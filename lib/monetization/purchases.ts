@@ -2,7 +2,7 @@ import type { Purchase } from 'react-native-iap';
 
 import type { PremiumEntitlements } from '../../types/monetization';
 
-export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.almostswedish.removeads';
+export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
 export const REMOVE_ADS_PRICE_LABEL = '29 SEK';
 export const REMOVE_ADS_STORAGE_KEY = 'monetization.removeAds.adsDisabled.v1';
 export const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;
@@ -80,7 +80,6 @@ export interface NativePurchaseProviderOptions {
 
 export interface MockPurchaseProviderOptions {
   owned?: boolean;
-  ownedProductIds?: readonly string[];
   pendingPurchase?: boolean;
   receiptValidationStatus?: RemoveAdsReceiptValidationStatus;
 }
@@ -155,17 +154,13 @@ function normalizePurchases(value: unknown): RemoveAdsPurchaseRecord[] {
   return purchase ? [purchase] : [];
 }
 
-function purchaseMatchesProductId(purchase: RemoveAdsPurchaseRecord, productId: string): boolean {
-  if (purchase.productId === productId) return true;
+function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
+  if (purchase.productId === REMOVE_ADS_PRODUCT_ID) return true;
   if (!isRecord(purchase.raw)) return false;
   return (
     Array.isArray(purchase.raw.ids) &&
-    purchase.raw.ids.some((rawProductId) => rawProductId === productId)
+    purchase.raw.ids.some((productId) => productId === REMOVE_ADS_PRODUCT_ID)
   );
-}
-
-function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
-  return purchaseMatchesProductId(purchase, REMOVE_ADS_PRODUCT_ID);
 }
 
 function hasStoreConfirmation(record: StoredRemoveAdsEntitlementRecord): boolean {
@@ -485,9 +480,7 @@ export function createNativePurchaseProvider({
         let settled = false;
         const subscriptions = [
           iap.purchaseUpdatedListener((purchase) => {
-            const matched = normalizePurchases(purchase).find((candidate) =>
-              purchaseMatchesProductId(candidate, productId),
-            );
+            const matched = normalizePurchases(purchase).find(isRemoveAdsPurchase);
             if (matched) settle(undefined, matched);
           }),
           iap.purchaseErrorListener((error) => {
@@ -521,43 +514,37 @@ export function createNativePurchaseProvider({
             },
             type: 'in-app',
           })
-          .then(() => {
-            // Native purchases are granted only from purchaseUpdatedListener events.
+          .then((requestResult) => {
+            const matched = normalizePurchases(requestResult).find(isRemoveAdsPurchase);
+            if (matched) settle(undefined, matched);
           })
           .catch((error: unknown) => settle(error));
       });
     },
-    async restorePurchases(productIds) {
+    async restorePurchases() {
       const iap = await getIap();
       await iap.restorePurchases();
-      return normalizePurchases(await iap.getAvailablePurchases()).filter((purchase) =>
-        productIds.some((productId) => purchaseMatchesProductId(purchase, productId)),
-      );
+      return normalizePurchases(await iap.getAvailablePurchases()).filter(isRemoveAdsPurchase);
     },
   };
 }
 
 export function createMockPurchaseProvider({
   owned = false,
-  ownedProductIds = owned ? [REMOVE_ADS_PRODUCT_ID] : [],
   pendingPurchase = false,
   receiptValidationStatus = 'valid',
 }: MockPurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
   let connected = false;
-  const ownedProductIdsSet = new Set(ownedProductIds);
+  let ownsRemoveAds = owned;
 
   function assertConnected() {
     if (!connected) throw new Error('Mock purchase provider is not connected');
   }
 
-  function createMockPurchase(
-    transactionId: string,
-    productId = REMOVE_ADS_PRODUCT_ID,
-  ): RemoveAdsPurchaseRecord {
+  function createMockPurchase(transactionId: string): RemoveAdsPurchaseRecord {
     return {
-      productId,
+      productId: REMOVE_ADS_PRODUCT_ID,
       purchaseToken: `mock-token-${transactionId}`,
-      raw: { ids: [productId] },
       transactionId,
     };
   }
@@ -577,27 +564,16 @@ export function createMockPurchaseProvider({
       if (receiptValidationStatus !== 'valid') return { status: receiptValidationStatus };
       return createReceiptValidationResult(purchase);
     },
-    async requestRemoveAdsPurchase(productId) {
+    async requestRemoveAdsPurchase() {
       assertConnected();
       if (pendingPurchase) return null;
-      ownedProductIdsSet.add(productId);
-      return createMockPurchase(
-        productId === REMOVE_ADS_PRODUCT_ID ? 'buy-remove-ads' : 'buy-purchase',
-        productId,
-      );
+      ownsRemoveAds = true;
+      return createMockPurchase('buy-remove-ads');
     },
     async restorePurchases(productIds) {
       assertConnected();
-      if (
-        productIds.includes(REMOVE_ADS_PRODUCT_ID) &&
-        ownedProductIdsSet.has(REMOVE_ADS_PRODUCT_ID)
-      ) {
-        return [createMockPurchase('restore-remove-ads')];
-      }
-
-      const productId = productIds.find((candidate) => ownedProductIdsSet.has(candidate));
-      if (!productId) return [];
-      return [createMockPurchase('restore-purchase', productId)];
+      if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];
+      return [createMockPurchase('restore-remove-ads')];
     },
   };
 }

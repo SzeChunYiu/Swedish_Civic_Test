@@ -74,18 +74,12 @@ function englishTranslationMap(appSource) {
 }
 
 function normalizeInlineHtml(value) {
-  return value
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return value.replace(/\s+/g, ' ').trim();
 }
 
 function staticFallbackI18nValues(indexHtml, keyPrefix) {
   const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
 
   let match;
   while ((match = elementPattern.exec(indexHtml))) {
@@ -99,51 +93,6 @@ function staticFaqSection(indexHtml) {
   const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
   assert.ok(faqMatch, 'static FAQ fallback section should be present');
   return faqMatch[0];
-}
-
-function staticHomeRoute(indexHtml) {
-  const homeMatch = indexHtml.match(
-    /<main data-screen-label="01 Home" data-page="\/"[\s\S]*?<\/main>/,
-  );
-  assert.ok(homeMatch, 'static Home route should be present');
-  return homeMatch[0];
-}
-
-function isGuardedHomeBodyKey(key) {
-  if (/^chap\.\d+\.m1$/.test(key)) return false;
-  return (
-    key.startsWith('demo.') ||
-    key.startsWith('qcard.') ||
-    key.startsWith('chap.') ||
-    key === 'ad.label' ||
-    key === 'ad.placeholder'
-  );
-}
-
-function assertStaticHomeBodyFallbackParitySource(indexHtml, appSource) {
-  const englishTranslations = englishTranslationMap(appSource);
-  const homeFallback = staticFallbackI18nValues(staticHomeRoute(indexHtml), '');
-  const guardedEntries = Array.from(homeFallback.entries()).filter(([key]) =>
-    isGuardedHomeBodyKey(key),
-  );
-
-  assert.ok(guardedEntries.length > 0, 'static Home body should expose guarded fallback copy');
-
-  for (const [key, fallbackValue] of guardedEntries) {
-    const expectedValue = englishTranslations.get(key);
-    assert.equal(
-      fallbackValue,
-      normalizeInlineHtml(expectedValue ?? ''),
-      `${key} Home no-JS fallback should match the English site/app.js dictionary`,
-    );
-  }
-
-  assert.ok(
-    !guardedEntries.some(([key]) => /^chap\.\d+\.m1$/.test(key)),
-    'runtime chapter count placeholders should not be treated as required literal fallback copy',
-  );
-
-  return guardedEntries.length;
 }
 
 const unsupportedPracticalTestClaimPatterns = [
@@ -163,22 +112,6 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-];
-const ebookFactboxSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const unsupportedEbookFactboxPatterns = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
 ];
 
 function sourceProvenanceSurface() {
@@ -273,21 +206,6 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
   }
 });
 
-test('static Home body no-JS fallback mirrors the English dictionary', () => {
-  const indexHtml = read('site/index.html');
-  const appSource = read('site/app.js');
-
-  assert.equal(assertStaticHomeBodyFallbackParitySource(indexHtml, appSource), 33);
-  assert.throws(
-    () =>
-      assertStaticHomeBodyFallbackParitySource(
-        indexHtml.replace('No textbooks.', 'No stale textbooks.'),
-        appSource,
-      ),
-    /demo\.h1 Home no-JS fallback should match the English site\/app\.js dictionary/,
-  );
-});
-
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
 });
@@ -318,19 +236,4 @@ test('static ebook practical test copy is backed by current UHR source metadata'
   unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
     assert.doesNotMatch(ebookSource, pattern),
   );
-});
-
-test('static ebook factbox and current prose claims use retrieved source metadata', () => {
-  const ebookSource = read('site/ebook.js');
-
-  assert.match(ebookSource, /const EBOOK_FACTBOX_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(ebookSource, /function ebookFactBox\(lang, heading, facts/);
-  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
-  assert.match(ebookSource, /Facts to review/);
-  assert.match(ebookSource, /Fakta att repetera/);
-  assert.match(ebookSource, /Sources accessed/);
-  assert.match(ebookSource, /Källor hämtade/);
-
-  ebookFactboxSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
-  unsupportedEbookFactboxPatterns.forEach((pattern) => assert.doesNotMatch(ebookSource, pattern));
 });

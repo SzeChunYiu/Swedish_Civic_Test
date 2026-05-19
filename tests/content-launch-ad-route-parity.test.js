@@ -10,8 +10,6 @@ const expectedSuppressedRoutes = [
   '/practice',
   '/quiz',
   '/disclaimer',
-  '/about-the-test',
-  '/onboarding',
   '/privacy',
   '/sources',
   '/support',

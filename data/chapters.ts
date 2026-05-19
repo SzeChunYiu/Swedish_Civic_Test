@@ -43,7 +43,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.',
     descriptionEn:
       'The fundamental laws, the justice system, rule of law, and the right of public access.',
-    questionCount: 70,
+    questionCount: 45,
   },
   {
     id: 'ch06',
@@ -80,7 +80,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.',
     descriptionEn:
       'Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.',
-    questionCount: 55,
+    questionCount: 30,
   },
   {
     id: 'ch10',

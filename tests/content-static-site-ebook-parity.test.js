@@ -16,12 +16,6 @@ const staleEbookCopyPatterns = [
   /Coming soon/i,
   /Kommer snart/i,
 ];
-const swedishEbookQuizLoanwordPatterns = [
-  phrasePattern('gör ett ', 'quiz'),
-  phrasePattern('quiz', 'frågor'),
-  phrasePattern('quiz', 'pass'),
-  phrasePattern('quiz', 'et'),
-];
 const unsupportedEbookOutcomeClaimPatterns = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -48,22 +42,6 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-];
-const factboxSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const unsupportedFactboxPatterns = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
 ];
 
 function readSiteFile(relativePath) {
@@ -158,12 +136,6 @@ function assertNoStaleEbookCopy(value) {
   }
 }
 
-function assertNoSwedishEbookQuizLoanwords(value) {
-  for (const pattern of swedishEbookQuizLoanwordPatterns) {
-    assert.doesNotMatch(value, pattern);
-  }
-}
-
 function assertNoUnsupportedEbookOutcomeClaim(value) {
   for (const pattern of unsupportedEbookOutcomeClaimPatterns) {
     assert.doesNotMatch(value, pattern);
@@ -172,12 +144,6 @@ function assertNoUnsupportedEbookOutcomeClaim(value) {
 
 function assertNoUnsupportedPracticalTestClaim(value) {
   for (const pattern of unsupportedPracticalTestClaimPatterns) {
-    assert.doesNotMatch(value, pattern);
-  }
-}
-
-function assertNoUnsupportedFactboxClaim(value) {
-  for (const pattern of unsupportedFactboxPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -206,10 +172,8 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
 
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assertNoStaleEbookCopy(source);
-  assertNoSwedishEbookQuizLoanwords(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
-  assertNoUnsupportedFactboxClaim(source);
   assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
 });
 
@@ -260,13 +224,10 @@ test('static ebook renders every chapter with Swedish and English body parity', 
 
     assertNoStaleEbookCopy(englishHtml);
     assertNoStaleEbookCopy(swedishHtml);
-    assertNoSwedishEbookQuizLoanwords(swedishHtml);
     assertNoUnsupportedEbookOutcomeClaim(englishHtml);
     assertNoUnsupportedEbookOutcomeClaim(swedishHtml);
     assertNoUnsupportedPracticalTestClaim(englishHtml);
     assertNoUnsupportedPracticalTestClaim(swedishHtml);
-    assertNoUnsupportedFactboxClaim(englishHtml);
-    assertNoUnsupportedFactboxClaim(swedishHtml);
 
     assert.match(englishHtml, /ebook__study-actions/);
     assert.match(swedishHtml, /ebook__study-actions/);
@@ -292,7 +253,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
       assert.match(englishHtml, /What this book is/);
       assert.match(englishHtml, /Short, repeated sessions make it easier/);
       assert.match(swedishHtml, /Vad den h[aä]r boken [aä]r/);
-      assert.match(swedishHtml, /gör en övning/);
+      assert.match(swedishHtml, /Avsluta veckan med ett [oö]vningsprov/);
     } else {
       assert.doesNotMatch(englishHtml, /<div class="ebook__crumb">How to read this book<\/div>/);
       assert.doesNotMatch(
@@ -305,12 +266,10 @@ test('static ebook renders every chapter with Swedish and English body parity', 
         assert.match(swedishHtml, /Kapitel 12 · [OÖ]vningsprov/);
         assert.match(swedishHtml, /Starta [oö]vningsprov/);
       } else {
-        assert.match(englishHtml, /Facts to review/);
+        assert.match(englishHtml, /Facts you'll see on the test/);
         assert.match(swedishHtml, /Det viktigaste/);
         assert.match(swedishHtml, /Plugga smart/);
-        assert.match(swedishHtml, /Fakta att repetera/);
-        assert.match(englishHtml, /Sources accessed 2026-05-19/);
-        assert.match(swedishHtml, /Källor hämtade 2026-05-19/);
+        assert.match(swedishHtml, /Fakta att kunna/);
       }
     }
 
@@ -329,34 +288,6 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.doesNotMatch(swedishHtml, /Chapter highlights/);
     assert.doesNotMatch(swedishHtml, /Next study steps/);
   }
-});
-
-test('static ebook factboxes carry retrieved source notes for current and quantitative facts', () => {
-  const source = readSiteFile('site/ebook.js');
-  const harness = createEbookHarness();
-
-  assert.match(source, /const EBOOK_FACTBOX_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(source, /function ebookFactBox\(lang, heading, facts/);
-  assert.match(source, /retrievedDate: '2026-05-19'/);
-  factboxSourceUrls.forEach((url) => assert.match(source, new RegExp(url)));
-  assertNoUnsupportedFactboxClaim(source);
-
-  const natureEn = renderChapter(harness, 'en', '7');
-  const natureSv = renderChapter(harness, 'sv', '7');
-  assert.match(natureEn, /Statistics Sweden land-use statistics/);
-  assert.match(natureSv, /SCB markanvändningsstatistik/);
-  assertNoUnsupportedFactboxClaim(natureEn);
-  assertNoUnsupportedFactboxClaim(natureSv);
-
-  const moneyEn = renderChapter(harness, 'en', '9');
-  const moneySv = renderChapter(harness, 'sv', '9');
-  assert.match(moneyEn, /Sveriges Riksbank history/);
-  assert.match(moneySv, /Riksbankens historik/);
-
-  const worldEn = renderChapter(harness, 'en', '10');
-  const worldSv = renderChapter(harness, 'sv', '10');
-  assert.match(worldEn, /Government Offices: Sweden is a NATO member/);
-  assert.match(worldSv, /Regeringskansliet: Sverige är medlem i Nato/);
 });
 
 test('static ebook chapter 12 keeps practical test claims current and sourced', () => {

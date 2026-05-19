@@ -19,7 +19,7 @@ try {
   mistakeReviewStorage = null;
 }
 
-export type PersistedMistakeReview = {
+type PersistedMistakeReview = {
   wrongAnswerReviews: Record<string, MistakeAnswerReview>;
 };
 
@@ -78,18 +78,8 @@ function normalizeMistakeReview(value: unknown): PersistedMistakeReview {
   return { wrongAnswerReviews };
 }
 
-export function normalizeImportedMistakeReview(value: unknown): PersistedMistakeReview {
-  return normalizeMistakeReview(value);
-}
-
 function readMistakeReview(): PersistedMistakeReview {
-  let rawReview: string | undefined;
-  try {
-    rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
-  } catch {
-    return emptyMistakeReview;
-  }
-
+  const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
   if (!rawReview) return emptyMistakeReview;
 
   try {
@@ -101,21 +91,6 @@ function readMistakeReview(): PersistedMistakeReview {
 
 function writeMistakeReview(review: PersistedMistakeReview): void {
   mistakeReviewStorage?.set(mistakeReviewStateKey, JSON.stringify(review));
-}
-
-function mergeMistakeReview(
-  current: PersistedMistakeReview,
-  imported: PersistedMistakeReview,
-): PersistedMistakeReview {
-  const wrongAnswerReviews = { ...current.wrongAnswerReviews };
-  for (const [questionId, importedReview] of Object.entries(imported.wrongAnswerReviews)) {
-    const currentReview = wrongAnswerReviews[questionId];
-    if (!currentReview || importedReview.answeredAt >= currentReview.answeredAt) {
-      wrongAnswerReviews[questionId] = importedReview;
-    }
-  }
-
-  return { wrongAnswerReviews };
 }
 
 type MistakeReviewState = PersistedMistakeReview & {
@@ -153,11 +128,3 @@ export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
       return nextReview;
     }),
 }));
-
-export function importMistakeReviewSnapshot(value: unknown): PersistedMistakeReview {
-  const importedReview = normalizeImportedMistakeReview(value);
-  const nextReview = mergeMistakeReview(useMistakeReviewStore.getState(), importedReview);
-  writeMistakeReview(nextReview);
-  useMistakeReviewStore.setState(nextReview);
-  return nextReview;
-}

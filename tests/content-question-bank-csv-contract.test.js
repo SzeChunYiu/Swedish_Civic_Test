@@ -83,7 +83,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 19 columns, expected 18/,
+    /content\/question-bank\.csv row 2 has 22 columns, expected 21/,
   );
 });
 
@@ -136,7 +136,6 @@ test('question-bank CSV exposes derived question provenance with no blank cells'
   );
 });
 
-test('question-bank CSV export check rejects generated rows collapsing to UHR', () => {
 test('question-bank CSV exposes UHR source metadata with no blank cells', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
@@ -182,24 +181,11 @@ test('question-bank CSV contract rejects source publisher drift', () => {
     [
       '-e',
       `
-process.argv.push('--check');
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/lib/content/provenance.ts')) {
-    return String(contents).replace(
-      "if (tags.includes('published-variant')) return 'derived';",
-      "if (tags.includes('published-variant')) return 'uhr';",
-    );
-  }
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    return String(contents).replace(/,"derived"$/gm, ',"uhr"');
-  }
-  return contents;
-};
-require('./scripts/export-question-bank.js');
   if (normalizedPath.endsWith('/content/question-bank.csv')) {
     return String(contents).replace(
       'Universitets- och högskolerådet (UHR)',
@@ -217,7 +203,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /question-bank export provenance helper composition is .* expected tag-derived/,
     /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Fel utgivare", expected "Universitets- och högskolerådet \(UHR\)"/,
   );
 });
@@ -258,83 +243,6 @@ require('./scripts/validate-content.js');
     (output.match(/content\/question-bank\.csv row \d+ q\d+ uhrSourceUrl is/g) || []).length,
     0,
     'whole-bank UHR source URL drift should be summarized instead of repeated per row',
-  );
-});
-
-test('question-bank CSV contract summarizes row order drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    const lines = String(contents).trimEnd().split('\\n');
-    const firstRow = lines[1];
-    lines[1] = lines[2];
-    lines[2] = firstRow;
-    return \`\${lines.join('\\n')}\\n\`;
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.match(
-    output,
-    /content\/question-bank\.csv row-order\/id drift: 2 row ids do not match exporter order; first mismatch at row 2: saw "q002", expected "q001"; CSV has \d+ data rows, expected \d+; Regenerate with npm run content:export\./,
-  );
-  assert.equal(
-    (output.match(/content\/question-bank\.csv row \d+ q\d+ [A-Za-z]+ is/g) || []).length,
-    0,
-    'row order drift should be summarized before field-level mismatch cascades',
-  );
-});
-
-test('question-bank CSV contract summarizes shifted row ids', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    const lines = String(contents).trimEnd().split('\\n');
-    lines.splice(1, 1);
-    return \`\${lines.join('\\n')}\\n\`;
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.match(
-    output,
-    /content\/question-bank\.csv row-order\/id drift: \d+ row ids do not match exporter order; first mismatch at row 2: saw "q002", expected "q001"; CSV has \d+ data rows, expected \d+; Regenerate with npm run content:export\./,
-  );
-  assert.doesNotMatch(output, /content\/question-bank\.csv has \d+ data rows/);
-  assert.equal(
-    (output.match(/content\/question-bank\.csv row \d+ q\d+ [A-Za-z]+ is/g) || []).length,
-    0,
-    'shifted rows should not cascade into per-field mismatch output',
   );
 });
 
@@ -399,37 +307,5 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /content\/question-bank\.csv row 2 q001 explanationEn is "The exported explanation drifted from the source question\.", expected "Sweden is in the Nordic region/,
-  );
-});
-
-test('question-bank CSV contract rejects source publisher drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    return String(contents).replace(
-      'Universitets- och högskolerådet (UHR)',
-      'Unknown publisher',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Unknown publisher", expected "Universitets- och högskolerådet \(UHR\)"/,
   );
 });

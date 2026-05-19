@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -11,16 +11,8 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { colors, radius, space, typography } from '../lib/theme';
 import type { GlossaryTerm } from '../types/content';
 
-type SearchQueryParams = {
-  q?: string | string[];
-  query?: string | string[];
-};
-
 export default function SearchScreen() {
-  const searchParams = useLocalSearchParams<SearchQueryParams>();
-  const [query, setQuery] = useState(() =>
-    initialSearchQueryFromParams(searchParams.q, searchParams.query),
-  );
+  const [query, setQuery] = useState('');
   const language = useSettingsStore((state) => state.language);
   const copy = searchRouteCopy[language];
   const termsWithChapters = useMemo(
@@ -44,22 +36,16 @@ export default function SearchScreen() {
     trimmedQuery.length > 0
       ? copy.filteredSummary(filteredTerms.length, termsWithChapters.length)
       : copy.allTermsSummary(termsWithChapters.length);
-  const searchDescriptionId = 'search-route-glossary-description';
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
       <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
 
-      <Card>
-        <Text nativeID={searchDescriptionId} style={styles.accessibilitySummaryText}>
-          {copy.searchCardAccessibilityLabel}
-        </Text>
+      <Card accessible accessibilityLabel={copy.searchCardAccessibilityLabel}>
         <Text accessibilityRole="header" style={styles.searchLabel}>
           {copy.searchLabel}
         </Text>
         <TextInput
-          aria-describedby={searchDescriptionId}
-          accessibilityHint={copy.searchCardAccessibilityLabel}
           accessibilityLabel={copy.searchInputAccessibilityLabel}
           autoCapitalize="none"
           autoCorrect={false}
@@ -72,9 +58,7 @@ export default function SearchScreen() {
           value={query}
         />
         <View style={styles.searchActions}>
-          <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.resultSummary}>
-            {resultSummary}
-          </Text>
+          <Text style={styles.resultSummary}>{resultSummary}</Text>
           <Button
             accessibilityLabel={copy.clearSearchAccessibilityLabel}
             accessibilityRole="button"
@@ -99,18 +83,18 @@ export default function SearchScreen() {
                 ? chapter.nameEn
                 : chapter.nameSv
               : undefined;
-            const termSummary = copy.termAccessibilityLabel({
-              chapterName,
-              explanation,
-              primaryTerm,
-            });
-            const termSummaryId = `search-term-summary-${term.id}`;
 
             return (
-              <Card key={term.id} style={styles.termCard}>
-                <Text nativeID={termSummaryId} style={styles.accessibilitySummaryText}>
-                  {termSummary}
-                </Text>
+              <Card
+                key={term.id}
+                accessible
+                accessibilityLabel={copy.termAccessibilityLabel({
+                  chapterName,
+                  explanation,
+                  primaryTerm,
+                })}
+                style={styles.termCard}
+              >
                 <View style={styles.termHeader}>
                   <View style={styles.termTitleGroup}>
                     <Text accessibilityRole="header" style={styles.termTitle}>
@@ -120,7 +104,6 @@ export default function SearchScreen() {
                   </View>
                   {term.chapterId && chapterName ? (
                     <Link
-                      aria-describedby={termSummaryId}
                       accessibilityLabel={copy.openChapterAccessibilityLabel(chapterName)}
                       accessibilityRole="link"
                       href={`/chapter/${term.chapterId}`}
@@ -249,22 +232,6 @@ function normalizeSearchText(value: string) {
     .trim();
 }
 
-type SearchParamValue = string | string[] | undefined;
-
-function initialSearchQueryFromParams(q: SearchParamValue, query: SearchParamValue) {
-  return firstSearchParamValue(q) || firstSearchParamValue(query);
-}
-
-function firstSearchParamValue(value: SearchParamValue) {
-  if (Array.isArray(value)) {
-    const firstTextValue = value.find((item) => item.trim().length > 0);
-
-    return firstTextValue?.trim() ?? '';
-  }
-
-  return value?.trim() ?? '';
-}
-
 function glossaryTermMatchesQuery(
   term: GlossaryTerm,
   chapter: (typeof chapters)[number] | undefined,
@@ -316,13 +283,6 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
-  },
-  accessibilitySummaryText: {
-    height: space.hairline,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: space.hairline,
   },
   termList: {
     gap: space[1.5],

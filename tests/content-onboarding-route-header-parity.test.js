@@ -21,24 +21,14 @@ test('onboarding route title stays accessible as a header', () => {
 
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
-  assert.equal(summary.onboardingRouteCopyLabelsValidated, 19);
+  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
   assert.match(source, /const onboardingCopy: Record<AppLanguage, OnboardingCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = onboardingCopy\[language\];/);
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
-  assert.match(
-    source,
-    /Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor\./,
-  );
   assert.match(source, /Prepare calmly for the civic test/);
-  assert.match(source, /Alla 13 ämnen och hela frågebanken ingår gratis/);
-  assert.match(source, /All 13 topics and the full question bank are included for free/);
-  assert.match(
-    source,
-    /The full question bank stays free; Remove Ads only changes ads, not question access\./,
-  );
   assert.match(
     source,
     /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
