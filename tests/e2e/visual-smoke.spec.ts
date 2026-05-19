@@ -3,10 +3,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { dismissBlockingModals } from './browserLaunch';
-
-const committedScreenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
-const updateCommittedScreenshots = process.env.VISUAL_SMOKE_UPDATE_BASELINE === '1';
+const screenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
 type RouteCapture = {
   name: string;
   route: string;
@@ -37,6 +35,14 @@ const routes = [
   ['support', '/support'],
 ] as const;
 
+const requiredRouteContextKeys = [
+  './_layout.tsx',
+  './(tabs)/home.tsx',
+  './(tabs)/practice.tsx',
+  './about-the-test.tsx',
+  './chapter/[chapterId].tsx',
+] as const;
+
 const explainedDuplicateScreenshotGroups = [
   {
     names: ['home', 'index'],
@@ -48,10 +54,29 @@ function sha256File(filePath: string): string {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
-function screenshotDirFor(testInfo: TestInfo): string {
-  return updateCommittedScreenshots
-    ? committedScreenshotDir
-    : testInfo.outputPath('visual-smoke-screenshots');
+function readWebBundleText(): string {
+  expect(fs.existsSync(webBundleDir), 'dist-web web bundle directory should exist').toBe(true);
+  const bundleFiles = fs
+    .readdirSync(webBundleDir)
+    .filter((file) => file.endsWith('.js'))
+    .map((file) => path.join(webBundleDir, file));
+
+  expect(bundleFiles.length, 'dist-web should include a web JavaScript bundle').toBeGreaterThan(0);
+  return bundleFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
+}
+
+function expectExportBundleToContainRouteContext() {
+  const bundleText = readWebBundleText();
+
+  expect(
+    bundleText,
+    'Expo Router route context should not be emitted as an empty module',
+  ).not.toContain('No modules in context');
+  for (const routeContextKey of requiredRouteContextKeys) {
+    expect(bundleText, `web bundle should include route module ${routeContextKey}`).toContain(
+      routeContextKey,
+    );
+  }
 }
 
 function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[] {
@@ -74,8 +99,9 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
     .map(([hash, names]) => `${hash}: ${names.sort().join(', ')}`);
 }
 
-test('primary routes render and capture UI/UX screenshots', async ({ page }, testInfo) => {
-  const screenshotDir = screenshotDirFor(testInfo);
+test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
+  expectExportBundleToContainRouteContext();
+
   fs.rmSync(screenshotDir, { force: true, recursive: true });
   fs.mkdirSync(screenshotDir, { recursive: true });
   const consoleErrors: string[] = [];
@@ -88,12 +114,13 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }, tes
 
   for (const [name, route] of routes) {
     await page.goto(route, { waitUntil: 'networkidle' });
-    const dismissal = await dismissBlockingModals(page);
-    const bodyText = (await page.locator('body').innerText()).trim();
-    expect(bodyText.length, `${name} should render route-specific text`).toBeGreaterThan(0);
-    expect(bodyText, `${name} should not surface the router empty-context error`).not.toContain(
-      'No routes found',
-    );
+    const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
+    const bodyText = await page.locator('body').innerText();
+    expect(bodyText).not.toContain('No routes found');
+    expect(
+      bodyText.trim().length,
+      `${route} should render route-specific body text`,
+    ).toBeGreaterThan(40);
     await expect(page.locator('body')).not.toContainText('Not Found');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
     const file = `${name}.png`;

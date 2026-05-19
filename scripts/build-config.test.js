@@ -13,27 +13,8 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
-function readThemeCanvasColor() {
-  const themeSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/colors.ts'), 'utf8');
-  const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
-  assert.notEqual(match, null, 'colors.canvas should stay parseable for web export checks');
-  return match[1];
-}
-
-function copyPublicWebManifest(outputDir) {
-  const manifest = readJson('public/manifest.webmanifest');
-  fs.copyFileSync(
-    path.join(repoRoot, 'public/manifest.webmanifest'),
-    path.join(outputDir, 'manifest.webmanifest'),
-  );
-
-  for (const icon of manifest.icons) {
-    const iconDestination = path.join(outputDir, icon.src);
-    fs.mkdirSync(path.dirname(iconDestination), { recursive: true });
-    fs.copyFileSync(path.join(repoRoot, 'public', icon.src), iconDestination);
-  }
-
-  return manifest;
+function readText(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
 test('EAS build and submit profiles are configured for internal and production releases', () => {
@@ -1547,9 +1528,8 @@ test('web export script is available for local production bundle smoke', () => {
   const pkg = readJson('package.json');
   const appConfig = readJson('app.json').expo;
   const vercelConfig = readJson('vercel.json');
-  const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
-  const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
-  const entry = fs.readFileSync(path.join(repoRoot, 'index.js'), 'utf8');
+  const redirects = readText('public/_redirects');
+  const workflow = readText('.github/workflows/web-deploy.yml');
 
   assert.equal(pkg.main, 'index.js');
   assert.match(entry, /require\.context\(\s*['"]\.\/app['"]/);
@@ -1557,7 +1537,10 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(entry, /renderRootComponent\(App\)/);
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
-  assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
+  assert.equal(
+    pkg.scripts['build:web:export'],
+    'expo export --platform web --output-dir dist-web --clear',
+  );
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
     pkg.scripts['release:web-export-smoke'],
@@ -1573,7 +1556,7 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(workflow, /node scripts\/prepare-web-export\.js --check dist-web/);
   assert.match(workflow, /actions\/upload-artifact@v6/);
   assert.match(workflow, /path:\s+dist-web/);
-  assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
+  assert.match(readText('.gitignore'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
   assert.equal(fs.existsSync(path.join(repoRoot, 'public/manifest.webmanifest')), true);
 });
@@ -1599,6 +1582,26 @@ test('Vercel static-site config ships host-level security headers without changi
   }
   // TODO(static-csp): add a tested report-only CSP after static fonts and inline scripts are removed.
   assert.equal(actualHeaders.has('content-security-policy'), false);
+});
+
+test('web export uses Expo Metro config with router route contexts enabled', () => {
+  const metroConfigPath = path.join(repoRoot, 'metro.config.js');
+
+  assert.equal(fs.existsSync(metroConfigPath), true);
+  assert.match(readText('metro.config.js'), /getDefaultConfig\(__dirname\)/);
+
+  delete require.cache[metroConfigPath];
+  const metroConfig = require(metroConfigPath);
+
+  assert.equal(metroConfig.transformer.unstable_allowRequireContext, true);
+  assert.match(
+    metroConfig.transformer.babelTransformerPath,
+    /@expo[\\/]metro-config[\\/]build[\\/]babel-transformer\.js$/,
+  );
+  assert.match(
+    metroConfig.transformerPath,
+    /@expo[\\/]metro-config[\\/]build[\\/]transform-worker[\\/]transform-worker\.js$/,
+  );
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {

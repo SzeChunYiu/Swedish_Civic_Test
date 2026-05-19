@@ -29,7 +29,7 @@
     "test:publishing": "node --test scripts/publishing.test.js",
     "build:preview": "node scripts/build-preview-guard.js",
     "build:production": "node scripts/build-production-guard.js",
-    "build:web:export": "expo export --platform web --output-dir dist-web",
+    "build:web:export": "expo export --platform web --output-dir dist-web --clear",
     "postbuild:web:export": "node scripts/prepare-web-export.js dist-web",
     "submit:production": "node scripts/submit-production-guard.js",
     "test:build-config": "node --test scripts/build-config.test.js",
