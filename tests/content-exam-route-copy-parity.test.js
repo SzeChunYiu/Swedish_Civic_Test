@@ -39,6 +39,13 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
+  assert.match(
+    source,
+    /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,
+  );
+  assert.match(source, /recordMockExamSession\(\{/);
+  assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
+  assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
 });
 
 test('exam route copy parity rejects bypassing the settings language', () => {

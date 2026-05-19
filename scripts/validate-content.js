@@ -588,6 +588,11 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home route must derive the readiness indicator from stored progress',
   ],
   [
+    'const mockExamSessions = useProgressStore((state) => state.mockExamSessions);',
+    'home route must read persisted mock exam scores',
+  ],
+  ['mockExamSessions,', 'home route must feed persisted mock exam scores into readiness'],
+  [
     'const readinessVerdict = copy.readinessVerdicts[readiness.verdict];',
     'home route readiness verdict must use localized copy',
   ],
@@ -2702,10 +2707,16 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'questionProgress', type: 'Record<string, QuestionProgress>', optional: false },
   { name: 'totalXp', type: 'number', optional: false },
   { name: 'answerDates', type: 'string[]', optional: false },
+  { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
     type: '(questionId: string, isCorrect: boolean) => void',
+    optional: false,
+  },
+  {
+    name: 'recordMockExamSession',
+    type: '(session: MockExamProgressInput) => void',
     optional: false,
   },
   { name: 'toggleBookmark', type: '(questionId: string) => void', optional: false },
@@ -6947,6 +6958,16 @@ function validateExamSubmissionFinalityParity() {
   ) {
     reject('next-exam control must stay disabled until the submitted completion is stored');
   }
+  if (
+    !examRoute.includes('const recordMockExamSession = useProgressStore') ||
+    !examRoute.includes('recordMockExamSession({') ||
+    !examRoute.includes(
+      'score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0',
+    ) ||
+    !examRoute.includes('completedAt: new Date().toISOString()')
+  ) {
+    reject('exam result submission must persist a completed mock-exam score for readiness');
+  }
 
   if (valid) examSubmissionFinalityParityValidated = true;
 }
@@ -9685,6 +9706,8 @@ function validateProgressStoreSchemaParity() {
     ],
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
     ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
+    ['mockExamSessions: [],', 'empty progress must initialize mock exam history'],
+    ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
     ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
   ];
