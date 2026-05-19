@@ -9,6 +9,15 @@ const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
 
+function isIntentionallyHiddenInteractive(tag) {
+  return (
+    tag.includes('accessible={false}') &&
+    (tag.includes('accessibilityElementsHidden') ||
+      tag.includes('importantForAccessibility="no"') ||
+      tag.includes('aria-hidden'))
+  );
+}
+
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const fullPath = path.join(dir, entry.name);
@@ -39,12 +48,19 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         const tag = collectOpeningTag(lines, index);
         const isButtonImplementation = relPath === 'components/ui/Button.tsx';
         const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
-        const isIntentionallyHidden =
-          tag.includes('accessible={false}') &&
-          tag.includes('importantForAccessibility="no-hide-descendants"');
-
-        if (isIntentionallyHidden) return;
-
+        if (isIntentionallyHiddenInteractive(tag)) {
+          if (tag.includes('accessibilityLabel=')) {
+            offenders.push(
+              `${relPath}:${index + 1}: hidden interactive should not expose accessibilityLabel: ${line.trim()}`,
+            );
+          }
+          if (tag.includes('accessibilityRole=')) {
+            offenders.push(
+              `${relPath}:${index + 1}: hidden interactive should not expose accessibilityRole: ${line.trim()}`,
+            );
+          }
+          return;
+        }
         if (!isButtonImplementation && !tag.includes('accessibilityLabel=')) {
           offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
         }

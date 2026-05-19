@@ -265,19 +265,21 @@ export function FirstRunAboutTheTestModal({
       visible
       onRequestClose={dismissFirstRunModal}
       accessibilityLabel={copy.title}
+      accessibilityViewIsModal
     >
-      <View style={styles.backdrop}>
+      <View accessible={false} style={styles.backdrop}>
         <Pressable
           accessible={false}
           accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          onPress={dismissFirstRunModal}
+          importantForAccessibility="no"
+          hitSlop={space[0]}
+          onPress={markSeen}
           style={({ pressed }) => [
-            styles.backdropDismissLayer,
-            pressed ? styles.backdropPressed : null,
+            styles.backdropDismissTarget,
+            pressed ? styles.backdropDismissTargetPressed : null,
           ]}
         />
-        <View accessibilityRole="none" style={styles.card}>
+        <View accessibilityRole="none" accessible={false} style={styles.card}>
           <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
           <Text accessibilityRole="header" style={styles.title}>
             {copy.title}
@@ -325,7 +327,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: space[3],
   },
-  backdropPressed: {
+  backdropDismissTarget: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  backdropDismissTargetPressed: {
     backgroundColor: colors.focusSoft,
   },
   backdropDismissLayer: {
