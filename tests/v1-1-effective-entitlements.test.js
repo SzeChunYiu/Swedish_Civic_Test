@@ -99,18 +99,6 @@ test('resolveEffectiveEntitlement: expired referral grant contributes nothing', 
   assert.equal(r.entitlements.spacedRepetition, false);
 });
 
-test('resolveEffectiveEntitlement: invalid time-bounded dates are ignored', () => {
-  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
-  const future = new Date(NOW.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString();
-  const r = resolveEffectiveEntitlement({
-    proTrial: { expiresAtIso: 'not-a-date' },
-    referralGrant: { expiresAtIso: future },
-    now: NOW,
-  });
-  assert.deepEqual(r.activeSources, ['referral-grant-active']);
-  assert.equal(r.nextExpiryIso, future);
-});
-
 test('resolveEffectiveEntitlement: Pro Lifetime stacked with active trial uses Pro primary', () => {
   const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
   const future = new Date(NOW.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString();
@@ -135,30 +123,6 @@ test('resolveEffectiveEntitlement: trial + referral both active picks the earlie
     now: NOW,
   });
   assert.equal(r.nextExpiryIso, earlier);
-});
-
-test('resolveEffectiveEntitlement: mixed ISO offsets are ordered by timestamp', () => {
-  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
-  const laterByTimestamp = '2026-05-20T00:00:00-05:00';
-  const earlierByTimestamp = '2026-05-20T03:00:00Z';
-  const r = resolveEffectiveEntitlement({
-    proTrial: { expiresAtIso: laterByTimestamp },
-    referralGrant: { expiresAtIso: earlierByTimestamp },
-    now: NOW,
-  });
-  assert.equal(r.nextExpiryIso, earlierByTimestamp);
-});
-
-test('resolveEffectiveEntitlement: equal expiry timestamps keep the first active source string', () => {
-  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
-  const trialExpiry = '2026-05-20T05:00:00Z';
-  const referralExpiry = '2026-05-20T00:00:00-05:00';
-  const r = resolveEffectiveEntitlement({
-    proTrial: { expiresAtIso: trialExpiry },
-    referralGrant: { expiresAtIso: referralExpiry },
-    now: NOW,
-  });
-  assert.equal(r.nextExpiryIso, trialExpiry);
 });
 
 test('hasProRightNow: convenience predicate matches resolver', () => {

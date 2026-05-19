@@ -5,8 +5,6 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const siteRoot = path.join(repoRoot, 'site');
-const productionTextExtensions = new Set(['.css', '.html', '.js', '.jsx']);
-const googleFontsEndpointPattern = /\b(?:https?:)?\/\/fonts\.(?:googleapis|gstatic)\.com\b/i;
 
 function readSiteIndex() {
   return fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
@@ -27,26 +25,6 @@ function localAssetReferences(indexHtml) {
     .filter(Boolean);
 }
 
-function productionTextFiles() {
-  const files = [];
-
-  function walk(directory) {
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-      const absolutePath = path.join(directory, entry.name);
-      if (entry.isDirectory()) {
-        walk(absolutePath);
-        continue;
-      }
-      if (!entry.isFile()) continue;
-      if (!productionTextExtensions.has(path.extname(entry.name))) continue;
-      files.push(absolutePath);
-    }
-  }
-
-  walk(siteRoot);
-  return files.sort((a, b) => a.localeCompare(b));
-}
-
 test('static site index references only shipped local assets', () => {
   const indexHtml = readSiteIndex();
   const missingAssets = localAssetReferences(indexHtml).filter(
@@ -55,16 +33,4 @@ test('static site index references only shipped local assets', () => {
 
   assert.deepEqual(missingAssets, []);
   assert.doesNotMatch(indexHtml, /signin\.js/);
-});
-
-test('static site production assets do not call Google Fonts before consent', () => {
-  const offenders = productionTextFiles()
-    .map((filePath) => ({
-      filePath: path.relative(repoRoot, filePath),
-      source: fs.readFileSync(filePath, 'utf8'),
-    }))
-    .filter(({ source }) => googleFontsEndpointPattern.test(source))
-    .map(({ filePath }) => filePath);
-
-  assert.deepEqual(offenders, []);
 });

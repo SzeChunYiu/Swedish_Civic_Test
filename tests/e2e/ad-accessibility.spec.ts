@@ -6,13 +6,12 @@ async function useEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await page
-    .getByRole('radio', {
-      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
-    })
+    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
-  await expect(
-    page.getByRole('radio', { name: 'Set question language to English support' }),
-  ).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
 }
 
 async function expectReachableButton(locator: Locator) {
@@ -69,7 +68,7 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   await dismissBlockingModals(page);
   await expect(
     page.getByLabel(
-      /(Test native ad: AdMob test placement preview|Inbyggd testannons: AdMob-testplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
+      /(Test native ad: Sponsored study placement|Inbyggd testannons: Sponsrad studieplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
     ),
   ).toBeVisible();
 
@@ -126,9 +125,7 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
   await page.goto('/mistakes', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   const mistakesAd = page
-    .getByLabel(
-      /Test native ad: AdMob test placement preview\..*Hidden after Remove Ads is active\./i,
-    )
+    .getByLabel(/Test native ad: Sponsored study placement\..*Hidden after Remove Ads is active\./i)
     .first();
   await expectPlacementCta({
     ad: mistakesAd,
@@ -140,7 +137,7 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
 
   await expect(
     page.getByLabel(
-      /Test native ad: AdMob test placement preview\..*Hidden after Remove Ads is active\./i,
+      /Test native ad: Sponsored study placement\..*Hidden after Remove Ads is active\./i,
     ),
   ).toHaveCount(0);
   await expect(page.getByText('Remove ads near results and mistakes ad')).toHaveCount(0);
