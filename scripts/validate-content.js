@@ -10704,6 +10704,16 @@ function validateMobileAdsConsentTypeSchemaParity() {
     return;
   }
 
+  if (
+    /Promise\.all\(\s*\[[\s\S]*resolveTrackingTransparencyStatus[\s\S]*resolveUmpConsentStatus/.test(
+      mobileConsentSource,
+    )
+  ) {
+    reject(
+      'lib/monetization/mobileAdsConsent.ts must sequence ATT before UMP consent collection instead of Promise.all',
+    );
+  }
+
   EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.forEach((expectedInterface) => {
     const actualFields = extractObjectTypePropertiesFromTs(
       mobileConsentSource,
