@@ -26,5 +26,17 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
 
+  await page.goto('/onboarding', { waitUntil: 'networkidle' });
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: 'Förbered dig lugnt för samhällskunskapsprovet' }),
+  ).toBeVisible();
+
+  await page.goto('/about-the-test', { waitUntil: 'networkidle' });
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: 'Vad är medborgarskapsprovet i samhällskunskap?' }),
+  ).toBeVisible();
+
   expect(consoleErrors).toEqual([]);
 });
