@@ -1075,6 +1075,33 @@ test('English support reaches quiz options, explanations, and exam review text',
   assert.match(examGeneratorSource, /explanationEn: question\.explanationEn/);
 });
 
+test('search route replaces placeholder copy with accessible tokenized question finder controls', () => {
+  const source = read('app/search.tsx');
+
+  assert.match(source, /import \{ Pressable, StyleSheet, Text, TextInput, View \}/);
+  assert.match(
+    source,
+    /searchQuestions\(\{ chapters, language, query: trimmedQuery, questions, limit: 12 \}\)/,
+  );
+  assert.match(source, /<TextInput/);
+  assert.match(source, /accessibilityLabel=\{copy\.inputAccessibilityLabel\}/);
+  assert.match(source, /placeholderTextColor=\{colors\.textPlaceholder\}/);
+  assert.match(source, /style=\{styles\.input\}/);
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[styles\.clearButton, pressed \? styles\.pressed : null\]\}/,
+  );
+  assert.match(source, /<View key=\{result\.question\.id\} style=\{styles\.resultCard\}>/);
+  assert.match(source, /style=\{styles\.practiceLink\}/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(source, /minHeight: space\[7\]/);
+  assert.match(source, /<QuestionDisclaimer language=\{language\} \/>/);
+  assert.match(source, /pathname: '\/quiz\/\[sessionId\]'/);
+  assert.match(source, /href=\{`\/chapter\/\$\{result\.chapter\.id\}`\}/);
+  assert.doesNotMatch(source, /Question search is coming/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('exam route exposes page and review section headings as headers', () => {
   const source = read('app/(tabs)/exam.tsx');
   const headerMatches = source.match(/<Text accessibilityRole="header" style=\{styles\./g);
