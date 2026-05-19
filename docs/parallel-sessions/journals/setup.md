@@ -1237,3 +1237,12 @@ Verification: clean worktree from current `origin/main` `3590ee03`; linked share
 PR: pending from `task/setup/static-hero-fallback-copy-1779229718-4134892` at handoff commit time.
 Blocked? no for this static outcome-copy guard follow-up; no Vercel CLI was run.
 Next suggested validator action: inspect the no-JS fallback copy and rerun the shared static outcome-copy guard tests before accepting `STATIC-HERO-PASSPORT-OUTCOME-COPY-1`.
+
+## Iteration 258 - 2026-05-20
+
+Task completed: STATIC-ADSENSE-STORED-CONSENT-BROWSER-GUARD-1 - set `adsbygoogle.requestNonPersonalizedAds` before static AdSense loads and added served-browser coverage for returning visitors with stored `min` and `all` consent.
+Artifacts changed: `site/app.js`, `scripts/static-site-adsense-consent-browser.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main`; `npm run test:static-site-adsense-consent-browser` exit 0 with 3/3 passing; `npm run validate:content` exit 0 with 770 questions and `staticSiteQuestionBankParityValidated:true`; `node --test scripts/static-site-adsense-consent-browser.test.js scripts/static-site-privacy-copy.test.js scripts/static-site-mobile-nav.test.js scripts/check-live-site.test.js` exit 0 with 18/18 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `git diff --check` exit 0. The browser guard seeds `smt_consent=min` and `smt_consent=all` before first navigation, fakes `pagead2.googlesyndication.com`, verifies the consent modal stays hidden, confirms localStorage survives reload, checks `ins.adsbygoogle` `data-npa`, checks `window.adsbygoogle.requestNonPersonalizedAds`, and requires script append before the two ad pushes with NPA already applied.
+PR: pending from `task/adsense-stored-consent-1779235600` at handoff commit time.
+Blocked? no for this static AdSense stored-consent guard; no Vercel CLI was run.
+Next suggested validator action: inspect the static consent ordering fix and rerun `npm run test:static-site-adsense-consent-browser` plus the grouped static browser/privacy/mobile/live-site checks before accepting.

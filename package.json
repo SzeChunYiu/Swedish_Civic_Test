@@ -49,6 +49,7 @@
     "test:static-site-asset-references": "node --test scripts/static-site-asset-references.test.js",
     "test:native-account-scope": "node --test scripts/native-account-scope.test.js",
     "test:static-site-privacy-copy": "node --test scripts/static-site-privacy-copy.test.js",
+    "test:static-site-adsense-consent-browser": "node --test scripts/static-site-adsense-consent-browser.test.js",
     "test:static-site-question-feedback": "node --test scripts/static-site-question-feedback.test.js",
     "test:static-site-settings-language": "node --test scripts/static-site-settings-language.test.js",
     "test:static-site-practice-result-i18n": "node --test scripts/static-site-practice-result-i18n.test.js",
