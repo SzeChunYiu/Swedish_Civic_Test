@@ -257,7 +257,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.themeColorTokens, ['colors.canvas']);
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
-  assert.deepEqual(manifest.appSchemes, ['swedish-civic-test']);
+  assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
   assert.equal(
     manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
     true,
@@ -330,12 +330,12 @@ test('native intent resolves about-the-test deep links before the Home fallback'
   assert.equal(
     redirectSystemPath({
       initial: true,
-      path: 'swedish-civic-test://app/about-the-test',
+      path: 'almost-swedish://app/about-the-test',
     }),
     '/about-the-test',
   );
   assert.equal(
-    redirectSystemPath({ initial: true, path: 'swedish-civic-test://app/not-real' }),
+    redirectSystemPath({ initial: true, path: 'almost-swedish://app/not-real' }),
     '/home',
   );
 });
