@@ -123,6 +123,42 @@ test('question-bank CSV exposes derived question provenance with no blank cells'
   );
 });
 
+test('question-bank CSV export check rejects generated rows collapsing to UHR', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--check');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/provenance.ts')) {
+    return String(contents).replace(
+      "if (tags.includes('published-variant')) return 'derived';",
+      "if (tags.includes('published-variant')) return 'uhr';",
+    );
+  }
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(/,"derived"$/gm, ',"uhr"');
+  }
+  return contents;
+};
+require('./scripts/export-question-bank.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /question-bank export provenance helper composition is .* expected tag-derived/,
+  );
+});
+
 test('question-bank CSV contract rejects option payload drift', () => {
   const result = spawnSync(
     process.execPath,
