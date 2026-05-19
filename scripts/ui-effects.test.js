@@ -185,6 +185,9 @@ test('shared buttons use token disabled styles without dimming child labels', ()
 test('language picker future-language rows are disabled instead of selectable', () => {
   const source = read('components/ui/LanguagePicker.tsx');
 
+  assert.match(source, /aria-expanded=\{open\}/);
+  assert.match(source, /aria-haspopup="menu"/);
+  assert.match(source, /accessibilityState=\{\{ expanded: open \}\}/);
   assert.match(source, /if \(!option\.available\) return;/);
   assert.match(source, /disabled=\{!opt\.available\}/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
