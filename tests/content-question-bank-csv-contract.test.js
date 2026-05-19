@@ -107,8 +107,21 @@ test('question-bank CSV exposes derived question provenance with no blank cells'
   assert.notEqual(provenanceIndex, -1);
 
   const rows = lines.slice(1).map(parseExportedCsvLine);
+  const provenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+  rows.forEach((row) => {
+    provenanceCounts[row[provenanceIndex]] += 1;
+  });
+
   assert.equal(rows.length, summary.publishedQuestions);
   assert.equal(rows.find((row) => row[idIndex] === 'q001')?.[provenanceIndex], 'uhr');
+  assert.deepEqual(summary.questionBankCsvProvenanceCounts, provenanceCounts);
+  assert.equal(
+    Object.values(summary.questionBankCsvProvenanceCounts).reduce(
+      (total, count) => total + count,
+      0,
+    ),
+    summary.publishedQuestions,
+  );
   assert.ok(
     rows.some(
       (row) =>
