@@ -353,12 +353,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Det stämmer att Ungefär nästan 11 miljoner människor bor i Sverige.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Det stämmer att Ungefär nästan 11 miljoner människor bor i Sverige.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: It is true that Approximately almost 11 million people live in Sweden.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'It is true that Approximately almost 11 million people live in Sweden.',
       );
   }
   return contents;
@@ -390,12 +390,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Det är korrekt att Svaret är genom att kontrollera information.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Det är korrekt att Svaret är genom att kontrollera information.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: It is correct that the answer is checking information.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'It is correct that the answer is checking information.',
       );
   }
   return contents;
@@ -427,12 +427,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att statschefen saknar politisk makt.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att statschefen saknar politisk makt.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: That the head of state lacks political power describes that Sweden is a constitutional monarchy.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'That the head of state lacks political power describes that Sweden is a constitutional monarchy.',
       );
   }
   return contents;
@@ -464,12 +464,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: Everyone who has the right to vote has one vote each is part of free elections in a democracy.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'Everyone who has the right to vote has one vote each is part of free elections in a democracy.',
       );
   }
   return contents;
@@ -501,12 +501,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.',
       );
   }
   return contents;
@@ -538,12 +538,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: They implement decisions and must follow laws and government instructions describes government agencies.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'They implement decisions and must follow laws and government instructions describes government agencies.',
       );
   }
   return contents;
@@ -575,12 +575,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Allemansrätten innebär att den ger alla möjlighet att vara i naturen.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Allemansrätten innebär att den ger alla möjlighet att vara i naturen.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: The right of public access means it gives everyone the opportunity to be in nature.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'The right of public access means it gives everyone the opportunity to be in nature.',
       );
   }
   return contents;
@@ -612,12 +612,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Genom att allmänna handlingar kan begäras ut.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Genom att allmänna handlingar kan begäras ut.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: By allowing public documents to be requested.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'By allowing public documents to be requested.',
       );
   }
   return contents;
@@ -649,12 +649,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: The statement is true: Sweden is in the Nordic region.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'The statement is true: Sweden is in the Nordic region.',
       );
   }
   return contents;
@@ -686,12 +686,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt: Det är inte sant att Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Det är inte sant att Sveriges nordligaste del ligger norr om polcirkeln.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        'True or false: It is not true that Sweden is in northern Europe.',
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        'It is not true that Sweden is in northern Europe.',
       );
   }
   return contents;
