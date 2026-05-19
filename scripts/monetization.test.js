@@ -77,51 +77,41 @@ function withEnv(overrides, fn) {
   }
 }
 
-const EFFECTIVE_ENTITLEMENT_NOW = new Date('2026-05-19T12:00:00.000Z');
+function makeNativeIapProductFixture({ availablePurchases = [] } = {}) {
+  const state = {
+    requestedProductIds: [],
+    restored: false,
+  };
 
-const EFFECTIVE_PRO_LIFETIME_ENTITLEMENTS = {
-  adsDisabled: true,
-  unlimitedMockExams: true,
-  fullMistakeReview: true,
-  spacedRepetition: true,
-  nativeLangExplanations: true,
-  customStudyPlan: true,
-  notesExport: true,
-  predictedPassProbability: true,
-  confidenceSlider: true,
-  multiColorHighlights: true,
-};
+  const iap = {
+    async initConnection() {},
+    async endConnection() {},
+    async finishTransaction() {},
+    async getAvailablePurchases() {
+      return availablePurchases;
+    },
+    purchaseErrorListener() {
+      return { remove() {} };
+    },
+    purchaseUpdatedListener() {
+      return { remove() {} };
+    },
+    async requestPurchase({ request }) {
+      const productId = request.apple.sku;
+      state.requestedProductIds.push(productId);
+      return {
+        ids: [productId],
+        productId,
+        purchaseToken: `tok-${productId}`,
+        transactionId: `tx-${productId}`,
+      };
+    },
+    async restorePurchases() {
+      state.restored = true;
+    },
+  };
 
-const EFFECTIVE_REMOVE_ADS_ENTITLEMENTS = {
-  adsDisabled: true,
-  unlimitedMockExams: false,
-  fullMistakeReview: false,
-};
-
-function assertRealAdUnitEnvInliningSource(adsSource, adsConfig) {
-  assert.match(
-    adsSource,
-    /REAL_AD_UNIT_ENV_VALUES/,
-    'real ad units should use a literal env-value table for bundler inlining',
-  );
-  assert.doesNotMatch(
-    adsSource,
-    /process\.env\s*\[[^\]]+\]/,
-    'real ad unit IDs must not use dynamic process.env[key] lookup',
-  );
-
-  for (const [placement, envKeys] of Object.entries(adsConfig.realUnitEnvKeys)) {
-    for (const [platform, envKey] of Object.entries(envKeys)) {
-      const literalReadPattern = new RegExp(
-        `${placement}:\\s*\\{[\\s\\S]*${platform}:\\s*readEnvString\\(\\s*process\\.env\\.${envKey}\\s*,?\\s*\\)`,
-      );
-      assert.match(
-        adsSource,
-        literalReadPattern,
-        `${placement} ${platform} real ad unit must read ${envKey} through a literal process.env.${envKey} expression`,
-      );
-    }
-  }
+  return { iap, state };
 }
 
 test('ad rendering is enabled by default with test units and env-driven real switch', () => {
@@ -1423,6 +1413,58 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
       delete globalThis.localStorage;
     }
   }
+});
+
+test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {
+  const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
+  const { PRO_LIFETIME_PRODUCT_ID } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const purchasesSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/purchases.ts'),
+    'utf8',
+  );
+  const { iap, state } = makeNativeIapProductFixture({
+    availablePurchases: [
+      {
+        ids: [REMOVE_ADS_PRODUCT_ID],
+        productId: REMOVE_ADS_PRODUCT_ID,
+        purchaseToken: 'tok-remove-ads',
+        transactionId: 'tx-remove-ads',
+      },
+      {
+        ids: [PRO_LIFETIME_PRODUCT_ID],
+        productId: 'store-wrapper',
+        purchaseToken: 'tok-pro-lifetime',
+        transactionId: 'tx-pro-lifetime',
+      },
+    ],
+  });
+  const provider = createNativePurchaseProvider({
+    loadIap: async () => iap,
+    purchaseTimeoutMs: 10,
+  });
+
+  const purchase = await provider.requestRemoveAdsPurchase(PRO_LIFETIME_PRODUCT_ID);
+  const restored = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);
+
+  assert.equal(purchase.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(purchase.purchaseToken, `tok-${PRO_LIFETIME_PRODUCT_ID}`);
+  assert.deepEqual(
+    restored.map((item) => item.purchaseToken),
+    ['tok-pro-lifetime'],
+  );
+  assert.equal(state.restored, true);
+  assert.deepEqual(state.requestedProductIds, [PRO_LIFETIME_PRODUCT_ID]);
+  assert.match(purchasesSource, /function isPurchaseForProduct/);
+  assert.match(
+    purchasesSource,
+    /requestRemoveAdsPurchase\(productId\)[\s\S]*isPurchaseForProduct\(candidate, productId\)/,
+  );
+  assert.match(
+    purchasesSource,
+    /restorePurchases\(productIds\)[\s\S]*productIds\.some\(\(productId\) => isPurchaseForProduct\(purchase, productId\)\)/,
+  );
 });
 
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {

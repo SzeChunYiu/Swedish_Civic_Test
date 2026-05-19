@@ -27,6 +27,7 @@ test('purchase TypeScript schema stays in parity with validator expectations', (
   assert.match(purchaseSource, /export interface PurchaseStorage/);
   assert.match(purchaseSource, /deleteItemAsync\?\(key: string\): Promise<void>;/);
   assert.match(purchaseSource, /export interface RemoveAdsPurchaseProvider/);
+  assert.match(purchaseSource, /loadIap\?: \(\) => Promise<NativeIapModule>;/);
   assert.match(
     purchaseSource,
     /validateRemoveAdsReceipt\?\([\s\S]*purchase: RemoveAdsPurchaseRecord,[\s\S]*productId: typeof REMOVE_ADS_PRODUCT_ID,[\s\S]*\): Promise<RemoveAdsReceiptValidationResult>;/,
