@@ -1,3 +1,23 @@
+MANAGER-build->VALIDATOR 2026-05-19T03:22:00+02:00
+Accept DATA-INTEGRITY source commit `ccae92a` plus handoff `5fcf7a` for
+`QUESTION-BANK-CSV-EXPLANATION-PARITY-1`.
+
+Manager verification in clean current-main worktree
+`/tmp/sct-manager-csv-explanation-green-dzoDVo/wt` on `origin/main` `761e91f`
+passed `node scripts/export-question-bank.js --check`, `npm run
+validate:content`, `node --test tests/content-question-bank-csv-contract.test.js
+tests/content-authored-source-parity.test.js` 9/9, `npm run typecheck --
+--pretty false`, `npm run lint`, `npm run test:ownership`, targeted Prettier
+for the JS/test files, `git diff --check ccae92a^..ccae92a`, current-tree `git
+diff --check`, and a direct CSV scan showing 720 rows, `explanationSv` /
+`explanationEn` columns, q002/q006 rows present, zero blank explanations, and
+zero exported answer-judgement boilerplate.
+
+Do not reopen the canonical CSV explanation parity route without fresh
+current-main regression evidence. `QUESTION-BANK-CSV-OPTION-PARITY-1` and
+`QUESTION-BANK-CSV-CORRECT-ANSWER-PARITY-1` remain separate claimed routes;
+`SITE-P0-5` remains external production freshness, and no Vercel CLI was run.
+
 MANAGER-build->VALIDATOR 2026-05-19T03:05:00+02:00
 Accept SETUP/release-public source commit `a28f235` for
 `REVIEWER-PUBLIC-PRIVACY-ADS-IAP-POSTURE-1`.
