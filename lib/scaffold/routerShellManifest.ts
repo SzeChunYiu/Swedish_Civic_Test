@@ -206,6 +206,7 @@ export const expoRouterNativeIntentStaticRoutes = [
   '/practice',
   '/privacy',
   '/profile',
+  '/search',
   '/settings',
   '/sources',
   '/support',
@@ -247,6 +248,10 @@ export const expoRouterNativeIntentRuntimeSamples = [
   {
     input: 'almost-swedish://app/about-the-test',
     expectedPath: '/about-the-test',
+  },
+  {
+    input: 'almost-swedish://app/search?q=riksdag',
+    expectedPath: '/search?q=riksdag',
   },
   {
     input: 'almost-swedish://quiz/q001',
