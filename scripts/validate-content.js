@@ -486,8 +486,25 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
   ],
 };
 const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
+  ["import { useMemo } from 'react';", 'learn route must memoize chapter progress derivation'],
   ['useSettingsStore, type AppLanguage', 'learn route must import AppLanguage from settings'],
   ['type ChapterLinkCopy = {', 'learn route must define a typed chapter-link copy contract'],
+  [
+    'type ChapterProgressCounts = {',
+    'learn route must keep chapter-progress counts in one typed map',
+  ],
+  [
+    'function buildChapterProgressById(completedQuestionIds: readonly string[])',
+    'learn route must derive chapter progress through one shared reducer',
+  ],
+  [
+    'const chapterProgressById = useMemo(',
+    'learn route must memoize chapter progress from the completed-id set',
+  ],
+  [
+    'buildChapterProgressById(completedQuestionIds)',
+    'learn route must compute chapter progress once per completed-id snapshot',
+  ],
   [
     'const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {',
     'learn route chapter-link copy must cover every AppLanguage value',
@@ -1040,9 +1057,10 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdBanner',
+    component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern:
+      /<PracticeInterstitialAd\s+showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -2614,12 +2632,8 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   },
   {
-    label: 'selected-only checked state',
-    pattern: /const checked = selected;/,
-  },
-  {
-    label: 'checked, selected, and disabled state forwarding',
-    pattern: /accessibilityState=\{\{ checked, disabled, selected \}\}/,
+    label: 'selected and disabled state forwarding',
+    pattern: /accessibilityState=\{\{ disabled, selected \}\}/,
   },
   {
     label: 'disabled interaction forwarding',
@@ -7128,6 +7142,93 @@ function validateAdPlacementRouteParity() {
       }
     }
 
+    if (spec.component === 'PracticeInterstitialAd') {
+      const consentAwareShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+      );
+      const practiceInterstitialSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+        'utf8',
+      );
+      const practiceInterstitialNativeSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+        'utf8',
+      );
+
+      if (/<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/.test(source)) {
+        reject('Practice completion interstitial must not flow through AdBanner');
+        routeIsValid = false;
+      }
+      if (
+        !practiceInterstitialSource.includes(
+          `shouldShowAd('${spec.placement}', resolvedEntitlements)`,
+        )
+      ) {
+        reject(
+          `PracticeInterstitialAd web fallback must gate ${spec.placement} through shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (practiceInterstitialSource.includes('react-native-google-mobile-ads')) {
+        reject('PracticeInterstitialAd web fallback must not import native-only ad SDK APIs');
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('InterstitialAd.createForAdRequest')) {
+        reject(
+          'PracticeInterstitialAd native placement must load quiz_completed_interstitial through InterstitialAd',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.LOADED')) {
+        reject(
+          'PracticeInterstitialAd native placement must wait for the interstitial loaded event',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('interstitialAd.show()')) {
+        reject('PracticeInterstitialAd native placement must show the loaded interstitial');
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.ERROR')) {
+        reject('PracticeInterstitialAd native placement must clear load state on ad errors');
+        routeIsValid = false;
+      }
+      if (
+        !practiceInterstitialNativeSource.includes(
+          `getPlatformAdUnitId('${spec.placement}', Platform.OS)`,
+        )
+      ) {
+        reject(
+          `PracticeInterstitialAd native placement must resolve the ${spec.placement} unit by platform`,
+        );
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(practiceInterstitialNativeSource)) {
+        reject(
+          `PracticeInterstitialAd native placement must gate ${spec.placement} through consent-aware shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('useMobileAdsConsent')) {
+        reject(
+          'PracticeInterstitialAd native placement must initialize only through the consent hook',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('requestNonPersonalizedAdsOnly')) {
+        reject(
+          'PracticeInterstitialAd native placement must pass non-personalized ad request options',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('lastInterstitialShowKey === showKey')) {
+        reject(
+          'PracticeInterstitialAd native placement must show at most once per answer feedback key',
+        );
+        routeIsValid = false;
+      }
+    }
+
     if (routeIsValid) adPlacementRoutesValidated += 1;
   }
 
@@ -8152,6 +8253,29 @@ function validateLearnRouteLinkCopyParity() {
   EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!learnRoute.includes(snippet)) reject(message);
   });
+
+  const rejectedProgressDerivationPatterns = [
+    [
+      /function\s+questionCountForChapter\b/,
+      'learn route must not reintroduce per-row questionCountForChapter scans',
+    ],
+    [
+      /function\s+completedCountForChapter\b/,
+      'learn route must not reintroduce per-row completedCountForChapter scans',
+    ],
+    [
+      /chapters\.map\([\s\S]*?questions\.filter\(/,
+      'learn route must not filter the full question bank inside the chapter row map',
+    ],
+    [
+      /chapters\.map\([\s\S]*?new Set\(completedQuestionIds\)/,
+      'learn route must not rebuild completed-id Sets inside the chapter row map',
+    ],
+  ];
+
+  for (const [pattern, message] of rejectedProgressDerivationPatterns) {
+    if (pattern.test(learnRoute)) reject(message);
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS).forEach(([language, labels]) => {
@@ -10401,6 +10525,10 @@ function validateSettingsStoreSchemaParity() {
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   const requiredSnippets = [
     ["createMMKV({ id: 'settings' })", 'settings storage must use the stable settings MMKV id'],
+    [
+      'language = settingsStorage?.getString(languageKey);',
+      'readLanguage must read the persisted language inside a guarded MMKV read',
+    ],
     ['language: readLanguage()', 'SettingsState must initialize language from persisted storage'],
     [
       'audioEnabled: readAudioEnabled()',
@@ -10409,6 +10537,14 @@ function validateSettingsStoreSchemaParity() {
     [
       'dailyGoalAnswers: readDailyGoalAnswers()',
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
+    ],
+    [
+      'storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
+      'readAudioEnabled must read the persisted audioEnabled boolean inside a guarded MMKV read',
+    ],
+    [
+      'storedValue = settingsStorage?.getNumber(dailyGoalKey);',
+      'readDailyGoalAnswers must read the persisted daily goal inside a guarded MMKV read',
     ],
     [
       'function normalizeDailyGoalAnswers(answerCount: number | undefined): number',
@@ -10601,9 +10737,7 @@ function validateSettingsAudioParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (
-    !normalizedSettingsStore.includes(
-      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
-    )
+    !normalizedSettingsStore.includes('storedValue = settingsStorage?.getBoolean(audioEnabledKey);')
   ) {
     reject('readAudioEnabled must read the persisted audioEnabled boolean');
   }
@@ -10947,8 +11081,12 @@ function validateProgressStoreSchemaParity() {
   const requiredSnippets = [
     ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
     [
-      'const rawProgress = progressStorage?.getString(progressStateKey);',
-      'readProgress must read persisted JSON through progressStateKey',
+      'rawProgress = progressStorage?.getString(progressStateKey);',
+      'readProgress must read persisted JSON through progressStateKey inside a guarded MMKV read',
+    ],
+    [
+      'catch { return emptyProgress; }',
+      'readProgress must fall back to empty progress when persisted MMKV reads throw',
     ],
     [
       'return normalizeProgress(JSON.parse(rawProgress));',
