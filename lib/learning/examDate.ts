@@ -1,4 +1,20 @@
-export const EXAM_REFORM_DATE = new Date('2026-06-06T00:00:00Z');
+export const CITIZENSHIP_RULES_EFFECTIVE_DATE = new Date('2026-06-06T00:00:00Z');
+export const CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = new Date('2026-08-17T00:00:00Z');
+export const CIVIC_KNOWLEDGE_TEST_START_MONTH = 'August 2026';
+
+export const CITIZENSHIP_RULES_SOURCE_URL =
+  'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html';
+export const CIVIC_KNOWLEDGE_TEST_SOURCE_URL = 'https://www.uhr.se/medborgarskapsprovet/';
+export const CIVIC_KNOWLEDGE_TEST_ASSIGNMENT_SOURCE_URL =
+  'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/';
+
+export const CITIZENSHIP_TIMELINE_SOURCE_URLS = {
+  rulesEffectiveDate: CITIZENSHIP_RULES_SOURCE_URL,
+  civicKnowledgeTestStart: CIVIC_KNOWLEDGE_TEST_SOURCE_URL,
+  civicKnowledgeTestDeadline: CIVIC_KNOWLEDGE_TEST_ASSIGNMENT_SOURCE_URL,
+} as const;
+
+export const EXAM_REFORM_DATE = CITIZENSHIP_RULES_EFFECTIVE_DATE;
 
 export function daysUntil(target: Date, now: Date = new Date()): number {
   const msPerDay = 1000 * 60 * 60 * 24;
