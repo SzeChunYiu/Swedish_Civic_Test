@@ -60,11 +60,21 @@ function createRenderContext({ hash, language = 'en' }) {
     dataset: { val: value },
     classList: { toggle() {} },
   }));
+  const a11yControlKeys = new Map([
+    ['settings-open', 'a11y.settings.open'],
+    ['settings-modal-close', 'a11y.close'],
+    ['ad-anchor-close', 'a11y.ad.close'],
+    ['dala-bubble-close', 'a11y.close'],
+    ['dala-figure', 'a11y.studyBuddy'],
+  ]);
 
   function element(id) {
     if (!elements.has(id)) {
+      const attributes = new Map();
       const node = {
         id,
+        attributes,
+        dataset: a11yControlKeys.has(id) ? { a11yLabel: a11yControlKeys.get(id) } : {},
         hidden: false,
         innerHTML: '',
         max: '',
@@ -73,6 +83,12 @@ function createRenderContext({ hash, language = 'en' }) {
         value: id === 'cfg-count' ? '5' : '',
         classList: { add() {}, remove() {}, toggle() {} },
         addEventListener() {},
+        setAttribute(name, value) {
+          attributes.set(name, String(value));
+        },
+        getAttribute(name) {
+          return attributes.get(name) ?? null;
+        },
         closest() {
           return {
             querySelector() {
@@ -91,6 +107,7 @@ function createRenderContext({ hash, language = 'en' }) {
     }
     return elements.get(id);
   }
+  Array.from(a11yControlKeys.keys()).forEach(element);
 
   const sandbox = {
     Array,
@@ -137,6 +154,9 @@ function createRenderContext({ hash, language = 'en' }) {
       },
       querySelectorAll(selector) {
         if (selector === '[data-set="language"] button') return settingButtons;
+        if (selector === '[data-a11y-label]') {
+          return Array.from(elements.values()).filter((node) => node.dataset.a11yLabel);
+        }
         return [];
       },
       addEventListener(type, handler) {
@@ -206,12 +226,42 @@ function createRenderContext({ hash, language = 'en' }) {
 
 function loadScripts(context, practiceInjection = '') {
   vm.runInContext(read('site/app.js'), context.sandbox, { timeout: 3000 });
+  vm.runInContext(read('site/i18n-extras.js'), context.sandbox, { timeout: 3000 });
   const practiceSource = practiceInjection
     ? read('site/practice.js').replace(/\}\)\(\);\s*$/, `${practiceInjection}\n})();`)
     : read('site/practice.js');
   vm.runInContext(practiceSource, context.sandbox, { timeout: 3000 });
   vm.runInContext(read('site/settings.js'), context.sandbox, { timeout: 3000 });
 }
+
+test('Static icon-control accessible names follow smtSetLanguage without reload', () => {
+  const context = createRenderContext({ hash: '#/', language: 'en' });
+  loadScripts(context);
+
+  assert.equal(context.element('settings-open').getAttribute('aria-label'), 'Settings');
+  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), 'Close');
+  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), 'Close ad');
+  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), 'Close');
+  assert.equal(context.element('dala-figure').getAttribute('aria-label'), 'Study buddy');
+
+  context.clickSettingsLanguage('sv');
+
+  assert.equal(context.element('settings-open').getAttribute('aria-label'), 'Inställningar');
+  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), 'Stäng');
+  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), 'Stäng annons');
+  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), 'Stäng');
+  assert.equal(context.element('dala-figure').getAttribute('aria-label'), 'Studiekompis');
+  assert.equal(context.reloadCount, 0);
+
+  vm.runInContext('smtSetLanguage("zh-Hans");', context.sandbox, { timeout: 3000 });
+
+  assert.equal(context.element('settings-open').getAttribute('aria-label'), '设置');
+  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), '关闭');
+  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), '关闭广告');
+  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), '关闭');
+  assert.equal(context.element('dala-figure').getAttribute('aria-label'), '学习伙伴');
+  assert.equal(context.reloadCount, 0);
+});
 
 const mockOfficialPassLineClaimPatterns = [
   new RegExp(['passing', 'line'].join('\\s+'), 'i'),

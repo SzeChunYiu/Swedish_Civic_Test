@@ -352,6 +352,10 @@ const i18n = window.i18n = {
     "ad.placeholder": "Your AdSense slot will render here.",
     "ad.anchor.placeholder": "Anchor ad slot",
     "ad.native.placeholder": "Native sponsored row",
+    "a11y.settings.open": "Settings",
+    "a11y.close": "Close",
+    "a11y.ad.close": "Close ad",
+    "a11y.studyBuddy": "Study buddy",
     "practice.kicker": "Practice round",
     "practice.title": "Ten questions.",
     "practice.subtitle": "No pressure.",
@@ -634,6 +638,10 @@ const i18n = window.i18n = {
     "ad.placeholder": "AdSense-yta visas här.",
     "ad.anchor.placeholder": "Ankarannons",
     "ad.native.placeholder": "Sponsrad rad",
+    "a11y.settings.open": "Inställningar",
+    "a11y.close": "Stäng",
+    "a11y.ad.close": "Stäng annons",
+    "a11y.studyBuddy": "Studiekompis",
     "practice.kicker": "Övningsrunda",
     "practice.title": "Tio frågor.",
     "practice.subtitle": "Ingen press.",
@@ -667,12 +675,36 @@ function smtDynamicI18nValue(key, lang) {
   return undefined;
 }
 
+function smtI18nValue(key, lang) {
+  const dynamicValue = smtDynamicI18nValue(key, lang);
+  if (dynamicValue !== undefined) return dynamicValue;
+  const dict = i18n[lang] || i18n.en;
+  if (dict && dict[key] !== undefined) return dict[key];
+  return i18n.en && i18n.en[key];
+}
+window.smtI18nValue = smtI18nValue;
+
+function smtStaticControlLabel(key, lang) {
+  return smtI18nValue(key, lang || document.documentElement.lang || "en") || "";
+}
+window.smtStaticControlLabel = smtStaticControlLabel;
+
+function smtUpdateStaticControlLabels(lang) {
+  const activeLang = lang || document.documentElement.lang || "en";
+  document.querySelectorAll("[data-a11y-label]").forEach((el) => {
+    const key = el.dataset && el.dataset.a11yLabel;
+    const value = key ? smtStaticControlLabel(key, activeLang) : "";
+    if (!value || typeof el.setAttribute !== "function") return;
+    el.setAttribute("aria-label", value);
+  });
+}
+window.smtUpdateStaticControlLabels = smtUpdateStaticControlLabels;
+
 function applyLang(lang) {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
-    const dynamicValue = smtDynamicI18nValue(key, lang);
-    const value = dynamicValue === undefined ? i18n[lang] && i18n[lang][key] : dynamicValue;
+    const value = smtI18nValue(key, lang);
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
@@ -680,6 +712,7 @@ function applyLang(lang) {
   document.querySelectorAll(".lang button[data-lang]").forEach((b) => {
     b.classList.toggle("is-on", b.dataset.lang === lang);
   });
+  smtUpdateStaticControlLabels(lang);
   try { localStorage.setItem("smt_lang", lang); } catch {}
 }
 window.applyLang = applyLang;
