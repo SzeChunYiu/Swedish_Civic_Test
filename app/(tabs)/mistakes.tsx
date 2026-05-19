@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
+import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/Button';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
@@ -117,6 +118,7 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <NativeAdCard />
+      <RemoveAdsPlacementCta placement="results_native" />
 
       {bookmarkedQuestions.length > 0 ? (
         <View style={styles.list}>
