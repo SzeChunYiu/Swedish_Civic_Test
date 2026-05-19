@@ -1,10 +1,11 @@
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/Button';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { getChapterQuizSessionId } from '../../lib/quiz/practiceFlow';
@@ -66,14 +67,13 @@ export default function ChapterScreen() {
         <Text accessibilityRole="header" style={styles.title}>
           {copy.missingTitle}
         </Text>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.backToListAccessibilityLabel}
-          accessibilityRole="link"
           href="/learn"
-          style={styles.link}
+          variant="text"
         >
           {copy.backToLearn}
-        </Link>
+        </RouteLink>
       </View>
     );
   }
@@ -83,14 +83,13 @@ export default function ChapterScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Link
+      <RouteLink
         accessibilityLabel={copy.backToListAccessibilityLabel}
-        accessibilityRole="link"
         href="/learn"
-        style={styles.link}
+        variant="text"
       >
         ← {copy.backToLearn}
-      </Link>
+      </RouteLink>
       <Text accessibilityRole="header" style={styles.title}>
         {chapterTitle}
       </Text>
@@ -181,12 +180,6 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
-  },
-  link: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'none',
   },
   startQuizButton: {
     alignSelf: 'flex-start',

@@ -1,12 +1,9 @@
-import { useMemo } from 'react';
-import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import type { ListRenderItemInfo } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/Button';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -212,6 +209,15 @@ export default function Screen() {
           <Text accessibilityRole="header" style={styles.sectionTitle}>
             {copy.bookmarkedTitle}
           </Text>
+          <Text style={styles.emptyText}>{copy.emptyText}</Text>
+          <RouteLink
+            accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
+            href="/practice"
+            style={styles.practiceLink}
+            variant="primary"
+          >
+            {copy.emptyPracticeLink}
+          </RouteLink>
         </View>
       ) : (
         <View style={styles.sectionHeading}>

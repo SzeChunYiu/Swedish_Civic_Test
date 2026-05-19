@@ -1,7 +1,7 @@
-import { Link } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { RouteLink } from '../ui/RouteLink';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { ComplianceActionLink } from './ComplianceActionLink';
@@ -13,7 +13,7 @@ type ComplianceLinkKey =
   | 'sources'
   | 'support'
   | 'aboutTheTest';
-type ComplianceHref = ComponentProps<typeof Link>['href'];
+type ComplianceHref = ComponentProps<typeof RouteLink>['href'];
 type ComplianceLinksCopy = {
   title: string;
   openLabel: (label: string) => string;
@@ -74,12 +74,14 @@ export function ComplianceLinks({ language }: { language?: AppLanguage } = {}) {
       </Text>
       <View style={styles.links}>
         {links.map((link) => (
-          <ComplianceActionLink
+          <RouteLink
             key={String(link.href)}
             accessibilityLabel={copy.openLabel(link.label)}
             href={link.href}
-            label={link.label}
-          />
+            variant="text"
+          >
+            {link.label}
+          </RouteLink>
         ))}
       </View>
     </View>

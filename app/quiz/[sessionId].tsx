@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -14,6 +14,7 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { calculateStreak } from '../../lib/learning/streaks';
@@ -113,14 +114,13 @@ export default function QuizSessionScreen() {
         <Text accessibilityRole="header" style={styles.title}>
           {copy.emptyTitle}
         </Text>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.backToPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.link}
+          variant="text"
         >
           {copy.backToPractice}
-        </Link>
+        </RouteLink>
       </View>
     );
   }
@@ -241,14 +241,14 @@ export default function QuizSessionScreen() {
             >
               {copy.tryAgain}
             </Button>
-            <Link
+            <RouteLink
               accessibilityLabel={copy.backToPracticeAccessibilityLabel}
-              accessibilityRole="link"
               href="/practice"
-              style={styles.linkButton}
+              style={styles.actionButton}
+              variant="secondary"
             >
               {copy.backToPractice}
-            </Link>
+            </RouteLink>
           </View>
         </View>
       ) : null}
@@ -311,23 +311,5 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     minHeight: space[5] + space[0.5],
-  },
-  linkButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.card,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    minHeight: space[5] + space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.5],
-    textDecorationLine: 'none',
-  },
-  link: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'none',
   },
 });

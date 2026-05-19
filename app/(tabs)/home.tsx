@@ -1,5 +1,3 @@
-import { Link } from 'expo-router';
-import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -15,6 +13,7 @@ import { Card } from '../../components/ui/Card';
 import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { SocialProofRow } from '../../components/ui/SocialProofRow';
 import { StatCallout } from '../../components/ui/StatCallout';
@@ -502,15 +501,17 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
-        <Text style={styles.readinessCaveat}>{copy.readinessCaveat}</Text>
-        <Link
+        {readiness.isSparse ? (
+          <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
+        ) : null}
+        <RouteLink
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
-          accessibilityRole="link"
           href="/exam"
           style={styles.readinessLink}
+          variant="secondary"
         >
           {copy.readinessCta}
-        </Link>
+        </RouteLink>
       </Card>
       <SocialProofRow language={language} />
       <Card style={styles.freeBankCard}>
@@ -525,22 +526,20 @@ export default function Screen() {
         />
       ) : null}
       <View style={styles.actions}>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
+          variant="primary"
         >
           {copy.startPractice}
-        </Link>
-        <Link
+        </RouteLink>
+        <RouteLink
           accessibilityLabel={copy.browseChaptersAccessibilityLabel}
-          accessibilityRole="link"
           href="/learn"
-          style={styles.secondaryLink}
+          variant="secondary"
         >
           {copy.browseChapters}
-        </Link>
+        </RouteLink>
       </View>
 
       <SectionHeader title={copy.guidedPathTitle} subtitle={copy.guidedPathSubtitle} />
@@ -586,14 +585,14 @@ export default function Screen() {
           {copy.feedbackTitle}
         </Text>
         <Text style={styles.feedbackText}>{copy.feedbackText}</Text>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
-          accessibilityRole="link"
           href="/mistakes"
           style={styles.feedbackLink}
+          variant="secondary"
         >
           {copy.feedbackLink}
-        </Link>
+        </RouteLink>
       </Card>
 
       <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
@@ -717,15 +716,7 @@ const styles = StyleSheet.create({
   },
   readinessLink: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
   goalCard: {
     backgroundColor: colors.surfaceWarm,
@@ -755,26 +746,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
   statsRow: {
     flexDirection: 'row',
@@ -813,15 +784,7 @@ const styles = StyleSheet.create({
   },
   feedbackLink: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
   loopGrid: {
     gap: space[1.5],

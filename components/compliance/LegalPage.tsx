@@ -1,11 +1,11 @@
-import type { Href } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { PropsWithChildren, ReactNode } from 'react';
+import type { ComponentProps, PropsWithChildren } from 'react';
+import { RouteLink } from '../ui/RouteLink';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { ComplianceActionLink } from './ComplianceActionLink';
 
-type LegalBackHref = Href;
+type LegalBackHref = ComponentProps<typeof RouteLink>['href'];
 type LegalPageCopy = {
   defaultBackAccessibilityLabel: string;
   defaultBackLabel: string;
@@ -62,11 +62,9 @@ export function LegalPage({
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <ComplianceActionLink
-        accessibilityLabel={resolvedBackAccessibilityLabel}
-        href={backHref}
-        label={resolvedBackLabel}
-      />
+      <RouteLink accessibilityLabel={resolvedBackAccessibilityLabel} href={backHref} variant="text">
+        {resolvedBackLabel}
+      </RouteLink>
       <Text accessibilityRole="header" style={styles.title}>
         {title}
       </Text>

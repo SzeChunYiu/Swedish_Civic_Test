@@ -1,8 +1,8 @@
-import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
+import { RouteLink } from '../components/ui/RouteLink';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -79,22 +79,20 @@ export default function Screen() {
       <ComplianceLinks />
 
       <View style={styles.actions}>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.startStudyingAccessibilityLabel}
-          accessibilityRole="link"
           href="/home"
-          style={styles.primaryLink}
+          variant="primary"
         >
           {copy.startStudying}
-        </Link>
-        <Link
+        </RouteLink>
+        <RouteLink
           accessibilityLabel={copy.adjustSettingsAccessibilityLabel}
-          accessibilityRole="link"
           href="/settings"
-          style={styles.secondaryLink}
+          variant="secondary"
         >
           {copy.adjustSettings}
-        </Link>
+        </RouteLink>
       </View>
     </ScrollView>
   );
@@ -167,25 +165,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
 });

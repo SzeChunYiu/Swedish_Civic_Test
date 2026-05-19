@@ -12,5 +12,6 @@ export * from './QuestionNavigator';
 export * from './ResultSummary';
 export * from './Surface';
 export * from './Text';
+export * from './ui/RouteLink';
 export * from './quiz/QuestionSourceCitation';
 export * from './quiz/SourceCitation';

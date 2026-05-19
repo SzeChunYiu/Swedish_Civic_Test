@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
+import { RouteLink } from '../components/ui/RouteLink';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -129,22 +129,20 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <View style={styles.actions}>
-        <ComplianceActionLink
+        <RouteLink
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
           href="/practice"
-          label={copy.openPractice}
           variant="primary"
-        />
-        <ComplianceActionLink
-          accessibilityLabel={copy.openRequirementsAccessibilityLabel}
-          href="/citizenship-requirements"
-          label={copy.openRequirements}
-        />
-        <ComplianceActionLink
+        >
+          {copy.openPractice}
+        </RouteLink>
+        <RouteLink
           accessibilityLabel={copy.backHomeAccessibilityLabel}
           href="/home"
-          label={copy.backHome}
-        />
+          variant="secondary"
+        >
+          {copy.backHome}
+        </RouteLink>
       </View>
     </ScrollView>
   );

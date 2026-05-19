@@ -1,15 +1,8 @@
-import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
-import {
-  applyLocalStudyDataImport,
-  previewLocalStudyDataImport,
-  type LocalStudyDataImportErrorCode,
-  type LocalStudyDataImportPreview,
-  type LocalStudyDataImportSummary,
-} from '../lib/storage/localStudyDataImport';
+import { RouteLink } from '../components/ui/RouteLink';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space, typography } from '../lib/theme';
@@ -265,11 +258,13 @@ export default function Screen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <ComplianceActionLink
+      <RouteLink
         accessibilityLabel={copy.backToProfileAccessibilityLabel}
         href="/(tabs)/profile"
-        label={copy.backToProfile}
-      />
+        variant="text"
+      >
+        {copy.backToProfile}
+      </RouteLink>
       <Text accessibilityRole="header" style={styles.title}>
         {copy.title}
       </Text>

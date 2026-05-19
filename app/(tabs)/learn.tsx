@@ -1,16 +1,14 @@
-import { useMemo } from 'react';
-import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { ChapterCard } from '../../components/learning/ChapterCard';
 import { AdBanner } from '../../components/monetization/AdBanner';
-import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space } from '../../lib/theme';
 
 type ChapterLinkCopy = {
   contentQueued: string;
@@ -142,7 +140,7 @@ export default function Screen() {
             questionCount: 0,
           };
           return (
-            <Link
+            <RouteLink
               key={chapter.id}
               accessibilityLabel={getChapterLinkAccessibilityLabel({
                 nameSv: chapter.nameSv,
@@ -152,9 +150,9 @@ export default function Screen() {
                 questionCount,
                 copy,
               })}
-              accessibilityRole="link"
               href={`/chapter/${chapter.id}`}
               style={styles.link}
+              variant="card"
             >
               <ChapterCard
                 accessibilitySummary={false}
@@ -164,7 +162,7 @@ export default function Screen() {
                 progressPresentationOnly
                 questionCount={questionCount}
               />
-            </Link>
+            </RouteLink>
           );
         })}
       </View>
@@ -181,8 +179,5 @@ const styles = StyleSheet.create({
   },
   link: {
     borderRadius: radius.card,
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    textDecorationLine: 'none',
   },
 });
