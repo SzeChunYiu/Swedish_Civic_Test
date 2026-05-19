@@ -189,7 +189,10 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /aria-haspopup="menu"/);
   assert.match(source, /accessibilityState=\{\{ expanded: open \}\}/);
   assert.match(source, /if \(!option\.available\) return;/);
+  assert.match(source, /aria-disabled=\{!opt\.available\}/);
+  assert.match(source, /aria-selected=\{selected\}/);
   assert.match(source, /disabled=\{!opt\.available\}/);
+  assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
   assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
   assert.match(source, /accessible=\{false\}/);
@@ -204,6 +207,10 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.doesNotMatch(
     source,
     /<Pressable[\s\S]*accessibilityLabel=\{copy\.closeLabel\}[\s\S]*styles\.backdrop/,
+  );
+  assert.doesNotMatch(
+    source,
+    /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*selected, disabled: !opt\.available/,
   );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
