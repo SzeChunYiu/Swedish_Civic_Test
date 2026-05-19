@@ -2,12 +2,13 @@ import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
+import { BadgeRow } from '../../components/learning/BadgeRow';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import { deriveBadges } from '../../lib/learning/badges';
+import { deriveBadges, getBadgeDescription, getBadgeTitle } from '../../lib/learning/badges';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -78,26 +79,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
 };
 
-const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
-  sv: {
-    first_practice: 'Första övningen',
-    level_2: 'Nivå 2',
-    mistake_reviewer: 'Misstagsrepetition',
-    streak_3: 'Tre dagars svit',
-  },
-  en: {},
-};
-
-function formatBadges(
-  badges: ReturnType<typeof deriveBadges>,
-  language: AppLanguage,
-  emptyLabel: string,
-): string {
-  if (badges.length === 0) return emptyLabel;
-
-  return badges.map((badge) => localizedBadgeTitles[language][badge.id] ?? badge.title).join(', ');
-}
-
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
@@ -151,7 +132,18 @@ export default function Screen() {
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
-        <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
+        {badges.length ? (
+          <View style={styles.badgeList}>
+            {badges.map((badge) => {
+              const title = getBadgeTitle(badge, language);
+              const description = getBadgeDescription(badge, language);
+
+              return <BadgeRow key={badge.id} title={title} description={description} />;
+            })}
+          </View>
+        ) : (
+          <Text style={styles.emptyBadgeText}>{copy.noBadges}</Text>
+        )}
       </Card>
 
       <PremiumBanner
@@ -187,11 +179,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
-  value: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
+  badgeList: {
+    gap: space[1],
+  },
+  emptyBadgeText: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   settingsLink: {
     alignSelf: 'flex-start',
