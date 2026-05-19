@@ -93,10 +93,18 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
-          onBlur: () => setIsFocused(false),
+          onBlur: () => {
+            setIsFocused(false);
+            setIsPressed(false);
+          },
           onFocus: () => setIsFocused(true),
+          onMouseDown: () => setIsPressed(true),
           onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => setIsHovered(false),
+          onMouseLeave: () => {
+            setIsHovered(false);
+            setIsPressed(false);
+          },
+          onMouseUp: () => setIsPressed(false),
         }
       : {};
 
@@ -141,6 +149,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: radius.pill,
     display: 'flex',
+    flexShrink: 0,
     height: space[6],
     justifyContent: 'center',
     minHeight: space[6],

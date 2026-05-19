@@ -291,6 +291,45 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
 });
 
+test('top-bar route links keep token-sized web anchors with pressed feedback', () => {
+  const topBarActions = read('components/ui/TopBarActions.tsx');
+
+  for (const href of ['/search', '/mistakes', '/settings']) {
+    assertContains(topBarActions, `href="${href}"`);
+  }
+
+  assert.doesNotMatch(
+    topBarActions,
+    /<Link\b[^>]*\basChild\b/,
+    'top-bar route links should keep Link as the web anchor instead of shrinking through asChild',
+  );
+  assertMatches(
+    topBarActions,
+    /<Link[\s\S]*accessibilityRole=["']link["'][\s\S]*style=\{\[[\s\S]*styles\.iconLink,[\s\S]*styles\.iconLinkHover[\s\S]*styles\.iconLinkPressed[\s\S]*\]\}/,
+    'route links should keep explicit link semantics and route through the shared icon link styles',
+  );
+  assertMatches(
+    topBarActions,
+    /const webInteractionHandlers[\s\S]*onBlur:\s*\(\)\s*=>\s*\{[\s\S]*setIsFocused\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*onMouseDown:\s*\(\)\s*=>\s*setIsPressed\(true\),[\s\S]*onMouseEnter:\s*\(\)\s*=>\s*setIsHovered\(true\),[\s\S]*onMouseLeave:\s*\(\)\s*=>\s*\{[\s\S]*setIsHovered\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*onMouseUp:\s*\(\)\s*=>\s*setIsPressed\(false\),/,
+    'web links should expose hover and mouse pressed-state handlers without leaving pressed state stuck',
+  );
+  assertMatches(
+    topBarActions,
+    /iconLink:\s*\{[\s\S]*alignItems:\s*['"]center['"],[\s\S]*borderRadius:\s*radius\.pill,[\s\S]*display:\s*['"]flex['"],[\s\S]*flexShrink:\s*0,[\s\S]*height:\s*space\[6\],[\s\S]*justifyContent:\s*['"]center['"],[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*width:\s*space\[6\],[\s\S]*\}/,
+    'web anchors should keep a stable token-sized 48px square hit target',
+  );
+  assertMatches(
+    topBarActions,
+    /iconLinkHover:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.hoverScale \}\],[\s\S]*\}/,
+    'hover feedback should use theme interaction tokens',
+  );
+  assertMatches(
+    topBarActions,
+    /iconLinkPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\],[\s\S]*\}/,
+    'pressed feedback should use theme interaction tokens',
+  );
+});
+
 test('router shell tooling guard is wired into package scripts', () => {
   const pkg = readJson('package.json');
 
