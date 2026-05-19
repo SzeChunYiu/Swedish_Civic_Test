@@ -6879,6 +6879,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "commercial-media",
@@ -6924,6 +6925,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "private-media",
@@ -6969,6 +6971,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "newspapers",
@@ -7014,6 +7017,7 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "web",
@@ -7059,6 +7063,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -33598,6 +33603,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "commercial-media",
@@ -33637,6 +33643,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "commercial-media",
@@ -33676,6 +33683,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "commercial-media",
@@ -33723,6 +33731,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "commercial-media",
@@ -33770,6 +33779,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
@@ -33809,6 +33819,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
@@ -33848,6 +33859,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
@@ -33895,6 +33907,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
@@ -33942,6 +33955,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
@@ -33981,6 +33995,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
@@ -34020,6 +34035,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
@@ -34067,6 +34083,7 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
@@ -34114,6 +34131,7 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "web",
@@ -34153,6 +34171,7 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "web",
@@ -34192,6 +34211,7 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "web",
@@ -34239,6 +34259,7 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "web",
@@ -34286,6 +34307,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -34325,6 +34347,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -34364,6 +34387,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -34411,6 +34435,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
