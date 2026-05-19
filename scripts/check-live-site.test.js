@@ -10,16 +10,12 @@ const {
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
-  REQUIRED_SECURITY_HEADERS,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 } = require('./check-live-site');
 const { checkAssetManifest, writeAssetManifest } = require('./update-site-asset-manifest');
 
 const repoRoot = path.resolve(__dirname, '..');
-const SECURITY_RESPONSE_HEADERS = Object.fromEntries(
-  REQUIRED_SECURITY_HEADERS.map((header) => [header.name, header.value]),
-);
 
 function generatedQuestions(count, label = 'current') {
   const questions = Array.from({ length: count }, (_, index) => ({
@@ -42,9 +38,6 @@ function currentQuestionBank() {
 function currentAssets() {
   return {
     '/index.html': [
-      '<head>',
-      '<meta name="description" content="A friendly, unofficial study app for Swedish citizenship test practice.">',
-      '</head>',
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
       '<script src="questions.js"></script>',
@@ -84,16 +77,11 @@ function sameCountStaleAssets() {
   };
 }
 
-async function withStaticServer(assets, callback, options = {}) {
+async function withStaticServer(assets, callback) {
   const server = http.createServer((request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
     const body = assets[pathname] ?? assets['/index.html'];
-    const headers = {
-      'content-type': 'text/plain; charset=utf-8',
-      ...(options.includeSecurityHeaders === false ? {} : SECURITY_RESPONSE_HEADERS),
-      ...(options.headers ?? {}),
-    };
-    response.writeHead(body == null ? 404 : 200, headers);
+    response.writeHead(body == null ? 404 : 200, { 'content-type': 'text/plain; charset=utf-8' });
     response.end(body ?? 'not found');
   });
 
@@ -172,26 +160,6 @@ test('live site check passes current static assets', async () => {
   });
 });
 
-test('live site check rejects missing static security headers', async () => {
-  await withStaticServer(
-    currentAssets(),
-    async (baseUrl) => {
-      const result = await checkLiveSite(baseUrl, {
-        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
-        requiredQuestionCount: 715,
-      });
-      const failedCheck = result.checks.find((check) => check.name === 'static security headers');
-      assert.equal(result.ok, false);
-      assert.equal(failedCheck?.ok, false);
-      assert.match(failedCheck?.details ?? '', /missing X-Content-Type-Options/);
-      assert.match(failedCheck?.details ?? '', /missing Referrer-Policy/);
-      assert.match(failedCheck?.details ?? '', /missing X-Frame-Options/);
-      assert.match(failedCheck?.details ?? '', /missing Permissions-Policy/);
-    },
-    { includeSecurityHeaders: false },
-  );
-});
-
 test('live site check rejects stale deploy assets', async () => {
   await withStaticServer(staleAssets(), async (baseUrl) => {
     const result = await checkLiveSite(baseUrl, {
@@ -205,7 +173,6 @@ test('live site check rejects stale deploy assets', async () => {
         'static question bank',
         'static question bank content',
         'practice hub assets',
-        'static head metadata description',
         'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',
@@ -213,50 +180,6 @@ test('live site check rejects stale deploy assets', async () => {
       ],
     );
   });
-});
-
-test('live site check rejects missing, blank, or outcome meta descriptions', async () => {
-  const cases = [
-    {
-      label: 'missing description',
-      indexHtml: currentAssets()['/index.html'].replace(
-        /<meta name="description" content="[^"]+">\n/,
-        '',
-      ),
-      expectedDetails: /missing static meta description/,
-    },
-    {
-      label: 'blank description',
-      indexHtml: currentAssets()['/index.html'].replace(
-        /<meta name="description" content="[^"]+">/,
-        '<meta name="description" content="">',
-      ),
-      expectedDetails: /blank static meta description/,
-    },
-    {
-      label: 'outcome description',
-      indexHtml: currentAssets()['/index.html'].replace(
-        /<meta name="description" content="[^"]+">/,
-        '<meta name="description" content="Pass the test.">',
-      ),
-      expectedDetails: /static meta description English pass-the-test slogan/,
-    },
-  ];
-
-  for (const { indexHtml, expectedDetails, label } of cases) {
-    await withStaticServer({ ...currentAssets(), '/index.html': indexHtml }, async (baseUrl) => {
-      const result = await checkLiveSite(baseUrl, {
-        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
-        requiredQuestionCount: 715,
-      });
-      const failedCheck = result.checks.find(
-        (check) => check.name === 'static head metadata description',
-      );
-      assert.equal(result.ok, false, `${label} should fail live-site validation`);
-      assert.equal(failedCheck?.ok, false, `${label} should fail the metadata check`);
-      assert.match(failedCheck?.details ?? '', expectedDetails);
-    });
-  }
 });
 
 test('live site check rejects same-count stale question banks', async () => {

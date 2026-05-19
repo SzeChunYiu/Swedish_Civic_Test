@@ -75,18 +75,18 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       accuracyLabel: 'Rätt',
       chapterOrder: 'Kapitelordning',
       coverageLabel: 'Täckning',
-      emptyState: 'När du har svarat på frågor visas dina kapitelframsteg här.',
+      emptyState: 'När du har svarat på frågor visas kapitelprogress här.',
       linkLabel: (chapterName) => `Öppna ${chapterName}`,
       sortAccessibilityLabel: (mode) => `Sortera kapitel: ${mode}`,
       subtitle: 'Rätt och täckning visas sida vid sida per kapitel.',
-      title: 'Kapitelframsteg',
+      title: 'Kapitelprogress',
       weakestFirst: 'Svagast först',
     },
     eyebrow: 'Lokal data',
     homeLink: 'Till startsidan',
     homeLinkAccessibilityLabel: 'Gå tillbaka till startsidan',
     streakXp: {
-      emptyState: 'XP-kurvan visas när du börjar få rätt svar.',
+      emptyState: 'XP-linjen visas när du börjar få rätt svar.',
       levelLabel: 'nivå',
       streakLabel: 'dagars svit',
       subtitle: 'Senaste 30 dagarna med nivå och dagsvana.',
@@ -206,18 +206,18 @@ export default function DashboardScreen() {
   const proEntitlements = useMemo(createDashboardProEntitlements, []);
   const advancedAnalyticsUnlocked =
     hasProEntitlement(proEntitlements) && proEntitlements.predictedPassProbability;
-  const summaryAccessibilityLabel = copy.summaryAccessibilityLabel(
-    summary.questionsAnsweredThisWeek,
-    summary.chaptersWithAnyAnswer,
-    summary.unresolvedMistakes,
-  );
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
-      <Text accessibilityRole="summary" style={styles.accessibilitySummary}>
-        {summaryAccessibilityLabel}
-      </Text>
-      <Card style={styles.summaryCard}>
+      <Card
+        accessibilityLabel={copy.summaryAccessibilityLabel(
+          summary.questionsAnsweredThisWeek,
+          summary.chaptersWithAnyAnswer,
+          summary.unresolvedMistakes,
+        )}
+        accessibilityRole="summary"
+        style={styles.summaryCard}
+      >
         <Badge tone="blue">{copy.eyebrow}</Badge>
         <Text style={styles.summaryText}>
           {copy.summaryLine(
@@ -255,13 +255,6 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
   summaryCard: {
     gap: space[1],
   },

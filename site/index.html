@@ -11,6 +11,13 @@
     <link rel="icon" type="image/png" href="icon.png" />
     <link rel="apple-touch-icon" href="icon.png" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="styles.css" />
 
     <script
@@ -68,12 +75,7 @@
           <a href="#/support" data-route="/support" data-i18n="nav.support">Support</a>
         </nav>
         <div class="topbar__tools">
-          <button
-            class="icon-btn icon-btn--square"
-            id="settings-open"
-            aria-label="Settings"
-            data-a11y-label="a11y.settings.open"
-          >
+          <button class="icon-btn icon-btn--square" id="settings-open" aria-label="Settings">
             <svg
               viewBox="0 0 24 24"
               width="18"
@@ -110,8 +112,8 @@
               ></span
             >
             <h1>
-              <span data-i18n="hero.h1a">Study the material.</span><br />
-              <em data-i18n="hero.h1c">Feel calmer on exam day.</em>
+              <span data-i18n="hero.h1a">Pass the test.</span><br />
+              <em data-i18n="hero.h1c">Brag at midsommar.</em>
             </h1>
             <p class="lede" data-i18n="hero.lede">
               A quiet, unofficial study app for Sweden's citizenship test. Short study chapters, a
@@ -129,12 +131,7 @@
       </section>
 
       <!-- V1.1 DASHBOARD (hidden until user has progress) -->
-      <section
-        id="v11-dashboard-wrap"
-        class="band v11-band"
-        data-screen-label="01.15 Dashboard"
-        style="display: none"
-      >
+      <section id="v11-dashboard-wrap" class="band v11-band" data-screen-label="01.15 Dashboard" style="display:none">
         <div class="wrap">
           <span class="eyebrow">Your progress</span>
           <div id="v11-dashboard"></div>
@@ -508,9 +505,9 @@
             <em data-i18n="privacy.h1b">stays on your phone.</em>
           </h1>
           <p class="doc__lede" data-i18n="privacy.lede">
-            Almost Swedish is an independent study app. We don't ask for an account, and study
-            progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads
-            app ads, and optional one-time Remove Ads purchase.
+            Almost Swedish is an independent study app. We don't ask for an account, and
+            study progress stays local. This page explains the Google AdSense web ads, Google Mobile
+            Ads app ads, and optional one-time Remove Ads purchase.
           </p>
           <div class="doc__meta">
             <span
@@ -542,9 +539,9 @@
             <div class="doc__main">
               <h2 id="p1" data-i18n="privacy.s1.t">Independence</h2>
               <p data-i18n="privacy.s1.p">
-                Almost Swedish is an independent study app for Swedish civic knowledge practice. It
-                is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the
-                Swedish government. Anything you read here represents what
+                Almost Swedish is an independent study app for Swedish civic knowledge
+                practice. It is not official and is not affiliated with UHR, Skolverket,
+                Migrationsverket, or the Swedish government. Anything you read here represents what
                 <em>this app</em> does — nothing more.
               </p>
 
@@ -772,9 +769,9 @@
             <div class="doc__main">
               <h2 id="t1" data-i18n="terms.s1.t">What this is</h2>
               <p data-i18n="terms.s1.p">
-                Almost Swedish is an unofficial study app. It is not the exam, it is not run by UHR,
-                Skolverket, Migrationsverket, or the Swedish government, and a perfect score here
-                does not grant citizenship.
+                Almost Swedish is an unofficial study app. It is not the exam, it is not run
+                by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score
+                here does not grant citizenship.
               </p>
 
               <h2 id="t2" data-i18n="terms.s2.t">Acceptable use</h2>
@@ -943,8 +940,8 @@
               <span data-i18n="brand">Almost Swedish</span>
             </a>
             <h3 class="footer__tagline">
-              <span data-i18n="footer.t1">Study the material.</span><br />
-              <em data-i18n="footer.t2">Practice with sources.</em>
+              <span data-i18n="footer.t1">Pass the test.</span><br />
+              <em data-i18n="footer.t2">Brag at midsommar.</em>
             </h3>
             <p class="footer__honest" data-i18n="footer.honest.p">
               Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the
@@ -1048,7 +1045,6 @@
             <ul>
               <li><a href="#/" data-i18n="nav.home">Home</a></li>
               <li><a href="#/practice" data-i18n="nav.practice">Practice</a></li>
-              <li><a href="#/mock" data-i18n="footer.app.4">Mock exam</a></li>
               <li><a href="#/ebook" data-i18n="nav.ebook">Ebook</a></li>
             </ul>
           </div>
@@ -1093,7 +1089,6 @@
       role="dialog"
       aria-modal="true"
       aria-labelledby="settings-title"
-      tabindex="-1"
     >
       <div class="modal__backdrop" data-close="settings"></div>
       <div class="modal__panel modal__panel--settings">
@@ -1101,14 +1096,7 @@
           <h2 id="settings-title" class="modal__title">
             <span data-i18n="settings.title">Settings</span>
           </h2>
-          <button
-            class="modal__close"
-            data-close="settings"
-            aria-label="Close"
-            data-a11y-label="a11y.close"
-          >
-            ✕
-          </button>
+          <button class="modal__close" data-close="settings" aria-label="Close">✕</button>
         </header>
         <div class="modal__body">
           <div class="set-group">
@@ -1238,14 +1226,7 @@
 
     <!-- ============================================================ ANCHOR AD (mobile, dismissible) -->
     <div class="ad-anchor" data-ad-slot="anchor" hidden>
-      <button
-        class="ad-anchor__close"
-        id="ad-anchor-close"
-        aria-label="Close ad"
-        data-a11y-label="a11y.ad.close"
-      >
-        ✕
-      </button>
+      <button class="ad-anchor__close" id="ad-anchor-close" aria-label="Close ad">✕</button>
       <span class="ad-anchor__label" data-i18n="ad.label">Sponsored</span>
       <div class="ad-anchor__frame">
         <ins
@@ -1285,24 +1266,11 @@
     <!-- ============================================================ DALA — STUDY BUDDY -->
     <div class="dala-buddy" id="dala-buddy" hidden>
       <div class="dala-bubble" id="dala-bubble" hidden role="status">
-        <button
-          class="dala-bubble__close"
-          id="dala-bubble-close"
-          aria-label="Close"
-          data-a11y-label="a11y.close"
-        >
-          ✕
-        </button>
+        <button class="dala-bubble__close" id="dala-bubble-close" aria-label="Close">✕</button>
         <span class="dala-bubble__name" id="dala-name">Buddy</span>
         <div class="dala-bubble__msg" id="dala-msg"></div>
       </div>
-      <div
-        id="dala-figure"
-        role="button"
-        tabindex="0"
-        aria-label="Study buddy"
-        data-a11y-label="a11y.studyBuddy"
-      ></div>
+      <div id="dala-figure" role="button" tabindex="0" aria-label="Study buddy"></div>
     </div>
 
     <!-- ============================================================ SCRIPTS -->
@@ -1326,14 +1294,11 @@
         var db = document.getElementById('v11-dashboard');
         function check() {
           if (!wrap || !db) return;
-          wrap.style.display =
-            db.style.display === 'none' || db.textContent.trim() === '' ? 'none' : '';
+          wrap.style.display = db.style.display === 'none' || db.textContent.trim() === '' ? 'none' : '';
         }
         var obs = new MutationObserver(check);
         if (db) obs.observe(db, { childList: true, attributes: true, subtree: false });
-        window.addEventListener('hashchange', function () {
-          setTimeout(check, 50);
-        });
+        window.addEventListener('hashchange', function () { setTimeout(check, 50); });
         setTimeout(check, 800);
       })();
     </script>

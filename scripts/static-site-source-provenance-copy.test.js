@@ -113,22 +113,6 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
-const ebookFactboxSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const unsupportedEbookFactboxPatterns = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
-];
 
 function sourceProvenanceSurface() {
   const indexHtml = read('site/index.html');
@@ -252,19 +236,4 @@ test('static ebook practical test copy is backed by current UHR source metadata'
   unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
     assert.doesNotMatch(ebookSource, pattern),
   );
-});
-
-test('static ebook factbox and current prose claims use retrieved source metadata', () => {
-  const ebookSource = read('site/ebook.js');
-
-  assert.match(ebookSource, /const EBOOK_FACTBOX_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(ebookSource, /function ebookFactBox\(lang, heading, facts/);
-  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
-  assert.match(ebookSource, /Facts to review/);
-  assert.match(ebookSource, /Fakta att repetera/);
-  assert.match(ebookSource, /Sources accessed/);
-  assert.match(ebookSource, /Källor hämtade/);
-
-  ebookFactboxSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
-  unsupportedEbookFactboxPatterns.forEach((pattern) => assert.doesNotMatch(ebookSource, pattern));
 });

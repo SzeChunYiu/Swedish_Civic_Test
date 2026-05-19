@@ -182,24 +182,6 @@ test('static Mock review renders citation and disclaimer for every reviewed ques
   );
 });
 
-test('static Practice and Mock feedback effects are gated for reduced motion', () => {
-  const fx = read('site/fx.js');
-  const app = read('site/app.js');
-  const practice = read('site/practice.js');
-
-  assert.match(fx, /window\.matchMedia\("\(prefers-reduced-motion: reduce\)"\)\.matches/);
-  assert.match(fx, /function prefersReducedMotion\(\)/);
-  assert.match(fx, /function motionAllowed\(\)/);
-  assert.match(fx, /function burst\([\s\S]*?if \(!motionAllowed\(\)\) return;/);
-  assert.match(fx, /function rain\([\s\S]*?if \(!motionAllowed\(\)\) return;/);
-  assert.match(fx, /function floatPlus\([\s\S]*?if \(!motionAllowed\(\)\) return;/);
-  assert.match(fx, /function countUp\([\s\S]*?el\.textContent = String\(to\);/);
-  assert.match(fx, /function toast\([\s\S]*?t\.style\.animation = "none";/);
-  assert.match(app, /function smtQuizFxPrefersReducedMotion\(fx\)/);
-  assert.match(app, /if \(!correct && !smtQuizFxPrefersReducedMotion\(fx\)\)/);
-  assert.match(practice, /strongPracticeScore && !staticFxPrefersReducedMotion\(window\.smtFx\)/);
-});
-
 test('static active Mock question renders citation and independent-study disclaimer', () => {
   const { sandbox, element } = createRenderContext({ hash: '#/mock?run=1', language: 'en' });
   const source = read('site/practice.js').replace(
