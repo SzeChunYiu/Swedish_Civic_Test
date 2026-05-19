@@ -1837,6 +1837,14 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
       /const groupedForAccessibility =\s*accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\);/,
   },
   {
+    label: 'resolved accessibility role fallback',
+    pattern: /const resolvedAccessibilityRole =\s*accessibilityRole \?\?/,
+  },
+  {
+    label: 'grouped default summary role',
+    pattern: /\(groupedForAccessibility \? 'summary' : undefined\)/,
+  },
+  {
     label: 'stable hint id',
     pattern: /const hintId = useId\(\);/,
   },
@@ -1869,8 +1877,8 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{accessibilityLabel\}/,
   },
   {
-    label: 'native accessibility role',
-    pattern: /accessibilityRole=\{accessibilityRole\}/,
+    label: 'native resolved accessibility role',
+    pattern: /accessibilityRole=\{resolvedAccessibilityRole\}/,
   },
   {
     label: 'hidden hint text node',

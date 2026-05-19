@@ -20,16 +20,21 @@ test('shared Card mirrors labelled grouped surfaces to native and web accessibil
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Card.tsx'), 'utf8');
 
-  assert.equal(summary.cardAccessibilityRulesValidated, 14);
+  assert.equal(summary.cardAccessibilityRulesValidated, 16);
   assert.equal(summary.cardAccessibilityParityValidated, true);
   assert.match(source, /const groupedForAccessibility =/);
   assert.match(source, /accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\)/);
+  assert.match(source, /const resolvedAccessibilityRole =/);
+  assert.match(
+    source,
+    /accessibilityRole \?\? \(groupedForAccessibility \? 'summary' : undefined\)/,
+  );
   assert.match(source, /aria-describedby=\{cardAccessibilityHintId\}/);
   assert.match(source, /aria-label=\{accessibilityLabel\}/);
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
   assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
+  assert.match(source, /accessibilityRole=\{resolvedAccessibilityRole\}/);
   assert.match(source, /nativeID=\{cardAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);
 });
@@ -61,5 +66,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Card missing hint mirrored to web aria-describedby for accessibility parity/,
+  );
+});
+
+test('Card accessibility parity rejects dropped grouped summary role', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/ui/Card.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("accessibilityRole ?? (groupedForAccessibility ? 'summary' : undefined)", 'accessibilityRole ?? undefined');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Card missing grouped default summary role for accessibility parity/,
   );
 });
