@@ -30,6 +30,14 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
   );
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+  const practiceInterstitialNativeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
@@ -46,8 +54,33 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(homeSource, /<AdBanner placement="home_banner" \/>/);
   assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(practiceSource, /PracticeInterstitialAd/);
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\} \/>/,
+  );
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\('quiz_completed_interstitial', resolvedEntitlements\)/,
+  );
+  assert.doesNotMatch(practiceInterstitialSource, /react-native-google-mobile-ads/);
+  assert.match(practiceInterstitialNativeSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(practiceInterstitialNativeSource, /AdEventType\.LOADED/);
+  assert.match(practiceInterstitialNativeSource, /AdEventType\.ERROR/);
+  assert.match(practiceInterstitialNativeSource, /interstitialAd\.show\(\)/);
+  assert.match(
+    practiceInterstitialNativeSource,
+    /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
+  );
+  assert.match(
+    practiceInterstitialNativeSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+  );
+  assert.match(practiceInterstitialNativeSource, /useMobileAdsConsent/);
+  assert.match(practiceInterstitialNativeSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(practiceInterstitialNativeSource, /lastInterstitialShowKey === showKey/);
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
   assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
   assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
@@ -86,6 +119,39 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+});
+
+test('ad placement route parity rejects practice interstitials routed through BannerAd', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<PracticeInterstitialAd showKey={\`\${question.id}:\${selectedOptionId ?? \\'\\'}\`} />',
+        '<AdBanner placement="quiz_completed_interstitial" />',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/practice\.tsx must render PracticeInterstitialAd placement quiz_completed_interstitial|Practice completion interstitial must not flow through AdBanner/,
+  );
 });
 
 test('ad placement route parity rejects bare Swedish rewarded extra-exam ad copy', () => {
