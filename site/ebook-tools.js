@@ -10,53 +10,6 @@
 
   function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
   function uid() { return "h_" + Math.random().toString(36).slice(2, 9) + Date.now().toString(36); }
-  const COPY = Object.freeze({
-    en: Object.freeze({
-      addNote: "Add note",
-      close: "Close",
-      delete: "Delete",
-      edit: "Edit",
-      find: "Find highlight",
-      highlight: "Highlight",
-      highlighted: "Highlighted",
-      noHighlights: "No highlights yet. Select text to mark it.",
-      note: "Note",
-      noteSaved: "Note saved",
-      noteText: "Note text",
-      remove: "Remove highlight",
-      save: "Save",
-      writeNote: "Write your note...",
-    }),
-    sv: Object.freeze({
-      addNote: "Lägg till anteckning",
-      close: "Stäng",
-      delete: "Radera",
-      edit: "Redigera",
-      find: "Hitta markering",
-      highlight: "Markera",
-      highlighted: "Markerat",
-      noHighlights: "Inga markeringar än. Välj text för att markera.",
-      note: "Anteckna",
-      noteSaved: "Anteckning sparad",
-      noteText: "Anteckningstext",
-      remove: "Ta bort markering",
-      save: "Spara",
-      writeNote: "Skriv din anteckning...",
-    }),
-  });
-
-  function copy() {
-    return lang() === "sv" ? COPY.sv : COPY.en;
-  }
-
-  function localizeButton(button, label, text) {
-    if (!button) return;
-    button.title = label;
-    button.setAttribute("aria-label", label);
-    if (typeof text === "string") {
-      button.textContent = text;
-    }
-  }
 
   function activeChapter() {
     const hash = (location.hash || "#/").replace(/^#/, "");
@@ -162,13 +115,13 @@
     popEl.className = "eb-pop";
     popEl.hidden = true;
     popEl.innerHTML = `
-      <button class="eb-pop__btn" data-act="hl" type="button">
+      <button class="eb-pop__btn" data-act="hl" title="Highlight">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 20l-7-7 9-9 7 7-9 9z"/><path d="M5 20h14"/>
         </svg>
         <span class="eb-pop__lbl"></span>
       </button>
-      <button class="eb-pop__btn" data-act="note" type="button">
+      <button class="eb-pop__btn" data-act="note" title="Add note">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M4 4h12l4 4v12H4z"/><path d="M16 4v4h4M8 12h8M8 16h6"/>
         </svg>
@@ -189,13 +142,8 @@
     const range = sel.getRangeAt(0);
     const r = range.getBoundingClientRect();
     const p = ensurePop();
-    const c = copy();
-    const highlightButton = p.querySelector('[data-act="hl"]');
-    const noteButton = p.querySelector('[data-act="note"]');
-    localizeButton(highlightButton, c.highlight);
-    localizeButton(noteButton, c.addNote);
-    p.querySelector(".eb-pop__lbl").textContent = c.highlight;
-    p.querySelector(".eb-pop__lbl-note").textContent = c.note;
+    p.querySelector(".eb-pop__lbl").textContent = lang() === "sv" ? "Markera" : "Highlight";
+    p.querySelector(".eb-pop__lbl-note").textContent = lang() === "sv" ? "Anteckna" : "Note";
     p.dataset.mode = "create";
     p.hidden = false;
     const popW = 220, popH = 38;
@@ -225,7 +173,7 @@
       setTimeout(() => openNoteEditor(hl.id), 50);
     }
     if (window.smtFx) window.smtFx.toast(
-      copy().highlighted,
+      lang() === "sv" ? "Markerat" : "Highlighted",
       { duration: 1200 }
     );
   }
@@ -246,26 +194,23 @@
       panel.innerHTML = `
         <div class="eb-note__head">
           <span class="eb-note__quote"></span>
-          <button class="eb-note__close" type="button">✕</button>
+          <button class="eb-note__close" aria-label="Close">✕</button>
         </div>
         <textarea class="eb-note__ta" placeholder=""></textarea>
         <div class="eb-note__actions">
-          <button class="eb-note__del" type="button"></button>
-          <button class="eb-note__save btn btn--gold btn--sm" type="button"></button>
+          <button class="eb-note__del">Delete</button>
+          <button class="eb-note__save btn btn--gold btn--sm">Save</button>
         </div>
       `;
       document.body.appendChild(panel);
     }
-    const c = copy();
     panel.dataset.hlId = hlId;
     panel.querySelector(".eb-note__quote").textContent = "“" + hl.text.slice(0, 80) + (hl.text.length > 80 ? "…" : "") + "”";
-    localizeButton(panel.querySelector(".eb-note__close"), c.close);
     const ta = panel.querySelector(".eb-note__ta");
     ta.value = hl.note || "";
-    ta.placeholder = c.writeNote;
-    ta.setAttribute("aria-label", c.noteText);
-    localizeButton(panel.querySelector(".eb-note__del"), c.delete, c.delete);
-    localizeButton(panel.querySelector(".eb-note__save"), c.save, c.save);
+    ta.placeholder = lang() === "sv" ? "Skriv din anteckning…" : "Write your note…";
+    panel.querySelector(".eb-note__del").textContent = lang() === "sv" ? "Radera" : "Delete";
+    panel.querySelector(".eb-note__save").textContent = lang() === "sv" ? "Spara" : "Save";
     panel.hidden = false;
     // Position near the highlight
     const w = 340;
@@ -295,7 +240,7 @@
     else applyHighlights();
     closeNote();
     if (window.smtFx) window.smtFx.toast(
-      copy().noteSaved,
+      lang() === "sv" ? "Anteckning sparad" : "Note saved",
       { duration: 1400 }
     );
   }
@@ -318,9 +263,11 @@
     const host = document.getElementById("eb-notes-list");
     if (!host) return;
     const hls = loadHighlights(activeChapter());
-    const c = copy();
+    const sv = lang() === "sv";
     if (!hls.length) {
-      host.innerHTML = `<p class="eb-notes-empty">${c.noHighlights}</p>`;
+      host.innerHTML = `<p class="eb-notes-empty">${
+        sv ? "Inga markeringar än. Välj text för att markera." : "No highlights yet. Select text to mark it."
+      }</p>`;
       return;
     }
     host.innerHTML = hls.map((h) => `
@@ -328,9 +275,9 @@
         <div class="eb-notes-item__text">${escapeHtml(h.text)}</div>
         ${h.note ? `<div class="eb-notes-item__note">${escapeHtml(h.note)}</div>` : ""}
         <div class="eb-notes-item__actions">
-          <button data-act="edit" type="button" title="${escapeHtml(c.edit)}" aria-label="${escapeHtml(c.edit)}">${escapeHtml(c.edit)}</button>
-          <button data-act="goto" type="button" title="${escapeHtml(c.find)}" aria-label="${escapeHtml(c.find)}">${escapeHtml(c.find)}</button>
-          <button data-act="del" type="button" title="${escapeHtml(c.remove)}" aria-label="${escapeHtml(c.remove)}">${escapeHtml(c.remove)}</button>
+          <button data-act="edit">${sv ? "Redigera" : "Edit"}</button>
+          <button data-act="goto">${sv ? "Hitta" : "Find"}</button>
+          <button data-act="del">${sv ? "Ta bort" : "Remove"}</button>
         </div>
       </div>
     `).join("");
