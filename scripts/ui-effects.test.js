@@ -847,6 +847,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 
 test('native ad preview card exposes a grouped accessibility summary', () => {
   const source = read('components/monetization/NativeAdCard.tsx');
+  const nativeSource = read('components/monetization/NativeAdCard.native.tsx');
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.match(source, /useSettingsStore/);
@@ -866,6 +867,14 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   assert.match(copySource, /Test native ad/);
   assert.match(copySource, /Sponsored study placement/);
   assert.match(copySource, /AdMob test placement preview/);
+  assert.match(nativeSource, /<NativeAdView accessible=\{false\}/);
+  assert.match(nativeSource, /accessibilityRole="summary"/);
+  assert.match(
+    nativeSource,
+    /<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/,
+  );
+  assert.match(nativeSource, /minHeight:\s*space\[6\]/);
+  assert.match(copySource, /ctaHint: 'Activates the ad action\.'/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(copySource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
