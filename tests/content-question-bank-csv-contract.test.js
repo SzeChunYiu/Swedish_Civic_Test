@@ -76,6 +76,38 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 13 columns, expected 12/,
+    /content\/question-bank\.csv row 2 has 15 columns, expected 14/,
+  );
+});
+
+test('question-bank CSV contract rejects explanation drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(
+      'Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.',
+      'The exported explanation drifted from the source question.',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /content\/question-bank\.csv row 2 q001 explanationEn is "The exported explanation drifted from the source question\.", expected "Sweden is in the Nordic region/,
   );
 });
