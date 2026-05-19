@@ -45,6 +45,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -82,6 +83,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -127,6 +129,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -173,6 +176,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -218,6 +222,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -256,6 +261,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -301,6 +307,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -346,6 +353,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -393,6 +401,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -438,6 +447,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -484,6 +494,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -529,6 +540,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -574,6 +586,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -619,6 +632,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -664,6 +678,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -709,6 +724,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -754,6 +770,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -799,6 +816,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -844,6 +862,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -889,6 +908,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -934,6 +954,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -979,6 +1000,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1016,6 +1038,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1061,6 +1084,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -1106,6 +1130,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -1151,6 +1176,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -1196,6 +1222,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -1233,6 +1260,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -1278,6 +1306,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -1323,6 +1352,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -1360,6 +1390,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -1405,6 +1436,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -1450,6 +1482,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -1495,6 +1528,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -1540,6 +1574,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1585,6 +1620,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -1630,6 +1666,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -1675,6 +1712,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -1720,6 +1758,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -1765,6 +1804,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -1810,6 +1850,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -1855,6 +1896,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -1900,6 +1942,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -1945,6 +1988,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -1990,6 +2034,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -2035,6 +2080,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -2072,6 +2118,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -2117,6 +2164,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -2155,6 +2203,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -2200,6 +2249,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -2245,6 +2295,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -2290,6 +2341,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -2335,6 +2387,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -2380,6 +2433,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -2426,6 +2480,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -2471,6 +2526,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -2516,6 +2572,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -2561,6 +2618,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -2606,6 +2664,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -2651,6 +2710,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -2696,6 +2756,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -2741,6 +2802,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -2786,6 +2848,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -2831,6 +2894,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -2876,6 +2940,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -2921,6 +2986,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -2966,6 +3032,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -3011,6 +3078,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -3057,6 +3125,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -3102,6 +3171,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -3147,6 +3217,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -3193,6 +3264,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -3238,6 +3310,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -3275,6 +3348,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -3320,6 +3394,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -3365,6 +3440,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -3411,6 +3487,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -3456,6 +3533,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -3501,6 +3579,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -3546,6 +3625,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -3591,6 +3671,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -3636,6 +3717,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -3681,6 +3763,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -3726,6 +3809,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -3771,6 +3855,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -3816,6 +3901,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -3861,6 +3947,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -3906,6 +3993,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -3951,6 +4039,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -3996,6 +4085,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -4033,6 +4123,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -4078,6 +4169,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -4123,6 +4215,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -4160,6 +4253,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -4205,6 +4299,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -4250,6 +4345,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -4295,6 +4391,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -4340,6 +4437,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -4386,6 +4484,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -4432,6 +4531,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -4478,6 +4578,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -4523,6 +4624,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -4569,6 +4671,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -4615,6 +4718,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -4661,6 +4765,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -4707,6 +4812,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -4753,6 +4859,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -4799,6 +4906,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -4845,6 +4953,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -4891,6 +5000,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -4937,6 +5047,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -4983,6 +5094,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -5029,6 +5141,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5075,6 +5188,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -5122,6 +5236,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -5168,6 +5283,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -5214,6 +5330,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5261,6 +5378,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5309,6 +5427,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -5355,6 +5474,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -5401,6 +5521,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -5447,6 +5568,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -5494,6 +5616,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -5540,6 +5663,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -5586,6 +5710,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -5633,6 +5758,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -5679,6 +5805,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -5725,6 +5852,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -5771,6 +5899,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -5817,6 +5946,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -5863,6 +5993,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -5910,6 +6041,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -5956,6 +6088,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -6003,6 +6136,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -6049,6 +6183,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -6095,6 +6230,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -6142,6 +6278,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -6188,6 +6325,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6234,6 +6372,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6280,6 +6419,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6326,6 +6466,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -6372,6 +6513,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6410,6 +6552,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6457,6 +6600,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -6503,6 +6647,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6548,6 +6693,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6593,6 +6739,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6638,6 +6785,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -6684,6 +6832,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -6730,6 +6879,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6769,6 +6919,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6808,6 +6959,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6855,6 +7007,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6902,6 +7055,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6941,6 +7095,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6979,6 +7134,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7026,6 +7182,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7073,6 +7230,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7113,6 +7271,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7153,6 +7312,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7201,6 +7361,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7249,6 +7410,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7288,6 +7450,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7327,6 +7490,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7374,6 +7538,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7421,6 +7586,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7461,6 +7627,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7501,6 +7668,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7549,6 +7717,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7597,6 +7766,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -7636,6 +7806,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -7674,6 +7845,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -7721,6 +7893,7 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -7768,6 +7941,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7807,6 +7981,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7846,6 +8021,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7893,6 +8069,7 @@
       "section": "Fjäll",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7940,6 +8117,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7981,6 +8159,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8022,6 +8201,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8071,6 +8251,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8120,6 +8301,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8159,6 +8341,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8198,6 +8381,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8245,6 +8429,7 @@
       "section": "Befolkning",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8292,6 +8477,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8332,6 +8518,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8372,6 +8559,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8420,6 +8608,7 @@
       "section": "Naturresurser",
       "page": 7
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8468,6 +8657,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8507,6 +8697,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8546,6 +8737,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8593,6 +8785,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8640,6 +8833,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8679,6 +8873,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8718,6 +8913,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8765,6 +8961,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8812,6 +9009,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -8851,6 +9049,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -8890,6 +9089,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -8937,6 +9137,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -8984,6 +9185,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9023,6 +9225,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9062,6 +9265,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9109,6 +9313,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9156,6 +9361,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9195,6 +9401,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9234,6 +9441,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9281,6 +9489,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9328,6 +9537,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9367,6 +9577,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9406,6 +9617,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9453,6 +9665,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9500,6 +9713,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -9539,6 +9753,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -9578,6 +9793,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -9625,6 +9841,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -9672,6 +9889,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -9711,6 +9929,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -9750,6 +9969,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -9797,6 +10017,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -9844,6 +10065,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -9883,6 +10105,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -9922,6 +10145,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -9969,6 +10193,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10016,6 +10241,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10055,6 +10281,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10094,6 +10321,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10141,6 +10369,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10188,6 +10417,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10227,6 +10457,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10266,6 +10497,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10313,6 +10545,7 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10360,6 +10593,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10399,6 +10633,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10438,6 +10673,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10485,6 +10721,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10532,6 +10769,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10571,6 +10809,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10610,6 +10849,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10657,6 +10897,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10704,6 +10945,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -10743,6 +10985,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -10782,6 +11025,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -10829,6 +11073,7 @@
       "section": "Myndigheter",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -10876,6 +11121,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -10915,6 +11161,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -10954,6 +11201,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11001,6 +11249,7 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11048,6 +11297,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11087,6 +11337,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11126,6 +11377,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11173,6 +11425,7 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11220,6 +11473,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11259,6 +11513,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11298,6 +11553,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11345,6 +11601,7 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11392,6 +11649,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -11431,6 +11689,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -11470,6 +11729,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -11517,6 +11777,7 @@
       "section": "Staten",
       "page": 12
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -11564,6 +11825,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -11603,6 +11865,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -11642,6 +11905,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -11689,6 +11953,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -11736,6 +12001,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -11775,6 +12041,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -11814,6 +12081,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -11861,6 +12129,7 @@
       "section": "Val och röstning",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -11908,6 +12177,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -11947,6 +12217,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -11986,6 +12257,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12033,6 +12305,7 @@
       "section": "Folkomröstningar",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12080,6 +12353,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12119,6 +12393,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12158,6 +12433,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12205,6 +12481,7 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12252,6 +12529,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12291,6 +12569,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12330,6 +12609,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12377,6 +12657,7 @@
       "section": "Politiska partier",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12424,6 +12705,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -12463,6 +12745,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -12502,6 +12785,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -12549,6 +12833,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -12596,6 +12881,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -12635,6 +12921,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -12674,6 +12961,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -12721,6 +13009,7 @@
       "section": "Proportionella val",
       "page": 15
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -12768,6 +13057,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -12807,6 +13097,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -12846,6 +13137,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -12893,6 +13185,7 @@
       "section": "Grundlagarna",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -12940,6 +13233,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -12979,6 +13273,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13018,6 +13313,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13065,6 +13361,7 @@
       "section": "Regeringsformen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13112,6 +13409,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13151,6 +13449,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13190,6 +13489,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13237,6 +13537,7 @@
       "section": "Successionsordningen",
       "page": 16
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13284,6 +13585,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13323,6 +13625,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13362,6 +13665,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13409,6 +13713,7 @@
       "section": "Allemansrätten",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13456,6 +13761,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -13495,6 +13801,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -13534,6 +13841,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -13581,6 +13889,7 @@
       "section": "Rättsväsendet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -13628,6 +13937,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -13667,6 +13977,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -13706,6 +14017,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -13753,6 +14065,7 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -13800,6 +14113,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -13839,6 +14153,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -13878,6 +14193,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -13925,6 +14241,7 @@
       "section": "Domstolar",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -13972,6 +14289,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14011,6 +14329,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14050,6 +14369,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14097,6 +14417,7 @@
       "section": "Polisen",
       "page": 18
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14144,6 +14465,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14183,6 +14505,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14222,6 +14545,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14269,6 +14593,7 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14316,6 +14641,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -14355,6 +14681,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -14394,6 +14721,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -14441,6 +14769,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -14488,6 +14817,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -14527,6 +14857,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -14566,6 +14897,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -14613,6 +14945,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -14660,6 +14993,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -14699,6 +15033,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -14738,6 +15073,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -14785,6 +15121,7 @@
       "section": "Fria medier",
       "page": 20
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -14832,6 +15169,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -14872,6 +15210,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -14912,6 +15251,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -14960,6 +15300,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15008,6 +15349,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15047,6 +15389,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15086,6 +15429,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15133,6 +15477,7 @@
       "section": "Public service",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15180,6 +15525,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15219,6 +15565,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15258,6 +15605,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15305,6 +15653,7 @@
       "section": "Källkritik",
       "page": 21
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15352,6 +15701,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -15391,6 +15741,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -15430,6 +15781,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -15477,6 +15829,7 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -15524,6 +15877,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -15563,6 +15917,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -15602,6 +15957,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -15649,6 +16005,7 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -15696,6 +16053,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -15735,6 +16093,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -15774,6 +16133,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -15821,6 +16181,7 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -15868,6 +16229,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -15908,6 +16270,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -15948,6 +16311,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -15996,6 +16360,7 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16044,6 +16409,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16083,6 +16449,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16122,6 +16489,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16169,6 +16537,7 @@
       "section": "Sexköpslagen",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16216,6 +16585,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16255,6 +16625,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16294,6 +16665,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16341,6 +16713,7 @@
       "section": "Barns rättigheter",
       "page": 24
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16388,6 +16761,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16427,6 +16801,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16466,6 +16841,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16513,6 +16889,7 @@
       "section": "Barns rättigheter",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16560,6 +16937,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -16599,6 +16977,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -16638,6 +17017,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -16685,6 +17065,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -16732,6 +17113,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -16771,6 +17153,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -16810,6 +17193,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -16857,6 +17241,7 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -16904,6 +17289,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -16943,6 +17329,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -16982,6 +17369,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17029,6 +17417,7 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17076,6 +17465,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17115,6 +17505,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17154,6 +17545,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17201,6 +17593,7 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17248,6 +17641,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17287,6 +17681,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17326,6 +17721,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17373,6 +17769,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17420,6 +17817,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -17459,6 +17857,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -17498,6 +17897,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -17545,6 +17945,7 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -17592,6 +17993,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -17631,6 +18033,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -17670,6 +18073,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -17717,6 +18121,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -17764,6 +18169,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -17803,6 +18209,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -17842,6 +18249,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -17889,6 +18297,7 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -17936,6 +18345,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -17975,6 +18385,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18014,6 +18425,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18061,6 +18473,7 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18108,6 +18521,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18147,6 +18561,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18186,6 +18601,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18233,6 +18649,7 @@
       "section": "A-kassan",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18280,6 +18697,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -18320,6 +18738,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -18360,6 +18779,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -18408,6 +18828,7 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -18456,6 +18877,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -18495,6 +18917,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -18534,6 +18957,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -18581,6 +19005,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -18628,6 +19053,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -18667,6 +19093,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -18706,6 +19133,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -18753,6 +19181,7 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -18800,6 +19229,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -18840,6 +19270,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -18880,6 +19311,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -18928,6 +19360,7 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -18976,6 +19409,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19015,6 +19449,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19054,6 +19489,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19101,6 +19537,7 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19148,6 +19585,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19187,6 +19625,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19226,6 +19665,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19273,6 +19713,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19320,6 +19761,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -19359,6 +19801,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -19398,6 +19841,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -19445,6 +19889,7 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -19492,6 +19937,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -19531,6 +19977,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -19570,6 +20017,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -19617,6 +20065,7 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -19664,6 +20113,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -19704,6 +20154,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -19744,6 +20195,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -19792,6 +20244,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -19840,6 +20293,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -19879,6 +20333,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -19918,6 +20373,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -19965,6 +20421,7 @@
       "section": "Befolkningsökning",
       "page": 32
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20012,6 +20469,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20051,6 +20509,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20090,6 +20549,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20137,6 +20597,7 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20184,6 +20645,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20223,6 +20685,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20262,6 +20725,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20309,6 +20773,7 @@
       "section": "Folkrörelserna",
       "page": 33
     },
+    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20356,6 +20821,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -20395,6 +20861,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -20434,6 +20901,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -20481,6 +20949,7 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -20528,6 +20997,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -20567,6 +21037,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -20606,6 +21077,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -20653,6 +21125,7 @@
       "section": "Den svenska modellen",
       "page": 35
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -20700,6 +21173,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -20739,6 +21213,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -20778,6 +21253,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -20825,6 +21301,7 @@
       "section": "Rekordåren",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -20872,6 +21349,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -20911,6 +21389,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -20950,6 +21429,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -20997,6 +21477,7 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21044,6 +21525,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21083,6 +21565,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21122,6 +21605,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21169,6 +21653,7 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21216,6 +21701,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -21255,6 +21741,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -21294,6 +21781,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -21341,6 +21829,7 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -21388,6 +21877,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -21427,6 +21917,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -21466,6 +21957,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -21513,6 +22005,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -21560,6 +22053,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -21599,6 +22093,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -21638,6 +22133,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -21685,6 +22181,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -21732,6 +22229,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -21771,6 +22269,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -21810,6 +22309,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -21857,6 +22357,7 @@
       "section": "EU och Europarådet",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -21904,6 +22405,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -21943,6 +22445,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -21982,6 +22485,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22029,6 +22533,7 @@
       "section": "Globalt samarbete",
       "page": 39
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22076,6 +22581,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22115,6 +22621,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22154,6 +22661,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22201,6 +22709,7 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22248,6 +22757,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -22287,6 +22797,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -22326,6 +22837,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -22373,6 +22885,7 @@
       "section": "Sveriges försvar",
       "page": 40
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -22420,6 +22933,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -22459,6 +22973,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -22498,6 +23013,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -22545,6 +23061,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -22592,6 +23109,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -22631,6 +23149,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -22670,6 +23189,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -22717,6 +23237,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -22764,6 +23285,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -22803,6 +23325,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -22842,6 +23365,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -22889,6 +23413,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -22936,6 +23461,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -22975,6 +23501,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23014,6 +23541,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23061,6 +23589,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23108,6 +23637,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23147,6 +23677,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23186,6 +23717,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23233,6 +23765,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23280,6 +23813,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -23319,6 +23853,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -23358,6 +23893,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -23405,6 +23941,7 @@
       "section": "Nyår",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -23452,6 +23989,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -23492,6 +24030,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -23532,6 +24071,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -23580,6 +24120,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -23628,6 +24169,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -23668,6 +24210,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -23708,6 +24251,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -23756,6 +24300,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -23804,6 +24349,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -23844,6 +24390,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -23884,6 +24431,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -23932,6 +24480,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -23980,6 +24529,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24019,6 +24569,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24058,6 +24609,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24105,6 +24657,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24152,6 +24705,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24192,6 +24746,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24232,6 +24787,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24280,6 +24836,7 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24328,6 +24885,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -24368,6 +24926,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -24408,6 +24967,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -24456,6 +25016,7 @@
       "section": "Första maj",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -24504,6 +25065,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -24544,6 +25106,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -24584,6 +25147,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -24632,6 +25196,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -24680,6 +25245,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -24720,6 +25286,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -24760,6 +25327,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -24808,6 +25376,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -24856,6 +25425,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -24896,6 +25466,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -24936,6 +25507,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -24984,6 +25556,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25032,6 +25605,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25072,6 +25646,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25112,6 +25687,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25160,6 +25736,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25208,6 +25785,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -25248,6 +25826,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -25288,6 +25867,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -25336,6 +25916,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -25384,6 +25965,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -25424,6 +26006,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -25464,6 +26047,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -25512,6 +26096,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -25560,6 +26145,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -25600,6 +26186,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -25640,6 +26227,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -25688,6 +26276,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -25736,6 +26325,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -25776,6 +26366,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -25816,6 +26407,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -25864,6 +26456,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -25912,6 +26505,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -25952,6 +26546,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -25992,6 +26587,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26040,6 +26636,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26088,6 +26685,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26128,6 +26726,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26168,6 +26767,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26216,6 +26816,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26264,6 +26865,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -26305,6 +26907,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -26346,6 +26949,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -26395,6 +26999,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -26444,6 +27049,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -26484,6 +27090,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -26524,6 +27131,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -26572,6 +27180,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -26620,6 +27229,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -26660,6 +27270,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -26700,6 +27311,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -26748,6 +27360,7 @@
       "section": "Religionsfrihet",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -26796,6 +27409,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26837,6 +27451,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26878,6 +27493,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26927,6 +27543,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26976,6 +27593,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27018,6 +27636,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27060,6 +27679,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27110,6 +27730,7 @@
       "section": "Religionens roll",
       "page": 42
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27160,6 +27781,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27200,6 +27822,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27240,6 +27863,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27288,6 +27912,7 @@
       "section": "Kristendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -27336,6 +27961,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -27376,6 +28002,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -27416,6 +28043,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -27464,6 +28092,7 @@
       "section": "Judendom",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -27512,6 +28141,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -27552,6 +28182,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -27592,6 +28223,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -27640,6 +28272,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -27688,6 +28321,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -27729,6 +28363,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -27770,6 +28405,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -27819,6 +28455,7 @@
       "section": "Islam",
       "page": 44
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -27868,6 +28505,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -27908,6 +28546,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -27948,6 +28587,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -27996,6 +28636,7 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28044,6 +28685,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28084,6 +28726,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28124,6 +28767,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28172,6 +28816,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28220,6 +28865,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -28261,6 +28907,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -28302,6 +28949,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -28351,6 +28999,7 @@
       "section": "Midsommar",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -28400,6 +29049,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -28440,6 +29090,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -28480,6 +29131,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -28528,6 +29180,7 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -28576,6 +29229,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -28616,6 +29270,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -28656,6 +29311,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -28704,6 +29360,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -28752,6 +29409,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -28792,6 +29450,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -28832,6 +29491,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -28880,6 +29540,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -28928,6 +29589,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -28968,6 +29630,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29008,6 +29671,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29056,6 +29720,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29104,6 +29769,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29144,6 +29810,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29184,6 +29851,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29232,6 +29900,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -29280,6 +29949,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -29321,6 +29991,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -29362,6 +30033,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -29411,6 +30083,7 @@
       "section": "Påsk",
       "page": 45
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -29460,6 +30133,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -29500,6 +30174,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -29540,6 +30215,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -29588,6 +30264,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -29636,6 +30313,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -29677,6 +30355,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -29718,6 +30397,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -29767,6 +30447,7 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -29816,6 +30497,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -29856,6 +30538,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -29896,6 +30579,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -29944,6 +30628,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -29992,6 +30677,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30032,6 +30718,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30072,6 +30759,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30120,6 +30808,7 @@
       "section": "Advent",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30168,6 +30857,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30209,6 +30899,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30250,6 +30941,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30299,6 +30991,7 @@
       "section": "Alla helgons dag",
       "page": 46
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30348,6 +31041,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -30388,6 +31082,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -30428,6 +31123,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -30476,6 +31172,7 @@
       "section": "Nya traditioner",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -30524,6 +31221,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30564,6 +31262,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30604,6 +31303,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30652,6 +31352,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30700,6 +31401,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30740,6 +31442,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30780,6 +31483,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30828,6 +31532,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30876,6 +31581,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30916,6 +31622,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -30956,6 +31663,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31004,6 +31712,7 @@
       "section": "Jul",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31052,6 +31761,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31092,6 +31802,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31132,6 +31843,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31180,6 +31892,7 @@
       "section": "Lucia",
       "page": 47
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -31228,6 +31941,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31268,6 +31982,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31308,6 +32023,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31356,6 +32072,7 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31404,6 +32121,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31445,6 +32163,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31486,6 +32205,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31535,6 +32255,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -31584,6 +32305,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -31624,6 +32346,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -31664,6 +32387,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -31712,6 +32436,7 @@
       "section": "Sveriges indelning",
       "page": 6
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -31760,6 +32485,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -31799,6 +32525,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -31838,6 +32565,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -31885,6 +32613,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -31932,6 +32661,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -31971,6 +32701,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32010,6 +32741,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32057,6 +32789,7 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32104,6 +32837,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32143,6 +32877,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32182,6 +32917,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32229,6 +32965,7 @@
       "section": "En stark demokrati",
       "page": 10
     },
+    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32276,6 +33013,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -32316,6 +33054,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -32356,6 +33095,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -32404,6 +33144,7 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -32452,6 +33193,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -32492,6 +33234,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -32532,6 +33275,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -32580,6 +33324,7 @@
       "section": "Segregation och integration",
       "page": 11
     },
+    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
