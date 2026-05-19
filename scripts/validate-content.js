@@ -939,7 +939,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 10;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -3038,6 +3038,10 @@ const EXPECTED_MONETIZATION_INTERFACES = [
 ];
 const EXPECTED_PURCHASE_TYPE_UNIONS = [
   {
+    typeName: 'RemoveAdsReceiptValidationStatus',
+    values: ['valid', 'invalid', 'pending'],
+  },
+  {
     typeName: 'RemoveAdsPurchaseStatus',
     values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
   },
@@ -3065,6 +3069,16 @@ const EXPECTED_PURCHASE_INTERFACES = [
     ],
   },
   {
+    name: 'RemoveAdsReceiptValidationResult',
+    fields: [
+      { name: 'status', type: 'RemoveAdsReceiptValidationStatus', optional: false },
+      { name: 'productId', type: 'string | null', optional: true },
+      { name: 'purchaseToken', type: 'string | null', optional: true },
+      { name: 'transactionId', type: 'string | null', optional: true },
+      { name: 'validatedAt', type: 'string | null', optional: true },
+    ],
+  },
+  {
     name: 'RemoveAdsPurchaseProvider',
     fields: [
       { name: 'connect', type: '() => Promise<void>', optional: false },
@@ -3072,6 +3086,11 @@ const EXPECTED_PURCHASE_INTERFACES = [
       {
         name: 'finishPurchase',
         type: '(purchase: RemoveAdsPurchaseRecord) => Promise<void>',
+        optional: true,
+      },
+      {
+        name: 'validateRemoveAdsReceipt',
+        type: '(purchase: RemoveAdsPurchaseRecord, productId: typeof REMOVE_ADS_PRODUCT_ID) => Promise<RemoveAdsReceiptValidationResult>',
         optional: true,
       },
       {
@@ -3113,6 +3132,7 @@ const EXPECTED_PURCHASE_INTERFACES = [
     fields: [
       { name: 'owned', type: 'boolean', optional: true },
       { name: 'pendingPurchase', type: 'boolean', optional: true },
+      { name: 'receiptValidationStatus', type: 'RemoveAdsReceiptValidationStatus', optional: true },
     ],
   },
 ];
@@ -10714,6 +10734,31 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes("source: 'restore'") &&
         normalizedPurchaseSource.includes('hasStoreConfirmation(record)'),
       'Remove Ads purchase and restore grants must persist source plus store confirmation identity',
+    ],
+    [
+      normalizedPurchaseSource.includes('receiptValidationStatus:') &&
+        normalizedPurchaseSource.includes('receiptValidatedAt:'),
+      'Remove Ads entitlement records must persist receipt validation status and timestamp',
+    ],
+    [
+      normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
+        normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
+      'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      normalizedPurchaseSource.includes(
+        'const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);',
+      ) &&
+        normalizedPurchaseSource.includes("return createResult('pending'") &&
+        normalizedPurchaseSource.includes("return createResult('not_found'"),
+      'Remove Ads buy and restore flows must validate receipts before granting entitlements',
+    ],
+    [
+      normalizedPurchaseSource.includes('receiptValidationStatus =') &&
+        normalizedPurchaseSource.includes("if (receiptValidationStatus !== 'valid')") &&
+        normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
+        normalizedPurchaseSource.includes('receiptValidation,'),
+      'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
     ],
   ];
 
