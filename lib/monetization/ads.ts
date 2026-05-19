@@ -3,6 +3,7 @@ import type { AdConsentDecision } from './consent';
 import { getRealAdUnitOverride, readRealAdUnitOverrides } from './adUnitsReal';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
+export type AdRuntimePlatform = string;
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
 type AdUnitEnvValues = Record<
@@ -171,6 +172,24 @@ export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
   return getConfiguredAdUnits().find((unit) => unit.placement === placement);
 }
 
+function hasConfiguredUnitForPlatform(
+  unit: AdUnitConfig | undefined,
+  platform?: AdRuntimePlatform,
+): boolean {
+  if (!unit?.enabled) return false;
+  if (!REAL_ADS_ENABLED) return true;
+  if (platform === 'ios') return Boolean(unit.iosUnitId);
+  if (platform === 'android') return Boolean(unit.androidUnitId);
+  return Boolean(unit.androidUnitId || unit.iosUnitId);
+}
+
+export function isAdPlacementAvailableOnPlatform(
+  placement: AdPlacement,
+  platform?: AdRuntimePlatform,
+): boolean {
+  return hasConfiguredUnitForPlatform(getAdUnit(placement), platform);
+}
+
 export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
@@ -181,11 +200,7 @@ export function shouldShowAd(
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
-  const unit = getAdUnit(placement);
-  if (!unit?.enabled) return false;
-  if (REAL_ADS_ENABLED && platform === 'ios') return Boolean(unit.iosUnitId);
-  if (REAL_ADS_ENABLED && platform === 'android') return Boolean(unit.androidUnitId);
-  return true;
+  return isAdPlacementAvailableOnPlatform(placement, platform);
 }
 
 export function shouldShowLaunchPopupAd({
@@ -216,7 +231,7 @@ export function shouldSuppressLaunchPopupAdForPath(pathname: string): boolean {
 
 export function getPlatformAdUnitId(
   placement: AdPlacement,
-  platform: 'ios' | 'android' | 'web' | string,
+  platform: AdRuntimePlatform,
 ): string | undefined {
   const unit = getAdUnit(placement);
   if (!unit) return undefined;

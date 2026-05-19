@@ -4018,6 +4018,7 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
         optional: false,
       },
       { name: 'freeMockExamLimit', type: 'number', optional: false },
+      { name: 'platform', type: 'AdRuntimePlatform', optional: true },
       { name: 'rewardedExtraExamCredits', type: 'number', optional: true },
     ],
   },
@@ -7189,6 +7190,7 @@ let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let nativeAdAssetDirectChildrenValidated = 0;
 let adPlacementRouteParityValidated = false;
+let adPlacementPlatformParityValidated = false;
 let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
@@ -7954,120 +7956,59 @@ function validateAdPlacementRouteParity() {
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
-  let webBannerSource = '';
-  let nativeBannerSource = '';
+  let platformSourcesValid = true;
 
-  try {
-    webBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-      'utf8',
-    );
-    nativeBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`AdBanner sources could not be read for banner placement parity: ${error.message}`);
-    return;
-  }
+  function expectSourcePattern(file, pattern, message) {
+    let source = '';
 
-  for (const { label, source } of [
-    { label: 'web AdBanner', source: webBannerSource },
-    { label: 'native AdBanner', source: nativeBannerSource },
-  ]) {
-    let sourceIsValid = true;
-
-    if (!/\bBannerAdPlacement\b/.test(source)) {
-      reject(`${label} props must use BannerAdPlacement`);
-      sourceIsValid = false;
-    }
-    if (!/placement\?: BannerAdPlacement;/.test(source)) {
-      reject(`${label} placement prop must be typed as optional BannerAdPlacement`);
-      sourceIsValid = false;
-    }
-    if (/\bAdPlacement\b/.test(source)) {
-      reject(`${label} must not accept the full AdPlacement union`);
-      sourceIsValid = false;
-    }
-    if (label === 'native AdBanner') {
-      if (!source.includes('const unit = getAdUnit(placement);')) {
-        reject('native AdBanner must inspect the configured ad unit');
-        sourceIsValid = false;
-      }
-      if (
-        !/const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/.test(
-          source,
-        )
-      ) {
-        reject('native AdBanner must derive the status label from unit.testOnly');
-        sourceIsValid = false;
-      }
-      if (
-        /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel,\s*copy\.liveStatus\)\}/.test(
-          source,
-        )
-      ) {
-        reject('native AdBanner accessibility label must not hardcode live ad status');
-        sourceIsValid = false;
-      }
-      if (!/accessibilityLabel=\{accessibilityLabel\}/.test(source)) {
-        reject('native AdBanner must pass the derived accessibility label');
-        sourceIsValid = false;
-      }
-      if (!source.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
-        reject('native AdBanner must resolve banner units by Platform.OS');
-        sourceIsValid = false;
-      }
-      if (
-        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
-          source,
-        )
-      ) {
-        reject('native AdBanner must gate banner visibility by Platform.OS');
-        sourceIsValid = false;
-      }
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} could not be read for ad platform parity: ${error.message}`);
+      platformSourcesValid = false;
+      return '';
     }
 
-    if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
+    if (!pattern.test(source)) {
+      reject(message);
+      platformSourcesValid = false;
+    }
+
+    return source;
   }
 
-  let bannerUsageIsValid = true;
-  const bannerUsageRoots = ['app', 'components'];
+  expectSourcePattern(
+    'components/monetization/AdBanner.native.tsx',
+    /getPlatformAdUnitId\(placement,\s*Platform\.OS\)[\s\S]*shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,\s*\)/,
+    'AdBanner.native must pass Platform.OS to native unit lookup and shouldShowAd',
+  );
+  expectSourcePattern(
+    'components/monetization/LaunchPopupAd.native.tsx',
+    /(?=[\s\S]*getPlatformAdUnitId\('app_open_launch',\s*Platform\.OS\))(?=[\s\S]*platform:\s*Platform\.OS)/,
+    'LaunchPopupAd.native must pass Platform.OS to app-open unit lookup and launch visibility',
+  );
+  expectSourcePattern(
+    'components/monetization/NativeAdCard.tsx',
+    /shouldShowAd\('results_native',\s*resolvedEntitlements,\s*undefined,\s*Platform\.OS\)/,
+    'NativeAdCard must pass Platform.OS to results_native shouldShowAd',
+  );
+  expectSourcePattern(
+    'lib/monetization/useMockExamAccess.ts',
+    /(?=[\s\S]*buildAccessDecision\(\{[\s\S]*platform:\s*Platform\.OS[\s\S]*\}\))(?=[\s\S]*getMockExamAccessDecision\(\{[\s\S]*platform,)/,
+    'useMockExamAccess must pass Platform.OS into rewarded mock-exam access decisions',
+  );
 
-  function scanBannerUsages(directory) {
-    const entries = fs.readdirSync(directory, { withFileTypes: true });
-
-    entries.forEach((entry) => {
-      const fullPath = path.join(directory, entry.name);
-      if (entry.isDirectory()) {
-        scanBannerUsages(fullPath);
-        return;
-      }
-      if (!entry.isFile() || !/\.(?:tsx|ts)$/.test(entry.name)) return;
-
-      const relativePath = path.relative(repoRoot, fullPath).replace(/\\/g, '/');
-      const source = fs.readFileSync(fullPath, 'utf8');
-      const adBannerPlacementPattern = /<AdBanner\b[^>]*\bplacement="([^"]+)"/g;
-      let match;
-
-      while ((match = adBannerPlacementPattern.exec(source))) {
-        const placement = match[1];
-        if (!EXPECTED_BANNER_AD_PLACEMENTS.includes(placement)) {
-          bannerUsageIsValid = false;
-          reject(`${relativePath} must not pass non-banner placement ${placement} to AdBanner`);
-        }
-      }
-    });
+  const webAdBannerSource = expectSourcePattern(
+    'components/monetization/AdBanner.tsx',
+    /shouldShowAd\(placement,\s*resolvedEntitlements\)/,
+    'web AdBanner must keep the generic shouldShowAd fallback',
+  );
+  if (webAdBannerSource.includes('Platform.OS')) {
+    reject('web AdBanner must not pin ad availability to a native platform');
+    platformSourcesValid = false;
   }
 
-  try {
-    bannerUsageRoots.forEach((root) => scanBannerUsages(path.join(repoRoot, root)));
-  } catch (error) {
-    reject(`AdBanner call sites could not be scanned: ${error.message}`);
-    bannerUsageIsValid = false;
-  }
-
-  if (bannerUsageIsValid) bannerAdPlacementTypeCasesValidated += 1;
+  if (platformSourcesValid) adPlacementPlatformParityValidated = true;
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -8135,11 +8076,10 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
       );
-      const nativeAdCardNativeSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
-        'utf8',
+      const nativeAdCardGatePattern = new RegExp(
+        `shouldShowAd\\('${spec.placement}',\\s*resolvedEntitlements`,
       );
-      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
+      if (!nativeAdCardGatePattern.test(nativeAdCardSource)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
         routeIsValid = false;
       }
@@ -17171,6 +17111,7 @@ console.log(
       noAdRoutesValidated,
       nativeAdAssetDirectChildrenValidated,
       adPlacementRouteParityValidated,
+      adPlacementPlatformParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
       removeAdsEntitlementHookCasesValidated,

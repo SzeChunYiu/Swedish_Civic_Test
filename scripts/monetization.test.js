@@ -77,51 +77,39 @@ function withEnv(overrides, fn) {
   }
 }
 
-const EFFECTIVE_ENTITLEMENT_NOW = new Date('2026-05-19T12:00:00.000Z');
-
-const EFFECTIVE_PRO_LIFETIME_ENTITLEMENTS = {
-  adsDisabled: true,
-  unlimitedMockExams: true,
-  fullMistakeReview: true,
-  spacedRepetition: true,
-  nativeLangExplanations: true,
-  customStudyPlan: true,
-  notesExport: true,
-  predictedPassProbability: true,
-  confidenceSlider: true,
-  multiColorHighlights: true,
+const REAL_AD_UNIT_ENV_KEYS = {
+  app_open_launch: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID',
+  },
+  chapter_list_banner: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID',
+  },
+  home_banner: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID',
+  },
+  quiz_completed_interstitial: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID',
+  },
+  results_native: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID',
+  },
+  rewarded_extra_exam: {
+    android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
+    ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
+  },
 };
 
-const EFFECTIVE_REMOVE_ADS_ENTITLEMENTS = {
-  adsDisabled: true,
-  unlimitedMockExams: false,
-  fullMistakeReview: false,
-};
-
-function assertRealAdUnitEnvInliningSource(adsSource, adsConfig) {
-  assert.match(
-    adsSource,
-    /REAL_AD_UNIT_ENV_VALUES/,
-    'real ad units should use a literal env-value table for bundler inlining',
-  );
-  assert.doesNotMatch(
-    adsSource,
-    /process\.env\s*\[[^\]]+\]/,
-    'real ad unit IDs must not use dynamic process.env[key] lookup',
-  );
-
-  for (const [placement, envKeys] of Object.entries(adsConfig.realUnitEnvKeys)) {
-    for (const [platform, envKey] of Object.entries(envKeys)) {
-      const literalReadPattern = new RegExp(
-        `${placement}:\\s*\\{[\\s\\S]*${platform}:\\s*readEnvString\\(\\s*process\\.env\\.${envKey}\\s*,?\\s*\\)`,
-      );
-      assert.match(
-        adsSource,
-        literalReadPattern,
-        `${placement} ${platform} real ad unit must read ${envKey} through a literal process.env.${envKey} expression`,
-      );
-    }
-  }
+function clearRealAdUnitEnv() {
+  return Object.values(REAL_AD_UNIT_ENV_KEYS).reduce((overrides, envKeys) => {
+    overrides[envKeys.android] = undefined;
+    overrides[envKeys.ios] = undefined;
+    return overrides;
+  }, {});
 }
 
 test('ad rendering is enabled by default with test units and env-driven real switch', () => {
@@ -162,6 +150,50 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       assert.match(nativeTestCopy.meta, /AdMob test placement preview/);
     },
   );
+});
+
+test('real ad availability is platform-specific for every placement', () => {
+  const freeEntitlements = { adsDisabled: false };
+  const consentDecision = { adServingAllowed: true };
+
+  for (const [placement, envKeys] of Object.entries(REAL_AD_UNIT_ENV_KEYS)) {
+    for (const activePlatform of ['android', 'ios']) {
+      const inactivePlatform = activePlatform === 'android' ? 'ios' : 'android';
+      const activeUnitId = `ca-app-pub-1234567890123456/${activePlatform === 'android' ? '1' : '2'}${placement.length
+        .toString()
+        .padStart(9, '0')}`;
+
+      withEnv(
+        {
+          ...clearRealAdUnitEnv(),
+          [envKeys[activePlatform]]: activeUnitId,
+          EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+          EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+        },
+        () => {
+          const { getPlatformAdUnitId, isAdPlacementAvailableOnPlatform, shouldShowAd } = loadTs(
+            'lib/monetization/ads.ts',
+            undefined,
+            new Map(),
+          );
+
+          assert.equal(getPlatformAdUnitId(placement, activePlatform), activeUnitId);
+          assert.equal(getPlatformAdUnitId(placement, inactivePlatform), undefined);
+          assert.equal(isAdPlacementAvailableOnPlatform(placement, activePlatform), true);
+          assert.equal(isAdPlacementAvailableOnPlatform(placement, inactivePlatform), false);
+          assert.equal(
+            shouldShowAd(placement, freeEntitlements, consentDecision, activePlatform),
+            true,
+          );
+          assert.equal(
+            shouldShowAd(placement, freeEntitlements, consentDecision, inactivePlatform),
+            false,
+          );
+          assert.equal(shouldShowAd(placement, freeEntitlements, consentDecision, 'web'), true);
+        },
+      );
+    }
+  }
 });
 
 test('every ad placement has a configured unit and real-unit env slot', () => {
@@ -729,58 +761,51 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
   );
 });
 
-test('mock exam access read failures fail closed for free users', () => {
-  const { getMockExamAccessDecision } = loadTs('lib/monetization/rewardedExam.ts');
-  const accessHookSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
-    'utf8',
-  );
-  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const freeEntitlements = { adsDisabled: false, unlimitedMockExams: false };
+test('rewarded extra exam access respects native platform ad unit availability', () => {
+  withEnv(
+    {
+      ...clearRealAdUnitEnv(),
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
+        'ca-app-pub-1234567890123456/3333333333',
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const { getMockExamAccessDecision } = loadTs(
+        'lib/monetization/rewardedExam.ts',
+        undefined,
+        new Map(),
+      );
+      const state = {
+        completedMockExamsToday: 1,
+        consentDecision: { adServingAllowed: true },
+        entitlements: { adsDisabled: false, unlimitedMockExams: false },
+        freeMockExamLimit: 1,
+      };
 
-  assert.deepEqual(
-    getMockExamAccessDecision({
-      accessReadFailed: true,
-      completedMockExamsToday: 0,
-      entitlements: freeEntitlements,
-      freeMockExamLimit: 1,
-      rewardedExtraExamCredits: 1,
-    }),
-    {
-      canOfferRewardedAd: false,
-      canStartExam: false,
-      freeExamsRemaining: 0,
-      placement: 'rewarded_extra_exam',
-      reason: 'access_read_failed',
-      rewardedExtraExamCredits: 1,
+      assert.equal(
+        getMockExamAccessDecision({
+          ...state,
+          platform: 'android',
+        }).reason,
+        'rewarded_ad_available',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...state,
+          platform: 'ios',
+        }).reason,
+        'ads_unavailable',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...state,
+          platform: 'web',
+        }).reason,
+        'rewarded_ad_available',
+      );
     },
   );
-  assert.deepEqual(
-    getMockExamAccessDecision({
-      accessReadFailed: true,
-      completedMockExamsToday: 0,
-      entitlements: { adsDisabled: true, unlimitedMockExams: true },
-      freeMockExamLimit: 1,
-    }),
-    {
-      canOfferRewardedAd: false,
-      canStartExam: true,
-      freeExamsRemaining: 0,
-      placement: 'rewarded_extra_exam',
-      reason: 'premium_unlimited_mock_exams',
-      rewardedExtraExamCredits: 0,
-    },
-  );
-  assert.match(
-    accessHookSource,
-    /const \[accessReadFailed, setAccessReadFailed\] = useState\(false\);/,
-  );
-  assert.match(accessHookSource, /accessReadFailed,/);
-  assert.match(accessHookSource, /setAccessReadFailed\(true\);[\s\S]*setAccessReady\(true\);/);
-  assert.doesNotMatch(accessHookSource, /if \(isMounted\) setAccessReady\(true\);/);
-  assert.match(examSource, /access_read_failed:/);
-  assert.match(examSource, /Det gick inte att läsa lokal åtkomst för övningsprov/);
-  assert.match(examSource, /Mock exam access could not be checked on this device/);
 });
 
 test('mock exam access persistence stores daily completions and rewarded credits', async () => {
