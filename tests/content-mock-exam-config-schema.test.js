@@ -54,7 +54,7 @@ test('mock exam config panel uses unofficial practice-result copy', () => {
     '75' + '%',
   ];
 
-  assert.match(source, /scoreModeLabel: 'Resultat är övning'/);
+  assert.match(source, /scoreModeLabel: 'Övningsresultat'/);
   assert.match(source, /scoreModeLabel: 'Practice result'/);
   assert.match(source, /sourceScopeLabel: 'UHR-baserade frågor'/);
   assert.match(source, /sourceScopeLabel: 'UHR-based questions'/);
@@ -68,6 +68,8 @@ test('mock exam config panel uses unofficial practice-result copy', () => {
       `MockExamConfigPanel should not expose unsupported score-source copy: ${fragment}`,
     );
   }
+
+  assert.doesNotMatch(source, /Resultat är övning/);
 });
 
 test('mock exam config TypeScript schema parity rejects optional field drift', () => {
