@@ -4,6 +4,10 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const {
+  findStaticHeadMetadataDescriptionIssues,
+  formatUnsupportedStaticOutcomeSlogans,
+} = require('./static-outcome-copy-guard');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
 const LOCAL_SITE_QUESTIONS_PATH = path.join(__dirname, '..', 'site', 'questions.js');
@@ -146,6 +150,19 @@ async function checkLiveSite(inputUrl, options = {}) {
     ]) && containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
       ? pass('practice hub assets')
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
+  );
+
+  const staticHeadMetadataDescriptionIssues = findStaticHeadMetadataDescriptionIssues(
+    index,
+    'index.html',
+  );
+  checks.push(
+    staticHeadMetadataDescriptionIssues.length === 0
+      ? pass('static head metadata description')
+      : fail(
+          'static head metadata description',
+          formatUnsupportedStaticOutcomeSlogans(staticHeadMetadataDescriptionIssues),
+        ),
   );
 
   checks.push(
