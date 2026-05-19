@@ -167,3 +167,35 @@ require('./scripts/validate-content.js');
     /q006 authored true\/false source explanation contains answer-judgement boilerplate/,
   );
 });
+
+test('authored source parity rejects true/false explanation answer-judgement conclusions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "'Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.'",
+      "'Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden, so the statement is true.'",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q006 authored true\/false source explanation contains answer-judgement boilerplate/,
+  );
+});
