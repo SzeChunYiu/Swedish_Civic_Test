@@ -37,7 +37,7 @@
     "test:architecture": "node --test scripts/architecture-scaffold.test.js",
     "test:router-shell": "node --test scripts/router-shell.test.js",
     "test:screenshot-manifest": "node --test scripts/screenshot-manifest.test.js scripts/visual-smoke-report.test.js",
-    "test:release-preflight": "node --test scripts/release-preflight.test.js",
+    "test:release-preflight": "node --test scripts/release-preflight.test.js tests/release-scope-v11-guard.test.js",
     "release:web-export-smoke": "rm -rf dist-web && npm run build:web:export",
     "release:native-prebuild-smoke": "node scripts/native-prebuild-smoke.js",
     "test:theme-discipline": "node --test scripts/theme-discipline.test.js",
