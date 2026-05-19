@@ -392,6 +392,22 @@ function englishTraditionalCelebrationAnswer(answer: string): string {
   return lowerFirst(answer);
 }
 
+function swedishContributionStatement(answer: string, target: string): string {
+  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
+  if (built) return `Byggandet av ${built[1]} ${built[2]} bidrog till ${target}`;
+  return `${answer} bidrog till ${target}`;
+}
+
+function englishContributionStatement(answer: string, target: string): string {
+  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
+  if (built) {
+    return `The building of ${built[1]} ${built[2]} contributed to ${target}`;
+  }
+  const clause = answer.trim().match(/^That\s+(.+)$/i);
+  if (clause) return `The fact that ${clause[1]} contributed to ${target}`;
+  return `${answer} contributed to ${target}`;
+}
+
 function swedishPurposeClause(value: string): string {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
 }
@@ -1436,6 +1452,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match)
     return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
 
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^Vilken händelse från (.+?) kopplas till (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
   match = q.match(/^När firas (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
 
@@ -1555,7 +1577,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^När byggdes (.+)$/i);
   if (match) return `${upperFirst(match[1])} byggdes ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
+  match = q.match(/^Vilka kristna kyrkor och samfund finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[1]}`;
 
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
@@ -1584,7 +1606,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${answer} finns i ${match[2]}`;
 
   match = q.match(/^Vad bidrog till (.+)$/i);
-  if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
+  if (match) return swedishContributionStatement(answer, match[1]);
 
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
@@ -1896,6 +1918,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
 
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which event from (.+?) is linked to (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
   match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
 
@@ -2052,8 +2080,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^When were (.+?) built$/i);
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
 
-  match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
-  if (match) return `${answer} exist in ${match[1]}`;
+  match = q.match(/^Which Christian churches and communities exist in (.+)$/i);
+  if (match) return `${answer} are present in ${match[1]}`;
 
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
@@ -2077,11 +2105,11 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
   if (match) return englishGainedRightStatement(match[1], answer, match[2]);
 
-  match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
+  match = q.match(/^Which branches within (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
 
   match = q.match(/^What contributed to (.+)$/i);
-  if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
+  if (match) return englishContributionStatement(answer, match[1]);
 
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;

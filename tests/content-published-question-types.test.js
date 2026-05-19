@@ -2789,7 +2789,12 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
+  for (const id of ['q563', 'q574']) {
+    assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
+  }
+  for (const id of ['q598', 'q599']) {
+    assert.match(output, new RegExp(`${id} carries source-authority wording in the stem`));
+  }
 });
 
 test('published question schema rejects residual q611-q660 true/false wording', () => {

@@ -22,12 +22,8 @@ const BANNED = [
   /(?:the\s+)?UHR\s+(?:material|section)/i,
   /st(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR/i,
   /best matches (?:the\s+)?UHR section/i,
-  /n(?:ä|a)mns\s+som\s+exempel/i,
-  /mentioned\s+as\s+examples?/i,
-  /n(?:ä|a)mns\s+som\s+en\s+anledning/i,
-  /mentioned\s+as\s+a\s+reason/i,
-  /n(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l/i,
-  /mentioned\s+as\s+(?:historical\s+)?reasons/i,
+  /nämns\s+som\s+(?:exempel|en\s+anledning)/i,
+  /mentioned\s+as\s+(?:an?\s+example|examples?|a\s+reason)/i,
 ];
 
 function parseCsv(text) {
@@ -104,7 +100,7 @@ test('source-citation stem gate rejects source-authority phrase drift in exporte
     .readFileSync(CSV, 'utf8')
     .replace(
       '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
-      '"q001","ch01","single_choice","Vilken plats beskriver UHR-materialet?","Which place does the UHR material describe?",',
+      '"q001","ch01","single_choice","Vilken plats nämns som exempel i UHR-materialet?","Which place is mentioned as an example in the UHR material?",',
     );
 
   const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);

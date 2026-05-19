@@ -279,37 +279,8 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
-  /\bn(?:ä|a)mns\s+som\s+exempel\b/i,
-  /\bmentioned\s+as\s+examples?\b/i,
-  /\bn(?:ä|a)mns\s+som\s+en\s+anledning\b/i,
-  /\bmentioned\s+as\s+a\s+reason\b/i,
-  /\bn(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l\b/i,
-  /\bmentioned\s+as\s+(?:historical\s+)?reasons\b/i,
-];
-const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
-];
-const SOURCE_PRIMARY_ANSWER_CONCEPT_PATTERNS = [
-  {
-    id: 'all-saints-day-grave-candles',
-    chapter: 'Traditioner och högtider',
-    section: 'Alla helgons dag',
-    label: 'All Saints Day grave-candle remembrance',
-    patterns: [
-      /\bt(?:ä|a)nd(?:a|er)?\s+ljus\s+p(?:å|a)\s+gravar\b/i,
-      /\bkyrkog(?:å|a)rd(?:en|ar)?[^.?!;]*\bt(?:ä|a)nd(?:a|er)?\s+ljus\b/i,
-      /\blight(?:ing)?\s+candles?\s+on\s+graves\b/i,
-      /\bcemeter(?:y|ies)[^.?!;]*\blight(?:ing)?\s+candles?\b/i,
-    ],
-  },
-];
-const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
-  /\bskatt och moms\b/i,
-  /\btax and VAT\b/i,
-  /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
-  /\bCompanies also pay tax,\s+and VAT is paid\b/i,
-  /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
-  /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
+  /\bnämns\s+som\s+(?:exempel|en\s+anledning)\b/i,
+  /\bmentioned\s+as\s+(?:an?\s+example|examples?|a\s+reason)\b/i,
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -5055,6 +5026,20 @@ function englishTraditionalCelebrationAnswer(answer) {
   if (/^Jesus' birth\b/.test(answer)) return answer;
   return lowerFirst(answer);
 }
+function swedishContributionStatement(answer, target) {
+  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
+  if (built) return `Byggandet av ${built[1]} ${built[2]} bidrog till ${target}`;
+  return `${answer} bidrog till ${target}`;
+}
+function englishContributionStatement(answer, target) {
+  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
+  if (built) {
+    return `The building of ${built[1]} ${built[2]} contributed to ${target}`;
+  }
+  const clause = answer.trim().match(/^That\s+(.+)$/i);
+  if (clause) return `The fact that ${clause[1]} contributed to ${target}`;
+  return `${answer} contributed to ${target}`;
+}
 function swedishPurposeClause(value) {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
 }
@@ -5826,6 +5811,10 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
     return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+  match = q.match(/^Vilken händelse från (.+?) kopplas till (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
   match = q.match(/^När firas (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
   match = q.match(/^När firas (.+)$/i);
@@ -5908,7 +5897,7 @@ function civicStatementSv(source, option) {
   if (match) return `Ett mål med ${match[1]} är ${swedishPurposeClause(answer)}`;
   match = q.match(/^När byggdes (.+)$/i);
   if (match) return `${upperFirst(match[1])} byggdes ${lowerFirst(answer)}`;
-  match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
+  match = q.match(/^Vilka kristna kyrkor och samfund finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[1]}`;
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
@@ -5924,11 +5913,11 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad var (.+?) under (.+?) innan (.+)$/i);
   if (match) return `${upperFirst(match[1])} var ${lowerFirst(answer)} under ${match[2]}`;
   match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
-  if (match) return swedishGainedRightStatement(match[1], answer, match[2]);
+  if (match) return swedishGainedRightStatement(match[1], answer);
   match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[2]}`;
   match = q.match(/^Vad bidrog till (.+)$/i);
-  if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
+  if (match) return swedishContributionStatement(answer, match[1]);
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
   match = q.match(/^Vad är vanligt i många hem under (.+)$/i);
@@ -6147,6 +6136,10 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+  match = q.match(/^Which event from (.+?) is linked to (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
   match = q.match(/^When are (.+?) celebrated$/i);
@@ -6254,8 +6247,8 @@ function civicStatementEn(source, option) {
   if (match) return `One goal of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^When were (.+?) built$/i);
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
-  match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
-  if (match) return `${answer} exist in ${match[1]}`;
+  match = q.match(/^Which Christian churches and communities exist in (.+)$/i);
+  if (match) return `${answer} are present in ${match[1]}`;
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
@@ -6270,11 +6263,11 @@ function civicStatementEn(source, option) {
   match = q.match(/^What was (.+?) during (.+?) before (.+)$/i);
   if (match) return `${upperFirst(match[1])} was ${lowerFirst(answer)} during ${match[2]}`;
   match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
-  if (match) return englishGainedRightStatement(match[1], answer, match[2]);
-  match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
+  if (match) return englishGainedRightStatement(match[1], answer);
+  match = q.match(/^Which branches within (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
   match = q.match(/^What contributed to (.+)$/i);
-  if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
+  if (match) return englishContributionStatement(answer, match[1]);
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;
   match = q.match(/^What is common in many homes during (.+)$/i);

@@ -2121,8 +2121,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Kristendom',
       pageApprox: 43,
     },
-    'Vilka kristna kyrkor eller samfund finns i dagens Sverige?',
-    'Which Christian churches or communities exist in Sweden today?',
+    'Vilka kristna kyrkor och samfund finns i dagens Sverige?',
+    'Which Christian churches and communities exist in Sweden today?',
     [
       [
         'Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor',
@@ -2338,7 +2338,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch12',
     { chapter: 'En sekulär stat och ett mångreligiöst land', section: 'Islam', pageApprox: 44 },
     'Vilka riktningar inom islam finns i svenska muslimska församlingar?',
-    'Which branches of Islam are found in Swedish Muslim congregations?',
+    'Which branches within Islam are found in Swedish Muslim congregations?',
     [
       ['Sunni och shia', 'Sunni and Shia'],
       ['Katolska och ortodoxa kyrkor', 'Catholic and Orthodox churches'],
@@ -2410,8 +2410,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q124',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Sveriges nationaldag', pageApprox: 46 },
-    'Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?',
-    "What happened on 6 June 1523, a date connected with Sweden's National Day?",
+    'Vilken händelse från 1523 kopplas till Sveriges nationaldag den 6 juni?',
+    "Which event from 1523 is linked to Sweden's National Day on 6 June?",
     [
       ['Gustav Vasa valdes till svensk kung', 'Gustav Vasa was elected king of Sweden'],
       ['Sverige gick med i EU', 'Sweden joined the EU'],

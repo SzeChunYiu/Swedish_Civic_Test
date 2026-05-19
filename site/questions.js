@@ -5109,8 +5109,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which Christian churches or communities exist in Sweden today?",
-      "sv": "Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
+      "en": "Which Christian churches and communities exist in Sweden today?",
+      "sv": "Vilka kristna kyrkor och samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -5489,7 +5489,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which branches of Islam are found in Swedish Muslim congregations?",
+      "en": "Which branches within Islam are found in Swedish Muslim congregations?",
       "sv": "Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
@@ -5631,8 +5631,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What happened on 6 June 1523, a date connected with Sweden's National Day?",
-      "sv": "Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
+      "en": "Which event from 1523 is linked to Sweden's National Day on 6 June?",
+      "sv": "Vilken händelse från 1523 kopplas till Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {
@@ -27349,8 +27349,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... exist in Sweden today.",
-      "sv": "... finns i dagens Sverige."
+      "en": "Which answer best matches? Which Christian churches and communities exist in Sweden today?",
+      "sv": "Vilket svar stämmer bäst? Vilka kristna kyrkor och samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -27398,7 +27398,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Orthodox churches, the Catholic Church, and Protestant churches exist in Sweden today.",
+      "en": "Orthodox churches, the Catholic Church, and Protestant churches are present in Sweden today.",
       "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor finns i dagens Sverige."
     },
     "opts": [
@@ -27439,7 +27439,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Only the Church of Sweden and no other communities exist in Sweden today.",
+      "en": "Only the Church of Sweden and no other communities are present in Sweden today.",
       "sv": "Bara Svenska kyrkan och inga andra samfund finns i dagens Sverige."
     },
     "opts": [
@@ -27480,8 +27480,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which Christian churches or communities exist in Sweden today?",
-      "sv": "Välj rätt alternativ: Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
+      "en": "Choose the correct option: Which Christian churches and communities exist in Sweden today?",
+      "sv": "Välj rätt alternativ: Vilka kristna kyrkor och samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -27529,8 +27529,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
-      "sv": "... bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet."
+      "en": "Which answer best matches? What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vilket svar stämmer bäst? Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -28805,8 +28805,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... are found in Swedish Muslim congregations.",
-      "sv": "... finns i svenska muslimska församlingar."
+      "en": "Which answer best matches? Which branches within Islam are found in Swedish Muslim congregations?",
+      "sv": "Vilket svar stämmer bäst? Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -28936,7 +28936,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which branches of Islam are found in Swedish Muslim congregations?",
+      "en": "Choose the correct option: Which branches within Islam are found in Swedish Muslim congregations?",
       "sv": "Välj rätt alternativ: Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
@@ -29349,8 +29349,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What happened on 6 June 1523, a date connected with Sweden's National Day ...?",
-      "sv": "Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag ...?"
+      "en": "Which answer best matches? Which event from 1523 is linked to Sweden's National Day on 6 June?",
+      "sv": "Vilket svar stämmer bäst? Vilken händelse från 1523 kopplas till Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {
@@ -29480,8 +29480,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What happened on 6 June 1523, a date connected with Sweden's National Day?",
-      "sv": "Välj rätt alternativ: Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
+      "en": "Choose the correct option: Which event from 1523 is linked to Sweden's National Day on 6 June?",
+      "sv": "Välj rätt alternativ: Vilken händelse från 1523 kopplas till Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {

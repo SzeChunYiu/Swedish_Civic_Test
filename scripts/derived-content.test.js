@@ -978,8 +978,8 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     byId.get(sourceQ002FalseStatementId)?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationSv, sourceQ002.explanationSv);
-  assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationEn, sourceQ002.explanationEn);
+  assert.equal(byId.get('q150')?.explanationSv, byId.get('q002')?.explanationSv);
+  assert.equal(byId.get('q150')?.explanationEn, byId.get('q002')?.explanationEn);
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
@@ -1240,11 +1240,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'På olika platser i Sverige finns buddhistiska och hinduiska församlingar och tempel för buddhister och hinduer.',
       'In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q114', 'trueStatement')]: [
+    q598: [
       'Resor till Asien och ökat intresse för meditation och yoga bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet.',
       'Travel to Asia and increased interest in meditation and yoga contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q114', 'falseStatement')]: [
+    q599: [
       'Byggandet av Sveriges första moskéer under 1970-talet bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet.',
       "The building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
     ],
