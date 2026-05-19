@@ -1381,6 +1381,11 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(webSource, /\{unit\?\.testOnly \? copy\.testBody : copy\.liveBody\}/);
   assert.match(webSource, /accessibilityLabel=\{copy\.closeAccessibilityLabel\}/);
   assert.match(webSource, /\{copy\.closeLabel\}/);
+  const closedGuardIndex = webSource.indexOf('if (!visible) {');
+  const modalIndex = webSource.indexOf('<Modal');
+  assert.ok(closedGuardIndex >= 0, 'web launch ad must explicitly unmount when closed');
+  assert.ok(modalIndex > closedGuardIndex, 'closed-state guard must run before rendering Modal');
+  assert.match(webSource.slice(closedGuardIndex, modalIndex), /return null;/);
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /AppOpenAd/);
   assert.match(nativeSource, /launchPopupShownThisRuntime/);
