@@ -188,6 +188,7 @@ export default function Screen() {
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
@@ -203,6 +204,7 @@ export default function Screen() {
     questionProgress,
     questions,
     chapters,
+    mockExamSessions,
   });
   const readinessVerdict = copy.readinessVerdicts[readiness.verdict];
   const readinessDetails = copy.readinessDetails(
