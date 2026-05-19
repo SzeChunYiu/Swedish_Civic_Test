@@ -244,10 +244,17 @@ test('architecture scaffold files expose expected public exports', () => {
   assert.deepEqual(missingExports, []);
 });
 
-test('root component barrel does not export the retired ChapterRow primitive', () => {
+test('root component barrel does not export retired unreachable primitives', () => {
   const componentBarrel = readText('components/index.ts');
+  const retiredPrimitivePaths = ['components/ChapterRow.tsx', 'components/Screen.tsx'];
+  const retiredPrimitiveExports = ['ChapterRow', 'Screen'];
 
-  assert.equal(pathExists('components/ChapterRow.tsx'), false);
-  assert.doesNotMatch(componentBarrel, /['"]\.\/ChapterRow['"]/);
-  assert.doesNotMatch(componentBarrel, /\bChapterRow\b/);
+  for (const relativePath of retiredPrimitivePaths) {
+    assert.equal(pathExists(relativePath), false);
+  }
+
+  for (const exportName of retiredPrimitiveExports) {
+    assert.doesNotMatch(componentBarrel, new RegExp(`['"]\\./${exportName}['"]`));
+    assert.doesNotMatch(componentBarrel, new RegExp(`\\b${exportName}\\b`));
+  }
 });

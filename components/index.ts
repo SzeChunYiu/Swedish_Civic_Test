@@ -9,7 +9,6 @@ export * from './PillBadge';
 export * from './ProgressBar';
 export * from './QuestionNavigator';
 export * from './ResultSummary';
-export * from './Screen';
 export * from './Surface';
 export * from './Text';
 export * from './quiz/QuestionSourceCitation';
