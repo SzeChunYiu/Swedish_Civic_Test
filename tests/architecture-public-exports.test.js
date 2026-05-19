@@ -251,3 +251,20 @@ test('root component barrel does not export the retired ChapterRow primitive', (
   assert.doesNotMatch(componentBarrel, /['"]\.\/ChapterRow['"]/);
   assert.doesNotMatch(componentBarrel, /\bChapterRow\b/);
 });
+
+test('mock exam draft primitives are not public exports unless the Exam route renders them', () => {
+  const componentBarrel = readText('components/index.ts');
+  const examRoute = readText('app/(tabs)/exam.tsx');
+
+  for (const componentName of ['MockExamStatusBar', 'MockExamConfigPanel']) {
+    const renderedByExamRoute = new RegExp(`\\b${componentName}\\b`).test(examRoute);
+    const exportedByRootBarrel = new RegExp(
+      `['"]\\./${componentName}['"]|\\b${componentName}\\b`,
+    ).test(componentBarrel);
+
+    assert.ok(
+      renderedByExamRoute || !exportedByRootBarrel,
+      `${componentName} must be rendered by app/(tabs)/exam.tsx before root export`,
+    );
+  }
+});
