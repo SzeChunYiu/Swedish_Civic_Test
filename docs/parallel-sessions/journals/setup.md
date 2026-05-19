@@ -1192,3 +1192,12 @@ Verification: clean worktree from current `origin/main` `89e28b3b`; source-relev
 PR: pending from `task/setup/live-deploy-recheck-1779154432` at handoff commit time.
 Blocked? yes - SITE-P0-5 remains external deploy capacity/operator production evidence; no SETUP-owned source drift or unblocked local P0 SETUP source atom was found, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held except for fresh current-main P0 site or release source evidence; keep `REVIEWER-SITE-LIVE-DEPLOY-STALE-1` open until production serves current `origin/main` and the hash-aware live smoke passes.
+
+## Iteration 251 - 2026-05-19
+
+Task completed: Card accessibility validator-red repair - restored the shared Card native accessibility role passthrough so `validate:content` accepts current main after the Card contract change.
+Artifacts changed: `components/ui/Card.tsx`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `3ecdda34`; pre-fix `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` failed with `Card missing native accessibility role for accessibility parity`; post-fix `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `cardAccessibilityParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-card-accessibility-parity.test.js` exit 0 with 2/2 passing; focused `scripts/ui-effects.test.js` Card scaffold check exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier for `components/ui/Card.tsx` exit 0; `git diff --check` exit 0.
+PR: pending from current SETUP branch at handoff commit time.
+Blocked? no - this fixes the current-main content-validation regression; SITE-P0-5 remains external production freshness and no Vercel CLI was run.
+Next suggested validator action: inspect the Card role passthrough repair and rerun `npm run validate:content` plus `tests/content-card-accessibility-parity.test.js` before accepting the validator-red repair.

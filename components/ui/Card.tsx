@@ -24,8 +24,6 @@ export function Card({
   ...viewProps
 }: CardProps) {
   const groupedForAccessibility = accessible ?? Boolean(accessibilityLabel || accessibilityRole);
-  const resolvedAccessibilityRole =
-    accessibilityRole ?? (groupedForAccessibility ? 'summary' : undefined);
   const hintId = useId();
   const cardAccessibilityHintId =
     accessibilityHint && Platform.OS === 'web'
@@ -39,7 +37,7 @@ export function Card({
       accessible={groupedForAccessibility}
       accessibilityHint={accessibilityHint}
       accessibilityLabel={accessibilityLabel}
-      accessibilityRole={resolvedAccessibilityRole}
+      accessibilityRole={accessibilityRole}
       style={[styles.card, elevated ? styles.elevated : null, style]}
       {...viewProps}
     >
