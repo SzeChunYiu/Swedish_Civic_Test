@@ -1218,6 +1218,10 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.match(mobileConsentSource, /expo-tracking-transparency/);
   assert.match(mobileConsentSource, /AdsConsent\.gatherConsent/);
   assert.match(mobileConsentSource, /mobileAds\(\)\.initialize/);
+  assert.doesNotMatch(
+    mobileConsentSource,
+    /Promise\.all\(\s*\[[\s\S]*resolveTrackingTransparencyStatus[\s\S]*resolveUmpConsentStatus/,
+  );
   assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
   assert.match(nativeBannerSource, /useMobileAdsConsent/);
   assert.match(nativeBannerSource, /consentDecision/);
@@ -1259,7 +1263,47 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(initializedResult.state.umpConsentStatus, 'obtained');
   assert.equal(initializedResult.decision.canInitializeGoogleMobileAds, true);
   assert.equal(initializedResult.decision.requestNonPersonalizedAdsOnly, true);
-  assert.deepEqual(calls, ['att:get', 'ump', 'att:request', 'ads:init']);
+  assert.deepEqual(calls, ['att:get', 'att:request', 'ump', 'ads:init']);
+
+  const sequencedCalls = [];
+  let attFinished = false;
+  await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    runtime: {
+      async gatherUmpConsent() {
+        sequencedCalls.push(`ump:${attFinished ? 'after-att' : 'before-att'}`);
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      async getTrackingPermissionsAsync() {
+        sequencedCalls.push('att:get:start');
+        await Promise.resolve();
+        sequencedCalls.push('att:get:end');
+        return { status: 'undetermined' };
+      },
+      async initializeGoogleMobileAds() {
+        sequencedCalls.push('ads:init');
+      },
+      platform: 'ios',
+      async requestTrackingPermissionsAsync() {
+        sequencedCalls.push('att:request:start');
+        await Promise.resolve();
+        sequencedCalls.push('att:request:end');
+        attFinished = true;
+        return { status: 'denied' };
+      },
+    },
+  });
+
+  assert.deepEqual(sequencedCalls, [
+    'att:get:start',
+    'att:get:end',
+    'att:request:start',
+    'att:request:end',
+    'ump:after-att',
+    'ads:init',
+  ]);
 
   const disabledCalls = [];
   const disabledState = await collectMobileAdsConsentState({
