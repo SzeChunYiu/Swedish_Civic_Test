@@ -261,6 +261,76 @@ const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
 };
+const EXPECTED_SEARCH_ROUTE_COPY_LABELS = {
+  sv: [
+    'Bläddra bland kapitel',
+    'Bläddra bland alla kapitel',
+    '${chapterName} · ${questionId}',
+    'Rensa sökningen',
+    'Rensa',
+    'Prova till exempel riksdag, skatt, allemansrätten eller midsommar.',
+    'Sök i frågebanken',
+    'Snabbsök',
+    'Sök efter frågor, svar, förklaringar, taggar eller kapitel',
+    'Sök efter riksdag, skatt, midsommar...',
+    'Inga frågor matchar "${query}". Testa ett kortare ord eller bläddra bland kapitlen.',
+    'Inga träffar',
+    'Öppna kapitlet ${chapterName}',
+    'Öppna quizfrågan: ${questionTitle}',
+    'Öva frågan',
+    '${count} träffar',
+    'Matchande frågor',
+    'Hitta snabbt begrepp, svarsalternativ och förklaringar i den lokala frågebanken.',
+    'Sök frågor',
+  ],
+  en: [
+    'Browse chapters',
+    'Browse all chapters',
+    '${chapterName} · ${questionId}',
+    'Clear search',
+    'Clear',
+    'Try riksdag, tax, right of public access, or midsummer.',
+    'Search the question bank',
+    'Quick search',
+    'Search questions, answers, explanations, tags, or chapters',
+    'Search riksdag, tax, midsummer...',
+    'No questions match "${query}". Try a shorter word or browse by chapter.',
+    'No results',
+    'Open chapter ${chapterName}',
+    'Open quiz question: ${questionTitle}',
+    'Practice question',
+    '${count} results',
+    'Matching questions',
+    'Quickly find concepts, answer options, and explanations in the local question bank.',
+    'Search questions',
+  ],
+};
+const EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'search route must import AppLanguage from settings'],
+  ['type SearchCopy = {', 'search route must define a typed copy contract'],
+  [
+    'const searchCopy: Record<AppLanguage, SearchCopy> = {',
+    'search route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'search route must read language from settings store',
+  ],
+  ['const copy = searchCopy[language];', 'search route must select copy from settings language'],
+  [
+    'searchQuestions({ chapters, language, query: trimmedQuery, questions, limit: 12 })',
+    'search route must query the local question bank with the settings language',
+  ],
+  [
+    '<QuestionDisclaimer language={language} />',
+    'search route disclaimer must receive settings language',
+  ],
+  ["pathname: '/quiz/[sessionId]'", 'search route must link results to routed quiz questions'],
+  [
+    'href={`/chapter/${result.chapter.id}`}',
+    'search route must link result chapter context to chapter pages',
+  ],
+];
 const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
   sv: [
     '5-minutersövning',
@@ -5658,6 +5728,11 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const questionSearchModule = loadTs('lib/search/questionSearch.ts');
+const searchQuestions = questionSearchModule.searchQuestions;
+const getQuestionSearchResultTitle = questionSearchModule.getQuestionSearchResultTitle;
+const getQuestionSearchResultChapter = questionSearchModule.getQuestionSearchResultChapter;
+const getQuestionSearchResultSnippet = questionSearchModule.getQuestionSearchResultSnippet;
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
@@ -5767,6 +5842,10 @@ let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
+let searchRouteCopyLabelsValidated = 0;
+let searchRouteCopyParityValidated = false;
+let questionSearchRuntimeCasesValidated = 0;
+let questionSearchRuntimeParityValidated = false;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let examRouteCopyLabelsValidated = 0;
@@ -7184,6 +7263,158 @@ function validateExamRouteCopyParity() {
   );
   if (valid && examRouteCopyLabelsValidated === expectedLabelCount) {
     examRouteCopyParityValidated = true;
+  }
+}
+
+function validateSearchRouteCopyParity() {
+  let valid = true;
+  let searchRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!searchRoute.includes(snippet)) reject(message);
+  });
+
+  if (searchRoute.includes('Question search is coming')) {
+    reject('search route must replace placeholder search copy');
+  }
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_SEARCH_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`search route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!searchRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`search route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`search route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) searchRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_SEARCH_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && searchRouteCopyLabelsValidated === expectedLabelCount) {
+    searchRouteCopyParityValidated = true;
+  }
+}
+
+function validateQuestionSearchRuntimeParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (typeof searchQuestions !== 'function') {
+    reject('question search runtime must export searchQuestions');
+    return;
+  }
+
+  const cases = [
+    {
+      description: 'English Riksdag query finds a Riksdag question',
+      language: 'en',
+      query: 'riksdag',
+      assertResults(results) {
+        return results.some((result) =>
+          /riksdag/i.test(getQuestionSearchResultTitle(result, 'en')),
+        );
+      },
+    },
+    {
+      description: 'Swedish midsommar query finds Swedish midsummer content',
+      language: 'sv',
+      query: 'midsommar',
+      assertResults(results) {
+        return results.some((result) =>
+          /midsommar/i.test(
+            `${getQuestionSearchResultTitle(result, 'sv')} ${getQuestionSearchResultSnippet(
+              result,
+              'sv',
+            )}`,
+          ),
+        );
+      },
+    },
+    {
+      description: 'numeric 349 query ranks the authored Riksdag member count question first',
+      language: 'sv',
+      query: '349',
+      assertResults(results) {
+        return results[0]?.question.id === 'q017';
+      },
+    },
+    {
+      description: 'blank query returns no results',
+      language: 'en',
+      query: ' ',
+      assertResults(results) {
+        return Array.isArray(results) && results.length === 0;
+      },
+    },
+  ];
+
+  for (const runtimeCase of cases) {
+    const results = searchQuestions({
+      chapters,
+      language: runtimeCase.language,
+      query: runtimeCase.query,
+      questions,
+      limit: 12,
+    });
+
+    if (!Array.isArray(results)) {
+      reject(`question search ${runtimeCase.description} must return an array`);
+      continue;
+    }
+    if (!runtimeCase.assertResults(results)) {
+      reject(`question search failed case: ${runtimeCase.description}`);
+      continue;
+    }
+
+    for (const result of results) {
+      if (!result?.question?.id || !result?.chapter?.id || typeof result.score !== 'number') {
+        reject(`question search ${runtimeCase.description} returned malformed result`);
+        continue;
+      }
+      const title = getQuestionSearchResultTitle(result, runtimeCase.language);
+      const chapter = getQuestionSearchResultChapter(result, runtimeCase.language);
+      const snippet = getQuestionSearchResultSnippet(result, runtimeCase.language);
+      if (!hasText(title) || !hasText(chapter) || !hasText(snippet)) {
+        reject(`question search ${runtimeCase.description} returned incomplete display text`);
+      }
+    }
+
+    questionSearchRuntimeCasesValidated += 1;
+  }
+
+  if (valid && questionSearchRuntimeCasesValidated === cases.length) {
+    questionSearchRuntimeParityValidated = true;
   }
 }
 
@@ -13317,6 +13548,8 @@ validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
+validateSearchRouteCopyParity();
+validateQuestionSearchRuntimeParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
 validateQuizRouteHeaderParity();
@@ -13439,6 +13672,10 @@ console.log(
       mockExamChapterBalanceParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
+      searchRouteCopyLabelsValidated,
+      searchRouteCopyParityValidated,
+      questionSearchRuntimeCasesValidated,
+      questionSearchRuntimeParityValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,
       examRouteCopyLabelsValidated,
