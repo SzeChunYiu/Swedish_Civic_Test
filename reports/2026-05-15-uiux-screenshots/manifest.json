@@ -1,0 +1,153 @@
+{
+  "capturedAt": "2026-05-19T12:10:13.097Z",
+  "viewport": "iPhone 12 via Playwright project config",
+  "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
+  "launchOverlayPolicy": "Visual smoke dismisses the launch sponsor overlay before every screenshot and rejects visible overlays.",
+  "duplicatePolicy": "Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.",
+  "duplicateExplanations": [
+    {
+      "names": [
+        "home",
+        "index"
+      ],
+      "reason": "The root route is a redirect to /home, so it may match the Home screenshot exactly."
+    }
+  ],
+  "routes": [
+    {
+      "name": "index",
+      "route": "/",
+      "file": "index.png",
+      "bytes": 119268,
+      "sha256": "95715ef8b5421133a2b7568afa60f6cf04bce996e0903544ad318674b0671fb5",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "onboarding",
+      "route": "/onboarding",
+      "file": "onboarding.png",
+      "bytes": 195771,
+      "sha256": "e1edc56863882ee47c36c13a445caf961633cc7308409ad793c64dcf84087434",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "home",
+      "route": "/home",
+      "file": "home.png",
+      "bytes": 157282,
+      "sha256": "20973c212b3a52fbec18c3ccbf70e8c97e3e321e06385c99ad68a4f56bdd42b2",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "learn",
+      "route": "/learn",
+      "file": "learn.png",
+      "bytes": 187346,
+      "sha256": "b001c1e9ee1eced2470c17a3f4ba0b4193b14e338649b8ad30f5da0022523736",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "practice",
+      "route": "/practice",
+      "file": "practice.png",
+      "bytes": 169917,
+      "sha256": "ad44e6b0c0f4277b34e846e9b83de826dfa8a2b109076e3169a48ea3f8b60984",
+      "launchOverlayDismissed": false,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "exam",
+      "route": "/exam",
+      "file": "exam.png",
+      "bytes": 165351,
+      "sha256": "9c357e9d013e117169d2922f17375004dee0cd87480332d9a87d408cf742a9b8",
+      "launchOverlayDismissed": false,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "mistakes",
+      "route": "/mistakes",
+      "file": "mistakes.png",
+      "bytes": 196017,
+      "sha256": "86e3eb9f353a853bc03b7268d280d768f3b7fac244ecb8af7241b7b6fa1ad912",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "profile",
+      "route": "/profile",
+      "file": "profile.png",
+      "bytes": 123138,
+      "sha256": "c45d9eec059709582f1ee9209e35ad1b693ec5e8eab26bd6e974e3cc36e0a81f",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "settings",
+      "route": "/settings",
+      "file": "settings.png",
+      "bytes": 135356,
+      "sha256": "880178446619ee024a4ca4560e5a0313f30f1844b0d5533ba78f881c29a5f6c4",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "chapter-ch01",
+      "route": "/chapter/ch01",
+      "file": "chapter-ch01.png",
+      "bytes": 178083,
+      "sha256": "ea7513e9f6a10ad7cf43328a2e046457f806a55615aae467bdb48266a2142ee4",
+      "launchOverlayDismissed": true,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "disclaimer",
+      "route": "/disclaimer",
+      "file": "disclaimer.png",
+      "bytes": 180842,
+      "sha256": "e685b9cdf25709f29e8c56349f6d8a07362517c13326806da41c50476170311d",
+      "launchOverlayDismissed": false,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "privacy",
+      "route": "/privacy",
+      "file": "privacy.png",
+      "bytes": 225534,
+      "sha256": "8fef1a31d40bdd9d822c86e2a4afb62df43e0629307103caaecf049201bc26f6",
+      "launchOverlayDismissed": false,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "terms",
+      "route": "/terms",
+      "file": "terms.png",
+      "bytes": 211453,
+      "sha256": "dacd5a715a1351aaf81246d4267abeaccdd3347301ac77eea2c38dbe49483cbd",
+      "launchOverlayDismissed": false,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "sources",
+      "route": "/sources",
+      "file": "sources.png",
+      "bytes": 224361,
+      "sha256": "4fe971cef02ef08a40dfa8e1b082923766e28d096ed726852a6db4d11dd8a80d",
+      "launchOverlayDismissed": false,
+      "launchOverlayVisibleAfterDismissal": false
+    },
+    {
+      "name": "support",
+      "route": "/support",
+      "file": "support.png",
+      "bytes": 195392,
+      "sha256": "326488027f627b83f5a229e7f522a55b7af726b7ee8bca147c4203c0d864e425",
+      "launchOverlayDismissed": false,
+      "launchOverlayVisibleAfterDismissal": false
+    }
+  ]
+}
