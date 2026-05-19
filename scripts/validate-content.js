@@ -6147,6 +6147,7 @@ let themeColorTokensValidated = 0;
 let themeSpaceTokensValidated = 0;
 let themeRadiusTokensValidated = 0;
 let themeTypographyTokensValidated = 0;
+let themeTypographyZeroLetterSpacingValidated = false;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
@@ -11142,11 +11143,8 @@ function validateThemeTokenSchema() {
         if (!['400', '500', '600', '700'].includes(style.fontWeight)) {
           rejectToken(`theme typography.${token}.fontWeight must use a supported weight`);
         }
-        if (
-          style.letterSpacing !== undefined &&
-          (!Number.isFinite(style.letterSpacing) || Math.abs(style.letterSpacing) > 4)
-        ) {
-          rejectToken(`theme typography.${token}.letterSpacing must be a bounded number`);
+        if (style.letterSpacing !== undefined && style.letterSpacing !== 0) {
+          rejectToken(`theme typography.${token}.letterSpacing must be 0 when set`);
         }
       }
 
@@ -11254,6 +11252,14 @@ function validateThemeTokenSchema() {
   ) {
     themeTokenSchemaValidated = true;
   }
+  themeTypographyZeroLetterSpacingValidated =
+    isObjectRecord(typography) &&
+    EXPECTED_THEME_TYPOGRAPHY_TOKENS.every((token) => {
+      const style = typography[token];
+      return (
+        isObjectRecord(style) && (style.letterSpacing === undefined || style.letterSpacing === 0)
+      );
+    });
 }
 
 function validateGlossaryTerms() {
@@ -13935,6 +13941,7 @@ console.log(
       themeSpaceTokensValidated,
       themeRadiusTokensValidated,
       themeTypographyTokensValidated,
+      themeTypographyZeroLetterSpacingValidated,
       themeShadowTokensValidated,
       themeMotionTokensValidated,
       themeTokenSchemaValidated,

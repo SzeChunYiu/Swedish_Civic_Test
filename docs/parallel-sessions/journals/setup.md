@@ -1201,3 +1201,12 @@ Verification: clean worktree from current `origin/main` `5ccf15d`; `NODE_OPTIONS
 PR: pending from current SETUP audit branch at handoff commit time.
 Blocked? yes - no fresh unblocked local SETUP source atom was found; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held unless fresh P0 site/release source evidence appears; keep production freshness separate until production serves current main and passes the hash-aware live smoke.
+
+## Iteration 253 - 2026-05-19
+
+Task completed: THEME-TYPOGRAPHY-LETTER-SPACING-GUARD-1 - normalized theme typography tracking to `letterSpacing: 0` and added validator/test coverage so future theme tokens cannot reintroduce nonzero letter spacing.
+Artifacts changed: `lib/theme/typography.ts`, `scripts/validate-content.js`, `scripts/theme-discipline.test.js`, `tests/content-theme-token-schema.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `5a3f9e78`; linked shared `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-theme-token-schema.test.js scripts/theme-discipline.test.js` exit 0 with 5/5 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `themeTypographyZeroLetterSpacingValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check scripts/validate-content.js`, `node --check scripts/theme-discipline.test.js`, and `node --check tests/content-theme-token-schema.test.js` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0.
+PR: pending from `task/setup/typography-letter-spacing-1779193111-868690` at handoff commit time.
+Blocked? no for this typography theme-source guard.
+Next suggested validator action: inspect the theme typography token changes and rerun the focused content/theme tests plus `npm run validate:content`; then route any rendered typography overlap concerns to a browser-smoke follow-up.

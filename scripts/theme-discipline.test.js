@@ -41,3 +41,15 @@ test('app and component styles use theme tokens instead of literal colors, spaci
 
   assert.deepEqual(offenders, []);
 });
+
+test('theme typography tokens keep default letter spacing', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'lib/theme/typography.ts'), 'utf8');
+  const offenders = [];
+
+  for (const match of source.matchAll(/letterSpacing:\s*([^,\n]+)/g)) {
+    const rawValue = match[1].trim();
+    if (Number(rawValue) !== 0) offenders.push(`letterSpacing: ${rawValue}`);
+  }
+
+  assert.deepEqual(offenders, []);
+});

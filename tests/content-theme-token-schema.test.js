@@ -20,6 +20,7 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeSpaceTokensValidated, 24);
   assert.equal(summary.themeRadiusTokensValidated, 7);
   assert.equal(summary.themeTypographyTokensValidated, 22);
+  assert.equal(summary.themeTypographyZeroLetterSpacingValidated, true);
   assert.equal(summary.themeShadowTokensValidated, 2);
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.equal(summary.themeTokenSchemaValidated, true);
@@ -55,4 +56,34 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.1 expected 8, found -8/);
+});
+
+test('theme token schema rejects nonzero typography letter spacing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/typography.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('letterSpacing: 0,', 'letterSpacing: -0.4,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme typography\.displayHero\.letterSpacing must be 0 when set/,
+  );
 });
