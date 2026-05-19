@@ -128,8 +128,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       },
       {
         label: 'Provredo',
-        lesson:
-          'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
@@ -197,7 +196,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       {
         label: 'Exam readiness',
         lesson:
-          'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:

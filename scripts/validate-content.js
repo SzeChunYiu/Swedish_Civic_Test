@@ -609,7 +609,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
     'Provredo',
-    'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+    'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',
@@ -657,7 +657,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Study rhythm',
     'Get one simple next action and gentle habit feedback without blocking serious study.',
     'Exam readiness',
-    'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+    'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
   ],
 };
 const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
@@ -670,6 +670,7 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
+const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
   ['type HomeCopy = {', 'home route must define a typed copy contract'],
@@ -6073,6 +6074,7 @@ let chapterCardAccessibilityRulesValidated = 0;
 let chapterCardAccessibilityParityValidated = false;
 let flashcardAccessibilityRulesValidated = 0;
 let flashcardAccessibilityParityValidated = false;
+let swedishFlashcardCopyNaturalnessValidated = false;
 let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
@@ -8837,6 +8839,74 @@ function validateFlashcardAccessibilityParity() {
     flashcardAccessibilityRulesValidated === EXPECTED_FLASHCARD_ACCESSIBILITY_RULES.length
   ) {
     flashcardAccessibilityParityValidated = true;
+  }
+}
+
+function validateSwedishFlashcardCopyNaturalness() {
+  let valid = true;
+  let flashcardSource = '';
+  let homeRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    flashcardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/Flashcard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/learning/Flashcard.tsx could not be read for Swedish flashcard copy naturalness: ${error.message}`,
+    );
+    return;
+  }
+
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `app/(tabs)/home.tsx could not be read for flashcard copy naturalness: ${error.message}`,
+    );
+    return;
+  }
+
+  const flashcardSwedishBlock = flashcardSource.match(/sv:\s*\{[\s\S]*?\n  \},\n  en:/)?.[0];
+  if (!flashcardSwedishBlock) {
+    reject('Flashcard Swedish copy block must stay parseable');
+  } else {
+    if (FORBIDDEN_SWEDISH_FLASHCARD_COPY.test(flashcardSwedishBlock)) {
+      reject('Swedish learner-facing flashcard copy must use natural Swedish study-card wording');
+    }
+    if (!flashcardSwedishBlock.includes('Övningskort')) {
+      reject('Swedish learner-facing flashcard copy must name the card as Övningskort');
+    }
+  }
+
+  if (FORBIDDEN_SWEDISH_FLASHCARD_COPY.test(homeRoute)) {
+    reject('home route must not advertise flashcards until the feature is reachable');
+  }
+
+  if (
+    !homeRoute.includes(
+      'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+    )
+  ) {
+    reject('home route Swedish study-loop copy must not include unreachable flashcard copy');
+  }
+
+  if (
+    !homeRoute.includes(
+      'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
+    )
+  ) {
+    reject('home route English study-loop copy must not include unreachable flashcard copy');
+  }
+
+  if (valid) {
+    swedishFlashcardCopyNaturalnessValidated = true;
   }
 }
 
@@ -13719,6 +13789,7 @@ validateMetricCardAccessibilityParity();
 validateBadgeAccessibilityParity();
 validateChapterCardAccessibilityParity();
 validateFlashcardAccessibilityParity();
+validateSwedishFlashcardCopyNaturalness();
 validateAudioButtonAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
@@ -13875,6 +13946,7 @@ console.log(
       chapterCardAccessibilityParityValidated,
       flashcardAccessibilityRulesValidated,
       flashcardAccessibilityParityValidated,
+      swedishFlashcardCopyNaturalnessValidated,
       audioButtonAccessibilityRulesValidated,
       audioButtonAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
