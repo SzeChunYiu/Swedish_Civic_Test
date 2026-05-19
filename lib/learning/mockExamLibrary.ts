@@ -166,9 +166,7 @@ export function materializeMock(input: MaterializeMockInput): MaterializedMock |
 
   const seed =
     input.seedOverride ??
-    (descriptor.seed === -1
-      ? Math.floor(Math.random() * 0xffffffff)
-      : descriptor.seed);
+    (descriptor.seed === -1 ? Math.floor(Math.random() * 0xffffffff) : descriptor.seed);
   const rand = mulberry32(seed);
 
   const filtered =

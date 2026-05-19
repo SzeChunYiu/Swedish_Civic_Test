@@ -60,6 +60,11 @@ function startOfWeek(date: Date): Date {
   return d;
 }
 
+function localDateFromKey(dayKey: string): Date {
+  const [year, month, day] = dayKey.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 function previousDayKey(dayKey: string): string {
   const d = new Date(`${dayKey}T00:00:00.000Z`);
   return new Date(d.getTime() - DAY_MS).toISOString().slice(0, 10);
@@ -69,12 +74,9 @@ function previousDayKey(dayKey: string): string {
  * Refill the freeze stockpile if at least one week has passed since the last
  * earn. Pure — returns a new state, does not mutate.
  */
-export function refillFreezes(
-  state: StreakFreezeState,
-  now: Date = new Date(),
-): StreakFreezeState {
+export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
   const currentWeekStart = startOfWeek(now);
-  const lastEarnedDate = new Date(`${state.lastEarnedAt}T00:00:00.000Z`);
+  const lastEarnedDate = startOfWeek(localDateFromKey(state.lastEarnedAt));
   const weeksSince = Math.floor(
     (currentWeekStart.getTime() - lastEarnedDate.getTime()) / (7 * DAY_MS),
   );
@@ -121,9 +123,7 @@ export interface StreakWithFreezeResult {
  *
  * Pure function — returns new state, does not mutate.
  */
-export function calculateStreakWithFreeze(
-  input: StreakWithFreezeInput,
-): StreakWithFreezeResult {
+export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakWithFreezeResult {
   const refilled = refillFreezes(input.freezeState, input.now ?? new Date());
   const today = input.today ?? getLocalDateKey(input.now ?? new Date());
   const activeSet = new Set(input.activeDayKeys.map((d) => d.slice(0, 10)));
@@ -176,6 +176,6 @@ export function freezeBannerCopy(
 ): string | null {
   if (result.rescuedThisRun.length === 0) return null;
   return language === 'sv'
-    ? `Strecket räddat — du har ${result.freezeState.available} fryser kvar.`
+    ? `Sviten är räddad — du har ${result.freezeState.available} svitskydd kvar.`
     : `Streak protected — ${result.freezeState.available} freezes left.`;
 }
