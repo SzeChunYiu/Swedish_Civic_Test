@@ -10804,12 +10804,40 @@ function validateProgressStoreSchemaParity() {
       'progress hydration must normalize unknown numeric fields through a shared integer helper',
     ],
     [
+      'function normalizeIsoTimestamp(value: unknown',
+      'progress hydration must normalize unknown ISO timestamp fields through a shared helper',
+    ],
+    [
+      'function normalizeLocalDateKey(value: unknown',
+      'progress hydration must normalize persisted local date keys through a shared helper',
+    ],
+    [
       'const seenCount = normalizeNonNegativeInteger(',
       'question progress hydration must normalize seenCount',
     ],
     [
       'totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp)',
       'progress hydration must normalize totalXp',
+    ],
+    [
+      'candidate.answerDates.map(normalizeLocalDateKey).filter((day): day is string => !!day)',
+      'progress hydration must normalize persisted answerDates',
+    ],
+    [
+      'lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),',
+      'question progress hydration must normalize lastAnsweredAt timestamps',
+    ],
+    [
+      'nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),',
+      'question progress hydration must normalize nextReviewAt timestamps',
+    ],
+    [
+      'const completedAt = normalizeIsoTimestamp(item.completedAt);',
+      'mock-exam hydration must normalize completedAt timestamps',
+    ],
+    [
+      'lastEarnedAt: normalizeLocalDateKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt',
+      'streak-freeze hydration must normalize lastEarnedAt date keys',
     ],
     [
       'available: normalizeNonNegativeInteger(candidate.available, fallback.available, 4)',
@@ -10865,6 +10893,10 @@ function validateProgressStoreSchemaParity() {
     'Math.round(candidate.available ?? fallback.available)',
     'Math.round(candidate.lifetimeEarned ?? fallback.lifetimeEarned)',
     'Math.round(candidate.lifetimeSpent ?? fallback.lifetimeSpent)',
+    'lastAnsweredAt: item.lastAnsweredAt',
+    'nextReviewAt: item.nextReviewAt',
+    'completedAt: item.completedAt',
+    "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
   ];
 
   forbiddenHydrationSnippets.forEach((snippet) => {

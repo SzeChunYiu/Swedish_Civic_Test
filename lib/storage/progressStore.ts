@@ -31,6 +31,9 @@ const maxHydratedQuestionAnswerCount = 10000;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
 const maxHydratedFreezeLifetimeCount = 10000;
+const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
+const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
 
 let progressStorage: MMKV | null = null;
 
@@ -80,19 +83,51 @@ function clampScore(value: unknown): number {
   return Math.max(0, Math.min(1, value));
 }
 
+function isHydratableDateTime(timeMs: number): boolean {
+  return Number.isFinite(timeMs) && timeMs <= Date.now() + maxHydratedFutureDateMs;
+}
+
+function normalizeIsoTimestamp(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  if (!isoTimestampPattern.test(trimmed)) return undefined;
+
+  const timeMs = Date.parse(trimmed);
+  if (!isHydratableDateTime(timeMs)) return undefined;
+
+  const normalized = new Date(timeMs).toISOString();
+  return normalized === trimmed ? trimmed : undefined;
+}
+
+function normalizeLocalDateKey(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  if (!localDateKeyPattern.test(trimmed)) return undefined;
+
+  const [year, month, day] = trimmed.split('-').map(Number);
+  const timeMs = Date.UTC(year, month - 1, day);
+  if (!isHydratableDateTime(timeMs)) return undefined;
+
+  const normalized = new Date(timeMs).toISOString().slice(0, 10);
+  return normalized === trimmed ? trimmed : undefined;
+}
+
 function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
   const fallback = createInitialFreezeState();
   if (!value || typeof value !== 'object') return fallback;
 
   const candidate = value as Partial<StreakFreezeState>;
   const rescuedDayKeys = Array.isArray(candidate.rescuedDayKeys)
-    ? [...new Set(candidate.rescuedDayKeys.filter((day): day is string => typeof day === 'string'))]
+    ? [
+        ...new Set(
+          candidate.rescuedDayKeys.map(normalizeLocalDateKey).filter((day): day is string => !!day),
+        ),
+      ]
     : [];
 
   return {
     available: normalizeNonNegativeInteger(candidate.available, fallback.available, 4),
-    lastEarnedAt:
-      typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt : fallback.lastEarnedAt,
+    lastEarnedAt: normalizeLocalDateKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
     lifetimeEarned: normalizeNonNegativeInteger(
       candidate.lifetimeEarned,
       fallback.lifetimeEarned,
@@ -119,7 +154,11 @@ function normalizeProgress(value: unknown): PersistedProgress {
     ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
     : [];
   const answerDates = Array.isArray(candidate.answerDates)
-    ? [...new Set(candidate.answerDates.filter((day): day is string => typeof day === 'string'))]
+    ? [
+        ...new Set(
+          candidate.answerDates.map(normalizeLocalDateKey).filter((day): day is string => !!day),
+        ),
+      ]
     : [];
   const mockExamSessions: MockExamProgress[] = [];
   const questionProgress: Record<string, QuestionProgress> = {};
@@ -155,8 +194,8 @@ function normalizeProgress(value: unknown): PersistedProgress {
         correctCount,
         wrongCount,
         correctStreak,
-        lastAnsweredAt: item.lastAnsweredAt,
-        nextReviewAt: item.nextReviewAt,
+        lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),
+        nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),
         bookmarked: item.bookmarked,
       };
     }
@@ -166,7 +205,8 @@ function normalizeProgress(value: unknown): PersistedProgress {
     for (const session of candidate.mockExamSessions) {
       if (!session || typeof session !== 'object') continue;
       const item = session as Partial<MockExamProgress>;
-      if (typeof item.sessionId !== 'string' || typeof item.completedAt !== 'string') continue;
+      const completedAt = normalizeIsoTimestamp(item.completedAt);
+      if (typeof item.sessionId !== 'string' || !completedAt) continue;
       const totalCount = normalizeNonNegativeInteger(
         item.totalCount,
         0,
@@ -179,7 +219,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
       mockExamSessions.push({
         sessionId: item.sessionId,
         score: clampScore(item.score ?? 0),
-        completedAt: item.completedAt,
+        completedAt,
         correctCount,
         totalCount,
       });
