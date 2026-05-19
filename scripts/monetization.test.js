@@ -911,8 +911,17 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
 
   assert.equal(hasAdsDisabled(REMOVE_ADS_ENTITLEMENTS), true);
   assert.equal(isPremiumUser(REMOVE_ADS_ENTITLEMENTS), false);
-  assert.equal(hasAdsDisabled(PRO_LIFETIME_ENTITLEMENTS), false);
+  assert.equal(hasAdsDisabled(PRO_LIFETIME_ENTITLEMENTS), true);
   assert.equal(hasProEntitlement(PRO_LIFETIME_ENTITLEMENTS), true);
+  assert.equal(
+    hasProEntitlement({
+      adsDisabled: true,
+      fullMistakeReview: false,
+      unlimitedMockExams: false,
+      spacedRepetition: false,
+    }),
+    false,
+  );
   assert.equal(
     isPremiumUser({
       adsDisabled: false,
