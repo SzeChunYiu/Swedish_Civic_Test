@@ -24,8 +24,15 @@ test('derived q155 explanation expectation stays anchored to authored q002 sourc
 
   assert.match(source, /const \{ questions, sourceQuestions \} = loadTs\('data\/questions\.ts'\);/);
   assert.match(source, /question\.id === 'q002'/);
-  assert.match(source, /byId\.get\('q155'\)\?\.explanationSv, sourceQ002\.explanationSv/);
-  assert.match(source, /byId\.get\('q155'\)\?\.explanationEn, sourceQ002\.explanationEn/);
+  assert.match(
+    source,
+    /byId\.get\(sourceQ002TrueStatementId\)\?\.explanationSv, sourceQ002\.explanationSv/,
+  );
+  assert.match(
+    source,
+    /byId\.get\(sourceQ002TrueStatementId\)\?\.explanationEn, sourceQ002\.explanationEn/,
+  );
+  assert.doesNotMatch(source, /byId\.get\('q\d{3,}'\)/);
   assert.doesNotMatch(
     source,
     /Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området\./,
