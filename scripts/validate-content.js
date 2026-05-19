@@ -1055,6 +1055,7 @@ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
+const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -6221,6 +6222,8 @@ const adsModule = loadTs('lib/monetization/ads.ts');
 const adsConfig = adsModule.adsConfig;
 const shouldShowAd = adsModule.shouldShowAd;
 const shouldSuppressLaunchPopupAdForPath = adsModule.shouldSuppressLaunchPopupAdForPath;
+const adCopyModule = loadTs('lib/monetization/adCopy.ts');
+const adBannerCopy = adCopyModule.adBannerCopy;
 const consentModule = loadTs('lib/monetization/consent.ts');
 const consentConfig = consentModule.consentConfig;
 const premiumModule = loadTs('lib/monetization/premium.ts');
@@ -6393,6 +6396,8 @@ let removeAdsPurchaseRuntimeCasesValidated = 0;
 let removeAdsPurchaseRuntimeParityValidated = false;
 let removeAdsSvExamCopyNaturalnessCasesValidated = 0;
 let removeAdsSvExamCopyNaturalnessValidated = false;
+let adCopySvRewardedPracticeExamCasesValidated = 0;
+let adCopySvRewardedPracticeExamNaturalnessValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
@@ -11541,6 +11546,122 @@ function validateRemoveAdsSvExamCopyNaturalness() {
   }
 }
 
+function validateAdCopySvRewardedPracticeExamNaturalness() {
+  let valid = true;
+  let adCopySource = '';
+  let webBannerSource = '';
+  let nativeBannerSource = '';
+  let placementCtaSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function hasPracticeQualifier(value) {
+    if (typeof value !== 'string') return false;
+    const normalizedValue = value.toLowerCase();
+    return (
+      normalizedValue.includes('övningsprov') ||
+      normalizedValue.includes('övningsläget') ||
+      normalizedValue.includes('övningsläge')
+    );
+  }
+
+  function hasBareExamWord(value) {
+    return /\bextra prov\b|\bextra provet\b|\bprov\b|\bprovet\b/i.test(value);
+  }
+
+  function isSafeRewardedPracticeCopy(value) {
+    return typeof value === 'string' && hasPracticeQualifier(value) && !hasBareExamWord(value);
+  }
+
+  try {
+    adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+    webBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+    nativeBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+      'utf8',
+    );
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`Rewarded ad Swedish copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  const svAdCopy = adBannerCopy?.sv;
+  const rewardedPlacementLabel = svAdCopy?.placementLabels?.rewarded_extra_exam;
+  const liveAccessibilityLabel =
+    typeof svAdCopy?.accessibilityLabel === 'function'
+      ? svAdCopy.accessibilityLabel(rewardedPlacementLabel, svAdCopy.liveStatus)
+      : '';
+  const testAccessibilityLabel =
+    typeof svAdCopy?.accessibilityLabel === 'function'
+      ? svAdCopy.accessibilityLabel(rewardedPlacementLabel, svAdCopy.testStatus)
+      : '';
+  const placementCtaTitle =
+    typeof rewardedPlacementLabel === 'string'
+      ? `Ta bort annonser vid ${rewardedPlacementLabel.toLowerCase()}`
+      : '';
+  const rewardedAdCopySource = `${adCopySource}\n${webBannerSource}\n${nativeBannerSource}\n${placementCtaSource}`;
+  const copyCases = [
+    [
+      rewardedPlacementLabel === 'Annons för extra övningsprov',
+      'rewarded_extra_exam Swedish ad placement label must say "Annons för extra övningsprov"',
+    ],
+    [
+      isSafeRewardedPracticeCopy(rewardedPlacementLabel),
+      'rewarded_extra_exam Swedish ad placement label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(liveAccessibilityLabel),
+      'rewarded_extra_exam Swedish live ad accessibility label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(testAccessibilityLabel),
+      'rewarded_extra_exam Swedish test ad accessibility label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(placementCtaTitle),
+      'RemoveAdsPlacementCta rewarded_extra_exam title must qualify the exam as an övningsprov',
+    ],
+    [
+      /const placementLabel = copy\.placementLabels\[placement\];/.test(webBannerSource) &&
+        /const placementLabel = copy\.placementLabels\[placement\];/.test(nativeBannerSource) &&
+        /const placementLabel = adBannerCopy\[language\]\.placementLabels\[placement\];/.test(
+          placementCtaSource,
+        ) &&
+        /copy\.title\(placementLabel\)/.test(placementCtaSource),
+      'Ad banners and RemoveAdsPlacementCta must derive labels from shared adBannerCopy placement labels',
+    ],
+    [
+      !/\bAnnons för extra prov\b|\bextra prov\b/i.test(rewardedAdCopySource),
+      'rewarded ad copy sources must not contain bare Swedish "extra prov" wording',
+    ],
+  ];
+
+  copyCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    adCopySvRewardedPracticeExamCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    adCopySvRewardedPracticeExamCasesValidated === EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES
+  ) {
+    adCopySvRewardedPracticeExamNaturalnessValidated = true;
+  }
+}
+
 function validateAdConsentTypeSchemaParity() {
   let valid = true;
   let consentSource = '';
@@ -14898,6 +15019,7 @@ validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
 validateRemoveAdsPurchaseRuntimeParity();
 validateRemoveAdsSvExamCopyNaturalness();
+validateAdCopySvRewardedPracticeExamNaturalness();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
@@ -15081,6 +15203,8 @@ console.log(
       removeAdsPurchaseRuntimeParityValidated,
       removeAdsSvExamCopyNaturalnessCasesValidated,
       removeAdsSvExamCopyNaturalnessValidated,
+      adCopySvRewardedPracticeExamCasesValidated,
+      adCopySvRewardedPracticeExamNaturalnessValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,
