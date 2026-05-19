@@ -34,10 +34,14 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
+  assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
     homeSource,
-    /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+    /monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled/,
   );
+  assert.match(homeSource, /\{monetizationEntitlementsReady \? \(\s*<PremiumBanner/);
+  assert.match(homeSource, /<AdBanner placement="home_banner" \/>/);
+  assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
@@ -84,6 +88,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /app\/\(tabs\)\/home\.tsx must render AdBanner placement home_banner/,
+  );
+});
+
+test('ad placement route parity rejects Home pending entitlement bypasses', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled', '!monetizationEntitlements.adsDisabled')
+      .replace('<AdBanner placement="home_banner" />', '<AdBanner entitlements={monetizationEntitlements} placement="home_banner" />');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Home pricing wedge must stay hidden until Remove Ads entitlements resolve|Home ad banner must not receive initial free entitlements before they resolve/,
   );
 });
 
