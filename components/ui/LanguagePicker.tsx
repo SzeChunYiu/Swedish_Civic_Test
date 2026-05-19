@@ -39,6 +39,8 @@ const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
   },
 };
 
+const triggerIconSize = space[2];
+
 /**
  * Defaults: reads and writes the settings-store language, opens the locale
  * menu in-place, and uses settings copy unless `languageOverride` is provided
@@ -68,13 +70,15 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   return (
     <>
       <Pressable
+        aria-expanded={open}
         accessibilityRole="button"
         accessibilityLabel={copy.triggerLabel(currentLabel)}
+        accessibilityState={{ expanded: open }}
         hitSlop={space[1]}
         onPress={() => setOpen(true)}
         style={({ pressed }) => [styles.trigger, pressed ? styles.triggerPressed : null]}
       >
-        <GlobeIcon size={16} color={colors.textMuted} />
+        <GlobeIcon size={triggerIconSize} color={colors.textMuted} />
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
       </Pressable>
 
@@ -154,8 +158,12 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
+    flexShrink: 0,
     flexDirection: 'row',
     gap: space[0.5],
+    justifyContent: 'center',
+    minHeight: space[6],
+    minWidth: space[6],
     paddingHorizontal: space[1.25],
     paddingVertical: space[0.5],
   },

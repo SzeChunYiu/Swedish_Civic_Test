@@ -330,6 +330,41 @@ test('top-bar route links keep token-sized web anchors with pressed feedback', (
   );
 });
 
+test('header language picker keeps a token-sized trigger target', () => {
+  const languagePicker = read('components/ui/LanguagePicker.tsx');
+
+  assertContains(
+    languagePicker,
+    'const triggerIconSize = space[2];',
+    'language picker icon size should use the spacing token scale',
+  );
+  assertContains(
+    languagePicker,
+    'aria-expanded={open}',
+    'language picker trigger should expose expanded state to web ARIA',
+  );
+  assertContains(
+    languagePicker,
+    'accessibilityState={{ expanded: open }}',
+    'language picker trigger should expose its expanded state',
+  );
+  assertContains(
+    languagePicker,
+    '<GlobeIcon size={triggerIconSize} color={colors.textMuted} />',
+    'language picker trigger icon should use the token-sized constant',
+  );
+  assertMatches(
+    languagePicker,
+    /trigger:\s*\{[\s\S]*alignItems:\s*['"]center['"],[\s\S]*backgroundColor:\s*colors\.surfaceWarm,[\s\S]*borderColor:\s*colors\.border,[\s\S]*borderRadius:\s*radius\.pill,[\s\S]*borderWidth:\s*StyleSheet\.hairlineWidth,[\s\S]*flexShrink:\s*0,[\s\S]*flexDirection:\s*['"]row['"],[\s\S]*gap:\s*space\[0\.5\],[\s\S]*justifyContent:\s*['"]center['"],[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*paddingHorizontal:\s*space\[1\.25\],[\s\S]*paddingVertical:\s*space\[0\.5\],[\s\S]*\}/,
+    'language picker trigger should keep a token-sized 48px minimum target while preserving compact row layout',
+  );
+  assertMatches(
+    languagePicker,
+    /triggerPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\],[\s\S]*\}/,
+    'language picker pressed feedback should use theme interaction tokens',
+  );
+});
+
 test('router shell tooling guard is wired into package scripts', () => {
   const pkg = readJson('package.json');
 
