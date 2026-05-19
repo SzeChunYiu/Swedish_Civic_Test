@@ -340,6 +340,25 @@ test('native intent resolves about-the-test deep links before the Home fallback'
   );
 });
 
+test('top-bar language picker keeps a token-sized target and feedback', () => {
+  const languagePicker = read('components/ui/LanguagePicker.tsx');
+  const topBarActions = read('components/ui/TopBarActions.tsx');
+
+  assertContains(topBarActions, '<LanguagePicker />');
+  assertMatches(
+    languagePicker,
+    /style=\{\(\{ pressed \}\) => \[styles\.trigger, pressed \? styles\.triggerPressed : null\]\}/,
+    'language picker trigger should keep tokenized pressed feedback',
+  );
+  assertMatches(
+    languagePicker,
+    /trigger:\s*\{[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*\}/,
+    'language picker trigger should preserve the shared 48px top-bar target',
+  );
+  assertContains(languagePicker, 'backgroundColor: colors.focusSoft');
+  assertContains(languagePicker, 'transform: [{ scale: motion.pressedScale }]');
+});
+
 test('router shell tooling guard is wired into package scripts', () => {
   const pkg = readJson('package.json');
 
