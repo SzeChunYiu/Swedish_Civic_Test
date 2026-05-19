@@ -7790,6 +7790,8 @@ function validateAppConfigSchema() {
 function validateLaunchAdRouteSuppressionParity() {
   let valid = true;
   let rootLayout = '';
+  let webLaunchPopupAd = '';
+  let nativeLaunchPopupAd = '';
 
   function reject(message) {
     valid = false;
@@ -7848,6 +7850,46 @@ function validateLaunchAdRouteSuppressionParity() {
   }
   if (!rootLayout.includes('!suppressLaunchPopupAd && entitlementsReady')) {
     reject('root layout must gate LaunchPopupAd on route suppression and entitlement readiness');
+  }
+  if (
+    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') === -1 ||
+    rootLayout.indexOf('<FirstRunAboutTheTestModal />') === -1 ||
+    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') >
+      rootLayout.indexOf('<FirstRunAboutTheTestModal />')
+  ) {
+    reject('root layout must render the launch ad deferral check before the first-run modal');
+  }
+
+  try {
+    webLaunchPopupAd = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.tsx'),
+      'utf8',
+    );
+    nativeLaunchPopupAd = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`launch popup ad sources could not be read: ${error.message}`);
+  }
+
+  for (const [label, source] of [
+    ['web', webLaunchPopupAd],
+    ['native', nativeLaunchPopupAd],
+  ]) {
+    if (
+      !source.includes(
+        "import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';",
+      )
+    ) {
+      reject(`${label} launch ad must import the first-run modal deferral helper`);
+    }
+    if (!source.includes('deferFirstRunAboutModalForLaunchSession();')) {
+      reject(`${label} launch ad must defer the first-run About modal when eligible`);
+    }
+  }
+  if (!nativeLaunchPopupAd.includes('if (nativeLaunchPopupMayShow)')) {
+    reject('native launch ad must set first-run deferral during the eligible render pass');
   }
 
   if (

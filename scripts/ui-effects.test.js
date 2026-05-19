@@ -1960,6 +1960,30 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(nativeSource, /launchPopupLoadInFlight/);
   assert.match(nativeSource, /launchPopupLoadInFlight \|\|[\s\S]*!mobileAdsConsent\.initialized/);
   assert.match(
+    webSource,
+    /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
+  );
+  assert.match(
+    nativeSource,
+    /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
+  );
+  assert.match(
+    nativeSource,
+    /const nativeLaunchPopupUnitId = getPlatformAdUnitId\('app_open_launch', Platform\.OS\);/,
+  );
+  assert.match(
+    nativeSource,
+    /const nativeLaunchPopupMayShow =[\s\S]*adsConfig\.googleMobileAdsEnabled[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/,
+  );
+  assert.match(
+    nativeSource,
+    /const launchPopupAdUnitId =[\s\S]*shouldShowLaunchPopupAd[\s\S]*\? nativeLaunchPopupUnitId/,
+  );
+  assert.match(
+    nativeSource,
+    /if \(nativeLaunchPopupMayShow\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
+  );
+  assert.match(
     nativeSource,
     /addAdEventListener\(AdEventType\.LOADED,[\s\S]*launchPopupShownThisRuntime = true;[\s\S]*launchPopupLoadInFlight = false;[\s\S]*Promise\.resolve\(appOpenAd\.show\(\)\)\.catch\(\(\) => undefined\)/,
   );
