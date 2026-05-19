@@ -6743,8 +6743,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7438,8 +7438,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Gulf Stream and the North Atlantic Current help make Sweden's climate mild. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
+      "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10374,8 +10374,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Riksdag chooses the prime minister. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Riksdagen väljer statsminister. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "The Riksdag chooses the prime minister.",
+      "sv": "Riksdagen väljer statsminister."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11234,8 +11234,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The opposition should scrutinize the government’s work and propose alternative policies. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Oppositionen ska granska regeringens arbete och föreslå annan politik. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "The opposition should scrutinize the government’s work and propose alternative policies.",
+      "sv": "Oppositionen ska granska regeringens arbete och föreslå annan politik."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14502,8 +14502,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "A person who gives information to newspapers, radio, and TV has the right to be anonymous. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "A person who gives information to newspapers, radio, and TV has the right to be anonymous.",
+      "sv": "Den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14850,8 +14850,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Public service companies should be independent of political and other interests. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Public service-företag ska vara oberoende av politiska och andra intressen. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Public service companies should be independent of political and other interests.",
+      "sv": "Public service-företag ska vara oberoende av politiska och andra intressen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19162,8 +19162,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Swedish municipalities must offer older people support and help. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Sveriges kommuner ska erbjuda äldre personer stöd och hjälp. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Swedish municipalities must offer older people support and help.",
+      "sv": "Sveriges kommuner ska erbjuda äldre personer stöd och hjälp."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22090,8 +22090,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Swedish total defence includes both military defence and civil defence. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Swedish total defence includes both military defence and civil defence.",
+      "sv": "Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22606,8 +22606,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated. Therefore the statement in the question is false, so False is correct.",
-      "sv": "År 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "In 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated.",
+      "sv": "År 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31250,8 +31250,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is usually divided into Götaland, Svealand, and Norrland. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Sverige brukar delas in i Götaland, Svealand och Norrland. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Sweden is usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Sverige brukar delas in i Götaland, Svealand och Norrland."
     },
     "source": {
       "title": "Sverige i fokus",
