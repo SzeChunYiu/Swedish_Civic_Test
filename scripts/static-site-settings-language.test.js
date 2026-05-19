@@ -47,7 +47,7 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createRenderContext({ hash, language = 'en' }) {
+function createRenderContext({ buttonLanguages = ['en', 'sv'], hash, language = 'en' }) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
   const storage = new Map([
@@ -56,10 +56,22 @@ function createRenderContext({ hash, language = 'en' }) {
   ]);
   let reloadCount = 0;
 
-  const settingButtons = ['en', 'sv'].map((value) => ({
-    dataset: { val: value },
-    classList: { toggle() {} },
-  }));
+  const settingButtons = buttonLanguages.map((value) => {
+    const classes = new Set();
+    return {
+      dataset: { val: value },
+      classList: {
+        contains(name) {
+          return classes.has(name);
+        },
+        toggle(name, force) {
+          const on = force === undefined ? !classes.has(name) : Boolean(force);
+          if (on) classes.add(name);
+          else classes.delete(name);
+        },
+      },
+    };
+  });
 
   function element(id) {
     if (!elements.has(id)) {
@@ -119,8 +131,11 @@ function createRenderContext({ hash, language = 'en' }) {
     document: {
       body: { style: {} },
       documentElement: {
+        dir: language === 'ar' ? 'rtl' : 'ltr',
         lang: language,
-        setAttribute() {},
+        setAttribute(name, value) {
+          this[name] = String(value);
+        },
         style: { setProperty() {} },
       },
       createElement() {
@@ -195,17 +210,37 @@ function createRenderContext({ hash, language = 'en' }) {
         .filter((entry) => entry.type === 'click')
         .forEach((entry) => entry.handler({ target }));
     },
+    clickSettingsOpen() {
+      const target = {
+        closest(selector) {
+          return selector === '#settings-open' ? this : null;
+        },
+      };
+      listeners.document
+        .filter((entry) => entry.type === 'click')
+        .forEach((entry) => entry.handler({ target }));
+    },
     element,
+    fireWindowEvent(type) {
+      listeners.window
+        .filter((entry) => entry.type === type)
+        .forEach((entry) => entry.handler({ type }));
+    },
     get reloadCount() {
       return reloadCount;
     },
     sandbox,
+    selectedSettingsLanguage() {
+      return settingButtons.find((button) => button.classList.contains('is-on'))?.dataset.val;
+    },
     storage,
   };
 }
 
-function loadScripts(context, practiceInjection = '') {
+function loadScripts(context, practiceInjection = '', { includeExtras = false } = {}) {
   vm.runInContext(read('site/app.js'), context.sandbox, { timeout: 3000 });
+  if (includeExtras)
+    vm.runInContext(read('site/i18n-extras.js'), context.sandbox, { timeout: 3000 });
   const practiceSource = practiceInjection
     ? read('site/practice.js').replace(/\}\)\(\);\s*$/, `${practiceInjection}\n})();`)
     : read('site/practice.js');
@@ -289,5 +324,55 @@ test('Settings language change rerenders submitted Mock results without restarti
   assert.match(html, /Frågegenomgång/);
   assert.match(html, /Rätt svar/);
   assert.doesNotMatch(html, /Build your exam|Bygg din tentamen/);
+  assert.equal(context.reloadCount, 0);
+});
+
+test('Unsupported saved static-site language falls back to English on boot and in Settings', () => {
+  const context = createRenderContext({
+    buttonLanguages: ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'so', 'bogus-locale'],
+    hash: '#/',
+    language: 'bogus-locale',
+  });
+  loadScripts(context, '', { includeExtras: true });
+
+  context.fireWindowEvent('DOMContentLoaded');
+  context.clickSettingsOpen();
+
+  assert.equal(context.sandbox.document.documentElement.lang, 'en');
+  assert.equal(context.sandbox.document.documentElement.dir, 'ltr');
+  assert.equal(context.storage.get('smt_lang'), 'en');
+  assert.equal(context.selectedSettingsLanguage(), 'en');
+
+  context.clickSettingsLanguage('bogus-locale');
+
+  assert.equal(context.sandbox.document.documentElement.lang, 'en');
+  assert.equal(context.sandbox.document.documentElement.dir, 'ltr');
+  assert.equal(context.storage.get('smt_lang'), 'en');
+  assert.equal(context.selectedSettingsLanguage(), 'en');
+  assert.equal(context.reloadCount, 0);
+});
+
+test('Valid extra static-site languages survive normalization and Arabic sets RTL direction', () => {
+  const context = createRenderContext({
+    buttonLanguages: ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'so'],
+    hash: '#/',
+    language: 'ar',
+  });
+  loadScripts(context, '', { includeExtras: true });
+
+  context.fireWindowEvent('DOMContentLoaded');
+  context.clickSettingsOpen();
+
+  assert.equal(context.sandbox.document.documentElement.lang, 'ar');
+  assert.equal(context.sandbox.document.documentElement.dir, 'rtl');
+  assert.equal(context.storage.get('smt_lang'), 'ar');
+  assert.equal(context.selectedSettingsLanguage(), 'ar');
+
+  context.clickSettingsLanguage('zh-Hans');
+
+  assert.equal(context.sandbox.document.documentElement.lang, 'zh-Hans');
+  assert.equal(context.sandbox.document.documentElement.dir, 'ltr');
+  assert.equal(context.storage.get('smt_lang'), 'zh-Hans');
+  assert.equal(context.selectedSettingsLanguage(), 'zh-Hans');
   assert.equal(context.reloadCount, 0);
 });

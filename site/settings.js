@@ -38,6 +38,10 @@
     try { const v = localStorage.getItem(key); return v == null ? fallback : v; } catch { return fallback; }
   }
   function lsSet(key, v) { try { localStorage.setItem(key, v); } catch {} }
+  function normalizedLanguage(value) {
+    if (window.smtNormalizeLanguage) return window.smtNormalizeLanguage(value);
+    return value === "sv" || value === "en" ? value : "en";
+  }
 
   // -------- APPLY HELPERS --------
 
@@ -113,7 +117,7 @@
   function syncControls() {
     setSegment("theme",     ls("smt_theme", "auto"));
     setPalette(ls("smt_palette", "flag"));
-    setSegment("language",  ls("smt_lang", "en"));
+    setSegment("language",  normalizedLanguage(ls("smt_lang", "en")));
     setSegment("textsize",  ls("smt_textsize", "100"));
     setCheckbox("motion",   ls("smt_motion", "") === "reduce");
     setCheckbox("aurora",   ls("smt_aurora", "on") !== "off");
@@ -128,7 +132,7 @@
     if (!host || !window.smtBuddyList) return;
     const buddies = window.smtBuddyList();
     const cur = ls("smt_buddy", "dala");
-    const lang = ls("smt_lang", "en");
+    const lang = normalizedLanguage(ls("smt_lang", "en"));
     host.innerHTML = buddies.map((b) => `
       <button class="buddy-card ${b.id === cur ? "is-on" : ""}" data-buddy="${b.id}" title="${b.name}">
         <span class="buddy-card__svg">${b.svg}</span>
@@ -148,14 +152,19 @@
     if (seg) {
       const group = seg.parentElement.dataset.set;
       const v = seg.dataset.val;
+      let appliedValue = v;
       if (group === "theme") applyTheme(v);
       else if (group === "language") {
-        if (window.smtSetLanguage) window.smtSetLanguage(v);
-        else if (window.applyLang) window.applyLang(v);
-        else { lsSet("smt_lang", v); location.reload(); }
+        if (window.smtSetLanguage) appliedValue = window.smtSetLanguage(v);
+        else if (window.applyLang) appliedValue = window.applyLang(v);
+        else {
+          appliedValue = normalizedLanguage(v);
+          lsSet("smt_lang", appliedValue);
+          location.reload();
+        }
       }
       else if (group === "textsize") applyTextSize(v);
-      setSegment(group, v);
+      setSegment(group, appliedValue);
       return;
     }
 

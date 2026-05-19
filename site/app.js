@@ -673,19 +673,32 @@ const i18n = window.i18n = {
   }
 };
 
+if (window.__i18n_extra) Object.assign(i18n, window.__i18n_extra);
+
+const smtRtlLanguages = new Set(["ar"]);
+
+function smtNormalizeLanguage(lang) {
+  return i18n[lang] ? lang : "en";
+}
+window.smtNormalizeLanguage = smtNormalizeLanguage;
+
 function applyLang(lang) {
-  document.documentElement.lang = lang;
+  const nextLang = smtNormalizeLanguage(lang);
+  const dictionary = i18n[nextLang] || i18n.en;
+  document.documentElement.lang = nextLang;
+  document.documentElement.dir = smtRtlLanguages.has(nextLang) ? "rtl" : "ltr";
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
-    const value = (i18n[lang] && i18n[lang][key]);
+    const value = dictionary[key] === undefined ? i18n.en[key] : dictionary[key];
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
   });
   document.querySelectorAll(".lang button[data-lang]").forEach((b) => {
-    b.classList.toggle("is-on", b.dataset.lang === lang);
+    b.classList.toggle("is-on", b.dataset.lang === nextLang);
   });
-  try { localStorage.setItem("smt_lang", lang); } catch {}
+  try { localStorage.setItem("smt_lang", nextLang); } catch {}
+  return nextLang;
 }
 window.applyLang = applyLang;
 
@@ -698,9 +711,9 @@ function smtEmitLanguageChange(lang) {
 }
 
 function smtSetLanguage(lang) {
-  const nextLang = i18n[lang] ? lang : "en";
-  applyLang(nextLang);
+  const nextLang = applyLang(lang);
   smtEmitLanguageChange(nextLang);
+  return nextLang;
 }
 window.smtSetLanguage = smtSetLanguage;
 
@@ -713,7 +726,7 @@ document.addEventListener("click", (e) => {
 window.addEventListener("DOMContentLoaded", () => {
   let saved = "en";
   try { saved = localStorage.getItem("smt_lang") || "en"; } catch {}
-  applyLang(saved);
+  smtSetLanguage(saved);
 });
 
 /* ============================ TRY-A-QUESTION DEMO */
