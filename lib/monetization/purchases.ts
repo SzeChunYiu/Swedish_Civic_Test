@@ -6,10 +6,12 @@ export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
 export const REMOVE_ADS_PRICE_LABEL = '29 SEK';
 export const REMOVE_ADS_STORAGE_KEY = 'monetization.removeAds.adsDisabled.v1';
 
-const STORED_TRUE = 'true';
+const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;
+const REMOVE_ADS_RECORD_SOURCES = ['manual', 'purchase', 'restore'] as const;
 
 type NativeIapModule = typeof import('react-native-iap');
 type SecureStoreModule = typeof import('expo-secure-store');
+type RemoveAdsEntitlementSource = (typeof REMOVE_ADS_RECORD_SOURCES)[number];
 
 export interface PurchaseStorage {
   getItemAsync(key: string): Promise<string | null>;
@@ -22,6 +24,15 @@ export interface RemoveAdsPurchaseRecord {
   purchaseToken?: string | null;
   transactionId?: string | null;
   raw?: unknown;
+}
+
+export interface StoredRemoveAdsPurchaseRecord {
+  grantedAt: string;
+  productId: string;
+  purchaseToken?: string | null;
+  schemaVersion: typeof REMOVE_ADS_RECORD_SCHEMA_VERSION;
+  source: RemoveAdsEntitlementSource;
+  transactionId?: string | null;
 }
 
 export interface RemoveAdsPurchaseProvider {
@@ -45,6 +56,12 @@ export interface RemoveAdsPurchaseResult {
 
 export interface PurchaseRuntimeOptions {
   provider?: RemoveAdsPurchaseProvider;
+  storage?: PurchaseStorage;
+}
+
+export interface SetRemoveAdsEntitlementOptions {
+  purchase?: RemoveAdsPurchaseRecord;
+  source?: RemoveAdsEntitlementSource;
   storage?: PurchaseStorage;
 }
 
@@ -77,6 +94,19 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function optionalString(value: unknown): string | null | undefined {
   return typeof value === 'string' ? value : undefined;
+}
+
+function optionalStoredString(value: unknown): string | null | undefined {
+  return value === null || typeof value === 'string' ? value : undefined;
+}
+
+function isRemoveAdsRecordSource(value: unknown): value is RemoveAdsEntitlementSource {
+  return typeof value === 'string' && REMOVE_ADS_RECORD_SOURCES.some((source) => source === value);
+}
+
+function isValidGrantedAt(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  return Number.isFinite(Date.parse(value));
 }
 
 function getBrowserPurchaseStorage(): BrowserPurchaseStorage | undefined {
@@ -127,6 +157,70 @@ function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
   );
 }
 
+function createStoredRemoveAdsPurchaseRecord({
+  purchase,
+  source,
+}: {
+  purchase?: RemoveAdsPurchaseRecord;
+  source: RemoveAdsEntitlementSource;
+}): StoredRemoveAdsPurchaseRecord {
+  return {
+    grantedAt: new Date().toISOString(),
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: purchase?.purchaseToken ?? null,
+    schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    source,
+    transactionId: purchase?.transactionId ?? null,
+  };
+}
+
+function serializeRemoveAdsPurchaseRecord({
+  purchase,
+  source,
+}: {
+  purchase?: RemoveAdsPurchaseRecord;
+  source: RemoveAdsEntitlementSource;
+}): string {
+  return JSON.stringify(createStoredRemoveAdsPurchaseRecord({ purchase, source }));
+}
+
+function parseStoredRemoveAdsPurchaseRecord(
+  storedValue: string | null,
+): StoredRemoveAdsPurchaseRecord | null {
+  if (!storedValue) return null;
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(storedValue);
+  } catch {
+    return null;
+  }
+
+  if (!isRecord(parsed)) return null;
+
+  const purchaseToken = optionalStoredString(parsed.purchaseToken);
+  const transactionId = optionalStoredString(parsed.transactionId);
+  if (purchaseToken === undefined || transactionId === undefined) return null;
+
+  if (
+    parsed.schemaVersion !== REMOVE_ADS_RECORD_SCHEMA_VERSION ||
+    parsed.productId !== REMOVE_ADS_PRODUCT_ID ||
+    !isRemoveAdsRecordSource(parsed.source) ||
+    !isValidGrantedAt(parsed.grantedAt)
+  ) {
+    return null;
+  }
+
+  return {
+    grantedAt: parsed.grantedAt,
+    productId: parsed.productId,
+    purchaseToken,
+    schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    source: parsed.source,
+    transactionId,
+  };
+}
+
 function createResult(
   status: RemoveAdsPurchaseStatus,
   entitlements: PremiumEntitlements,
@@ -169,7 +263,9 @@ export function createSecureStorePurchaseStorage(): PurchaseStorage {
 
 export function createMemoryPurchaseStorage(initialAdsDisabled = false): PurchaseStorage {
   const values = new Map<string, string>();
-  if (initialAdsDisabled) values.set(REMOVE_ADS_STORAGE_KEY, STORED_TRUE);
+  if (initialAdsDisabled) {
+    values.set(REMOVE_ADS_STORAGE_KEY, serializeRemoveAdsPurchaseRecord({ source: 'manual' }));
+  }
 
   return {
     async deleteItemAsync(key) {
@@ -191,7 +287,10 @@ export function createWebPurchaseStorage(initialAdsDisabled = false): PurchaseSt
   if (browserStorage && initialAdsDisabled) {
     try {
       if (browserStorage.getItem(REMOVE_ADS_STORAGE_KEY) === null) {
-        browserStorage.setItem(REMOVE_ADS_STORAGE_KEY, STORED_TRUE);
+        browserStorage.setItem(
+          REMOVE_ADS_STORAGE_KEY,
+          serializeRemoveAdsPurchaseRecord({ source: 'manual' }),
+        );
       }
     } catch {
       // Fall back to in-memory storage when browser persistence is unavailable.
@@ -238,10 +337,17 @@ export function createWebPurchaseStorage(initialAdsDisabled = false): PurchaseSt
 
 export async function setRemoveAdsEntitlement(
   adsDisabled: boolean,
-  { storage = createSecureStorePurchaseStorage() }: Pick<PurchaseRuntimeOptions, 'storage'> = {},
+  {
+    purchase,
+    source = 'manual',
+    storage = createSecureStorePurchaseStorage(),
+  }: SetRemoveAdsEntitlementOptions = {},
 ): Promise<PremiumEntitlements> {
   if (adsDisabled) {
-    await storage.setItemAsync(REMOVE_ADS_STORAGE_KEY, STORED_TRUE);
+    await storage.setItemAsync(
+      REMOVE_ADS_STORAGE_KEY,
+      serializeRemoveAdsPurchaseRecord({ purchase, source }),
+    );
   } else if (storage.deleteItemAsync) {
     await storage.deleteItemAsync(REMOVE_ADS_STORAGE_KEY);
   } else {
@@ -255,7 +361,7 @@ export async function getPurchaseEntitlements({
   storage = createSecureStorePurchaseStorage(),
 }: Pick<PurchaseRuntimeOptions, 'storage'> = {}): Promise<PremiumEntitlements> {
   const storedValue = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
-  return removeAdsEntitlements(storedValue === STORED_TRUE);
+  return removeAdsEntitlements(parseStoredRemoveAdsPurchaseRecord(storedValue) !== null);
 }
 
 export function createNativePurchaseProvider({
@@ -397,7 +503,11 @@ export async function buyRemoveAds({
     }
 
     await provider.finishPurchase?.(purchase);
-    const entitlements = await setRemoveAdsEntitlement(true, { storage });
+    const entitlements = await setRemoveAdsEntitlement(true, {
+      purchase,
+      source: 'purchase',
+      storage,
+    });
     return createResult('purchased', entitlements, purchase);
   } finally {
     await provider.disconnect?.();
@@ -417,7 +527,11 @@ export async function restoreRemoveAdsPurchase({
       return createResult('not_found', await getPurchaseEntitlements({ storage }));
     }
 
-    const entitlements = await setRemoveAdsEntitlement(true, { storage });
+    const entitlements = await setRemoveAdsEntitlement(true, {
+      purchase,
+      source: 'restore',
+      storage,
+    });
     return createResult('restored', entitlements, purchase);
   } finally {
     await provider.disconnect?.();
