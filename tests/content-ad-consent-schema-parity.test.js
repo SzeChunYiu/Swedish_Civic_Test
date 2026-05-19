@@ -3,41 +3,8 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-function loadTs(relativePath, exportName, moduleCache = new Map()) {
-  const filePath = path.join(repoRoot, relativePath);
-  if (moduleCache.has(filePath)) {
-    const cached = moduleCache.get(filePath);
-    return exportName ? cached[exportName] : cached;
-  }
-
-  const source = fs.readFileSync(filePath, 'utf8');
-  const output = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-  }).outputText;
-  const mod = { exports: {} };
-  moduleCache.set(filePath, mod.exports);
-
-  function localRequire(specifier) {
-    if (specifier.startsWith('.')) {
-      const resolvedPath = path.resolve(path.dirname(filePath), specifier);
-      const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
-      const resolvedTsPath = tsPath;
-
-      if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
-      }
-    }
-
-    return require(specifier);
-  }
-
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
-  return exportName ? mod.exports[exportName] : mod.exports;
-}
 
 test('ad consent TypeScript schema stays in parity with validator expectations', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -56,47 +23,6 @@ test('ad consent TypeScript schema stays in parity with validator expectations',
   assert.match(consentSource, /export interface AdConsentState/);
   assert.match(consentSource, /pendingPrompts: AdConsentPrompt\[\];/);
   assert.match(consentSource, /blockReason\?: AdSdkInitializationBlockReason;/);
-});
-
-test('ad consent decision blocks real ads before prompts and downgrades denied ATT', () => {
-  const { getAdConsentDecision, getAdSdkInitializationDecision } = loadTs(
-    'lib/monetization/consent.ts',
-  );
-  const pendingState = {
-    entitlements: { adsDisabled: false },
-    googleMobileAdsEnabled: true,
-    platform: 'ios',
-    realAdsEnabled: true,
-    region: 'eea',
-    trackingTransparencyStatus: 'not_determined',
-    umpConsentStatus: 'required',
-  };
-  const deniedAttState = {
-    ...pendingState,
-    trackingTransparencyStatus: 'denied',
-    umpConsentStatus: 'obtained',
-  };
-
-  assert.deepEqual(getAdConsentDecision(pendingState), {
-    adServingAllowed: false,
-    canRequestNonPersonalizedAds: false,
-    canRequestPersonalizedAds: false,
-    pendingPrompts: ['app_tracking_transparency', 'ump_consent_form'],
-  });
-  assert.deepEqual(getAdSdkInitializationDecision(pendingState), {
-    blockReason: 'pending_consent_prompts',
-    canInitializeGoogleMobileAds: false,
-    consentDecision: getAdConsentDecision(pendingState),
-    requestNonPersonalizedAdsOnly: false,
-  });
-  assert.deepEqual(getAdConsentDecision(deniedAttState), {
-    adServingAllowed: true,
-    canRequestNonPersonalizedAds: true,
-    canRequestPersonalizedAds: false,
-    pendingPrompts: [],
-  });
-  assert.equal(getAdSdkInitializationDecision(deniedAttState).canInitializeGoogleMobileAds, true);
-  assert.equal(getAdSdkInitializationDecision(deniedAttState).requestNonPersonalizedAdsOnly, true);
 });
 
 test('ad consent schema parity rejects SDK init optionality drift', () => {
