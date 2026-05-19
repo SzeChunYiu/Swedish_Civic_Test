@@ -7,10 +7,6 @@ export type AdRuntimePlatform = 'ios' | 'android' | 'web' | string;
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
-export const WEB_AD_FALLBACK_CONSENT_DECISION: AdConsentGate = {
-  adServingAllowed: true,
-};
-
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',

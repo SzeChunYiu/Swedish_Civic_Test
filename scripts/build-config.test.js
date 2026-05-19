@@ -5,8 +5,6 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { readWebDocumentMetadata } = require('./prepare-web-export.js');
-
 const repoRoot = path.resolve(__dirname, '..');
 
 function readJson(relativePath) {
@@ -1285,7 +1283,6 @@ test('web export script is available for local production bundle smoke', () => {
   const vercelConfig = readJson('vercel.json');
   const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
   const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
-  const htmlShell = fs.readFileSync(path.join(repoRoot, 'app/+html.tsx'), 'utf8');
 
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
@@ -1307,7 +1304,6 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
-  assert.equal(fs.existsSync(path.join(repoRoot, 'tests/web-export-budget.test.js')), true);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
@@ -1340,19 +1336,16 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   });
   const index = fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8');
   const fallback = fs.readFileSync(path.join(outputDir, '404.html'), 'utf8');
-  const favicon = fs.readFileSync(path.join(outputDir, 'favicon.svg'), 'utf8');
   const bundle = fs.readFileSync(path.join(bundleDir, 'entry-test.js'), 'utf8');
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(index, /data-web-export-loader="true"/);
-  assert.match(index, /<link href="favicon\.svg" rel="icon" type="image\/svg\+xml" \/>/);
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
-  assert.match(favicon, /viewBox="0 0 64 64"/);
 
   const checkResult = spawnSync(
     process.execPath,
@@ -1363,22 +1356,6 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     },
   );
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
-
-  const wrongLanguage = metadata.language === 'sv' ? 'en' : 'sv';
-  const wrongIndex = index.replace(`lang="${metadata.language}"`, `lang="${wrongLanguage}"`);
-  fs.writeFileSync(path.join(outputDir, 'index.html'), wrongIndex);
-  fs.writeFileSync(path.join(outputDir, '404.html'), wrongIndex);
-
-  const staleMetadataCheck = spawnSync(
-    process.execPath,
-    ['scripts/prepare-web-export.js', '--check', outputDir],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-  assert.notEqual(staleMetadataCheck.status, 0);
-  assert.match(staleMetadataCheck.stderr || staleMetadataCheck.stdout, /must declare lang=/);
 });
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {

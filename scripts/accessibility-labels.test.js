@@ -7,15 +7,6 @@ const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
 
-function isIntentionallyHiddenInteractive(tag) {
-  return (
-    tag.includes('accessible={false}') &&
-    (tag.includes('accessibilityElementsHidden') ||
-      tag.includes('importantForAccessibility="no"') ||
-      tag.includes('aria-hidden'))
-  );
-}
-
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const fullPath = path.join(dir, entry.name);
