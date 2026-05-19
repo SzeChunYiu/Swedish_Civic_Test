@@ -16,7 +16,9 @@
 // through i18n to user-facing copy.
 
 import { perChapterProgress, mockHistory } from './dashboardStats';
-import type { UserProgress } from '../../types/progress';
+import type { UserProgress, UserQuestionProgress } from '../../types/progress';
+import type { PracticeQuestion } from '../../types/content';
+import type { MockExamProgress } from '../storage/progressStore';
 
 export type ReadinessVerdict =
   | 'not_ready_yet'
@@ -114,6 +116,52 @@ export interface ReadinessInput {
   chapters: ReadonlyArray<{ id: string; questionCount: number }>;
   questionChapterIndex: Record<string, string>;
   now?: Date;
+}
+
+// Adapter: called by home.tsx with the flat store slices it already holds.
+export function computeReadinessFromQuestionProgress(input: {
+  questionProgress: Record<string, UserQuestionProgress>;
+  questions: readonly PracticeQuestion[];
+  chapters: readonly { id: string; questionCount: number }[];
+  mockExamSessions: readonly MockExamProgress[];
+}): ReadinessScore {
+  // Build a minimal UserProgress so computeReadinessScore can run unchanged.
+  const questionChapterIndex: Record<string, string> = {};
+  for (const q of input.questions) {
+    questionChapterIndex[q.id] = q.chapterId;
+  }
+  const sessions = input.mockExamSessions.map((s) => ({
+    id: s.sessionId,
+    mode: 'exam' as const,
+    questionIds: [],
+    answers: Array.from({ length: s.correctCount }, () => ({
+      questionId: '',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: s.completedAt,
+      timeSpentSeconds: 0,
+    })).concat(
+      Array.from({ length: s.totalCount - s.correctCount }, () => ({
+        questionId: '',
+        selectedOptionIds: [],
+        isCorrect: false,
+        answeredAt: s.completedAt,
+        timeSpentSeconds: 0,
+      })),
+    ),
+    startedAt: s.completedAt,
+    completedAt: s.completedAt,
+    score: s.score,
+  }));
+  const progress: UserProgress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: input.questionProgress,
+    sessions,
+  };
+  return computeReadinessScore({ progress, chapters: input.chapters, questionChapterIndex });
 }
 
 export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
