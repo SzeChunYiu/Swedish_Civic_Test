@@ -5,6 +5,7 @@ const path = require('node:path');
 const DEFAULT_REPO_ROOT = path.resolve(__dirname, '..');
 
 const STATIC_OUTCOME_COPY_FILES = Object.freeze([
+  'site/index.html',
   'site/app.js',
   'site/i18n-extras.js',
   'site/buddies.js',
