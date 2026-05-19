@@ -63,6 +63,24 @@ test('badge preserves a readable accessibility label when visual text is upperca
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('provenance badge source note uses tokenized toggle feedback', () => {
+  const source = read('components/quiz/ProvenanceBadge.tsx');
+
+  assert.match(source, /const showSourceNote = \(\) => setSourceNoteVisible\(true\);/);
+  assert.match(
+    source,
+    /const toggleSourceNote = \(\) => setSourceNoteVisible\(\(visible\) => !visible\);/,
+  );
+  assert.match(source, /onFocus=\{showSourceNote\}/);
+  assert.match(source, /onPress=\{toggleSourceNote\}/);
+  assert.match(source, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
+  assert.match(source, /hitSlop=\{space\[1\]\}/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /pressed \? styles\.badgePressed : null/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('button derives an accessibility label from plain text children by default', () => {
   const source = read('components/ui/Button.tsx');
 
