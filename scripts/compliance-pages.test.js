@@ -124,6 +124,8 @@ test('compliance pages and source links are present', () => {
 
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+  assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
+  assert.match(read('site/index.html'), /data-i18n="footer\.t1">Study the material\./);
   assert.match(read('site/app.js'), /"hero\.h1a": "Study the material\."/);
   assert.match(read('site/app.js'), /"hero\.h1b": "Practice with sources\."/);
   assert.match(read('site/app.js'), /"hero\.h1a": "Plugga materialet\."/);
