@@ -2,6 +2,11 @@ import { Link } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import {
+  GuidedPracticePath,
+  type GuidedPracticePathCopy,
+  type GuidedPracticePathStage,
+} from '../../components/learning/GuidedPracticePath';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
@@ -28,13 +33,27 @@ import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/
 import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
-import { useProgressStore } from '../../lib/storage/progressStore';
+import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type StudyLoopItemCopy = {
   label: string;
   lesson: string;
+};
+
+type GuidedPathStageCopy = {
+  accessibilityLabel: (
+    title: string,
+    chapterRange: string,
+    progress: string,
+    status: string,
+  ) => string;
+  chapterRange: string;
+  description: string;
+  levelLabel: string;
+  progressLabel: (completedChapters: number, totalChapters: number) => string;
+  title: string;
 };
 
 type HomeCopy = {
@@ -54,6 +73,20 @@ type HomeCopy = {
   feedbackLinkAccessibilityLabel: string;
   feedbackText: string;
   feedbackTitle: string;
+  guidedPathDailyAccessibilityLabel: (completed: number, goal: number) => string;
+  guidedPathDailyCta: string;
+  guidedPathDailyText: (completed: number, goal: number) => string;
+  guidedPathDailyTitle: string;
+  guidedPathResumeAccessibilityLabel: (stageTitle: string) => string;
+  guidedPathResumeCta: string;
+  guidedPathStageStatuses: {
+    active: string;
+    completed: string;
+    upcoming: string;
+  };
+  guidedPathStages: GuidedPathStageCopy[];
+  guidedPathSubtitle: string;
+  guidedPathTitle: string;
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
@@ -80,6 +113,89 @@ type HomeCopy = {
   xpBasedHelper: string;
 };
 
+const guidedPathChapterGroups = [
+  { id: 'beginner', chapterIds: ['ch01', 'ch02', 'ch03', 'ch04'] },
+  { id: 'builder', chapterIds: ['ch05', 'ch06', 'ch07', 'ch08', 'ch09'] },
+  { id: 'advanced', chapterIds: ['ch10', 'ch11', 'ch12', 'ch13'] },
+] as const;
+
+function getAnsweredChapterIds(questionProgress: Record<string, QuestionProgress>) {
+  const answeredChapterIds = new Set<string>();
+
+  questions.forEach((question) => {
+    const progress = questionProgress[question.id];
+    const hasAnswered =
+      (progress?.seenCount ?? 0) > 0 ||
+      (progress?.correctCount ?? 0) > 0 ||
+      (progress?.wrongCount ?? 0) > 0;
+
+    if (hasAnswered) answeredChapterIds.add(question.chapterId);
+  });
+
+  return answeredChapterIds;
+}
+
+function buildGuidedPracticePathStages(
+  copy: HomeCopy,
+  questionProgress: Record<string, QuestionProgress>,
+): GuidedPracticePathStage[] {
+  const answeredChapterIds = getAnsweredChapterIds(questionProgress);
+  const progressByGroup = guidedPathChapterGroups.map((group) => {
+    const completedChapterCount = group.chapterIds.filter((chapterId) =>
+      answeredChapterIds.has(chapterId),
+    ).length;
+
+    return {
+      ...group,
+      completedChapterCount,
+      progress: completedChapterCount / group.chapterIds.length,
+    };
+  });
+  const activeGroupId =
+    progressByGroup.find((group) => group.completedChapterCount < group.chapterIds.length)?.id ??
+    'advanced';
+
+  return progressByGroup.map((group, index) => {
+    const stageCopy = copy.guidedPathStages[index];
+    const progressLabel = stageCopy.progressLabel(
+      group.completedChapterCount,
+      group.chapterIds.length,
+    );
+    const isCompleted = group.completedChapterCount === group.chapterIds.length;
+    const isActive = group.id === activeGroupId;
+    const statusLabel = isCompleted
+      ? copy.guidedPathStageStatuses.completed
+      : isActive
+        ? copy.guidedPathStageStatuses.active
+        : copy.guidedPathStageStatuses.upcoming;
+    const nextChapterId = group.chapterIds.find((chapterId) => !answeredChapterIds.has(chapterId));
+    const href = nextChapterId
+      ? (`/chapter/${nextChapterId}` as GuidedPracticePathStage['href'])
+      : group.id === 'advanced'
+        ? '/exam'
+        : '/learn';
+
+    return {
+      accessibilityLabel: stageCopy.accessibilityLabel(
+        stageCopy.title,
+        stageCopy.chapterRange,
+        progressLabel,
+        statusLabel,
+      ),
+      chapterRange: stageCopy.chapterRange,
+      description: stageCopy.description,
+      href,
+      id: group.id,
+      isActive,
+      levelLabel: stageCopy.levelLabel,
+      progress: group.progress,
+      progressLabel,
+      statusLabel,
+      title: stageCopy.title,
+    };
+  });
+}
+
 const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
@@ -99,6 +215,54 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     feedbackTitle: 'Håll koll på det som behöver övas',
+    guidedPathDailyAccessibilityLabel: (completed, goal) =>
+      `Starta dagens övning. ${completed} av ${goal} svar klara idag.`,
+    guidedPathDailyCta: 'Starta dagens övning',
+    guidedPathDailyText: (completed, goal) => `${completed}/${goal} svar idag håller vanan synlig.`,
+    guidedPathDailyTitle: 'Daglig övning',
+    guidedPathResumeAccessibilityLabel: (stageTitle) => `Fortsätt på ${stageTitle}`,
+    guidedPathResumeCta: 'Fortsätt på nästa kapitel',
+    guidedPathStageStatuses: {
+      active: 'Pågår',
+      completed: 'Klar',
+      upcoming: 'Nästa',
+    },
+    guidedPathStages: [
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 1-4',
+        description: 'Börja med landet, demokratin, styret och valen.',
+        levelLabel: 'Nybörjare',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Grunderna i Sverige och demokrati',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 5-9',
+        description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
+        levelLabel: 'Fortsättning',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Rättigheter, medier och samhällsliv',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 10-13',
+        description:
+          'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
+        levelLabel: 'Avancerad',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Historia, omvärld, religion och traditioner',
+      },
+    ],
+    guidedPathSubtitle:
+      'Följ 13 samhällskapitel i tre steg, fortsätt där du var och håll igång dagens övning.',
+    guidedPathTitle: 'Väg från grund till provträning',
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
@@ -170,6 +334,55 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     feedbackTitle: 'Keep track of what needs review',
+    guidedPathDailyAccessibilityLabel: (completed, goal) =>
+      `Start today's practice. ${completed} of ${goal} answers complete today.`,
+    guidedPathDailyCta: "Start today's practice",
+    guidedPathDailyText: (completed, goal) =>
+      `${completed}/${goal} answers today keeps the habit visible.`,
+    guidedPathDailyTitle: 'Daily practice',
+    guidedPathResumeAccessibilityLabel: (stageTitle) => `Continue with ${stageTitle}`,
+    guidedPathResumeCta: 'Continue the next chapter',
+    guidedPathStageStatuses: {
+      active: 'In progress',
+      completed: 'Done',
+      upcoming: 'Next',
+    },
+    guidedPathStages: [
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 1-4',
+        description: 'Start with Sweden, democracy, government, and elections.',
+        levelLabel: 'Beginner',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'Sweden and democracy basics',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 5-9',
+        description: 'Build through law, media, rights, working life, and welfare.',
+        levelLabel: 'Builder',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'Rights, media, and civic life',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 10-13',
+        description:
+          'Finish with modern Sweden, international topics, freedom of religion, and holidays.',
+        levelLabel: 'Advanced',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'History, the wider world, religion, and traditions',
+      },
+    ],
+    guidedPathSubtitle:
+      "Follow 13 civic chapters in three stages, resume where you left off, and keep today's practice visible.",
+    guidedPathTitle: 'Guided path from basics to exam practice',
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
@@ -297,6 +510,26 @@ export default function Screen() {
     [dashboardProgress, dashboardQuestionChapterIndex],
   );
   const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
+  const guidedPathStages = useMemo(
+    () => buildGuidedPracticePathStages(copy, questionProgress),
+    [copy, questionProgress],
+  );
+  const guidedPathActiveStage =
+    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
+  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
+  const guidedPathCopy: GuidedPracticePathCopy = {
+    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
+      completedToday,
+      dailyGoalAnswers,
+    ),
+    dailyPracticeCta: copy.guidedPathDailyCta,
+    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
+    dailyPracticeTitle: copy.guidedPathDailyTitle,
+    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
+      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
+    ),
+    resumeCta: copy.guidedPathResumeCta,
+  };
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -400,6 +633,15 @@ export default function Screen() {
           {copy.browseChapters}
         </Link>
       </View>
+
+      <SectionHeader title={copy.guidedPathTitle} subtitle={copy.guidedPathSubtitle} />
+      <GuidedPracticePath
+        copy={guidedPathCopy}
+        dailyProgress={progress}
+        language={language}
+        resumeHref={guidedPathResumeHref}
+        stages={guidedPathStages}
+      />
 
       <View style={styles.statsRow}>
         <MetricCard
