@@ -930,8 +930,16 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.equal(fs.existsSync(workflowPath), true);
 
   const workflow = fs.readFileSync(workflowPath, 'utf8');
+  function indexOfRequired(pattern, label) {
+    const match = workflow.match(pattern);
+    assert.ok(match, `${label} is missing`);
+    return match.index;
+  }
+
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /branches:\s*\[\s*main\s*\]/);
+  assert.match(workflow, /runs-on:\s+ubuntu-24\.04/);
+  assert.doesNotMatch(workflow, /runs-on:\s+ubuntu-latest/);
   assert.match(workflow, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*true/);
   assert.match(workflow, /actions\/checkout@v5/);
   assert.match(workflow, /actions\/setup-node@v5/);
@@ -939,10 +947,33 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
   assert.match(workflow, /npm run validate/);
+  assert.match(workflow, /npm run build:web:export -- --max-workers 2/);
+  assert.match(workflow, /npx playwright install --with-deps chromium/);
+  assert.match(workflow, /npm run test:e2e -- tests\/e2e\/visual-smoke\.spec\.ts --workers=1/);
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
+  const validateIndex = indexOfRequired(/npm run validate/, 'full validation command');
+  const webExportIndex = indexOfRequired(
+    /npm run build:web:export -- --max-workers 2/,
+    'web export command',
+  );
+  const visualSmokeIndex = indexOfRequired(
+    /npm run test:e2e -- tests\/e2e\/visual-smoke\.spec\.ts --workers=1/,
+    'visual smoke command',
+  );
+  const evidenceUploadIndex = indexOfRequired(
+    /actions\/upload-artifact@v6/,
+    'release evidence artifact upload',
+  );
+
+  assert.ok(validateIndex < webExportIndex, 'web export must run after full validation');
+  assert.ok(webExportIndex < visualSmokeIndex, 'visual smoke must run after web export');
+  assert.ok(
+    visualSmokeIndex < evidenceUploadIndex,
+    'visual smoke must run before release evidence upload',
+  );
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 
