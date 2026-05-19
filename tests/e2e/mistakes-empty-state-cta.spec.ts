@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+
 import { dismissBlockingModals } from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
@@ -19,9 +20,9 @@ test('mistakes empty state CTA is a full-size route to practice', async ({ page 
   await page.goto('/mistakes', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  await expect(page.getByText('Inga missade frågor ännu', { exact: true })).toBeVisible();
+  await expect(page.getByText('Inga misstag ännu', { exact: true })).toBeVisible();
   await expect(
-    page.getByText('När du missar en övningsfråga visas den här.', { exact: true }),
+    page.getByText('Svara fel på en övningsfråga så visas den här.', { exact: true }),
   ).toBeVisible();
 
   const practiceCta = page.getByRole('button', { name: 'Öva svåra frågor' });

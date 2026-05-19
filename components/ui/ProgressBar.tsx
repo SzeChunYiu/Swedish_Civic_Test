@@ -16,22 +16,13 @@ const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = {
   },
 };
 
-/**
- * Defaults: `progress=0`, `language="sv"`, and `presentationOnly=false`.
- * Use `presentationOnly` when a parent link or summary already announces the
- * same localized progress value.
- */
-export interface ProgressBarProps {
-  progress?: number;
-  language?: AppLanguage;
-  presentationOnly?: boolean;
-}
-
 export function ProgressBar({
   progress = 0,
   language = 'sv',
-  presentationOnly = false,
-}: ProgressBarProps) {
+}: {
+  progress?: number;
+  language?: AppLanguage;
+}) {
   const clampedProgress = Math.max(0, Math.min(1, progress));
   const progressPercent = Math.round(clampedProgress * 100);
   const copy = progressBarCopy[language];
@@ -52,21 +43,6 @@ export function ProgressBar({
     outputRange: ['0%', '100%'],
   });
 
-  if (presentationOnly) {
-    return (
-      <View
-        aria-hidden
-        accessibilityElementsHidden
-        accessibilityRole="none"
-        importantForAccessibility="no-hide-descendants"
-        pointerEvents="none"
-        style={styles.track}
-      >
-        <Animated.View style={[styles.fill, { width: fillWidth }]} />
-      </View>
-    );
-  }
-
   return (
     <View
       aria-label={progressAccessibilityLabel}
@@ -82,7 +58,6 @@ export function ProgressBar({
         now: progressPercent,
         text: progressAccessibilityLabel,
       }}
-      pointerEvents="none"
       style={styles.track}
     >
       <Animated.View style={[styles.fill, { width: fillWidth }]} />

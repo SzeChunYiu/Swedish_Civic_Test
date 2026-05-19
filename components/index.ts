@@ -1,5 +1,7 @@
 export * from './Button';
+export * from './ChapterProgressCard';
 export * from './DisclaimerBanner';
+export * from './Divider';
 export * from './OptionCard';
 export * from './PillBadge';
 export * from './ProgressBar';

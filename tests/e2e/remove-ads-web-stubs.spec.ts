@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
+
 import { dismissBlockingModals } from './browserLaunch';
 
 function homeBannerAd(page: Page) {
@@ -16,7 +17,7 @@ function chapterListAd(page: Page) {
 
 function nativeStudyAd(page: Page) {
   return page.getByLabel(
-    /(Test native ad: AdMob test placement preview|Inbyggd testannons: AdMob-testplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
+    /(Test native ad: Sponsored study placement|Inbyggd testannons: Sponsrad studieplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
   );
 }
 

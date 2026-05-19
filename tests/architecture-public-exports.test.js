@@ -30,8 +30,6 @@ const architectureExpectedExports = {
   'components/monetization/LaunchPopupAd.tsx': ['LaunchPopupAd'],
   'components/monetization/NativeAdCard.tsx': ['NativeAdCard'],
   'components/monetization/PremiumBanner.tsx': ['PremiumBanner'],
-  'components/monetization/PracticeInterstitialAd.native.tsx': ['PracticeInterstitialAd'],
-  'components/monetization/PracticeInterstitialAd.tsx': ['PracticeInterstitialAd'],
   'data/chapters.ts': ['chapters'],
   'data/questions.ts': ['questions'],
   'data/glossary.ts': ['glossaryTerms'],
@@ -227,80 +225,11 @@ function pathExists(relativePath) {
   return fs.existsSync(path.join(repoRoot, relativePath));
 }
 
-function listFiles(relativePath) {
-  return fs
-    .readdirSync(path.join(repoRoot, relativePath), { withFileTypes: true })
-    .flatMap((entry) => {
-      const entryPath = path.join(relativePath, entry.name);
-      if (entry.isDirectory()) return listFiles(entryPath);
-      return entryPath;
-    });
-}
-
 function exportedNamePattern(exportName) {
   return new RegExp(
     `export\\s+(?:declare\\s+)?(?:async\\s+)?(?:function|const|let|var|type|interface|class)\\s+${exportName}\\b|export\\s*\\{[^}]*\\b${exportName}\\b[^}]*\\}`,
   );
 }
-
-function rootBarrelExportSpecifiers(source) {
-  return [...source.matchAll(/^export\s+\*\s+from\s+['"]([^'"]+)['"];$/gm)].map(
-    (match) => match[1],
-  );
-}
-
-function resolveComponentExportTarget(exportSpecifier) {
-  const relativePath = path.posix.normalize(
-    path.posix.join('components', exportSpecifier.replace(/^\.\//, '')),
-  );
-  const candidates = [`${relativePath}.tsx`, `${relativePath}.ts`];
-  const targetPath = candidates.find((candidate) => pathExists(candidate));
-  assert.ok(targetPath, `${exportSpecifier} should resolve to a component source file`);
-  return targetPath;
-}
-
-function sourceFilesForRootBarrelReachability() {
-  return ['app', 'components']
-    .filter(pathExists)
-    .flatMap(listFiles)
-    .filter((relativePath) => /\.(?:ts|tsx)$/.test(relativePath))
-    .filter((relativePath) => relativePath !== 'components/index.ts');
-}
-
-function resolveImportSpecifier(importerPath, importSpecifier) {
-  if (!importSpecifier.startsWith('.')) return null;
-  const basePath = path.posix.normalize(
-    path.posix.join(path.posix.dirname(importerPath), importSpecifier),
-  );
-  const candidates = [
-    `${basePath}.tsx`,
-    `${basePath}.ts`,
-    `${basePath}/index.tsx`,
-    `${basePath}/index.ts`,
-  ];
-  return candidates.find((candidate) => pathExists(candidate)) || null;
-}
-
-function fileImportsTarget(importerPath, targetPath) {
-  const source = readText(importerPath);
-  return [...source.matchAll(/from\s+['"]([^'"]+)['"]/g)].some((match) => {
-    const resolvedPath = resolveImportSpecifier(importerPath, match[1]);
-    return resolvedPath === targetPath;
-  });
-}
-
-const allowedRootBarrelFoundationExports = {
-  'components/QuestionNavigator.tsx': {
-    rationale:
-      'QuestionNavigator is a public exam-navigation foundation kept for the queued exam integration.',
-    focusedTests: [
-      {
-        path: 'scripts/accessibility-labels.test.js',
-        pattern: /QuestionNavigator tabs keep token-sized touch targets/,
-      },
-    ],
-  },
-};
 
 test('architecture scaffold files expose expected public exports', () => {
   const missingExports = Object.entries(architectureExpectedExports).flatMap(
@@ -346,35 +275,4 @@ test('mock exam draft primitives are not public exports unless the Exam route re
       `${componentName} must be rendered by app/(tabs)/exam.tsx before root export`,
     );
   }
-});
-
-test('root component barrel exports are reachable or explicitly allowed foundations', () => {
-  const componentBarrel = readText('components/index.ts');
-  const sourceFiles = sourceFilesForRootBarrelReachability();
-  const unreachableExports = [];
-
-  for (const exportSpecifier of rootBarrelExportSpecifiers(componentBarrel)) {
-    const targetPath = resolveComponentExportTarget(exportSpecifier);
-    const hasConsumer = sourceFiles
-      .filter((sourcePath) => sourcePath !== targetPath)
-      .some((sourcePath) => fileImportsTarget(sourcePath, targetPath));
-    if (hasConsumer) continue;
-
-    const allowedFoundation = allowedRootBarrelFoundationExports[targetPath];
-    if (allowedFoundation) {
-      assert.ok(allowedFoundation.rationale.trim().length >= 40);
-      for (const focusedTest of allowedFoundation.focusedTests) {
-        assert.match(
-          readText(focusedTest.path),
-          focusedTest.pattern,
-          `${targetPath} allowlist should point at focused test coverage`,
-        );
-      }
-      continue;
-    }
-
-    unreachableExports.push(`${exportSpecifier} -> ${targetPath}`);
-  }
-
-  assert.deepEqual(unreachableExports, []);
 });

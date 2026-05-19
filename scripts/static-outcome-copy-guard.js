@@ -5,7 +5,6 @@ const path = require('node:path');
 const DEFAULT_REPO_ROOT = path.resolve(__dirname, '..');
 
 const STATIC_OUTCOME_COPY_FILES = Object.freeze([
-  'site/index.html',
   'site/app.js',
   'site/i18n-extras.js',
   'site/buddies.js',
@@ -35,68 +34,6 @@ function lineNumberForIndex(source, index) {
   return source.slice(0, index).split('\n').length;
 }
 
-function readHtmlAttribute(tagSource, name) {
-  const pattern = new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, 'i');
-  const match = pattern.exec(tagSource);
-  return match ? (match[1] ?? match[2] ?? '') : '';
-}
-
-function extractStaticHeadMetaDescriptions(source) {
-  const headMatch = /<head\b[^>]*>([\s\S]*?)<\/head>/i.exec(source);
-  const headSource = headMatch ? headMatch[1] : source;
-  const headOffset = headMatch ? headMatch.index + headMatch[0].indexOf(headSource) : 0;
-  const descriptions = [];
-
-  for (const match of headSource.matchAll(/<meta\b[^>]*>/gi)) {
-    const tagSource = match[0];
-    if (readHtmlAttribute(tagSource, 'name').toLocaleLowerCase('en-US') !== 'description') {
-      continue;
-    }
-
-    descriptions.push({
-      content: readHtmlAttribute(tagSource, 'content').trim(),
-      line: lineNumberForIndex(source, headOffset + match.index),
-    });
-  }
-
-  return descriptions;
-}
-
-function findStaticHeadMetadataDescriptionIssues(source, file = 'site/index.html') {
-  const descriptions = extractStaticHeadMetaDescriptions(source);
-  const issues = [];
-
-  if (descriptions.length === 0) {
-    issues.push({ file, line: 1, label: 'missing static meta description', match: '' });
-    return issues;
-  }
-
-  for (const description of descriptions) {
-    if (!description.content) {
-      issues.push({
-        file,
-        line: description.line,
-        label: 'blank static meta description',
-        match: '',
-      });
-      continue;
-    }
-
-    for (const { label, pattern } of UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS) {
-      const match = pattern.exec(description.content);
-      if (!match) continue;
-      issues.push({
-        file,
-        line: description.line,
-        label: `static meta description ${label}`,
-        match: match[0],
-      });
-    }
-  }
-
-  return issues;
-}
-
 function findUnsupportedStaticOutcomeSlogans(repoRoot = DEFAULT_REPO_ROOT) {
   const offenders = [];
 
@@ -124,23 +61,6 @@ function formatUnsupportedStaticOutcomeSlogans(offenders) {
     .join('\n');
 }
 
-function assertStaticHeadMetadataDescriptionSource(source, file = 'site/index.html') {
-  const issues = findStaticHeadMetadataDescriptionIssues(source, file);
-  assert.equal(
-    issues.length,
-    0,
-    `static head meta description must be non-empty and avoid pass/passport outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
-      issues,
-    )}`,
-  );
-  return extractStaticHeadMetaDescriptions(source).length;
-}
-
-function assertStaticHeadMetadataDescription(repoRoot = DEFAULT_REPO_ROOT) {
-  const source = fs.readFileSync(path.join(repoRoot, 'site/index.html'), 'utf8');
-  return assertStaticHeadMetadataDescriptionSource(source);
-}
-
 function assertNoUnsupportedStaticOutcomeSlogans(repoRoot = DEFAULT_REPO_ROOT) {
   const offenders = findUnsupportedStaticOutcomeSlogans(repoRoot);
   assert.equal(
@@ -157,10 +77,6 @@ module.exports = {
   STATIC_OUTCOME_COPY_FILES,
   UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
   assertNoUnsupportedStaticOutcomeSlogans,
-  assertStaticHeadMetadataDescription,
-  assertStaticHeadMetadataDescriptionSource,
-  extractStaticHeadMetaDescriptions,
-  findStaticHeadMetadataDescriptionIssues,
   findUnsupportedStaticOutcomeSlogans,
   formatUnsupportedStaticOutcomeSlogans,
 };

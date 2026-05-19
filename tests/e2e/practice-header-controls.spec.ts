@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
+
 import { dismissBlockingModals } from './browserLaunch';
 
 type BoundingBox = { x: number; y: number; width: number; height: number };
@@ -8,13 +9,12 @@ async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await page
-    .getByRole('radio', {
-      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
-    })
+    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
-  await expect(
-    page.getByRole('radio', { name: 'Set question language to English support' }),
-  ).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
 }
 
 async function expectStableTarget(locator: Locator, name: string) {
@@ -88,9 +88,9 @@ test('practice header controls keep English labels, states, and mobile targets',
   await expect(sources).toHaveAttribute('aria-expanded', 'false');
   await sources.click();
 
-  const closeSources = page.getByRole('button', { name: 'Close source details' });
+  const closeSources = page.getByRole('button', { name: 'Close about-the-sources' });
   await expect(closeSources).toHaveAttribute('aria-expanded', 'true');
-  await expectStableTarget(closeSources, 'Close source details control');
+  await expectStableTarget(closeSources, 'Close about-the-sources control');
 
   await expect(page.getByText('UHR source', { exact: true }).first()).toBeVisible();
   await expect(

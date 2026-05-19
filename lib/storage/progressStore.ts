@@ -18,30 +18,19 @@ export type QuestionProgress = {
   bookmarked?: boolean;
 };
 
-export type MockExamAnswerProgress = {
-  questionId: string;
-  isCorrect: boolean;
-  timeSpentSeconds: number;
-};
-
 export type MockExamProgress = {
   sessionId: string;
   score: number;
   completedAt: string;
   correctCount: number;
   totalCount: number;
-  answers: MockExamAnswerProgress[];
 };
 
 const progressStateKey = 'progressState';
 const maxHydratedQuestionAnswerCount = 10000;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
-const maxHydratedMockQuestionTimeSeconds = 12 * 60 * 60;
 const maxHydratedFreezeLifetimeCount = 10000;
-const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
-const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
 
 let progressStorage: MMKV | null = null;
 
@@ -72,7 +61,6 @@ const emptyProgress: PersistedProgress = {
 type MockExamProgressInput = {
   sessionId: string;
   score: number;
-  answers?: MockExamAnswerProgress[];
   completedAt?: string;
   correctCount?: number;
   totalCount?: number;
@@ -92,77 +80,19 @@ function clampScore(value: unknown): number {
   return Math.max(0, Math.min(1, value));
 }
 
-function normalizeMockExamAnswers(value: unknown): MockExamAnswerProgress[] {
-  if (!Array.isArray(value)) return [];
-
-  const answers: MockExamAnswerProgress[] = [];
-  for (const answer of value) {
-    if (answers.length >= maxHydratedMockQuestionCount) break;
-    if (!answer || typeof answer !== 'object') continue;
-
-    const item = answer as Partial<MockExamAnswerProgress>;
-    if (typeof item.questionId !== 'string' || item.questionId.trim().length === 0) continue;
-    if (typeof item.isCorrect !== 'boolean') continue;
-
-    answers.push({
-      questionId: item.questionId,
-      isCorrect: item.isCorrect,
-      timeSpentSeconds: normalizeNonNegativeInteger(
-        item.timeSpentSeconds,
-        0,
-        maxHydratedMockQuestionTimeSeconds,
-      ),
-    });
-  }
-
-  return answers;
-}
-
-function isHydratableDateTime(timeMs: number): boolean {
-  return Number.isFinite(timeMs) && timeMs <= Date.now() + maxHydratedFutureDateMs;
-}
-
-function normalizeIsoTimestamp(value: unknown): string | undefined {
-  if (typeof value !== 'string') return undefined;
-  const trimmed = value.trim();
-  if (!isoTimestampPattern.test(trimmed)) return undefined;
-
-  const timeMs = Date.parse(trimmed);
-  if (!isHydratableDateTime(timeMs)) return undefined;
-
-  const normalized = new Date(timeMs).toISOString();
-  return normalized === trimmed ? trimmed : undefined;
-}
-
-function normalizeLocalDateKey(value: unknown): string | undefined {
-  if (typeof value !== 'string') return undefined;
-  const trimmed = value.trim();
-  if (!localDateKeyPattern.test(trimmed)) return undefined;
-
-  const [year, month, day] = trimmed.split('-').map(Number);
-  const timeMs = Date.UTC(year, month - 1, day);
-  if (!isHydratableDateTime(timeMs)) return undefined;
-
-  const normalized = new Date(timeMs).toISOString().slice(0, 10);
-  return normalized === trimmed ? trimmed : undefined;
-}
-
 function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
   const fallback = createInitialFreezeState();
   if (!value || typeof value !== 'object') return fallback;
 
   const candidate = value as Partial<StreakFreezeState>;
   const rescuedDayKeys = Array.isArray(candidate.rescuedDayKeys)
-    ? [
-        ...new Set(
-          candidate.rescuedDayKeys.map(normalizeLocalDateKey).filter((day): day is string => !!day),
-        ),
-      ]
+    ? [...new Set(candidate.rescuedDayKeys.filter((day): day is string => typeof day === 'string'))]
     : [];
 
   return {
     available: normalizeNonNegativeInteger(candidate.available, fallback.available, 4),
-    lastEarnedAt: normalizeLocalDateKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
+    lastEarnedAt:
+      typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt : fallback.lastEarnedAt,
     lifetimeEarned: normalizeNonNegativeInteger(
       candidate.lifetimeEarned,
       fallback.lifetimeEarned,
@@ -189,11 +119,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
     ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
     : [];
   const answerDates = Array.isArray(candidate.answerDates)
-    ? [
-        ...new Set(
-          candidate.answerDates.map(normalizeLocalDateKey).filter((day): day is string => !!day),
-        ),
-      ]
+    ? [...new Set(candidate.answerDates.filter((day): day is string => typeof day === 'string'))]
     : [];
   const mockExamSessions: MockExamProgress[] = [];
   const questionProgress: Record<string, QuestionProgress> = {};
@@ -223,21 +149,16 @@ function normalizeProgress(value: unknown): PersistedProgress {
         normalizeNonNegativeInteger(item.correctStreak, 0, maxHydratedQuestionAnswerCount),
         correctCount,
       );
-      const normalizedQuestionProgress: QuestionProgress = {
+      questionProgress[questionId] = {
         questionId,
         seenCount,
         correctCount,
         wrongCount,
         correctStreak,
+        lastAnsweredAt: item.lastAnsweredAt,
+        nextReviewAt: item.nextReviewAt,
+        bookmarked: item.bookmarked,
       };
-      const lastAnsweredAt = normalizeIsoTimestamp(item.lastAnsweredAt);
-      const nextReviewAt = normalizeIsoTimestamp(item.nextReviewAt);
-      if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;
-      if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;
-      if (typeof item.bookmarked === 'boolean') {
-        normalizedQuestionProgress.bookmarked = item.bookmarked;
-      }
-      questionProgress[questionId] = normalizedQuestionProgress;
     }
   }
 
@@ -245,28 +166,20 @@ function normalizeProgress(value: unknown): PersistedProgress {
     for (const session of candidate.mockExamSessions) {
       if (!session || typeof session !== 'object') continue;
       const item = session as Partial<MockExamProgress>;
-      const completedAt = normalizeIsoTimestamp(item.completedAt);
-      if (typeof item.sessionId !== 'string' || !completedAt) continue;
-      const normalizedAnswers = normalizeMockExamAnswers(item.answers);
+      if (typeof item.sessionId !== 'string' || typeof item.completedAt !== 'string') continue;
       const totalCount = normalizeNonNegativeInteger(
         item.totalCount,
-        normalizedAnswers.length,
+        0,
         maxHydratedMockQuestionCount,
       );
-      const answers = normalizedAnswers.slice(0, totalCount);
       const correctCount = Math.min(
-        normalizeNonNegativeInteger(
-          item.correctCount,
-          answers.filter((answer) => answer.isCorrect).length,
-          maxHydratedMockQuestionCount,
-        ),
+        normalizeNonNegativeInteger(item.correctCount, 0, maxHydratedMockQuestionCount),
         totalCount,
       );
       mockExamSessions.push({
-        answers,
         sessionId: item.sessionId,
         score: clampScore(item.score ?? 0),
-        completedAt,
+        completedAt: item.completedAt,
         correctCount,
         totalCount,
       });
@@ -284,13 +197,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
 }
 
 function readProgress(): PersistedProgress {
-  let rawProgress: string | undefined;
-  try {
-    rawProgress = progressStorage?.getString(progressStateKey);
-  } catch {
-    return emptyProgress;
-  }
-
+  const rawProgress = progressStorage?.getString(progressStateKey);
   if (!rawProgress) return emptyProgress;
 
   try {
@@ -300,10 +207,8 @@ function readProgress(): PersistedProgress {
   }
 }
 
-function writeProgress(progress: PersistedProgress): PersistedProgress {
-  const serializedProgress = JSON.stringify(progress);
-  progressStorage?.set(progressStateKey, serializedProgress);
-  return normalizeProgress(JSON.parse(serializedProgress));
+function writeProgress(progress: PersistedProgress): void {
+  progressStorage?.set(progressStateKey, JSON.stringify(progress));
 }
 
 type ProgressState = PersistedProgress & {
@@ -331,13 +236,12 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      const persistedProgress = writeProgress(nextProgress);
-      return persistedProgress;
+      writeProgress(nextProgress);
+
+      return nextProgress;
     }),
   recordAnswer: (questionId, isCorrect) =>
     set((state) => {
-      if (typeof isCorrect !== 'boolean') return state;
-
       const answeredAt = new Date().toISOString();
       const answerDate = getLocalDateKey(new Date(answeredAt));
       const previous = state.questionProgress[questionId] ?? {
@@ -374,33 +278,19 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      const persistedProgress = writeProgress(nextProgress);
-      return persistedProgress;
+      writeProgress(nextProgress);
+
+      return nextProgress;
     }),
   recordMockExamSession: (session) =>
     set((state) => {
       const completedAt = session.completedAt ?? new Date().toISOString();
-      const normalizedAnswers = normalizeMockExamAnswers(session.answers);
-      const totalCount = normalizeNonNegativeInteger(
-        session.totalCount,
-        normalizedAnswers.length,
-        maxHydratedMockQuestionCount,
-      );
-      const answers = normalizedAnswers.slice(0, totalCount);
       const nextSession: MockExamProgress = {
-        answers,
         sessionId: session.sessionId,
         score: clampScore(session.score),
         completedAt,
-        correctCount: Math.min(
-          normalizeNonNegativeInteger(
-            session.correctCount,
-            answers.filter((answer) => answer.isCorrect).length,
-            maxHydratedMockQuestionCount,
-          ),
-          totalCount,
-        ),
-        totalCount,
+        correctCount: Math.max(0, session.correctCount ?? 0),
+        totalCount: Math.max(0, session.totalCount ?? 0),
       };
       const existingSession = state.mockExamSessions.find(
         (item) => item.sessionId === nextSession.sessionId,
@@ -422,8 +312,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: [...otherSessions, nextSession],
         streakFreezeState: state.streakFreezeState,
       };
-      const persistedProgress = writeProgress(nextProgress);
-      return persistedProgress;
+      writeProgress(nextProgress);
+
+      return nextProgress;
     }),
   setStreakFreezeState: (streakFreezeState) =>
     set((state) => {
@@ -437,8 +328,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState,
       };
-      const persistedProgress = writeProgress(nextProgress);
-      return persistedProgress;
+      writeProgress(nextProgress);
+
+      return nextProgress;
     }),
   toggleBookmark: (questionId) =>
     set((state) => {
@@ -460,11 +352,12 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      const persistedProgress = writeProgress(nextProgress);
-      return persistedProgress;
+      writeProgress(nextProgress);
+
+      return nextProgress;
     }),
   resetProgress: () => {
-    const persistedProgress = writeProgress(emptyProgress);
-    set(persistedProgress);
+    writeProgress(emptyProgress);
+    set(emptyProgress);
   },
 }));
