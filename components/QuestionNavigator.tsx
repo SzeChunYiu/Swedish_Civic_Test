@@ -139,6 +139,8 @@ export function QuestionNavigator({
 
         return (
           <Pressable
+            aria-disabled={isDisabled}
+            aria-selected={selected}
             accessibilityLabel={
               itemAccessibilityLabel?.(questionNumber, state) ??
               getDefaultItemAccessibilityLabel({
