@@ -5813,6 +5813,7 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
+let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -7954,6 +7955,22 @@ function validateLegalRouteHeaderParity() {
         );
       } else {
         legalRouteHeadersValidated += 1;
+      }
+    }
+
+    if (expectedRoute.file === 'app/privacy.tsx') {
+      const swedishPrivacyBlock = routeSource.match(
+        /sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy',\s*\},\s*en:/,
+      )?.[0];
+
+      if (!swedishPrivacyBlock) {
+        reject('app/privacy.tsx Swedish privacy copy block must stay parseable');
+      } else if (/\bstreaks\b/i.test(swedishPrivacyBlock)) {
+        reject('Swedish privacy copy must use natural Swedish streak wording, not "streaks"');
+      } else if (!/\bstudiesviter\b/i.test(swedishPrivacyBlock)) {
+        reject('Swedish privacy copy must name locally stored study streaks as studiesviter');
+      } else {
+        swedishPrivacyStreakCopyNaturalnessValidated = true;
       }
     }
   }
@@ -13499,6 +13516,7 @@ console.log(
       mistakesRouteCopyParityValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
+      swedishPrivacyStreakCopyNaturalnessValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
