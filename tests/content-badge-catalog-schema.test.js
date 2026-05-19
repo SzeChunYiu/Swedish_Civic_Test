@@ -90,8 +90,8 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
-  assert.match(output, /streak_3 duplicates English badge title/);
-  assert.match(output, /streak_3 duplicates English badge description/);
+  assert.match(output, /streak_3 duplicates en badge title/);
+  assert.match(output, /streak_3 duplicates en badge description/);
   assert.match(output, /deriveBadges milestone ids are/);
 });
 
