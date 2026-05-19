@@ -2133,3 +2133,21 @@ test('exam chapter breakdown uses chapter names instead of raw ids only', () => 
   assert.match(source, /chapter\.chapterNameEn/);
   assert.match(source, /chapter\.chapterId/);
 });
+
+test('search route renders matched-field highlights with tokenized press feedback', () => {
+  const source = read('app/search.tsx');
+  const searchHelperSource = read('lib/search/questionSearch.ts');
+
+  assert.match(source, /<TextInput[\s\S]*accessibilityLabel=\{copy\.inputAccessibilityLabel\}/);
+  assert.match(source, /searchQuestions\(questions, trimmedQuery, language, \{ limit: 10 \}\)/);
+  assert.match(source, /renderHighlightedParts\(result\)/);
+  assert.match(source, /style=\{part\.matched \? styles\.highlight : null\}/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /hitSlop=\{space\[0\.5\]\}/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(source, /backgroundColor: colors\.badgeBlueBg/);
+  assert.match(searchHelperSource, /export function getHighlightParts/);
+  assert.match(searchHelperSource, /normalizeSearchText/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(searchHelperSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});

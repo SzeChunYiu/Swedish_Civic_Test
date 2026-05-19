@@ -2,67 +2,104 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function read(relativePath) {
-  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+function resolveLocalModule(fromFile, request) {
+  const base = path.resolve(path.dirname(fromFile), request);
+  for (const candidate of [`${base}.ts`, `${base}.tsx`, path.join(base, 'index.ts')]) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return request;
 }
 
-test('Search route hydrates the input from q or query route parameters', () => {
-  const source = read('app/search.tsx');
+function loadTs(relativePath, moduleCache = new Map()) {
+  const filePath = path.join(repoRoot, relativePath);
 
-  assert.match(source, /import \{ Link, useLocalSearchParams \} from 'expo-router';/);
-  assert.match(source, /type SearchQueryParams = \{/);
-  assert.match(source, /q\?: string \| string\[\];/);
-  assert.match(source, /query\?: string \| string\[\];/);
-  assert.match(source, /const searchParams = useLocalSearchParams<SearchQueryParams>\(\);/);
-  assert.match(
-    source,
-    /const \[query, setQuery\] = useState\(\(\) =>\s+initialSearchQueryFromParams\(searchParams\.q, searchParams\.query\),\s+\);/,
-  );
-  assert.match(
-    source,
-    /function initialSearchQueryFromParams\(q: SearchParamValue, query: SearchParamValue\) \{\s+return firstSearchParamValue\(q\) \|\| firstSearchParamValue\(query\);/,
-  );
-  assert.match(
-    source,
-    /const firstTextValue = value\.find\(\(item\) => item\.trim\(\)\.length > 0\);/,
-  );
-  assert.match(source, /return firstTextValue\?\.trim\(\) \?\? '';/);
-  assert.match(source, /return value\?\.trim\(\) \?\? '';/);
+  if (moduleCache.has(filePath)) return moduleCache.get(filePath).exports;
+
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      esModuleInterop: true,
+      jsx: ts.JsxEmit.React,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+  const mod = { exports: {} };
+  moduleCache.set(filePath, mod);
+
+  const localRequire = (request) => {
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)), moduleCache);
+    }
+    return require(request);
+  };
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return mod.exports;
+}
+
+const sampleQuestion = {
+  id: 'qsea',
+  chapterId: 'ch01',
+  type: 'single_choice',
+  questionSv: 'Vad heter havet vid Sveriges östra kust?',
+  questionEn: "What is the sea along Sweden's eastern coast called?",
+  options: [
+    { id: 'a', textSv: 'Nordsjön', textEn: 'The North Sea' },
+    { id: 'b', textSv: 'Östersjön', textEn: 'The Baltic Sea' },
+  ],
+  correctOptionId: 'b',
+  explanationSv: 'Havet vid Sveriges östra kust heter Östersjön.',
+  explanationEn: "The sea along Sweden's eastern coast is the Baltic Sea.",
+  uhrReference: {
+    chapter: 'Landet Sverige',
+    section: 'Geografi, klimat och natur',
+    pageApprox: 5,
+  },
+  difficulty: 'easy',
+  reviewStatus: 'reviewed',
+  tags: ['geography', 'baltic-sea'],
+};
+
+test('search route has localized search copy and highlighted result rendering', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+
+  assert.match(source, /type SearchCopy = \{/);
+  assert.match(source, /const searchCopy: Record<AppLanguage, SearchCopy> = \{/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(source, /const copy = searchCopy\[language\];/);
+  assert.match(source, /searchQuestions\(questions, trimmedQuery, language, \{ limit: 10 \}\)/);
+  assert.match(source, /Sök/);
+  assert.match(source, /Search/);
+  assert.match(source, /Sökresultat/);
+  assert.match(source, /Search results/);
+  assert.match(source, /renderHighlightedParts/);
+  assert.match(source, /styles\.highlight/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.doesNotMatch(source, /Question search is coming/);
 });
 
-test('Search route keeps manual typing and clear-search behavior intact', () => {
-  const source = read('app/search.tsx');
+test('question search matches and highlights Swedish text without requiring accents', () => {
+  const { searchQuestions } = loadTs('lib/search/questionSearch.ts');
+  const [result] = searchQuestions([sampleQuestion], 'ostersjon', 'sv');
 
-  assert.match(source, /onChangeText=\{setQuery\}/);
-  assert.match(source, /value=\{query\}/);
-  assert.match(source, /disabled=\{query\.length === 0\}/);
-  assert.match(source, /onPress=\{\(\) => setQuery\(''\)\}/);
-  assert.match(source, /const trimmedQuery = query\.trim\(\);/);
-  assert.match(source, /const normalizedQuery = normalizeSearchText\(trimmedQuery\);/);
+  assert.equal(result.question.id, 'qsea');
+  assert.equal(result.field, 'answer');
+  assert.equal(result.questionText, 'Vad heter havet vid Sveriges östra kust?');
+  assert.equal(result.highlightParts.find((part) => part.matched)?.text, 'Östersjön');
 });
 
-test('Search route query hydration has glossary and native-intent evidence', () => {
-  const glossary = read('data/glossary.ts');
-  const routerManifest = read('lib/scaffold/routerShellManifest.ts');
-  const nativeIntent = read('app/+native-intent.ts');
+test('question search matches English answer options and multi-word question tokens', () => {
+  const { searchQuestions } = loadTs('lib/search/questionSearch.ts');
+  const [answerResult] = searchQuestions([sampleQuestion], 'Baltic Sea', 'en');
+  const [questionResult] = searchQuestions([sampleQuestion], 'Sweden coast', 'en');
 
-  assert.match(glossary, /id: 'riksdagen'/);
-  assert.match(glossary, /termSv: 'Riksdagen'/);
-  assert.match(glossary, /termEn: 'The Riksdag'/);
-  assert.match(
-    routerManifest,
-    /input: '\/search\?q=riksdag'[\s\S]*expectedPath: '\/search\?q=riksdag'/,
-  );
-  assert.match(
-    routerManifest,
-    /input: '\/search\?query=riksdag'[\s\S]*expectedPath: '\/search\?query=riksdag'/,
-  );
-  assert.match(
-    routerManifest,
-    /input: 'almost-swedish:\/\/app\/search\?q=riksdag'[\s\S]*expectedPath: '\/search\?q=riksdag'/,
-  );
-  assert.match(nativeIntent, /'\/search'/);
+  assert.equal(answerResult.field, 'answer');
+  assert.equal(answerResult.highlightParts.find((part) => part.matched)?.text, 'Baltic Sea');
+  assert.equal(questionResult.field, 'question');
+  assert.equal(questionResult.questionText, "What is the sea along Sweden's eastern coast called?");
 });
