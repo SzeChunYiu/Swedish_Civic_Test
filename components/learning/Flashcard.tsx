@@ -15,9 +15,9 @@ type FlashcardCopy = {
 
 const flashcardCopy: Record<AppLanguage, FlashcardCopy> = {
   sv: {
-    accessibilityLabel: (prompt, answer) => `Övningskort. Fråga: ${prompt}. Svar: ${answer}.`,
+    accessibilityLabel: (prompt, answer) => `Flashkort. Fråga: ${prompt}. Svar: ${answer}.`,
     answerHeader: 'Svar',
-    badgeLabel: 'Övningskort',
+    badgeLabel: 'Flashkort',
     fallbackPrompt: 'Studiefråga saknas',
     fallbackAnswer: 'Svar saknas',
     promptHeader: 'Fråga',
