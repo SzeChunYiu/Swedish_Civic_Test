@@ -104,6 +104,12 @@ const QUESTION_BANK_CSV_HEADER = [
   'tags',
   'questionProvenance',
 ];
+const QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS = Object.freeze({
+  uhrSourceTitle: 'title',
+  uhrSourcePublisher: 'publisher',
+  uhrSourceUrl: 'url',
+  uhrSourceRetrievedAt: 'retrievedDate',
+});
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -146,6 +152,22 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'kostnadsfritt',
   'generöst med tid',
   'Praktiska detaljer väntar hos UHR',
+];
+const STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS = [
+  /Facts you'll see on the test/i,
+  /what you'll see on the test/i,
+  /\b69%\s+is\s+forest/i,
+  /\b9%\s+lake/i,
+  /35\s*000\s+km\s+of\s+coastline/i,
+  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /historically commits\s+~?1%\s+of\s+GNI/i,
+  /Citizenship test starts:\s*6 June 2026/i,
+];
+const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
 ];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
@@ -3186,6 +3208,7 @@ const EXPECTED_EXAM_GENERATOR_INTERFACES = [
   {
     name: 'ExamAutoSubmitState',
     fields: [
+      { name: 'examActive', type: 'boolean', optional: false },
       { name: 'remainingSeconds', type: 'number', optional: false },
       { name: 'submitted', type: 'boolean', optional: false },
       { name: 'questionCount', type: 'number', optional: false },
@@ -3754,6 +3777,46 @@ function validateStaticEbookPracticalTestClaims() {
     requiredCopyValidated,
     sourceUrlsValidated,
     unsupportedPracticalClaimsValidated,
+  };
+}
+
+function validateStaticEbookFactboxSources() {
+  const source = loadText('site/ebook.js');
+  let unsupportedFactboxPatternsValidated = 0;
+  let sourceUrlsValidated = 0;
+
+  STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static ebook factbox/prose copy retains unsourced claim pattern: ${pattern}`);
+      return;
+    }
+    unsupportedFactboxPatternsValidated += 1;
+  });
+
+  STATIC_EBOOK_FACTBOX_SOURCE_URLS.forEach((url) => {
+    if (!source.includes(url)) {
+      fail(`static ebook factbox source metadata missing ${url}`);
+      return;
+    }
+    sourceUrlsValidated += 1;
+  });
+
+  if (!source.includes('EBOOK_FACTBOX_SOURCE_NOTES')) {
+    fail('static ebook factboxes must use shared source-note metadata');
+  }
+  if (!source.includes("retrievedDate: '2026-05-19'")) {
+    fail('static ebook factbox source metadata must include the current retrieved date');
+  }
+  if (!/ebookFactBox\('en', 'Facts to review'/.test(source)) {
+    fail('static ebook English factboxes must use the sourced factbox helper');
+  }
+  if (!/ebookFactBox\('sv', 'Fakta att repetera'/.test(source)) {
+    fail('static ebook Swedish factboxes must use the sourced factbox helper');
+  }
+
+  return {
+    sourceUrlsValidated,
+    unsupportedFactboxPatternsValidated,
   };
 }
 
@@ -6393,6 +6456,9 @@ let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
+let staticEbookFactboxClaimPatternsValidated = 0;
+let staticEbookFactboxSourceUrlsValidated = 0;
+let staticEbookFactboxSourceParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -6477,6 +6543,14 @@ staticSiteOutcomeSloganParityValidated =
     staticEbookPracticalTestRequiredCopyValidated ===
       STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
     staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
+}
+{
+  const factboxValidation = validateStaticEbookFactboxSources();
+  staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxPatternsValidated;
+  staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
+  staticEbookFactboxSourceParityValidated =
+    staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS.length &&
+    staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
@@ -7592,10 +7666,18 @@ function validateMockExamTimerParity(config) {
 
   const totalSeconds = config.durationMinutes * 60;
   let valid = true;
+  let examRoute = '';
 
   function reject(message) {
     valid = false;
     fail(message);
+  }
+
+  try {
+    examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/(tabs)/exam.tsx could not be read: ${error.message}`);
+    return;
   }
 
   if (!Number.isInteger(totalSeconds) || totalSeconds < 60) {
@@ -7611,6 +7693,7 @@ function validateMockExamTimerParity(config) {
   }
 
   const liveExamState = {
+    examActive: true,
     remainingSeconds: totalSeconds,
     submitted: false,
     questionCount: config.questionCount,
@@ -7644,8 +7727,35 @@ function validateMockExamTimerParity(config) {
   ) {
     reject('shouldAutoSubmitExam must not submit an empty exam');
   }
+  if (
+    shouldAutoSubmitExam({
+      ...liveExamState,
+      examActive: false,
+      remainingSeconds: 0,
+    })
+  ) {
+    reject('shouldAutoSubmitExam must wait for an explicitly started exam');
+  }
   if (formatExamTime(-1) !== '00:00') {
     reject('formatExamTime must clamp negative remaining time to 00:00');
+  }
+  if (
+    !examRoute.includes(
+      'if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;',
+    )
+  ) {
+    reject('mock exam timer interval must wait for the explicit start state');
+  }
+  if (!examRoute.includes('examActive: examUnlocked')) {
+    reject('mock exam auto-submit must be gated by the explicit start state');
+  }
+  if (
+    examRoute.includes(
+      "accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit'",
+    ) ||
+    (examRoute.match(/setExamUnlocked\(true\)/g) || []).length !== 1
+  ) {
+    reject('mock exam route must not auto-unlock free or premium exams before Start is pressed');
   }
 
   if (valid) mockExamTimerParityValidated = true;
@@ -10818,6 +10928,10 @@ function validateProgressStoreSchemaParity() {
       'question progress hydration must normalize seenCount',
     ],
     [
+      "...(typeof item.bookmarked === 'boolean' ? { bookmarked: item.bookmarked } : {}),",
+      'question progress hydration must preserve only boolean bookmark values',
+    ],
+    [
       'totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp)',
       'progress hydration must normalize totalXp',
     ],
@@ -10899,11 +11013,17 @@ function validateProgressStoreSchemaParity() {
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
+    'bookmarked: item.bookmarked,',
+    'bookmarked: Boolean(item.bookmarked)',
+    'bookmarked: !!item.bookmarked',
   ];
 
   forbiddenHydrationSnippets.forEach((snippet) => {
     if (normalizedProgressStore.includes(snippet)) {
-      reject(`progress hydration must not use raw numeric expression ${snippet}`);
+      const label = snippet.startsWith('bookmarked:')
+        ? 'raw bookmark expression'
+        : 'raw numeric expression';
+      reject(`progress hydration must not use ${label} ${snippet}`);
     }
   });
 
@@ -13535,6 +13655,34 @@ function validateQuestionBankCsvContract() {
     );
   }
 
+  const sourceMetadataMismatches = [];
+
+  function formatCsvMismatch(mismatch) {
+    return `content/question-bank.csv row ${mismatch.rowNumber} ${mismatch.label} ${
+      mismatch.field
+    } is ${JSON.stringify(mismatch.actual)}, expected ${JSON.stringify(mismatch.expected)}`;
+  }
+
+  function formatCsvSourceMetadataDrift(field, mismatches) {
+    const sourceField = QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS[field];
+    const actualValues = Array.from(new Set(mismatches.map((mismatch) => mismatch.actual))).map(
+      (value) => JSON.stringify(value),
+    );
+    const expectedValues = Array.from(new Set(mismatches.map((mismatch) => mismatch.expected))).map(
+      (value) => JSON.stringify(value),
+    );
+    const actualSummary =
+      actualValues.length === 1
+        ? actualValues[0]
+        : `${actualValues.slice(0, 3).join(', ')}${actualValues.length > 3 ? ', ...' : ''}`;
+    const expectedSummary =
+      expectedValues.length === 1
+        ? expectedValues[0]
+        : `${expectedValues.slice(0, 3).join(', ')}${expectedValues.length > 3 ? ', ...' : ''}`;
+
+    return `content/question-bank.csv ${field} metadata drift: ${mismatches.length} rows disagree with content/uhr-section-map.json source.${sourceField}; saw ${actualSummary}, expected ${expectedSummary}`;
+  }
+
   dataRows.forEach((row, index) => {
     const question = questions[index];
     const rowNumber = index + 2;
@@ -13582,17 +13730,39 @@ function validateQuestionBankCsvContract() {
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
-        reject(
-          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
-            row[fieldIndex],
-          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
-        );
+        rowIsValid = false;
+        const mismatch = {
+          rowNumber,
+          label,
+          field,
+          actual: row[fieldIndex],
+          expected: expectedRow[fieldIndex],
+        };
+        if (QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS[field]) {
+          sourceMetadataMismatches.push(mismatch);
+        } else {
+          reject(formatCsvMismatch(mismatch));
+        }
       }
     });
 
     if (rowIsValid) {
       questionBankCsvRowsValidated += 1;
       questionBankCsvProvenanceCounts[getQuestionProvenance(question)] += 1;
+    }
+  });
+
+  const aggregatedSourceMetadataFields = new Set();
+  Object.keys(QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS).forEach((field) => {
+    const mismatches = sourceMetadataMismatches.filter((mismatch) => mismatch.field === field);
+    if (mismatches.length === dataRows.length && dataRows.length > 1) {
+      aggregatedSourceMetadataFields.add(field);
+      fail(formatCsvSourceMetadataDrift(field, mismatches));
+    }
+  });
+  sourceMetadataMismatches.forEach((mismatch) => {
+    if (!aggregatedSourceMetadataFields.has(mismatch.field)) {
+      fail(formatCsvMismatch(mismatch));
     }
   });
 }
@@ -15020,6 +15190,9 @@ console.log(
       staticEbookPracticalTestRequiredCopyValidated,
       staticEbookPracticalTestSourceUrlsValidated,
       staticEbookPracticalTestCurrentnessValidated,
+      staticEbookFactboxClaimPatternsValidated,
+      staticEbookFactboxSourceUrlsValidated,
+      staticEbookFactboxSourceParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,
