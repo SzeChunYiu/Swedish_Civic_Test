@@ -3,6 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 import { getChromiumLaunchOptions } from './tests/e2e/browserLaunch';
 
 const chromiumLaunchOptions = getChromiumLaunchOptions();
+const e2ePort = process.env.PORT || '4173';
+const e2eBaseURL = `http://127.0.0.1:${e2ePort}`;
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -10,7 +12,7 @@ export default defineConfig({
   expect: { timeout: 5_000 },
   reporter: [['list']],
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: e2eBaseURL,
     ...devices['iPhone 12'],
     browserName: 'chromium',
     ...(chromiumLaunchOptions ? { launchOptions: chromiumLaunchOptions } : {}),
@@ -18,7 +20,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'node tests/e2e/serve-dist-web.cjs',
-    url: 'http://127.0.0.1:4173',
+    url: e2eBaseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 10_000,
   },

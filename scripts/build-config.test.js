@@ -1354,6 +1354,20 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
+test('Playwright exported-web server and base URL honor PORT override', () => {
+  const playwrightConfig = fs.readFileSync(path.join(repoRoot, 'playwright.config.ts'), 'utf8');
+  const distServer = fs.readFileSync(path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'), 'utf8');
+
+  assert.match(playwrightConfig, /const e2ePort = process\.env\.PORT \|\| '4173';/);
+  assert.match(playwrightConfig, /const e2eBaseURL = `http:\/\/127\.0\.0\.1:\$\{e2ePort\}`;/);
+  assert.match(playwrightConfig, /baseURL: e2eBaseURL,/);
+  assert.match(playwrightConfig, /url: e2eBaseURL,/);
+  assert.match(playwrightConfig, /command: 'node tests\/e2e\/serve-dist-web\.cjs'/);
+  assert.doesNotMatch(playwrightConfig, /http:\/\/127\.0\.0\.1:4173/);
+  assert.match(distServer, /const port = Number\(process\.env\.PORT \|\| 4173\);/);
+  assert.match(distServer, /Serving dist-web on http:\/\/127\.0\.0\.1:\$\{port\}/);
+});
+
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
   const pkg = readJson('package.json');
   const workflow = fs.readFileSync(
