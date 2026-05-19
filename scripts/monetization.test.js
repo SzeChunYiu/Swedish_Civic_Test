@@ -294,6 +294,47 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
 });
 
+test('practice completion placement uses a native interstitial and web preview', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const nativeInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
+  const webInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+
+  assert.match(practiceSource, /PracticeInterstitialAd/);
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\} \/>/,
+  );
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.load\(\)/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
+  assert.match(
+    nativeInterstitialSource,
+    /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
+  );
+  assert.match(
+    nativeInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+  );
+  assert.match(nativeInterstitialSource, /useMobileAdsConsent/);
+  assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
+  assert.match(
+    webInterstitialSource,
+    /shouldShowAd\('quiz_completed_interstitial', resolvedEntitlements\)/,
+  );
+  assert.match(webInterstitialSource, /<Card[\s\S]*accessibilityLabel=\{accessibilityLabel\}/);
+  assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
+});
+
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
     {
@@ -870,8 +911,17 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
 
   assert.equal(hasAdsDisabled(REMOVE_ADS_ENTITLEMENTS), true);
   assert.equal(isPremiumUser(REMOVE_ADS_ENTITLEMENTS), false);
-  assert.equal(hasAdsDisabled(PRO_LIFETIME_ENTITLEMENTS), false);
+  assert.equal(hasAdsDisabled(PRO_LIFETIME_ENTITLEMENTS), true);
   assert.equal(hasProEntitlement(PRO_LIFETIME_ENTITLEMENTS), true);
+  assert.equal(
+    hasProEntitlement({
+      adsDisabled: true,
+      fullMistakeReview: false,
+      unlimitedMockExams: false,
+      spacedRepetition: false,
+    }),
+    false,
+  );
   assert.equal(
     isPremiumUser({
       adsDisabled: false,
@@ -1366,6 +1416,14 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
+  const webInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+  const nativeInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
   const entitlementHookSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
     'utf8',
@@ -1383,6 +1441,10 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
   assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeAdCardSource, /!entitlementsReady/);
+  assert.match(webInterstitialSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(webInterstitialSource, /!entitlementsReady/);
+  assert.match(nativeInterstitialSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(nativeInterstitialSource, /!entitlementsReady/);
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
