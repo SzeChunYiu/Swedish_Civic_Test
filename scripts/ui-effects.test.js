@@ -1161,6 +1161,29 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   assert.match(read('components/quiz/UHRReferenceCard.tsx'), /Source reference unavailable/);
 });
 
+test('search route turns the header search action into a searchable glossary reference', () => {
+  const source = read('app/search.tsx');
+  const glossary = read('data/glossary.ts');
+
+  assert.match(source, /import \{ glossaryTerms \} from '\.\.\/data\/glossary';/);
+  assert.match(source, /import \{ chapters \} from '\.\.\/data\/chapters';/);
+  assert.match(source, /TextInput/);
+  assert.match(source, /type SearchRouteCopy =/);
+  assert.match(source, /const searchRouteCopy: Record<AppLanguage, SearchRouteCopy>/);
+  assert.match(source, /const \[query, setQuery\] = useState\(''\);/);
+  assert.match(source, /normalizeSearchText/);
+  assert.match(source, /const filteredTerms = useMemo/);
+  assert.match(source, /placeholderTextColor=\{colors\.textPlaceholder\}/);
+  assert.match(source, /href=\{`\/chapter\/\$\{term\.chapterId\}`\}/);
+  assert.match(source, /Inga begrepp matchar din sökning/);
+  assert.match(source, /No terms match your search/);
+  assert.match(source, /civic reference terms/);
+  assert.match(source, /samhällsbegrepp/);
+  assert.match(glossary, /id: 'demokrati'/);
+  assert.match(glossary, /termSv: 'Allemansrätten'/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('audio button disables playback when speech text is unavailable', () => {
   const source = read('components/learning/AudioButton.tsx');
 
