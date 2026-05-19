@@ -17,6 +17,7 @@ const expectedPolicyFields = [
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
+  'removeAdsStoreProductIds',
   'storeDisclosureTopics',
 ];
 
@@ -120,7 +121,12 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
+    REMOVE_ADS_PRICE_LABEL,
+    REMOVE_ADS_PRODUCT_ID,
+  } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
@@ -137,6 +143,10 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
+  assert.deepEqual(releaseMonetizationPolicy.removeAdsStoreProductIds, {
+    android: REMOVE_ADS_ANDROID_PRODUCT_ID,
+    ios: REMOVE_ADS_IOS_PRODUCT_ID,
+  });
   assert.deepEqual(releaseMonetizationPolicy.storeDisclosureTopics, [
     'Google Mobile Ads',
     'Remove Ads in-app purchase',
@@ -198,7 +208,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/monetization/releasePolicy.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("removeAdsPriceLabel: '29 SEK'", "removeAdsPriceLabel: '19 SEK'");
+      .replace("removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL", "removeAdsPriceLabel: '19 SEK'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
