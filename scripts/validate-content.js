@@ -6211,6 +6211,7 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+const questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
@@ -12687,7 +12688,10 @@ function validateQuestionBankCsvContract() {
       }
     });
 
-    if (rowIsValid) questionBankCsvRowsValidated += 1;
+    if (rowIsValid) {
+      questionBankCsvRowsValidated += 1;
+      questionBankCsvProvenanceCounts[getQuestionProvenance(question)] += 1;
+    }
   });
 }
 
@@ -14045,6 +14049,7 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      questionBankCsvProvenanceCounts,
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
