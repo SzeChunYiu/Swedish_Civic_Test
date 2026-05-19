@@ -6454,6 +6454,7 @@ let mockExamConfigExactSchemaKeysValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
+let mockExamSessionRotationParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
@@ -8087,8 +8088,40 @@ function validateMockExamRuntimeParity(config) {
     }
   }
 
-  if (valid) mockExamRuntimeParityValidated = true;
-  if (valid) mockExamChapterBalanceParityValidated = true;
+  const sessionIds = ['mock-exam-0', 'mock-exam-1', 'mock-exam-2'];
+  const sessionQuestionIds = sessionIds.map((sessionId) =>
+    generateExam(questions, { questionCount: config.questionCount, sessionId }).map(
+      (question) => question.id,
+    ),
+  );
+  const repeatedSessionQuestionIds = generateExam(questions, {
+    questionCount: config.questionCount,
+    sessionId: sessionIds[0],
+  }).map((question) => question.id);
+
+  if (JSON.stringify(sessionQuestionIds[0]) !== JSON.stringify(repeatedSessionQuestionIds)) {
+    reject('mock exam question rotation is not deterministic for the same session seed');
+  }
+
+  for (let index = 1; index < sessionQuestionIds.length; index += 1) {
+    if (
+      JSON.stringify(sessionQuestionIds[index - 1]) === JSON.stringify(sessionQuestionIds[index])
+    ) {
+      reject('mock exam question rotation ignores the session seed');
+    }
+  }
+
+  sessionQuestionIds.forEach((questionIds, index) => {
+    if (new Set(questionIds).size !== questionIds.length) {
+      reject(`${sessionIds[index]} repeats question ids after session rotation`);
+    }
+  });
+
+  if (valid) {
+    mockExamRuntimeParityValidated = true;
+    mockExamChapterBalanceParityValidated = true;
+    mockExamSessionRotationParityValidated = true;
+  }
 }
 
 function expectedFormattedExamTime(totalSeconds) {
@@ -15723,6 +15756,7 @@ console.log(
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
+      mockExamSessionRotationParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,
