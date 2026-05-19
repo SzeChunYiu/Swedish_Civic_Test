@@ -10,6 +10,26 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+test('static mock exam copy avoids unsupported official pass-line claims', () => {
+  const practiceSource = read('site/practice.js');
+  const forbiddenFragments = [
+    '75' + '%',
+    ['passing', 'line'].join(' '),
+    'godk' + 'änt-gräns',
+    '75' + '% next time',
+  ];
+
+  for (const fragment of forbiddenFragments) {
+    assert.doesNotMatch(practiceSource, new RegExp(fragment.replace(/\s+/g, '\\s+'), 'i'));
+  }
+
+  assert.doesNotMatch(practiceSource, /\bpct\s*>=\s*75\b/);
+  assert.doesNotMatch(practiceSource, /\bm\.pct\s*>=\s*75\b/);
+  assert.doesNotMatch(practiceSource, new RegExp(['you', 'passed'].join('\\s+'), 'i'));
+  assert.doesNotMatch(practiceSource, new RegExp('underk' + '[aä]nt', 'i'));
+  assert.doesNotMatch(practiceSource, new RegExp('godk' + '[aä]nt', 'i'));
+});
+
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
