@@ -1,9 +1,16 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function parseExportedCsvLine(line) {
+  return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
+    match[1].replaceAll('""', '"'),
+  );
+}
 
 test('question-bank CSV keeps its public row contract', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -76,7 +83,43 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 17 columns, expected 16/,
+    /content\/question-bank\.csv row 2 has 18 columns, expected 17/,
+  );
+});
+
+test('question-bank CSV exposes derived question provenance with no blank cells', () => {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const lines = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(lines[0]);
+  const provenanceIndex = header.indexOf('questionProvenance');
+  const idIndex = header.indexOf('id');
+  const tagIndex = header.indexOf('tags');
+  assert.notEqual(provenanceIndex, -1);
+
+  const rows = lines.slice(1).map(parseExportedCsvLine);
+  assert.equal(rows.length, summary.publishedQuestions);
+  assert.equal(rows.find((row) => row[idIndex] === 'q001')?.[provenanceIndex], 'uhr');
+  assert.ok(
+    rows.some(
+      (row) =>
+        row[tagIndex].split('|').includes('published-variant') &&
+        row[provenanceIndex] === 'derived',
+    ),
+    'at least one published-variant row should export derived provenance',
+  );
+  assert.ok(
+    rows.every((row) => ['uhr', 'derived', 'editorial'].includes(row[provenanceIndex])),
+    'every row should export non-blank supported provenance',
   );
 });
 
