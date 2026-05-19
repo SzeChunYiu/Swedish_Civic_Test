@@ -883,12 +883,20 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   const sourceQ002FalseStatementId = generatedQuestionId(sourceQuestions, 'q002', 'falseStatement');
 
   assert.equal(
-    byId.get(sourceQ002FalseStatementId)?.explanationSv,
+    byId.get('q151')?.explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
-    byId.get(sourceQ002FalseStatementId)?.explanationEn,
+    byId.get('q151')?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
+  );
+  assert.equal(
+    byId.get('q150')?.explanationSv,
+    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området.',
+  );
+  assert.equal(
+    byId.get('q150')?.explanationEn,
+    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
   );
   assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationSv, sourceQ002.explanationSv);
   assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationEn, sourceQ002.explanationEn);
