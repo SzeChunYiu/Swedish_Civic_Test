@@ -1,0 +1,38 @@
+# LANE: mascot-pack
+# Blueprint: swedish_citizenship_app_project_plan/23_mascot_pack.md
+# Owners: MASCOT-ART (vectorization), MANAGER-uiux (picker UI), MANAGER-build (catalog + store + Mascot component), DELIGHT (animations)
+# Status: queued — assets exist as raster sources, need vectorization first
+# Operator pre-shipped: lib/mascot/catalog.ts data module (companion runtime catalog) in this PR
+
+## Iteration 1 (MASCOT-ART, BLOCKING for UI) — vectorize 50 SVGs
+- [ ] Auto-trace each of 10 PNG sources via Vectorizer.AI or Illustrator Image Trace.
+- [ ] Manual cleanup: < 200 anchor points per file, 6-8 swatch palette derived from design tokens.
+- [ ] Author 5 expressions per mascot: idle, happy, oops, think, celebrate.
+- [ ] SVGO optimization. Enforce file-size budget: each SVG < 8 KB, total pack < 400 KB.
+- [ ] Commit to assets/mascot/<id>/<expression>.svg per blueprint § File structure.
+
+## Iteration 2 (BUILD) — companion store + Mascot component
+- [ ] lib/storage/companionStore.ts — MMKV-backed, persists selected companion id, fallback to dala-horse.
+- [ ] lib/mascot/catalog.ts — operator session pre-shipped (uses 10 mascots from blueprint).
+- [ ] components/mascot/Mascot.tsx — renders <SvgUri> for the expression, accessibilityLabel from catalog.
+- [ ] Reduced-motion: static SVG instead of animation.
+- [ ] Unit tests on store persistence + fallback.
+
+## Iteration 3 (UIUX) — companion picker
+- [ ] components/mascot/CompanionPicker.tsx — modal grid, 5/row phone, 10/row tablet.
+- [ ] Settings section "Studievän / Study companion" in app/settings.tsx (above Accessibility, below Language).
+- [ ] A11y: radio group semantics, screen-reader announces cultural anchor.
+- [ ] Onboarding final step uses celebrate animation of selected companion.
+
+## Iteration 4 (DELIGHT) — secondary surfaces
+- [ ] Wire happy/oops to answer reveal in quiz screen.
+- [ ] Wire celebrate to badge unlock + chapter completion + mock pass.
+- [ ] Wire idle to empty states in mistakes.tsx, dashboard.tsx.
+- [ ] Wire think to loading > 2s spinners.
+- [ ] Fact-bubble personality (DELIGHT-rec exists separately): use idle companion next to fact.
+
+## Definition of done
+- All 7 blueprint acceptance commands pass.
+- Reviewer first-time-immigrant + screen-reader personas pass.
+- File-size budgets enforced by a test in tests/mascot/.
+- change_log entry.
