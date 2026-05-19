@@ -151,51 +151,39 @@ const i18n = window.i18n = {
 
     "chap.1.t": "A very short history of Sweden",
     "chap.1.d": "Vikings → kings → 1809 → folkhemmet → EU. The whole rollercoaster, minus the dynastic family tree memorisation.",
-    "chap.1.m1": "38 questions",
     "chap.1.m2": "~9 min",
     "chap.2.t": "How Sweden is governed",
     "chap.2.d": "Riksdag, regering, kommun, region. Who decides what, who you vote for, and why nobody fears the king.",
-    "chap.2.m1": "52 questions",
     "chap.2.m2": "~12 min",
     "chap.3.t": "Rights, freedoms & the four basic laws",
     "chap.3.d": "Grundlagarna in plain English. Press freedom, free speech, and why your boss can't ask about your religion.",
-    "chap.3.m1": "47 questions",
     "chap.3.m2": "~11 min",
     "chap.4.t": "Work, taxes & the welfare state",
     "chap.4.d": "Skatteverket, kollektivavtal, föräldraledighet, sjukpenning. The deal you signed up for.",
-    "chap.4.m1": "44 questions",
     "chap.4.m2": "~10 min",
     "chap.5.t": "Equality & the modern household",
     "chap.5.d": "Jämställdhet, LGBTQ+ rights, parental leave splits. The reason Sweden keeps showing up in those ranking lists.",
-    "chap.5.m1": "39 questions",
     "chap.5.m2": "~9 min",
     "chap.6.t": "Society, school & healthcare",
     "chap.6.d": "Förskola to universitet, BVC to 1177. How daily life is plumbed.",
-    "chap.6.m1": "41 questions",
     "chap.6.m2": "~10 min",
     "chap.7.t": "Nature, climate & allemansrätten",
     "chap.7.d": "The right to roam, environmental rules, why you can't actually pick someone's apples (sorry).",
-    "chap.7.m1": "36 questions",
     "chap.7.m2": "~8 min",
     "chap.8.t": "Culture, traditions & the calendar",
     "chap.8.d": "Midsommar, lucia, kräftskiva, semla day. Useful for the test. Essential for the small talk.",
-    "chap.8.m1": "40 questions",
     "chap.8.m2": "~9 min",
     "chap.9.t": "Money, banks & BankID",
     "chap.9.d": "Personnummer, BankID, Swish, kronor. Sweden runs on plastic and identifiers — meet them.",
-    "chap.9.m1": "28 questions",
     "chap.9.m2": "~7 min",
     "chap.10.t": "Sweden, the EU & the world",
     "chap.10.d": "Member of EU since 1995, neutral-ish for centuries, now NATO. The international story.",
-    "chap.10.m1": "33 questions",
     "chap.10.m2": "~8 min",
     "chap.11.t": "Migration, residence & citizenship",
     "chap.11.d": "The actual path to a passport. Routes, requirements, the difference between PUT, medborgarskap, and \"just visiting\".",
-    "chap.11.m1": "35 questions",
     "chap.11.m2": "~9 min",
     "chap.12.t": "Mock exam & survival guide",
     "chap.12.d": "Timed full-length exams that look and feel like the real thing. Plus a what-to-bring list.",
-    "chap.12.m1": "3 full mocks",
     "chap.12.m2": "60 min each",
     "chap.13.t": "Traditions, holidays & everyday culture",
 
@@ -445,51 +433,39 @@ const i18n = window.i18n = {
 
     "chap.1.t": "Sveriges historia, mycket kortfattat",
     "chap.1.d": "Vikingar → kungar → 1809 → folkhemmet → EU. Hela berg-och-dalbanan, utan släktträdsplugget.",
-    "chap.1.m1": "38 frågor",
     "chap.1.m2": "~9 min",
     "chap.2.t": "Så styrs Sverige",
     "chap.2.d": "Riksdag, regering, kommun, region. Vem bestämmer vad, vem du röstar på, och varför ingen är rädd för kungen.",
-    "chap.2.m1": "52 frågor",
     "chap.2.m2": "~12 min",
     "chap.3.t": "Rättigheter, friheter & de fyra grundlagarna",
     "chap.3.d": "Grundlagarna på enkel svenska. Tryckfrihet, yttrandefrihet, och varför chefen inte får fråga om din religion.",
-    "chap.3.m1": "47 frågor",
     "chap.3.m2": "~11 min",
     "chap.4.t": "Arbete, skatt & välfärden",
     "chap.4.d": "Skatteverket, kollektivavtal, föräldraledighet, sjukpenning. Avtalet du gick med på.",
-    "chap.4.m1": "44 frågor",
     "chap.4.m2": "~10 min",
     "chap.5.t": "Jämställdhet & det moderna hushållet",
     "chap.5.d": "Jämställdhet, HBTQ+-rättigheter, hur föräldraledigheten delas. Anledningen till att Sverige dyker upp i alla rankinglistor.",
-    "chap.5.m1": "39 frågor",
     "chap.5.m2": "~9 min",
     "chap.6.t": "Samhälle, skola & sjukvård",
     "chap.6.d": "Förskola till universitet, BVC till 1177. Hur vardagen är monterad.",
-    "chap.6.m1": "41 frågor",
     "chap.6.m2": "~10 min",
     "chap.7.t": "Natur, klimat & allemansrätten",
     "chap.7.d": "Rätten att vistas fritt, miljöregler, varför man trots allt inte får plocka grannens äpplen (tyvärr).",
-    "chap.7.m1": "36 frågor",
     "chap.7.m2": "~8 min",
     "chap.8.t": "Kultur, traditioner & kalendern",
     "chap.8.d": "Midsommar, lucia, kräftskiva, semladagen. Bra för provet. Avgörande för småpratet.",
-    "chap.8.m1": "40 frågor",
     "chap.8.m2": "~9 min",
     "chap.9.t": "Pengar, banker & BankID",
     "chap.9.d": "Personnummer, BankID, Swish, kronor. Sverige drivs av plast och identifierare — lär känna dem.",
-    "chap.9.m1": "28 frågor",
     "chap.9.m2": "~7 min",
     "chap.10.t": "Sverige, EU & världen",
     "chap.10.d": "Med i EU sedan 1995, lite-neutralt i sekler, nu i NATO. Den internationella berättelsen.",
-    "chap.10.m1": "33 frågor",
     "chap.10.m2": "~8 min",
     "chap.11.t": "Migration, uppehållstillstånd & medborgarskap",
     "chap.11.d": "Den faktiska vägen till passet. Vägar, krav, skillnaden mellan PUT, medborgarskap och \"bara på besök\".",
-    "chap.11.m1": "35 frågor",
     "chap.11.m2": "~9 min",
     "chap.12.t": "Provexempel & överlevnadsguide",
     "chap.12.d": "Tidsatta fullängdsprov som ser ut och känns som det riktiga. Plus en \"så här packar du väskan\"-lista.",
-    "chap.12.m1": "3 hela prov",
     "chap.12.m2": "60 min styck",
     "chap.13.t": "Traditioner, helgdagar & vardagskultur",
 
@@ -673,11 +649,30 @@ const i18n = window.i18n = {
   }
 };
 
+function smtChapterQuestionCountLabel(chapterNumber, lang) {
+  const chapterId = Number(chapterNumber);
+  const chapters = Array.isArray(window.SMT_CHAPTERS_META) ? window.SMT_CHAPTERS_META : [];
+  const chapter = chapters.find((entry) => Number(entry && entry.id) === chapterId);
+  const count = Number(chapter && chapter.questionCount);
+  if (!Number.isInteger(chapterId) || !Number.isInteger(count) || count < 0) return undefined;
+  return lang === "sv" ? `${count} frågor` : `${count} questions`;
+}
+window.smtChapterQuestionCountLabel = smtChapterQuestionCountLabel;
+
+function smtDynamicI18nValue(key, lang) {
+  const chapterQuestionCountMatch = key.match(/^chap\.(\d+)\.m1$/);
+  if (chapterQuestionCountMatch) {
+    return smtChapterQuestionCountLabel(chapterQuestionCountMatch[1], lang);
+  }
+  return undefined;
+}
+
 function applyLang(lang) {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
-    const value = (i18n[lang] && i18n[lang][key]);
+    const dynamicValue = smtDynamicI18nValue(key, lang);
+    const value = dynamicValue === undefined ? i18n[lang] && i18n[lang][key] : dynamicValue;
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
