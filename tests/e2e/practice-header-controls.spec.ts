@@ -1,20 +1,13 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-type BoundingBox = { x: number; y: number; width: number; height: number };
+import { dismissBlockingModals } from './browserLaunch';
 
-async function closeLaunchAdIfPresent(page: Page) {
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
-}
+type BoundingBox = { x: number; y: number; width: number; height: number };
 
 async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
@@ -58,7 +51,7 @@ test('practice header controls keep English labels, states, and mobile targets',
   await page.setViewportSize({ width: 390, height: 844 });
   await enableEnglishSupport(page);
   await page.goto('/practice', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
 
   await expect(page.getByText('Question 1')).toBeVisible();
 
