@@ -51,6 +51,7 @@ export function AnswerOption({
   const copy = answerOptionCopy[language];
   const label = option ? getOptionLabel(option, language) : copy.fallbackLabel;
   const state = getOptionCardState(tone, selected);
+  const checked = selected;
   const accessibilityLabel = resultLabel
     ? `${label}, ${resultLabel}`
     : copy.selectAccessibilityLabel(label);
@@ -59,7 +60,7 @@ export function AnswerOption({
   return (
     <OptionCard
       accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ disabled, selected }}
+      accessibilityState={{ checked, disabled, selected }}
       disabled={disabled}
       label={label}
       onPress={onPress}
