@@ -1052,9 +1052,22 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
 ];
 const EXPECTED_TAB_NAVIGATION_RULES = [
   {
+    label: 'tabs pathname import',
+    pattern: /import \{ Tabs, usePathname \} from 'expo-router';/,
+  },
+  {
     label: 'settings language import',
     pattern:
       /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
+  },
+  {
+    label: 'semantic tab icon import',
+    pattern:
+      /import \{ TabBarIcon, type TabBarIconName \} from '\.\.\/\.\.\/components\/ui\/icons\/TabBarIcon';/,
+  },
+  {
+    label: 'theme token import',
+    pattern: /import \{ colors \} from '\.\.\/\.\.\/lib\/theme';/,
   },
   {
     label: 'tab route-name union',
@@ -1066,16 +1079,37 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /type TabTitleCopy = Record<TabRouteName, string>;/,
   },
   {
+    label: 'tab icon map contract',
+    pattern: /type TabIconMap = Record<TabRouteName, TabBarIconName>;/,
+  },
+  {
+    label: 'tab path map contract',
+    pattern: /type TabPathMap = Record<TabRouteName, string>;/,
+  },
+  {
+    label: 'semantic tab icon map',
+    pattern: /const tabIconMap: TabIconMap = \{/,
+  },
+  {
+    label: 'tab route path map',
+    pattern: /const tabPathMap: TabPathMap = \{/,
+  },
+  {
+    label: 'path-based active tab helper',
+    pattern: /function isActiveTab\(routeName: TabRouteName, pathname: string\)/,
+  },
+  {
+    label: 'route-aware icon component',
+    pattern:
+      /function TabRouteIcon\(\{ routeName, size \}: \{ routeName: TabRouteName; size: number \}\)/,
+  },
+  {
     label: 'localized tab copy map',
     pattern: /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/,
   },
   {
-    label: 'hidden icon helper',
-    pattern: /const hiddenTabIcon = \(\) => null;/,
-  },
-  {
     label: 'tab options helper',
-    pattern: /function getTabOptions\(title: string\)/,
+    pattern: /function getTabOptions\(routeName: TabRouteName, title: string\)/,
   },
   {
     label: 'plain tab title',
@@ -1086,8 +1120,16 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /tabBarAccessibilityLabel: title/,
   },
   {
-    label: 'placeholder glyph suppression',
-    pattern: /tabBarIcon: hiddenTabIcon/,
+    label: 'semantic tab icon renderer',
+    pattern: /<TabRouteIcon routeName=\{routeName\} size=\{size\} \/>/,
+  },
+  {
+    label: 'active tab token color',
+    pattern: /tabBarActiveTintColor: colors\.accent/,
+  },
+  {
+    label: 'inactive tab token color',
+    pattern: /tabBarInactiveTintColor: colors\.textSecondary/,
   },
   {
     label: 'settings language read',
@@ -7070,6 +7112,9 @@ function validateTabNavigationParity() {
   if (tabLayout.includes('⏷')) {
     reject('tab layout must not include visible placeholder tab glyphs');
   }
+  if (/hiddenTabIcon|tabBarIcon:\s*(?:undefined|null)|=>\s*null/.test(tabLayout)) {
+    reject('tab layout must render semantic SVG tab icons instead of hidden/null placeholders');
+  }
 
   const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
   const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
@@ -7077,12 +7122,16 @@ function validateTabNavigationParity() {
     reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
   }
 
+  const iconMapBlock = tabLayout.match(/const tabIconMap: TabIconMap = \{([\s\S]*?)\};/)?.[1] ?? '';
+  const seenIcons = new Set();
+
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
-      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
+      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\('${route.routeName}', copy\\.${route.routeName}\\)\\}`,
     );
     const svPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.sv)}'`);
     const enPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.en)}'`);
+    const iconPattern = new RegExp(`${route.routeName}: '${route.routeName}'`);
 
     if (!routePattern.test(tabLayout)) {
       reject(`${route.routeName} tab must use getTabOptions(copy.${route.routeName})`);
@@ -7092,6 +7141,15 @@ function validateTabNavigationParity() {
       reject(`${route.routeName} tab must define Swedish and English titles`);
       continue;
     }
+    if (!iconPattern.test(iconMapBlock)) {
+      reject(`${route.routeName} tab must map to its own semantic icon`);
+      continue;
+    }
+    if (seenIcons.has(route.routeName)) {
+      reject(`${route.routeName} tab icon must be unique`);
+      continue;
+    }
+    seenIcons.add(route.routeName);
 
     tabNavigationRoutesValidated += 1;
   }
