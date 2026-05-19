@@ -73,6 +73,8 @@ type ExamRouteCopy = {
 const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   sv: {
     accessStatus: {
+      access_read_failed:
+        'Det gick inte att läsa lokal åtkomst för övningsprov. Försök igen om en stund.',
       ads_unavailable: 'Extra övningsprov är inte tillgängliga just nu.',
       consent_required: 'Annonsmedgivande krävs innan ett extra prov kan låsas upp.',
       free_exam_available: 'Dagens kostnadsfria övningsprov är tillgängligt.',
@@ -132,6 +134,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   },
   en: {
     accessStatus: {
+      access_read_failed:
+        'Mock exam access could not be checked on this device. Try again in a moment.',
       ads_unavailable: 'Extra mock exams are unavailable right now.',
       consent_required: 'Ad consent is needed before an extra exam can be unlocked.',
       free_exam_available: 'Daily free mock exam available.',
