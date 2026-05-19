@@ -108,7 +108,10 @@ export function buildExamDiagnostic(input: ExamDiagnosticInput): ExamDiagnostic 
  * Format the "X out of Y to pass" line for the result screen. Honest copy —
  * never says "you will pass" / "guaranteed". Two languages.
  */
-export function formatPassLine(diagnostic: ExamDiagnostic, language: 'sv' | 'en'): string {
+export function formatPassLine(
+  diagnostic: ExamDiagnostic,
+  language: 'sv' | 'en',
+): string {
   const needed = Math.ceil(diagnostic.passThreshold * diagnostic.totalCount);
   if (diagnostic.passed) {
     return language === 'sv'
