@@ -1383,7 +1383,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 16;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -13208,6 +13208,23 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         purchaseSource,
       ),
       'native Remove Ads finish transaction must be non-consumable',
+    ],
+    [
+      normalizedPurchaseSource.includes('async function finishRemoveAdsPurchase(') &&
+        normalizedPurchaseSource.includes('await provider.finishPurchase?.(purchase);') &&
+        normalizedPurchaseSource.includes(
+          'Receipt validation is the entitlement boundary; store acknowledgement can retry later.',
+        ),
+      'Remove Ads finish transaction failures must not replace validated purchase grants',
+    ],
+    [
+      /await finishRemoveAdsPurchase\(provider,\s*purchase\);\s*const entitlements = await setRemoveAdsEntitlement\(true,\s*\{[\s\S]*source:\s*'purchase'/.test(
+        purchaseSource,
+      ) &&
+        /await finishRemoveAdsPurchase\(provider,\s*purchase\);\s*const entitlements = await setRemoveAdsEntitlement\(true,\s*\{[\s\S]*source:\s*'restore'/.test(
+          purchaseSource,
+        ),
+      'Remove Ads buy and restore flows must isolate finish failures before granting validated entitlements',
     ],
     [
       /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*productId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*productId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
