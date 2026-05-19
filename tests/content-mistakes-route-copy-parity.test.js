@@ -5,7 +5,11 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
-const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
+const {
+  createMemoryMMKV,
+  createThrowingGetMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -236,4 +240,16 @@ test('mistake review store drops corrupt persisted selected-answer reviews', () 
       selectedOptionTextSv: 'Fel svar',
     },
   });
+});
+
+test('mistake review store falls back when MMKV reads throw', () => {
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': createThrowingGetMMKV('mistake review read failed'),
+    },
+  );
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {});
 });

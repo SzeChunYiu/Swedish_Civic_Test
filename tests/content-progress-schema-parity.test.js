@@ -39,12 +39,14 @@ function resolveLocalTs(parentFilename, request) {
   );
 }
 
-function loadProgressStoreFromStorage(progress) {
+function loadProgressStoreFromProgressStorage(
+  progressStorage,
+  readPersistedProgress = () => undefined,
+) {
   const progressStorePath = path.join(repoRoot, 'lib/storage/progressStore.ts');
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
   const originalTsExtension = require.extensions['.ts'];
-  let persistedProgressJson = JSON.stringify(progress);
 
   Module._resolveFilename = function patchedResolve(request, parent, ...args) {
     if (request === 'react-native-mmkv' || request === 'zustand') return `__stub__:${request}`;
@@ -57,12 +59,7 @@ function loadProgressStoreFromStorage(progress) {
   Module._load = function patchedLoad(request, parent, isMain) {
     if (request === 'react-native-mmkv') {
       return {
-        createMMKV: () => ({
-          getString: (key) => (key === 'progressState' ? persistedProgressJson : undefined),
-          set: (key, value) => {
-            if (key === 'progressState') persistedProgressJson = String(value);
-          },
-        }),
+        createMMKV: () => progressStorage,
       };
     }
 
@@ -102,7 +99,7 @@ function loadProgressStoreFromStorage(progress) {
     const { useProgressStore } = require(progressStorePath);
     return {
       useProgressStore,
-      readPersistedProgress: () => JSON.parse(persistedProgressJson),
+      readPersistedProgress,
     };
   } finally {
     for (const cacheKey of Object.keys(require.cache)) {
@@ -119,8 +116,29 @@ function loadProgressStoreFromStorage(progress) {
   }
 }
 
+function loadProgressStoreFromStorage(progress) {
+  let persistedProgressJson = JSON.stringify(progress);
+
+  return loadProgressStoreFromProgressStorage(
+    {
+      getString: (key) => (key === 'progressState' ? persistedProgressJson : undefined),
+      set: (key, value) => {
+        if (key === 'progressState') persistedProgressJson = String(value);
+      },
+    },
+    () => JSON.parse(persistedProgressJson),
+  );
+}
+
+function loadProgressFromProgressStorage(progressStorage) {
+  return loadProgressStoreFromProgressStorage(progressStorage).useProgressStore.getState();
+}
+
 function loadProgressFromStorage(progress) {
-  return loadProgressStoreFromStorage(progress).useProgressStore.getState();
+  return loadProgressFromProgressStorage({
+    getString: (key) => (key === 'progressState' ? JSON.stringify(progress) : undefined),
+    set: () => {},
+  });
 }
 
 function progressSnapshot(state) {
@@ -182,7 +200,10 @@ test('progress question schema stays in parity with persisted progress records',
     progressStore,
     /setStreakFreezeState: \(streakFreezeState: StreakFreezeState\) => void;/,
   );
-  assert.match(progressStore, /function writeProgress\(progress: PersistedProgress\): PersistedProgress/);
+  assert.match(
+    progressStore,
+    /function writeProgress\(progress: PersistedProgress\): PersistedProgress/,
+  );
   assert.match(progressStore, /const serializedProgress = JSON\.stringify\(progress\);/);
   assert.match(progressStore, /progressStorage\?\.set\(progressStateKey, serializedProgress\);/);
   assert.match(progressStore, /return normalizeProgress\(JSON\.parse\(serializedProgress\)\);/);
@@ -324,14 +345,26 @@ test('progress mutations return the same shape as persisted JSON readback', () =
     );
   }
 
-  assert.equal(Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'lastAnsweredAt'), false);
-  assert.equal(Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'nextReviewAt'), false);
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'lastAnsweredAt'),
+    false,
+  );
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'nextReviewAt'),
+    false,
+  );
 
   useProgressStore.getState().toggleBookmark('q001');
   assertReturnedStateMatchesReadback();
   assert.equal(useProgressStore.getState().questionProgress.q001.bookmarked, true);
-  assert.equal(Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'lastAnsweredAt'), false);
-  assert.equal(Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'nextReviewAt'), false);
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'lastAnsweredAt'),
+    false,
+  );
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'nextReviewAt'),
+    false,
+  );
 
   useProgressStore.getState().toggleBookmark('q001');
   assertReturnedStateMatchesReadback();
@@ -361,6 +394,25 @@ test('progress mutations return the same shape as persisted JSON readback', () =
   assertReturnedStateMatchesReadback();
   assert.deepEqual(useProgressStore.getState().completedQuestionIds, []);
   assert.deepEqual(useProgressStore.getState().questionProgress, {});
+});
+
+test('progress hydration falls back when MMKV reads throw', () => {
+  const state = loadProgressFromProgressStorage({
+    getString() {
+      throw new Error('progress read failed');
+    },
+    set() {},
+  });
+
+  assert.deepEqual(state.completedQuestionIds, []);
+  assert.deepEqual(state.questionProgress, {});
+  assert.equal(state.totalXp, 0);
+  assert.deepEqual(state.answerDates, []);
+  assert.deepEqual(state.mockExamSessions, []);
+  assert.equal(state.streakFreezeState.available, 1);
+  assert.equal(state.streakFreezeState.lifetimeEarned, 1);
+  assert.equal(state.streakFreezeState.lifetimeSpent, 0);
+  assert.deepEqual(state.streakFreezeState.rescuedDayKeys, []);
 });
 
 test('progress type schema parity rejects session optionality drift', () => {
