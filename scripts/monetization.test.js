@@ -1084,6 +1084,11 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   );
   assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);
+  assert.match(profileSource, /entitlementsReady/);
+  assert.match(
+    profileSource,
+    /\{entitlementsReady \? \(\s*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}/,
+  );
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
