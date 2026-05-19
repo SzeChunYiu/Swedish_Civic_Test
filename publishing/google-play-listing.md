@@ -45,7 +45,7 @@ Privacy Policy URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/
 
 ## Data safety summary
 
-Data safety answers are prepared in `publishing/google-play-data-safety.md`. Current MVP answer: no user data collected and no user data shared; local progress remains on the local device.
+Data safety answers are prepared in `publishing/google-play-data-safety.md` for the ad-supported v1.0 posture. Local study progress remains on the device, while Google Mobile Ads, Google UMP consent, and Google Play Billing may collect or share data for advertising, measurement, fraud prevention, purchase handling, consent, and app functionality. Remove Ads is a one-time 29 SEK in-app product.
 
 ## Official platform guidance checked
 

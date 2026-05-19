@@ -106,6 +106,17 @@ const blockedEvidencePatterns = [
   [/missing/i, 'missing'],
 ];
 
+const stalePublicPrivacyPatterns = [
+  [/no user data is collected/i, 'no user data is collected'],
+  [/no user data is shared/i, 'no user data is shared'],
+  [/no user data collected/i, 'no user data collected'],
+  [/no user data shared/i, 'no user data shared'],
+  [/real ad rendering is disabled/i, 'real ad rendering is disabled'],
+  [/real ads? (?:is|are) disabled/i, 'real ads disabled'],
+  [/Data Not Collected/i, 'Data Not Collected'],
+  [/REAL_ADS_ENABLED_FOR_V1/i, 'REAL_ADS_ENABLED_FOR_V1'],
+];
+
 const gateSpecificBlockedEvidencePatterns = {
   'device-screenshots': [
     [/web[- ]draft/i, 'web-draft evidence is not final store screenshot evidence'],
@@ -178,6 +189,13 @@ function removeAdsV1AcceptanceFindings() {
   const findings = [];
   const adsSource = readFileIfExists('lib/monetization/ads.ts');
   const purchasesSource = readFileIfExists('lib/monetization/purchases.ts');
+  const publicPrivacySurface = [
+    'publishing/public-site/privacy/index.html',
+    'publishing/public-support-and-privacy.md',
+    'publishing/google-play-listing.md',
+  ]
+    .map(readFileIfExists)
+    .join('\n');
 
   if (!/REAL_ADS_ENABLED/.test(adsSource)) {
     findings.push('GOAL step 1 is not structurally green: REAL_ADS_ENABLED is missing.');
@@ -213,6 +231,32 @@ function removeAdsV1AcceptanceFindings() {
   }
   if (!/admob|advertis|in-app purchase/i.test(dataSafety)) {
     findings.push('GOAL step 7 is red: Google Play data safety does not disclose ads and IAP.');
+  }
+  const stalePublicPrivacyTerms = stalePublicPrivacyPatterns
+    .filter(([pattern]) => pattern.test(publicPrivacySurface))
+    .map(([, label]) => label);
+  if (stalePublicPrivacyTerms.length > 0) {
+    findings.push(
+      `Public privacy posture is red: hosted/listing copy still says ${stalePublicPrivacyTerms.join(
+        ', ',
+      )}.`,
+    );
+  }
+  if (!/Google Mobile Ads|AdMob/i.test(publicPrivacySurface)) {
+    findings.push(
+      'Public privacy posture is red: public copy does not disclose Google Mobile Ads.',
+    );
+  }
+  if (!/Remove Ads/i.test(publicPrivacySurface) || !/29 SEK/i.test(publicPrivacySurface)) {
+    findings.push(
+      'Public privacy posture is red: public copy does not disclose 29 SEK Remove Ads.',
+    );
+  }
+  if (
+    !/App Tracking Transparency|ATT/i.test(publicPrivacySurface) ||
+    !/UMP consent/i.test(publicPrivacySurface)
+  ) {
+    findings.push('Public privacy posture is red: public copy does not disclose ATT/UMP consent.');
   }
   if (!exists(removeAdsDeviceQaPath)) {
     findings.push(`Manual device-QA gate is red: ${removeAdsDeviceQaPath} is missing.`);
