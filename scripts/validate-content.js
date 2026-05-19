@@ -61,6 +61,15 @@ const EXPECTED_UHR_SOURCE = {
 };
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
+const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
+const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
+const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
+  rulesEffectiveDate:
+    'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
+  civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestDeadline:
+    'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
+};
 const QUESTION_BANK_CSV_HEADER = [
   'id',
   'chapterId',
@@ -3441,6 +3450,12 @@ function fail(message) {
   failures.push(message);
 }
 
+function dateIsoDay(value) {
+  return value instanceof Date && !Number.isNaN(value.getTime())
+    ? value.toISOString().slice(0, 10)
+    : '';
+}
+
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -3514,6 +3529,97 @@ function questionSentenceEndingsAreComplete(question) {
   return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
     textHasSentenceEnding(question[field]),
   );
+}
+
+function validateCitizenshipTimeline() {
+  let dateParity = true;
+  let countdownCopyParity = true;
+  const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
+  const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
+  const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
+
+  function rejectDate(message) {
+    dateParity = false;
+    fail(message);
+  }
+
+  function rejectCountdown(message) {
+    countdownCopyParity = false;
+    fail(message);
+  }
+
+  if (rulesDate !== EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE) {
+    rejectDate(
+      `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
+    );
+  }
+  if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
+    rejectDate(
+      `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
+    );
+  }
+  if (
+    !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
+    !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
+    examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
+      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
+  ) {
+    rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
+  }
+  if (dateIsoDay(examDateModule.EXAM_REFORM_DATE) !== rulesDate) {
+    rejectDate('EXAM_REFORM_DATE must remain an alias for the citizenship rules date');
+  }
+
+  let sourceUrlsValidated = 0;
+  Object.entries(EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS).forEach(([key, expectedUrl]) => {
+    const actualUrl = sourceUrls?.[key];
+    if (actualUrl !== expectedUrl) {
+      rejectDate(`citizenship timeline source URL ${key} must be ${expectedUrl}`);
+      return;
+    }
+    if (!actualUrl.startsWith('https://')) {
+      rejectDate(`citizenship timeline source URL ${key} must use HTTPS`);
+      return;
+    }
+    sourceUrlsValidated += 1;
+  });
+
+  const countdownBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/CountdownBanner.tsx'),
+    'utf8',
+  );
+
+  [
+    'CITIZENSHIP_RULES_EFFECTIVE_DATE',
+    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
+    'Nya medborgarskapsregler gäller från',
+    'Samhällskunskapsprovet väntas starta i augusti 2026',
+    'New citizenship rules apply from',
+    'The civic-knowledge test is expected in August 2026',
+  ].forEach((requiredText) => {
+    if (!countdownBannerSource.includes(requiredText)) {
+      rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
+    }
+  });
+
+  [
+    /Det nya samhällskunskapstestet träder i kraft/,
+    /The new civic knowledge test takes effect/,
+    /until new exam/,
+    /tills nya provet/,
+  ].forEach((forbiddenPattern) => {
+    if (forbiddenPattern.test(countdownBannerSource)) {
+      rejectCountdown('CountdownBanner still says the civic knowledge test starts on 6 June');
+    }
+  });
+
+  return {
+    countdownCopyParity,
+    dateParity,
+    rulesDate,
+    sourceUrlsValidated,
+    testDeadlineDate,
+  };
 }
 
 function findQuestionAuthorityOverclaim(question) {
@@ -5760,6 +5866,7 @@ const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionSto
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
+const examDateModule = loadTs('lib/learning/examDate.ts');
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
@@ -5968,6 +6075,11 @@ let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
+let citizenshipRulesEffectiveDateValidated = '';
+let civicKnowledgeTestDeadlineDateValidated = '';
+let citizenshipTimelineSourceUrlsValidated = 0;
+let citizenshipTimelineDateParityValidated = false;
+let countdownBannerTimelineCopyParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -6071,6 +6183,14 @@ if (
   Array.isArray(localizationStrings)
 ) {
   fail('strings export is not an object');
+}
+{
+  const timelineValidation = validateCitizenshipTimeline();
+  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
 }
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
@@ -13730,6 +13850,11 @@ console.log(
       progressStoreSchemaParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
+      citizenshipRulesEffectiveDateValidated,
+      civicKnowledgeTestDeadlineDateValidated,
+      citizenshipTimelineSourceUrlsValidated,
+      citizenshipTimelineDateParityValidated,
+      countdownBannerTimelineCopyParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,
