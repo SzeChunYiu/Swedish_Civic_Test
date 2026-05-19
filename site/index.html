@@ -8,7 +8,8 @@
       name="description"
       content="A friendly, unofficial study app for the Swedish citizenship test. Quiz, learn, mock-exam — all in lagom-sized chapters."
     />
-    <link rel="icon" href="data:," />
+    <link rel="icon" type="image/png" href="icon.png" />
+    <link rel="apple-touch-icon" href="icon.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -126,6 +127,14 @@
               <a class="btn btn--ghost" href="#try" data-i18n="hero.cta2">One quick question</a>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- V1.1 DASHBOARD (hidden until user has progress) -->
+      <section id="v11-dashboard-wrap" class="band v11-band" data-screen-label="01.15 Dashboard" style="display:none">
+        <div class="wrap">
+          <span class="eyebrow">Your progress</span>
+          <div id="v11-dashboard"></div>
         </div>
       </section>
 
@@ -1220,5 +1229,21 @@
     <script src="ebook.js"></script>
     <script type="text/babel" src="tweaks-panel.jsx"></script>
     <script type="text/babel" src="tweaks.jsx"></script>
+    <script src="v11.js"></script>
+    <script>
+      // Show dashboard wrapper once v11 has content.
+      (function () {
+        var wrap = document.getElementById('v11-dashboard-wrap');
+        var db = document.getElementById('v11-dashboard');
+        function check() {
+          if (!wrap || !db) return;
+          wrap.style.display = db.style.display === 'none' || db.textContent.trim() === '' ? 'none' : '';
+        }
+        var obs = new MutationObserver(check);
+        if (db) obs.observe(db, { childList: true, attributes: true, subtree: false });
+        window.addEventListener('hashchange', function () { setTimeout(check, 50); });
+        setTimeout(check, 800);
+      })();
+    </script>
   </body>
 </html>
