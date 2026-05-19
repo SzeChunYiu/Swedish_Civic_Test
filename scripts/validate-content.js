@@ -1133,6 +1133,10 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam route must read language from settings store',
   ],
   ['const copy = examRouteCopy[language];', 'exam route must select copy from settings language'],
+  [
+    "import { ResultSummary } from '../../components/ResultSummary';",
+    'exam result must import the shared ResultSummary',
+  ],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
   [
     '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
@@ -1159,6 +1163,17 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     "language === 'en' ? chapter.chapterNameEn : chapter.chapterNameSv",
     'exam chapter breakdown must use selected-language chapter names',
   ],
+  ['<ResultSummary', 'exam result must render the shared ResultSummary'],
+  ['languageOverride={language}', 'exam result summary must receive settings language'],
+  [
+    'metricLabel={copy.correctCount(result.correctCount, result.totalCount)}',
+    'exam result summary must render localized score metric',
+  ],
+  [
+    "status={endedByTime ? 'review' : undefined}",
+    'time-expired exam results must not be announced as passing',
+  ],
+  ['subtitle={copy.resultNote}', 'exam result summary must render finality note'],
   ['{copy.questionReviewTitle}', 'exam review title must render localized copy'],
   ['{copy.selectedAnswerLabel}', 'exam selected-answer label must render localized copy'],
   ['{copy.correctAnswerLabel}', 'exam correct-answer label must render localized copy'],

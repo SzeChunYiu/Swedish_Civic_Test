@@ -42,9 +42,20 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /import \{ getQuestionDisplayText, getQuestionSourceCitation \} from '..\/..\/lib\/quiz\/questionText';/,
   );
+  assert.match(source, /import \{ ResultSummary \} from '..\/..\/components\/ResultSummary';/);
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
+  assert.match(source, /<ResultSummary/);
+  assert.match(source, /correctCount=\{result\.correctCount\}/);
+  assert.match(source, /totalCount=\{result\.totalCount\}/);
+  assert.match(source, /languageOverride=\{language\}/);
+  assert.match(
+    source,
+    /metricLabel=\{copy\.correctCount\(result\.correctCount, result\.totalCount\)\}/,
+  );
+  assert.match(source, /status=\{endedByTime \? 'review' : undefined\}/);
+  assert.match(source, /subtitle=\{copy\.resultNote\}/);
   assert.match(
     source,
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,

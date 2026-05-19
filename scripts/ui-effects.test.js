@@ -1211,6 +1211,14 @@ test('exam results include per-question explanations and UHR sources', () => {
   assert.match(source, /type ExamRouteCopy =/);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /buildExamReviewItems/);
+  assert.match(source, /import \{ ResultSummary \} from '..\/..\/components\/ResultSummary';/);
+  assert.match(source, /<ResultSummary/);
+  assert.match(source, /languageOverride=\{language\}/);
+  assert.match(
+    source,
+    /metricLabel=\{copy\.correctCount\(result\.correctCount, result\.totalCount\)\}/,
+  );
+  assert.match(source, /status=\{endedByTime \? 'review' : undefined\}/);
   assert.match(source, /questionReviewTitle: 'Frågegenomgång'/);
   assert.match(source, /questionReviewTitle: 'Question review'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
@@ -1322,7 +1330,7 @@ test('exam results are final after submission', () => {
 
   assert.match(source, /resultNote:\s*'Skickade resultat är slutgiltiga/);
   assert.match(source, /resultNote: 'Submitted results are final/);
-  assert.match(source, /\{copy\.resultNote\}/);
+  assert.match(source, /subtitle=\{copy\.resultNote\}/);
   assert.doesNotMatch(source, /Back to exam answers/);
   assert.doesNotMatch(source, /Back to answers/);
 });
