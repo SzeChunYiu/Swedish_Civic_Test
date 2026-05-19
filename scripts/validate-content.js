@@ -271,6 +271,14 @@ const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bkvalitets(?:granskad|granskade|granskat)\s+av\s+(?:uhr|myndighet|regeringen)\b/i,
   /\bgaranter(?:ar|ad|at)?\s+(?:godk[aä]nt|att\s+klara)\b/i,
 ];
+const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
+  new RegExp(['most people', 'who pass'].join('\\s+'), 'i'),
+  new RegExp(['pass', 'this', 'way'].join('\\s+'), 'i'),
+  new RegExp(['three weeks,', 'not three days'].join('\\s*'), 'i'),
+  /\bpass(?:ed|ing)?\s+(?:in|within)\s+(?:\d+|one|two|three|a few|few)\s+(?:day|days|week|weeks|month|months)\b/i,
+  /\bde flesta som klarar\b[^.?!]*(?:dag|vecka|veckor|m[åa]nad|m[åa]nader)\b/i,
+  /\bklara(?:r)?\s+(?:p[åa]|inom)\s+(?:\d+|en|ett|tv[åa]|tre|några)\s+(?:dag|dagar|vecka|veckor|m[åa]nad|m[åa]nader)\b/i,
+];
 const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\benligt\s+UHR\b/i,
   /\bUHR[\s-]?(?:materialet|avsnittet)\b/i,
@@ -7432,24 +7440,7 @@ let criminalResponsibilityCurrentnessParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
-let staticSiteOutcomeSloganPatternsValidated = 0;
-let staticSiteOutcomeSloganParityValidated = false;
-let staticHeadMetadataDescriptionsValidated = 0;
-let staticHeadMetadataDescriptionValidated = false;
-let staticV11ReadinessUnsupportedCopyValidated = 0;
-let staticV11ReadinessRequiredCopyValidated = 0;
-let staticV11ReadinessCopyParityValidated = false;
-let staticEbookOutcomeClaimPatternsValidated = 0;
-let staticEbookOutcomeClaimParityValidated = false;
-let staticEbookSwedishQuizLoanwordPatternsValidated = 0;
-let staticEbookSwedishQuizNaturalnessValidated = false;
-let staticEbookPracticalTestClaimPatternsValidated = 0;
-let staticEbookPracticalTestRequiredCopyValidated = 0;
-let staticEbookPracticalTestSourceUrlsValidated = 0;
-let staticEbookPracticalTestCurrentnessValidated = false;
-let staticEbookFactboxClaimPatternsValidated = 0;
-let staticEbookFactboxSourceUrlsValidated = 0;
-let staticEbookFactboxSourceParityValidated = false;
+let staticEbookOutcomeClaimsValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -16015,6 +16006,43 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankParityValidated = true;
 }
 
+function validateStaticEbookOutcomeClaims() {
+  const ebookPaths = ['site/ebook.js', 'site/index.html'];
+  const source = ebookPaths
+    .map((relativePath) => {
+      try {
+        return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+      } catch (error) {
+        fail(
+          `${relativePath} could not be read for static ebook outcome copy validation: ${error.message}`,
+        );
+        return '';
+      }
+    })
+    .join('\n');
+
+  const unsupportedPattern = STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.find((pattern) =>
+    pattern.test(source),
+  );
+  if (unsupportedPattern) {
+    fail(
+      `static ebook copy contains unsupported pass-duration or outcome claim matching ${unsupportedPattern}`,
+    );
+    return;
+  }
+
+  if (
+    !source.includes(
+      'Read on your phone in 10-minute windows. Keep the pace small, then repeat the same chapter with practice questions before moving on.',
+    )
+  ) {
+    fail('static ebook intro tip must use evidence-free study-habit guidance');
+    return;
+  }
+
+  staticEbookOutcomeClaimsValidated = true;
+}
+
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'id',
   'chapterId',
@@ -17139,6 +17167,7 @@ validateMasteryRules();
 validateQuestionBankCsvContract();
 validateCriminalResponsibilityCurrentness();
 validateStaticSiteQuestionBankParity();
+validateStaticEbookOutcomeClaims();
 validateUhrSourceMaterialLinkParity();
 
 if (failures.length) {
@@ -17445,24 +17474,7 @@ console.log(
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
-      staticSiteOutcomeSloganPatternsValidated,
-      staticSiteOutcomeSloganParityValidated,
-      staticHeadMetadataDescriptionsValidated,
-      staticHeadMetadataDescriptionValidated,
-      staticV11ReadinessUnsupportedCopyValidated,
-      staticV11ReadinessRequiredCopyValidated,
-      staticV11ReadinessCopyParityValidated,
-      staticEbookOutcomeClaimPatternsValidated,
-      staticEbookOutcomeClaimParityValidated,
-      staticEbookSwedishQuizLoanwordPatternsValidated,
-      staticEbookSwedishQuizNaturalnessValidated,
-      staticEbookPracticalTestClaimPatternsValidated,
-      staticEbookPracticalTestRequiredCopyValidated,
-      staticEbookPracticalTestSourceUrlsValidated,
-      staticEbookPracticalTestCurrentnessValidated,
-      staticEbookFactboxClaimPatternsValidated,
-      staticEbookFactboxSourceUrlsValidated,
-      staticEbookFactboxSourceParityValidated,
+      staticEbookOutcomeClaimsValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,

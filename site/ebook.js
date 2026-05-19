@@ -90,7 +90,7 @@
             <li>If you forget something, that's normal. The practice quiz brings it back.</li>
           </ul>
           <blockquote><p>You don't need to remember everything. You need to remember the right things. That's what we're here for.</p></blockquote>
-          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Short, repeated sessions make it easier to notice what you know, what needs review, and when to check UHR's material again.</p></div>
+          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Keep the pace small, then repeat the same chapter with practice questions before moving on.</p></div>
         `,
         sv: `
           <h2>Vad den här boken är</h2>
