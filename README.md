@@ -1,6 +1,6 @@
-# Sweden Citizenship Test Prep
+# Almost Swedish
 
-Independent study app for the Swedish citizenship civic test. The app is built with Expo, React Native, TypeScript, Expo Router, Zustand, MMKV, and `expo-speech`.
+Independent study app for the Swedish citizenship civic test — for everyone who's *almost* Swedish and just needs to pass the last hurdle. Built with Expo, React Native, TypeScript, Expo Router, Zustand, MMKV, and `expo-speech`.
 
 ## Status
 
