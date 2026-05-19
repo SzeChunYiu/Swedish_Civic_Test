@@ -185,6 +185,39 @@ test('shared buttons use token disabled styles without dimming child labels', ()
 test('language picker future-language rows are disabled instead of selectable', () => {
   const source = read('components/ui/LanguagePicker.tsx');
 
+  assert.match(source, /const availableLocaleOptions = useMemo\(/);
+  assert.match(source, /const focusAvailableOption = \(optionCode: string\) => \{/);
+  assert.match(source, /const handleMenuKeyDown = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /case 'Escape':/);
+  assert.match(source, /closePicker\(\{ restoreFocus: true \}\);/);
+  assert.match(source, /case 'ArrowDown':/);
+  assert.match(source, /moveFocusBy\(1\);/);
+  assert.match(source, /case 'ArrowUp':/);
+  assert.match(source, /moveFocusBy\(-1\);/);
+  assert.match(source, /case 'Home':/);
+  assert.match(source, /focusAvailableIndex\(0\);/);
+  assert.match(source, /case 'End':/);
+  assert.match(source, /focusAvailableIndex\(availableLocaleOptions\.length - 1\);/);
+  assert.match(source, /case 'Enter':/);
+  assert.match(source, /case ' ':/);
+  assert.match(source, /if \(!focusedOptionCode\) return;/);
+  assert.match(
+    source,
+    /availableLocaleOptions\.find\(\(option\) => option\.code === focusedOptionCode\)/,
+  );
+  assert.match(source, /\.\.\.menuKeyboardProps/);
+  assert.match(source, /const triggerKeyboardProps: WebKeyboardProps =/);
+  assert.match(
+    source,
+    /Platform\.OS === 'web' && open \? \{ onKeyDown: handleMenuKeyDown \} : \{\}/,
+  );
+  assert.match(source, /\.\.\.triggerKeyboardProps/);
+  assert.match(
+    source,
+    /onFocus=\{\(\) => \{\s*if \(opt\.available\) setFocusedOptionCode\(opt\.code\);/,
+  );
+  assert.match(source, /rowRefs\.current\[opt\.code\] = node;/);
+  assert.match(source, /tabIndex=\{\s*opt\.available/);
   assert.match(source, /aria-expanded=\{open\}/);
   assert.match(source, /aria-haspopup="menu"/);
   assert.match(source, /accessibilityState=\{\{ expanded: open \}\}/);
