@@ -2,7 +2,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
+const {
+  assertNoUnsupportedStaticOutcomeSlogans,
+  assertStaticHeadMetadataDescriptionSource,
+} = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -130,6 +133,36 @@ test('static learner-facing slogans avoid pass and passport outcome promises', (
   assert.match(read('site/app.js'), /"hero\.h1b": "Practice with sources\."/);
   assert.match(read('site/app.js'), /"hero\.h1a": "Plugga materialet\."/);
   assert.match(read('site/app.js'), /"hero\.h1b": "Öva med källor\."/);
+});
+
+test('static head metadata description is neutral and non-empty', () => {
+  const indexHtml = read('site/index.html');
+
+  assert.equal(assertStaticHeadMetadataDescriptionSource(indexHtml), 1);
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(/<meta\s+name="description"[\s\S]*?\/>\n/, ''),
+      ),
+    /missing static meta description/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(/(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/, '$1$2'),
+      ),
+    /blank static meta description/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(
+          /(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/,
+          '$1Pass the test.$2',
+        ),
+      ),
+    /static meta description English pass-the-test slogan/,
+  );
 });
 
 test('static Swedish mock exam copy stays clearly unofficial practice wording', () => {
