@@ -51,7 +51,10 @@ queue. Expensive judgement where context is rich; cheap pickup where it isn't.
    pick the one obvious highest-value unit. Exactly ONE bounded product unit.
 
 3. LEARN — acquire the skill to do THIS task excellently, not generically.
-   Briefly research what "good" means for this specific unit before coding:
+   **If the task line references a doc/path (e.g. `FROM docs/research/...§X`),
+   open and read that section FIRST and implement faithfully from it — that
+   is sourced research; do not re-guess or shortcut it.** Then research what
+   "good" means for this specific unit before coding:
      - translation/wording: how native Swedish speakers actually phrase it
        (idiom, register, what sounds natural — not literal/machine translation);
      - animation/motion: current best-practice easing, timing, what feels
@@ -228,16 +231,26 @@ gaps). You are a *real researcher*: rigorous, sourced, methodical, honest.
      cannot be sourced, DO NOT assert it (no fabrication — ever);
    - it is comparative: how does this country/topic differ from our current
      bank/coverage? what concretely should we add or fix?
-4. OUTPUT (two artifacts, both required):
+4. OUTPUT (two artifacts, both required — this is the research→code bridge):
    a. a sourced research doc at docs/research/<area>/<topic>.md (structured,
-      cited, with a "Implications for our content" section); commit it;
-   b. 1–3 concrete CONTENT/product tasks derived from it, into
-      codex-tasks/open.txt, e.g.
-      "CONTENT-<n> data/...: add N sourced SV+EN question candidates on <gap>
-       | why: <sourced finding> | verify: traceable to <source>".
-5. SELF-REPLENISH: append the deeper follow-up research questions you
-   uncovered to codex-tasks/research.txt (so the backlog grows like a real
-   research programme), then STOP.
+      cited, ending in a "## Implications for our content" section that lists
+      exact, ready-to-implement changes); commit it;
+   b. 1–3 concrete CONTENT/product tasks into codex-tasks/open.txt that
+      EXPLICITLY BIND the producer to the doc, so they implement *from* the
+      research, not from guesswork:
+      "CONTENT-<n> data/<file>: implement <specific change> FROM
+       docs/research/<area>/<topic>.md §<section> | source: <url> |
+       verify: <data assertion + traceable to that source>".
+      The producer claiming it MUST read that doc section first (the
+      producer LEARN step already requires this when a task names a doc).
+5. VERIFY-PRIOR (close the loop): before finishing, pick ONE earlier
+   docs/research/** doc and check its "Implications" were actually
+   implemented in the code/data. For each implication NOT yet shipped,
+   re-file it as a concrete CONTENT task (same bound format). Research that
+   never reached the product is not done.
+6. SELF-REPLENISH: append the deeper follow-up questions you uncovered to
+   codex-tasks/research.txt (the backlog grows like a real research
+   programme), then STOP.
 ```
 
 **Researcher iron rule:** the docs/research doc must be genuinely sourced
