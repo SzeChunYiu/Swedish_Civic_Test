@@ -1163,20 +1163,24 @@ test('exam route exposes page and review section headings as headers', () => {
 test('exam controls mirror selected and disabled state to web aria attributes', () => {
   const source = read('app/(tabs)/exam.tsx');
 
+  assert.match(source, /import \{ OptionCard \} from '..\/..\/components\/OptionCard';/);
   assert.match(source, /aria-disabled=\{!canStartAccessibleExam \|\| startingAccessibleExam\}/);
   assert.match(
     source,
     /aria-disabled=\{!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam\}/,
   );
+  assert.match(source, /aria-checked=\{isSelected\}/);
   assert.match(source, /aria-selected=\{isSelected\}/);
   assert.match(source, /aria-disabled=\{!canSubmit\}/);
   assert.match(
     source,
-    /accessibilityLabel=\{copy\.answerAccessibilityLabel\(optionText, index \+ 1\)\}/,
+    /<OptionCard[\s\S]*accessibilityLabel=\{copy\.answerAccessibilityLabel\(optionText, index \+ 1\)\}[\s\S]*accessibilityRole="radio"[\s\S]*accessibilityState=\{\{ checked: isSelected, selected: isSelected \}\}[\s\S]*state=\{isSelected \? 'selected' : 'idle'\}/,
   );
   assert.match(source, /accessibilityLabel=\{copy\.submitAccessibilityLabel\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: isSelected \}\}/);
+  assert.match(source, /languageOverride=\{language\}/);
   assert.match(source, /accessibilityState=\{\{ disabled: !canSubmit \}\}/);
+  assert.doesNotMatch(source, /<Pressable[\s\S]*copy\.answerAccessibilityLabel/);
+  assert.doesNotMatch(source, /styles\.option(?:Selected|Text)?\b/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
