@@ -66,6 +66,9 @@ const EXPECTED_UHR_SOURCE = {
 };
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
+const EXPECTED_UHR_ABOUT_TEST_URL =
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/';
+const EXPECTED_UHR_ABOUT_TEST_RETRIEVED_AT = '2026-05-19';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
@@ -13525,14 +13528,20 @@ function validateUhrSourceMaterialLinkParity() {
   }
 
   const routeMaterialUrl = extractStringConstantFromTs(sourcesRoute, 'UHR_EDUCATION_MATERIAL_URL');
+  const routeAboutTestUrl = extractStringConstantFromTs(sourcesRoute, 'UHR_ABOUT_TEST_URL');
   if (routeMaterialUrl !== EXPECTED_UHR_EDUCATION_MATERIAL_URL) {
     reject(
       `app/sources.tsx UHR_EDUCATION_MATERIAL_URL must be ${EXPECTED_UHR_EDUCATION_MATERIAL_URL}`,
     );
   }
-
+  if (routeAboutTestUrl !== EXPECTED_UHR_ABOUT_TEST_URL) {
+    reject(`app/sources.tsx UHR_ABOUT_TEST_URL must be ${EXPECTED_UHR_ABOUT_TEST_URL}`);
+  }
   if (!isHttpsUrl(routeMaterialUrl)) {
     reject('app/sources.tsx UHR education material URL must be HTTPS');
+  }
+  if (!isHttpsUrl(routeAboutTestUrl)) {
+    reject('app/sources.tsx UHR about-test URL must be HTTPS');
   }
 
   const mapSourceUrl = uhrSectionMap?.source?.url;
@@ -13566,11 +13575,39 @@ function validateUhrSourceMaterialLinkParity() {
   if (!sourcesRoute.includes('Every practice question shows a source line with the UHR chapter')) {
     reject('app/sources.tsx must explain English learner-visible source lines');
   }
+  if (/UHR\s+varnar|UHR\s+warns/i.test(sourcesRoute)) {
+    reject('app/sources.tsx must cite the UHR boundary without paraphrasing it as a warning');
+  }
+  if (/kvalitetsgranskade\s+av\s+UHR|quality-controlled\s+by\s+UHR/i.test(sourcesRoute)) {
+    reject('app/sources.tsx must avoid unsupported UHR quality-review wording');
+  }
+  if (!sourcesRoute.includes('UHR står inte bakom dem')) {
+    reject('app/sources.tsx must state the Swedish UHR third-party practice-test boundary');
+  }
+  if (!sourcesRoute.includes('quality is not checked by UHR or any other authority')) {
+    reject('app/sources.tsx must state the English UHR third-party practice-test boundary');
+  }
+  if (
+    !sourcesRoute.includes(`Källa hämtad ${EXPECTED_UHR_ABOUT_TEST_RETRIEVED_AT}`) ||
+    !sourcesRoute.includes(`Source accessed ${EXPECTED_UHR_ABOUT_TEST_RETRIEVED_AT}`)
+  ) {
+    reject('app/sources.tsx UHR boundary note must show Swedish and English retrieved dates');
+  }
   if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
     reject('app/sources.tsx must render the UHR material URL through an Expo Link');
   }
+  if (!/<Link[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR about-test URL through an Expo Link');
+  }
   if (!sourcesRoute.includes('accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}')) {
     reject('app/sources.tsx UHR material link needs the localized accessibility label');
+  }
+  if (
+    !sourcesRoute.includes(
+      'accessibilityLabel={copy.openAuthorityBoundarySourceAccessibilityLabel}',
+    )
+  ) {
+    reject('app/sources.tsx UHR boundary link needs the localized accessibility label');
   }
   if (
     !sourcesRoute.includes(
@@ -13579,6 +13616,12 @@ function validateUhrSourceMaterialLinkParity() {
     !sourcesRoute.includes("openEducationMaterialAccessibilityLabel: 'Open UHR education material'")
   ) {
     reject('app/sources.tsx UHR material link needs Swedish and English accessibility labels');
+  }
+  if (
+    !sourcesRoute.includes("'Öppna UHR:s sida Om medborgarskapsprovet'") ||
+    !sourcesRoute.includes("'Open UHR About the citizenship test page'")
+  ) {
+    reject('app/sources.tsx UHR boundary link needs Swedish and English accessibility labels');
   }
 
   if (valid) uhrSourceMaterialLinkParityValidated = true;

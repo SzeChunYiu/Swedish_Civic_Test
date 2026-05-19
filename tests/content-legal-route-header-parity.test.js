@@ -82,9 +82,13 @@ const expectedLegalRoutes = [
       'const copy = sourcesCopy[language];',
       'Källor',
       'Primärt studiematerial',
+      'UHR står inte bakom dem',
+      'Källa hämtad 2026-05-19',
       'Varje övningsfråga visar en källrad med UHR:s kapitel',
       'Sources',
       'Primary study material',
+      'quality is not checked by UHR or any other authority',
+      'Source accessed 2026-05-19',
       'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
