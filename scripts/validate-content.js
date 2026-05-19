@@ -8,6 +8,8 @@ const {
 } = require('./export-site-question-bank');
 const {
   UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
+  extractStaticHeadMetaDescriptions,
+  findStaticHeadMetadataDescriptionIssues,
   findUnsupportedStaticOutcomeSlogans,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
@@ -234,9 +236,11 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
   /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
   /^En anledning är(?: att)? (?:skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)\b/i,
+  /^En anledning är\b/i,
   /^It was presented in (?:1918|1948)\b/i,
   /^Den presenterades (?:1918|1948)\b/i,
   /^One reason is (?:to (?:protect employees|decide who becomes head of state)|better farming methods|EU membership|eU membership)\b/i,
+  /^One reason is\b/i,
   /^En anledning är att (?:valet är hemligt|rösterna ska räknas snabbare)\b/i,
   /^One reason is (?:the vote is secret|votes are counted faster)\b/i,
   /^En myndighet som\b/i,
@@ -486,8 +490,25 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
   ],
 };
 const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
+  ["import { useMemo } from 'react';", 'learn route must memoize chapter progress derivation'],
   ['useSettingsStore, type AppLanguage', 'learn route must import AppLanguage from settings'],
   ['type ChapterLinkCopy = {', 'learn route must define a typed chapter-link copy contract'],
+  [
+    'type ChapterProgressCounts = {',
+    'learn route must keep chapter-progress counts in one typed map',
+  ],
+  [
+    'function buildChapterProgressById(completedQuestionIds: readonly string[])',
+    'learn route must derive chapter progress through one shared reducer',
+  ],
+  [
+    'const chapterProgressById = useMemo(',
+    'learn route must memoize chapter progress from the completed-id set',
+  ],
+  [
+    'buildChapterProgressById(completedQuestionIds)',
+    'learn route must compute chapter progress once per completed-id snapshot',
+  ],
   [
     'const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {',
     'learn route chapter-link copy must cover every AppLanguage value',
@@ -661,6 +682,31 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     'Granska bokmärkta eller missade frågor',
     'Repetera sparade frågor',
+    'Starta dagens övning. ${completed} av ${goal} svar klara idag.',
+    'Starta dagens övning',
+    '${completed}/${goal} svar idag håller vanan synlig.',
+    'Daglig övning',
+    'Fortsätt på ${stageTitle}',
+    'Fortsätt på nästa kapitel',
+    'Pågår',
+    'Klar',
+    'Nästa',
+    '${title}. ${chapterRange}. ${progressLabel}. ${status}.',
+    '${completedChapters}/${totalChapters} kapitel provade',
+    'Kapitel 1-4',
+    'Börja med landet, demokratin, styret och valen.',
+    'Nybörjare',
+    'Grunderna i Sverige och demokrati',
+    'Kapitel 5-9',
+    'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
+    'Fortsättning',
+    'Rättigheter, medier och samhällsliv',
+    'Kapitel 10-13',
+    'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
+    'Avancerad',
+    'Historia, omvärld, religion och traditioner',
+    'Följ 13 samhällskapitel i tre steg, fortsätt där du var och håll igång dagens övning.',
+    'Väg från grund till provträning',
     'Smarta studievanor',
     'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     'Korta pass',
@@ -709,6 +755,31 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     'Review bookmarked or missed questions',
     'Review saved questions',
+    "Start today's practice. ${completed} of ${goal} answers complete today.",
+    "Start today's practice",
+    '${completed}/${goal} answers today keeps the habit visible.',
+    'Daily practice',
+    'Continue with ${stageTitle}',
+    'Continue the next chapter',
+    'In progress',
+    'Done',
+    'Next',
+    '${title}. ${chapterRange}. ${progressLabel}. ${status}.',
+    '${completedChapters}/${totalChapters} chapters tried',
+    'Chapters 1-4',
+    'Start with Sweden, democracy, government, and elections.',
+    'Beginner',
+    'Sweden and democracy basics',
+    'Chapters 5-9',
+    'Build through law, media, rights, working life, and welfare.',
+    'Builder',
+    'Rights, media, and civic life',
+    'Chapters 10-13',
+    'Finish with modern Sweden, international topics, freedom of religion, and holidays.',
+    'Advanced',
+    'History, the wider world, religion, and traditions',
+    "Follow 13 civic chapters in three stages, resume where you left off, and keep today's practice visible.",
+    'Guided path from basics to exam practice',
     'Smart study habits',
     'Choose one clear next step, get quick feedback, and follow progress without distractions in exam mode.',
     'Bite-size practice',
@@ -733,6 +804,7 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
 ].map((parts) => parts.join(''));
 const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
+  ['GuidedPracticePath', 'home route must render the guided practice path component'],
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
   ['type HomeCopy = {', 'home route must define a typed copy contract'],
   [
@@ -751,6 +823,28 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   [
     'computeReadinessFromQuestionProgress({',
     'home route must derive the readiness indicator from stored progress',
+  ],
+  ['const guidedPathChapterGroups = [', 'home route must define the guided path chapter groups'],
+  [
+    "{ id: 'beginner', chapterIds: ['ch01', 'ch02', 'ch03', 'ch04'] }",
+    'home route guided path must start with chapters 1-4',
+  ],
+  [
+    "{ id: 'builder', chapterIds: ['ch05', 'ch06', 'ch07', 'ch08', 'ch09'] }",
+    'home route guided path must continue through chapters 5-9',
+  ],
+  [
+    "{ id: 'advanced', chapterIds: ['ch10', 'ch11', 'ch12', 'ch13'] }",
+    'home route guided path must finish with chapters 10-13',
+  ],
+  [
+    'buildGuidedPracticePathStages(copy, questionProgress)',
+    'home route must derive guided path progress from stored answers',
+  ],
+  ['resumeHref={guidedPathResumeHref}', 'home route guided path must provide a resume destination'],
+  [
+    'dailyProgress={progress}',
+    'home route guided path must reuse the daily-practice progress signal',
   ],
   [
     'const mockExamSessions = useProgressStore((state) => state.mockExamSessions);',
@@ -1040,9 +1134,10 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdBanner',
+    component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern:
+      /<PracticeInterstitialAd\s+showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -1450,6 +1545,10 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
     label: 'feedback card title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.feedbackTitle\}>\s*\{copy\.feedbackTitle\}\s*<\/Text>/,
+  },
+  {
+    label: 'guided path section title',
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.guidedPathTitle\}/,
   },
   {
     label: 'study-loop section title',
@@ -2614,12 +2713,8 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   },
   {
-    label: 'selected-only checked state',
-    pattern: /const checked = selected;/,
-  },
-  {
-    label: 'checked, selected, and disabled state forwarding',
-    pattern: /accessibilityState=\{\{ checked, disabled, selected \}\}/,
+    label: 'selected and disabled state forwarding',
+    pattern: /accessibilityState=\{\{ disabled, selected \}\}/,
   },
   {
     label: 'disabled interaction forwarding',
@@ -3752,6 +3847,21 @@ function validateStaticOutcomeSloganPatterns() {
   return UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length - offenders.length;
 }
 
+function validateStaticHeadMetadataDescription() {
+  const source = loadText('site/index.html');
+  const issues = findStaticHeadMetadataDescriptionIssues(source);
+
+  if (issues.length > 0) {
+    fail(
+      `static head metadata description is missing, blank, or contains unsupported outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
+        issues,
+      )}`,
+    );
+  }
+
+  return extractStaticHeadMetaDescriptions(source).length;
+}
+
 function validateStaticEbookPracticalTestClaims() {
   const source = loadText('site/ebook.js');
   let unsupportedPracticalClaimsValidated = 0;
@@ -4359,7 +4469,65 @@ function englishGainedRightStatement(subject, answer) {
     stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
   )}`;
 }
-function reasonStatementSv(answer) {
+function whyTargetStatementSv(target) {
+  const cleaned = stripFinalPunctuation(target);
+  let match = cleaned.match(
+    /^(kan|ska|måste|bör|får)\s+(.+?)\s+(vara|bli|ha|göra|skapa|ersätta|ge|påverka|spridas|delta|rösta)\b(.*)$/i,
+  );
+  if (match) {
+    return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
+  }
+  match = cleaned.match(/^behövs\s+(.+?)\s+(när|för|i|på|av)\b(.*)$/i);
+  if (match) {
+    return `${lowerLeadingSwedishClauseStart(match[1])} behövs ${match[2]}${match[3]}`;
+  }
+  match = cleaned.match(/^(behövs|finns)\s+(.+)$/i);
+  if (match) return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()}`;
+  return lowerLeadingSwedishClauseStart(cleaned);
+}
+function whyTargetStatementEn(target) {
+  const cleaned = stripFinalPunctuation(target);
+  let match = cleaned.match(
+    /^(can|could|should|must|will|would|may|might)\s+(.+?)\s+(be|have|do|make|create|spread|replace|give|become)\b(.*)$/i,
+  );
+  if (match) {
+    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
+  }
+  match = cleaned.match(/^(is|are|was|were)\s+(.+?)\s+((?:needed|required|allowed|called)\b.*)$/i);
+  if (match) {
+    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3]}`;
+  }
+  return lowerLeadingEnglishClauseStart(cleaned);
+}
+function swedishReasonClause(value) {
+  return lowerFirst(value).replace(/\bsom publiceras är alltid\b/i, 'som publiceras alltid är');
+}
+function reasonAnswerClauseSv(answer) {
+  const stripped = stripLeadingPurposeSv(answer);
+  if (/^för att|^att\s+/i.test(answer.trim())) return `att ${swedishReasonClause(stripped)}`;
+  if (
+    /(^|[\s,])(?:hade|saknade|var|är|kan|ska|måste|gör|behöver|får|blir|har)(?=$|[\s,.?!])/i.test(
+      stripped,
+    )
+  ) {
+    return `att ${swedishReasonClause(stripped)}`;
+  }
+  return lowerFirst(stripped).replace(/\beU\b/g, 'EU');
+}
+function reasonAnswerClauseEn(answer) {
+  const stripped = stripLeadingPurposeEn(answer);
+  if (/^to\b/i.test(answer.trim())) return `to ${lowerFirst(stripped)}`;
+  if (/\b(?:had|was|were|is|are|can|must|should|does|do|has|have|makes|gives)\b/i.test(stripped)) {
+    return `that ${lowerFirst(stripped)}`;
+  }
+  return lowerFirst(stripped);
+}
+function reasonStatementSv(answer, target) {
+  if (target) {
+    return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
+      answer,
+    )}`.replace(/\beU\b/g, 'EU');
+  }
   const stripped = stripLeadingPurposeSv(answer);
   if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
@@ -4367,7 +4535,10 @@ function reasonStatementSv(answer) {
   }
   return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
-function reasonStatementEn(answer) {
+function reasonStatementEn(answer, target) {
+  if (target) {
+    return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
+  }
   const stripped = stripLeadingPurposeEn(answer);
   if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
@@ -4899,7 +5070,7 @@ function civicStatementSv(source, option) {
   if (match)
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
   match = q.match(/^Varför (.+)$/i);
-  if (match) return reasonStatementSv(answer);
+  if (match) return reasonStatementSv(answer, match[1]);
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
@@ -5203,7 +5374,7 @@ function civicStatementEn(source, option) {
   if (match)
     return `${upperFirst(match[1])} is often called ${match[2]} because ${embeddedEnglishClause(answer)}`;
   match = q.match(/^Why (.+)$/i);
-  if (match) return reasonStatementEn(answer);
+  if (match) return reasonStatementEn(answer, match[1]);
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
   match = q.match(/^What happens in (.+?) if (.+)$/i);
@@ -6493,6 +6664,8 @@ let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
 let staticSiteOutcomeSloganPatternsValidated = 0;
 let staticSiteOutcomeSloganParityValidated = false;
+let staticHeadMetadataDescriptionsValidated = 0;
+let staticHeadMetadataDescriptionValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -6574,6 +6747,8 @@ staticEbookOutcomeClaimParityValidated =
 staticSiteOutcomeSloganPatternsValidated = validateStaticOutcomeSloganPatterns();
 staticSiteOutcomeSloganParityValidated =
   staticSiteOutcomeSloganPatternsValidated === UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
+staticHeadMetadataDescriptionsValidated = validateStaticHeadMetadataDescription();
+staticHeadMetadataDescriptionValidated = staticHeadMetadataDescriptionsValidated >= 1;
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -7124,6 +7299,93 @@ function validateAdPlacementRouteParity() {
       }
       if (!/\.destroy\(\)/.test(nativeAdCardNativeSource)) {
         reject('NativeAdCard native placement must destroy loaded native ads on cleanup');
+        routeIsValid = false;
+      }
+    }
+
+    if (spec.component === 'PracticeInterstitialAd') {
+      const consentAwareShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+      );
+      const practiceInterstitialSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+        'utf8',
+      );
+      const practiceInterstitialNativeSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+        'utf8',
+      );
+
+      if (/<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/.test(source)) {
+        reject('Practice completion interstitial must not flow through AdBanner');
+        routeIsValid = false;
+      }
+      if (
+        !practiceInterstitialSource.includes(
+          `shouldShowAd('${spec.placement}', resolvedEntitlements)`,
+        )
+      ) {
+        reject(
+          `PracticeInterstitialAd web fallback must gate ${spec.placement} through shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (practiceInterstitialSource.includes('react-native-google-mobile-ads')) {
+        reject('PracticeInterstitialAd web fallback must not import native-only ad SDK APIs');
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('InterstitialAd.createForAdRequest')) {
+        reject(
+          'PracticeInterstitialAd native placement must load quiz_completed_interstitial through InterstitialAd',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.LOADED')) {
+        reject(
+          'PracticeInterstitialAd native placement must wait for the interstitial loaded event',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('interstitialAd.show()')) {
+        reject('PracticeInterstitialAd native placement must show the loaded interstitial');
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.ERROR')) {
+        reject('PracticeInterstitialAd native placement must clear load state on ad errors');
+        routeIsValid = false;
+      }
+      if (
+        !practiceInterstitialNativeSource.includes(
+          `getPlatformAdUnitId('${spec.placement}', Platform.OS)`,
+        )
+      ) {
+        reject(
+          `PracticeInterstitialAd native placement must resolve the ${spec.placement} unit by platform`,
+        );
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(practiceInterstitialNativeSource)) {
+        reject(
+          `PracticeInterstitialAd native placement must gate ${spec.placement} through consent-aware shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('useMobileAdsConsent')) {
+        reject(
+          'PracticeInterstitialAd native placement must initialize only through the consent hook',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('requestNonPersonalizedAdsOnly')) {
+        reject(
+          'PracticeInterstitialAd native placement must pass non-personalized ad request options',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('lastInterstitialShowKey === showKey')) {
+        reject(
+          'PracticeInterstitialAd native placement must show at most once per answer feedback key',
+        );
         routeIsValid = false;
       }
     }
@@ -8152,6 +8414,29 @@ function validateLearnRouteLinkCopyParity() {
   EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!learnRoute.includes(snippet)) reject(message);
   });
+
+  const rejectedProgressDerivationPatterns = [
+    [
+      /function\s+questionCountForChapter\b/,
+      'learn route must not reintroduce per-row questionCountForChapter scans',
+    ],
+    [
+      /function\s+completedCountForChapter\b/,
+      'learn route must not reintroduce per-row completedCountForChapter scans',
+    ],
+    [
+      /chapters\.map\([\s\S]*?questions\.filter\(/,
+      'learn route must not filter the full question bank inside the chapter row map',
+    ],
+    [
+      /chapters\.map\([\s\S]*?new Set\(completedQuestionIds\)/,
+      'learn route must not rebuild completed-id Sets inside the chapter row map',
+    ],
+  ];
+
+  for (const [pattern, message] of rejectedProgressDerivationPatterns) {
+    if (pattern.test(learnRoute)) reject(message);
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS).forEach(([language, labels]) => {
@@ -10401,6 +10686,10 @@ function validateSettingsStoreSchemaParity() {
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   const requiredSnippets = [
     ["createMMKV({ id: 'settings' })", 'settings storage must use the stable settings MMKV id'],
+    [
+      'language = settingsStorage?.getString(languageKey);',
+      'readLanguage must read the persisted language inside a guarded MMKV read',
+    ],
     ['language: readLanguage()', 'SettingsState must initialize language from persisted storage'],
     [
       'audioEnabled: readAudioEnabled()',
@@ -10409,6 +10698,14 @@ function validateSettingsStoreSchemaParity() {
     [
       'dailyGoalAnswers: readDailyGoalAnswers()',
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
+    ],
+    [
+      'storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
+      'readAudioEnabled must read the persisted audioEnabled boolean inside a guarded MMKV read',
+    ],
+    [
+      'storedValue = settingsStorage?.getNumber(dailyGoalKey);',
+      'readDailyGoalAnswers must read the persisted daily goal inside a guarded MMKV read',
     ],
     [
       'function normalizeDailyGoalAnswers(answerCount: number | undefined): number',
@@ -10601,9 +10898,7 @@ function validateSettingsAudioParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (
-    !normalizedSettingsStore.includes(
-      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
-    )
+    !normalizedSettingsStore.includes('storedValue = settingsStorage?.getBoolean(audioEnabledKey);')
   ) {
     reject('readAudioEnabled must read the persisted audioEnabled boolean');
   }
@@ -10947,8 +11242,12 @@ function validateProgressStoreSchemaParity() {
   const requiredSnippets = [
     ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
     [
-      'const rawProgress = progressStorage?.getString(progressStateKey);',
-      'readProgress must read persisted JSON through progressStateKey',
+      'rawProgress = progressStorage?.getString(progressStateKey);',
+      'readProgress must read persisted JSON through progressStateKey inside a guarded MMKV read',
+    ],
+    [
+      'catch { return emptyProgress; }',
+      'readProgress must fall back to empty progress when persisted MMKV reads throw',
     ],
     [
       'return normalizeProgress(JSON.parse(rawProgress));',
@@ -15534,6 +15833,8 @@ console.log(
       staticSiteQuestionBankParityValidated,
       staticSiteOutcomeSloganPatternsValidated,
       staticSiteOutcomeSloganParityValidated,
+      staticHeadMetadataDescriptionsValidated,
+      staticHeadMetadataDescriptionValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookPracticalTestClaimPatternsValidated,

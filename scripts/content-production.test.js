@@ -66,9 +66,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.profileRouteHeaderParityValidated, true);
   assert.equal(summary.profileRouteCopyLabelsValidated, 40);
   assert.equal(summary.profileRouteCopyParityValidated, true);
-  assert.equal(summary.homeRouteHeadersValidated, 5);
+  assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 142);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
@@ -275,6 +275,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.staticSiteQuestionBankQuestionsValidated, summary.publishedQuestions);
   assert.equal(summary.staticSiteQuestionBankChaptersValidated, 13);
   assert.equal(summary.staticSiteQuestionBankParityValidated, true);
+  assert.equal(summary.staticHeadMetadataDescriptionsValidated, 1);
+  assert.equal(summary.staticHeadMetadataDescriptionValidated, true);
   assert.equal(summary.staticEbookOutcomeClaimPatternsValidated, 6);
   assert.equal(summary.staticEbookOutcomeClaimParityValidated, true);
   assert.equal(summary.uhrSourceMetadataValidated, true);
