@@ -1,4 +1,4 @@
-/* Sveriges Medborgartest — Extras
+/* Almost Swedish — Extras
    - Reveal-on-scroll for chapter list
    - Easter eggs: fika, abba, snö, vasa, ikea, skål, lagom, brand-tap, "?" cheatsheet, triple-click facts
    - Smooth in-page anchor scroll
