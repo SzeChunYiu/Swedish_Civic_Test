@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
+import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
@@ -12,7 +13,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildQuestionSpeechText } from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -191,6 +192,11 @@ export default function QuizSessionScreen() {
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}
             language={language}
+          />
+          <FeedbackAudioButton
+            enabled={audioEnabled}
+            language={language}
+            text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
           <View style={styles.actions}>
