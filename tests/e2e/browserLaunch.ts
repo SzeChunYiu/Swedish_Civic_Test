@@ -62,3 +62,14 @@ export async function dismissBlockingModals(page: Page): Promise<void> {
 
   await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
 }
+
+export function collectConsoleAndPageErrors(page: Page): string[] {
+  const errors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  return errors;
+}
