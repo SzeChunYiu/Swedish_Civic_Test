@@ -128,6 +128,7 @@ const designSystemSupportComponentFiles = [
 const themeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
+  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',
