@@ -185,6 +185,7 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
     },
   );
+});
 
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
