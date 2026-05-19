@@ -43,6 +43,7 @@ export type ExamReviewItem = {
 };
 
 export type ExamAutoSubmitState = {
+  examActive: boolean;
   remainingSeconds: number;
   submitted: boolean;
   questionCount: number;
@@ -56,11 +57,12 @@ export function formatExamTime(remainingSeconds: number): string {
 }
 
 export function shouldAutoSubmitExam({
+  examActive,
   remainingSeconds,
   submitted,
   questionCount,
 }: ExamAutoSubmitState): boolean {
-  return !submitted && questionCount > 0 && remainingSeconds <= 0;
+  return examActive && !submitted && questionCount > 0 && remainingSeconds <= 0;
 }
 
 function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
