@@ -10,6 +10,26 @@ const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 
+function read(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function staleNativeIdentifierPattern() {
+  return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+}
+
+function oldRealAdsEnvFlagPattern() {
+  return new RegExp(['REAL_ADS', 'ENABLED_FOR_V1'].join('_'), 'i');
+}
+
+function staleDisabledAdsDecisionPattern() {
+  return /real[-\s]+ads[-\s]+disabled|keep\s+real\s+ads\s+disabled/i;
+}
+
+function disabledGoogleMobileAdsPattern() {
+  return new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i');
+}
+
 function storeRecordReadyEvidence(extra = '') {
   return [
     `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
@@ -2052,6 +2072,33 @@ test('release preflight blocks store record evidence without exact public URLs',
   );
 });
 
+test('release evidence template is synchronized with ad-supported store and privacy evidence', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  const template = read('reports/release-evidence-template.md');
+
+  assert.match(template, new RegExp(appConfig.ios.bundleIdentifier, 'i'));
+  assert.match(template, new RegExp(appConfig.android.package, 'i'));
+  assert.match(template, /AdMob app ID/i);
+  assert.match(template, /app-ads\.txt/i);
+  assert.match(template, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(template, /adMob\.appAdsTxtReviewed:\s*true/i);
+  assert.match(template, /googleMobileAds\.realAdsEnabled:\s*true/i);
+  assert.match(template, /googleMobileAds\.removeAdsIapReviewed:\s*true/i);
+  assert.match(template, /googleMobileAds\.consentFlowReviewed:\s*true/i);
+  assert.match(template, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(template, /generated binary\/build|generated binary/i);
+  assert.match(template, /Remove Ads/i);
+  assert.match(template, /29 SEK/i);
+  assert.match(template, /non-consumable/i);
+  assert.match(template, /App Tracking Transparency|ATT/i);
+  assert.match(template, /Google UMP|UMP consent/i);
+
+  assert.doesNotMatch(template, staleNativeIdentifierPattern());
+  assert.doesNotMatch(template, oldRealAdsEnvFlagPattern());
+  assert.doesNotMatch(template, staleDisabledAdsDecisionPattern());
+  assert.doesNotMatch(template, disabledGoogleMobileAdsPattern());
+});
+
 test('release preflight blocks local store record evidence missing store URLs', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-record-json-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
@@ -2179,7 +2226,7 @@ test('release preflight blocks local store record evidence without AdMob app rea
   const storeEvidence = createStoreRecordEvidence({
     evidence: {
       adMob: {
-        status: 'deferred-real-ads-disabled',
+        status: 'deferred',
         note: 'legacy disabled-ad decision',
       },
     },
@@ -2278,7 +2325,7 @@ test('release preflight blocks local privacy review evidence with disabled-ad po
         sdkPresent: true,
         testAppIds: true,
         realAdsEnabled: false,
-        gate: 'REAL_ADS_ENABLED_FOR_V1=false',
+        gate: 'legacy disabled-ad gate',
       },
       disabledSdks: {
         analytics: true,

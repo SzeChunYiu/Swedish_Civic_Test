@@ -21,6 +21,14 @@ function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
 }
 
+function staleNativeIdentifierPattern() {
+  return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+}
+
+function disabledGoogleMobileAdsPattern() {
+  return new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i');
+}
+
 function assertNoStalePublicPrivacyPosture(source) {
   [
     staleWords('no', 'user', 'data', 'is', 'collected'),
@@ -89,6 +97,30 @@ test('store publishing metadata is prepared', () => {
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
   assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
+});
+
+test('release evidence template matches ad-supported app store posture', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  const template = read('reports/release-evidence-template.md');
+
+  assert.match(template, new RegExp(appConfig.ios.bundleIdentifier, 'i'));
+  assert.match(template, new RegExp(appConfig.android.package, 'i'));
+  assert.match(template, /AdMob app ID/i);
+  assert.match(template, /app-ads\.txt/i);
+  assert.match(template, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(template, /adMob\.appAdsTxtReviewed:\s*true/i);
+  assert.match(template, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(template, /Remove Ads/i);
+  assert.match(template, /29 SEK/i);
+  assert.match(template, /non-consumable/i);
+  assert.match(template, /generated binary\/build|generated binary/i);
+  assert.match(template, /App Tracking Transparency|ATT/i);
+  assert.match(template, /Google UMP|UMP consent/i);
+
+  assert.doesNotMatch(template, staleNativeIdentifierPattern());
+  assert.doesNotMatch(template, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
+  assert.doesNotMatch(template, staleWords('real', 'ads', 'disabled'));
+  assert.doesNotMatch(template, disabledGoogleMobileAdsPattern());
 });
 
 test('privacy labels and data safety answers match ad-supported release practices', () => {
