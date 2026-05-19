@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const { REQUIRED_SECURITY_HEADERS } = require('./check-live-site');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -1499,6 +1500,10 @@ test('web export script is available for local production bundle smoke', () => {
     pkg.scripts['release:web-export-smoke'],
     'rm -rf dist-web && npm run build:web:export',
   );
+  assert.equal(vercelConfig.outputDirectory, 'site');
+  assert.equal(vercelConfig.framework, null);
+  assert.equal(vercelConfig.cleanUrls, true);
+  assert.deepEqual(vercelConfig.git, { deploymentEnabled: false });
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
   assert.match(workflow, /npm run build:web:export/);
@@ -1508,6 +1513,29 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
   assert.equal(fs.existsSync(path.join(repoRoot, 'public/manifest.webmanifest')), true);
+});
+
+test('Vercel static-site config ships host-level security headers without changing deploy path', () => {
+  const vercelConfig = readJson('vercel.json');
+  const headerRule = vercelConfig.headers?.find((rule) => rule.source === '/(.*)');
+  assert.ok(headerRule, 'vercel.json must apply response headers to the static site');
+  assert.equal(vercelConfig.outputDirectory, 'site');
+  assert.equal(vercelConfig.cleanUrls, true);
+  assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
+  assert.deepEqual(vercelConfig.git, { deploymentEnabled: false });
+
+  const actualHeaders = new Map(
+    (headerRule.headers ?? []).map((header) => [String(header.key).toLowerCase(), header.value]),
+  );
+  for (const expectedHeader of REQUIRED_SECURITY_HEADERS) {
+    assert.equal(
+      actualHeaders.get(expectedHeader.key),
+      expectedHeader.value,
+      `${expectedHeader.name} must stay configured in vercel.json`,
+    );
+  }
+  // TODO(static-csp): add a tested report-only CSP after static fonts and inline scripts are removed.
+  assert.equal(actualHeaders.has('content-security-policy'), false);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
