@@ -11,6 +11,29 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
+function readThemeCanvasColor() {
+  const themeSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/colors.ts'), 'utf8');
+  const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
+  assert.notEqual(match, null, 'colors.canvas should stay parseable for web export checks');
+  return match[1];
+}
+
+function copyPublicWebManifest(outputDir) {
+  const manifest = readJson('public/manifest.webmanifest');
+  fs.copyFileSync(
+    path.join(repoRoot, 'public/manifest.webmanifest'),
+    path.join(outputDir, 'manifest.webmanifest'),
+  );
+
+  for (const icon of manifest.icons) {
+    const iconDestination = path.join(outputDir, icon.src);
+    fs.mkdirSync(path.dirname(iconDestination), { recursive: true });
+    fs.copyFileSync(path.join(repoRoot, 'public', icon.src), iconDestination);
+  }
+
+  return manifest;
+}
+
 test('EAS build and submit profiles are configured for internal and production releases', () => {
   const eas = readJson('eas.json');
   assert.equal(eas.cli.version, '>= 13.0.0');
@@ -1484,13 +1507,16 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'public/manifest.webmanifest')), true);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-postbuild-'));
   const outputDir = path.join(tmpDir, 'dist-web');
   const bundleDir = path.join(outputDir, '_expo/static/js/web');
+  const canvasColor = readThemeCanvasColor();
   fs.mkdirSync(bundleDir, { recursive: true });
+  const manifest = copyPublicWebManifest(outputDir);
   fs.writeFileSync(
     path.join(outputDir, 'index.html'),
     [
@@ -1531,9 +1557,17 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.doesNotMatch(index, /href="\/assets\//);
   assert.match(index, /href="_expo\/static\/js\/web\/entry-test\.js"/);
   assert.match(index, /href="assets\/favicon\.png"/);
+  assert.match(index, new RegExp(`<meta name="theme-color" content="${canvasColor}" />`));
+  assert.match(index, /<link rel="manifest" href="manifest\.webmanifest" \/>/);
+  assert.match(index, new RegExp(`<body style="background-color:${canvasColor}">`));
+  assert.equal(
+    JSON.parse(fs.readFileSync(path.join(outputDir, 'manifest.webmanifest'), 'utf8')).display,
+    'standalone',
+  );
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
+  assert.equal(manifest.name, readJson('app.json').expo.name);
 
   const checkResult = spawnSync(
     process.execPath,
