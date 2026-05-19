@@ -1008,6 +1008,8 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(source, /Återställ köp av Ta bort annonser/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
+  assert.match(source, /Tidsatta övningsprov är redan annonsfria/);
+  assert.doesNotMatch(source, /\bprov förblir annonsfria\b/i);
   assert.match(source, /Remove Ads/);
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
   assert.match(source, /Restore Remove Ads purchase/);

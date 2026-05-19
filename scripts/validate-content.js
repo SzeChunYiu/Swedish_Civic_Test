@@ -1014,6 +1014,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 6;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -6271,6 +6272,8 @@ let purchaseTypeInterfacesValidated = 0;
 let purchaseTypeSchemaParityValidated = false;
 let removeAdsPurchaseRuntimeCasesValidated = 0;
 let removeAdsPurchaseRuntimeParityValidated = false;
+let removeAdsSvExamCopyNaturalnessCasesValidated = 0;
+let removeAdsSvExamCopyNaturalnessValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
@@ -11037,6 +11040,74 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 }
 
+function validateRemoveAdsSvExamCopyNaturalness() {
+  let valid = true;
+  let premiumBannerSource = '';
+  let pricingWedgeSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    premiumBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
+    pricingWedgeSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`Remove Ads Swedish copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  const combinedSource = `${premiumBannerSource}\n${pricingWedgeSource}`;
+  const copyCases = [
+    [
+      /Tidsatta övningsprov är redan annonsfria/.test(premiumBannerSource),
+      'PremiumBanner Swedish Remove Ads body must name ad-free timed practice exams',
+    ],
+    [
+      /Provläget är redan annonsfritt/.test(premiumBannerSource),
+      'PremiumBanner Swedish purchase hint must name the app exam mode, not the official test',
+    ],
+    [
+      /tidsatta övningsprov är alltid annonsfria/.test(pricingWedgeSource),
+      'PricingWedge Swedish Remove Ads pitch must name timed practice exams',
+    ],
+    [
+      !/\bprov förblir annonsfria\b/i.test(combinedSource),
+      'Swedish Remove Ads copy must not say bare "prov förblir annonsfria"',
+    ],
+    [
+      !/\bprovet är alltid annonsfritt\b/i.test(combinedSource),
+      'Swedish Remove Ads copy must not say bare "provet är alltid annonsfritt"',
+    ],
+    [
+      !/\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i.test(combinedSource),
+      'Swedish Remove Ads copy must not use bare prov/provet for ad-free exam claims',
+    ],
+  ];
+
+  copyCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    removeAdsSvExamCopyNaturalnessCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    removeAdsSvExamCopyNaturalnessCasesValidated === EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES
+  ) {
+    removeAdsSvExamCopyNaturalnessValidated = true;
+  }
+}
+
 function validateAdConsentTypeSchemaParity() {
   let valid = true;
   let consentSource = '';
@@ -14339,6 +14410,7 @@ validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
 validateRemoveAdsPurchaseRuntimeParity();
+validateRemoveAdsSvExamCopyNaturalness();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
@@ -14517,6 +14589,8 @@ console.log(
       purchaseTypeSchemaParityValidated,
       removeAdsPurchaseRuntimeCasesValidated,
       removeAdsPurchaseRuntimeParityValidated,
+      removeAdsSvExamCopyNaturalnessCasesValidated,
+      removeAdsSvExamCopyNaturalnessValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,

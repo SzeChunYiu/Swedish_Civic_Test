@@ -1038,7 +1038,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
+  assert.match(paywallSource, /Tidsatta övningsprov är redan annonsfria/);
   assert.match(paywallSource, /Provläget är redan annonsfritt/);
+  assert.doesNotMatch(paywallSource, /\bprov förblir annonsfria\b/i);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
@@ -1076,9 +1078,11 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
   assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
   assert.doesNotMatch(pricingWedgeSource, /29 kr/);
+  assert.doesNotMatch(pricingWedgeSource, /\bprovet är alltid annonsfritt\b/i);
   assert.doesNotMatch(paywallSource, /29 kr/);
 });
 
