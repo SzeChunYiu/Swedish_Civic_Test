@@ -701,7 +701,8 @@ test('practice and routed quiz answer options expose selected state', () => {
 
   assert.match(answerOptionSource, /selected = false/);
   assert.match(answerOptionSource, /selected\?: boolean/);
-  assert.match(answerOptionSource, /accessibilityState=\{\{ disabled, selected \}\}/);
+  assert.match(answerOptionSource, /const checked = selected;/);
+  assert.match(answerOptionSource, /accessibilityState=\{\{ checked, disabled, selected \}\}/);
   assert.match(practiceSource, /selected=\{hasSelectedAnswer && selectedOptionId === option\.id\}/);
   assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
 });
