@@ -2488,8 +2488,14 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
-    label: 'Card receives accessibility summary',
-    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
+    label: 'standalone accessibility summary node',
+    pattern:
+      /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>[\s\S]*\{questionAccessibilityLabel\}[\s\S]*<\/Text>/,
+  },
+  {
+    label: 'visually hidden accessibility summary style',
+    pattern:
+      /accessibilitySummary: \{[\s\S]*height: 1,[\s\S]*left: -10000,[\s\S]*overflow: 'hidden',[\s\S]*position: 'absolute',[\s\S]*width: 1,/,
   },
   {
     label: 'visible difficulty label',
@@ -9321,6 +9327,10 @@ function validateQuestionCardAccessibilityParity() {
     }
     questionCardAccessibilityRulesValidated += 1;
   });
+
+  if (/<Card accessibilityLabel=\{questionAccessibilityLabel\}>/.test(questionCardSource)) {
+    reject('QuestionCard parent Card must not group nested source controls');
+  }
 
   EXPECTED_QUESTION_SOURCE_CITATION_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(questionTextSource)) {
