@@ -6897,8 +6897,46 @@ function validateAdPlacementRouteParity() {
         reject('NativeAdCard native placement must render NativeAdView');
         routeIsValid = false;
       }
+      const nativeAdViewOpeningTag = nativeAdCardNativeSource.match(/<NativeAdView[\s\S]*?>/)?.[0];
+      if (!nativeAdViewOpeningTag?.includes('accessible={false}')) {
+        reject(
+          'NativeAdCard native placement must not group the whole ad as one accessibility element',
+        );
+        routeIsValid = false;
+      }
+      if (
+        nativeAdViewOpeningTag &&
+        /accessibility(?:Hint|Label)=\{copy\.(?:hint|accessibilityLabel)\}/.test(
+          nativeAdViewOpeningTag,
+        )
+      ) {
+        reject('NativeAdCard native placement must expose ad summary on a child element');
+        routeIsValid = false;
+      }
       if (!nativeAdCardNativeSource.includes('NativeAsset')) {
         reject('NativeAdCard native placement must register visible native ad assets');
+        routeIsValid = false;
+      }
+      if (
+        !/<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/.test(
+          nativeAdCardNativeSource,
+        )
+      ) {
+        reject('NativeAdCard native placement must expose a separate ad summary element');
+        routeIsValid = false;
+      }
+      if (
+        !/<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/.test(
+          nativeAdCardNativeSource,
+        )
+      ) {
+        reject(
+          'NativeAdCard native placement must expose the call-to-action as a labelled native asset button',
+        );
+        routeIsValid = false;
+      }
+      if (!nativeAdCardNativeSource.includes('minHeight: space[6]')) {
+        reject('NativeAdCard native call-to-action must keep a token-sized touch target');
         routeIsValid = false;
       }
       if (!nativeAdCardNativeSource.includes('NativeMediaView')) {

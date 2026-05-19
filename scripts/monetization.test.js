@@ -195,9 +195,16 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.match(mistakesSource, /<NativeAdCard \/>/);
   assert.match(nativeAdCardSource, /NativeAd\.createForAdRequest/);
   assert.match(nativeAdCardSource, /NativeAdView/);
+  assert.match(nativeAdCardSource, /<NativeAdView accessible=\{false\}/);
+  assert.match(nativeAdCardSource, /accessibilityRole="summary"/);
   assert.match(nativeAdCardSource, /NativeAssetType\.HEADLINE/);
   assert.match(nativeAdCardSource, /NativeAssetType\.BODY/);
   assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
+  assert.match(
+    nativeAdCardSource,
+    /accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}/,
+  );
+  assert.match(nativeAdCardSource, /minHeight:\s*space\[6\]/);
   assert.match(nativeAdCardSource, /NativeMediaView/);
   assert.match(nativeAdCardSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(nativeAdCardSource, /requestNonPersonalizedAdsOnly/);
