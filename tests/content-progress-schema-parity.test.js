@@ -178,16 +178,19 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         wrongCount: -2,
         correctStreak: 999999999,
         lastAnsweredAt: 'not-a-date',
+        nextReviewAt: '2099-01-01T00:00:00.000Z',
       },
       q002: {
         seenCount: 5,
         correctCount: 9,
         wrongCount: 8,
         correctStreak: 3,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+        nextReviewAt: '2026-05-20T10:00:00.000Z',
       },
     },
     totalXp: 'huge',
-    answerDates: ['2026-05-19', 7, '2026-05-19'],
+    answerDates: ['2026-05-19', 7, 'not-a-date', '2026-02-30', '2099-01-01', '2026-05-19'],
     mockExamSessions: [
       {
         sessionId: 'm1',
@@ -203,13 +206,27 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         correctCount: 3.5,
         totalCount: 'bad',
       },
+      {
+        sessionId: 'future',
+        score: 0.8,
+        completedAt: '2099-01-01T00:00:00.000Z',
+        correctCount: 8,
+        totalCount: 10,
+      },
+      {
+        sessionId: 'invalid',
+        score: 0.8,
+        completedAt: 'not-a-date',
+        correctCount: 8,
+        totalCount: 10,
+      },
     ],
     streakFreezeState: {
       available: 999,
-      lastEarnedAt: 7,
+      lastEarnedAt: '2099-01-01',
       lifetimeEarned: 'bad',
       lifetimeSpent: 3.5,
-      rescuedDayKeys: ['2026-05-18', 7, '2026-05-18'],
+      rescuedDayKeys: ['2026-05-18', 7, 'not-a-date', '2099-01-01', '2026-05-18'],
     },
   });
 
@@ -218,12 +235,17 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(state.questionProgress.q001.correctCount, 0);
   assert.equal(state.questionProgress.q001.wrongCount, 0);
   assert.equal(state.questionProgress.q001.correctStreak, 0);
+  assert.equal(state.questionProgress.q001.lastAnsweredAt, undefined);
+  assert.equal(state.questionProgress.q001.nextReviewAt, undefined);
   assert.equal(state.questionProgress.q002.seenCount, 5);
   assert.equal(state.questionProgress.q002.correctCount, 5);
   assert.equal(state.questionProgress.q002.wrongCount, 0);
   assert.equal(state.questionProgress.q002.correctStreak, 3);
+  assert.equal(state.questionProgress.q002.lastAnsweredAt, '2026-05-19T10:00:00.000Z');
+  assert.equal(state.questionProgress.q002.nextReviewAt, '2026-05-20T10:00:00.000Z');
   assert.equal(state.totalXp, 0);
   assert.deepEqual(state.answerDates, ['2026-05-19']);
+  assert.equal(state.mockExamSessions.length, 2);
   assert.equal(state.mockExamSessions[0].score, 1);
   assert.equal(state.mockExamSessions[0].correctCount, 720);
   assert.equal(state.mockExamSessions[0].totalCount, 720);
@@ -231,6 +253,8 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(state.mockExamSessions[1].correctCount, 0);
   assert.equal(state.mockExamSessions[1].totalCount, 0);
   assert.equal(state.streakFreezeState.available, 4);
+  assert.match(state.streakFreezeState.lastEarnedAt, /^\d{4}-\d{2}-\d{2}$/);
+  assert.notEqual(state.streakFreezeState.lastEarnedAt, '2099-01-01');
   assert.equal(state.streakFreezeState.lifetimeEarned, 1);
   assert.equal(state.streakFreezeState.lifetimeSpent, 0);
   assert.deepEqual(state.streakFreezeState.rescuedDayKeys, ['2026-05-18']);
@@ -276,6 +300,19 @@ test('progress store schema parity rejects raw numeric hydration', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /progress hydration must not use raw numeric expression Math\.max\(0, item\.seenCount \?\? 0\)/,
+  );
+});
+
+test('progress store schema parity rejects raw date hydration', () => {
+  const result = runValidationWithProgressStorePatch(
+    'lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),',
+    'lastAnsweredAt: item.lastAnsweredAt,',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /question progress hydration must normalize lastAnsweredAt timestamps/,
   );
 });
 
