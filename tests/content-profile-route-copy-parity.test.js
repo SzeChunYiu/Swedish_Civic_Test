@@ -28,6 +28,11 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /const copy = profileCopy\[language\]/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Progress without an account/);
+  assert.match(
+    source,
+    /Dina mål, språkval, sviter och märken sparas bara på den här enheten, så att dina studier förblir privata\./,
+  );
+  assert.doesNotMatch(source, /för\s+privat\s+studierutin/i);
   assert.match(source, /Första övningen/);
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
@@ -205,6 +210,39 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
+});
+
+test('profile route copy parity rejects literal Swedish study routine copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'så att dina studier förblir privata',
+        ['för privat', 'studierutin'].join(' '),
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /profile route contains literal Swedish monetization\/profile copy/,
+  );
 });
 
 test('profile route copy parity rejects badge-title localization drift', () => {

@@ -1461,8 +1461,8 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   assert.match(copySource, /const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy>/);
   assert.match(copySource, /getNativeAdCardCopy/);
   assert.match(copySource, /Inbyggd testannons/);
-  assert.match(copySource, /AdMob-testannons/);
-  assert.match(copySource, /Annons från Google AdMob/);
+  assert.match(copySource, /Annons i studieflödet/);
+  assert.match(copySource, /Förhandsvisning av AdMob-testplacering/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /Test native ad/);
   assert.match(copySource, /Google AdMob ad/);
@@ -1515,6 +1515,7 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /accessibilityLiveRegion="polite"/);
   assert.match(source, /aria-live="polite"/);
   assert.match(source, /Ta bort annonser/);
+  assert.match(source, /Den kostnadsfria versionen visar annonser från AdMob/);
   assert.match(source, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(source, /Återställ köp av Ta bort annonser/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
@@ -1626,6 +1627,7 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
+  assert.match(source, /så att dina studier förblir privata/);
   assert.match(source, /Studieinställningar/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);

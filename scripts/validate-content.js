@@ -617,7 +617,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
     'Lokal profil',
     'Framsteg utan konto',
-    'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
+    'Dina mål, språkval, sviter och märken sparas bara på den här enheten, så att dina studier förblir privata.',
     'nivå',
     'XP',
     'dagars svit',
@@ -659,6 +659,11 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Edit goal, language, and audio',
   ],
 };
+const SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS = [
+  /för\s+privat\s+studierutin/i,
+  /Gratisstudier\s+visar/i,
+  /Sponsrad\s+studieplacering/i,
+];
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
   ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
@@ -8395,6 +8400,19 @@ function validateAdPlacementRouteParity() {
 
   if (bannerUsageIsValid) bannerAdPlacementTypeCasesValidated += 1;
 
+  for (const file of ['components/monetization/PremiumBanner.tsx', 'lib/monetization/adCopy.ts']) {
+    try {
+      const source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+      SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS.forEach((pattern) => {
+        if (pattern.test(source)) {
+          reject(`${file} contains literal Swedish monetization copy`);
+        }
+      });
+    } catch (error) {
+      reject(`${file} could not be read for Swedish monetization copy parity: ${error.message}`);
+    }
+  }
+
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
     let routeIsValid = true;
@@ -10305,6 +10323,12 @@ function validateProfileRouteCopyParity() {
 
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
+  });
+
+  SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS.forEach((pattern) => {
+    if (pattern.test(profileRoute)) {
+      reject('profile route contains literal Swedish monetization/profile copy');
+    }
   });
 
   const seenLabels = new Set();
