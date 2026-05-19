@@ -1129,3 +1129,12 @@ Verification: clean worktree rebased onto current `origin/main` before push; `NO
 PR: pending from `task/setup/scheduled-deploy-hook-1779146323` at handoff commit time.
 Blocked? no for this workflow source atom - SITE-P0-5 still needs production to serve current main, and no Vercel CLI was run.
 Next suggested validator action: inspect the scheduled deploy workflow and rerun `npm run test:build-config`; keep SITE-P0-5 external until the Deploy Hook path produces current production live-smoke evidence.
+
+## Iteration 244 - 2026-05-19
+
+Task completed: REMOVE-ADS-ENTITLEMENT-INTEGRITY-1 - replaced the bare Remove Ads entitlement boolean with a versioned structured purchase/restore record and fail-closed reload validation.
+Artifacts changed: `lib/monetization/purchases.ts`, `scripts/monetization.test.js`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-remove-ads-purchase-runtime-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: product branch rebased onto current `origin/main` `3267571`; `npm run test:monetization` exit 0 with 22/22 passing; `node --test tests/content-remove-ads-purchase-runtime-parity.test.js scripts/content-production.test.js` exit 0 before final rebase; `npm run validate:content` exit 0 with `removeAdsPurchaseRuntimeCasesValidated:10`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `npm run format:check` exit 0; `git diff --check origin/main..HEAD` exit 0; `npm run build:web:export -- --max-workers 2` exit 0 before final rebase; `node scripts/prepare-web-export.js --check dist-web` exit 0 before final rebase; browser smoke with Playwright and system Chrome against exported web build confirmed injected legacy `"true"` storage renders the idle Remove Ads heading, a valid structured record renders the active ad-free heading, and no page errors were observed.
+PR: #864 `iap: validate remove ads entitlement record` - merged as `9fa1c87`.
+Blocked? no for this entitlement-integrity atom; `REMOVE-ADS-RECEIPT-VALIDATION-1` was queued as the next hardening step for provider-level receipt/token validation.
+Next suggested validator action: inspect #864 and rerun `npm run test:monetization` plus `npm run validate:content`; then route the queued receipt-validation atom if stronger anti-spoofing is needed before v1.0 Remove Ads acceptance.
