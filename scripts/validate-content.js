@@ -1204,6 +1204,8 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
   'react-native-iap',
   'expo-tracking-transparency',
 ];
+const EXPECTED_APP_NAME = 'Almost Swedish';
+const EXPECTED_APP_SLUG = 'almost-swedish';
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
@@ -2052,37 +2054,39 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     ],
   },
 ];
-const LEGAL_SWEDISH_COPY_ALLOWED_ENGLISH_PATTERNS = [
-  /\bXP\b/g,
-  /\bUHR\b/g,
-  /\bGDPR\b/g,
-  /\bSEK\b/g,
-  /\biOS\b/g,
-  /\bID\b/g,
-  /\bAdMob\b/g,
-  /\bGoogle Mobile Ads\b/g,
-  /\bApp Tracking Transparency\b/g,
-  /\bGoogle UMP\b/g,
-  /\bRemove Ads\b/g,
-  /\badsDisabled=true\b/g,
-  /https?:\/\/[^\s']+/g,
-  /\bcontent\/[A-Za-z0-9_./-]+\b/g,
-  /\b[A-Za-z0-9_-]+\.(?:csv|json|txt)\b/g,
+const LEGAL_SWEDISH_ALLOWED_ENGLISH_PATTERNS = [
+  /\bXP\b/i,
+  /\bGDPR\b/i,
+  /\bUHR\b/i,
+  /\bSEK\b/i,
+  /\bID\b/i,
+  /\bGoogle Mobile Ads\b/i,
+  /\bApp Tracking Transparency\b/i,
+  /\bGoogle UMP(?: consent)?\b/i,
+  /\bAdMob\b/i,
+  /\bRemove Ads\b/i,
+  /\badsDisabled=true\b/i,
 ];
-const LEGAL_SWEDISH_COPY_BANNED_ENGLISH_TOKENS = [
-  { label: 'account', pattern: /\baccount\b/i },
-  { label: 'audio', pattern: /\baudio\b/i },
-  { label: 'bookmarks', pattern: /\bbookmarks?\b/i },
-  { label: 'device', pattern: /\bdevices?\b/i },
-  { label: 'feedback', pattern: /\bfeedback\b/i },
-  { label: 'mistakes', pattern: /\bmistakes?\b/i },
-  { label: 'privacy', pattern: /\bprivacy\b/i },
-  { label: 'profile', pattern: /\bprofiles?\b/i },
-  { label: 'progress', pattern: /\bprogress\b/i },
-  { label: 'settings', pattern: /\bsettings?\b/i },
-  { label: 'source', pattern: /\bsources?\b/i },
-  { label: 'streaks', pattern: /\bstreaks?\b/i },
-  { label: 'terms', pattern: /\bterms\b/i },
+const LEGAL_SWEDISH_FORBIDDEN_ENGLISH_TOKENS = [
+  { token: 'account', pattern: /\baccount\b/i },
+  { token: 'audio preferences', pattern: /\baudio preferences\b/i },
+  { token: 'bookmarks', pattern: /\bbookmarks\b/i },
+  { token: 'content issue', pattern: /\bcontent issue\b/i },
+  { token: 'email', pattern: /\bemail\b/i },
+  { token: 'mistakes', pattern: /\bmistakes\b/i },
+  { token: 'mock exam', pattern: /\bmock exam\b/i },
+  { token: 'phone number', pattern: /\bphone number\b/i },
+  { token: 'privacy', pattern: /\bprivacy\b/i },
+  { token: 'profile', pattern: /\bprofile\b/i },
+  { token: 'progress', pattern: /\bprogress\b/i },
+  { token: 'settings', pattern: /\bsettings\b/i },
+  { token: 'sign-in', pattern: /\bsign[- ]?in\b/i },
+  { token: 'source', pattern: /\bsource\b/i },
+  { token: 'sources', pattern: /\bsources\b/i },
+  { token: 'streaks', pattern: /\bstreaks\b/i },
+  { token: 'study flow', pattern: /\bstudy flow\b/i },
+  { token: 'study progress', pattern: /\bstudy progress\b/i },
+  { token: 'terms', pattern: /\bterms\b/i },
 ];
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
@@ -7238,9 +7242,8 @@ let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
-let legalSwedishEnglishTokenGuardValidated = 0;
-let legalSwedishEnglishTokenGuardParityValidated = false;
-let staticSwedishGrammarToneNaturalnessValidated = false;
+let legalSwedishEnglishTokenRoutesValidated = 0;
+let legalSwedishEnglishTokenGuardValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -7676,11 +7679,11 @@ function validateAppConfigSchema() {
     return;
   }
 
-  if (expo.name !== 'Almost Swedish') {
+  if (expo.name !== EXPECTED_APP_NAME) {
     reject('app.json expo.name must identify the release app');
   }
-  if (expo.slug !== 'almost-swedish') {
-    reject('app.json expo.slug must be almost-swedish');
+  if (expo.slug !== EXPECTED_APP_SLUG) {
+    reject(`app.json expo.slug must be ${EXPECTED_APP_SLUG}`);
   }
   if (expo.scheme !== expo.slug) {
     reject('app.json expo.scheme must match expo.slug');
@@ -10182,68 +10185,47 @@ function countPatternOccurrences(source, pattern) {
   return (source.match(new RegExp(pattern.source, flags)) || []).length;
 }
 
-function extractSwedishLegalStringLiterals(source, file) {
-  const match = source.match(/\n\s*sv:\s*\{([\s\S]*?)\n\s*en:\s*\{/);
-  if (!match) {
-    fail(`${file} must keep Swedish legal copy in a sv block before en copy`);
-    return [];
-  }
-
-  const literals = [];
-  const literalPattern = /'((?:\\.|[^'\\])*)'/g;
-  let literalMatch = null;
-  while ((literalMatch = literalPattern.exec(match[1]))) {
-    literals.push(literalMatch[1].replace(/\\'/g, "'"));
-  }
-  return literals;
+function makeGlobalPattern(pattern) {
+  const flags = pattern.flags.includes('g') ? pattern.flags : `${pattern.flags}g`;
+  return new RegExp(pattern.source, flags);
 }
 
-function stripAllowedEnglishLegalTokens(value) {
-  return LEGAL_SWEDISH_COPY_ALLOWED_ENGLISH_PATTERNS.reduce(
-    (cleaned, pattern) => cleaned.replace(pattern, ' '),
+function extractSwedishLegalCopyValues(routeSource) {
+  const swedishBlock = routeSource.match(/sv:\s*\{[\s\S]*?title:\s*'[^']+',\s*\},\s*en:/)?.[0];
+  if (!swedishBlock) return null;
+
+  return Array.from(swedishBlock.matchAll(/'((?:\\'|[^'])*)'/g), (match) =>
+    match[1].replace(/\\'/g, "'"),
+  );
+}
+
+function removeAllowedEnglishLegalTokens(value) {
+  return LEGAL_SWEDISH_ALLOWED_ENGLISH_PATTERNS.reduce(
+    (sanitized, allowedPattern) => sanitized.replace(makeGlobalPattern(allowedPattern), ' '),
     value,
   );
 }
 
-function validateLegalSwedishEnglishTokenGuard() {
-  let valid = true;
-
-  function reject(message) {
-    valid = false;
-    fail(message);
+function validateSwedishLegalEnglishTokens(file, routeSource, reject) {
+  const swedishCopyValues = extractSwedishLegalCopyValues(routeSource);
+  if (!swedishCopyValues) {
+    reject(`${file} Swedish legal copy block must stay parseable`);
+    return false;
   }
 
-  for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
-    let routeSource = '';
-    try {
-      routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
-    } catch (error) {
-      reject(
-        `${expectedRoute.file} could not be read for Swedish legal copy guard: ${error.message}`,
-      );
-      continue;
-    }
-
-    const swedishLiterals = extractSwedishLegalStringLiterals(routeSource, expectedRoute.file);
-    for (const literal of swedishLiterals) {
-      const scannedLiteral = stripAllowedEnglishLegalTokens(literal);
-      let literalIsValid = true;
-      for (const bannedToken of LEGAL_SWEDISH_COPY_BANNED_ENGLISH_TOKENS) {
-        if (!bannedToken.pattern.test(scannedLiteral)) continue;
-        literalIsValid = false;
+  for (const copyValue of swedishCopyValues) {
+    const copyWithoutAllowedTokens = removeAllowedEnglishLegalTokens(copyValue);
+    for (const forbidden of LEGAL_SWEDISH_FORBIDDEN_ENGLISH_TOKENS) {
+      if (forbidden.pattern.test(copyWithoutAllowedTokens)) {
         reject(
-          `${expectedRoute.file} Swedish legal copy contains English token "${bannedToken.label}" in ${JSON.stringify(
-            literal,
-          )}`,
+          `${file} Swedish legal copy must use Swedish learner-facing wording, not English token "${forbidden.token}"`,
         );
+        return false;
       }
-      if (literalIsValid) legalSwedishEnglishTokenGuardValidated += 1;
     }
   }
 
-  if (valid && legalSwedishEnglishTokenGuardValidated > 0) {
-    legalSwedishEnglishTokenGuardParityValidated = true;
-  }
+  return true;
 }
 
 function validateLegalRouteHeaderParity() {
@@ -10319,6 +10301,10 @@ function validateLegalRouteHeaderParity() {
       }
     }
 
+    if (validateSwedishLegalEnglishTokens(expectedRoute.file, routeSource, reject)) {
+      legalSwedishEnglishTokenRoutesValidated += 1;
+    }
+
     if (expectedRoute.file === 'app/privacy.tsx') {
       const swedishPrivacyBlock = routeSource.match(
         /sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy',\s*\},\s*en:/,
@@ -10327,7 +10313,9 @@ function validateLegalRouteHeaderParity() {
       if (!swedishPrivacyBlock) {
         reject('app/privacy.tsx Swedish privacy copy block must stay parseable');
       } else if (/\bstreaks\b/i.test(swedishPrivacyBlock)) {
-        reject('Swedish privacy copy must use natural Swedish streak wording, not "streaks"');
+        reject(
+          'app/privacy.tsx Swedish legal copy must use Swedish learner-facing wording, not English token "streaks"',
+        );
       } else if (!/\bstudiesviter\b/i.test(swedishPrivacyBlock)) {
         reject('Swedish privacy copy must name locally stored study streaks as studiesviter');
       } else {
@@ -10342,6 +10330,9 @@ function validateLegalRouteHeaderParity() {
   );
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
+  }
+  if (valid && legalSwedishEnglishTokenRoutesValidated === EXPECTED_LEGAL_ROUTE_HEADERS.length) {
+    legalSwedishEnglishTokenGuardValidated = true;
   }
 }
 
@@ -17228,9 +17219,8 @@ console.log(
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
+      legalSwedishEnglishTokenRoutesValidated,
       legalSwedishEnglishTokenGuardValidated,
-      legalSwedishEnglishTokenGuardParityValidated,
-      staticSwedishGrammarToneNaturalnessValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,

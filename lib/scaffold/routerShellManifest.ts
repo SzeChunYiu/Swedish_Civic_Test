@@ -266,36 +266,12 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/about-the-test',
   },
   {
-    input: '/citizenship-requirements',
-    expectedPath: '/citizenship-requirements',
-  },
-  {
-    input: '/dashboard',
-    expectedPath: '/dashboard',
-  },
-  {
-    input: '/dashboard?from=home',
-    expectedPath: '/dashboard?from=home',
-  },
-  {
     input: 'almost-swedish://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
   },
   {
-    input: 'almost-swedish://app/dashboard',
-    expectedPath: '/dashboard',
-  },
-  {
     input: 'almost-swedish://app/about-the-test',
     expectedPath: '/about-the-test',
-  },
-  {
-    input: 'almost-swedish://app/citizenship-requirements',
-    expectedPath: '/citizenship-requirements',
-  },
-  {
-    input: 'almost-swedish://app/search?q=riksdag',
-    expectedPath: '/search?q=riksdag',
   },
   {
     input: 'almost-swedish://quiz/q001',

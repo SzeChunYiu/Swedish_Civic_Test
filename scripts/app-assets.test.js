@@ -31,11 +31,10 @@ test('release app assets are configured and present at store-safe sizes', () => 
   assert.equal(app.splash.resizeMode, 'contain');
   assert.equal(app.splash.backgroundColor, '#fffcf9');
   assert.equal(app.android.adaptiveIcon.foregroundImage, './assets/adaptive-icon.png');
-  assertHexColor(app.splash.backgroundColor, 'splash background');
-  assertHexColor(app.android.adaptiveIcon.backgroundColor, 'adaptive icon background');
-  assert.equal(app.android.adaptiveIcon.backgroundColor, app.splash.backgroundColor);
+  assert.equal(app.android.adaptiveIcon.backgroundColor, '#fffcf9');
+  assert.equal(app.splash.backgroundColor, app.android.adaptiveIcon.backgroundColor);
 
   assert.deepEqual(pngDimensions('assets/icon.png'), { width: 1024, height: 1024 });
   assert.deepEqual(pngDimensions('assets/adaptive-icon.png'), { width: 1024, height: 1024 });
-  assert.deepEqual(splashDimensions, { width: 1024, height: 1024 });
+  assert.deepEqual(pngDimensions('assets/splash-icon.png'), { width: 1024, height: 1024 });
 });
