@@ -2614,8 +2614,12 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   },
   {
-    label: 'selected and disabled state forwarding',
-    pattern: /accessibilityState=\{\{ disabled, selected \}\}/,
+    label: 'selected-only checked state',
+    pattern: /const checked = selected;/,
+  },
+  {
+    label: 'checked, selected, and disabled state forwarding',
+    pattern: /accessibilityState=\{\{ checked, disabled, selected \}\}/,
   },
   {
     label: 'disabled interaction forwarding',
