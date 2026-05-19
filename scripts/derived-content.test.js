@@ -639,8 +639,10 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 });
 
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
-  const { questions } = loadTs('data/questions.ts');
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
+  const sourceQ002 = sourceQuestions.find((question) => question.id === 'q002');
+  assert.ok(sourceQ002, 'q002 source question should exist');
   const expectedRows = {
     q151: [
       'Sveriges nordligaste del ligger inte norr om polcirkeln.',
@@ -714,14 +716,8 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     byId.get('q151')?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(
-    byId.get('q150')?.explanationSv,
-    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln.',
-  );
-  assert.equal(
-    byId.get('q150')?.explanationEn,
-    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
-  );
+  assert.equal(byId.get('q150')?.explanationSv, sourceQ002.explanationSv);
+  assert.equal(byId.get('q150')?.explanationEn, sourceQ002.explanationEn);
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
