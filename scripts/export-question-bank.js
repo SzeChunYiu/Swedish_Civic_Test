@@ -54,10 +54,6 @@ function optionPayload(question, field) {
 }
 
 const questions = loadTs('data/questions.ts', 'questions');
-const uhrSectionMap = JSON.parse(
-  fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
-);
-const uhrSourcePublisher = uhrSectionMap.source?.publisher || '';
 const rows = [
   [
     'id',
@@ -75,7 +71,6 @@ const rows = [
     'uhrChapter',
     'uhrSection',
     'uhrPageApprox',
-    'uhrSourcePublisher',
     'difficulty',
     'reviewStatus',
     'tags',
@@ -96,7 +91,6 @@ const rows = [
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,
-    uhrSourcePublisher,
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),

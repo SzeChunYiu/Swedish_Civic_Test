@@ -76,7 +76,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 18 columns, expected 17/,
+    /content\/question-bank\.csv row 2 has 17 columns, expected 16/,
   );
 });
 
