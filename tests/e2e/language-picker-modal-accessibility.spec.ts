@@ -1,33 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-
-async function closeBlockingModalsIfPresent(page: Page) {
-  const closeLaunchSponsorAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (
-    await closeLaunchSponsorAd
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await closeLaunchSponsorAd.first().click();
-  }
-
-  const skipFirstRunGuide = page.getByRole('button', {
-    name: /Skip the guide|Hoppa över guiden/,
-  });
-  if (
-    await skipFirstRunGuide
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await skipFirstRunGuide.first().click();
-  }
-
-  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
-}
+import { dismissBlockingModals } from './browserLaunch';
 
 async function expectCompactTarget(locator: Locator, label: string) {
   const box = await locator.boundingBox();
@@ -58,7 +31,7 @@ test('topbar language picker exposes one compact close target and keeps disabled
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/home', { waitUntil: 'networkidle' });
-  await closeBlockingModalsIfPresent(page);
+  await dismissBlockingModals(page);
 
   await openLanguagePicker(page);
 
