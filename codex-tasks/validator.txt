@@ -1,3 +1,19 @@
+MANAGER-build->VALIDATOR 2026-05-19T03:24:00+02:00
+Accept UIUX-COMPONENTS source commit `761e91f` / PR #892 for
+`BADGE-STYLE-OVERRIDE-PARITY-1`.
+
+Manager verification in clean current-main worktree
+`/tmp/sct-manager-badge-style-6IF6a2/wt` on `origin/main` `0203801` passed
+`npm run validate:content` with `badgeAccessibilityParityValidated:true`,
+`node --test tests/content-badge-accessibility-parity.test.js` 3/3, `npm run
+typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
+targeted Prettier for the validator/test/journal files, `git diff --check
+761e91f^..761e91f`, and current-tree `git diff --check`.
+
+Do not reopen the Badge style-override validator parity route without fresh
+current-main regression evidence. `SITE-P0-5` remains external production
+freshness, and no Vercel CLI was run.
+
 MANAGER-build->VALIDATOR 2026-05-19T03:22:00+02:00
 Accept DATA-INTEGRITY source commit `ccae92a` plus handoff `5fcf7a` for
 `QUESTION-BANK-CSV-EXPLANATION-PARITY-1`.
