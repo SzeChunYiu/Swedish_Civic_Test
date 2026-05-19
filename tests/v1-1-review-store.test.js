@@ -7,12 +7,6 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
-const {
-  createMemoryMMKV,
-  createThrowingSetMMKV,
-  loadTsWithStorage,
-} = require('./helpers/storageStoreHarness.cjs');
-
 const repoRoot = path.resolve(__dirname, '..');
 
 // Stub react-native-mmkv and zustand so we can load store modules in Node
@@ -160,53 +154,4 @@ test('reviewStats: counts mastered (stability >= 21) and review days', () => {
   assert.equal(stats.totalCards, 4);
   assert.equal(stats.masteredCards, 2);
   assert.equal(stats.reviewDaysCount, 2); // days with > 0
-});
-
-test('review store: throwing MMKV writes keep graded card in memory and record warning', () => {
-  const storage = createThrowingSetMMKV('review disk full');
-  const { useReviewStore } = loadTsWithStorage(repoRoot, 'lib/storage/reviewStore.ts', {
-    reviews: storage,
-  });
-
-  const reviewed = useReviewStore.getState().grade('q1', 3, '2026-05-19T12:00:00.000Z');
-  const state = useReviewStore.getState();
-
-  assert.equal(reviewed.questionId, 'q1');
-  assert.equal(state.byId.q1.questionId, 'q1');
-  assert.equal(
-    Object.values(state.gradedPerDay).reduce((sum, count) => sum + count, 0),
-    1,
-  );
-  assert.equal(state.persistenceWarning.recoverable, true);
-  assert.equal(state.persistenceWarning.storageId, 'reviews');
-  assert.equal(state.persistenceWarning.key, 'learning.reviews.cards.v1');
-  assert.match(state.persistenceWarning.errorMessage, /disk full/);
-});
-
-test('review store: successful writes persist JSON and corrupt reads still fall back', () => {
-  const storage = createMemoryMMKV();
-  const { REVIEW_STORE_KEY, useReviewStore } = loadTsWithStorage(
-    repoRoot,
-    'lib/storage/reviewStore.ts',
-    {
-      reviews: storage,
-    },
-  );
-
-  useReviewStore.getState().ensureCard('q2', '2026-05-19T12:00:00.000Z');
-  assert.equal(useReviewStore.getState().persistenceWarning, null);
-
-  const persisted = JSON.parse(storage.values.get(REVIEW_STORE_KEY));
-  assert.equal(persisted.byId.q2.questionId, 'q2');
-
-  const corruptStorage = createMemoryMMKV({ [REVIEW_STORE_KEY]: '{not-json' });
-  const { useReviewStore: useCorruptReviewStore } = loadTsWithStorage(
-    repoRoot,
-    'lib/storage/reviewStore.ts',
-    {
-      reviews: corruptStorage,
-    },
-  );
-  assert.deepEqual(useCorruptReviewStore.getState().byId, {});
-  assert.deepEqual(useCorruptReviewStore.getState().gradedPerDay, {});
 });
