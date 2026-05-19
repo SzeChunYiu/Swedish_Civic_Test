@@ -12360,6 +12360,15 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
+  if (!settingsStore.includes("import { stopSpeech } from '../audio/speak';")) {
+    reject('setAudioEnabled must import stopSpeech for mute-side playback cleanup');
+  }
+  if (!normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')) {
+    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
+  }
+  if (normalizedSettingsStore.includes('if (audioEnabled) { stopSpeech(); }')) {
+    reject('setAudioEnabled(true) must not stop or start speech playback');
+  }
 
   if (
     !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')
