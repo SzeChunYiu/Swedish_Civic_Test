@@ -33083,8 +33083,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Many people voting, getting involved, and learning about social issues.",
-      "sv": "Många röstar, engagerar sig och skaffar kunskap om samhällsfrågor."
+      "en": "Democracy becomes stronger when many people vote, get involved, and learn about social issues.",
+      "sv": "Demokratin blir starkare när många röstar, engagerar sig och skaffar kunskap om samhällsfrågor."
     },
     "opts": [
       {
@@ -33123,8 +33123,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Fewer people taking part in elections.",
-      "sv": "Färre människor deltar i val."
+      "en": "Democracy becomes stronger when fewer people take part in elections.",
+      "sv": "Demokratin blir starkare när färre människor deltar i val."
     },
     "opts": [
       {
@@ -33440,7 +33440,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "People with different backgrounds and economic situations living closer to one another and feeling included.",
+      "en": "Integration in a democratic society means people with different backgrounds and economic situations live closer to one another and feel included.",
       "sv": "Integration i ett demokratiskt samhälle är att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga."
     },
     "opts": [
@@ -33481,7 +33481,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "People living completely separated by income or ethnic background.",
+      "en": "Integration in a democratic society means people live completely separated by income or ethnic background.",
       "sv": "Integration i ett demokratiskt samhälle är att människor lever helt åtskilda efter inkomst eller etnisk bakgrund."
     },
     "opts": [
