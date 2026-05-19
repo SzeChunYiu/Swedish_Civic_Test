@@ -17,13 +17,21 @@ function loadTs(relativePath, exportName) {
 }
 
 test('practice flow keeps answered question locked until explicit advance', () => {
-  const { getPracticeQuestionForSession } = loadTs('lib/quiz/practiceFlow.ts');
+  const { filterQuestionsByIdAllowlist, getPracticeQuestionForSession } = loadTs(
+    'lib/quiz/practiceFlow.ts',
+  );
   const questions = [{ id: 'q1' }, { id: 'q2' }, { id: 'q3' }];
 
   assert.equal(getPracticeQuestionForSession(questions, [], null)?.id, 'q1');
   assert.equal(getPracticeQuestionForSession(questions, ['q1'], 'q1')?.id, 'q1');
   assert.equal(getPracticeQuestionForSession(questions, ['q1'], null)?.id, 'q2');
   assert.equal(getPracticeQuestionForSession(questions, ['q1', 'q2', 'q3'], null)?.id, 'q1');
+  assert.equal(getPracticeQuestionForSession(questions, [], null, ['q2', 'q3'])?.id, 'q2');
+  assert.equal(getPracticeQuestionForSession(questions, ['q1'], 'q1', ['q2', 'q3'])?.id, 'q3');
+  assert.deepEqual(
+    filterQuestionsByIdAllowlist(questions, ['q3']).map((question) => question.id),
+    ['q3'],
+  );
 });
 
 test('practice flow scopes completed progress to the visible question bank', () => {
@@ -63,6 +71,8 @@ test('practice session separates retry from next-question advancement', () => {
 
   usePracticeSessionStore.setState({
     activeQuestionId: null,
+    dueReviewQuestionIds: null,
+    dueReviewQuestionIndex: 0,
     selectedOptionId: null,
     shuffleSessionId: 'practice-session-0',
   });
@@ -96,6 +106,8 @@ test('practice session separates retry from next-question advancement', () => {
   usePracticeSessionStore.getState().advanceQuestion();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
+  assert.equal(usePracticeSessionStore.getState().dueReviewQuestionIds, null);
+  assert.equal(usePracticeSessionStore.getState().dueReviewQuestionIndex, 0);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
   assert.notEqual(getPracticeInterstitialShowKey('q2', 'practice-session-1'), firstFeedbackShowKey);
@@ -169,6 +181,38 @@ test('practice quick round fills from answered questions when unanswered is spar
     ).map((question) => question.id),
     ['q-scope-1b', 'q-scope-1a', 'q-scope-2a'],
   );
+});
+
+test('practice session due-review mode advances inside its question allowlist', () => {
+  const { usePracticeSessionStore } = loadTs('lib/quiz/practiceSessionStore.ts');
+
+  usePracticeSessionStore.setState({
+    activeQuestionId: null,
+    dueReviewQuestionIds: null,
+    dueReviewQuestionIndex: 0,
+    selectedOptionId: null,
+    shuffleSessionId: 'practice-session-1',
+  });
+
+  usePracticeSessionStore.getState().startDueReviewSession(['q2', 'q3', 'q2']);
+
+  assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q2');
+  assert.deepEqual(usePracticeSessionStore.getState().dueReviewQuestionIds, ['q2', 'q3']);
+  assert.equal(usePracticeSessionStore.getState().dueReviewQuestionIndex, 0);
+  assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-2');
+
+  usePracticeSessionStore.getState().selectOption('q2', 'q2-a');
+  usePracticeSessionStore.getState().advanceQuestion();
+
+  assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q3');
+  assert.equal(usePracticeSessionStore.getState().dueReviewQuestionIndex, 1);
+  assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
+
+  usePracticeSessionStore.getState().clearDueReviewSession();
+
+  assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
+  assert.equal(usePracticeSessionStore.getState().dueReviewQuestionIds, null);
+  assert.equal(usePracticeSessionStore.getState().dueReviewQuestionIndex, 0);
 });
 
 test('chapter quiz session id resolves to the first question in that chapter', () => {

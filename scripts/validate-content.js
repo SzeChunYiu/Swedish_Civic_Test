@@ -503,6 +503,8 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Nästa fråga',
     'Gå till nästa övningsfråga',
     'Fråga ${questionNumber}',
+    'Repetition',
+    '${count} frågor som är dags att repetera',
     'Poäng',
     'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     'Försök igen',
@@ -529,6 +531,8 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Next question',
     'Move to the next practice question',
     'Question ${questionNumber}',
+    'Due review',
+    '${count} questions due for review',
     'Score',
     'Answer, get instant feedback, then review the UHR source before moving on.',
     'Try again',
@@ -562,12 +566,14 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ],
   ['<Text>{copy.emptyTitle}</Text>', 'empty state must render localized copy'],
   ['<Badge>{copy.badge}</Badge>', 'practice badge must render localized copy'],
+  ['{copy.reviewModeBadge}', 'practice due-review badge must render localized copy'],
   ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
   ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
   [
     '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
   ],
+  ['{copy.reviewModeSummary(reviewModeCount)}', 'due-review metadata must render localized copy'],
   [
     'getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'practice route must scope completed progress to the visible question bank',
@@ -822,8 +828,16 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'XP-baserad',
     'dagars svit',
     'daglig vana',
-    '${count} svitskydd redo',
-    'Svitskydd',
+    'Repetition som är dags: ${count} frågor. ${limitLabel}',
+    'Smart repetition',
+    'Dagens gratisrepetition är använd. Du kan fortsätta med vanliga övningar.',
+    '${count} frågor är dags att repetera',
+    'Repetera frågor',
+    'Starta repetition med ${count} frågor som är dags',
+    'Inga frågor behöver repeteras just nu.',
+    'Gratis: ${remaining} av ${cap} repetitionstillfällen kvar i dag',
+    'Pro: obegränsad smart repetition',
+    'Repetition som är dags',
     'svaga kapitel',
     'behöver repetition',
     'frågor',
@@ -901,8 +915,16 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'XP-based',
     'day streak',
     'daily habit',
-    '${count} streak freeze ready',
-    'Streak freeze',
+    'Due review: ${count} questions. ${limitLabel}',
+    'Smart review',
+    "Today's free reviews are used. You can keep using normal practice.",
+    '${count} questions are due for review',
+    'Review due questions',
+    'Start due review with ${count} questions',
+    'No questions are due for review right now.',
+    'Free: ${remaining} of ${cap} reviews left today',
+    'Pro: unlimited smart review',
+    'Due review',
     'weak chapters',
     'needs review',
     'questions',
@@ -1029,6 +1051,14 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'const mockExamSessions = useProgressStore((state) => state.mockExamSessions);',
     'home route must read persisted mock exam scores',
   ],
+  [
+    'const reviewCardsById = useReviewStore((state) => state.byId);',
+    'home route must read due-review cards',
+  ],
+  [
+    'const startDueReviewSession = usePracticeSessionStore((state) => state.startDueReviewSession);',
+    'home route must be able to launch due-review practice',
+  ],
   ['mockExamSessions,', 'home route must feed persisted mock exam scores into readiness'],
   [
     'const readinessVerdict = copy.readinessVerdicts[readiness.verdict];',
@@ -1039,7 +1069,20 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home route preparation signal card must expose localized accessibility copy',
   ],
   ['href="/exam"', 'home route readiness CTA must link to the mock exam flow'],
-  ['{copy.readinessCaveat}', 'home route preparation signal caveat must always render'],
+  [
+    'const dueReviewQuestionIds = actionableDueReviewCards.map((card) => card.questionId);',
+    'home route must build a due-review question allowlist',
+  ],
+  [
+    'accessibilityLabel={dueReviewAccessibilityLabel}',
+    'home due-review card must expose localized accessibility copy',
+  ],
+  ['{copy.dueReviewTitle}', 'home due-review title must render localized copy'],
+  [
+    'onPress={() => startDueReviewSession(dueReviewQuestionIds)}',
+    'home due-review CTA must seed the practice allowlist before navigation',
+  ],
+  ['onPress={clearDueReviewSession}', 'home normal practice CTA must clear stale due-review state'],
   ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
   ['title={copy.title}', 'home route title must render localized copy'],
   ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
@@ -1897,6 +1940,11 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
     label: 'readiness card title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.readinessTitle\}>\s*\{copy\.readinessTitle\}\s*<\/Text>/,
+  },
+  {
+    label: 'due-review card title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.dueReviewTitle\}>\s*\{copy\.dueReviewTitle\}\s*<\/Text>/,
   },
   {
     label: 'feedback card title',
@@ -3526,8 +3574,12 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
 ];
 const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'activeQuestionId', type: 'string | null', optional: false },
+  { name: 'dueReviewQuestionIds', type: 'string[] | null', optional: false },
+  { name: 'dueReviewQuestionIndex', type: 'number', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
   { name: 'shuffleSessionId', type: 'string', optional: false },
+  { name: 'clearDueReviewSession', type: '() => void', optional: false },
+  { name: 'startDueReviewSession', type: '(questionIds: string[]) => void', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
@@ -10032,7 +10084,9 @@ function validateHomeRouteHeaderParity() {
   }
 
   const unheaderedCardHeadings =
-    homeRoute.match(/<Text\s+style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/g) || [];
+    homeRoute.match(
+      /<Text\s+style=\{styles\.(?:goalLabel|readinessTitle|dueReviewTitle|feedbackTitle)\}>/g,
+    ) || [];
   if (unheaderedCardHeadings.length > 0) {
     reject('home route card headings must expose accessibilityRole="header"');
   }
@@ -14501,28 +14555,20 @@ function validatePracticeFlowParity() {
       expectedId: firstQuestion.id,
     },
     {
-      label: 'completion outside visible bank is ignored',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [thirdQuestion.id],
+      label: 'due-review allowlist starts at the first due question',
+      questions: publishedQuestions,
+      completedQuestionIds: [],
       activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedScopedCompletedIds: [],
-    },
-    {
-      label: 'visible completion advances within filtered bank',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [thirdQuestion.id, firstQuestion.id],
-      activeQuestionId: null,
+      questionIdAllowlist: [secondQuestion.id, thirdQuestion.id],
       expectedId: secondQuestion.id,
-      expectedScopedCompletedIds: [firstQuestion.id],
     },
     {
-      label: 'sparse visible completion returns first unanswered question',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [secondQuestion.id],
-      activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedScopedCompletedIds: [secondQuestion.id],
+      label: 'due-review allowlist ignores stale active question',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id],
+      activeQuestionId: firstQuestion.id,
+      questionIdAllowlist: [secondQuestion.id, thirdQuestion.id],
+      expectedId: thirdQuestion.id,
     },
   ];
   const expectedValidationCount =
@@ -14536,6 +14582,7 @@ function validatePracticeFlowParity() {
       questions: caseQuestions,
       completedQuestionIds,
       activeQuestionId,
+      questionIdAllowlist,
       expectedId,
       expectedScopedCompletedIds,
     } = testCase;
@@ -14550,6 +14597,7 @@ function validatePracticeFlowParity() {
         caseQuestions,
         completedQuestionIds,
         activeQuestionId,
+        questionIdAllowlist ?? null,
       );
     } catch (error) {
       valid = false;
@@ -14668,6 +14716,8 @@ function validatePracticeSessionStoreParity() {
   ) {
     usePracticeSessionStore.setState({
       activeQuestionId: null,
+      dueReviewQuestionIds: null,
+      dueReviewQuestionIndex: 0,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
     });
@@ -14727,8 +14777,37 @@ function validatePracticeSessionStoreParity() {
       rejectRuntime('practice session advanceQuestion must advance the shuffle session seed');
     }
 
+    usePracticeSessionStore.getState().startDueReviewSession(['q-due-1', 'q-due-2', 'q-due-1']);
+    state = usePracticeSessionStore.getState();
+    if (
+      state.activeQuestionId !== 'q-due-1' ||
+      !arrayEquals(state.dueReviewQuestionIds, ['q-due-1', 'q-due-2']) ||
+      state.dueReviewQuestionIndex !== 0
+    ) {
+      rejectRuntime('practice session startDueReviewSession must seed a unique due-question queue');
+    }
+
+    usePracticeSessionStore.getState().advanceQuestion();
+    state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== 'q-due-2' || state.dueReviewQuestionIndex !== 1) {
+      rejectRuntime('practice session advanceQuestion must stay inside the due-review queue');
+    }
+
+    usePracticeSessionStore.getState().clearDueReviewSession();
+    state = usePracticeSessionStore.getState();
+    if (
+      state.activeQuestionId !== null ||
+      state.dueReviewQuestionIds !== null ||
+      state.dueReviewQuestionIndex !== 0 ||
+      state.selectedOptionId !== null
+    ) {
+      rejectRuntime('practice session clearDueReviewSession must clear due-review state');
+    }
+
     usePracticeSessionStore.setState({
       activeQuestionId: null,
+      dueReviewQuestionIds: null,
+      dueReviewQuestionIndex: 0,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
     });

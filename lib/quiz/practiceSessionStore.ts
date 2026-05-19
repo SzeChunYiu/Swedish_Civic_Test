@@ -2,8 +2,12 @@ import { create } from 'zustand';
 
 type PracticeSessionState = {
   activeQuestionId: string | null;
+  dueReviewQuestionIds: string[] | null;
+  dueReviewQuestionIndex: number;
   selectedOptionId: string | null;
   shuffleSessionId: string;
+  clearDueReviewSession: () => void;
+  startDueReviewSession: (questionIds: string[]) => void;
   selectOption: (questionId: string, optionId: string) => void;
   resetSelection: () => void;
   advanceQuestion: () => void;
@@ -26,15 +30,44 @@ function nextPracticeShuffleSessionId(currentSessionId: string): string {
 
 export const usePracticeSessionStore = create<PracticeSessionState>((set) => ({
   activeQuestionId: null,
+  dueReviewQuestionIds: null,
+  dueReviewQuestionIndex: 0,
   selectedOptionId: null,
   shuffleSessionId: `${PRACTICE_SHUFFLE_SESSION_PREFIX}-0`,
+  clearDueReviewSession: () =>
+    set({
+      activeQuestionId: null,
+      dueReviewQuestionIds: null,
+      dueReviewQuestionIndex: 0,
+      selectedOptionId: null,
+    }),
+  startDueReviewSession: (questionIds) => {
+    const uniqueQuestionIds = [...new Set(questionIds.filter(Boolean))];
+    set((state) => ({
+      activeQuestionId: uniqueQuestionIds[0] ?? null,
+      dueReviewQuestionIds: uniqueQuestionIds.length > 0 ? uniqueQuestionIds : null,
+      dueReviewQuestionIndex: 0,
+      selectedOptionId: null,
+      shuffleSessionId: nextPracticeShuffleSessionId(state.shuffleSessionId),
+    }));
+  },
   selectOption: (questionId, optionId) =>
     set({ activeQuestionId: questionId, selectedOptionId: optionId }),
   resetSelection: () => set({ selectedOptionId: null }),
   advanceQuestion: () =>
-    set((state) => ({
-      activeQuestionId: null,
-      selectedOptionId: null,
-      shuffleSessionId: nextPracticeShuffleSessionId(state.shuffleSessionId),
-    })),
+    set((state) => {
+      const dueReviewQuestionIds = state.dueReviewQuestionIds;
+      const nextReviewIndex =
+        dueReviewQuestionIds && dueReviewQuestionIds.length > 0
+          ? (state.dueReviewQuestionIndex + 1) % dueReviewQuestionIds.length
+          : 0;
+
+      return {
+        activeQuestionId: dueReviewQuestionIds?.[nextReviewIndex] ?? null,
+        dueReviewQuestionIds,
+        dueReviewQuestionIndex: nextReviewIndex,
+        selectedOptionId: null,
+        shuffleSessionId: nextPracticeShuffleSessionId(state.shuffleSessionId),
+      };
+    }),
 }));

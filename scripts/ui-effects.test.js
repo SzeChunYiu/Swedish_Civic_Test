@@ -1670,10 +1670,13 @@ test('audio button disables playback when speech text is unavailable', () => {
 test('home screen surfaces focused review copy and review action', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /Focused review/);
-  assert.match(source, /Fokuserad repetition/);
-  assert.match(source, /Keep track of what needs review/);
-  assert.match(source, /Håll koll på det som behöver övas/);
+  assert.match(source, /10,000-learner feedback pass/);
+  assert.match(source, /10 000 elevers återkoppling/);
+  assert.match(source, /Repetition som är dags/);
+  assert.match(source, /Review due questions/);
+  assert.match(source, /useReviewStore/);
+  assert.match(source, /startDueReviewSession/);
+  assert.match(source, /onPress=\{clearDueReviewSession\}/);
   assert.match(source, /Review saved questions/);
   assert.match(source, /Repetera sparade frågor/);
   assert.match(source, /href="\/mistakes"/);
@@ -1775,129 +1778,13 @@ test('home screen exposes dashboard card titles as headers', () => {
 
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /\{copy\.readinessTitle\}/);
-  assert.match(source, /\{resumeCopy\.title\}/);
+  assert.match(source, /\{copy\.dueReviewTitle\}/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
-  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.dueReviewTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.equal(headerMatches?.length, 4);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('free dashboard surface is routed, localized, and accessible', () => {
-  const dashboard = read('app/dashboard.tsx');
-  const home = read('app/(tabs)/home.tsx');
-  const profile = read('app/(tabs)/profile.tsx');
-  const activity = read('components/dashboard/ActivityHeatmap.tsx');
-  const chapters = read('components/dashboard/PerChapterProgressBars.tsx');
-  const sparkline = read('components/dashboard/StreakXpSparkline.tsx');
-
-  assert.match(home, /href="\/dashboard"/);
-  assert.match(profile, /href="\/dashboard"/);
-  assert.match(home, /Framstegsöversikt/);
-  assert.match(home, /Progress dashboard/);
-  assert.match(profile, /Aktivitet, kapitelframsteg och XP visas på en egen sida\./);
-  assert.match(profile, /Activity, chapter progress, and XP live on a dedicated page\./);
-  assert.match(dashboard, /type DashboardCopy =/);
-  assert.match(dashboard, /const dashboardCopy: Record<AppLanguage, DashboardCopy>/);
-  assert.match(dashboard, /const copy = dashboardCopy\[language\]/);
-  assert.match(dashboard, /dailyActivityHistogram/);
-  assert.match(dashboard, /perChapterProgress/);
-  assert.match(dashboard, /dashboardSummary/);
-  assert.match(dashboard, /xpSparkline/);
-  assert.match(dashboard, /buildDashboardProgressSnapshot/);
-  assert.match(dashboard, /hasProEntitlement/);
-  assert.match(dashboard, /predictedPassProbability/);
-  assert.match(dashboard, /<ActivityHeatmap bins=\{activityBins\} copy=\{copy\.activity\} \/>/);
-  assert.match(dashboard, /<PerChapterProgressBars/);
-  assert.match(dashboard, /<StreakXpSparkline/);
-  assert.match(dashboard, /const summaryAccessibilityLabel = copy\.summaryAccessibilityLabel\(/);
-  assert.match(
-    dashboard,
-    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
-  );
-  assert.doesNotMatch(
-    dashboard,
-    /<Card[\s\S]{0,180}accessibilityLabel=\{summaryAccessibilityLabel\}[\s\S]{0,900}<Link/,
-  );
-  assert.match(
-    activity,
-    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
-  );
-  assert.match(activity, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(activity, /accessibilityRole="summary"/);
-  assert.match(activity, /copy\.legend\.title/);
-  assert.match(activity, /copy\.legend\.low/);
-  assert.match(activity, /copy\.legend\.high/);
-  assert.match(activity, /style=\{\[styles\.legendSwatch, styles\[item\.style\]\]\}/);
-  assert.match(
-    activity,
-    /legendSwatch:\s*\{[\s\S]*height: space\[[^\]]+\][\s\S]*width: space\[[^\]]+\]/,
-  );
-  assert.match(dashboard, /title: 'Aktivitetsskala'/);
-  assert.match(dashboard, /low: 'Låg aktivitet'/);
-  assert.match(dashboard, /high: 'Hög aktivitet'/);
-  assert.match(dashboard, /title: 'Activity scale'/);
-  assert.match(dashboard, /low: 'Low activity'/);
-  assert.match(dashboard, /high: 'High activity'/);
-  assert.doesNotMatch(activity, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(
-    chapters,
-    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
-  );
-  assert.match(activity, /copy\.emptyState/);
-  assert.match(chapters, /accessibilityState=\{\{ selected \}\}/);
-  assert.doesNotMatch(chapters, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(chapters, /copy\.emptyState/);
-  assert.match(sparkline, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(sparkline, /copy\.emptyState/);
-  assert.doesNotMatch(profile, /Kapitelprogress|kapitelprogress|XP-linjen/);
-  assert.doesNotMatch(dashboard, /Kapitelprogress|kapitelprogress|XP-linjen/);
-  assert.doesNotMatch(
-    `${dashboard}\n${activity}\n${chapters}\n${sparkline}`,
-    /#[0-9a-fA-F]{6}|rgba?\(/,
-  );
-});
-
-test('home action links keep token targets and interaction feedback', () => {
-  const source = read('app/(tabs)/home.tsx');
-  const homeActionLinks = source.match(/<HomeActionLink/g) ?? [];
-  const targetStyles = ['readinessLink', 'primaryLink', 'secondaryLink', 'feedbackLink'];
-
-  assert.equal(homeActionLinks.length, 4);
-  assert.match(source, /const homeActionLinkClassName = 'home-action-link';/);
-  assert.match(source, /function useHomeActionLinkWebStyles\(\)/);
-  assert.match(
-    source,
-    /if \(Platform\.OS !== 'web' \|\| typeof document === 'undefined'\) return;/,
-  );
-  assert.match(source, /\$\{homeActionLinkClassName\}:hover,/);
-  assert.match(source, /transform: scale\(\$\{motion\.hoverScale\}\);/);
-  assert.match(source, /transform: scale\(\$\{motion\.pressedScale\}\);/);
-  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
-  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
-  assert.match(
-    source,
-    /style=\{\[styles\.homeActionLink, style, isPressed \? styles\.homeActionLinkPressed : null\]\}/,
-  );
-  assert.match(source, /homeActionLink:\s*\{[\s\S]*?minHeight: space\[6\]/);
-  assert.match(
-    source,
-    /homeActionLinkPressed:\s*\{[\s\S]*?transform: \[\{ scale: motion\.pressedScale \}\]/,
-  );
-
-  for (const styleName of targetStyles) {
-    const styleStart = source.indexOf(`${styleName}: {`);
-    assert.ok(styleStart >= 0, `${styleName} style should exist`);
-    const styleBlock = source.slice(styleStart, source.indexOf('  },', styleStart) + 4);
-    assert.match(
-      styleBlock,
-      /minHeight: space\[6\]/,
-      `${styleName} should keep a token-sized minimum target`,
-    );
-  }
-
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

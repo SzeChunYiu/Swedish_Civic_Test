@@ -33,7 +33,14 @@ import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/
 import { countAnswerAttemptsForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
-import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
+import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
+import { useProgressStore } from '../../lib/storage/progressStore';
+import {
+  dueCards,
+  FREE_DAILY_REVIEW_CAP,
+  remainingDailyReviews,
+  useReviewStore,
+} from '../../lib/storage/reviewStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -69,6 +76,16 @@ type HomeCopy = {
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
+  dueReviewAccessibilityLabel: (count: number, limitLabel: string) => string;
+  dueReviewBadge: string;
+  dueReviewCapReached: string;
+  dueReviewCount: (count: number) => string;
+  dueReviewCta: string;
+  dueReviewCtaAccessibilityLabel: (count: number) => string;
+  dueReviewEmpty: string;
+  dueReviewFreeLimit: (remaining: number, cap: number) => string;
+  dueReviewProLimit: string;
+  dueReviewTitle: string;
   eyebrow: string;
   feedbackBadge: string;
   feedbackLink: string;
@@ -198,6 +215,19 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
+    dueReviewAccessibilityLabel: (count, limitLabel) =>
+      `Repetition som är dags: ${count} frågor. ${limitLabel}`,
+    dueReviewBadge: 'Smart repetition',
+    dueReviewCapReached:
+      'Dagens gratisrepetition är använd. Du kan fortsätta med vanliga övningar.',
+    dueReviewCount: (count) => `${count} frågor är dags att repetera`,
+    dueReviewCta: 'Repetera frågor',
+    dueReviewCtaAccessibilityLabel: (count) => `Starta repetition med ${count} frågor som är dags`,
+    dueReviewEmpty: 'Inga frågor behöver repeteras just nu.',
+    dueReviewFreeLimit: (remaining, cap) =>
+      `Gratis: ${remaining} av ${cap} repetitionstillfällen kvar i dag`,
+    dueReviewProLimit: 'Pro: obegränsad smart repetition',
+    dueReviewTitle: 'Repetition som är dags',
     eyebrow: 'Studieöversikt',
     feedbackBadge: 'Fokuserad repetition',
     feedbackLink: 'Repetera sparade frågor',
@@ -274,6 +304,17 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
+    dueReviewAccessibilityLabel: (count, limitLabel) =>
+      `Due review: ${count} questions. ${limitLabel}`,
+    dueReviewBadge: 'Smart review',
+    dueReviewCapReached: "Today's free reviews are used. You can keep using normal practice.",
+    dueReviewCount: (count) => `${count} questions are due for review`,
+    dueReviewCta: 'Review due questions',
+    dueReviewCtaAccessibilityLabel: (count) => `Start due review with ${count} questions`,
+    dueReviewEmpty: 'No questions are due for review right now.',
+    dueReviewFreeLimit: (remaining, cap) => `Free: ${remaining} of ${cap} reviews left today`,
+    dueReviewProLimit: 'Pro: unlimited smart review',
+    dueReviewTitle: 'Due review',
     eyebrow: 'Study dashboard',
     feedbackBadge: 'Focused review',
     feedbackLink: 'Review saved questions',
@@ -353,8 +394,10 @@ export default function Screen() {
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
-  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
-  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
+  const reviewCardsById = useReviewStore((state) => state.byId);
+  const gradedPerDay = useReviewStore((state) => state.gradedPerDay);
+  const clearDueReviewSession = usePracticeSessionStore((state) => state.clearDueReviewSession);
+  const startDueReviewSession = usePracticeSessionStore((state) => state.startDueReviewSession);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
@@ -396,51 +439,26 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-  const dashboardProgress = useMemo(
-    () =>
-      buildDashboardProgressSnapshot({
-        answerDates,
-        answerAttempts,
-        dailyGoalAnswers,
-        mockExamSessions,
-        questionProgress,
-        totalXp,
-      }),
-    [answerAttempts, answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+  const isProReviewUser =
+    monetizationEntitlements.unlimitedMockExams && monetizationEntitlements.fullMistakeReview;
+  const remainingReviewCount = remainingDailyReviews({ gradedPerDay }, { isPro: isProReviewUser });
+  const allDueReviewCards = dueCards({ byId: reviewCardsById });
+  const actionableDueReviewCards = dueCards(
+    { byId: reviewCardsById },
+    {
+      limit: isProReviewUser
+        ? undefined
+        : Math.max(0, Math.min(remainingReviewCount, FREE_DAILY_REVIEW_CAP)),
+    },
   );
-  const dashboardQuestionChapterIndex = useMemo(
-    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
-    [],
+  const dueReviewQuestionIds = actionableDueReviewCards.map((card) => card.questionId);
+  const dueReviewLimitLabel = isProReviewUser
+    ? copy.dueReviewProLimit
+    : copy.dueReviewFreeLimit(remainingReviewCount, FREE_DAILY_REVIEW_CAP);
+  const dueReviewAccessibilityLabel = copy.dueReviewAccessibilityLabel(
+    allDueReviewCards.length,
+    dueReviewLimitLabel,
   );
-  const dashboard = useMemo(
-    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
-    [dashboardProgress, dashboardQuestionChapterIndex],
-  );
-  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
-  const guidedPathStages = useMemo(
-    () => buildGuidedPracticePathStages(copy, questionProgress),
-    [copy, questionProgress],
-  );
-  const guidedPathActiveStage =
-    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
-  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
-  const guidedPathCopy: GuidedPracticePathCopy = {
-    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
-      completedToday,
-      dailyGoalAnswers,
-    ),
-    dailyPracticeCta: copy.guidedPathDailyCta,
-    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
-    dailyPracticeTitle: copy.guidedPathDailyTitle,
-    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
-      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
-    ),
-    resumeCta: copy.guidedPathResumeCta,
-  };
-
-  useEffect(() => {
-    setStreakFreezeState(streakWithFreeze.freezeState);
-  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
 
   return (
     <ScreenShell
@@ -513,9 +531,30 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      <Card style={styles.freeBankCard}>
-        <Badge tone="blue">{copy.freeBankBadge}</Badge>
-        <Text style={styles.freeBankText}>{copy.freeBankText}</Text>
+      <Card accessibilityLabel={dueReviewAccessibilityLabel} style={styles.dueReviewCard}>
+        <Badge tone={allDueReviewCards.length > 0 ? 'green' : 'warm'}>{copy.dueReviewBadge}</Badge>
+        <Text accessibilityRole="header" style={styles.dueReviewTitle}>
+          {copy.dueReviewTitle}
+        </Text>
+        <Text style={styles.dueReviewText}>
+          {allDueReviewCards.length > 0
+            ? copy.dueReviewCount(allDueReviewCards.length)
+            : copy.dueReviewEmpty}
+        </Text>
+        <Text style={styles.dueReviewLimit}>{dueReviewLimitLabel}</Text>
+        {dueReviewQuestionIds.length > 0 ? (
+          <Link
+            accessibilityLabel={copy.dueReviewCtaAccessibilityLabel(dueReviewQuestionIds.length)}
+            accessibilityRole="link"
+            href="/practice"
+            onPress={() => startDueReviewSession(dueReviewQuestionIds)}
+            style={styles.dueReviewLink}
+          >
+            {copy.dueReviewCta}
+          </Link>
+        ) : allDueReviewCards.length > 0 ? (
+          <Text style={styles.dueReviewLimit}>{copy.dueReviewCapReached}</Text>
+        ) : null}
       </Card>
       {!monetizationEntitlements.adsDisabled ? (
         <PricingWedge
@@ -529,6 +568,7 @@ export default function Screen() {
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
           accessibilityRole="link"
           href="/practice"
+          onPress={clearDueReviewSession}
           style={styles.primaryLink}
         >
           {copy.startPractice}
@@ -720,6 +760,38 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     borderRadius: radius.micro,
     color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.5],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  dueReviewCard: {
+    gap: space[1],
+  },
+  dueReviewTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  dueReviewText: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  dueReviewLimit: {
+    color: colors.textDisclaimer,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dueReviewLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],

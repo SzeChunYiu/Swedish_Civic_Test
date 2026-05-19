@@ -12,7 +12,7 @@ test('practice scoring parity validates scoreAnswers rule cases', () => {
 
   assert.equal(summary.practiceScoringRulesValidated, 9);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
-  assert.equal(summary.practiceSessionStoreFieldsValidated, 6);
+  assert.equal(summary.practiceSessionStoreFieldsValidated, 10);
   assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
   assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
 });

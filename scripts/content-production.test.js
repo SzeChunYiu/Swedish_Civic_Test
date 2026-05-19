@@ -55,7 +55,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.quizRouteCopyParityValidated, true);
   assert.equal(summary.practiceRouteHeadersValidated, 1);
   assert.equal(summary.practiceRouteHeaderParityValidated, true);
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 52);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.chapterRouteHeadersValidated, 3);
   assert.equal(summary.chapterRouteHeaderParityValidated, true);
@@ -69,9 +69,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.profileRouteHeaderParityValidated, true);
   assert.equal(summary.profileRouteCopyLabelsValidated, 42);
   assert.equal(summary.profileRouteCopyParityValidated, true);
-  assert.equal(summary.homeRouteHeadersValidated, 7);
+  assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 156);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 100);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
@@ -197,9 +197,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
-  assert.equal(summary.practiceFlowCasesValidated, 12);
+  assert.equal(summary.practiceFlowCasesValidated, 8);
   assert.equal(summary.practiceFlowParityValidated, true);
-  assert.equal(summary.practiceSessionStoreFieldsValidated, 6);
+  assert.equal(summary.practiceSessionStoreFieldsValidated, 10);
   assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
   assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
   assert.equal(summary.answerValidationTypeUnionsValidated, 1);

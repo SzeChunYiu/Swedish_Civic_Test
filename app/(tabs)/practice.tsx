@@ -84,10 +84,8 @@ type PracticeCopy = {
   nextQuestion: string;
   nextQuestionAccessibilityLabel: string;
   questionTitle: (questionNumber: number) => string;
-  quickRoundAccessibilityLabel: (count: number) => string;
-  quickRoundBody: (count: number) => string;
-  quickRoundCta: string;
-  quickRoundTitle: string;
+  reviewModeBadge: string;
+  reviewModeSummary: (count: number) => string;
   scoreLabel: string;
   subtitle: string;
   tryAgain: string;
@@ -139,11 +137,8 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     nextQuestion: 'Nästa fråga',
     nextQuestionAccessibilityLabel: 'Gå till nästa övningsfråga',
     questionTitle: (questionNumber) => `Fråga ${questionNumber}`,
-    quickRoundAccessibilityLabel: (count) => `Starta en snabb runda med ${count} frågor`,
-    quickRoundBody: (count) =>
-      `${count} frågor blandade mellan kapitel, med obesvarade frågor först.`,
-    quickRoundCta: 'Starta snabb runda',
-    quickRoundTitle: 'Snabb runda',
+    reviewModeBadge: 'Repetition',
+    reviewModeSummary: (count) => `${count} frågor som är dags att repetera`,
     scoreLabel: 'Poäng',
     subtitle: 'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     tryAgain: 'Försök igen',
@@ -196,11 +191,8 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     nextQuestion: 'Next question',
     nextQuestionAccessibilityLabel: 'Move to the next practice question',
     questionTitle: (questionNumber) => `Question ${questionNumber}`,
-    quickRoundAccessibilityLabel: (count) => `Start a quick round with ${count} questions`,
-    quickRoundBody: (count) =>
-      `${count} questions mixed across chapters, with unanswered questions first.`,
-    quickRoundCta: 'Start quick round',
-    quickRoundTitle: 'Quick round',
+    reviewModeBadge: 'Due review',
+    reviewModeSummary: (count) => `${count} questions due for review`,
     scoreLabel: 'Score',
     subtitle: 'Answer, get instant feedback, then review the UHR source before moving on.',
     tryAgain: 'Try again',
@@ -264,6 +256,7 @@ function buildChapterPracticeSummaries(
 
 export default function Screen() {
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
+  const dueReviewQuestionIds = usePracticeSessionStore((state) => state.dueReviewQuestionIds);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
@@ -293,39 +286,17 @@ export default function Screen() {
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
-  const visibleCompletedQuestionIds = useMemo(
-    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
-    [completedQuestionIds, filteredQuestions],
-  );
-  const selectedPracticeQuestions = useMemo(
-    () =>
-      getQuestionsForPracticeScope(
-        filteredQuestions,
-        visibleCompletedQuestionIds,
-        practiceScope,
-        QUICK_ROUND_SIZE,
-      ),
-    [filteredQuestions, practiceScope, visibleCompletedQuestionIds],
-  );
-  const scopedCompletedQuestionIds = useMemo(
-    () => getCompletedQuestionIdsForQuestionBank(selectedPracticeQuestions, completedQuestionIds),
-    [completedQuestionIds, selectedPracticeQuestions],
-  );
-  const chapterPracticeSummaries = useMemo(
-    () =>
-      buildChapterPracticeSummaries(
-        filteredQuestions,
-        visibleCompletedQuestionIds,
-        questionProgress,
-        language,
-      ),
-    [filteredQuestions, language, questionProgress, visibleCompletedQuestionIds],
-  );
-  const quickRoundQuestionCount = Math.min(QUICK_ROUND_SIZE, filteredQuestions.length);
+  const practiceQuestions = useMemo(() => {
+    if (!dueReviewQuestionIds) return filteredQuestions;
+
+    const dueQuestionIdSet = new Set(dueReviewQuestionIds);
+    return filteredQuestions.filter((candidate) => dueQuestionIdSet.has(candidate.id));
+  }, [dueReviewQuestionIds, filteredQuestions]);
   const rawQuestion = getPracticeQuestionForSession(
-    selectedPracticeQuestions,
-    scopedCompletedQuestionIds,
+    practiceQuestions,
+    completedQuestionIds,
     activeQuestionId,
+    dueReviewQuestionIds,
   );
   const question = useMemo(
     () =>
@@ -484,8 +455,8 @@ export default function Screen() {
     (candidate) => candidate.id === question.id,
   );
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress =
-    selectedPracticeQuestions.length > 0 ? questionNumber / selectedPracticeQuestions.length : 0;
+  const reviewModeCount = dueReviewQuestionIds?.length ?? 0;
+  const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -506,31 +477,39 @@ export default function Screen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge>{copy.badge}</Badge>
+        {reviewModeCount > 0 ? <Badge tone="warm">{copy.reviewModeBadge}</Badge> : null}
         <Text accessibilityRole="header" style={styles.title}>
           {copy.questionTitle(questionNumber)}
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>
-          {copy.completedQuestions(scopedCompletedQuestionIds.length)}
-        </Text>
-        <View style={styles.headerControls}>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-selected={isBookmarked}
-            accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isBookmarked }}
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('bookmark')}
-            onPress={() => toggleBookmark(question.id)}
-            style={({ pressed }) => [
-              styles.bookmarkButton,
-              isBookmarked ? styles.bookmarkButtonActive : null,
-              focusedHeaderControl === 'bookmark' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
+        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
+        {reviewModeCount > 0 ? (
+          <Text style={styles.meta}>{copy.reviewModeSummary(reviewModeCount)}</Text>
+        ) : null}
+        <Pressable
+          aria-selected={isBookmarked}
+          accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: isBookmarked }}
+          onPress={() => toggleBookmark(question.id)}
+          style={[styles.bookmarkButton, isBookmarked ? styles.bookmarkButtonActive : null]}
+        >
+          <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
+            {isBookmarked ? copy.bookmarked : copy.bookmark}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="switch"
+          accessibilityState={{ checked: includeSupplementary }}
+          accessibilityLabel={
+            includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+          }
+          onPress={() => setIncludeSupplementary(!includeSupplementary)}
+          style={[styles.bookmarkButton, includeSupplementary ? styles.bookmarkButtonActive : null]}
+        >
+          <Text
+            style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
           >
             <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
               {isBookmarked ? copy.bookmarked : copy.bookmark}

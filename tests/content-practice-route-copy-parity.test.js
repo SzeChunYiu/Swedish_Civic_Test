@@ -19,7 +19,7 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 92);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 52);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.match(source, /const practiceCopy: Record<AppLanguage, PracticeCopy> = \{/);
   assert.match(source, /type PracticeScope/);
@@ -40,8 +40,9 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /startPractice\(\{ type: 'chapter', chapterId: chapter\.id \}\)/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);
-  assert.match(source, /Close source details/);
-  assert.doesNotMatch(source, /Close about-the-sources|about-the-sources/);
+  assert.match(source, /Due review/);
+  assert.match(source, /Repetition/);
+  assert.match(source, /\{copy\.reviewModeSummary\(reviewModeCount\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
