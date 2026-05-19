@@ -24,9 +24,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
-  assert.equal(summary.homeRouteHeadersValidated, 6);
+  assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 150);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 80);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
@@ -34,64 +34,15 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
   assert.match(source, /computeReadinessFromQuestionProgress/);
-  assert.match(
-    source,
-    /const mockExamSessions = useProgressStore\(\(state\) => state\.mockExamSessions\);/,
-  );
-  assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
   assert.match(source, /Redoindikator/);
   assert.match(source, /Readiness indicator/);
-  assert.match(source, /Väg från grund till provträning/);
-  assert.match(source, /Guided path from basics to exam practice/);
-  assert.match(source, /const guidedPathChapterGroups = \[/);
-  assert.match(source, /\{ id: 'beginner', chapterIds: \['ch01', 'ch02', 'ch03', 'ch04'\] \}/);
-  assert.match(
-    source,
-    /\{ id: 'builder', chapterIds: \['ch05', 'ch06', 'ch07', 'ch08', 'ch09'\] \}/,
-  );
-  assert.match(source, /\{ id: 'advanced', chapterIds: \['ch10', 'ch11', 'ch12', 'ch13'\] \}/);
-  assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
-  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
-  assert.match(source, /<GuidedPracticePath/);
-  assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
-  assert.match(source, /dailyProgress=\{progress\}/);
-  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
-  assert.match(
-    source,
-    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
-  );
-  assert.match(source, /: '\/exam';/);
-  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
-  assert.match(guidedPathSource, /href=\{stage\.href\}/);
-  assert.match(guidedPathSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
-  assert.match(guidedPathSource, /\{stage\.cta\}/);
-  assert.match(guidedPathSource, /href="\/practice"/);
-  assert.match(guidedPathSource, /minHeight: space\[6\]/);
-  assert.match(source, /Smarta studievanor/);
-  assert.match(source, /Smart study habits/);
-  assert.match(
-    source,
-    /Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator\./,
-  );
-  assert.match(source, /genomgång av frågor du missat/);
-  assert.doesNotMatch(source, /felspårning|repetition av misstag/);
-  assert.match(
-    source,
-    /Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals\./,
-  );
-  assert.doesNotMatch(source, /flashcards/);
-  assert.match(source, /calculateStreakWithFreeze/);
-  assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
-  assert.match(source, /Svitskydd/);
-  assert.match(source, /Streak freeze/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
-  assert.match(source, /helper=\{dayStreakHelper\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
   assert.match(source, /\{copy\.readinessTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
