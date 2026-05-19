@@ -37,46 +37,6 @@
       ? "Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga."
       : "Independent study practice, not a real exam or an official UHR question.";
   }
-  const provenanceCopy = {
-    uhr: {
-      en: { label: "UHR", description: "Directly from UHR's study material Sverige i fokus." },
-      sv: { label: "UHR", description: "Direkt från UHR:s utbildningsmaterial Sverige i fokus." },
-    },
-    derived: {
-      en: { label: "Supplementary", description: "Variant generated from a UHR question." },
-      sv: { label: "Tillägg", description: "Variant som genererats från en UHR-fråga." },
-    },
-    editorial: {
-      en: { label: "Editorial", description: "Hand-written editorial context." },
-      sv: { label: "Redaktionell", description: "Redaktionellt skrivet sammanhang." },
-    },
-  };
-  function questionProvenance(question) {
-    const direct = question && question.questionProvenance;
-    if (direct === "uhr" || direct === "derived" || direct === "editorial") return direct;
-    const tags = Array.isArray(question && question.tags) ? question.tags : [];
-    if (tags.includes("editorial")) return "editorial";
-    if (tags.includes("published-variant")) return "derived";
-    return "uhr";
-  }
-  function provenanceBadge(question) {
-    const sv = lang() === "sv";
-    const provenance = questionProvenance(question);
-    const copy = provenanceCopy[provenance][sv ? "sv" : "en"] || provenanceCopy[provenance].en;
-    const ariaPrefix = sv ? "Källtyp" : "Provenance";
-    const notePrefix = sv ? "Källanteckning" : "Source note";
-    const label = escapeHtml(copy.label);
-    const note = escapeHtml(`${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`);
-    return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
-  }
-  function questionSourceRow(question, citationClassName = "quiz__source") {
-    return `
-      <div class="quiz__source-row">
-        ${provenanceBadge(question)}
-        <p class="${citationClassName}">${escapeHtml(sourceCitation(question))}</p>
-      </div>
-    `;
-  }
   function hashString(value) {
     let hash = 2166136261;
     const text = String(value ?? "");
@@ -224,7 +184,7 @@
             <a class="hub__quickbtn" href="#/practice?c=mix">${sv ? "10 slumpade" : "10 random"} →</a>
           </div>
           <div>
-            <span class="hub__statlabel">${sv ? "Övningsprov" : "Mock exam"}</span>
+            <span class="hub__statlabel">${sv ? "Skarp tentamen" : "Mock exam"}</span>
             <a class="hub__quickbtn hub__quickbtn--gold" href="#/mock">${sv ? "Starta" : "Start"} →</a>
           </div>
         </div>
@@ -329,8 +289,8 @@
             <li>
               <span class="mock-history__date">${new Date(m.t).toLocaleDateString(lang())}</span>
               <span class="mock-history__score">${m.correct}/${m.total}</span>
-              <span class="mock-history__pct">${m.pct}%</span>
-              <span class="mock-history__verdict">${sv ? "Övningsrunda" : "Practice round"}</span>
+              <span class="mock-history__pct ${m.pct >= 75 ? "pass" : "fail"}">${m.pct}%</span>
+              <span class="mock-history__verdict">${m.pct >= 75 ? (sv ? "Godkänt" : "Pass") : (sv ? "Underkänt" : "Fail")}</span>
             </li>`).join("")}
         </ul>
       </div>` : "";
@@ -338,9 +298,9 @@
     stage.innerHTML = `
       <div class="mock-landing">
         <div class="mock-landing__inner">
-          <span class="eyebrow">${sv ? "Övningsprov" : "Mock exam"}</span>
+          <span class="eyebrow">${sv ? "Skarp tentamen" : "Mock exam"}</span>
           <h1 class="practice__title">
-            <span>${sv ? "Bygg ditt övningsprov." : "Build your exam."}</span>
+            <span>${sv ? "Bygg din tentamen." : "Build your exam."}</span>
           </h1>
           <p class="mock-landing__lede">${sv
             ? "Välj antal frågor, tid och vilka kapitel du vill testas på. Vi blandar och slumpar resten."
@@ -362,7 +322,7 @@
                 <output id="cfg-min-out">${cfg.minutes} ${sv ? "min" : "min"}</output>
               </label>
               <input type="range" id="cfg-min" min="2" max="90" step="1" value="${cfg.minutes}" />
-              <div class="mock-cfg__hint">${sv ? "Välj din övningstid" : "Choose your practice time"}</div>
+              <div class="mock-cfg__hint">${sv ? "Riktigt provet är 60 min" : "Real exam is 60 min"}</div>
             </div>
 
             <div class="mock-cfg__row">
@@ -377,14 +337,14 @@
             </div>
 
             <div class="mock-cfg__meta">
-              <span><b>${sv ? "Övningspoäng" : "Practice score"}</b> ${sv ? "% rätt" : "% correct"}</span>
+              <span><b>${sv ? "Godkänt" : "Pass"}</b> 75%</span>
               <span><b>${sv ? "Ingen återkoppling" : "No feedback"}</b> ${sv ? "förrän inlämnat" : "until submit"}</span>
               <span><b>${sv ? "Lokalt sparat" : "Saved locally"}</b></span>
             </div>
           </div>
 
           <div class="mock-landing__cta">
-            <a class="btn btn--gold" href="#/mock?run=1" id="cfg-start">${sv ? "Starta övningsprov" : "Start exam"} →</a>
+            <a class="btn btn--gold" href="#/mock?run=1" id="cfg-start">${sv ? "Starta tentamen" : "Start exam"} →</a>
             <a class="btn btn--ghost" href="#/practice">${sv ? "Öva först" : "Practice first"}</a>
             <button class="mock-cfg__link" id="cfg-reset">${sv ? "Återställ" : "Reset to defaults"}</button>
           </div>
@@ -514,7 +474,7 @@
       <div class="mock-shell">
         <header class="mock-bar">
           <div class="mock-bar__title">
-            <span class="eyebrow">${sv ? "Övningsprov" : "Mock exam"}</span>
+            <span class="eyebrow">${sv ? "Skarp tentamen" : "Mock exam"}</span>
             <span class="mock-bar__counter">${i + 1} / ${n}</span>
           </div>
           <div class="mock-bar__timer">
@@ -529,7 +489,7 @@
         <div class="mock-card">
           <div class="quiz__crumb">Ch ${q.chapterId}</div>
           <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
-          ${questionSourceRow(q)}
+          <p class="quiz__source">${escapeHtml(sourceCitation(q))}</p>
           <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           <div class="quiz__opts">${opts}</div>
         </div>
@@ -568,7 +528,7 @@
     const total = MOCK.questions.length;
     const correct = MOCK.questions.reduce((s, q, i) => s + (MOCK.answers[i] === q.answer ? 1 : 0), 0);
     const pct = Math.round((correct / total) * 100);
-    const strongPracticeScore = pct >= 80;
+    const pass = pct >= 75;
 
     // by chapter
     const byCh = {};
@@ -617,7 +577,7 @@
               </div>
             </dl>
             <p class="mock-review__why">${escapeHtml(tr(q.why))}</p>
-            ${questionSourceRow(q, "mock-review__source")}
+            <p class="mock-review__source">${escapeHtml(sourceCitation(q))}</p>
             <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           </div>
         </details>
@@ -625,13 +585,13 @@
     }).join("");
 
     stage.innerHTML = `
-      <div class="mock-result ${strongPracticeScore ? "is-strong" : "needs-study"}">
+      <div class="mock-result ${pass ? "is-pass" : "is-fail"}">
         <span class="eyebrow">${sv ? "Resultat" : "Result"}</span>
         <p class="quiz__score">
           <span id="mock-score-num">0</span><em>/</em>${total}
         </p>
-        <h2 class="mock-result__verdict">${sv ? "Övningen är klar." : "Practice round complete."}</h2>
-        <p class="mock-result__pct">${pct}% — ${correct}/${total} ${sv ? "rätt" : "correct"}</p>
+        <h2 class="mock-result__verdict">${pass ? (sv ? "Godkänt." : "You passed.") : (sv ? "Underkänt." : "Not yet.")}</h2>
+        <p class="mock-result__pct">${pct}% — ${sv ? "godkänt-gräns" : "passing line"} 75%</p>
 
         <ul class="result-chapters">${chapterRows}</ul>
         <section class="mock-review" aria-label="${sv ? "Frågegenomgång" : "Question review"}">
@@ -648,15 +608,15 @@
 
     if (window.smtFx) {
       window.smtFx.countUp(document.getElementById("mock-score-num"), 0, correct, 1100);
-      if (strongPracticeScore) {
+      if (pass) {
         setTimeout(() => window.smtFx.rain({ colors: window.smtFx.PALETTES.big, count: 90 }), 300);
         if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
-          `${pct}%. Strong practice round.`, `${pct}%. Stark övningsrunda.`
+          `${pct}%. Lysande.`, `${pct}%. Lysande.`
         );
       } else if (window.smtBuddyConsole) {
         window.smtBuddyConsole(
-          "Review the weak chapters, then try another practice round.",
-          "Öva svaga kapitel och testa en ny övningsrunda."
+          "75% next time. Drill the weak chapters first.",
+          "75% nästa gång. Öva svaga kapitel först."
         );
       }
     }
