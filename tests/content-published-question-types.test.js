@@ -9,6 +9,31 @@ const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank'
 
 const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
+const BASELINE_SOURCE_QUESTIONS_FOR_GENERATED_ID_FIXTURES = 149;
+let cachedValidationSummary;
+
+function validationSummary() {
+  if (!cachedValidationSummary) {
+    const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+      encoding: 'utf8',
+    });
+    const match = output.match(/\{[\s\S]*\}/);
+    assert.ok(match, 'validation should print JSON summary');
+    cachedValidationSummary = JSON.parse(match[0]);
+  }
+  return cachedValidationSummary;
+}
+
+function shiftedGeneratedQuestionId(id) {
+  const idNumber = Number(String(id).replace(/^q/, ''));
+  const shift =
+    validationSummary().sourceQuestions - BASELINE_SOURCE_QUESTIONS_FOR_GENERATED_ID_FIXTURES;
+  return `q${String(idNumber + shift).padStart(3, '0')}`;
+}
+
+function shiftedGeneratedQuestionIds(ids) {
+  return ids.map((id) => shiftedGeneratedQuestionId(id));
+}
 
 function actualStaticQuestions() {
   const context = { window: {} };
@@ -726,7 +751,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  question.id === 'q156'",
+        "  question.id === '${shiftedGeneratedQuestionId('q156')}'",
         "    ? {",
         "        ...question,",
         "        explanationSv:",
@@ -750,7 +775,9 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q156 contains a false-answer explanation that says True is correct/,
+    new RegExp(
+      `${shiftedGeneratedQuestionId('q156')} contains a false-answer explanation that says True is correct`,
+    ),
   );
 });
 
@@ -771,7 +798,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  question.id === 'q155'",
+        "  question.id === '${shiftedGeneratedQuestionId('q155')}'",
         "    ? {",
         "        ...question,",
         "        explanationSv:",
@@ -795,7 +822,9 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q155 contains a generated true\/false explanation meta-judgement/,
+    new RegExp(
+      `${shiftedGeneratedQuestionId('q155')} contains a generated true/false explanation meta-judgement`,
+    ),
   );
 });
 
@@ -816,7 +845,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  question.id === 'q156'",
+        "  question.id === '${shiftedGeneratedQuestionId('q156')}'",
         "    ? {",
         "        ...question,",
         "        explanationSv:",
@@ -840,7 +869,9 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q156 contains a generated true\/false explanation meta-judgement/,
+    new RegExp(
+      `${shiftedGeneratedQuestionId('q156')} contains a generated true/false explanation meta-judgement`,
+    ),
   );
 });
 
@@ -861,8 +892,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "const q256Residuals = {",
-        "  q275: { questionSv: 'En anledning är att valet är hemligt och ingen annan ska se vilket val de gör.', questionEn: 'One reason is the vote is secret and no one else should see their choice.' },",
-        "  q276: { questionSv: 'En anledning är att rösterna ska räknas snabbare.', questionEn: 'One reason is votes are counted faster.' },",
+        "  '${shiftedGeneratedQuestionId('q275')}': { questionSv: 'En anledning är att valet är hemligt och ingen annan ska se vilket val de gör.', questionEn: 'One reason is the vote is secret and no one else should see their choice.' },",
+        "  '${shiftedGeneratedQuestionId('q276')}': { questionSv: 'En anledning är att rösterna ska räknas snabbare.', questionEn: 'One reason is votes are counted faster.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q256Residuals[question.id]",
@@ -885,7 +916,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  for (const id of ['q275', 'q276']) {
+  for (const id of shiftedGeneratedQuestionIds(['q275', 'q276'])) {
     assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
   }
 });
@@ -907,7 +938,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  question.id === 'q323'",
+        "  question.id === '${shiftedGeneratedQuestionId('q323')}'",
         "    ? {",
         "        ...question,",
         "        questionEn: 'A person in Sweden is criminally responsible and able to be prosecuted for a crime from 15 years.',",
@@ -928,7 +959,9 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q323 contains a generated true\/false grammar-splice stem/,
+    new RegExp(
+      `${shiftedGeneratedQuestionId('q323')} contains a generated true/false grammar-splice stem`,
+    ),
   );
 });
 
@@ -949,7 +982,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  question.id === 'q403'",
+        "  question.id === '${shiftedGeneratedQuestionId('q403')}'",
         "    ? {",
         "        ...question,",
         "        questionEn: 'They represent employees, negotiate wages, and can help members.',",
@@ -970,7 +1003,9 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q403 contains a generated true\/false grammar-splice stem/,
+    new RegExp(
+      `${shiftedGeneratedQuestionId('q403')} contains a generated true/false grammar-splice stem`,
+    ),
   );
 });
 
@@ -991,7 +1026,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  question.id === 'q451'",
+        "  question.id === '${shiftedGeneratedQuestionId('q451')}'",
         "    ? {",
         "        ...question,",
         "        questionEn: 'One reason is eU membership.',",
@@ -1012,7 +1047,9 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q451 contains a generated true\/false grammar-splice stem/,
+    new RegExp(
+      `${shiftedGeneratedQuestionId('q451')} contains a generated true/false grammar-splice stem`,
+    ),
   );
 });
 
@@ -1033,12 +1070,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "const q456Residuals = {",
-        "  q459: { questionSv: 'Förändringen genom den nya grundlagen år 1809 var att Kungens makt begränsades.' },",
-        "  q471: { questionSv: 'Saltsjöbadsavtalet från 1938 blev viktigt för Samarbetet mellan fackföreningar och arbetsgivare.', questionEn: 'The 1938 Saltsjöbaden Agreement became important for Cooperation between trade unions and employers.' },",
-        "  q475: { questionSv: 'En anledning är att Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.', questionEn: 'One reason is that Sweden had long-lasting strong economic growth and could carry out major reforms.' },",
-        "  q476: { questionSv: 'En anledning är att Sverige saknade nästan all industri.', questionEn: 'One reason is that Sweden had almost no industry.' },",
-        "  q484: { questionSv: 'Den digitala revolutionen har förändrat bara hur människor firar midsommar.', questionEn: 'The digital revolution has changed only how people celebrate Midsummer.' },",
-        "  q500: { questionSv: 'Europarådet arbetar för endast jordbrukspolitik.', questionEn: 'The Council of Europe works for only agricultural policy.' },",
+        "  '${shiftedGeneratedQuestionId('q459')}': { questionSv: 'Förändringen genom den nya grundlagen år 1809 var att Kungens makt begränsades.' },",
+        "  '${shiftedGeneratedQuestionId('q471')}': { questionSv: 'Saltsjöbadsavtalet från 1938 blev viktigt för Samarbetet mellan fackföreningar och arbetsgivare.', questionEn: 'The 1938 Saltsjöbaden Agreement became important for Cooperation between trade unions and employers.' },",
+        "  '${shiftedGeneratedQuestionId('q475')}': { questionSv: 'En anledning är att Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.', questionEn: 'One reason is that Sweden had long-lasting strong economic growth and could carry out major reforms.' },",
+        "  '${shiftedGeneratedQuestionId('q476')}': { questionSv: 'En anledning är att Sverige saknade nästan all industri.', questionEn: 'One reason is that Sweden had almost no industry.' },",
+        "  '${shiftedGeneratedQuestionId('q484')}': { questionSv: 'Den digitala revolutionen har förändrat bara hur människor firar midsommar.', questionEn: 'The digital revolution has changed only how people celebrate Midsummer.' },",
+        "  '${shiftedGeneratedQuestionId('q500')}': { questionSv: 'Europarådet arbetar för endast jordbrukspolitik.', questionEn: 'The Council of Europe works for only agricultural policy.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q456Residuals[question.id]",
@@ -1061,7 +1098,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  for (const id of ['q459', 'q471', 'q475', 'q476', 'q484', 'q500']) {
+  for (const id of shiftedGeneratedQuestionIds(['q459', 'q471', 'q475', 'q476', 'q484', 'q500'])) {
     assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
   }
 });
@@ -1083,13 +1120,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "const q506Residuals = {",
-        "  q531: { questionEn: 'Islam is described as the second largest in Sweden.' },",
-        "  q532: { questionEn: 'Judaism is described as the second largest in Sweden.' },",
-        "  q535: { questionEn: 'On New Year’s Eve, 31 December,, it is common to celebrate with parties and dinners and at night with fireworks.' },",
-        "  q536: { questionEn: 'On New Year’s Eve, 31 December,, it is common to large bonfires and spring songs.' },",
-        "  q540: { questionSv: 'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangerar demonstrationer.' },",
-        "  q547: { questionEn: 'Lucia celebration is largely about spreadinging light when the year is at its darkest.' },",
-        "  q548: { questionEn: 'Lucia celebration is largely about welcominging spring with large bonfires.' },",
+        "  '${shiftedGeneratedQuestionId('q531')}': { questionEn: 'Islam is described as the second largest in Sweden.' },",
+        "  '${shiftedGeneratedQuestionId('q532')}': { questionEn: 'Judaism is described as the second largest in Sweden.' },",
+        "  '${shiftedGeneratedQuestionId('q535')}': { questionEn: 'On New Year’s Eve, 31 December,, it is common to celebrate with parties and dinners and at night with fireworks.' },",
+        "  '${shiftedGeneratedQuestionId('q536')}': { questionEn: 'On New Year’s Eve, 31 December,, it is common to large bonfires and spring songs.' },",
+        "  '${shiftedGeneratedQuestionId('q540')}': { questionSv: 'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangerar demonstrationer.' },",
+        "  '${shiftedGeneratedQuestionId('q547')}': { questionEn: 'Lucia celebration is largely about spreadinging light when the year is at its darkest.' },",
+        "  '${shiftedGeneratedQuestionId('q548')}': { questionEn: 'Lucia celebration is largely about welcominging spring with large bonfires.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q506Residuals[question.id]",
@@ -1112,7 +1149,15 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  for (const id of ['q531', 'q532', 'q535', 'q536', 'q540', 'q547', 'q548']) {
+  for (const id of shiftedGeneratedQuestionIds([
+    'q531',
+    'q532',
+    'q535',
+    'q536',
+    'q540',
+    'q547',
+    'q548',
+  ])) {
     assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
   }
 });
@@ -1134,10 +1179,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "const q556Residuals = {",
-        "  q568: { questionEn: 'Advent occurs a Saturday at the end of October or beginning of November.' },",
-        "  q579: { questionEn: 'In different places in Sweden, there are buddhist and Hindu congregations and temples for Buddhists and Hindus.' },",
-        "  q603: { questionEn: 'Travel to Asia and increased interest in meditation and yoga is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.' },",
-        "  q604: { questionEn: \\"That Sweden's first mosques were built during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.\\" },",
+        "  '${shiftedGeneratedQuestionId('q568')}': { questionEn: 'Advent occurs a Saturday at the end of October or beginning of November.' },",
+        "  '${shiftedGeneratedQuestionId('q579')}': { questionEn: 'In different places in Sweden, there are buddhist and Hindu congregations and temples for Buddhists and Hindus.' },",
+        "  '${shiftedGeneratedQuestionId('q603')}': { questionEn: 'Travel to Asia and increased interest in meditation and yoga is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.' },",
+        "  '${shiftedGeneratedQuestionId('q604')}': { questionEn: \\"That Sweden's first mosques were built during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.\\" },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q556Residuals[question.id]",
@@ -1160,7 +1205,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  for (const id of ['q568', 'q579', 'q603', 'q604']) {
+  for (const id of shiftedGeneratedQuestionIds(['q568', 'q579', 'q603', 'q604'])) {
     assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
   }
 });
@@ -1182,10 +1227,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "const q606Residuals = {",
-        "  q611: { questionSv: 'Regeringsformen skyddar rätten att utöva sin religion och skydd mot diskriminering på grund av tro.', questionEn: 'The Instrument of Government protects the right to practice one’s religion and protection from discrimination because of belief.' },",
-        "  q612: { questionSv: 'Regeringsformen skyddar att staten väljer religion åt varje invånare.', questionEn: 'The Instrument of Government protects that the state chooses a religion for each resident.' },",
-        "  q616: { questionSv: 'Många svenskar firar id al-fitr och Newroz även om de inte ser sig som religiösa.', questionEn: 'Many Swedes celebrate Eid al-Fitr and Newroz even if they do not see themselves as religious.' },",
-        "  q627: { questionSv: 'Judar fick rätt att bo i landet och utöva sin religion.', questionEn: 'Jews gained the right to live in the country and practice their religion.' },",
+        "  '${shiftedGeneratedQuestionId('q611')}': { questionSv: 'Regeringsformen skyddar rätten att utöva sin religion och skydd mot diskriminering på grund av tro.', questionEn: 'The Instrument of Government protects the right to practice one’s religion and protection from discrimination because of belief.' },",
+        "  '${shiftedGeneratedQuestionId('q612')}': { questionSv: 'Regeringsformen skyddar att staten väljer religion åt varje invånare.', questionEn: 'The Instrument of Government protects that the state chooses a religion for each resident.' },",
+        "  '${shiftedGeneratedQuestionId('q616')}': { questionSv: 'Många svenskar firar id al-fitr och Newroz även om de inte ser sig som religiösa.', questionEn: 'Many Swedes celebrate Eid al-Fitr and Newroz even if they do not see themselves as religious.' },",
+        "  '${shiftedGeneratedQuestionId('q627')}': { questionSv: 'Judar fick rätt att bo i landet och utöva sin religion.', questionEn: 'Jews gained the right to live in the country and practice their religion.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q606Residuals[question.id]",
@@ -1208,7 +1253,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  for (const id of ['q611', 'q612', 'q616', 'q627']) {
+  for (const id of shiftedGeneratedQuestionIds(['q611', 'q612', 'q616', 'q627'])) {
     assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
   }
 });
@@ -1230,7 +1275,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "const q656Residuals = {",
-        "  q703: { questionSv: 'Julen firar traditionellt jesu födelse inom kristendomen.', questionEn: \\"Christmas traditionally celebrates jesus' birth in Christianity.\\" },",
+        "  '${shiftedGeneratedQuestionId('q703')}': { questionSv: 'Julen firar traditionellt jesu födelse inom kristendomen.', questionEn: \\"Christmas traditionally celebrates jesus' birth in Christianity.\\" },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q656Residuals[question.id]",
@@ -1253,7 +1298,12 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.match(output, /q703 contains a generated true\/false grammar-splice stem/);
+  assert.match(
+    output,
+    new RegExp(
+      `${shiftedGeneratedQuestionId('q703')} contains a generated true/false grammar-splice stem`,
+    ),
+  );
 });
 
 test('published question schema rejects residual q656-q705 holiday wording', () => {
@@ -1273,9 +1323,9 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         "const q656Residuals = {",
-        "  q668: { questionSv: 'Gudstjänsten tidigt på morgonen den 25 december kallas Luciatåg.', questionEn: 'The church service early on the morning of 25 December is called Lucia procession.' },",
-        "  q675: { questionSv: 'Barn öppnar en lucka varje dag fram till julafton med en adventskalender hemma.', questionEn: 'Children often open one door each day until Christmas Eve with an Advent calendar at home.' },",
-        "  q676: { questionSv: 'Barn tänder stora brasor på kvällen med en adventskalender hemma.', questionEn: 'Children often light large bonfires in the evening with an Advent calendar at home.' },",
+        "  '${shiftedGeneratedQuestionId('q668')}': { questionSv: 'Gudstjänsten tidigt på morgonen den 25 december kallas Luciatåg.', questionEn: 'The church service early on the morning of 25 December is called Lucia procession.' },",
+        "  '${shiftedGeneratedQuestionId('q675')}': { questionSv: 'Barn öppnar en lucka varje dag fram till julafton med en adventskalender hemma.', questionEn: 'Children often open one door each day until Christmas Eve with an Advent calendar at home.' },",
+        "  '${shiftedGeneratedQuestionId('q676')}': { questionSv: 'Barn tänder stora brasor på kvällen med en adventskalender hemma.', questionEn: 'Children often light large bonfires in the evening with an Advent calendar at home.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q656Residuals[question.id]",
@@ -1298,7 +1348,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  for (const id of ['q668', 'q675', 'q676']) {
+  for (const id of shiftedGeneratedQuestionIds(['q668', 'q675', 'q676'])) {
     assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
   }
 });
@@ -1322,7 +1372,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
         ").map((question) =>",
-        "  question.id === 'q150'",
+        "  question.id === '${shiftedGeneratedQuestionId('q150')}'",
         "    ? {",
         "        ...question,",
         "        options: question.options.map((option, index) =>",
@@ -1370,7 +1420,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
         ").map((question) =>",
-        "  question.id === 'q153'",
+        "  question.id === '${shiftedGeneratedQuestionId('q153')}'",
         "    ? {",
         "        ...question,",
         "        options: question.options.map((option, index) =>",

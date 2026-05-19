@@ -6,6 +6,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
+const BASELINE_SOURCE_QUESTIONS_FOR_GENERATED_ID_FIXTURES = 149;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -42,6 +43,12 @@ function loadTs(relativePath, exportName) {
 
 function questionNumber(question) {
   return Number(String(question.id).replace(/^q/, ''));
+}
+
+function shiftedGeneratedQuestionId(id, sourceQuestions) {
+  const idNumber = Number(String(id).replace(/^q/, ''));
+  const shift = sourceQuestions.length - BASELINE_SOURCE_QUESTIONS_FOR_GENERATED_ID_FIXTURES;
+  return `q${String(idNumber + shift).padStart(3, '0')}`;
 }
 
 function generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions) {
@@ -695,12 +702,24 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   };
 
   for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+    const shiftedId = shiftedGeneratedQuestionId(id, sourceQuestions);
+    assert.equal(
+      byId.get(shiftedId)?.questionSv,
+      questionSv,
+      `${shiftedId} Swedish generated stem`,
+    );
+    assert.equal(
+      byId.get(shiftedId)?.questionEn,
+      questionEn,
+      `${shiftedId} English generated stem`,
+    );
   }
 
   const checkedText = Object.keys(expectedRows)
-    .map((id) => `${byId.get(id)?.questionSv} ${byId.get(id)?.questionEn}`)
+    .map((id) => {
+      const shiftedId = shiftedGeneratedQuestionId(id, sourceQuestions);
+      return `${byId.get(shiftedId)?.questionSv} ${byId.get(shiftedId)?.questionEn}`;
+    })
     .join('\n');
 
   assert.doesNotMatch(
@@ -709,15 +728,21 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   );
 
   assert.equal(
-    byId.get('q156')?.explanationSv,
+    byId.get(shiftedGeneratedQuestionId('q156', sourceQuestions))?.explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
-    byId.get('q156')?.explanationEn,
+    byId.get(shiftedGeneratedQuestionId('q156', sourceQuestions))?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(byId.get('q155')?.explanationSv, sourceQ002.explanationSv);
-  assert.equal(byId.get('q155')?.explanationEn, sourceQ002.explanationEn);
+  assert.equal(
+    byId.get(shiftedGeneratedQuestionId('q155', sourceQuestions))?.explanationSv,
+    sourceQ002.explanationSv,
+  );
+  assert.equal(
+    byId.get(shiftedGeneratedQuestionId('q155', sourceQuestions))?.explanationEn,
+    sourceQ002.explanationEn,
+  );
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
@@ -1010,8 +1035,17 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
   };
 
   for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+    const shiftedId = shiftedGeneratedQuestionId(id, sourceQuestions);
+    assert.equal(
+      byId.get(shiftedId)?.questionSv,
+      questionSv,
+      `${shiftedId} Swedish generated stem`,
+    );
+    assert.equal(
+      byId.get(shiftedId)?.questionEn,
+      questionEn,
+      `${shiftedId} English generated stem`,
+    );
   }
 
   const residualQuestions = generatedTrueFalseResidualQuestions(

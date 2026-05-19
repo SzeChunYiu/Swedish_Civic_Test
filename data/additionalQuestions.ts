@@ -2996,4 +2996,158 @@ export const additionalQuestions: PracticeQuestion[] = [
     'Integration means people with different backgrounds and economic situations live closer to one another and feel included in society. It is the opposite of segregation, where people live separately and may have unequal access to services, culture, and safety.',
     ['integration', 'segregation', 'democracy', 'inclusion'],
   ),
+  single(
+    'q150',
+    'ch08',
+    { chapter: 'Arbetsmarknad och privatekonomi', section: 'Organisationer', pageApprox: 28 },
+    'Vilket påstående beskriver arbetsmarknadens organisationer?',
+    'Which statement describes labour-market organizations?',
+    [
+      [
+        'Arbetsgivarorganisationer företräder arbetsgivare och fackföreningar företräder arbetstagare',
+        'Employer organizations represent employers, and trade unions represent employees',
+      ],
+      [
+        'Fackföreningar beslutar ensamma hur staten ska ta ut skatt',
+        'Trade unions alone decide how the state should collect tax',
+      ],
+      [
+        'Arbetsgivarorganisationer ersätter domstolar i arbetsrättsliga mål',
+        'Employer organizations replace courts in labour-law cases',
+      ],
+      [
+        'Fackföreningar får bara företräda personer utan arbete',
+        'Trade unions may only represent people without work',
+      ],
+    ],
+    0,
+    'Arbetsgivarorganisationer samlar arbetsgivare, medan fackföreningar samlar arbetstagare. Organisationerna kan förhandla om löner och arbetsvillkor, ofta genom kollektivavtal.',
+    'Employer organizations bring employers together, while trade unions bring employees together. These organizations can negotiate wages and working conditions, often through collective agreements.',
+    ['labour-market', 'employer-organizations', 'trade-unions'],
+  ),
+  single(
+    'q151',
+    'ch08',
+    {
+      chapter: 'Arbetsmarknad och privatekonomi',
+      section: 'Lagar och regler på arbetsmarknaden',
+      pageApprox: 29,
+    },
+    'Vilket påstående beskriver arbetsgivarens avgifter till staten?',
+    "Which statement describes an employer's contributions to the state?",
+    [
+      [
+        'Arbetsgivaren betalar avgifter som bland annat går till pension och sjukförsäkring för anställda',
+        'The employer pays contributions that go partly to employees’ pensions and sickness insurance',
+      ],
+      [
+        'Arbetsgivaren betalar bara avgifter för anställda som är fackmedlemmar',
+        'The employer pays contributions only for employees who are union members',
+      ],
+      [
+        'Arbetsgivaren ersätter kommunalskatten genom en frivillig avgift',
+        'The employer replaces municipal income tax with a voluntary fee',
+      ],
+      [
+        'Arbetsgivaren betalar avgifter direkt till A-kassans medlemmar varje månad',
+        'The employer pays contributions directly to A-kassan members every month',
+      ],
+    ],
+    0,
+    'En arbetsgivare betalar avgifter till staten för sina anställda. Avgifterna bidrar bland annat till pension, sjukförsäkring och andra delar av socialförsäkringen.',
+    'An employer pays contributions to the state for its employees. These contributions help fund pensions, sickness insurance, and other parts of social insurance.',
+    ['labour-law', 'social-contributions', 'pension'],
+  ),
+  single(
+    'q152',
+    'ch08',
+    { chapter: 'Arbetsmarknad och privatekonomi', section: 'Skatt på arbete', pageApprox: 29 },
+    'Vad gäller för skatt på arbete i Sverige?',
+    'What applies to tax on work in Sweden?',
+    [
+      [
+        'Alla som arbetar betalar skatt på sin lön, och beloppet beror på inkomsten',
+        'Everyone who works pays tax on their wages, and the amount depends on income',
+      ],
+      [
+        'Endast personer som arbetar i offentlig sektor betalar skatt på lön',
+        'Only people who work in the public sector pay tax on wages',
+      ],
+      [
+        'Skatt på arbete betalas bara av personer som saknar anställning',
+        'Tax on work is paid only by people who do not have employment',
+      ],
+      [
+        'Alla betalar exakt samma skattebelopp oavsett inkomst',
+        'Everyone pays exactly the same tax amount regardless of income',
+      ],
+    ],
+    0,
+    'Den som arbetar i Sverige betalar skatt på sin lön. Hur mycket skatt som betalas beror på inkomsten och reglerna där personen bor och arbetar.',
+    'A person who works in Sweden pays tax on wages. The amount paid depends on income and on the rules where the person lives and works.',
+    ['tax', 'income', 'work'],
+    'easy',
+  ),
+  single(
+    'q153',
+    'ch08',
+    { chapter: 'Arbetsmarknad och privatekonomi', section: 'A-kassan', pageApprox: 29 },
+    'Vilket påstående beskriver ersättningen från A-kassan?',
+    'Which statement describes compensation from A-kassan?',
+    [
+      [
+        'Ersättningen finansieras av staten och av avgifter från dem som är medlemmar',
+        'The compensation is funded by the state and by fees from people who are members',
+      ],
+      [
+        'Ersättningen betalas alltid ut till alla som byter arbete',
+        'The compensation is always paid to everyone who changes jobs',
+      ],
+      [
+        'Ersättningen ersätter all lön oavsett hur länge personen har varit arbetslös',
+        'The compensation replaces all wages regardless of how long the person has been unemployed',
+      ],
+      [
+        'Ersättningen finansieras bara av arbetsgivarorganisationer',
+        'The compensation is funded only by employer organizations',
+      ],
+    ],
+    0,
+    'A-kassan är en arbetslöshetsförsäkring. Ersättningen finansieras både av staten och av medlemsavgifter, och den som vill få ersättning behöver uppfylla villkoren.',
+    'A-kassan is unemployment insurance. Compensation is funded both by the state and by membership fees, and a person who wants compensation must meet the conditions.',
+    ['a-kassa', 'unemployment-insurance', 'member-fees'],
+  ),
+  single(
+    'q154',
+    'ch08',
+    {
+      chapter: 'Arbetsmarknad och privatekonomi',
+      section: 'Privatekonomi i Sverige',
+      pageApprox: 29,
+    },
+    'Vilket påstående beskriver privatekonomi i Sverige?',
+    'Which statement describes personal finance in Sweden?',
+    [
+      [
+        'Privatekonomi handlar om en persons eller ett hushålls inkomster, utgifter, sparande och lån',
+        "Personal finance concerns a person’s or household's income, expenses, savings, and loans",
+      ],
+      [
+        'Privatekonomi handlar bara om statens budget och kommunernas skatteintäkter',
+        'Personal finance concerns only the state budget and municipal tax revenue',
+      ],
+      [
+        'Privatekonomi betyder att alla hushåll måste ha samma inkomster och utgifter',
+        'Personal finance means all households must have the same income and expenses',
+      ],
+      [
+        'Privatekonomi är ett annat ord för arbetsmarknadens kollektivavtal',
+        'Personal finance is another word for labour-market collective agreements',
+      ],
+    ],
+    0,
+    'Privatekonomi handlar om pengar i vardagen: inkomster, utgifter, sparande, lån och krediter. Om skulder inte betalas kan Kronofogden bli inblandad.',
+    'Personal finance is about everyday money: income, expenses, savings, loans, and credit. If debts are not paid, the Enforcement Authority may become involved.',
+    ['personal-finance', 'income', 'expenses'],
+  ),
 ];

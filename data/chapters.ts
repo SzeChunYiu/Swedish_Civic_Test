@@ -71,7 +71,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.',
     descriptionEn:
       'The labour market, labour-market parties, workplace rules, and personal finance.',
-    questionCount: 35,
+    questionCount: 60,
   },
   {
     id: 'ch09',
