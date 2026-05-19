@@ -4,6 +4,11 @@ const { spawnSync } = require('node:child_process');
 
 const jsonMode = process.argv.includes('--json');
 const runValidate = process.argv.includes('--run-validate');
+const DEFAULT_COMMAND_TIMEOUT_MS = 5 * 60 * 1000;
+const commandTimeoutMs = parsePositiveIntegerEnv(
+  'RELEASE_PREFLIGHT_COMMAND_TIMEOUT_MS',
+  DEFAULT_COMMAND_TIMEOUT_MS,
+);
 const skipExternalChecks = /^(1|true|yes)$/i.test(
   String(process.env.RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS || '').trim(),
 );
@@ -137,6 +142,14 @@ const removeAdsDeviceQaPath = 'reports/release-ads-iap-device-qa.md';
 const removeAdsStep3Command =
   'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
 const releaseScopeOverrideId = 'release-scope-v11';
+
+function parsePositiveIntegerEnv(name, fallback) {
+  const rawValue = String(process.env[name] || '').trim();
+  if (!rawValue) return fallback;
+
+  const parsed = Number.parseInt(rawValue, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
 
 const expectedPublicUrlEvidenceRequirements = {
   'store-records': [
@@ -1099,12 +1112,40 @@ function validateLocalArtifactContents(id, artifactPaths) {
   return errors.length > 0 ? errors : null;
 }
 
+function commandLabel(command, args) {
+  return [command, ...args].join(' ');
+}
+
 function commandSucceeds(command, args) {
-  const result = spawnSync(command, args, { encoding: 'utf8' });
+  const result = spawnSync(command, args, { encoding: 'utf8', timeout: commandTimeoutMs });
+  const stdout = (result.stdout || '').trim();
+  const stderr = (result.stderr || '').trim();
+  if (result.error) {
+    const errorMessage =
+      result.error.code === 'ETIMEDOUT'
+        ? `Timed out after ${commandTimeoutMs}ms: ${commandLabel(command, args)}`
+        : `Failed to run ${commandLabel(command, args)}: ${result.error.message}`;
+    return {
+      ok: false,
+      stdout,
+      stderr: [errorMessage, stderr].filter(Boolean).join('\n'),
+    };
+  }
+
+  if (result.signal) {
+    return {
+      ok: false,
+      stdout,
+      stderr: [`Stopped with signal ${result.signal}: ${commandLabel(command, args)}`, stderr]
+        .filter(Boolean)
+        .join('\n'),
+    };
+  }
+
   return {
     ok: result.status === 0,
-    stdout: result.stdout.trim(),
-    stderr: result.stderr.trim(),
+    stdout,
+    stderr,
   };
 }
 

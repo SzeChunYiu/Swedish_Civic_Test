@@ -57,6 +57,9 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     fakeNpm,
     [
       '#!/bin/sh',
+      options.validateCommand === 'timeout'
+        ? 'if [ "$1 $2" = "run validate" ]; then sleep 2; exit 0; fi'
+        : 'if [ "$1 $2" = "run validate" ]; then echo "Local validation passed"; exit 0; fi',
       'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
       'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
       'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "Android and iOS native prebuild smoke passed"; exit 0; fi',
@@ -72,6 +75,9 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     [
       '#!/bin/sh',
       'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
+      options.easWhoamiCommand === 'timeout'
+        ? 'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then sleep 2; exit 0; fi'
+        : '',
       'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
       'echo "unexpected npx command: $@" >&2',
       'exit 2',
@@ -913,6 +919,51 @@ test('release preflight fails closed on external launch blockers', () => {
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
   assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
+});
+
+test('release preflight times out local validation subprocesses with blocked evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-validate-timeout-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir, { validateCommand: 'timeout' });
+
+  const report = runPreflight({
+    args: ['--run-validate'],
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_COMMAND_TIMEOUT_MS: '100',
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const validationGate = report.gates.find((gate) => gate.id === 'local-validation');
+  assert.equal(validationGate.status, 'BLOCKED');
+  assert.match(validationGate.evidence, /Timed out after 100ms: npm run validate/);
+});
+
+test('release preflight times out EAS auth subprocesses with blocked evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-eas-timeout-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir, { easWhoamiCommand: 'timeout' });
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_COMMAND_TIMEOUT_MS: '100',
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const easAuthGate = report.gates.find((gate) => gate.id === 'eas-auth');
+  assert.equal(easAuthGate.status, 'BLOCKED');
+  assert.match(easAuthGate.evidence, /Timed out after 100ms: npx --yes eas-cli@18\.13\.0 whoami/);
 });
 
 test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is red', () => {
