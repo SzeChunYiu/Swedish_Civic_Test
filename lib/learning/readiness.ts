@@ -32,10 +32,10 @@ export interface ReadinessScore {
   verdict: ReadinessVerdict;
   /** Component contributions in 0..1, useful for "why?" tooltip. */
   components: {
-    accuracy: number;       // rolling accuracy 0..1
-    coverage: number;       // share of chapters with >= 1 answer
-    recency: number;        // 0..1 freshness weight
-    mockAverage: number;    // average of best mock per session, 0..1; 0 when none
+    accuracy: number; // rolling accuracy 0..1
+    coverage: number; // share of chapters with >= 1 answer
+    recency: number; // 0..1 freshness weight
+    mockAverage: number; // average of best mock per session, 0..1; 0 when none
   };
   /** True when we don't yet have enough data (verdict still set, but UI should soften copy). */
   isSparse: boolean;
@@ -189,10 +189,7 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
   const score = Math.round(clamp01(blended) * 100);
 
   // Sparse: too little data to be meaningful.
-  const totalAnswers = (input.progress.sessions ?? []).reduce(
-    (n, s) => n + s.answers.length,
-    0,
-  );
+  const totalAnswers = (input.progress.sessions ?? []).reduce((n, s) => n + s.answers.length, 0);
   const isSparse = totalAnswers < 30;
 
   return {
