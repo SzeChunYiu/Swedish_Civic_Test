@@ -31,8 +31,8 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
-  badgeLocked: string;
-  badgeUnlocked: string;
+  audioDisabledBadge: string;
+  audioEnabledBadge: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
@@ -49,8 +49,7 @@ type ProfileCopy = {
   openSettings: string;
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
-  removeAdsFocusCue: string;
-  streakFreezeBadge: string;
+  settingsShortcutHelper: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -61,8 +60,8 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
-    badgeLocked: 'Låst',
-    badgeUnlocked: 'Upplåst',
+    audioDisabledBadge: 'Ljud av',
+    audioEnabledBadge: 'Ljud på',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
@@ -76,11 +75,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Ändra mål, språk och ljud',
-    openSettingsAccessibilityLabel: 'Ändra mål, språk och ljud',
+    openSettings: 'Justera studieinställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
     questionsHelper: 'frågor',
-    removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
-    streakFreezeBadge: 'Svitskydd',
+    settingsShortcutHelper: 'Dagligt mål, språk och ljud',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -90,8 +88,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
-    badgeLocked: 'Locked',
-    badgeUnlocked: 'Unlocked',
+    audioDisabledBadge: 'Audio off',
+    audioEnabledBadge: 'Audio on',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
@@ -105,11 +103,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Edit goal, language, and audio',
-    openSettingsAccessibilityLabel: 'Edit goal, language, and audio',
+    openSettings: 'Adjust study settings',
+    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
     questionsHelper: 'questions',
-    removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
-    streakFreezeBadge: 'Streak freeze',
+    settingsShortcutHelper: 'Daily goal, language, and audio',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -131,8 +128,7 @@ export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
-  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
-  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
+  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
@@ -217,6 +213,20 @@ export default function Screen() {
             {dailyGoalAnswers} {copy.answersPerDay}
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
+          <Badge tone={audioEnabled ? 'green' : 'orange'}>
+            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
+          </Badge>
+        </View>
+        <View style={styles.settingsShortcutRow}>
+          <Text style={styles.settingsShortcutHelper}>{copy.settingsShortcutHelper}</Text>
+          <Link
+            accessibilityLabel={copy.openSettingsAccessibilityLabel}
+            accessibilityRole="link"
+            href="/settings"
+            style={styles.settingsLink}
+          >
+            {copy.openSettings}
+          </Link>
         </View>
         <Link
           accessibilityLabel={copy.openSettingsAccessibilityLabel}
@@ -303,31 +313,36 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
-  badgeList: {
-    gap: space[1],
-  },
-  emptyBadgeText: {
+  settingsShortcutHelper: {
     color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  removeAdsPaywall: {
-    gap: space[1],
-  },
-  removeAdsPaywallFocused: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space[1],
-  },
-  removeAdsFocusCue: {
-    color: colors.textSecondary,
+    flex: 1,
     fontSize: typography.caption.fontSize,
+    fontWeight: typography.caption.fontWeight,
     lineHeight: typography.caption.lineHeight,
+  },
+  settingsShortcutRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+  },
+  value: {
+    color: colors.text,
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.sectionTitle.fontWeight,
+    lineHeight: typography.sectionTitle.lineHeight,
   },
   settingsLink: {
     alignSelf: 'flex-start',
-    minHeight: space[6],
+    backgroundColor: colors.accent,
+    borderRadius: radius.small,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.5],
+    textDecorationLine: 'none',
   },
 });
