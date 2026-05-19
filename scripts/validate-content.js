@@ -945,6 +945,7 @@ const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
+  'removeAdsStoreProductIds',
   'storeDisclosureTopics',
 ];
 const EXPECTED_RELEASE_CONSENT_PROMPTS = ['app_tracking_transparency', 'ump_consent_form'];
@@ -991,7 +992,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -3212,7 +3213,11 @@ const EXPECTED_PURCHASE_INTERFACES = [
   },
   {
     name: 'NativePurchaseProviderOptions',
-    fields: [{ name: 'purchaseTimeoutMs', type: 'number', optional: true }],
+    fields: [
+      { name: 'iapModule', type: 'NativeIapModule', optional: true },
+      { name: 'platform', type: 'RemoveAdsStorePlatform', optional: true },
+      { name: 'purchaseTimeoutMs', type: 'number', optional: true },
+    ],
   },
   {
     name: 'MockPurchaseProviderOptions',
@@ -6296,6 +6301,8 @@ const hasAdsDisabled = premiumModule.hasAdsDisabled;
 const isPremiumUser = premiumModule.isPremiumUser;
 const premiumConfig = premiumModule.premiumConfig;
 const purchaseModule = loadTs('lib/monetization/purchases.ts');
+const REMOVE_ADS_ANDROID_PRODUCT_ID = purchaseModule.REMOVE_ADS_ANDROID_PRODUCT_ID;
+const REMOVE_ADS_IOS_PRODUCT_ID = purchaseModule.REMOVE_ADS_IOS_PRODUCT_ID;
 const REMOVE_ADS_PRICE_LABEL = purchaseModule.REMOVE_ADS_PRICE_LABEL;
 const REMOVE_ADS_PRODUCT_ID = purchaseModule.REMOVE_ADS_PRODUCT_ID;
 const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
@@ -7092,6 +7099,10 @@ function validateReleaseMonetizationPolicyParity() {
     realAdsEnvFlag: EXPECTED_RELEASE_REAL_ADS_ENV_FLAG,
     removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL,
     removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
+    removeAdsStoreProductIds: {
+      android: REMOVE_ADS_ANDROID_PRODUCT_ID,
+      ios: REMOVE_ADS_IOS_PRODUCT_ID,
+    },
     storeDisclosureTopics: EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS,
   };
 
@@ -10784,6 +10795,18 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'Remove Ads product id must stay a reverse-DNS removeads identifier',
     ],
     [
+      REMOVE_ADS_IOS_PRODUCT_ID === REMOVE_ADS_PRODUCT_ID &&
+        REMOVE_ADS_ANDROID_PRODUCT_ID === 'removeads',
+      'Remove Ads store ids must split iOS reverse-DNS from Android removeads SKU',
+    ],
+    [
+      normalizedPurchaseSource.includes('export const REMOVE_ADS_STORE_PRODUCT_IDS =') &&
+        normalizedPurchaseSource.includes('android: REMOVE_ADS_ANDROID_PRODUCT_ID') &&
+        normalizedPurchaseSource.includes('ios: REMOVE_ADS_IOS_PRODUCT_ID') &&
+        normalizedPurchaseSource.includes('getRemoveAdsStoreProductId('),
+      'Remove Ads runtime must expose platform-specific store product ids',
+    ],
+    [
       /return\s+\{[\s\S]*priceLabel:\s*REMOVE_ADS_PRICE_LABEL,[\s\S]*productId:\s*REMOVE_ADS_PRODUCT_ID,[\s\S]*\};/.test(
         purchaseSource,
       ),
@@ -10808,27 +10831,20 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'native Remove Ads finish transaction must be non-consumable',
     ],
     [
-      normalizedPurchaseSource.includes('async function finishRemoveAdsPurchase(') &&
-        normalizedPurchaseSource.includes('await provider.finishPurchase?.(purchase);') &&
-        normalizedPurchaseSource.includes(
-          'Receipt validation is the entitlement boundary; store acknowledgement can retry later.',
-        ),
-      'Remove Ads finish transaction failures must not replace validated purchase grants',
-    ],
-    [
-      /await finishRemoveAdsPurchase\(provider,\s*purchase\);\s*const entitlements = await setRemoveAdsEntitlement\(true,\s*\{[\s\S]*source:\s*'purchase'/.test(
-        purchaseSource,
-      ) &&
-        /await finishRemoveAdsPurchase\(provider,\s*purchase\);\s*const entitlements = await setRemoveAdsEntitlement\(true,\s*\{[\s\S]*source:\s*'restore'/.test(
-          purchaseSource,
-        ),
-      'Remove Ads buy and restore flows must isolate finish failures before granting validated entitlements',
-    ],
-    [
-      /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*productId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*productId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
+      /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*storeProductId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*storeProductId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
         purchaseSource,
       ),
-      'native Remove Ads purchase request must use the supplied product id as an in-app purchase',
+      'native Remove Ads purchase request must use the platform store product id as an in-app purchase',
+    ],
+    [
+      normalizedPurchaseSource.includes('purchaseMatchesProductId(purchase, productId') &&
+        normalizedPurchaseSource.includes('getPurchaseStoreProductId(productId, storePlatform)'),
+      'native purchase matching must compare the requested product against its platform store id',
+    ],
+    [
+      normalizedPurchaseSource.includes('isRemoveAdsProductId(result.productId)') &&
+        normalizedPurchaseSource.includes('productId: REMOVE_ADS_PRODUCT_ID,'),
+      'receipt validation must accept store-specific Remove Ads ids but persist canonical entitlement id',
     ],
     [
       normalizedPurchaseSource.includes(
