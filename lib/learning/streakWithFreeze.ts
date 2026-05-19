@@ -69,10 +69,7 @@ function previousDayKey(dayKey: string): string {
  * Refill the freeze stockpile if at least one week has passed since the last
  * earn. Pure — returns a new state, does not mutate.
  */
-export function refillFreezes(
-  state: StreakFreezeState,
-  now: Date = new Date(),
-): StreakFreezeState {
+export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
   const currentWeekStart = startOfWeek(now);
   const lastEarnedDate = new Date(`${state.lastEarnedAt}T00:00:00.000Z`);
   const weeksSince = Math.floor(
@@ -121,9 +118,7 @@ export interface StreakWithFreezeResult {
  *
  * Pure function — returns new state, does not mutate.
  */
-export function calculateStreakWithFreeze(
-  input: StreakWithFreezeInput,
-): StreakWithFreezeResult {
+export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakWithFreezeResult {
   const refilled = refillFreezes(input.freezeState, input.now ?? new Date());
   const today = input.today ?? getLocalDateKey(input.now ?? new Date());
   const activeSet = new Set(input.activeDayKeys.map((d) => d.slice(0, 10)));
@@ -176,6 +171,6 @@ export function freezeBannerCopy(
 ): string | null {
   if (result.rescuedThisRun.length === 0) return null;
   return language === 'sv'
-    ? `Strecket räddat — du har ${result.freezeState.available} fryser kvar.`
+    ? `Sviten är räddad — ${result.freezeState.available} svitskydd kvar.`
     : `Streak protected — ${result.freezeState.available} freezes left.`;
 }
