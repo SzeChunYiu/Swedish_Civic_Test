@@ -98,7 +98,18 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
   );
 }
 
-function writeAllReadyEvidence(evidencePath, overrides = {}) {
+function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
+  const releaseScopeOverride =
+    options.includeReleaseScopeOverride === false
+      ? {}
+      : {
+          'release-scope-v11': {
+            status: 'READY',
+            evidence:
+              'Operator approved v1.1 foundations before v1.0 Remove Ads closure for this release-preflight fixture.',
+          },
+        };
+
   fs.writeFileSync(
     evidencePath,
     JSON.stringify(
@@ -157,6 +168,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}) {
             evidence:
               'TestFlight build 100 processing complete; Google Play internal track URL https://play.google.com/console/internal version code 100 tester group qa; production submission ID ios-submit-100 and android-submit-100; post-launch report https://example.com/monitoring/v1-week1 recorded.',
           },
+          ...releaseScopeOverride,
           ...overrides,
         },
       },
@@ -901,6 +913,54 @@ test('release preflight fails closed on external launch blockers', () => {
   const blocked = report.gates.filter((gate) => gate.status === 'BLOCKED');
   assert.ok(blocked.length >= 5, 'external blockers should remain explicit');
   assert.match(report.nextActions.join('\n'), /Expo\/EAS/i);
+});
+
+test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is red', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-v11-scope-red-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+  assert.equal(scopeGate.status, 'BLOCKED');
+  assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
+  assert.match(scopeGate.evidence, /tests\/v1-1-/i);
+  assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is missing/i);
+  assert.match(scopeGate.nextAction, /test -f lib\/monetization\/purchases\.ts/);
+  assert.match(scopeGate.nextAction, /test -f reports\/release-ads-iap-device-qa\.md/);
+});
+
+test('release preflight allows v1.1 surfaces only with explicit operator override evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-v11-scope-override-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 0,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+  assert.equal(scopeGate.status, 'READY');
+  assert.match(scopeGate.evidence, /Operator override recorded/i);
+  assert.match(scopeGate.evidence, /v1\.1 foundations/i);
+  assert.match(scopeGate.evidence, /Remove Ads/i);
 });
 
 test('release preflight blocks local release-owner approval evidence with unresolved blockers', () => {
