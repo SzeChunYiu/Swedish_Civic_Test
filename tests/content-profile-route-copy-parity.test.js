@@ -47,6 +47,33 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /Edit goal, language, and audio/);
 });
 
+test('profile premium banner has distinct paid-state copy and recovery action', () => {
+  const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  const bannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+    'utf8',
+  );
+
+  assert.match(profileSource, /\{entitlementsReady \? \(\s*<PremiumBanner/);
+  assert.match(profileSource, /entitlements=\{monetizationEntitlements\}/);
+  assert.match(bannerSource, /bodyActive:/);
+  assert.match(bannerSource, /bodyIdle: \(price\) =>/);
+  assert.match(bannerSource, /Purchase confirmed\. Study ads are disabled on this device/);
+  assert.match(bannerSource, /Köpet är bekräftat\. Studieannonser är avstängda/);
+  assert.match(
+    bannerSource,
+    /\{adsDisabled \? copy\.bodyActive : copy\.bodyIdle\(REMOVE_ADS_PRICE_LABEL\)\}/,
+  );
+  assert.match(
+    bannerSource,
+    /\{!adsDisabled \? \(\s*<Button[\s\S]*copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*\) : null\}/,
+  );
+  assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
+  assert.match(bannerSource, /status === 'restored' \? 'restored' : 'purchased'/);
+  assert.doesNotMatch(bannerSource, /adsDisabled \? copy\.bodyIdle/);
+  assert.doesNotMatch(bannerSource, /activeAction !== null \|\| adsDisabled/);
+});
+
 test('profile study setup card owns the localized settings shortcut', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
   const settingsLinks = source.match(/href="\/settings"/g) ?? [];

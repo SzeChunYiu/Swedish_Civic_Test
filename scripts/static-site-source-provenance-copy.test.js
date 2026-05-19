@@ -59,6 +59,42 @@ function appTranslationValues(appSource, includeKey) {
   return values;
 }
 
+function englishTranslationMap(appSource) {
+  const englishMatch = appSource.match(/en:\s*{([\s\S]*?)\n\s*},\n\s*sv:/);
+  assert.ok(englishMatch, 'static English dictionary should be present');
+
+  const values = new Map();
+  const entryPattern = /"([^"]+)": "((?:\\.|[^"\\])*)"/g;
+  let match;
+  while ((match = entryPattern.exec(englishMatch[1]))) {
+    const [, key, rawValue] = match;
+    values.set(key, JSON.parse(`"${rawValue}"`));
+  }
+  return values;
+}
+
+function normalizeInlineHtml(value) {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
+function staticFallbackI18nValues(indexHtml, keyPrefix) {
+  const values = new Map();
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
+
+  let match;
+  while ((match = elementPattern.exec(indexHtml))) {
+    const [, , key, rawValue] = match;
+    if (key.startsWith(keyPrefix)) values.set(key, normalizeInlineHtml(rawValue));
+  }
+  return values;
+}
+
+function staticFaqSection(indexHtml) {
+  const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
+  assert.ok(faqMatch, 'static FAQ fallback section should be present');
+  return faqMatch[0];
+}
+
 const unsupportedPracticalTestClaimPatterns = [
   phrasePattern('Format of ', 'the real test'),
   phrasePattern('multiple-choice ', 'and timed'),
@@ -144,6 +180,30 @@ test('static source provenance copy rejects unshipped external source families',
     /Primary sources\s+8/i,
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+});
+
+test('static FAQ no-JS fallback mirrors the English dictionary', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+  const englishTranslations = englishTranslationMap(appSource);
+  const faqDictionaryEntries = Array.from(englishTranslations.entries())
+    .filter(([key]) => key.startsWith('faq.'))
+    .map(([key, value]) => [key, normalizeInlineHtml(value)]);
+  const faqFallback = staticFallbackI18nValues(staticFaqSection(indexHtml), 'faq.');
+  const faqFallbackEntries = Array.from(faqFallback.entries());
+
+  assert.deepEqual(
+    faqFallbackEntries.map(([key]) => key).sort(),
+    faqDictionaryEntries.map(([key]) => key).sort(),
+  );
+
+  for (const [key, expectedValue] of faqDictionaryEntries) {
+    assert.equal(
+      faqFallback.get(key),
+      expectedValue,
+      `${key} no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
 });
 
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
