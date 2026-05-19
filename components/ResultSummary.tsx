@@ -144,28 +144,8 @@ export function ResultSummary({
       : status === 'review'
         ? styles.reviewFill
         : styles.neutralFill;
-  const actionButtons = actions?.length ? (
-    <View style={styles.actions}>
-      {actions.map((action) => (
-        <Button
-          accessibilityLabel={action.accessibilityLabel ?? action.label}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: action.disabled }}
-          disabled={action.disabled}
-          key={action.label}
-          languageOverride={language}
-          onPress={action.onPress}
-          style={styles.action}
-          testID={action.testID}
-          variant={action.variant ?? 'secondary'}
-        >
-          {action.label}
-        </Button>
-      ))}
-    </View>
-  ) : null;
 
-  const summarySurface = (
+  return (
     <Surface
       accessibilityLabel={
         accessibilityLabel ??
@@ -221,23 +201,32 @@ export function ResultSummary({
           </View>
         ))}
       </View>
+
+      {actions?.length ? (
+        <View style={styles.actions}>
+          {actions.map((action) => (
+            <Button
+              accessibilityLabel={action.accessibilityLabel ?? action.label}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: action.disabled }}
+              disabled={action.disabled}
+              key={action.label}
+              languageOverride={language}
+              onPress={action.onPress}
+              style={styles.action}
+              testID={action.testID}
+              variant={action.variant ?? 'secondary'}
+            >
+              {action.label}
+            </Button>
+          ))}
+        </View>
+      ) : null}
     </Surface>
-  );
-
-  if (!actionButtons) return summarySurface;
-
-  return (
-    <View style={styles.container}>
-      {summarySurface}
-      {actionButtons}
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: space[1],
-  },
   card: {
     gap: space[1.5],
     padding: space[2.25],
