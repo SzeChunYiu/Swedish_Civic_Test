@@ -83,6 +83,59 @@ function assertReachableBox(box, label) {
   assert.ok(box.right <= 390, `${label} should fit inside the 390px viewport`);
 }
 
+function readSiteFile(relativePath) {
+  return fs.readFileSync(path.join(siteRoot, relativePath), 'utf8');
+}
+
+function readProductionSiteSurface() {
+  return fs
+    .readdirSync(siteRoot)
+    .filter((fileName) => /\.(?:css|html|js)$/.test(fileName))
+    .map((fileName) => readSiteFile(fileName))
+    .join('\n');
+}
+
+function getStatus(url) {
+  return new Promise((resolve, reject) => {
+    http
+      .get(url, (response) => {
+        response.resume();
+        response.on('end', () => resolve(response.statusCode));
+      })
+      .on('error', reject);
+  });
+}
+
+test('static production site excludes dev Tweaks assets', async () => {
+  const index = readSiteFile('index.html');
+  const productionSurface = readProductionSiteSurface();
+
+  ['tweaks.jsx', 'tweaks-panel.jsx'].forEach((fileName) => {
+    assert.equal(fs.existsSync(path.join(siteRoot, fileName)), false, `${fileName} must not ship`);
+  });
+
+  [
+    /type=["']text\/babel["']/i,
+    /react\.development\.js/i,
+    /react-dom\.development\.js/i,
+    /@babel\/standalone/i,
+    /tweaks-panel\.jsx/i,
+    /tweaks\.jsx/i,
+  ].forEach((pattern) => assert.doesNotMatch(index, pattern));
+
+  [/\btwk-panel\b/i, /\bTweaks\b/, /Clear localStorage/, /\bNo ads\b/].forEach((pattern) =>
+    assert.doesNotMatch(productionSurface, pattern),
+  );
+
+  const server = await createStaticServer();
+  try {
+    assert.equal(await getStatus(`${server.url}/tweaks.jsx`), 404);
+    assert.equal(await getStatus(`${server.url}/tweaks-panel.jsx`), 404);
+  } finally {
+    await server.close();
+  }
+});
+
 test('static mobile topbar reaches key routes and settings without horizontal overflow', async () => {
   const server = await createStaticServer();
   const browser = await chromium.launch({
