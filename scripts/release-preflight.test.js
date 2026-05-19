@@ -151,7 +151,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
           'public-urls': {
             status: 'READY',
             evidence:
-              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ verified over HTTPS and entered in both store records.',
+              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/, Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/, and app-ads.txt URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt verified over HTTPS.',
           },
           'device-screenshots': {
             status: 'READY',
@@ -295,9 +295,9 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
           },
           {
             id: 'public-urls',
-            label: 'Public support and privacy URLs',
+            label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
-            evidence: 'Support and Privacy Policy URLs returned HTTP 200.',
+            evidence: 'Support, Privacy Policy, and app-ads URLs returned HTTP 200.',
             nextAction: 'Enter URLs in both store records.',
           },
         ],
@@ -358,7 +358,7 @@ test('release completion audit command maps objective to preflight evidence befo
           },
           {
             id: 'public-urls',
-            label: 'Public support and privacy URLs',
+            label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
             evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
@@ -421,7 +421,7 @@ test('release issue update draft command writes tracker-ready status comment', (
           },
           {
             id: 'public-urls',
-            label: 'Public support and privacy URLs',
+            label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
             evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',

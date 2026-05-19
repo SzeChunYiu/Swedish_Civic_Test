@@ -10,6 +10,7 @@ const skipExternalChecks = /^(1|true|yes)$/i.test(
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const appAdsUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
   : [supportUrl, privacyUrl];
@@ -146,6 +147,7 @@ const expectedPublicUrlEvidenceRequirements = {
   'public-urls': [
     ['expected Support URL', supportUrl],
     ['expected Privacy Policy URL', privacyUrl],
+    ['expected app-ads.txt URL', appAdsUrl],
   ],
 };
 
@@ -1316,15 +1318,16 @@ function publicUrlsGate(manualEvidence) {
   const manualGate = evidenceGate(
     manualEvidence,
     'public-urls',
-    'Public support and privacy URLs',
-    'Static pages exist locally, but no hosted HTTPS URL evidence is recorded.',
-    'Host the static pages, verify public HTTPS access, and enter URLs in both store records.',
+    'Public support, privacy, and app-ads URLs',
+    'Static pages/files exist locally, but no hosted HTTPS URL evidence is recorded.',
+    'Host the static pages and app-ads file, verify public HTTPS access, and enter support/privacy URLs in both store records.',
     {
       requiredArtifactMissing:
         exists('publishing/public-site/support/index.html') &&
-        exists('publishing/public-site/privacy/index.html')
+        exists('publishing/public-site/privacy/index.html') &&
+        exists('publishing/public-site/app-ads.txt')
           ? null
-          : 'Local static support/privacy pages are missing from publishing/public-site.',
+          : 'Local static support/privacy/app-ads files are missing from publishing/public-site.',
     },
   );
 
@@ -1345,6 +1348,9 @@ function publicUrlsGate(manualEvidence) {
   const liveCheck = commandSucceeds(process.execPath, [
     'scripts/check-public-urls.js',
     ...publicUrls,
+    '--expect-app-ads-file',
+    appAdsUrl,
+    'publishing/public-site/app-ads.txt',
   ]);
   if (liveCheck.ok) {
     return gate(
