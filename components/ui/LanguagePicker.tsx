@@ -80,9 +80,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
 
       <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
         <Pressable
-          accessibilityLabel={copy.closeLabel}
-          accessibilityRole="button"
-          hitSlop={space[1]}
+          accessible={false}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
           onPress={() => setOpen(false)}
           style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
         >
@@ -93,7 +93,27 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
             onPress={(e) => e.stopPropagation()}
             style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
           >
-            <Text style={styles.title}>{copy.title}</Text>
+            <View style={styles.headerRow}>
+              <Text style={styles.title}>{copy.title}</Text>
+              <Pressable
+                accessibilityLabel={copy.closeLabel}
+                accessibilityRole="button"
+                hitSlop={space[1]}
+                onPress={() => setOpen(false)}
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  pressed ? styles.closeButtonPressed : null,
+                ]}
+              >
+                <Text
+                  accessibilityElementsHidden
+                  importantForAccessibility="no"
+                  style={styles.closeButtonText}
+                >
+                  ×
+                </Text>
+              </Pressable>
+            </View>
             <Text style={styles.subtitle}>{copy.subtitle}</Text>
             <ScrollView style={styles.list}>
               {locales.map((opt) => {
@@ -150,6 +170,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
     gap: space[0.5],
+    justifyContent: 'center',
+    minHeight: space[6],
+    minWidth: space[6],
     paddingHorizontal: space[1.25],
     paddingVertical: space[0.5],
   },
@@ -188,11 +211,36 @@ const styles = StyleSheet.create({
   cardPressed: {
     transform: [{ scale: motion.pressedScale }],
   },
+  headerRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space[1.5],
+    justifyContent: 'space-between',
+  },
   title: {
     color: colors.text,
+    flex: 1,
     fontFamily: typography.subHeading.fontFamily,
     fontSize: typography.subHeading.fontSize,
     fontWeight: typography.subHeading.fontWeight,
+  },
+  closeButton: {
+    alignItems: 'center',
+    borderRadius: radius.pill,
+    justifyContent: 'center',
+    minHeight: space[6],
+    minWidth: space[6],
+  },
+  closeButtonPressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  closeButtonText: {
+    color: colors.textMuted,
+    fontFamily: typography.bodyBold.fontFamily,
+    fontSize: typography.bodyBold.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyBold.lineHeight,
   },
   subtitle: {
     color: colors.textMuted,

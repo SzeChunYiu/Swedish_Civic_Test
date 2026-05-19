@@ -40,7 +40,36 @@ test('profile route shell copy stays keyed by the settings language', () => {
   );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
+  assert.match(source, /entitlementsReady/);
+  assert.match(source, /\{entitlementsReady \? \(\s*<PremiumBanner/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /Ändra mål, språk och ljud/);
+  assert.match(source, /Edit goal, language, and audio/);
+});
+
+test('profile study setup card owns the localized settings shortcut', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  const settingsLinks = source.match(/href="\/settings"/g) ?? [];
+  const studySetupStart = source.indexOf('<SectionHeader title={copy.studySetupTitle}');
+  const badgesStart = source.indexOf('<SectionHeader title={copy.badgesTitle}');
+  const studySetupCard = source.slice(studySetupStart, badgesStart);
+  const pillRowIndex = studySetupCard.indexOf('<View style={styles.pillRow}>');
+  const settingsLinkIndex = studySetupCard.indexOf('href="/settings"');
+  const premiumBannerIndex = source.indexOf('<PremiumBanner');
+
+  assert.equal(settingsLinks.length, 1);
+  assert.notEqual(studySetupStart, -1);
+  assert.notEqual(badgesStart, -1);
+  assert.ok(studySetupStart < badgesStart, 'study setup card should render before badges card');
+  assert.ok(pillRowIndex >= 0, 'study setup card should render daily-goal/language badges');
+  assert.ok(settingsLinkIndex > pillRowIndex, 'settings shortcut should render after setup badges');
+  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
+  assert.match(
+    studySetupCard,
+    /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.openSettings\}[\s\S]*<\/Button>/,
+  );
+  assert.doesNotMatch(source.slice(premiumBannerIndex), /href="\/settings"/);
+  assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
 });
 
 test('profile route copy parity rejects bypassing the settings language', () => {
@@ -125,4 +154,35 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
+});
+
+test('profile route copy parity rejects Remove Ads paywall pending bypass', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('{entitlementsReady ? (\\n        <PremiumBanner', '<PremiumBanner')
+      .replace('\\n      ) : null}', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /profile premium banner must fail closed while entitlements load/,
+  );
 });
