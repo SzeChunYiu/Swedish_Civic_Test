@@ -35,6 +35,8 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.nativeAdAssetDirectChildrenValidated, 5);
   assert.equal(summary.adPlacementRouteParityValidated, true);
+  assert.equal(summary.adCopySvRewardedPracticeExamCasesValidated, 7);
+  assert.equal(summary.adCopySvRewardedPracticeExamNaturalnessValidated, true);
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
     homeSource,
@@ -84,6 +86,36 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+});
+
+test('ad placement route parity rejects bare Swedish rewarded extra-exam ad copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/adCopy.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Annons för extra övningsprov', 'Annons för extra prov');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /rewarded_extra_exam Swedish ad placement label must say "Annons för extra övningsprov"|rewarded ad copy sources must not contain bare Swedish "extra prov" wording/,
+  );
 });
 
 test('ad placement parity keeps real ad unit env reads literal for web export', () => {
