@@ -29,8 +29,7 @@ import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
-import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswersForLocalDate } from '../../lib/learning/streaks';
+import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
@@ -510,7 +509,6 @@ export default function Screen() {
     questionProgress,
     questions,
     chapters,
-    mockExamSessions,
   });
   const readinessVerdict = copy.readinessVerdicts[readiness.verdict];
   const readinessDetails = copy.readinessDetails(
@@ -522,50 +520,6 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-  const dashboardProgress = useMemo(
-    () =>
-      buildDashboardProgressSnapshot({
-        answerDates,
-        dailyGoalAnswers,
-        mockExamSessions,
-        questionProgress,
-        totalXp,
-      }),
-    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
-  );
-  const dashboardQuestionChapterIndex = useMemo(
-    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
-    [],
-  );
-  const dashboard = useMemo(
-    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
-    [dashboardProgress, dashboardQuestionChapterIndex],
-  );
-  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
-  const guidedPathStages = useMemo(
-    () => buildGuidedPracticePathStages(copy, questionProgress),
-    [copy, questionProgress],
-  );
-  const guidedPathActiveStage =
-    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
-  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
-  const guidedPathCopy: GuidedPracticePathCopy = {
-    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
-      completedToday,
-      dailyGoalAnswers,
-    ),
-    dailyPracticeCta: copy.guidedPathDailyCta,
-    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
-    dailyPracticeTitle: copy.guidedPathDailyTitle,
-    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
-      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
-    ),
-    resumeCta: copy.guidedPathResumeCta,
-  };
-
-  useEffect(() => {
-    setStreakFreezeState(streakWithFreeze.freezeState);
-  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
 
   return (
     <ScreenShell
@@ -595,18 +549,6 @@ export default function Screen() {
           tone="accent"
         />
       </View>
-      <Link
-        accessibilityLabel={copy.dashboardAccessibilityLabel(dashboardSummaryLine)}
-        accessibilityRole="link"
-        href="/dashboard"
-        style={styles.dashboardLink}
-      >
-        <View style={styles.dashboardLinkContent}>
-          <Text style={styles.dashboardTitle}>{copy.dashboardTitle}</Text>
-          <Text style={styles.dashboardSummaryText}>{dashboardSummaryLine}</Text>
-          <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
-        </View>
-      </Link>
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -752,35 +694,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
-  },
-  dashboardLink: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    minHeight: space[6],
-    padding: space[2],
-    textDecorationLine: 'none',
-  },
-  dashboardLinkContent: {
-    gap: space[0.5],
-  },
-  dashboardTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  dashboardSummaryText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  dashboardCta: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
   },
   readinessCard: {
     gap: space[1.5],

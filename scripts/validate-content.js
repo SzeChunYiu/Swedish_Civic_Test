@@ -970,38 +970,6 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'computeReadinessFromQuestionProgress({',
     'home route must derive the readiness indicator from stored progress',
   ],
-  ['const guidedPathChapterGroups = [', 'home route must define the guided path chapter groups'],
-  [
-    "{ id: 'beginner', chapterIds: ['ch01', 'ch02', 'ch03', 'ch04'] }",
-    'home route guided path must start with chapters 1-4',
-  ],
-  [
-    "{ id: 'builder', chapterIds: ['ch05', 'ch06', 'ch07', 'ch08', 'ch09'] }",
-    'home route guided path must continue through chapters 5-9',
-  ],
-  [
-    "{ id: 'advanced', chapterIds: ['ch10', 'ch11', 'ch12', 'ch13'] }",
-    'home route guided path must finish with chapters 10-13',
-  ],
-  [
-    'buildGuidedPracticePathStages(copy, questionProgress)',
-    'home route must derive guided path progress from stored answers',
-  ],
-  ['resumeHref={guidedPathResumeHref}', 'home route guided path must provide a resume destination'],
-  ['cta: stageCopy.cta(isCompleted)', 'home route guided path must provide stage-level CTA copy'],
-  [
-    'ctaAccessibilityLabel: stageCopy.ctaAccessibilityLabel(stageCopy.title, isCompleted)',
-    'home route guided path must provide localized stage CTA accessibility copy',
-  ],
-  [
-    'dailyProgress={progress}',
-    'home route guided path must reuse the daily-practice progress signal',
-  ],
-  [
-    'const mockExamSessions = useProgressStore((state) => state.mockExamSessions);',
-    'home route must read persisted mock exam scores',
-  ],
-  ['mockExamSessions,', 'home route must feed persisted mock exam scores into readiness'],
   [
     'const readinessVerdict = copy.readinessVerdicts[readiness.verdict];',
     'home route readiness verdict must use localized copy',
