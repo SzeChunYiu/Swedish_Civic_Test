@@ -1,4 +1,4 @@
-/* Sveriges Medborgartest — Tweaks panel
+/* Almost Swedish — Tweaks panel
    Swedish palette presets + slogan variants + display knobs.
 */
 
