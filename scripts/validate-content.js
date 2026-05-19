@@ -6156,6 +6156,7 @@ let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
+let nativeAdAssetDirectChildrenValidated = 0;
 let adPlacementRouteParityValidated = false;
 let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
@@ -6916,6 +6917,49 @@ function validateAdPlacementRouteParity() {
       if (!nativeAdCardNativeSource.includes('NativeAsset')) {
         reject('NativeAdCard native placement must register visible native ad assets');
         routeIsValid = false;
+      }
+      const expectedNativeAdAssetChildren = {
+        ICON: 'Image',
+        HEADLINE: 'Text',
+        BODY: 'Text',
+        ADVERTISER: 'Text',
+        CALL_TO_ACTION: 'Text',
+      };
+      const nativeAssetBlocks = new Map(
+        Array.from(
+          nativeAdCardNativeSource.matchAll(
+            /<NativeAsset\s+assetType=\{NativeAssetType\.([A-Z_]+)\}>\s*([\s\S]*?)\s*<\/NativeAsset>/g,
+          ),
+          ([, assetType, childSource]) => [assetType, childSource.trim()],
+        ),
+      );
+
+      for (const [assetType, directChild] of Object.entries(expectedNativeAdAssetChildren)) {
+        const childSource = nativeAssetBlocks.get(assetType);
+
+        if (!childSource) {
+          reject(`NativeAdCard native placement must register ${assetType} as a NativeAsset`);
+          routeIsValid = false;
+          continue;
+        }
+
+        if (new RegExp(`^<(?:View|Pressable|Touchable\\w*)\\b`).test(childSource)) {
+          reject(
+            `NativeAdCard native ${assetType} asset must not wrap its registered child in a touch/view container`,
+          );
+          routeIsValid = false;
+          continue;
+        }
+
+        if (!new RegExp(`^<${directChild}\\b`).test(childSource)) {
+          reject(
+            `NativeAdCard native ${assetType} asset must have <${directChild}> as its direct child`,
+          );
+          routeIsValid = false;
+          continue;
+        }
+
+        nativeAdAssetDirectChildrenValidated += 1;
       }
       if (
         !/<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/.test(
@@ -14667,6 +14711,7 @@ console.log(
       tabNavigationParityValidated,
       adPlacementRoutesValidated,
       noAdRoutesValidated,
+      nativeAdAssetDirectChildrenValidated,
       adPlacementRouteParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
