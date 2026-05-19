@@ -56,6 +56,25 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
           );
         }
         if (
+          tagName === 'Pressable' &&
+          (tag.includes('accessibilityRole="switch"') ||
+            /accessibilityState=\{\{[^}]*checked:/.test(tag)) &&
+          !tag.includes('aria-checked=')
+        ) {
+          offenders.push(
+            `${relPath}:${index + 1}: missing aria-checked mirror for web false state: ${line.trim()}`,
+          );
+        }
+        if (
+          tagName === 'Pressable' &&
+          /accessibilityState=\{\{[^}]*expanded:/.test(tag) &&
+          !tag.includes('aria-expanded=')
+        ) {
+          offenders.push(
+            `${relPath}:${index + 1}: missing aria-expanded mirror for web false state: ${line.trim()}`,
+          );
+        }
+        if (
           (tag.includes('disabled=') || tag.includes('Selected') || tag.includes('Active')) &&
           !tag.includes('accessibilityState=')
         ) {

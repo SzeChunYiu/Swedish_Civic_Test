@@ -64,6 +64,7 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
     <View style={styles.row}>
       <LanguagePicker />
       <Pressable
+        aria-checked={audioEnabled}
         accessibilityRole="switch"
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
         accessibilityState={{ checked: audioEnabled }}
