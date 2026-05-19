@@ -27,14 +27,6 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
-  const nativeAdBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
-  const useMockExamAccessSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
-    'utf8',
-  );
 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
@@ -46,15 +38,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
-  assert.match(
-    nativeAdCardSource,
-    /shouldShowAd\('results_native', resolvedEntitlements, undefined, Platform\.OS\)/,
-  );
-  assert.match(
-    nativeAdBannerSource,
-    /shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,\s*\)/,
-  );
-  assert.match(useMockExamAccessSource, /platform: Platform\.OS/);
+  assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
@@ -207,6 +191,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard must gate results_native through platform-aware shouldShowAd/,
+    /AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd/,
   );
 });

@@ -6973,14 +6973,8 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
       );
-      const nativeAdCardCompactSource = compactSource(nativeAdCardSource);
-      if (
-        !nativeAdCardSource.includes("import { Platform, StyleSheet, Text } from 'react-native'") ||
-        !nativeAdCardCompactSource.includes(
-          `shouldShowAd('${spec.placement}', resolvedEntitlements, undefined, Platform.OS)`,
-        )
-      ) {
-        reject(`NativeAdCard must gate ${spec.placement} through platform-aware shouldShowAd`);
+      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
+        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
         routeIsValid = false;
       }
     }

@@ -23,7 +23,6 @@ export function LaunchPopupAd({
         alreadyShownThisLaunch: launchPopupShownThisRuntime,
         consentDecision: mobileAdsConsent.decision.consentDecision,
         entitlements,
-        platform: Platform.OS,
       })
     ) {
       return undefined;
