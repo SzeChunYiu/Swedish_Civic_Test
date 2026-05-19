@@ -110,6 +110,11 @@ export const expoRouterRootStackScreens = [
     purpose: 'Search route registered in the root stack',
   },
   {
+    name: 'dashboard',
+    file: 'app/dashboard.tsx',
+    purpose: 'Progress dashboard route registered in the root stack',
+  },
+  {
     name: '+not-found',
     file: 'app/+not-found.tsx',
     purpose: 'Unknown-route recovery screen registered in the root stack',
@@ -197,6 +202,7 @@ export const expoRouterRootLayoutGlobalPlacements = [
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
   '/about-the-test',
+  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -242,8 +248,20 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/about-the-test',
   },
   {
+    input: '/dashboard',
+    expectedPath: '/dashboard',
+  },
+  {
+    input: '/dashboard?from=home',
+    expectedPath: '/dashboard?from=home',
+  },
+  {
     input: 'almost-swedish://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
+  },
+  {
+    input: 'almost-swedish://app/dashboard',
+    expectedPath: '/dashboard',
   },
   {
     input: 'almost-swedish://app/about-the-test',
