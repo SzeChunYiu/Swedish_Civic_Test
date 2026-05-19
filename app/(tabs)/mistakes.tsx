@@ -148,9 +148,6 @@ function renderListHeader(copy: MistakesCopy) {
 
       <NativeAdCard />
       <RemoveAdsPlacementCta placement="results_native" />
-    </View>
-  );
-}
 
 export default function Screen() {
   const router = useRouter();

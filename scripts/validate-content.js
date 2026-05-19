@@ -693,7 +693,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Ändra mål, språk och ljud',
+    'Öppna inställningar',
+    'Ta bort annonser är markerat här så att knapparna för köp och återställning är lätta att hitta.',
     'Första övningen',
     'Nivå 2',
     'Misstagsrepetition',
@@ -717,10 +718,12 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Edit goal, language, and audio',
+    'Open settings',
+    'Remove Ads is highlighted here so the buy and restore buttons are easy to find.',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+  ['useLocalSearchParams', 'profile route must read focus query params for deep-linked paywall'],
   ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
   ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
   [
@@ -765,6 +768,9 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'formatBadges(badges, language, copy.noBadges)',
     'profile badge summary must use localized badge and empty-state copy',
   ],
+  ["focus === 'remove-ads'", 'profile route must recognize the Remove Ads focus query'],
+  ['nativeID="remove-ads-paywall"', 'profile route must expose a stable Remove Ads target'],
+  ['{copy.removeAdsFocusCue}', 'profile route must render localized Remove Ads focus copy'],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
@@ -1365,18 +1371,21 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     component: 'AdBanner',
     placement: 'chapter_list_banner',
     pattern: /<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
+    ctaPattern: /<RemoveAdsPlacementCta\s+placement="chapter_list_banner"\s+\/>/,
   },
   {
     file: 'app/(tabs)/practice.tsx',
     component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<PracticeInterstitialAd\s+showKey=\{practiceInterstitialShowKey\}\s+\/>/,
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    ctaPattern: /<RemoveAdsPlacementCta\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
     component: 'NativeAdCard',
     placement: 'results_native',
     pattern: /<NativeAdCard\s+\/>/,
+    ctaPattern: /<RemoveAdsPlacementCta\s+placement="results_native"\s+\/>/,
   },
 ];
 const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
@@ -8090,23 +8099,13 @@ function validateAdPlacementRouteParity() {
       routeIsValid = false;
     }
 
-    if (spec.file === 'app/(tabs)/home.tsx') {
-      if (!source.includes('entitlementsReady: monetizationEntitlementsReady')) {
-        reject('Home must read entitlementsReady before rendering monetization surfaces');
+    if (spec.ctaPattern) {
+      if (!source.includes('components/monetization/RemoveAdsPlacementCta')) {
+        reject(`${spec.file} must import RemoveAdsPlacementCta beside study ad placements`);
         routeIsValid = false;
       }
-      if (
-        !/monetizationEntitlementsReady\s*&&\s*!monetizationEntitlements\.adsDisabled/.test(source)
-      ) {
-        reject('Home pricing wedge must stay hidden until Remove Ads entitlements resolve');
-        routeIsValid = false;
-      }
-      if (!/\{monetizationEntitlementsReady\s*\?\s*\(\s*<PremiumBanner/.test(source)) {
-        reject('Home paywall must stay hidden until Remove Ads entitlements resolve');
-        routeIsValid = false;
-      }
-      if (/<AdBanner\s+entitlements=\{monetizationEntitlements\}/.test(source)) {
-        reject('Home ad banner must not receive initial free entitlements before they resolve');
+      if (!spec.ctaPattern.test(source)) {
+        reject(`${spec.file} must render RemoveAdsPlacementCta placement ${spec.placement}`);
         routeIsValid = false;
       }
     }
@@ -8425,7 +8424,7 @@ function validateAdPlacementRouteParity() {
       continue;
     }
 
-    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd/.test(source)) {
+    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd|RemoveAdsPlacementCta/.test(source)) {
       reject(`${file} must not import or render ad components`);
       routeIsValid = false;
     }

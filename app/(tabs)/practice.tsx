@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
-import { PracticeInterstitialAd } from '../../components/monetization/PracticeInterstitialAd';
+import { AdBanner } from '../../components/monetization/AdBanner';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
@@ -658,7 +658,7 @@ export default function Screen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <PracticeInterstitialAd showKey={practiceInterstitialShowKey} />
+          <AdBanner placement="quiz_completed_interstitial" />
           <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Button

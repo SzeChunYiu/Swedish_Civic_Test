@@ -1794,6 +1794,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     'utf8',
   );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
@@ -1853,23 +1857,29 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /minWidth: space\[15\]/);
   assert.doesNotMatch(paywallSource, /minWidth: 128/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
+  assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(placementCtaSource, /shouldShowAd\(placement, resolvedEntitlements\)/);
+  assert.match(placementCtaSource, /copy\.body\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
+  assert.match(placementCtaSource, /Open Remove Ads/);
+  assert.match(placementCtaSource, /Öppna Ta bort annonser/);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
     homeSource,
     /monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled/,
   );
+  assert.match(learnSource, /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>/);
   assert.match(
-    homeSource,
-    /\{monetizationEntitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>[\s\S]*\) : null\}[\s\S]*<AdBanner placement="home_banner" \/>/,
+    practiceSource,
+    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>/,
   );
-  assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
+  assert.match(mistakesSource, /<RemoveAdsPlacementCta placement="results_native" \/>/);
+  assert.doesNotMatch(examSource, /RemoveAdsPlacementCta/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);
-  assert.match(profileSource, /entitlementsReady/);
-  assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
+  assert.match(profileSource, /useLocalSearchParams/);
+  assert.match(profileSource, /focus === 'remove-ads'/);
   assert.match(profileSource, /nativeID="remove-ads-paywall"/);
-  assert.match(profileSource, /\{removeAdsFocused \? removeAdsPaywall : null\}/);
-  assert.match(profileSource, /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });

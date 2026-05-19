@@ -19,14 +19,25 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 42);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 38);
   assert.equal(summary.profileRouteCopyParityValidated, true);
+  assert.match(source, /useLocalSearchParams/);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
   assert.match(source, /const localizedBadgeTitles: Record<AppLanguage, Record<string, string>>/);
   assert.match(source, /const copy = profileCopy\[language\]/);
+  assert.match(source, /focus === 'remove-ads'/);
+  assert.match(source, /nativeID="remove-ads-paywall"/);
   assert.match(source, /Framsteg utan konto/);
+  assert.match(
+    source,
+    /Ta bort annonser är markerat här så att knapparna för köp och återställning är lätta att hitta\./,
+  );
   assert.match(source, /Progress without an account/);
+  assert.match(
+    source,
+    /Remove Ads is highlighted here so the buy and restore buttons are easy to find\./,
+  );
   assert.match(source, /Första övningen/);
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);

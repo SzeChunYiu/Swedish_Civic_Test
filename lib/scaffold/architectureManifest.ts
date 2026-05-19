@@ -329,8 +329,7 @@ export const architectureMonetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
-  'components/monetization/PracticeInterstitialAd.native.tsx',
-  'components/monetization/PracticeInterstitialAd.tsx',
+  'components/monetization/RemoveAdsPlacementCta.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
@@ -350,7 +349,9 @@ export const architectureRemoveAdsRuntimeFiles = [
   'components/monetization/PracticeInterstitialAd.native.tsx',
   'components/monetization/PracticeInterstitialAd.tsx',
   'app/(tabs)/home.tsx',
+  'app/(tabs)/learn.tsx',
   'app/(tabs)/practice.tsx',
+  'app/(tabs)/mistakes.tsx',
   'app/(tabs)/profile.tsx',
 ] as const;
 

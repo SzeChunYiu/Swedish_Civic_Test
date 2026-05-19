@@ -1,5 +1,4 @@
 import { Link, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceActionLink } from '../../components/compliance/ComplianceActionLink';
@@ -50,7 +49,6 @@ type ProfileCopy = {
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
   removeAdsFocusCue: string;
-  streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -79,8 +77,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettings: 'Ändra mål, språk och ljud',
     openSettingsAccessibilityLabel: 'Ändra mål, språk och ljud',
     questionsHelper: 'frågor',
-    removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
-    streakFreezeBadge: 'Svitskydd',
+    removeAdsFocusCue:
+      'Ta bort annonser är markerat här så att knapparna för köp och återställning är lätta att hitta.',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -108,8 +106,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettings: 'Edit goal, language, and audio',
     openSettingsAccessibilityLabel: 'Edit goal, language, and audio',
     questionsHelper: 'questions',
-    removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
-    streakFreezeBadge: 'Streak freeze',
+    removeAdsFocusCue:
+      'Remove Ads is highlighted here so the buy and restore buttons are easy to find.',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -137,7 +135,6 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
   const removeAdsFocused = focus === 'remove-ads';
-  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
   const level = calculateLevel(totalXp);
   const streakWithFreeze = useMemo(
     () =>
@@ -162,22 +159,16 @@ export default function Screen() {
     currentStreak,
     level,
     wrongAnswerCount,
-  };
-  const badges = deriveBadges(badgeInput);
-  const unlockedBadgeIds = new Set(badges.map((badge) => badge.id));
-
-  useEffect(() => {
-    setStreakFreezeState(streakWithFreeze.freezeState);
-  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
-
-  const removeAdsPaywall = entitlementsReady ? (
+  });
+  const removeAdsPaywall = (
     <View
       nativeID="remove-ads-paywall"
-      testID="remove-ads-paywall"
-      style={[styles.removeAdsPaywall, removeAdsFocused ? styles.removeAdsPaywallFocused : null]}
+      style={[styles.removeAdsSection, removeAdsFocused ? styles.removeAdsFocused : null]}
     >
       {removeAdsFocused ? (
-        <Text style={styles.removeAdsFocusCue}>{copy.removeAdsFocusCue}</Text>
+        <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.removeAdsFocusCue}>
+          {copy.removeAdsFocusCue}
+        </Text>
       ) : null}
       <PremiumBanner
         entitlements={monetizationEntitlements}
@@ -186,10 +177,11 @@ export default function Screen() {
         runtimeOptions={purchaseRuntime}
       />
     </View>
-  ) : null;
+  );
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
+      {removeAdsFocused ? removeAdsPaywall : null}
       <View style={styles.statsRow}>
         <MetricCard label={copy.levelMetric} value={level} tone="blue" />
         <MetricCard label={copy.xpMetric} value={totalXp} />
@@ -269,14 +261,7 @@ export default function Screen() {
         </View>
       </Card>
 
-      {!removeAdsFocused ? removeAdsPaywall : null}
-      {entitlementsReady && proRuntimeScopeEnabled ? (
-        <ProPaywall
-          alreadyAdFree={monetizationEntitlements.adsDisabled}
-          language={language}
-          onEntitlementsChange={(nextEntitlements) => setMonetizationEntitlements(nextEntitlements)}
-        />
-      ) : null}
+      {removeAdsFocused ? null : removeAdsPaywall}
       <ComplianceLinks />
     </ScreenShell>
   );
@@ -324,6 +309,22 @@ const styles = StyleSheet.create({
   removeAdsFocusCue: {
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  removeAdsSection: {
+    gap: space[1],
+  },
+  removeAdsFocused: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space[1],
+  },
+  removeAdsFocusCue: {
+    color: colors.text,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
     lineHeight: typography.caption.lineHeight,
   },
   settingsLink: {
