@@ -16,7 +16,10 @@ import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
-import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
+import {
+  getCompletedQuestionIdsForQuestionBank,
+  getPracticeQuestionForSession,
+} from '../../lib/quiz/practiceFlow';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
@@ -149,9 +152,13 @@ export default function Screen() {
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
+  const visibleCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+    [completedQuestionIds, filteredQuestions],
+  );
   const rawQuestion = getPracticeQuestionForSession(
     filteredQuestions,
-    completedQuestionIds,
+    visibleCompletedQuestionIds,
     activeQuestionId,
   );
   const question = useMemo(
@@ -201,7 +208,9 @@ export default function Screen() {
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
+        <Text style={styles.meta}>
+          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
+        </Text>
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
