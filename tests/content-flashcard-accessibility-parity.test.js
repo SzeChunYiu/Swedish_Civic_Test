@@ -18,6 +18,7 @@ function parseValidationSummary() {
 test('learning Flashcard keeps prompt and answer accessibility in parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/learning/Flashcard.tsx'), 'utf8');
+  const learnRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
 
   assert.equal(summary.flashcardAccessibilityRulesValidated, 15);
   assert.equal(summary.flashcardAccessibilityParityValidated, true);
@@ -53,6 +54,14 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   assert.match(source, /\{copy\.answerHeader\}/);
   assert.match(source, /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.answer\}>\{answer\}<\/Text>/);
+  assert.match(
+    learnRoute,
+    /import \{ Flashcard \} from '..\/..\/components\/learning\/Flashcard';/,
+  );
+  assert.match(learnRoute, /<Flashcard/);
+  assert.match(learnRoute, /front=\{getFlashcardPrompt\(question, language\)\}/);
+  assert.match(learnRoute, /back=\{getFlashcardAnswer\(question, language\)\}/);
+  assert.match(learnRoute, /language=\{language\}/);
 });
 
 test('Flashcard Swedish copy naturalness rejects loan-word drift', () => {

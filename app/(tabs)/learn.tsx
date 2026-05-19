@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
+import { Flashcard } from '../../components/learning/Flashcard';
 import { ChapterCard } from '../../components/learning/ChapterCard';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
@@ -11,6 +12,7 @@ import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { PracticeQuestion } from '../../types/content';
 
 type ChapterLinkCopy = {
   contentQueued: string;
@@ -28,6 +30,8 @@ type ChapterLinkCopy = {
 
 type LearnRouteCopy = {
   eyebrow: string;
+  flashcardSectionSubtitle: string;
+  flashcardSectionTitle: string;
   sectionSubtitle: string;
   sectionTitle: string;
   subtitle: string;
@@ -42,6 +46,9 @@ type ChapterProgressCounts = {
 const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
   sv: {
     eyebrow: 'Studieväg',
+    flashcardSectionSubtitle:
+      'Tre källstödda kort från frågebanken. Läs frågan, säg svaret högt och jämför direkt.',
+    flashcardSectionTitle: 'Snabba flashkort',
     sectionSubtitle: 'Studera med källnära kapitel och öva sedan på samma material.',
     sectionTitle: '13 samhällsområden',
     subtitle: 'Varje kapitel visar omfång och lokal progression så att du kan fokusera studierna.',
@@ -49,6 +56,9 @@ const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
   },
   en: {
     eyebrow: 'Learning path',
+    flashcardSectionSubtitle:
+      'Three source-backed cards from the question bank. Read the prompt, answer aloud, then compare.',
+    flashcardSectionTitle: 'Quick flashcards',
     sectionSubtitle: 'Study in source-aligned chapters, then practice from the same material.',
     sectionTitle: '13 civic areas',
     subtitle:
@@ -56,6 +66,8 @@ const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
     title: 'Browse chapters with a clear next step',
   },
 };
+
+const FLASHCARD_PREVIEW_LIMIT = 3;
 
 const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
   sv: {
@@ -99,6 +111,20 @@ function buildChapterProgressById(completedQuestionIds: readonly string[]) {
   return progressById;
 }
 
+function getFlashcardPrompt(question: PracticeQuestion, language: AppLanguage) {
+  return language === 'en' ? question.questionEn : question.questionSv;
+}
+
+function getFlashcardAnswer(question: PracticeQuestion, language: AppLanguage) {
+  const answer = question.options.find((option) => option.id === question.correctOptionId);
+
+  if (!answer) {
+    return language === 'en' ? question.explanationEn : question.explanationSv;
+  }
+
+  return language === 'en' ? answer.textEn : answer.textSv;
+}
+
 function getChapterLinkAccessibilityLabel({
   nameSv,
   nameEn,
@@ -127,13 +153,25 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const routeCopy = learnRouteCopy[language];
   const copy = chapterLinkCopy[language];
-  const chapterProgressById = useMemo(
-    () => buildChapterProgressById(completedQuestionIds),
-    [completedQuestionIds],
-  );
+  const flashcardQuestions = questions.slice(0, FLASHCARD_PREVIEW_LIMIT);
 
   return (
     <ScreenShell eyebrow={routeCopy.eyebrow} title={routeCopy.title} subtitle={routeCopy.subtitle}>
+      <SectionHeader
+        title={routeCopy.flashcardSectionTitle}
+        subtitle={routeCopy.flashcardSectionSubtitle}
+      />
+      <View style={styles.flashcardDeck}>
+        {flashcardQuestions.map((question) => (
+          <Flashcard
+            key={question.id}
+            front={getFlashcardPrompt(question, language)}
+            back={getFlashcardAnswer(question, language)}
+            language={language}
+          />
+        ))}
+      </View>
+
       <SectionHeader title={routeCopy.sectionTitle} subtitle={routeCopy.sectionSubtitle} />
       <View style={styles.list}>
         {chapters.map((chapter) => {
@@ -176,6 +214,9 @@ export default function Screen() {
 }
 
 const styles = StyleSheet.create({
+  flashcardDeck: {
+    gap: space[1.5],
+  },
   list: {
     gap: space[1.5],
   },

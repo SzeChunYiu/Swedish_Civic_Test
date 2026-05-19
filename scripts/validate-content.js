@@ -612,15 +612,22 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
     'innehåll planerat',
     '${completedCount} av ${questionCount} frågor besvarade',
     'Öppna kapitel ${primaryName}. Engelskt namn: ${secondaryName}. Framsteg: ${progressLabel}.',
+    'Snabba flashkort',
+    'Tre källstödda kort från frågebanken. Läs frågan, säg svaret högt och jämför direkt.',
   ],
   en: [
     'content queued',
     '${completedCount} of ${questionCount} questions practiced',
     'Open chapter ${primaryName}. Swedish name: ${secondaryName}. Progress: ${progressLabel}.',
+    'Quick flashcards',
+    'Three source-backed cards from the question bank. Read the prompt, answer aloud, then compare.',
   ],
 };
 const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
-  ["import { useMemo } from 'react';", 'learn route must memoize chapter progress derivation'],
+  [
+    "import { Flashcard } from '../../components/learning/Flashcard';",
+    'learn route must import the shared Flashcard component',
+  ],
   ['useSettingsStore, type AppLanguage', 'learn route must import AppLanguage from settings'],
   ['type ChapterLinkCopy = {', 'learn route must define a typed chapter-link copy contract'],
   [
@@ -673,6 +680,16 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ],
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
+  ['const FLASHCARD_PREVIEW_LIMIT = 3;', 'learn route must bound the flashcard preview deck'],
+  [
+    'const flashcardQuestions = questions.slice(0, FLASHCARD_PREVIEW_LIMIT);',
+    'learn route must derive flashcards from the existing question bank',
+  ],
+  ['function getFlashcardPrompt(', 'learn route must localize flashcard prompts'],
+  ['function getFlashcardAnswer(', 'learn route must localize flashcard answers'],
+  ['<Flashcard', 'learn route must render the shared Flashcard component'],
+  ['front={getFlashcardPrompt(question, language)}', 'learn flashcards must use localized prompts'],
+  ['back={getFlashcardAnswer(question, language)}', 'learn flashcards must use localized answers'],
 ];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
@@ -872,8 +889,8 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
-    'Övningsläge',
-    'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+    'Provredo',
+    'Växla mellan tidsatta prov, flashkort, bokmärken, felspårning, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',

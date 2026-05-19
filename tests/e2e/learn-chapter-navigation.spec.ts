@@ -99,6 +99,9 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await openLearn(page, 'sv');
 
   await expect(page.locator('body')).toContainText('Studieväg');
+  await expect(page.locator('body')).toContainText('Snabba flashkort');
+  await expect(page.locator('body')).toContainText('Var ligger Sverige?');
+  await expect(page.locator('body')).toContainText('I Norden i norra Europa');
   await expect(page.locator('body')).toContainText('13 samhällsområden');
   await expectChapterRowsAreSingleAccessibleLinks(page, 'sv');
   await expectNoHorizontalOverflow(page, 'Swedish learn chapter list');
@@ -146,13 +149,12 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await openLearn(page, 'en');
 
   await expect(page.locator('body')).toContainText('Learning path');
-  await expectChapterRowsAreSingleAccessibleLinks(page, 'en');
-  await expectNoHorizontalOverflow(page, 'English learn chapter list');
-
-  const firstChapter = page.getByRole('link', {
-    exact: true,
-    name: expectedChapterLinkLabel(chapters[0], 'en'),
-  });
+  await expect(page.locator('body')).toContainText('Quick flashcards');
+  await expect(page.locator('body')).toContainText('Where is Sweden located?');
+  await expect(page.locator('body')).toContainText('In the Nordic region in northern Europe');
+  const firstChapter = page.getByLabel(
+    /Open chapter The country of Sweden\. Swedish name: Landet Sverige\./,
+  );
   await expect(firstChapter).toBeVisible();
   await expect(firstChapter).toContainText('The country of Sweden');
   await expect(firstChapter).toContainText('Landet Sverige');

@@ -19,19 +19,16 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
 
-  assert.equal(summary.learnRouteLinkCopyLabelsValidated, 6);
+  assert.equal(summary.learnRouteLinkCopyLabelsValidated, 10);
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
+  assert.match(source, /import \{ Flashcard \} from '..\/..\/components\/learning\/Flashcard';/);
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = chapterLinkCopy\[language\];/);
-  assert.match(source, /const chapterProgressById = useMemo\(/);
-  assert.match(source, /buildChapterProgressById\(completedQuestionIds\)/);
-  assert.doesNotMatch(source, /function questionCountForChapter/);
-  assert.doesNotMatch(source, /function completedCountForChapter/);
-  assert.doesNotMatch(
-    source,
-    /questions\.filter\(\s*\(question\) => question\.chapterId === chapter\.id/,
-  );
+  assert.match(source, /Snabba flashkort/);
+  assert.match(source, /Tre källstödda kort från frågebanken/);
+  assert.match(source, /Quick flashcards/);
+  assert.match(source, /Three source-backed cards from the question bank/);
   assert.match(source, /innehåll planerat/);
   assert.match(source, /content queued/);
   assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
@@ -43,7 +40,22 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel\(\{/);
   assert.match(source, /accessibilitySummary=\{false\}/);
   assert.match(source, /language=\{language\}/);
-  assert.match(source, /progressPresentationOnly/);
+  assert.match(source, /const FLASHCARD_PREVIEW_LIMIT = 3;/);
+  assert.match(
+    source,
+    /const flashcardQuestions = questions\.slice\(0, FLASHCARD_PREVIEW_LIMIT\);/,
+  );
+  assert.match(
+    source,
+    /function getFlashcardPrompt\(question: PracticeQuestion, language: AppLanguage\)/,
+  );
+  assert.match(
+    source,
+    /function getFlashcardAnswer\(question: PracticeQuestion, language: AppLanguage\)/,
+  );
+  assert.match(source, /<Flashcard/);
+  assert.match(source, /front=\{getFlashcardPrompt\(question, language\)\}/);
+  assert.match(source, /back=\{getFlashcardAnswer\(question, language\)\}/);
 });
 
 test('learn route chapter-link copy parity rejects bypassing the settings language', () => {

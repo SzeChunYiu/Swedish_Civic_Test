@@ -250,7 +250,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       {
         label: 'Övningsläge',
         lesson:
-          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+          'Växla mellan tidsatta prov, flashkort, bokmärken, felspårning, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:

@@ -1091,22 +1091,43 @@ test('chapter card groups title, translation, status, and description into an ac
 
 test('learn route chapter links announce chapter progress', () => {
   const source = read('app/(tabs)/learn.tsx');
+  const homeSource = read('app/(tabs)/home.tsx');
 
+  assert.match(source, /import \{ Flashcard \} from '..\/..\/components\/learning\/Flashcard';/);
   assert.match(source, /useSettingsStore, type AppLanguage/);
   assert.match(source, /type LearnRouteCopy =/);
   assert.match(source, /const learnRouteCopy: Record<AppLanguage, LearnRouteCopy>/);
   assert.match(source, /const routeCopy = learnRouteCopy\[language\]/);
   assert.match(source, /Studieväg/);
   assert.match(source, /Bläddra bland kapitel med tydliga nästa steg/);
+  assert.match(source, /Snabba flashkort/);
+  assert.match(source, /Tre källstödda kort från frågebanken/);
   assert.match(source, /13 samhällsområden/);
   assert.match(source, /Learning path/);
   assert.match(source, /Browse chapters with a clear next step/);
+  assert.match(source, /Quick flashcards/);
+  assert.match(source, /Three source-backed cards from the question bank/);
   assert.match(source, /13 civic areas/);
   assert.match(source, /eyebrow=\{routeCopy\.eyebrow\}/);
   assert.match(source, /title=\{routeCopy\.title\}/);
   assert.match(source, /subtitle=\{routeCopy\.subtitle\}/);
+  assert.match(source, /title=\{routeCopy\.flashcardSectionTitle\}/);
+  assert.match(source, /subtitle=\{routeCopy\.flashcardSectionSubtitle\}/);
   assert.match(source, /title=\{routeCopy\.sectionTitle\}/);
   assert.match(source, /subtitle=\{routeCopy\.sectionSubtitle\}/);
+  assert.match(source, /const FLASHCARD_PREVIEW_LIMIT = 3/);
+  assert.match(source, /const flashcardQuestions = questions\.slice\(0, FLASHCARD_PREVIEW_LIMIT\)/);
+  assert.match(
+    source,
+    /function getFlashcardPrompt\(question: PracticeQuestion, language: AppLanguage\)/,
+  );
+  assert.match(
+    source,
+    /function getFlashcardAnswer\(question: PracticeQuestion, language: AppLanguage\)/,
+  );
+  assert.match(source, /<Flashcard/);
+  assert.match(source, /front=\{getFlashcardPrompt\(question, language\)\}/);
+  assert.match(source, /back=\{getFlashcardAnswer\(question, language\)\}/);
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy>/);
   assert.match(source, /const copy = chapterLinkCopy\[language\]/);
   assert.match(
@@ -1141,6 +1162,7 @@ test('learn route chapter links announce chapter progress', () => {
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
   assert.match(source, /accessibilitySummary=\{false\}/);
   assert.match(source, /language=\{language\}/);
+  assert.match(homeSource, /flashkort|flashcards/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
