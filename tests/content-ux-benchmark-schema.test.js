@@ -17,10 +17,6 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
-function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 test('UX benchmark schema validates the home-screen benchmark data', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -43,13 +39,6 @@ test('UX benchmark schema validates the home-screen benchmark data', () => {
 });
 
 test('UX benchmark schema rejects duplicate products, duplicate sources, and non-HTTPS URLs', () => {
-  const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
-  const duplicateProduct = uxBenchmarks[0].product;
-  const duplicateSource = uxBenchmarks[0].source;
-  const duplicateTargetProduct = uxBenchmarks[1].product;
-  const duplicateTargetSource = uxBenchmarks[1].source;
-  const insecureTargetProduct = uxBenchmarks[2].product;
-  const insecureTargetSource = uxBenchmarks[2].source;
   const result = spawnSync(
     process.execPath,
     [
@@ -57,19 +46,17 @@ test('UX benchmark schema rejects duplicate products, duplicate sources, and non
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
-const duplicateProduct = ${JSON.stringify(duplicateProduct)};
-const duplicateSource = ${JSON.stringify(duplicateSource)};
-const duplicateTargetProduct = ${JSON.stringify(duplicateTargetProduct)};
-const duplicateTargetSource = ${JSON.stringify(duplicateTargetSource)};
-const insecureTargetSource = ${JSON.stringify(insecureTargetSource)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/uxBenchmarks.ts')) {
     return String(contents)
-      .replace(\`product: '\${duplicateTargetProduct}'\`, \`product: '\${duplicateProduct}'\`)
-      .replace(\`source: '\${duplicateTargetSource}'\`, \`source: '\${duplicateSource}'\`)
-      .replace(\`source: '\${insecureTargetSource}'\`, \`source: '\${insecureTargetSource.replace(/^https:/, 'http:')}'\`);
+      .replace("product: 'Citizen Pass'", "product: 'CivicsGo'")
+      .replace("source: 'https://citizenpass.us/'", "source: 'https://civicsgo.com/'")
+      .replace(
+        "source: 'https://apps.apple.com/gb/app/life-in-the-uk-test-2026/id1625443834'",
+        "source: 'http://apps.apple.com/gb/app/life-in-the-uk-test-2026/id1625443834'",
+      );
   }
   return contents;
 };
@@ -81,16 +68,7 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
-  assert.match(
-    output,
-    new RegExp(`${escapeRegExp(duplicateProduct)} duplicates UX benchmark product`),
-  );
-  assert.match(
-    output,
-    new RegExp(`${escapeRegExp(duplicateProduct)} duplicates UX benchmark source`),
-  );
-  assert.match(
-    output,
-    new RegExp(`${escapeRegExp(insecureTargetProduct)} source must be an HTTPS URL`),
-  );
+  assert.match(output, /CivicsGo duplicates UX benchmark product/);
+  assert.match(output, /CivicsGo duplicates UX benchmark source/);
+  assert.match(output, /Life in the UK Test apps source must be an HTTPS URL/);
 });
