@@ -34,17 +34,20 @@ function createDefaultMockExamAccessStorage(): MockExamAccessStorage {
 }
 
 function buildAccessDecision({
+  accessReadFailed,
   consentDecision,
   entitlements,
   freeMockExamLimit,
   snapshot,
 }: {
+  accessReadFailed?: boolean;
   consentDecision?: Pick<AdConsentDecision, 'adServingAllowed'>;
   entitlements: PremiumEntitlements;
   freeMockExamLimit: number;
   snapshot: StoredMockExamAccessSnapshot;
 }): MockExamAccessDecision {
   return getMockExamAccessDecision({
+    accessReadFailed,
     completedMockExamsToday: snapshot.completedMockExamsToday,
     consentDecision,
     entitlements,
@@ -76,11 +79,13 @@ export function useMockExamAccess({
       runtimeOptions: purchaseRuntimeOptions,
     });
   const [accessReady, setAccessReady] = useState(false);
+  const [accessReadFailed, setAccessReadFailed] = useState(false);
   const [snapshot, setSnapshot] = useState<StoredMockExamAccessSnapshot>(EMPTY_ACCESS_SNAPSHOT);
 
   const refreshAccess = useCallback(async () => {
     const nextSnapshot = await getStoredMockExamAccess({ storage });
     setSnapshot(nextSnapshot);
+    setAccessReadFailed(false);
     setAccessReady(true);
     return nextSnapshot;
   }, [storage]);
@@ -88,15 +93,19 @@ export function useMockExamAccess({
   useEffect(() => {
     let isMounted = true;
     setAccessReady(false);
+    setAccessReadFailed(false);
 
     void getStoredMockExamAccess({ storage })
       .then((nextSnapshot) => {
         if (!isMounted) return;
         setSnapshot(nextSnapshot);
+        setAccessReadFailed(false);
         setAccessReady(true);
       })
       .catch(() => {
-        if (isMounted) setAccessReady(true);
+        if (!isMounted) return;
+        setAccessReadFailed(true);
+        setAccessReady(true);
       });
 
     return () => {
@@ -107,12 +116,14 @@ export function useMockExamAccess({
   const accessDecision = useMemo(
     () =>
       buildAccessDecision({
+        accessReadFailed,
         consentDecision,
         entitlements,
         freeMockExamLimit,
         snapshot,
       }),
     [
+      accessReadFailed,
       consentDecision,
       entitlements,
       freeMockExamLimit,
@@ -124,6 +135,7 @@ export function useMockExamAccess({
   const recordExamCompletion = useCallback(async () => {
     const nextSnapshot = await recordStoredMockExamCompletion({ storage });
     setSnapshot(nextSnapshot);
+    setAccessReadFailed(false);
     setAccessReady(true);
     return nextSnapshot;
   }, [storage]);
@@ -131,6 +143,7 @@ export function useMockExamAccess({
   const grantRewardedExamCredit = useCallback(async () => {
     const nextSnapshot = await grantStoredRewardedExtraExamCredit({ storage });
     setSnapshot(nextSnapshot);
+    setAccessReadFailed(false);
     setAccessReady(true);
     return nextSnapshot;
   }, [storage]);
@@ -138,12 +151,14 @@ export function useMockExamAccess({
   const consumeRewardedExamCredit = useCallback(async () => {
     const nextSnapshot = await consumeStoredRewardedExtraExamCredit({ storage });
     setSnapshot(nextSnapshot);
+    setAccessReadFailed(false);
     setAccessReady(true);
     return nextSnapshot;
   }, [storage]);
 
   return {
     accessDecision,
+    accessReadFailed,
     accessReady,
     consumeRewardedExamCredit,
     entitlements,
