@@ -11,6 +11,32 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
+function createFastBlockedReleasePreflightEnv(tmpDir) {
+  const npmLog = path.join(tmpDir, 'npm.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    [
+      '#!/bin/sh',
+      `echo "$@" >> "${npmLog}"`,
+      'if [ "$1 $2" = "run validate" ]; then echo "fixture validate failed" >&2; exit 1; fi',
+      'echo "unexpected npm command: $@" >&2',
+      'exit 2',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  return {
+    env: {
+      ...process.env,
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS: '1',
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+    npmLog,
+  };
+}
+
 test('EAS build and submit profiles are configured for internal and production releases', () => {
   const eas = readJson('eas.json');
   assert.equal(eas.cli.version, '>= 13.0.0');
@@ -1200,18 +1226,25 @@ test('EAS access evidence check writes a redacted blocked report when auth is mi
 });
 
 test('production build guard blocks while release preflight is not ready', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-build-guard-fast-'));
+  const { env, npmLog } = createFastBlockedReleasePreflightEnv(tmpDir);
+  const startTime = Date.now();
   const result = spawnSync(
     process.execPath,
     ['scripts/build-production-guard.js', '--check-only'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
+      env,
     },
   );
+  const elapsedMs = Date.now() - startTime;
 
   assert.equal(result.status, 1);
   assert.match(result.stdout, /Production build blocked/i);
   assert.match(result.stdout, /release preflight/i);
+  assert.match(fs.readFileSync(npmLog, 'utf8'), /^run validate$/m);
+  assert.ok(elapsedMs < 5000, `production build guard fixture took ${elapsedMs}ms`);
 });
 
 test('production build and submit guards rerun validation inside release preflight', () => {
@@ -1247,6 +1280,8 @@ test('production submit guard blocks while release preflight is not ready', () =
   const easPath = path.join(repoRoot, 'eas.json');
   const originalEas = fs.readFileSync(easPath, 'utf8');
   const fakeServiceAccount = path.join(repoRoot, 'tmp/fake-google-play-service-account.json');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-submit-guard-fast-'));
+  const { env, npmLog } = createFastBlockedReleasePreflightEnv(tmpDir);
 
   try {
     const eas = JSON.parse(originalEas);
@@ -1259,18 +1294,23 @@ test('production submit guard blocks while release preflight is not ready', () =
     fs.writeFileSync(fakeServiceAccount, '{"type":"service_account"}\n');
     fs.writeFileSync(easPath, `${JSON.stringify(eas, null, 2)}\n`);
 
+    const startTime = Date.now();
     const result = spawnSync(
       process.execPath,
       ['scripts/submit-production-guard.js', '--check-only'],
       {
         cwd: repoRoot,
         encoding: 'utf8',
+        env,
       },
     );
+    const elapsedMs = Date.now() - startTime;
 
     assert.equal(result.status, 1);
     assert.match(result.stdout, /Production submit blocked/i);
     assert.match(result.stdout, /release preflight/i);
+    assert.match(fs.readFileSync(npmLog, 'utf8'), /^run validate$/m);
+    assert.ok(elapsedMs < 5000, `production submit guard fixture took ${elapsedMs}ms`);
   } finally {
     fs.writeFileSync(easPath, originalEas);
     fs.rmSync(fakeServiceAccount, { force: true });
