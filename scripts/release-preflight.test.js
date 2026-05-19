@@ -12,7 +12,7 @@ const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 
 function storeRecordReadyEvidence(extra = '') {
   return [
-    `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
+    `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest.`,
     `Support URL ${supportUrl} and Privacy Policy URL ${privacyUrl} entered in both stores.`,
     `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
     extra,
@@ -38,7 +38,6 @@ function runPreflight(options = {}) {
     process.execPath,
     ['scripts/release-preflight.js', '--json', ...(options.args || [])],
     {
-      cwd: repoRoot,
       encoding: 'utf8',
       env: { ...process.env, ...(options.env || {}) },
     },
@@ -152,7 +151,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
           'public-urls': {
             status: 'READY',
             evidence:
-              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/, Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/, and app-ads.txt URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt verified over HTTPS.',
+              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ verified over HTTPS and entered in both store records.',
           },
           'device-screenshots': {
             status: 'READY',
@@ -244,14 +243,15 @@ function createEasBuildEvidence(options = {}) {
       profile: 'internal',
       buildId: 'android-build-100',
       buildUrl:
-        'https://expo.dev/accounts/example/projects/almost-swedish/builds/android-build-100',
+        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/android-build-100',
       artifactType: 'aab',
       installOrTestStatus: 'ready-for-device-smoke',
     },
     ios: {
       profile: 'internal',
       buildId: 'ios-build-100',
-      buildUrl: 'https://expo.dev/accounts/example/projects/almost-swedish/builds/ios-build-100',
+      buildUrl:
+        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/ios-build-100',
       artifactType: 'ipa',
       installOrTestStatus: 'ready-for-testflight',
     },
@@ -295,9 +295,9 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
           },
           {
             id: 'public-urls',
-            label: 'Public support, privacy, and app-ads URLs',
+            label: 'Public support and privacy URLs',
             status: 'READY',
-            evidence: 'Support, Privacy Policy, and app-ads URLs returned HTTP 200.',
+            evidence: 'Support and Privacy Policy URLs returned HTTP 200.',
             nextAction: 'Enter URLs in both store records.',
           },
         ],
@@ -358,7 +358,7 @@ test('release completion audit command maps objective to preflight evidence befo
           },
           {
             id: 'public-urls',
-            label: 'Public support, privacy, and app-ads URLs',
+            label: 'Public support and privacy URLs',
             status: 'READY',
             evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
@@ -421,7 +421,7 @@ test('release issue update draft command writes tracker-ready status comment', (
           },
           {
             id: 'public-urls',
-            label: 'Public support, privacy, and app-ads URLs',
+            label: 'Public support and privacy URLs',
             status: 'READY',
             evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
@@ -591,94 +591,6 @@ function createDeviceAudioEvidence(platform, options = {}) {
   };
 }
 
-const removeAdsDeviceQaRequiredChecks = [
-  'admob-test-ads-study-screens',
-  'remove-ads-purchase-hides-ads',
-  'entitlement-persists-after-relaunch',
-  'restore-purchase-restores-entitlement',
-  'att-status-documented',
-  'ump-consent-documented',
-  'mock-exam-shows-no-ads',
-];
-
-function createRemoveAdsDeviceQaEvidence(options = {}) {
-  const relativeDir = path.join(
-    'reports',
-    'release-device-qa',
-    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-  );
-  const absoluteDir = path.join(repoRoot, relativeDir);
-  fs.mkdirSync(absoluteDir, { recursive: true });
-
-  const createArtifact = (platform, overrides = {}) => {
-    const screenshot = `${platform}-remove-ads.png`;
-    const log = `${platform}-remove-ads.log`;
-    const artifact = {
-      schemaVersion: 1,
-      status: 'passed',
-      platform,
-      device: platform === 'ios' ? 'iPhone 15 physical device' : 'Pixel 8 physical device',
-      osVersion: platform === 'ios' ? 'iOS 18.4' : 'Android 15',
-      build: {
-        id: platform === 'ios' ? 'ios-build-100' : 'android-build-100',
-        url:
-          platform === 'ios'
-            ? 'https://appstoreconnect.apple.com/testflight/ios-build-100'
-            : 'https://expo.dev/accounts/example/projects/almost-swedish/builds/android-build-100',
-        version: '1.0.0',
-      },
-      reviewer: 'Release QA',
-      reviewedAt: platform === 'ios' ? '2026-05-19T11:00:00Z' : '2026-05-19T11:05:00Z',
-      proof: {
-        screenshots: [screenshot],
-        logs: [log],
-      },
-      checks: removeAdsDeviceQaRequiredChecks.map((id) => ({
-        id,
-        result: 'passed',
-        notes: `${id} observed on ${platform}`,
-      })),
-      ...overrides,
-    };
-
-    if (options.createProofFiles !== false) {
-      for (const proofPath of [
-        ...(artifact.proof?.screenshots || []),
-        ...(artifact.proof?.logs || []),
-      ]) {
-        if (!/^https:\/\//i.test(proofPath)) {
-          fs.writeFileSync(path.join(absoluteDir, proofPath), `${platform} proof\n`);
-        }
-      }
-    }
-
-    const artifactPath = path.join(absoluteDir, `${platform}.json`);
-    fs.writeFileSync(artifactPath, JSON.stringify(artifact, null, 2));
-    return path.join(relativeDir, `${platform}.json`);
-  };
-
-  const iosArtifactPath = createArtifact('ios', options.iosArtifact);
-  const androidArtifactPath = createArtifact('android', options.androidArtifact);
-  const reportBody =
-    options.reportBody ||
-    [
-      '# Release Ads/IAP Device QA',
-      '',
-      '## Platform Artifacts',
-      '',
-      `- iOS artifact: \`${iosArtifactPath}\``,
-      `- Android artifact: \`${androidArtifactPath}\``,
-      '',
-    ].join('\n');
-  const reportPath = path.join(absoluteDir, 'release-ads-iap-device-qa.md');
-  fs.writeFileSync(reportPath, reportBody);
-
-  return {
-    relativeReportPath: path.join(relativeDir, 'release-ads-iap-device-qa.md'),
-    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
-  };
-}
-
 function createStoreRecordEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -690,7 +602,7 @@ function createStoreRecordEvidence(options = {}) {
 
   const evidence = {
     status: 'ready',
-    bundleIdentifier: 'com.billyyiu.almostswedish',
+    bundleIdentifier: 'com.billyyiu.swedishcivictest',
     appStoreConnectUrl: 'https://appstoreconnect.apple.com/apps/1234567890/appstore',
     googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
     supportUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
@@ -746,10 +658,10 @@ function createStoreCredentialEvidence(options = {}) {
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
     android: {
-      serviceAccountEmail: 'play-submit@almost-swedish.iam.gserviceaccount.com',
+      serviceAccountEmail: 'play-submit@swedish-civic-test.iam.gserviceaccount.com',
       serviceAccountKeyFingerprint:
         'SHA256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
-      packageName: 'com.billyyiu.almostswedish',
+      packageName: 'com.billyyiu.swedishcivictest',
       credentialsSource: 'local secure file outside git',
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
@@ -1024,144 +936,8 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
   assert.match(scopeGate.evidence, /tests\/v1-1-/i);
   assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is missing/i);
-  assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
-  assert.match(scopeGate.evidence, /reports\/release-device-qa\/ios\.json/i);
-  assert.match(scopeGate.nextAction, /Remove Ads structural gate/i);
+  assert.match(scopeGate.nextAction, /test -f lib\/monetization\/purchases\.ts/);
   assert.match(scopeGate.nextAction, /test -f reports\/release-ads-iap-device-qa\.md/);
-});
-
-test('release preflight blocks Remove Ads device QA reports without JSON artifacts', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-prose-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const qaEvidence = createRemoveAdsDeviceQaEvidence({
-    reportBody: [
-      '# Release Ads/IAP Device QA',
-      '',
-      '## iOS',
-      '',
-      '- Evidence artifact: reports/release-device-qa/ios-notes.md',
-      '',
-      '## Android',
-      '',
-      '- Evidence artifact: reports/release-device-qa/android-notes.md',
-      '',
-    ].join('\n'),
-  });
-
-  try {
-    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
-    writeFakeReleaseCommands(tmpDir);
-
-    const report = runPreflight({
-      expectedStatus: 1,
-      env: {
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_DEVICE_QA_PATH: qaEvidence.relativeReportPath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    });
-
-    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
-    assert.equal(scopeGate.status, 'BLOCKED');
-    assert.match(scopeGate.evidence, /must link per-platform JSON artifacts/i);
-    assert.match(scopeGate.evidence, /report must link a ios JSON artifact/i);
-    assert.match(scopeGate.evidence, /report must link a android JSON artifact/i);
-  } finally {
-    qaEvidence.cleanup();
-  }
-});
-
-test('release preflight blocks Remove Ads device QA JSON artifacts missing build ids and checks', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-shape-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const qaEvidence = createRemoveAdsDeviceQaEvidence({
-    iosArtifact: {
-      build: { id: '', url: 'https://appstoreconnect.apple.com/testflight/ios-build-100' },
-      checks: [{ id: 'admob-test-ads-study-screens', result: 'failed' }],
-    },
-  });
-
-  try {
-    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
-    writeFakeReleaseCommands(tmpDir);
-
-    const report = runPreflight({
-      expectedStatus: 1,
-      env: {
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_DEVICE_QA_PATH: qaEvidence.relativeReportPath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    });
-
-    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
-    assert.equal(scopeGate.status, 'BLOCKED');
-    assert.match(scopeGate.evidence, /ios\.json: build\.id is required/i);
-    assert.match(scopeGate.evidence, /build\.version is required/i);
-    assert.match(scopeGate.evidence, /admob-test-ads-study-screens result must be passed/i);
-    assert.match(scopeGate.evidence, /missing passed check remove-ads-purchase-hides-ads/i);
-  } finally {
-    qaEvidence.cleanup();
-  }
-});
-
-test('release preflight blocks Remove Ads device QA JSON artifacts without proof files', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-proof-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const qaEvidence = createRemoveAdsDeviceQaEvidence({ createProofFiles: false });
-
-  try {
-    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
-    writeFakeReleaseCommands(tmpDir);
-
-    const report = runPreflight({
-      expectedStatus: 1,
-      env: {
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_DEVICE_QA_PATH: qaEvidence.relativeReportPath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    });
-
-    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
-    assert.equal(scopeGate.status, 'BLOCKED');
-    assert.match(scopeGate.evidence, /proof\.screenshots\[0\] does not exist/i);
-    assert.match(scopeGate.evidence, /proof\.logs\[0\] does not exist/i);
-  } finally {
-    qaEvidence.cleanup();
-  }
-});
-
-test('release preflight accepts valid Remove Ads device QA JSON artifacts', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-valid-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  const qaEvidence = createRemoveAdsDeviceQaEvidence();
-
-  try {
-    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
-    writeFakeReleaseCommands(tmpDir);
-
-    const report = runPreflight({
-      expectedStatus: 0,
-      env: {
-        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-        RELEASE_PREFLIGHT_DEVICE_QA_PATH: qaEvidence.relativeReportPath,
-        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-      },
-    });
-
-    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
-    assert.equal(scopeGate.status, 'READY');
-    assert.doesNotMatch(scopeGate.evidence, /device-QA gate is red/i);
-    assert.doesNotMatch(scopeGate.evidence, /missing passed check/i);
-    assert.doesNotMatch(scopeGate.evidence, /proof\.screenshots/i);
-  } finally {
-    qaEvidence.cleanup();
-  }
 });
 
 test('release preflight allows v1.1 surfaces only with explicit operator override evidence', () => {
@@ -1613,7 +1389,7 @@ test('release preflight blocks store records without support and privacy URL ent
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; AdMob app configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; AdMob app configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
@@ -2200,7 +1976,7 @@ test('release preflight blocks store record evidence without exact public URLs',
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);

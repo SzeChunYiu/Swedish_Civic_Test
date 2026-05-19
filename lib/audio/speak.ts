@@ -7,11 +7,6 @@ type SpeakableQuestion = {
   options: QuestionOption[];
 };
 
-type SpeakableFeedbackQuestion = SpeakableQuestion & {
-  correctOptionId: string;
-  explanationSv: string;
-};
-
 function optionLetter(index: number): string {
   return String.fromCharCode('A'.charCodeAt(0) + index);
 }
@@ -24,30 +19,7 @@ export function buildQuestionSpeechText(question: SpeakableQuestion): string {
   return `${promptText} ${optionText}`.trim();
 }
 
-export function buildAnswerFeedbackSpeechText(
-  question: SpeakableFeedbackQuestion,
-  selectedOptionId: string | null | undefined,
-): string {
-  const selectedOption = question.options.find((option) => option.id === selectedOptionId);
-  if (!selectedOption) return '';
-
-  const correctOption = question.options.find((option) => option.id === question.correctOptionId);
-  const explanationText =
-    stripSourceAuthorityPhrasing(question.explanationSv) || question.explanationSv;
-  const selectedAnswerText = `Ditt svar: ${selectedOption.textSv}.`;
-  const correctAnswerText =
-    correctOption && correctOption.id !== selectedOption.id
-      ? `Rätt svar: ${correctOption.textSv}.`
-      : 'Det är rätt.';
-
-  return `${selectedAnswerText} ${correctAnswerText} Förklaring: ${explanationText}`.trim();
-}
-
 export interface SpeakSwedishOptions {
-  onDone?: Speech.SpeechOptions['onDone'];
-  onError?: Speech.SpeechOptions['onError'];
-  onStart?: Speech.SpeechOptions['onStart'];
-  onStopped?: Speech.SpeechOptions['onStopped'];
   /** Playback rate. Default 1.0. expo-speech clamps engine-supported range. */
   rate?: number;
 }
@@ -60,18 +32,9 @@ export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): v
       ? Math.max(0.1, Math.min(2.0, options.rate))
       : undefined;
   try {
-    Speech.speak(speechText, {
-      language: 'sv-SE',
-      ...(rate !== undefined ? { rate } : {}),
-      ...(options.onDone ? { onDone: options.onDone } : {}),
-      ...(options.onError ? { onError: options.onError } : {}),
-      ...(options.onStart ? { onStart: options.onStart } : {}),
-      ...(options.onStopped ? { onStopped: options.onStopped } : {}),
-    });
+    Speech.speak(speechText, { language: 'sv-SE', ...(rate !== undefined ? { rate } : {}) });
   } catch (error) {
-    const speechError = error instanceof Error ? error : new Error(String(error));
-    options.onError?.(speechError);
-    console.warn('Speech unavailable:', speechError);
+    console.warn('Speech unavailable:', error);
   }
 }
 
