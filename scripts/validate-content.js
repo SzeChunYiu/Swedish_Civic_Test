@@ -79,6 +79,14 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
 ];
+const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
+  /Most people who pass this way/i,
+  /three weeks,\s*not three days/i,
+  /de flesta[^.?!]*(?:veckor|veckan)[^.?!]*(?:klarar|klara|godk[aä]n|prov)/i,
+  /\b(?:typical|most)\s+(?:learners|people|users)[^.?!]*(?:pass|passing)[^.?!]*(?:days?|weeks?|months?)/i,
+  /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
+  /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
+];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -3403,6 +3411,10 @@ function loadJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8'));
 }
 
+function loadText(relativePath) {
+  return fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8');
+}
+
 function fail(message) {
   failures.push(message);
 }
@@ -3461,6 +3473,19 @@ function questionTextFieldsAreNormalized(question) {
 
 function textHasSentenceEnding(value) {
   return typeof value === 'string' && /[.!?]$/.test(value.trim());
+}
+
+function validateStaticEbookOutcomeClaimPatterns() {
+  const source = loadText('site/ebook.js');
+  const offenders = STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.filter((pattern) =>
+    pattern.test(source),
+  );
+
+  if (offenders.length > 0) {
+    fail('static ebook contains unsupported pass-duration, pass-likelihood, or outcome copy');
+  }
+
+  return STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length - offenders.length;
 }
 
 function questionSentenceEndingsAreComplete(question) {
@@ -5978,6 +6003,8 @@ let questionBankCsvRowsValidated = 0;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
+let staticEbookOutcomeClaimPatternsValidated = 0;
+let staticEbookOutcomeClaimParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -6035,6 +6062,10 @@ if (typeof formatExamTime !== 'function') fail('formatExamTime export is not a f
 if (typeof shouldAutoSubmitExam !== 'function') {
   fail('shouldAutoSubmitExam export is not a function');
 }
+staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatterns();
+staticEbookOutcomeClaimParityValidated =
+  staticEbookOutcomeClaimPatternsValidated ===
+  STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
@@ -13702,6 +13733,8 @@ console.log(
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
+      staticEbookOutcomeClaimPatternsValidated,
+      staticEbookOutcomeClaimParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,
