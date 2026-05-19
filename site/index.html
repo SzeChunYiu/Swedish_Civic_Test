@@ -117,8 +117,8 @@
               ></span
             >
             <h1>
-              <span data-i18n="hero.h1a">Pass the test.</span><br />
-              <em data-i18n="hero.h1c">Brag at midsommar.</em>
+              <span data-i18n="hero.h1a">Study the material.</span><br />
+              <em data-i18n="hero.h1c">Feel calmer on exam day.</em>
             </h1>
             <p class="lede" data-i18n="hero.lede">
               A quiet, unofficial study app for Sweden's citizenship test. Short study chapters, a
@@ -136,7 +136,12 @@
       </section>
 
       <!-- V1.1 DASHBOARD (hidden until user has progress) -->
-      <section id="v11-dashboard-wrap" class="band v11-band" data-screen-label="01.15 Dashboard" style="display:none">
+      <section
+        id="v11-dashboard-wrap"
+        class="band v11-band"
+        data-screen-label="01.15 Dashboard"
+        style="display: none"
+      >
         <div class="wrap">
           <span class="eyebrow">Your progress</span>
           <div id="v11-dashboard"></div>
@@ -510,9 +515,9 @@
             <em data-i18n="privacy.h1b">stays on your phone.</em>
           </h1>
           <p class="doc__lede" data-i18n="privacy.lede">
-            Almost Swedish is an independent study app. We don't ask for an account, and
-            study progress stays local. This page explains the Google AdSense web ads, Google Mobile
-            Ads app ads, and optional one-time Remove Ads purchase.
+            Almost Swedish is an independent study app. We don't ask for an account, and study
+            progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads
+            app ads, and optional one-time Remove Ads purchase.
           </p>
           <div class="doc__meta">
             <span
@@ -544,9 +549,9 @@
             <div class="doc__main">
               <h2 id="p1" data-i18n="privacy.s1.t">Independence</h2>
               <p data-i18n="privacy.s1.p">
-                Almost Swedish is an independent study app for Swedish civic knowledge
-                practice. It is not official and is not affiliated with UHR, Skolverket,
-                Migrationsverket, or the Swedish government. Anything you read here represents what
+                Almost Swedish is an independent study app for Swedish civic knowledge practice. It
+                is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the
+                Swedish government. Anything you read here represents what
                 <em>this app</em> does — nothing more.
               </p>
 
@@ -774,9 +779,9 @@
             <div class="doc__main">
               <h2 id="t1" data-i18n="terms.s1.t">What this is</h2>
               <p data-i18n="terms.s1.p">
-                Almost Swedish is an unofficial study app. It is not the exam, it is not run
-                by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score
-                here does not grant citizenship.
+                Almost Swedish is an unofficial study app. It is not the exam, it is not run by UHR,
+                Skolverket, Migrationsverket, or the Swedish government, and a perfect score here
+                does not grant citizenship.
               </p>
 
               <h2 id="t2" data-i18n="terms.s2.t">Acceptable use</h2>
@@ -945,8 +950,8 @@
               <span data-i18n="brand">Almost Swedish</span>
             </a>
             <h3 class="footer__tagline">
-              <span data-i18n="footer.t1">Pass the test.</span><br />
-              <em data-i18n="footer.t2">Brag at midsommar.</em>
+              <span data-i18n="footer.t1">Study the material.</span><br />
+              <em data-i18n="footer.t2">Practice with sources.</em>
             </h3>
             <p class="footer__honest" data-i18n="footer.honest.p">
               Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the
@@ -1326,11 +1331,14 @@
         var db = document.getElementById('v11-dashboard');
         function check() {
           if (!wrap || !db) return;
-          wrap.style.display = db.style.display === 'none' || db.textContent.trim() === '' ? 'none' : '';
+          wrap.style.display =
+            db.style.display === 'none' || db.textContent.trim() === '' ? 'none' : '';
         }
         var obs = new MutationObserver(check);
         if (db) obs.observe(db, { childList: true, attributes: true, subtree: false });
-        window.addEventListener('hashchange', function () { setTimeout(check, 50); });
+        window.addEventListener('hashchange', function () {
+          setTimeout(check, 50);
+        });
         setTimeout(check, 800);
       })();
     </script>

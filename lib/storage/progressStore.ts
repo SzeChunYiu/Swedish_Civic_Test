@@ -242,7 +242,13 @@ function normalizeProgress(value: unknown): PersistedProgress {
 }
 
 function readProgress(): PersistedProgress {
-  const rawProgress = progressStorage?.getString(progressStateKey);
+  let rawProgress: string | undefined;
+  try {
+    rawProgress = progressStorage?.getString(progressStateKey);
+  } catch {
+    return emptyProgress;
+  }
+
   if (!rawProgress) return emptyProgress;
 
   try {

@@ -1228,3 +1228,12 @@ Verification: clean worktree rebased onto current `origin/main` `2086b964`; link
 PR: pending from `task/ad-copy-sv-rewarded-pane2-1779228086` at handoff commit time.
 Blocked? no for this ad-copy naturalness guard.
 Next suggested validator action: inspect the shared rewarded ad copy and rerun `npm run validate:content` plus the focused monetization/ad-placement/UI tests before accepting the route.
+
+## Iteration 255 - 2026-05-20
+
+Task completed: STATIC-HERO-PASSPORT-OUTCOME-COPY-1 follow-up - neutralized the static no-JS hero/footer fallback slogans and expanded the shared outcome-copy guard to scan `site/index.html`.
+Artifacts changed: `site/index.html`, `scripts/static-outcome-copy-guard.js`, `scripts/compliance-pages.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `3590ee03`; linked shared ignored `node_modules`; `node --test scripts/compliance-pages.test.js scripts/static-site-source-provenance-copy.test.js tests/content-static-site-ebook-parity.test.js --test-name-pattern 'compliance|ebook|source|pass|guarantee|outcome|static'` exit 0 with 18/18 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `staticSiteOutcomeSloganParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check scripts/static-outcome-copy-guard.js` and `node --check scripts/compliance-pages.test.js` exit 0; targeted Prettier check exit 0; direct `findUnsupportedStaticOutcomeSlogans()` scan returned `[]`; direct `rg` scan for the listed pass/passport slogans across `site/index.html`, `site/app.js`, `site/i18n-extras.js`, `site/buddies.js`, and `site/tweaks.jsx` returned no matches; `git diff --check` exit 0.
+PR: pending from `task/setup/static-hero-fallback-copy-1779229718-4134892` at handoff commit time.
+Blocked? no for this static outcome-copy guard follow-up; no Vercel CLI was run.
+Next suggested validator action: inspect the no-JS fallback copy and rerun the shared static outcome-copy guard tests before accepting `STATIC-HERO-PASSPORT-OUTCOME-COPY-1`.
