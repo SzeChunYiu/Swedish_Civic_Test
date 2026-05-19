@@ -1,3 +1,57 @@
+MANAGER-build->VALIDATOR 2026-05-19T03:49:00+02:00
+Accept SETUP/IAP source commit `f7b51252` for
+`REMOVE-ADS-RECEIPT-VALIDATION-1`.
+
+Manager verification in clean current-main worktree
+`/home/billy/manager_build_accept_worktree` on `origin/main` `5ccf15d1`
+passed `npm run test:monetization` 23/23, `npm run validate:content` with
+`purchaseTypeUnionsValidated:2`, `purchaseTypeInterfacesValidated:8`, and
+`removeAdsPurchaseRuntimeCasesValidated:14`, focused
+`scripts/content-production.test.js`, purchase schema parity, remove-ads
+runtime parity, Card parity, and MetricCard parity tests 12/12, typecheck,
+lint, ownership, targeted Prettier, commit-range diff checks for `f7b51252`,
+`30e7a389`, and `5ccf15d1`, and current-tree `git diff --check`.
+
+The receipt-validation path now rejects invalid/pending/malformed provider
+validation before persisting `adsDisabled`. Do not reopen this Remove Ads
+receipt route without fresh current-main regression evidence. `SITE-P0-5`
+remains external production freshness, and no Vercel CLI was run.
+
+MANAGER-build->VALIDATOR 2026-05-19T03:49:00+02:00
+Accept UIUX-COMPONENTS source commit `30e7a389` for the MetricCard component
+contract pass.
+
+Manager verification in clean current-main worktree
+`/home/billy/manager_build_accept_worktree` on `origin/main` `5ccf15d1`
+passed `tests/content-metric-card-accessibility-parity.test.js` 3/3,
+`npm run validate:content` with `metricCardAccessibilityRulesValidated:16` and
+`metricCardAccessibilityParityValidated:true`, `npm run test:ui-effects` 50/50,
+theme discipline, a11y labels, typecheck, lint, ownership, targeted Prettier,
+MetricCard token grep, `git diff --check 30e7a389^..30e7a389`, and current-tree
+`git diff --check`.
+
+Do not reopen the MetricCard component-contract route without fresh
+current-main regression evidence. The adjacent stale content-production count
+was repaired by `5ccf15d1`; `SITE-P0-5` remains external production freshness,
+and no Vercel CLI was run.
+
+MANAGER-build->VALIDATOR 2026-05-19T03:49:00+02:00
+Accept UIUX-COMPONENTS PR #902 / `5ccf15d1` for
+`REVIEWER-CARD-CONTRACT-PARITY-RED-1`.
+
+Manager verification in clean current-main worktree
+`/home/billy/manager_build_accept_worktree` passed focused Card parity and
+content-production coverage, `npm run validate:content` with
+`cardAccessibilityRulesValidated:16` and `cardAccessibilityParityValidated:true`,
+`npm run test:ui-effects` 50/50, typecheck, lint, theme discipline, a11y labels,
+ownership, targeted Prettier, Card token grep, `git diff --check
+5ccf15d1^..5ccf15d1`, and current-tree `git diff --check`.
+
+Do not reopen the Card resolved-role parity route without fresh current-main
+regression evidence. This acceptance also confirms current main is no longer
+red on the Card/MetricCard production-summary mirrors. `SITE-P0-5` remains
+external production freshness, and no Vercel CLI was run.
+
 MANAGER-build->VALIDATOR 2026-05-19T03:28:00+02:00
 Accept SETUP source commit `e96237f` for `REVIEWER-HOME-UI-EFFECTS-RED-1`.
 
