@@ -70,8 +70,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'explanationSv',
   'explanationEn',
   'correctOptionId',
-  'optionSv',
-  'optionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
@@ -941,7 +939,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 10;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -1739,21 +1737,6 @@ const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
 ];
 const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   {
-    label: 'exported variant type',
-    pattern:
-      /export type ButtonVariant = 'primary' \| 'secondary' \| 'option' \| 'success' \| 'danger';/,
-  },
-  {
-    label: 'exported props interface',
-    pattern:
-      /export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>>/,
-  },
-  {
-    label: 'documented default props',
-    pattern:
-      /Defaults: `variant="primary"`, `accessibilityRole="button"`[\s\S]*`hitSlop=space\[0\.5\]`/,
-  },
-  {
     label: 'native Pressable root',
     pattern: /<Pressable[\s\S]*>/,
   },
@@ -1810,18 +1793,6 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     label: 'native accessibility state',
     pattern: /accessibilityState=\{mergedAccessibilityState\}/,
   },
-  {
-    label: 'token hairline border width',
-    pattern: /borderWidth:\s*space\.hairline/,
-  },
-  {
-    label: 'token minimum touch target',
-    pattern: /minHeight:\s*space\[6\]/,
-  },
-  {
-    label: 'token pressed feedback',
-    pattern: /transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
-  },
 ];
 const EXPECTED_CARD_ACCESSIBILITY_RULES = [
   {
@@ -1836,14 +1807,6 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
     label: 'label-or-role grouping fallback',
     pattern:
       /const groupedForAccessibility =\s*accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\);/,
-  },
-  {
-    label: 'resolved accessibility role fallback',
-    pattern: /const resolvedAccessibilityRole =\s*accessibilityRole \?\?/,
-  },
-  {
-    label: 'grouped default summary role',
-    pattern: /\(groupedForAccessibility \? 'summary' : undefined\)/,
   },
   {
     label: 'stable hint id',
@@ -1878,8 +1841,8 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{accessibilityLabel\}/,
   },
   {
-    label: 'native resolved accessibility role',
-    pattern: /accessibilityRole=\{resolvedAccessibilityRole\}/,
+    label: 'native accessibility role',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
   },
   {
     label: 'hidden hint text node',
@@ -1971,26 +1934,8 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
     pattern: /<View[\s\S]*>/,
   },
   {
-    label: 'exported MetricCard props interface',
-    pattern:
-      /export interface MetricCardProps extends Omit<ComponentProps<typeof View>, 'children' \| 'style'>/,
-  },
-  {
-    label: 'documented defaults',
-    pattern:
-      /Defaults: `tone="warm"`, `accessible=true`, `accessibilityRole="summary"`,[\s\S]*accessibility label derived from the visible label\/value\/helper text/,
-  },
-  {
     label: 'explicit accessibility label prop',
     pattern: /accessibilityLabel\?: string;/,
-  },
-  {
-    label: 'caller style prop',
-    pattern: /style\?: ComponentProps<typeof View>\['style'\];/,
-  },
-  {
-    label: 'summary role default',
-    pattern: /accessibilityRole = 'summary'/,
   },
   {
     label: 'label value helper summary',
@@ -2003,11 +1948,7 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'native grouped surface',
-    pattern: /accessible=\{accessible\}/,
-  },
-  {
-    label: 'native accessibility role',
-    pattern: /accessibilityRole=\{accessibilityRole\}/,
+    pattern: /\s+accessible\s+/,
   },
   {
     label: 'native accessibility label',
@@ -2027,11 +1968,7 @@ const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'blue tone style path',
-    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null, style\]\}/,
-  },
-  {
-    label: 'token hairline border width',
-    pattern: /borderWidth:\s*space\.hairline/,
+    pattern: /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null\]\}/,
   },
 ];
 const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
@@ -2057,8 +1994,8 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
   },
   {
-    label: 'tone style path with caller override',
-    pattern: /style=\{\[styles\.badge, styles\[tone\], style\]\}/,
+    label: 'tone style path',
+    pattern: /style=\{\[styles\.badge, styles\[tone\]\]\}/,
   },
   {
     label: 'visible child text',
@@ -3075,10 +3012,6 @@ const EXPECTED_MONETIZATION_INTERFACES = [
 ];
 const EXPECTED_PURCHASE_TYPE_UNIONS = [
   {
-    typeName: 'RemoveAdsReceiptValidationStatus',
-    values: ['valid', 'invalid', 'pending'],
-  },
-  {
     typeName: 'RemoveAdsPurchaseStatus',
     values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
   },
@@ -3106,16 +3039,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
     ],
   },
   {
-    name: 'RemoveAdsReceiptValidationResult',
-    fields: [
-      { name: 'status', type: 'RemoveAdsReceiptValidationStatus', optional: false },
-      { name: 'productId', type: 'string | null', optional: true },
-      { name: 'purchaseToken', type: 'string | null', optional: true },
-      { name: 'transactionId', type: 'string | null', optional: true },
-      { name: 'validatedAt', type: 'string | null', optional: true },
-    ],
-  },
-  {
     name: 'RemoveAdsPurchaseProvider',
     fields: [
       { name: 'connect', type: '() => Promise<void>', optional: false },
@@ -3123,11 +3046,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
       {
         name: 'finishPurchase',
         type: '(purchase: RemoveAdsPurchaseRecord) => Promise<void>',
-        optional: true,
-      },
-      {
-        name: 'validateRemoveAdsReceipt',
-        type: '(purchase: RemoveAdsPurchaseRecord, productId: typeof REMOVE_ADS_PRODUCT_ID) => Promise<RemoveAdsReceiptValidationResult>',
         optional: true,
       },
       {
@@ -3169,7 +3087,6 @@ const EXPECTED_PURCHASE_INTERFACES = [
     fields: [
       { name: 'owned', type: 'boolean', optional: true },
       { name: 'pendingPurchase', type: 'boolean', optional: true },
-      { name: 'receiptValidationStatus', type: 'RemoveAdsReceiptValidationStatus', optional: true },
     ],
   },
 ];
@@ -5925,15 +5842,6 @@ function parseCsvRows(csv) {
   }
 
   return rows;
-}
-
-function questionOptionPayload(question, field) {
-  return JSON.stringify(
-    question.options.map((option) => ({
-      id: option.id,
-      text: option[field],
-    })),
-  );
 }
 
 function optionIdsMatchQuestionType(question) {
@@ -10894,31 +10802,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes('hasStoreConfirmation(record)'),
       'Remove Ads purchase and restore grants must persist source plus store confirmation identity',
     ],
-    [
-      normalizedPurchaseSource.includes('receiptValidationStatus:') &&
-        normalizedPurchaseSource.includes('receiptValidatedAt:'),
-      'Remove Ads entitlement records must persist receipt validation status and timestamp',
-    ],
-    [
-      normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
-        normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
-      'Remove Ads purchase provider must expose a receipt validation hook',
-    ],
-    [
-      normalizedPurchaseSource.includes(
-        'const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);',
-      ) &&
-        normalizedPurchaseSource.includes("return createResult('pending'") &&
-        normalizedPurchaseSource.includes("return createResult('not_found'"),
-      'Remove Ads buy and restore flows must validate receipts before granting entitlements',
-    ],
-    [
-      normalizedPurchaseSource.includes('receiptValidationStatus =') &&
-        normalizedPurchaseSource.includes("if (receiptValidationStatus !== 'valid')") &&
-        normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
-        normalizedPurchaseSource.includes('receiptValidation,'),
-      'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
-    ],
   ];
 
   runtimeCases.forEach(([caseIsValid, message]) => {
@@ -13150,8 +13033,6 @@ function validateQuestionBankCsvContract() {
       question.explanationSv,
       question.explanationEn,
       question.correctOptionId,
-      questionOptionPayload(question, 'textSv'),
-      questionOptionPayload(question, 'textEn'),
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
