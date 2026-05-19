@@ -17,7 +17,11 @@ type RouteLinkWebEventHandler = (event: unknown) => void;
  * 48px token-sized target, and token hover/focus/pressed feedback on web.
  * Pass an explicit `accessibilityLabel` that describes the destination.
  */
-export interface RouteLinkProps extends Omit<ExpoLinkProps, 'children' | 'href' | 'style'> {
+export interface RouteLinkProps extends Omit<
+  ExpoLinkProps,
+  'accessibilityLabel' | 'children' | 'href' | 'style'
+> {
+  accessibilityLabel: string;
   children: ReactNode;
   href: Href;
   onBlur?: RouteLinkWebEventHandler;
@@ -29,7 +33,7 @@ export interface RouteLinkProps extends Omit<ExpoLinkProps, 'children' | 'href' 
 }
 
 export function RouteLink({
-  accessibilityRole = 'link',
+  accessibilityLabel,
   children,
   onBlur,
   onFocus,
@@ -70,7 +74,8 @@ export function RouteLink({
     <Link
       {...linkProps}
       {...webInteractionHandlers}
-      accessibilityRole={accessibilityRole}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="link"
       onPressIn={(event) => {
         setIsPressed(true);
         onPressIn?.(event);

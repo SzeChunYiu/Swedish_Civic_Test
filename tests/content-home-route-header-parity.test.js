@@ -20,9 +20,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
-  assert.equal(summary.homeRouteHeadersValidated, 5);
+  assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 120);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.match(source, /type HomeCopy =/);
@@ -45,6 +45,10 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
   assert.match(source, /Streak freeze/);
+  assert.match(source, /Snabbstart/);
+  assert.match(source, /Quick start/);
+  assert.match(source, /quickActions\.map/);
+  assert.match(source, /router\.push\(action\.href\)/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
@@ -54,6 +58,8 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /\{copy\.readinessTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.quickActionsTitle\}>/);
+  assert.match(source, /\{copy\.quickActionsTitle\}/);
   assert.doesNotMatch(
     source,
     /<Text style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/,
