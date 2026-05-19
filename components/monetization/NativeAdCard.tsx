@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 
 import { nativeAdCardCopy } from '../../lib/monetization/adCopy';
 import { shouldShowAd } from '../../lib/monetization/ads';
@@ -20,7 +20,7 @@ export function NativeAdCard({
 
   if (
     !entitlementsReady ||
-    !shouldShowAd('results_native', resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION)
+    !shouldShowAd('results_native', resolvedEntitlements, undefined, Platform.OS)
   ) {
     return null;
   }

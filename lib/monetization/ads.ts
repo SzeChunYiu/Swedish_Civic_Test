@@ -2,6 +2,7 @@ import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types
 import type { AdConsentDecision } from './consent';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
+export type AdRuntimePlatform = 'ios' | 'android' | 'web' | string;
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
@@ -124,6 +125,23 @@ export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
   };
 });
 
+function getAdUnitIdForPlatform(
+  unit: AdUnitConfig,
+  platform?: AdRuntimePlatform,
+): string | undefined {
+  if (platform === 'ios') return unit.iosUnitId;
+  if (platform === 'android') return unit.androidUnitId;
+  return unit.androidUnitId ?? unit.iosUnitId;
+}
+
+function isAdUnitAvailableForPlatform(
+  unit: AdUnitConfig | undefined,
+  platform?: AdRuntimePlatform,
+): boolean {
+  if (!unit?.enabled) return false;
+  return Boolean(getAdUnitIdForPlatform(unit, platform));
+}
+
 export function getConfiguredAdUnits(): AdUnitConfig[] {
   return REAL_ADS_ENABLED ? REAL_AD_UNITS : TEST_AD_UNITS;
 }
@@ -136,25 +154,31 @@ export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   consentDecision?: AdConsentGate,
+  platform?: AdRuntimePlatform,
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
   const unit = getAdUnit(placement);
-  return Boolean(unit?.enabled);
+  return isAdUnitAvailableForPlatform(unit, platform);
 }
 
 export function shouldShowLaunchPopupAd({
   alreadyShownThisLaunch,
   consentDecision,
   entitlements,
+  platform,
 }: {
   alreadyShownThisLaunch: boolean;
   consentDecision?: AdConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
+  platform?: AdRuntimePlatform;
 }): boolean {
-  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
+  return (
+    !alreadyShownThisLaunch &&
+    shouldShowAd('app_open_launch', entitlements, consentDecision, platform)
+  );
 }
 
 function pathMatchesRoute(pathname: string, route: string): boolean {
@@ -168,13 +192,10 @@ export function shouldSuppressLaunchPopupAdForPath(pathname: string): boolean {
 
 export function getPlatformAdUnitId(
   placement: AdPlacement,
-  platform: 'ios' | 'android' | 'web' | string,
+  platform: AdRuntimePlatform,
 ): string | undefined {
   const unit = getAdUnit(placement);
-  if (!unit) return undefined;
-  if (platform === 'ios') return unit.iosUnitId;
-  if (platform === 'android') return unit.androidUnitId;
-  return unit.androidUnitId ?? unit.iosUnitId;
+  return unit ? getAdUnitIdForPlatform(unit, platform) : undefined;
 }
 
 export const adsConfig = {
