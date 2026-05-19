@@ -445,11 +445,11 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Svenska',
     'Ljud på',
     'Ljud av',
-    'Dagligt mål, språk och ljud',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Öppna inställningar',
+    'Justera mål, språk och ljud',
+    'Öppnar inställningar för dagligt mål, språk och ljud.',
     'Första övningen',
     'Nivå 2',
     'Misstagsrepetition',
@@ -470,11 +470,11 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'English support',
     'Audio on',
     'Audio off',
-    'Daily goal, language, and audio',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Open settings',
+    'Adjust goal, language, and audio',
+    'Opens settings for daily goal, language, and audio.',
   ],
 };
 const SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS = [
@@ -499,9 +499,13 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ],
   [
     'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
-    'profile route must read audio state from settings store',
+    'profile route must read audio status for study setup shortcut',
   ],
   ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
+  [
+    'const audioBadge = audioEnabled ? copy.audioEnabledBadge : copy.audioMutedBadge;',
+    'profile route must localize audio status in the study setup shortcut',
+  ],
   [
     '<ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>',
     'profile shell must render localized copy',
@@ -515,6 +519,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
   ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
+  [
+    "<Badge tone={audioEnabled ? 'green' : 'warm'}>{audioBadge}</Badge>",
+    'profile audio badge must reflect localized audio status',
+  ],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   [
@@ -524,6 +532,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityHint={copy.openSettingsHint}',
+    'profile settings link must describe daily goal, language, and audio settings',
   ],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
