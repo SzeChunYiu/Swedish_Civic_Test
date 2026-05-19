@@ -1976,6 +1976,51 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q151'",
+        "    ? {",
+        "        ...question,",
+        "        explanationSv:",
+        "          'Sveriges nordligaste del ligger norr om polcirkeln. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.',",
+        '        explanationEn:',
+        '          "Sweden\\'s northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",',
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q151 contains a generated true\/false explanation meta-judgement/,
+  );
+});
+
+test('published question schema rejects residual q251-q300 reason-target wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  question.id === generatedFixtureId('q002', 2)",
