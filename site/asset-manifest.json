@@ -8,48 +8,48 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 70291,
-      "sha256": "d1ebf34a203b86cefe2163f0a2ae0183c9e3ce6d38bdd4f9e7972f3bc069c2b5"
+      "bytes": 73667,
+      "sha256": "00fb4728442dbc4c3f4f5802432f8429f5a1c5ede61ef6e95359fe4393a70a8d"
     },
     "buddies.js": {
-      "bytes": 31469,
-      "sha256": "f68a74d0d60856345b8c0f7e0ad5610d64364d4e2da679745ebfa0d2d32fddb7"
+      "bytes": 31739,
+      "sha256": "b77f34dbc945f4476d6239701790712968a9dd294eb298da9e754dfefc8ba215"
     },
     "ebook-tools.js": {
       "bytes": 15053,
       "sha256": "fac09ba3ee74e7a46e02c337ac17190bed55fdbfc2e809b079f086790df1d06e"
     },
     "ebook.js": {
-      "bytes": 56274,
-      "sha256": "ca929b74d993131e67c5ea68805c1063a08a4506ada0225bf16264cf49ec535d"
+      "bytes": 57925,
+      "sha256": "883fcf1d7d24e21139193cd2af02f2a14d5eba3ad6f0c5bd5c65b9b2e2b2598f"
     },
     "extras.js": {
-      "bytes": 14240,
-      "sha256": "b255d4ac2d725eaa3e48dd698e1f2cd723430f17a7b1e06d8011f90a98e3928c"
+      "bytes": 14334,
+      "sha256": "79e4a06fc8b9875745eac4118594743f478e8b6ccdf9f44069fb886ce8ffca1f"
     },
     "fx.js": {
-      "bytes": 6362,
-      "sha256": "8a611e619c922386356c25f47e67de7c7c2caf4c9724df745430e7d75c3b5c1d"
+      "bytes": 6332,
+      "sha256": "b0b83c15c2c0c9b3e7314ef16585de51e030e291adc9d976483d75a8b45ea45d"
     },
     "i18n-extras.js": {
-      "bytes": 17309,
-      "sha256": "7a9f808768e01c67259fe2bc85fcaaff41a7176d1b0bf1f0ebb3488956958cee"
+      "bytes": 18034,
+      "sha256": "e0bfa9a9ea719d9946d704e031b15803b4100769681ca33e8a9e3d1424556683"
     },
     "icon.png": {
       "bytes": 362794,
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 59081,
-      "sha256": "e28a31fb7c3943cec2fd19677258645e3e447fe144eb1e6011b01458aea33601"
+      "bytes": 62134,
+      "sha256": "05f1be0aba414e966464476498d16a047d1ce00e3f4314bee16813051d36fb55"
     },
     "practice.js": {
-      "bytes": 28887,
-      "sha256": "17403892da811ca174f21d0a5b50b61da060f9223456b401456d691d87db9683"
+      "bytes": 30930,
+      "sha256": "1e80135d19e881053873253e93189301cd29f4c1480bb1852712636611cee36c"
     },
     "questions.js": {
-      "bytes": 1177439,
-      "sha256": "9a1b05130c81595ea72aee815077cf250c461784ad8f9972b61555e38b10101a"
+      "bytes": 1245107,
+      "sha256": "e5d7a3464dd3d4d98e2e120a26d44eb04386f8fa734c845cbcb696e65dc24418"
     },
     "settings.js": {
       "bytes": 8065,
@@ -60,8 +60,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 80034,
-      "sha256": "4def7514ae7cb8fa8bc89e5cad95f45669d76afbc33ee461db84c6b7baa92c00"
+      "bytes": 81978,
+      "sha256": "ee4cf2441da476be43d07e709eec2f2170dd0496fb0bbe4e086c53f1441df392"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
