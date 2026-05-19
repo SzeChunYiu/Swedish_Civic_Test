@@ -435,3 +435,4 @@ CLAIMED ONBOARDING-DAILY-GOAL-PRESET-1 by pane2-setup-1779213097 2026-05-19T17:5
 CLAIMED STATIC-V11-READINESS-HEURISTIC-COPY-GUARD-1 by pane0-manager-build-2325653 2026-05-19T17:54:04Z
 CLAIMED STATIC-EBOOK-SV-QUIZ-TERM-NATURALNESS-1 by pane3-uiux-1779213400 2026-05-19T17:56:26Z (takeover: prior branch is stale with unrelated generated/content diffs, no open PR found, and Swedish ebook quiz loanword remains on origin/main)
 CLAIMED MOCK-EXAM-COMPLETION-XP-AWARD-1 by billy-2356704 2026-05-19T18:00:18Z
+CLAIMED E2E-BLOCKING-MODAL-HELPER-1 by billy-2378110 2026-05-19T18:05:01Z (first unblocked after PR-gated P0/CI rows)
