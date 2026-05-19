@@ -180,27 +180,9 @@ test('generateWeeklyRecap: counts answers within Mon-Sun local window only', () 
       questionIds: ['q1', 'q2', 'q3'],
       startedAt: '2026-05-19T10:00:00.000Z',
       answers: [
-        {
-          questionId: 'q1',
-          selectedOptionIds: ['a'],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:00:00.000Z',
-          timeSpentSeconds: 10,
-        },
-        {
-          questionId: 'q2',
-          selectedOptionIds: ['a'],
-          isCorrect: false,
-          answeredAt: '2026-05-19T10:01:00.000Z',
-          timeSpentSeconds: 10,
-        },
-        {
-          questionId: 'q3',
-          selectedOptionIds: ['a'],
-          isCorrect: true,
-          answeredAt: '2026-05-14T10:00:00.000Z',
-          timeSpentSeconds: 10,
-        },
+        { questionId: 'q1', selectedOptionIds: ['a'], isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z', timeSpentSeconds: 10 },
+        { questionId: 'q2', selectedOptionIds: ['a'], isCorrect: false, answeredAt: '2026-05-19T10:01:00.000Z', timeSpentSeconds: 10 },
+        { questionId: 'q3', selectedOptionIds: ['a'], isCorrect: true, answeredAt: '2026-05-14T10:00:00.000Z', timeSpentSeconds: 10 },
       ],
     },
   ];
@@ -235,33 +217,9 @@ test('generateWeeklyRecap: detects newly-mastered chapter', () => {
 test('generateWeeklyRecap: counts mock exams completed this week with best score', () => {
   const { generateWeeklyRecap } = loadTs('lib/learning/weeklyRecap.ts');
   const sessions = [
-    {
-      id: 'e1',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-19T09:00:00.000Z',
-      completedAt: '2026-05-19T10:00:00.000Z',
-      score: 0.72,
-    },
-    {
-      id: 'e2',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-21T09:00:00.000Z',
-      completedAt: '2026-05-21T10:00:00.000Z',
-      score: 0.85,
-    },
-    {
-      id: 'e3',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-10T09:00:00.000Z',
-      completedAt: '2026-05-10T10:00:00.000Z',
-      score: 0.99,
-    },
+    { id: 'e1', mode: 'exam', questionIds: [], answers: [], startedAt: '2026-05-19T09:00:00.000Z', completedAt: '2026-05-19T10:00:00.000Z', score: 0.72 },
+    { id: 'e2', mode: 'exam', questionIds: [], answers: [], startedAt: '2026-05-21T09:00:00.000Z', completedAt: '2026-05-21T10:00:00.000Z', score: 0.85 },
+    { id: 'e3', mode: 'exam', questionIds: [], answers: [], startedAt: '2026-05-10T09:00:00.000Z', completedAt: '2026-05-10T10:00:00.000Z', score: 0.99 },
   ];
   const recap = generateWeeklyRecap({
     progress: makeProgress(sessions),
@@ -289,10 +247,7 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
 
 test('tierComparison: three columns in canonical order', () => {
   const { TIER_COLUMNS } = loadTs('lib/monetization/tierComparison.ts');
-  assert.deepEqual(
-    TIER_COLUMNS.map((c) => c.id),
-    ['free', 'adFree', 'pro'],
-  );
+  assert.deepEqual(TIER_COLUMNS.map((c) => c.id), ['free', 'adFree', 'pro']);
 });
 
 test('tierComparison: every row has all three cells present', () => {
@@ -328,32 +283,11 @@ test('dailyActivityHistogram: returns contiguous bins ending today', () => {
   const now = new Date('2026-05-19T12:00:00.000Z');
   const sessions = [
     {
-      id: 's1',
-      mode: 'study',
-      questionIds: [],
-      startedAt: '2026-05-19T10:00:00.000Z',
+      id: 's1', mode: 'study', questionIds: [], startedAt: '2026-05-19T10:00:00.000Z',
       answers: [
-        {
-          questionId: 'q1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q2',
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt: '2026-05-19T11:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q3',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-17T10:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
+        { questionId: 'q1', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'q2', selectedOptionIds: [], isCorrect: false, answeredAt: '2026-05-19T11:00:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'q3', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-17T10:00:00.000Z', timeSpentSeconds: 5 },
       ],
     },
   ];
@@ -372,47 +306,20 @@ test('perChapterProgress: accuracy + coverage computed per chapter', () => {
   ];
   const sessions = [
     {
-      id: 's1',
-      mode: 'study',
-      questionIds: [],
-      startedAt: '2026-05-19T00:00:00.000Z',
+      id: 's1', mode: 'study', questionIds: [], startedAt: '2026-05-19T00:00:00.000Z',
       answers: [
-        {
-          questionId: 'd1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'd2',
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt: '2026-05-19T10:01:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'd1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:02:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'h1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:03:00.000Z',
-          timeSpentSeconds: 5,
-        },
+        { questionId: 'd1', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'd2', selectedOptionIds: [], isCorrect: false, answeredAt: '2026-05-19T10:01:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'd1', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-19T10:02:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'h1', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-19T10:03:00.000Z', timeSpentSeconds: 5 },
       ],
     },
   ];
-  const result = perChapterProgress(progressWithSessions(sessions), chapters, {
-    d1: 'democracy',
-    d2: 'democracy',
-    h1: 'history',
-  });
+  const result = perChapterProgress(
+    progressWithSessions(sessions),
+    chapters,
+    { d1: 'democracy', d2: 'democracy', h1: 'history' },
+  );
   const democracy = result.find((r) => r.chapterId === 'democracy');
   assert.equal(democracy.answers, 3);
   assert.equal(democracy.accuracy, 2 / 3);
@@ -425,40 +332,10 @@ test('perChapterProgress: accuracy + coverage computed per chapter', () => {
 test('mockHistory + bestMockScore: returns only exam-mode completed sessions', () => {
   const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
   const sessions = [
-    {
-      id: 's1',
-      mode: 'study',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-01T00:00:00.000Z',
-      completedAt: '2026-05-01T00:30:00.000Z',
-      score: 1,
-    },
-    {
-      id: 'e1',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-10T00:00:00.000Z',
-      completedAt: '2026-05-10T01:00:00.000Z',
-      score: 0.7,
-    },
-    {
-      id: 'e2',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-17T00:00:00.000Z',
-      completedAt: '2026-05-17T01:00:00.000Z',
-      score: 0.85,
-    },
-    {
-      id: 'e3',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-19T00:00:00.000Z' /* no completedAt */,
-    },
+    { id: 's1', mode: 'study', questionIds: [], answers: [], startedAt: '2026-05-01T00:00:00.000Z', completedAt: '2026-05-01T00:30:00.000Z', score: 1 },
+    { id: 'e1', mode: 'exam', questionIds: [], answers: [], startedAt: '2026-05-10T00:00:00.000Z', completedAt: '2026-05-10T01:00:00.000Z', score: 0.7 },
+    { id: 'e2', mode: 'exam', questionIds: [], answers: [], startedAt: '2026-05-17T00:00:00.000Z', completedAt: '2026-05-17T01:00:00.000Z', score: 0.85 },
+    { id: 'e3', mode: 'exam', questionIds: [], answers: [], startedAt: '2026-05-19T00:00:00.000Z' /* no completedAt */ },
   ];
   const history = mockHistory(progressWithSessions(sessions));
   assert.equal(history.length, 2);
@@ -469,32 +346,11 @@ test('timeOfDayPattern: 24 hourly bins, accuracy per hour', () => {
   const { timeOfDayPattern } = loadTs('lib/learning/dashboardStats.ts');
   const sessions = [
     {
-      id: 's1',
-      mode: 'study',
-      questionIds: [],
-      startedAt: '2026-05-19T00:00:00.000Z',
+      id: 's1', mode: 'study', questionIds: [], startedAt: '2026-05-19T00:00:00.000Z',
       answers: [
-        {
-          questionId: 'q1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T09:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q2',
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt: '2026-05-19T09:30:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q3',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T20:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
+        { questionId: 'q1', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-19T09:00:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'q2', selectedOptionIds: [], isCorrect: false, answeredAt: '2026-05-19T09:30:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'q3', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-19T20:00:00.000Z', timeSpentSeconds: 5 },
       ],
     },
   ];
@@ -511,32 +367,11 @@ test('mistakeConvergence: decreases as wrongs are resolved', () => {
   const { mistakeConvergence } = loadTs('lib/learning/dashboardStats.ts');
   const sessions = [
     {
-      id: 's1',
-      mode: 'study',
-      questionIds: [],
-      startedAt: '2026-05-15T00:00:00.000Z',
+      id: 's1', mode: 'study', questionIds: [], startedAt: '2026-05-15T00:00:00.000Z',
       answers: [
-        {
-          questionId: 'q1',
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt: '2026-05-15T10:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q2',
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt: '2026-05-15T10:01:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-17T10:00:00.000Z',
-          timeSpentSeconds: 5,
-        },
+        { questionId: 'q1', selectedOptionIds: [], isCorrect: false, answeredAt: '2026-05-15T10:00:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'q2', selectedOptionIds: [], isCorrect: false, answeredAt: '2026-05-15T10:01:00.000Z', timeSpentSeconds: 5 },
+        { questionId: 'q1', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-05-17T10:00:00.000Z', timeSpentSeconds: 5 },
       ],
     },
   ];
@@ -582,10 +417,7 @@ test('computeReadinessScore: high accuracy + coverage + recency → strong_prepa
     progress: progressWithSessions([
       { id: 's1', mode: 'study', questionIds: [], startedAt: '2026-05-18T00:00:00.000Z', answers },
     ]),
-    chapters: [
-      { id: 'a', questionCount: 20 },
-      { id: 'b', questionCount: 20 },
-    ],
+    chapters: [{ id: 'a', questionCount: 20 }, { id: 'b', questionCount: 20 }],
     questionChapterIndex,
     now: new Date('2026-05-19T12:00:00.000Z'),
   });
@@ -596,13 +428,7 @@ test('computeReadinessScore: high accuracy + coverage + recency → strong_prepa
 test('computeReadinessScore: idle 30 days drags recency to 0', () => {
   const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
   const answers = [
-    {
-      questionId: 'q1',
-      selectedOptionIds: [],
-      isCorrect: true,
-      answeredAt: '2026-04-01T10:00:00.000Z',
-      timeSpentSeconds: 5,
-    },
+    { questionId: 'q1', selectedOptionIds: [], isCorrect: true, answeredAt: '2026-04-01T10:00:00.000Z', timeSpentSeconds: 5 },
   ];
   const result = computeReadinessScore({
     progress: progressWithSessions([
@@ -631,21 +457,11 @@ test('generateCalibration: well-calibrated user → well_calibrated verdict', ()
   const events = [];
   // rating 1: 20% correct (4 of 20 = expected 20%)
   for (let i = 0; i < 20; i += 1) {
-    events.push({
-      questionId: `q${i}`,
-      isCorrect: i < 4,
-      answeredAt: '2026-05-19',
-      confidenceRating: 1,
-    });
+    events.push({ questionId: `q${i}`, isCorrect: i < 4, answeredAt: '2026-05-19', confidenceRating: 1 });
   }
   // rating 5: ~100% correct
   for (let i = 0; i < 20; i += 1) {
-    events.push({
-      questionId: `q${20 + i}`,
-      isCorrect: true,
-      answeredAt: '2026-05-19',
-      confidenceRating: 5,
-    });
+    events.push({ questionId: `q${20 + i}`, isCorrect: true, answeredAt: '2026-05-19', confidenceRating: 5 });
   }
   const result = generateCalibration(events);
   assert.equal(result.verdict, 'well_calibrated');
@@ -660,12 +476,7 @@ test('generateCalibration: overconfident user → over_confident verdict', () =>
   const events = [];
   // rating 5: only 50% correct (claimed 100%)
   for (let i = 0; i < 30; i += 1) {
-    events.push({
-      questionId: `q${i}`,
-      isCorrect: i < 15,
-      answeredAt: '2026-05-19',
-      confidenceRating: 5,
-    });
+    events.push({ questionId: `q${i}`, isCorrect: i < 15, answeredAt: '2026-05-19', confidenceRating: 5 });
   }
   const result = generateCalibration(events);
   assert.equal(result.verdict, 'over_confident');
