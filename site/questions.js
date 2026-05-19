@@ -33260,8 +33260,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One reason is that It can create conflicts and scare people away from democratic debate.",
-      "sv": "En anledning är att Det kan skapa konflikter och skrämma människor från demokratisk debatt."
+      "en": "One reason false information and hate can be a threat to democracy is that it can create conflicts and scare people away from democratic debate.",
+      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det kan skapa konflikter och skrämma människor från demokratisk debatt."
     },
     "opts": [
       {
@@ -33301,8 +33301,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One reason is it automatically gives everyone more knowledge.",
-      "sv": "En anledning är det gör att alla automatiskt får mer kunskap."
+      "en": "One reason false information and hate can be a threat to democracy is that it automatically gives everyone more knowledge.",
+      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det gör att alla automatiskt får mer kunskap."
     },
     "opts": [
       {
@@ -34323,8 +34323,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason is that False information can spread quickly and affect people's opinions.",
-      "sv": "En anledning är att Falska uppgifter kan spridas snabbt och påverka människors åsikter."
+      "en": "One reason source criticism is needed when using media is that false information can spread quickly and affect people's opinions.",
+      "sv": "En anledning till att källkritik behövs när man använder medier är att falska uppgifter kan spridas snabbt och påverka människors åsikter."
     },
     "opts": [
       {
@@ -34363,8 +34363,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason is that Everything that is published is always correct.",
-      "sv": "En anledning är allt som publiceras är alltid korrekt."
+      "en": "One reason source criticism is needed when using media is that everything that is published is always correct.",
+      "sv": "En anledning till att källkritik behövs när man använder medier är att allt som publiceras alltid är korrekt."
     },
     "opts": [
       {
