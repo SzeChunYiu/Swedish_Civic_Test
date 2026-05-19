@@ -176,7 +176,6 @@ export function freezeBannerCopy(
 ): string | null {
   if (result.rescuedThisRun.length === 0) return null;
   return language === 'sv'
-    ? `Sviten är räddad — ${result.freezeState.available} svitskydd kvar.`
     ? `Sviten är räddad — du har ${result.freezeState.available} svitskydd kvar.`
     : `Streak protected — ${result.freezeState.available} freezes left.`;
 }
