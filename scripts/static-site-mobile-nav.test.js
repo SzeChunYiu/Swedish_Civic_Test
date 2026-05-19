@@ -106,6 +106,25 @@ function assertReachableBox(box, label) {
   assert.ok(box.right <= 390, `${label} should fit inside the 390px viewport`);
 }
 
+test('static study buddy role button has keyboard activation wiring', () => {
+  const html = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
+  const source = fs.readFileSync(path.join(siteRoot, 'buddies.js'), 'utf8');
+
+  assert.match(
+    html,
+    /<div id="dala-figure" role="button" tabindex="0" aria-label="Study buddy"><\/div>/,
+  );
+  assert.match(source, /function activateBuddyFigure\(\)/);
+  assert.match(
+    source,
+    /document\.addEventListener\("click"[\s\S]*?#dala-figure[\s\S]*?activateBuddyFigure\(\)/,
+  );
+  assert.match(source, /document\.addEventListener\("keydown"/);
+  assert.match(source, /e\.key !== "Enter" && e\.key !== " "/);
+  assert.match(source, /e\.preventDefault\(\)/);
+  assert.match(source, /activateBuddyFigure\(\)/);
+});
+
 test(
   'static mobile topbar reaches key routes and settings without horizontal overflow',
   chromiumTestOptions(),
