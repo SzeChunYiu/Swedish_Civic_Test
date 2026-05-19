@@ -10,6 +10,26 @@ const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 
+function read(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function staleNativeIdentifierPattern() {
+  return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+}
+
+function oldRealAdsEnvFlagPattern() {
+  return new RegExp(['REAL_ADS', 'ENABLED_FOR_V1'].join('_'), 'i');
+}
+
+function staleDisabledAdsDecisionPattern() {
+  return /real[-\s]+ads[-\s]+disabled|keep\s+real\s+ads\s+disabled/i;
+}
+
+function disabledGoogleMobileAdsPattern() {
+  return new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i');
+}
+
 function storeRecordReadyEvidence(extra = '') {
   return [
     `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
@@ -33,6 +53,56 @@ function privacyReviewReadyEvidence(extra = '') {
     .join(' ');
 }
 
+function readJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
+}
+
+test('checked-in local evidence stubs keep blocked current ad-supported shape', () => {
+  const storeRecords = readJson('reports/store-records/store-records.json');
+  const privacyReview = readJson('reports/privacy-review/privacy-review.json');
+  const storeRecordsSource = fs.readFileSync(
+    path.join(repoRoot, 'reports/store-records/store-records.json'),
+    'utf8',
+  );
+  const privacyReviewSource = fs.readFileSync(
+    path.join(repoRoot, 'reports/privacy-review/privacy-review.json'),
+    'utf8',
+  );
+
+  assert.equal(storeRecords.status, 'blocked');
+  assert.equal(storeRecords.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.packageName, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.supportUrl, supportUrl);
+  assert.equal(storeRecords.privacyUrl, privacyUrl);
+  assert.match(storeRecords.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.iosAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.androidAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.equal(storeRecords.adMob.realAdsEnabled, true);
+  assert.equal(storeRecords.adMob.appAdsTxtReviewed, false);
+  assert.match(storeRecords.adMob.appAdsTxtPublisherLine, /^google\.com, pub-\d+, DIRECT,/);
+
+  assert.equal(privacyReview.status, 'blocked');
+  assert.equal(privacyReview.reviewedBuild.version, '1.0.0');
+  assert.equal(privacyReview.googleMobileAds.sdkPresent, true);
+  assert.equal(privacyReview.googleMobileAds.realAdsEnabled, true);
+  assert.equal(privacyReview.googleMobileAds.removeAdsIapReviewed, false);
+  assert.equal(privacyReview.googleMobileAds.consentFlowReviewed, false);
+  assert.match(privacyReview.googleMobileAds.gate, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/);
+  assert.match(privacyReview.googleMobileAds.gate, /Google Mobile Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /Remove Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /29 SEK/);
+  assert.match(privacyReview.googleMobileAds.gate, /ATT and UMP consent/i);
+  assert.notEqual(privacyReview.disabledSdks.realAds, true);
+  assert.notEqual(privacyReview.disabledSdks.purchases, true);
+
+  for (const source of [storeRecordsSource, privacyReviewSource]) {
+    assert.doesNotMatch(source, /com\.billyyiu\.swedishcivictest(?!"?\.removeads)/);
+    assert.doesNotMatch(source, /REAL_ADS_ENABLED_FOR_V1/);
+    assert.doesNotMatch(source, /real ads? (?:is|are )?disabled/i);
+    assert.doesNotMatch(source, /deferred-real-ads-disabled/i);
+  }
+});
+
 function runPreflight(options = {}) {
   const result = spawnSync(
     process.execPath,
@@ -52,6 +122,7 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
   const fakeNpm = path.join(tmpDir, 'npm');
   const fakeNpx = path.join(tmpDir, 'npx');
   const fakeGit = path.join(tmpDir, 'git');
+  const fakeGrep = path.join(tmpDir, 'grep');
 
   fs.writeFileSync(
     fakeNpm,
@@ -96,6 +167,10 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     ].join('\n'),
     { mode: 0o755 },
   );
+
+  if (options.grepAlwaysPass) {
+    fs.writeFileSync(fakeGrep, '#!/bin/sh\nexit 0\n', { mode: 0o755 });
+  }
 }
 
 function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
@@ -590,6 +665,70 @@ function createDeviceAudioEvidence(platform, options = {}) {
   };
 }
 
+const removeAdsDeviceQaChecks = [
+  'AdMob test ads rendered on study screens',
+  'Remove Ads purchase removed ads',
+  'Entitlement persisted after relaunch',
+  'Restore purchase restored entitlement',
+  'ATT prompt/status documented',
+  'EEA UMP consent prompt rendered',
+  'Timed exam screens showed no ads',
+];
+
+function createRemoveAdsDeviceQaReport(options = {}) {
+  const relativeDir = path.join(
+    'reports',
+    'release-device-qa',
+    `test-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
+  const absoluteDir = path.join(repoRoot, relativeDir);
+  fs.mkdirSync(absoluteDir, { recursive: true });
+
+  const iosArtifact = path.join(relativeDir, 'ios-remove-ads-qa.md');
+  const androidArtifact = path.join(relativeDir, 'android-remove-ads-qa.md');
+  if (options.createArtifactFiles !== false) {
+    fs.writeFileSync(path.join(repoRoot, iosArtifact), 'iOS Remove Ads QA evidence\n');
+    fs.writeFileSync(path.join(repoRoot, androidArtifact), 'Android Remove Ads QA evidence\n');
+  }
+
+  const checked = options.checked === false ? ' ' : 'x';
+  const checklist = removeAdsDeviceQaChecks.map((check) => `- [${checked}] ${check}`).join('\n');
+  const body =
+    options.body ||
+    [
+      '# Release Ads/IAP Device QA',
+      '',
+      '## iOS',
+      '',
+      '- Device: iPhone 15 / iOS 18 physical device',
+      '- Build: TestFlight build ios-100 version 1.0.0',
+      `- Evidence artifact: ${iosArtifact}`,
+      '- Reviewer: Release QA',
+      '- Reviewed at: 2026-05-19T11:00:00Z',
+      '',
+      checklist,
+      '',
+      '## Android',
+      '',
+      '- Device: Pixel 8 / Android 15 physical device',
+      '- Build: EAS Android AAB build android-100 version 1.0.0',
+      `- Evidence artifact: ${androidArtifact}`,
+      '- Reviewer: Release QA',
+      '- Reviewed at: 2026-05-19T11:05:00Z',
+      '',
+      checklist,
+      '',
+    ].join('\n');
+
+  const reportPath = path.join(absoluteDir, 'release-ads-iap-device-qa.md');
+  fs.writeFileSync(reportPath, body);
+
+  return {
+    relativePath: path.join(relativeDir, 'release-ads-iap-device-qa.md'),
+    cleanup: () => fs.rmSync(absoluteDir, { recursive: true, force: true }),
+  };
+}
+
 function createStoreRecordEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -934,9 +1073,88 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   assert.equal(scopeGate.status, 'BLOCKED');
   assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
   assert.match(scopeGate.evidence, /tests\/v1-1-/i);
-  assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is missing/i);
+  assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
+  assert.match(scopeGate.evidence, /unchecked manual checklist item/i);
   assert.match(scopeGate.nextAction, /test -f lib\/monetization\/purchases\.ts/);
   assert.match(scopeGate.nextAction, /test -f reports\/release-ads-iap-device-qa\.md/);
+});
+
+test('release preflight blocks generic Remove Ads device-QA prose', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-generic-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const deviceQaReport = createRemoveAdsDeviceQaReport({
+    body: '# Release Ads/IAP Device QA\n\ndone\n',
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+    writeFakeReleaseCommands(tmpDir, { grepAlwaysPass: true });
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    assert.equal(scopeGate.status, 'BLOCKED');
+    assert.match(scopeGate.evidence, /generic "done" evidence/i);
+    assert.match(scopeGate.evidence, /missing ## iOS section/i);
+    assert.match(scopeGate.evidence, /missing ## Android section/i);
+  } finally {
+    deviceQaReport.cleanup();
+  }
+});
+
+test('release preflight accepts complete Remove Ads device-QA evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-valid-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const deviceQaReport = createRemoveAdsDeviceQaReport();
+
+  try {
+    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+    writeFakeReleaseCommands(tmpDir, { grepAlwaysPass: true });
+
+    const report = runPreflight({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    assert.equal(scopeGate.status, 'READY');
+    assert.match(scopeGate.evidence, /device-QA gates are closed/i);
+  } finally {
+    deviceQaReport.cleanup();
+  }
+});
+
+test('release preflight documents every Remove Ads device-QA manual check', () => {
+  const releasePreflight = fs.readFileSync(
+    path.join(repoRoot, 'scripts/release-preflight.js'),
+    'utf8',
+  );
+  const deviceQaTemplate = fs.readFileSync(
+    path.join(repoRoot, 'reports/release-ads-iap-device-qa.md'),
+    'utf8',
+  );
+
+  for (const check of removeAdsDeviceQaChecks) {
+    assert.match(releasePreflight, new RegExp(check.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.match(deviceQaTemplate, new RegExp(check.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  for (const label of ['Device', 'Build', 'Evidence artifact', 'Reviewer', 'Reviewed at']) {
+    assert.match(releasePreflight, new RegExp(label));
+    assert.match(deviceQaTemplate, new RegExp(`- ${label}:`));
+  }
 });
 
 test('release preflight allows v1.1 surfaces only with explicit operator override evidence', () => {
@@ -2002,6 +2220,33 @@ test('release preflight blocks store record evidence without exact public URLs',
   );
 });
 
+test('release evidence template is synchronized with ad-supported store and privacy evidence', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  const template = read('reports/release-evidence-template.md');
+
+  assert.match(template, new RegExp(appConfig.ios.bundleIdentifier, 'i'));
+  assert.match(template, new RegExp(appConfig.android.package, 'i'));
+  assert.match(template, /AdMob app ID/i);
+  assert.match(template, /app-ads\.txt/i);
+  assert.match(template, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(template, /adMob\.appAdsTxtReviewed:\s*true/i);
+  assert.match(template, /googleMobileAds\.realAdsEnabled:\s*true/i);
+  assert.match(template, /googleMobileAds\.removeAdsIapReviewed:\s*true/i);
+  assert.match(template, /googleMobileAds\.consentFlowReviewed:\s*true/i);
+  assert.match(template, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(template, /generated binary\/build|generated binary/i);
+  assert.match(template, /Remove Ads/i);
+  assert.match(template, /29 SEK/i);
+  assert.match(template, /non-consumable/i);
+  assert.match(template, /App Tracking Transparency|ATT/i);
+  assert.match(template, /Google UMP|UMP consent/i);
+
+  assert.doesNotMatch(template, staleNativeIdentifierPattern());
+  assert.doesNotMatch(template, oldRealAdsEnvFlagPattern());
+  assert.doesNotMatch(template, staleDisabledAdsDecisionPattern());
+  assert.doesNotMatch(template, disabledGoogleMobileAdsPattern());
+});
+
 test('release preflight blocks local store record evidence missing store URLs', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-record-json-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
@@ -2129,7 +2374,7 @@ test('release preflight blocks local store record evidence without AdMob app rea
   const storeEvidence = createStoreRecordEvidence({
     evidence: {
       adMob: {
-        status: 'deferred-real-ads-disabled',
+        status: 'deferred',
         note: 'legacy disabled-ad decision',
       },
     },
@@ -2228,7 +2473,7 @@ test('release preflight blocks local privacy review evidence with disabled-ad po
         sdkPresent: true,
         testAppIds: true,
         realAdsEnabled: false,
-        gate: 'REAL_ADS_ENABLED_FOR_V1=false',
+        gate: 'legacy disabled-ad gate',
       },
       disabledSdks: {
         analytics: true,

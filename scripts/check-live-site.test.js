@@ -1,5 +1,8 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const http = require('node:http');
+const os = require('node:os');
+const path = require('node:path');
 const test = require('node:test');
 
 const {
@@ -10,6 +13,9 @@ const {
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 } = require('./check-live-site');
+const { checkAssetManifest, writeAssetManifest } = require('./update-site-asset-manifest');
+
+const repoRoot = path.resolve(__dirname, '..');
 
 function generatedQuestions(count, label = 'current') {
   const questions = Array.from({ length: count }, (_, index) => ({
@@ -110,6 +116,34 @@ test('derives the expected live count from the local generated site bank', () =>
 test('derives the expected live bank hash from the local generated site bank', () => {
   const hash = resolveRequiredQuestionBankHash();
   assert.match(hash, /^[0-9a-f]{64}$/);
+});
+
+test('site asset manifest generator writes and checks deterministic static fingerprints', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  assert.equal(
+    pkg.scripts['update:site-asset-manifest'],
+    'node scripts/update-site-asset-manifest.js',
+  );
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-asset-manifest-'));
+  const siteDir = path.join(tmpDir, 'site');
+  const manifestPath = path.join(siteDir, 'asset-manifest.json');
+  fs.mkdirSync(siteDir, { recursive: true });
+  fs.writeFileSync(path.join(siteDir, 'index.html'), '<main>Almost Swedish</main>\n');
+  fs.writeFileSync(path.join(siteDir, 'styles.css'), '.practice__inner { max-width: 1080px; }\n');
+
+  const first = writeAssetManifest({ siteDir, manifestPath });
+  const second = writeAssetManifest({ siteDir, manifestPath });
+  assert.deepEqual(second, first);
+  assert.equal(checkAssetManifest({ siteDir, manifestPath }).ok, true);
+
+  fs.appendFileSync(path.join(siteDir, 'styles.css'), '.stale { color: red; }\n');
+  const staleResult = checkAssetManifest({ siteDir, manifestPath });
+  assert.equal(staleResult.ok, false);
+  assert.match(staleResult.mismatches.join('\n'), /styles\.css/);
+
+  writeAssetManifest({ siteDir, manifestPath });
+  assert.equal(checkAssetManifest({ siteDir, manifestPath }).ok, true);
 });
 
 test('live site check passes current static assets', async () => {
