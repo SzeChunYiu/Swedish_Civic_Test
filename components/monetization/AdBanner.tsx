@@ -5,14 +5,14 @@ import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
-import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
+import type { BannerAdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
 export function AdBanner({
   placement = 'home_banner',
   entitlements,
 }: {
-  placement?: AdPlacement;
+  placement?: BannerAdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
   const language = useSettingsStore((state) => state.language);

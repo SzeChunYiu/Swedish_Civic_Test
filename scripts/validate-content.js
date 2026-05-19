@@ -1146,6 +1146,8 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     pattern: /<NativeAdCard\s+\/>/,
   },
 ];
+const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
+const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
@@ -3335,6 +3337,10 @@ const EXPECTED_MONETIZATION_TYPE_UNIONS = [
       'rewarded_extra_exam',
       'app_open_launch',
     ],
+  },
+  {
+    typeName: 'BannerAdPlacement',
+    values: ['home_banner', 'chapter_list_banner'],
   },
 ];
 const EXPECTED_MONETIZATION_INTERFACES = [
@@ -6436,6 +6442,7 @@ let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
+let bannerAdPlacementTypeCasesValidated = 0;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let nativeAdAssetDirectChildrenValidated = 0;
@@ -7117,6 +7124,82 @@ function validateAdPlacementRouteParity() {
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
+  let webBannerSource = '';
+  let nativeBannerSource = '';
+
+  try {
+    webBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+    nativeBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`AdBanner sources could not be read for banner placement parity: ${error.message}`);
+    return;
+  }
+
+  for (const { label, source } of [
+    { label: 'web AdBanner', source: webBannerSource },
+    { label: 'native AdBanner', source: nativeBannerSource },
+  ]) {
+    let sourceIsValid = true;
+
+    if (!/\bBannerAdPlacement\b/.test(source)) {
+      reject(`${label} props must use BannerAdPlacement`);
+      sourceIsValid = false;
+    }
+    if (!/placement\?: BannerAdPlacement;/.test(source)) {
+      reject(`${label} placement prop must be typed as optional BannerAdPlacement`);
+      sourceIsValid = false;
+    }
+    if (/\bAdPlacement\b/.test(source)) {
+      reject(`${label} must not accept the full AdPlacement union`);
+      sourceIsValid = false;
+    }
+
+    if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
+  }
+
+  let bannerUsageIsValid = true;
+  const bannerUsageRoots = ['app', 'components'];
+
+  function scanBannerUsages(directory) {
+    const entries = fs.readdirSync(directory, { withFileTypes: true });
+
+    entries.forEach((entry) => {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        scanBannerUsages(fullPath);
+        return;
+      }
+      if (!entry.isFile() || !/\.(?:tsx|ts)$/.test(entry.name)) return;
+
+      const relativePath = path.relative(repoRoot, fullPath).replace(/\\/g, '/');
+      const source = fs.readFileSync(fullPath, 'utf8');
+      const adBannerPlacementPattern = /<AdBanner\b[^>]*\bplacement="([^"]+)"/g;
+      let match;
+
+      while ((match = adBannerPlacementPattern.exec(source))) {
+        const placement = match[1];
+        if (!EXPECTED_BANNER_AD_PLACEMENTS.includes(placement)) {
+          bannerUsageIsValid = false;
+          reject(`${relativePath} must not pass non-banner placement ${placement} to AdBanner`);
+        }
+      }
+    });
+  }
+
+  try {
+    bannerUsageRoots.forEach((root) => scanBannerUsages(path.join(repoRoot, root)));
+  } catch (error) {
+    reject(`AdBanner call sites could not be scanned: ${error.message}`);
+    bannerUsageIsValid = false;
+  }
+
+  if (bannerUsageIsValid) bannerAdPlacementTypeCasesValidated += 1;
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -7436,6 +7519,7 @@ function validateAdPlacementRouteParity() {
 
   if (
     valid &&
+    bannerAdPlacementTypeCasesValidated === EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES &&
     adPlacementRoutesValidated === EXPECTED_ROUTE_AD_PLACEMENTS.length &&
     noAdRoutesValidated === EXPECTED_NO_AD_ROUTE_FILES.length
   ) {
@@ -15703,6 +15787,7 @@ console.log(
       tabNavigationRulesValidated,
       tabNavigationRoutesValidated,
       tabNavigationParityValidated,
+      bannerAdPlacementTypeCasesValidated,
       adPlacementRoutesValidated,
       noAdRoutesValidated,
       nativeAdAssetDirectChildrenValidated,

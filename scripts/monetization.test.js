@@ -1480,8 +1480,12 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   assert.match(entitlementHookSource, /subscribeToRemoveAdsEntitlements/);
   assert.match(entitlementHookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(entitlementHookSource, /useResolvedAdEntitlements/);
+  assert.match(webBannerSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(webBannerSource, /\bAdPlacement\b/);
   assert.match(webBannerSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(webBannerSource, /!entitlementsReady/);
+  assert.match(nativeBannerSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(nativeBannerSource, /\bAdPlacement\b/);
   assert.match(nativeBannerSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
   assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);

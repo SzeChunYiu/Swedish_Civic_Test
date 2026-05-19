@@ -1059,6 +1059,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
+  assert.match(webSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(webSource, /\bAdPlacement\b/);
   assert.match(webSource, /useSettingsStore/);
   assert.match(webSource, /const copy = adBannerCopy\[language\]/);
   assert.match(webSource, /const placementLabel = copy\.placementLabels\[placement\];/);
@@ -1073,6 +1075,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   );
   assert.match(webSource, /<Card[\s\S]*accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(nativeSource, /react-native-google-mobile-ads/);
+  assert.match(nativeSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(nativeSource, /\bAdPlacement\b/);
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
