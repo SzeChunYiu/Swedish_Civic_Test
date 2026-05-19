@@ -94,6 +94,59 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.match(warnings[1], /Speech stop unavailable/i);
 });
 
+test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
+  moduleCache.clear();
+  const speechEvents = [];
+  const onDone = () => {};
+  const onError = () => {};
+  const onStart = () => {};
+  const onStopped = () => {};
+  const { speakSwedish } = loadTs('lib/audio/speak.ts', {
+    speechMock: {
+      speak(text, options) {
+        speechEvents.push({ text, options });
+      },
+      stop() {},
+    },
+  });
+
+  speakSwedish('Hej Sverige', { onDone, onError, onStart, onStopped });
+
+  assert.equal(speechEvents.length, 1);
+  assert.equal(speechEvents[0].text, 'Hej Sverige');
+  assert.equal(speechEvents[0].options.language, 'sv-SE');
+  assert.equal(speechEvents[0].options.onDone, onDone);
+  assert.equal(speechEvents[0].options.onError, onError);
+  assert.equal(speechEvents[0].options.onStart, onStart);
+  assert.equal(speechEvents[0].options.onStopped, onStopped);
+});
+
+test('AudioButton exposes prompt playback state as a stop toggle', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/learning/AudioButton.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /import \{ useCallback, useEffect, useRef, useState \} from 'react';/);
+  assert.match(source, /playingLabel: 'Stoppa ljudet'/);
+  assert.match(source, /playingLabel: 'Stop audio'/);
+  assert.match(
+    source,
+    /const \[activeSpeechText, setActiveSpeechText\] = useState<string \| null>\(null\);/,
+  );
+  assert.match(source, /const activeSpeechRunIdRef = useRef\(0\);/);
+  assert.match(source, /const isSpeaking = canPlayAudio && activeSpeechText === speechText;/);
+  assert.match(source, /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*return;/);
+  assert.match(
+    source,
+    /speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onError: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onStopped: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*\}\);/,
+  );
+  assert.match(
+    source,
+    /accessibilityState=\{\{ disabled: !canPlayAudio, busy: isSpeaking, selected: isSpeaking \}\}/,
+  );
+});
+
 test('practice and routed quiz screens honor the persisted audio setting', () => {
   const routeFiles = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
 
