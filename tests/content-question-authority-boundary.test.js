@@ -1,6 +1,9 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const path = require('node:path');
 const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
 
 test('published question text keeps the independent study boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -35,7 +38,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -67,7 +70,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -104,7 +107,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
