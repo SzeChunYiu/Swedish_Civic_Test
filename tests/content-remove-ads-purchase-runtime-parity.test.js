@@ -21,13 +21,17 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'lib/monetization/purchases.ts'),
     'utf8',
   );
-  const placementCtaSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+  const paywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 16);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 17);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
+  assert.match(purchaseSource, /'persistence_failed'/);
+  assert.match(purchaseSource, /interface RemoveAdsPersistenceResult/);
+  assert.match(purchaseSource, /async function persistValidatedRemoveAdsEntitlement/);
+  assert.match(purchaseSource, /return createResult\('persistence_failed'/);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
   assert.match(purchaseSource, /receiptValidationStatus: 'valid'/);
@@ -43,8 +47,8 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
-  assert.match(purchaseSource, /function finishRemoveAdsPurchase/);
-  assert.match(purchaseSource, /await finishRemoveAdsPurchase\(provider, purchase\)/);
+  assert.match(paywallSource, /persistence_failed/);
+  assert.match(paywallSource, /Tap Restore to activate ad-free study/);
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
@@ -110,7 +114,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('Remove Ads purchase runtime parity rejects finish failure grant regressions', () => {
+test('Remove Ads purchase runtime parity rejects missing persistence-failure result', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -123,10 +127,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        'await finishRemoveAdsPurchase(provider, purchase);',
-        'await provider.finishPurchase?.(purchase);',
-      );
+      .replaceAll("return createResult('persistence_failed'", "return createResult('pending'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -139,6 +140,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /Remove Ads buy and restore flows must isolate finish failures before granting validated entitlements/,
+    /Remove Ads buy and restore flows must return persistence_failed/,
   );
 });

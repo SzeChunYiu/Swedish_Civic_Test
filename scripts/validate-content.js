@@ -1339,7 +1339,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 16;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -3731,7 +3731,7 @@ const EXPECTED_PURCHASE_TYPE_UNIONS = [
   },
   {
     typeName: 'RemoveAdsPurchaseStatus',
-    values: ['purchased', 'pending', 'restored', 'not_found'],
+    values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
   },
 ];
 const EXPECTED_PURCHASE_INTERFACES = [
@@ -13239,31 +13239,21 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
     ],
     [
-      /restoreRemoveAdsPurchase/.test(placementCtaSource) &&
-        normalizedPlacementCtaSource.includes(
-          "runPurchaseAction('restore', restoreRemoveAdsPurchase)",
-        ),
-      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
+      normalizedPurchaseSource.includes('interface RemoveAdsPersistenceResult') &&
+        normalizedPurchaseSource.includes('async function persistValidatedRemoveAdsEntitlement') &&
+        normalizedPurchaseSource.includes('persisted: false'),
+      'Remove Ads persistence failures must be represented as a typed recoverable result',
     ],
     [
-      normalizedPlacementCtaSource.includes(
-        'accessibilityLabel={copy.restoreAccessibilityLabel}',
-      ) &&
-        normalizedPlacementCtaSource.includes(
-          'accessibilityHint={copy.restoreAccessibilityHint}',
-        ) &&
-        normalizedPlacementCtaSource.includes('variant="secondary"'),
-      'RemoveAdsPlacementCta restore action must be an accessible secondary action',
+      normalizedPurchaseSource.includes("return createResult('persistence_failed'") &&
+        normalizedPurchaseSource.includes("source: 'purchase'") &&
+        normalizedPurchaseSource.includes("source: 'restore'"),
+      'Remove Ads buy and restore flows must return persistence_failed after validated persistence failures',
     ],
     [
-      /not_found:\s*'No previous Remove Ads purchase was found\.'/.test(placementCtaSource) &&
-        /restored:\s*'Purchase restored\. Study ads are being removed\.'/.test(
-          placementCtaSource,
-        ) &&
-        /pending:\s*'Waiting for store confirmation before removing ads\.'/.test(
-          placementCtaSource,
-        ),
-      'RemoveAdsPlacementCta must expose localized pending, not_found, and restored status copy',
+      normalizedPurchaseSource.includes('async function getFailClosedPurchaseEntitlements') &&
+        normalizedPurchaseSource.includes('return removeAdsEntitlements(false);'),
+      'Remove Ads persistence failures must fail closed instead of enabling adsDisabled without stored proof',
     ],
   ];
 

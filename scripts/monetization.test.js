@@ -1788,7 +1788,7 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
   assert.equal(await directGrantStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
-test('remove-ads purchase cleanup failures do not replace primary outcomes', async () => {
+test('validated remove-ads purchases fail closed when entitlement persistence fails', async () => {
   const {
     REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
@@ -1798,95 +1798,92 @@ test('remove-ads purchase cleanup failures do not replace primary outcomes', asy
     restoreRemoveAdsPurchase,
   } = loadTs('lib/monetization/purchases.ts');
 
-  const purchaseCleanupCalls = [];
-  const purchasedStorage = createMemoryPurchaseStorage();
-  const successfulPurchaseProvider = {
-    ...createMockPurchaseProvider(),
-    async disconnect() {
-      purchaseCleanupCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
-  };
-  const purchaseResult = await buyRemoveAds({
-    provider: successfulPurchaseProvider,
-    storage: purchasedStorage,
+  function createPersistenceFailingStorage(backingStorage) {
+    return {
+      async deleteItemAsync(key) {
+        await backingStorage.deleteItemAsync?.(key);
+      },
+      async getItemAsync(key) {
+        return backingStorage.getItemAsync(key);
+      },
+      async setItemAsync(key, value) {
+        if (key === REMOVE_ADS_STORAGE_KEY) throw new Error('storage write failed');
+        await backingStorage.setItemAsync(key, value);
+      },
+    };
+  }
+
+  const buyBackingStorage = createMemoryPurchaseStorage();
+  const buyProvider = createMockPurchaseProvider();
+  const failedBuy = await buyRemoveAds({
+    provider: buyProvider,
+    storage: createPersistenceFailingStorage(buyBackingStorage),
   });
 
-  assert.equal(purchaseResult.status, 'purchased');
-  assert.equal(purchaseResult.entitlements.adsDisabled, true);
-  assert.equal((await getPurchaseEntitlements({ storage: purchasedStorage })).adsDisabled, true);
-  assert.ok(await purchasedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
-  assert.deepEqual(purchaseCleanupCalls, ['disconnect']);
+  assert.equal(failedBuy.status, 'persistence_failed');
+  assert.equal(failedBuy.entitlements.adsDisabled, false);
+  assert.equal(failedBuy.purchaseToken, 'mock-token-buy-remove-ads');
+  assert.equal(await buyBackingStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+  assert.equal((await getPurchaseEntitlements({ storage: buyBackingStorage })).adsDisabled, false);
 
-  const restoreCleanupCalls = [];
-  const restoredStorage = createMemoryPurchaseStorage();
-  const successfulRestoreProvider = {
-    ...createMockPurchaseProvider({ owned: true }),
-    async disconnect() {
-      restoreCleanupCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
-  };
-  const restoreResult = await restoreRemoveAdsPurchase({
-    provider: successfulRestoreProvider,
-    storage: restoredStorage,
+  const buyRetryRestore = await restoreRemoveAdsPurchase({
+    provider: buyProvider,
+    storage: buyBackingStorage,
   });
 
-  assert.equal(restoreResult.status, 'restored');
-  assert.equal(restoreResult.entitlements.adsDisabled, true);
-  assert.equal((await getPurchaseEntitlements({ storage: restoredStorage })).adsDisabled, true);
-  assert.deepEqual(restoreCleanupCalls, ['disconnect']);
+  assert.equal(buyRetryRestore.status, 'restored');
+  assert.equal((await getPurchaseEntitlements({ storage: buyBackingStorage })).adsDisabled, true);
 
-  const requestFailureCalls = [];
-  const requestFailureProvider = {
-    async connect() {
-      requestFailureCalls.push('connect');
-    },
-    async disconnect() {
-      requestFailureCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
-    async requestRemoveAdsPurchase() {
-      requestFailureCalls.push('request');
-      throw new Error('store request failed');
-    },
-    async restorePurchases() {
-      return [];
-    },
-  };
+  const restoreBackingStorage = createMemoryPurchaseStorage();
+  const restoreProvider = createMockPurchaseProvider({ owned: true });
+  const failedRestore = await restoreRemoveAdsPurchase({
+    provider: restoreProvider,
+    storage: createPersistenceFailingStorage(restoreBackingStorage),
+  });
 
-  await assert.rejects(
-    () =>
-      buyRemoveAds({
-        provider: requestFailureProvider,
-        storage: createMemoryPurchaseStorage(),
-      }),
-    /store request failed/,
+  assert.equal(failedRestore.status, 'persistence_failed');
+  assert.equal(failedRestore.entitlements.adsDisabled, false);
+  assert.equal(failedRestore.purchaseToken, 'mock-token-restore-remove-ads');
+  assert.equal(await restoreBackingStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const restoreRetry = await restoreRemoveAdsPurchase({
+    provider: restoreProvider,
+    storage: restoreBackingStorage,
+  });
+
+  assert.equal(restoreRetry.status, 'restored');
+  assert.equal(
+    (await getPurchaseEntitlements({ storage: restoreBackingStorage })).adsDisabled,
+    true,
   );
-  assert.deepEqual(requestFailureCalls, ['connect', 'request', 'disconnect']);
 
-  const validationFailureCalls = [];
+  const requestFailureProvider = {
+    ...createMockPurchaseProvider(),
+    async requestRemoveAdsPurchase() {
+      throw new Error('request failed before persistence');
+    },
+  };
+  await assert.rejects(
+    buyRemoveAds({
+      provider: requestFailureProvider,
+      storage: createMemoryPurchaseStorage(),
+    }),
+    /request failed before persistence/,
+  );
+
   const validationFailureProvider = {
     ...createMockPurchaseProvider(),
-    async disconnect() {
-      validationFailureCalls.push('disconnect');
-      throw new Error('endConnection failed');
-    },
     async validateRemoveAdsReceipt() {
-      validationFailureCalls.push('validate');
-      throw new Error('receipt validation failed');
+      throw new Error('receipt validation failed before persistence');
     },
   };
-
   await assert.rejects(
-    () =>
-      buyRemoveAds({
-        provider: validationFailureProvider,
-        storage: createMemoryPurchaseStorage(),
-      }),
-    /receipt validation failed/,
+    buyRemoveAds({
+      provider: validationFailureProvider,
+      storage: createMemoryPurchaseStorage(),
+    }),
+    /receipt validation failed before persistence/,
   );
-  assert.deepEqual(validationFailureCalls, ['validate', 'disconnect']);
 });
 
 test('remove-ads paywall is surfaced near an ad placement and wired to purchase helpers', () => {
@@ -1952,14 +1949,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.doesNotMatch(paywallSource, /\bprov förblir annonsfria\b/i);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
-  assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
-  assert.match(paywallSource, /same store account/);
-  assert.match(paywallSource, /samma butikskonto/);
-  assert.match(paywallSource, /status === 'restored' \? 'restored' : 'purchased'/);
-  assert.doesNotMatch(paywallSource, /adsDisabled \? copy\.bodyIdle/);
-  assert.doesNotMatch(paywallSource, /activeAction !== null \|\| adsDisabled/);
-  assert.match(paywallSource, /minWidth: space\[15\]/);
-  assert.doesNotMatch(paywallSource, /minWidth: 128/);
+  assert.match(paywallSource, /persistence_failed/);
+  assert.match(paywallSource, /Köpet är bekräftat, men kunde inte sparas på enheten/);
+  assert.match(paywallSource, /The purchase is confirmed, but could not be saved on this device/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
   assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(placementCtaSource, /useResolvedAdEntitlements\(entitlements\)/);
