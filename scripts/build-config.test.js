@@ -1285,14 +1285,19 @@ test('web export script is available for local production bundle smoke', () => {
   const vercelConfig = readJson('vercel.json');
   const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
   const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
+  const htmlShell = fs.readFileSync(path.join(repoRoot, 'app/+html.tsx'), 'utf8');
 
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
+    pkg.scripts['test:web-export-resources'],
+    'node scripts/check-web-export-resources.js dist-web',
+  );
+  assert.equal(
     pkg.scripts['release:web-export-smoke'],
-    'rm -rf dist-web && npm run build:web:export',
+    'rm -rf dist-web && npm run build:web:export && npm run test:web-export-resources',
   );
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
@@ -1302,6 +1307,9 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/check-web-export-resources.js')), true);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'assets/favicon.svg')), true);
+  assert.match(htmlShell, /<link href="favicon\.svg" rel="icon" type="image\/svg\+xml" \/>/);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
@@ -1334,16 +1342,19 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   });
   const index = fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8');
   const fallback = fs.readFileSync(path.join(outputDir, '404.html'), 'utf8');
+  const favicon = fs.readFileSync(path.join(outputDir, 'favicon.svg'), 'utf8');
   const bundle = fs.readFileSync(path.join(bundleDir, 'entry-test.js'), 'utf8');
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(index, /data-web-export-loader="true"/);
+  assert.match(index, /<link href="favicon\.svg" rel="icon" type="image\/svg\+xml" \/>/);
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
+  assert.match(favicon, /viewBox="0 0 64 64"/);
 
   const checkResult = spawnSync(
     process.execPath,
