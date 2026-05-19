@@ -686,11 +686,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Ändra mål, språk och ljud',
-    'Första övningen',
-    'Nivå 2',
-    'Misstagsrepetition',
-    'Tre dagars svit',
+    'Öppna inställningar',
   ],
   en: [
     'Local profile',
@@ -719,7 +715,11 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'profile route must import AppLanguage from settings'],
-  ['deriveBadges, getBadgeTitle', 'profile route must import bilingual badge title helper'],
+  ['BadgeRow', 'profile route must render badge rows with descriptions'],
+  [
+    'deriveBadges, getBadgeDescription, getBadgeTitle',
+    'profile route must import localized badge helpers',
+  ],
   ['type ProfileCopy = {', 'profile route must define a typed copy contract'],
   [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
@@ -759,9 +759,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['style={styles.settingsLink}', 'profile settings shortcut must use the token target style'],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
+  ['const title = getBadgeTitle(badge, language);', 'profile badge title must use catalog locale'],
   [
-    'formatBadges(badges, language, copy.noBadges)',
-    'profile badge summary must use localized badge and empty-state copy',
+    'const description = getBadgeDescription(badge, language);',
+    'profile badge description must use catalog locale',
+  ],
+  [
+    '<BadgeRow key={badge.id} title={title} description={description} />',
+    'profile badge section must render individual localized rows',
+  ],
+  [
+    '<Text style={styles.emptyBadgeText}>{copy.noBadges}</Text>',
+    'profile empty badge copy must localize',
   ],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
@@ -13972,10 +13981,14 @@ function validateBadgeCatalog() {
     );
   }
 
-  const seenTitlesSv = new Set();
-  const seenTitlesEn = new Set();
-  const seenDescriptionsSv = new Set();
-  const seenDescriptionsEn = new Set();
+  const seenTitlesByLanguage = {
+    sv: new Set(),
+    en: new Set(),
+  };
+  const seenDescriptionsByLanguage = {
+    sv: new Set(),
+    en: new Set(),
+  };
 
   entries.forEach(([key, badge], index) => {
     const label = hasText(badge?.id) ? badge.id : `badge[${index}]`;
@@ -14003,30 +14016,26 @@ function validateBadgeCatalog() {
         }
       }
 
-      if (normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)) {
-        reject(`${label} titleSv and titleEn must be distinct bilingual text`);
-      }
-      if (
-        normalizeComparableText(badge.descriptionSv) ===
-        normalizeComparableText(badge.descriptionEn)
-      ) {
-        reject(`${label} descriptionSv and descriptionEn must be distinct bilingual text`);
-      }
-
-      const duplicateChecks = [
-        ['titleSv', seenTitlesSv, 'Swedish badge title'],
-        ['titleEn', seenTitlesEn, 'English badge title'],
-        ['descriptionSv', seenDescriptionsSv, 'Swedish badge description'],
-        ['descriptionEn', seenDescriptionsEn, 'English badge description'],
-      ];
-
-      duplicateChecks.forEach(([field, seen, duplicateLabel]) => {
-        const normalized = normalizeComparableText(badge[field]);
-        if (normalized && seen.has(normalized)) {
-          reject(`${label} duplicates ${duplicateLabel}`);
+      for (const language of ['sv', 'en']) {
+        const titleField = language === 'sv' ? 'titleSv' : 'titleEn';
+        const descriptionField = language === 'sv' ? 'descriptionSv' : 'descriptionEn';
+        const normalizedTitle = normalizeComparableText(badge[titleField]);
+        if (normalizedTitle && seenTitlesByLanguage[language].has(normalizedTitle)) {
+          reject(`${label} duplicates ${language} badge title`);
         }
-        if (normalized) seen.add(normalized);
-      });
+        if (normalizedTitle) seenTitlesByLanguage[language].add(normalizedTitle);
+
+        const normalizedDescription = normalizeComparableText(badge[descriptionField]);
+        if (
+          normalizedDescription &&
+          seenDescriptionsByLanguage[language].has(normalizedDescription)
+        ) {
+          reject(`${label} duplicates ${language} badge description`);
+        }
+        if (normalizedDescription) {
+          seenDescriptionsByLanguage[language].add(normalizedDescription);
+        }
+      }
     }
 
     if (valid) badgesValidated += 1;
