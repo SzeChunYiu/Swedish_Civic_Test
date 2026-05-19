@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colors, motion, radius, shadows, space, typography } from '../lib/theme';
+import { colors, radius, shadows, space, typography } from '../lib/theme';
 
 type SettingsCopy = {
   audioDisabledLabel: string;
@@ -88,17 +88,13 @@ export default function Screen() {
     return (
       <Pressable
         key={value}
-        aria-checked={language === value}
+        aria-selected={language === value}
         accessibilityLabel={copy.languageAccessibilityLabel(label)}
-        accessibilityRole="radio"
-        accessibilityState={{ checked: language === value }}
+        accessibilityRole="button"
+        accessibilityState={{ selected: language === value }}
         hitSlop={space[1]}
         onPress={() => setLanguage(value)}
-        style={({ pressed }) => [
-          styles.pill,
-          language === value ? styles.pillActive : null,
-          pressed ? styles.controlPressed : null,
-        ]}
+        style={[styles.pill, language === value ? styles.pillActive : null]}
       >
         <Text style={[styles.pillText, language === value ? styles.pillTextActive : null]}>
           {label}
@@ -126,12 +122,7 @@ export default function Screen() {
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.questionLanguageTitle}
         </Text>
-        <View
-          aria-label={copy.questionLanguageTitle}
-          accessibilityLabel={copy.questionLanguageTitle}
-          accessibilityRole="radiogroup"
-          style={styles.row}
-        >
+        <View style={styles.row}>
           {[
             renderLanguageButton('sv', 'Swedish', 'Svenska'),
             renderLanguageButton('en', 'English support', 'Engelskt stöd'),
@@ -152,10 +143,7 @@ export default function Screen() {
           accessibilityState={{ checked: audioEnabled }}
           hitSlop={space[1]}
           onPress={() => setAudioEnabled(!audioEnabled)}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            pressed ? styles.secondaryButtonPressed : null,
-          ]}
+          style={styles.secondaryButton}
         >
           <Text style={styles.secondaryButtonText}>
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
@@ -168,30 +156,20 @@ export default function Screen() {
           {copy.dailyGoalTitle}
         </Text>
         <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
-        <View
-          aria-label={copy.dailyGoalTitle}
-          accessibilityLabel={copy.dailyGoalTitle}
-          accessibilityRole="radiogroup"
-          style={styles.row}
-        >
+        <View style={styles.row}>
           {[5, 10, 20, 40].map((goal) => {
             const selected = dailyGoalAnswers === goal;
 
             return (
               <Pressable
                 key={goal}
-                aria-checked={dailyGoalAnswers === goal}
+                aria-selected={dailyGoalAnswers === goal}
                 accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: dailyGoalAnswers === goal }}
+                accessibilityRole="button"
+                accessibilityState={{ selected: dailyGoalAnswers === goal }}
                 hitSlop={space[1]}
                 onPress={() => setDailyGoalAnswers(goal)}
-                style={({ pressed }) => [
-                  styles.pill,
-                  styles.goalPill,
-                  selected ? styles.pillActive : null,
-                  pressed ? styles.controlPressed : null,
-                ]}
+                style={[styles.pill, styles.goalPill, selected ? styles.pillActive : null]}
               >
                 <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
                   {goal}
@@ -272,9 +250,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.badgeBlueBg,
     borderColor: colors.badgeBlueText,
   },
-  controlPressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
   pillText: {
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
@@ -309,10 +284,6 @@ const styles = StyleSheet.create({
     minHeight: space[5] + space[0.5],
     paddingHorizontal: space[2],
     paddingVertical: space[1.25],
-  },
-  secondaryButtonPressed: {
-    backgroundColor: colors.accentActive,
-    transform: [{ scale: motion.pressedScale }],
   },
   secondaryButtonText: {
     color: colors.surface,
