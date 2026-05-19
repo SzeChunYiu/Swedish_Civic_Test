@@ -1041,6 +1041,50 @@ function smtQuizQuestionDisclaimer(lang) {
     : "Independent study practice, not a real exam or an official UHR question.";
 }
 
+const SMT_QUIZ_PROVENANCE_COPY = {
+  uhr: {
+    en: { label: "UHR", description: "Directly from UHR's study material Sverige i fokus." },
+    sv: { label: "UHR", description: "Direkt från UHR:s utbildningsmaterial Sverige i fokus." },
+  },
+  derived: {
+    en: { label: "Supplementary", description: "Variant generated from a UHR question." },
+    sv: { label: "Tillägg", description: "Variant som genererats från en UHR-fråga." },
+  },
+  editorial: {
+    en: { label: "Editorial", description: "Hand-written editorial context." },
+    sv: { label: "Redaktionell", description: "Redaktionellt skrivet sammanhang." },
+  },
+};
+
+function smtQuizQuestionProvenance(question) {
+  const direct = question && question.questionProvenance;
+  if (direct === "uhr" || direct === "derived" || direct === "editorial") return direct;
+  const tags = Array.isArray(question && question.tags) ? question.tags : [];
+  if (tags.includes("editorial")) return "editorial";
+  if (tags.includes("published-variant")) return "derived";
+  return "uhr";
+}
+
+function smtQuizProvenanceBadge(question, lang) {
+  const provenance = smtQuizQuestionProvenance(question);
+  const copy = SMT_QUIZ_PROVENANCE_COPY[provenance][lang] || SMT_QUIZ_PROVENANCE_COPY[provenance].en;
+  const ariaPrefix = lang === "sv" ? "Källtyp" : "Provenance";
+  const notePrefix = lang === "sv" ? "Källanteckning" : "Source note";
+  const label = smtQuizEscapeHtml(copy.label);
+  const note = smtQuizEscapeHtml(`${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`);
+  return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
+}
+
+function smtQuizSourceRow(question, lang, citationClassName = "quiz__source") {
+  const citation = smtQuizEscapeHtml(smtQuizSourceCitation(question, lang));
+  return `
+    <div class="quiz__source-row">
+      ${smtQuizProvenanceBadge(question, lang)}
+      <p class="${citationClassName}">${citation}</p>
+    </div>
+  `;
+}
+
 const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE = 0.35;
 
 function smtQuizHashString(value) {
@@ -1235,7 +1279,7 @@ function smtQuizRender() {
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
   const sessionId = `practice:${scope}`;
-  const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
+  const sourceRow = smtQuizSourceRow(q, lang);
   const dots = Array.from({ length: n }, (_, k) => {
     let cls = "";
     if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === questions[k].answer ? "is-right" : "is-wrong";
@@ -1260,12 +1304,11 @@ function smtQuizRender() {
   let feedback = "";
   if (answered) {
     const right = ans === q.answer;
-    const feedbackSource = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
     const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
     feedback = `
       <div class="quiz__feedback ${right ? "" : "is-wrong"}">
         <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
-        <p class="quiz__feedback-source">${feedbackSource}</p>
+        ${smtQuizSourceRow(q, lang, "quiz__feedback-source")}
         <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
     `;
@@ -1282,7 +1325,7 @@ function smtQuizRender() {
     <div class="quiz__card">
       <div class="quiz__crumb">${q.chapter}</div>
       <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
-      <p class="quiz__source">${sourceCitation}</p>
+      ${sourceRow}
       <div class="quiz__opts">${opts}</div>
       ${feedback}
       <div class="quiz__actions">
