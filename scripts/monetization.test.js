@@ -1528,7 +1528,7 @@ test('exam screen does not import ad components', () => {
   assert.match(examSource, /recordExamCompletion/);
   assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
-  assert.match(examSource, /Unlock extra exam/);
+  assert.match(examSource, /Unlock extra mock exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ sessionId, storage \}\)/);
