@@ -480,3 +480,4 @@ CLAIMED ROOT-BARREL-REACHABILITY-GUARD-1 by billy-laptop-old-1485760 2026-05-19T
 CLAIMED WEB-ARIA-FALSE-STATE-E2E-1 by pane3-uiux-2776348 2026-05-19T19:41:29Z (earlier unclaimed rows blocked by missing prerequisite UI/source surfaces; old remote branch is stale and massively divergent)
 CLAIMED GENERATED-WHY-REASON-TARGET-GUARD-1 by pane0-manager-content-1498749 2026-05-19T19:45:09Z
 CLAIMED DASHBOARD-NATIVE-INTENT-ROUTE-PARITY-1 by pane0-manager-build-2816121 2026-05-19T19:46:56Z
+CLAIMED STATIC-CHAPTER-CARD-QUESTION-COUNT-PARITY-1 by pane4-data-integrity-2826478 2026-05-19T19:48:44Z
