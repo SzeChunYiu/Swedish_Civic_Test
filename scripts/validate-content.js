@@ -890,7 +890,7 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
   { routeName: 'home', sv: 'Hem', en: 'Home' },
   { routeName: 'learn', sv: 'Lär dig', en: 'Learn' },
   { routeName: 'practice', sv: 'Öva', en: 'Practice' },
-  { routeName: 'exam', sv: 'Prov', en: 'Exam' },
+  { routeName: 'exam', sv: 'Övningsprov', en: 'Exam' },
   { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes' },
   { routeName: 'profile', sv: 'Profil', en: 'Profile' },
 ];
@@ -6587,6 +6587,12 @@ function validateTabNavigationParity() {
 
   if (tabLayout.includes('⏷')) {
     reject('tab layout must not include visible placeholder tab glyphs');
+  }
+
+  const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
+  const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
+  if (swedishExamTabTitle !== 'Övningsprov') {
+    reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
   }
 
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
