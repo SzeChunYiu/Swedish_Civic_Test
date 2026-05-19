@@ -11,6 +11,7 @@ export default function RootHtml({ children }: PropsWithChildren) {
         <meta content="IE=edge" httpEquiv="X-UA-Compatible" />
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport" />
         <meta content={colors.canvas} name="theme-color" />
+        <link href="manifest.webmanifest" rel="manifest" />
         <meta
           content="Öva svensk samhällskunskap med övningar utan uppkoppling, lokalt sparade framsteg och tydliga källhänvisningar."
           name="description"

@@ -15,6 +15,13 @@ function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
 
+function readThemeCanvasColor() {
+  const themeSource = read('lib/theme/colors.ts');
+  const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
+  assert.notEqual(match, null, 'colors.canvas should stay parseable for web manifest checks');
+  return match[1];
+}
+
 function assertContains(source, literal, message) {
   assert.equal(source.includes(literal), true, message ?? `expected source to include ${literal}`);
 }
@@ -246,6 +253,9 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
   const manifest = readRouterShellManifest();
+  const pwaManifest = readJson('public/manifest.webmanifest');
+  const appConfig = readJson('app.json').expo;
+  const canvasColor = readThemeCanvasColor();
   const webLanguage = manifest.webLanguages[0];
   const localizedDescription = metaDescriptionForLanguage(manifest, webLanguage);
   const englishDescription = metaDescriptionForLanguage(manifest, 'en');
@@ -265,6 +275,7 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /name=["']theme-color["'][\s\S]*content=\{colors\.canvas\}|content=\{colors\.canvas\}[\s\S]*name=["']theme-color["']/,
     'web shell theme color should follow theme canvas',
   );
+  assertContains(htmlShell, '<link href="manifest.webmanifest" rel="manifest" />');
   assertContains(htmlShell, '<ScrollViewStyleReset />');
   assertMatches(
     htmlShell,
@@ -289,6 +300,28 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
       false,
       'the Swedish web shell should not pair lang="sv" with the English meta description',
     );
+  }
+  assert.equal(pwaManifest.name, appConfig.name);
+  assert.equal(pwaManifest.short_name, appConfig.name);
+  assert.equal(pwaManifest.lang, webLanguage);
+  assert.equal(pwaManifest.start_url, '.');
+  assert.equal(pwaManifest.scope, '.');
+  assert.equal(pwaManifest.display, 'standalone');
+  assert.equal(pwaManifest.theme_color, canvasColor);
+  assert.equal(pwaManifest.background_color, canvasColor);
+  assert.equal(pwaManifest.description, localizedDescription);
+  assert.deepEqual(
+    pwaManifest.icons.map((icon) => [icon.src, icon.sizes, icon.purpose]),
+    [
+      ['icons/pwa-icon-192.png', '192x192', 'any'],
+      ['icons/pwa-icon-512.png', '512x512', 'any'],
+      ['icons/pwa-maskable-512.png', '512x512', 'maskable'],
+    ],
+  );
+  for (const icon of pwaManifest.icons) {
+    assert.equal(path.isAbsolute(icon.src), false, `${icon.src} should be host-agnostic`);
+    assert.equal(icon.src.includes('..'), false, `${icon.src} should stay inside public/`);
+    assert.equal(fs.existsSync(path.join(repoRoot, 'public', icon.src)), true);
   }
 });
 

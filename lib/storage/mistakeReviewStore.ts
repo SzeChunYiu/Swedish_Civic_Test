@@ -79,7 +79,13 @@ function normalizeMistakeReview(value: unknown): PersistedMistakeReview {
 }
 
 function readMistakeReview(): PersistedMistakeReview {
-  const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
+  let rawReview: string | undefined;
+  try {
+    rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
+  } catch {
+    return emptyMistakeReview;
+  }
+
   if (!rawReview) return emptyMistakeReview;
 
   try {
