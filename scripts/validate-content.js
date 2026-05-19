@@ -198,6 +198,18 @@ const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
 ];
+const AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS = [
+  /^\s*Påståendet är (?:sant|falskt)[:.]\s*/i,
+  /^\s*The statement is (?:true|false)[:.]\s*/i,
+  /\b(?:så|därför)\s+(?:är\s+)?påståendet\s+(?:sant|falskt)\b/i,
+  /\balternativet\s+(?:Sant|Falskt)\b/i,
+  /\bmedan\s+Falskt\b/i,
+  /\bso\s+the\s+statement\s+is\s+(?:true|false)\b/i,
+  /\bthat\s+makes\s+the\s+statement\s+(?:true|false)\b/i,
+  /\bThat makes True correct\b/i,
+  /\b(?:True|False)\s+is\s+correct\b/i,
+  /\bwhile False\b/i,
+];
 const GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [/\bmaterialet\b/i, /\bfrom the material\b/i];
 const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Inget av alternativen stämmer',
@@ -3399,6 +3411,13 @@ function findQuestionTrueFalseStemPrefix(question) {
   return QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
+}
+
+function findAuthoredTrueFalseExplanationBoilerplate(question) {
+  if (question.type !== 'true_false') return null;
+
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionFalseAnswerExplanationMismatch(question) {
@@ -12313,6 +12332,14 @@ function validateAuthoredSourceParity() {
     if (question.reviewStatus !== 'reviewed') {
       reject(
         `${label} authored source reviewStatus is ${question.reviewStatus}, expected reviewed`,
+      );
+    }
+    if (findQuestionTrueFalseStemPrefix(question)) {
+      reject(`${label} authored true/false source stem contains redundant true/false prefix`);
+    }
+    if (findAuthoredTrueFalseExplanationBoilerplate(question)) {
+      reject(
+        `${label} authored true/false source explanation contains answer-judgement boilerplate`,
       );
     }
 
