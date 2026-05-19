@@ -16,6 +16,10 @@ import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
+import {
+  computeReadinessFromQuestionProgress,
+  type ReadinessVerdict,
+} from '../../lib/learning/readiness';
 import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -41,6 +45,14 @@ type HomeCopy = {
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
+  readinessAccessibilityLabel: (score: number, verdict: string, details: string) => string;
+  readinessCta: string;
+  readinessCtaAccessibilityLabel: string;
+  readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
+  readinessMetricLabel: string;
+  readinessSparseNote: string;
+  readinessTitle: string;
+  readinessVerdicts: Record<ReadinessVerdict, string>;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
@@ -81,6 +93,22 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
+    readinessAccessibilityLabel: (score, verdict, details) =>
+      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
+    readinessCta: 'Gör ett mockprov',
+    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
+    readinessDetails: (accuracyPercent, coveragePercent) =>
+      `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
+    readinessMetricLabel: 'redo',
+    readinessSparseNote:
+      'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    readinessTitle: 'Redoindikator',
+    readinessVerdicts: {
+      not_ready_yet: 'Öva mer först',
+      getting_there: 'På rätt väg',
+      almost_ready: 'Nästan redo',
+      strong_preparation: 'Stark förberedelse',
+    },
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
@@ -121,6 +149,22 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
+    readinessAccessibilityLabel: (score, verdict, details) =>
+      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
+    readinessCta: 'Take a mock exam',
+    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
+    readinessDetails: (accuracyPercent, coveragePercent) =>
+      `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
+    readinessMetricLabel: 'ready',
+    readinessSparseNote:
+      'Based on your answers so far. Answer more questions for a steadier signal.',
+    readinessTitle: 'Readiness indicator',
+    readinessVerdicts: {
+      not_ready_yet: 'Keep practicing first',
+      getting_there: 'Getting there',
+      almost_ready: 'Almost ready',
+      strong_preparation: 'Strong preparation',
+    },
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
@@ -155,6 +199,21 @@ export default function Screen() {
   const level = calculateLevel(totalXp);
   const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
   const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;
+  const readiness = computeReadinessFromQuestionProgress({
+    questionProgress,
+    questions,
+    chapters,
+  });
+  const readinessVerdict = copy.readinessVerdicts[readiness.verdict];
+  const readinessDetails = copy.readinessDetails(
+    Math.round(readiness.components.accuracy * 100),
+    Math.round(readiness.components.coverage * 100),
+  );
+  const readinessAccessibilityLabel = copy.readinessAccessibilityLabel(
+    readiness.score,
+    readinessVerdict,
+    readinessDetails,
+  );
 
   return (
     <ScreenShell
@@ -183,6 +242,38 @@ export default function Screen() {
           tone="accent"
         />
       </View>
+      <Card style={styles.readinessCard}>
+        <View
+          accessible
+          accessibilityLabel={readinessAccessibilityLabel}
+          aria-label={readinessAccessibilityLabel}
+          style={styles.readinessHeader}
+        >
+          <View style={styles.readinessTitleBlock}>
+            <Text accessibilityRole="header" style={styles.readinessTitle}>
+              {copy.readinessTitle}
+            </Text>
+            <Text style={styles.readinessVerdict}>{readinessVerdict}</Text>
+          </View>
+          <View style={styles.readinessScorePill}>
+            <Text style={styles.readinessScore}>{readiness.score}%</Text>
+            <Text style={styles.readinessMetric}>{copy.readinessMetricLabel}</Text>
+          </View>
+        </View>
+        <ProgressBar language={language} progress={readiness.score / 100} />
+        <Text style={styles.readinessDetail}>{readinessDetails}</Text>
+        {readiness.isSparse ? (
+          <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
+        ) : null}
+        <Link
+          accessibilityLabel={copy.readinessCtaAccessibilityLabel}
+          accessibilityRole="link"
+          href="/exam"
+          style={styles.readinessLink}
+        >
+          {copy.readinessCta}
+        </Link>
+      </Card>
       <SocialProofRow language={language} />
       {!monetizationEntitlements.adsDisabled ? (
         <PricingWedge
@@ -278,6 +369,74 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
+  },
+  readinessCard: {
+    gap: space[1.5],
+  },
+  readinessHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space[1.5],
+    justifyContent: 'space-between',
+  },
+  readinessTitleBlock: {
+    flex: 1,
+    gap: space[0.5],
+  },
+  readinessTitle: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.caption.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
+  readinessVerdict: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  readinessScorePill: {
+    alignItems: 'center',
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.focusSoft,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    minWidth: space[9],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  readinessScore: {
+    color: colors.text,
+    fontSize: typography.subHeadingLarge.fontSize,
+    fontWeight: typography.subHeadingLarge.fontWeight,
+    lineHeight: typography.subHeadingLarge.lineHeight,
+  },
+  readinessMetric: {
+    color: colors.textSecondary,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+  },
+  readinessDetail: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  readinessSparseNote: {
+    color: colors.textDisclaimer,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+  },
+  readinessLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.5],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   goalCard: {
     backgroundColor: colors.surfaceWarm,

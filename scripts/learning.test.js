@@ -112,6 +112,62 @@ test('mastery blends accuracy, coverage, and recency', () => {
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.7), ['ch01']);
 });
 
+test('readiness score can be derived from the persisted question progress snapshot', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+
+  const questions = Array.from({ length: 40 }, (_, index) => ({
+    id: `q${index}`,
+    chapterId: index < 20 ? 'ch01' : 'ch02',
+  }));
+  const questionProgress = Object.fromEntries(
+    questions.map((question) => [
+      question.id,
+      {
+        seenCount: 1,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 1,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+    ]),
+  );
+
+  const result = computeReadinessFromQuestionProgress({
+    questionProgress,
+    questions,
+    chapters: [
+      { id: 'ch01', questionCount: 20 },
+      { id: 'ch02', questionCount: 20 },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.verdict, 'strong_preparation');
+  assert.equal(result.isSparse, false);
+  assert.ok(result.score >= 85);
+  assert.equal(result.components.accuracy, 1);
+  assert.equal(result.components.coverage, 1);
+});
+
+test('readiness score softens copy when there are too few stored answers', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const result = computeReadinessFromQuestionProgress({
+    questionProgress: {
+      q1: {
+        seenCount: 1,
+        correctCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+    },
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.isSparse, true);
+  assert.equal(result.verdict, 'not_ready_yet');
+});
+
 test('spaced repetition schedules wrong answers soon and known answers later', () => {
   const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
 

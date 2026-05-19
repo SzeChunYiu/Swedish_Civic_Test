@@ -487,6 +487,17 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Studera lugnt, ett samhällsbegrepp i taget',
     'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
     'Dagens mål',
+    'Redoindikator',
+    'redo',
+    'Öva mer först',
+    'På rätt väg',
+    'Nästan redo',
+    'Stark förberedelse',
+    'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    '${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade',
+    'Redoindikator: ${score} procent. ${verdict}. ${details}',
+    'Starta ett mockprov för att kontrollera din redoindikator',
+    'Gör ett mockprov',
     'Repetera svaga kapitel',
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
@@ -518,6 +529,17 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Prepare calmly, one civic concept at a time',
     'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     "Today's goal",
+    'Readiness indicator',
+    'ready',
+    'Keep practicing first',
+    'Getting there',
+    'Almost ready',
+    'Strong preparation',
+    'Based on your answers so far. Answer more questions for a steadier signal.',
+    '${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried',
+    'Readiness indicator: ${score} percent. ${verdict}. ${details}',
+    'Start a mock exam to check your readiness indicator',
+    'Take a mock exam',
     'Review weak chapters',
     'Start a 5-minute practice set',
     'Start the recommended practice session',
@@ -561,6 +583,19 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;',
     'home route next action must use localized copy',
   ],
+  [
+    'computeReadinessFromQuestionProgress({',
+    'home route must derive the readiness indicator from stored progress',
+  ],
+  [
+    'const readinessVerdict = copy.readinessVerdicts[readiness.verdict];',
+    'home route readiness verdict must use localized copy',
+  ],
+  [
+    'accessibilityLabel={readinessAccessibilityLabel}',
+    'home route readiness card must expose localized accessibility copy',
+  ],
+  ['href="/exam"', 'home route readiness CTA must link to the mock exam flow'],
   ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
   ['title={copy.title}', 'home route title must render localized copy'],
   ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
@@ -1218,6 +1253,11 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
     label: 'daily goal card title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.goalLabel\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
+  },
+  {
+    label: 'readiness card title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.readinessTitle\}>\s*\{copy\.readinessTitle\}\s*<\/Text>/,
   },
   {
     label: 'feedback card title',
@@ -7563,7 +7603,7 @@ function validateHomeRouteHeaderParity() {
   }
 
   const unheaderedCardHeadings =
-    homeRoute.match(/<Text\s+style=\{styles\.(?:goalLabel|feedbackTitle)\}>/g) || [];
+    homeRoute.match(/<Text\s+style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/g) || [];
   if (unheaderedCardHeadings.length > 0) {
     reject('home route card headings must expose accessibilityRole="header"');
   }
