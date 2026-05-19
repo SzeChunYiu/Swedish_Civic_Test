@@ -1034,6 +1034,45 @@ test('home screen exposes dashboard card titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('free dashboard surface is routed, localized, and accessible', () => {
+  const dashboard = read('app/dashboard.tsx');
+  const home = read('app/(tabs)/home.tsx');
+  const profile = read('app/(tabs)/profile.tsx');
+  const activity = read('components/dashboard/ActivityHeatmap.tsx');
+  const chapters = read('components/dashboard/PerChapterProgressBars.tsx');
+  const sparkline = read('components/dashboard/StreakXpSparkline.tsx');
+
+  assert.match(home, /href="\/dashboard"/);
+  assert.match(profile, /href="\/dashboard"/);
+  assert.match(home, /Framstegsöversikt/);
+  assert.match(home, /Progress dashboard/);
+  assert.match(profile, /Aktivitet, kapitelprogress och XP visas på en egen sida\./);
+  assert.match(profile, /Activity, chapter progress, and XP live on a dedicated page\./);
+  assert.match(dashboard, /type DashboardCopy =/);
+  assert.match(dashboard, /const dashboardCopy: Record<AppLanguage, DashboardCopy>/);
+  assert.match(dashboard, /const copy = dashboardCopy\[language\]/);
+  assert.match(dashboard, /dailyActivityHistogram/);
+  assert.match(dashboard, /perChapterProgress/);
+  assert.match(dashboard, /dashboardSummary/);
+  assert.match(dashboard, /xpSparkline/);
+  assert.match(dashboard, /buildDashboardProgressSnapshot/);
+  assert.match(dashboard, /hasProEntitlement/);
+  assert.match(dashboard, /predictedPassProbability/);
+  assert.match(dashboard, /<ActivityHeatmap bins=\{activityBins\} copy=\{copy\.activity\} \/>/);
+  assert.match(dashboard, /<PerChapterProgressBars/);
+  assert.match(dashboard, /<StreakXpSparkline/);
+  assert.match(activity, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(activity, /copy\.emptyState/);
+  assert.match(chapters, /accessibilityState=\{\{ selected \}\}/);
+  assert.match(chapters, /copy\.emptyState/);
+  assert.match(sparkline, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(sparkline, /copy\.emptyState/);
+  assert.doesNotMatch(
+    `${dashboard}\n${activity}\n${chapters}\n${sparkline}`,
+    /#[0-9a-fA-F]{6}|rgba?\(/,
+  );
+});
+
 test('launch popup ad has native app-open implementation and safe web preview', () => {
   const layoutSource = read('app/_layout.tsx');
   const webSource = read('components/monetization/LaunchPopupAd.tsx');
