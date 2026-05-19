@@ -1300,6 +1300,29 @@ test('home screen surfaces focused review copy and review action', () => {
   assert.match(source, /href="\/mistakes"/);
 });
 
+test('home screen surfaces a guided civic readiness path', () => {
+  const source = read('app/(tabs)/home.tsx');
+  const componentSource = read('components/learning/GuidedPracticePath.tsx');
+
+  assert.match(source, /GuidedPracticePath/);
+  assert.match(source, /Väg från grund till provträning/);
+  assert.match(source, /Guided path from basics to exam practice/);
+  assert.match(source, /Daglig övning/);
+  assert.match(source, /Daily practice/);
+  assert.match(source, /Fortsätt på nästa kapitel/);
+  assert.match(source, /Continue the next chapter/);
+  assert.match(source, /\['ch01', 'ch02', 'ch03', 'ch04'\]/);
+  assert.match(source, /\['ch05', 'ch06', 'ch07', 'ch08', 'ch09'\]/);
+  assert.match(source, /\['ch10', 'ch11', 'ch12', 'ch13'\]/);
+  assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
+  assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
+  assert.match(source, /dailyProgress=\{progress\}/);
+  assert.match(componentSource, /href="\/practice"/);
+  assert.match(componentSource, /ProgressBar language=\{language\} progress=\{stage\.progress\}/);
+  assert.match(componentSource, /minHeight: space\[6\]/);
+  assert.doesNotMatch(`${source}\n${componentSource}`, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('home shell copy follows Swedish and English settings language', () => {
   const source = read('app/(tabs)/home.tsx');
 
@@ -1313,6 +1336,8 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
+  assert.match(source, /<GuidedPracticePath/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /copy\.studyLoopItems\[index\]/);
   assert.match(source, /\{itemCopy\.label\}/);
