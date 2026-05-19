@@ -748,12 +748,18 @@ test('launch popup ad respects launch cap and adsDisabled entitlement', () => {
 });
 
 test('remove-ads entitlement is decoupled from premium feature bundle', () => {
-  const { REMOVE_ADS_ENTITLEMENTS, hasAdsDisabled, isPremiumUser } = loadTs(
-    'lib/monetization/premium.ts',
-  );
+  const {
+    PRO_LIFETIME_ENTITLEMENTS,
+    REMOVE_ADS_ENTITLEMENTS,
+    hasAdsDisabled,
+    hasProEntitlement,
+    isPremiumUser,
+  } = loadTs('lib/monetization/premium.ts');
 
   assert.equal(hasAdsDisabled(REMOVE_ADS_ENTITLEMENTS), true);
   assert.equal(isPremiumUser(REMOVE_ADS_ENTITLEMENTS), false);
+  assert.equal(hasAdsDisabled(PRO_LIFETIME_ENTITLEMENTS), false);
+  assert.equal(hasProEntitlement(PRO_LIFETIME_ENTITLEMENTS), true);
   assert.equal(
     isPremiumUser({
       adsDisabled: false,
