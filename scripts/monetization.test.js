@@ -1377,6 +1377,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /bodyIdle: \(price\) =>/);
   assert.match(paywallSource, /Purchase confirmed\. Study ads are disabled on this device/);
   assert.match(paywallSource, /Köpet är bekräftat\. Studieannonser är avstängda/);
+  assert.match(paywallSource, /The full question bank stays free/);
+  assert.match(paywallSource, /Hela frågebanken är gratis/);
+  assert.match(paywallSource, /it does not unlock questions/);
+  assert.match(paywallSource, /det låser inte upp frågor/);
   assert.match(
     paywallSource,
     /\{adsDisabled \? copy\.bodyActive : copy\.bodyIdle\(REMOVE_ADS_PRICE_LABEL\)\}/,
@@ -1440,6 +1444,10 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
   assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(pricingWedgeSource, /Full question bank stays free/);
+  assert.match(pricingWedgeSource, /Hela frågebanken/);
+  assert.match(pricingWedgeSource, /All questions stay free/);
+  assert.match(pricingWedgeSource, /Alla frågor är gratis/);
   assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
