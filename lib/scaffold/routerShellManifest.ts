@@ -1,5 +1,3 @@
-import { webDocumentMetaDescriptions, webDocumentMetadata } from './webDocumentMetadata';
-
 export type ExpoRouterShellRole =
   | 'initial-redirect'
   | 'root-layout'
@@ -57,8 +55,6 @@ export type ExpoRouterWebDocumentMetaDescription = {
   readonly language: 'sv' | 'en';
   readonly description: string;
 };
-
-export type ExpoRouterWebDocumentMetadata = typeof webDocumentMetadata;
 
 export type ExpoRouterStandaloneRoute = {
   readonly name: string;
@@ -287,11 +283,18 @@ export const expoRouterNativeIntentRuntimeSamples = [
 
 export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-intent.ts'] as const;
 
-export const expoRouterWebDocumentMetaDescriptions =
-  webDocumentMetaDescriptions satisfies readonly ExpoRouterWebDocumentMetaDescription[];
-
-export const expoRouterWebDocumentMetadata =
-  webDocumentMetadata satisfies ExpoRouterWebDocumentMetadata;
+export const expoRouterWebDocumentMetaDescriptions = [
+  {
+    language: 'sv',
+    description:
+      'Öva svensk samhällskunskap med övningar utan uppkoppling, lokalt sparade framsteg och tydliga källhänvisningar.',
+  },
+  {
+    language: 'en',
+    description:
+      'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
+  },
+] as const satisfies readonly ExpoRouterWebDocumentMetaDescription[];
 
 export const expoRouterStandaloneRoutes = [
   {
