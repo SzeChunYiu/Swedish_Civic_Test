@@ -1787,6 +1787,21 @@ const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
 ];
 const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   {
+    label: 'exported variant type',
+    pattern:
+      /export type ButtonVariant = 'primary' \| 'secondary' \| 'option' \| 'success' \| 'danger';/,
+  },
+  {
+    label: 'exported props interface',
+    pattern:
+      /export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>>/,
+  },
+  {
+    label: 'documented default props',
+    pattern:
+      /Defaults: `variant="primary"`, `accessibilityRole="button"`[\s\S]*`hitSlop=space\[0\.5\]`/,
+  },
+  {
     label: 'native Pressable root',
     pattern: /<Pressable[\s\S]*>/,
   },
@@ -1842,6 +1857,18 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'native accessibility state',
     pattern: /accessibilityState=\{mergedAccessibilityState\}/,
+  },
+  {
+    label: 'token hairline border width',
+    pattern: /borderWidth:\s*space\.hairline/,
+  },
+  {
+    label: 'token minimum touch target',
+    pattern: /minHeight:\s*space\[6\]/,
+  },
+  {
+    label: 'token pressed feedback',
+    pattern: /transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
   },
 ];
 const EXPECTED_CARD_ACCESSIBILITY_RULES = [

@@ -20,8 +20,14 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
 
-  assert.equal(summary.buttonAccessibilityRulesValidated, 14);
+  assert.equal(summary.buttonAccessibilityRulesValidated, 20);
   assert.equal(summary.buttonAccessibilityParityValidated, true);
+  assert.match(
+    source,
+    /export type ButtonVariant = 'primary' \| 'secondary' \| 'option' \| 'success' \| 'danger';/,
+  );
+  assert.match(source, /export interface ButtonProps extends PropsWithChildren/);
+  assert.match(source, /Defaults: `variant="primary"`, `accessibilityRole="button"`/);
   assert.match(source, /accessibilityRole = 'button'/);
   assert.match(source, /const mergedAccessibilityState =/);
   assert.match(source, /\.\.\.\(disabled == null \? \{\} : \{ disabled \}\),/);
@@ -31,6 +37,9 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   assert.match(source, /aria-expanded=\{mergedAccessibilityState\.expanded\}/);
   assert.match(source, /aria-selected=\{mergedAccessibilityState\.selected\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
+  assert.match(source, /borderWidth: space\.hairline/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
 });
 
 test('Button accessibility parity rejects web aria state drift', () => {
@@ -60,5 +69,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Button missing disabled state mirrored to web aria for accessibility parity/,
+  );
+});
+
+test('Button accessibility parity rejects hardcoded touch target drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/ui/Button.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('minHeight: space[6]', 'minHeight: 44');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Button missing token minimum touch target for accessibility parity/,
   );
 });

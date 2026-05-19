@@ -103,7 +103,8 @@ test('button derives an accessibility label from plain text children by default'
     source,
     /pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null/,
   );
-  assert.match(source, /minHeight: 44/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /borderRadius: radius\.card/);
   assert.match(source, /backgroundColor: colors\.accentActive/);
   assert.match(source, /nativeID=\{buttonAccessibilityHintId\}/);
