@@ -13,6 +13,20 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
+const generatedIdLiteralPatterns = [
+  {
+    label: 'question.id equality',
+    pattern: /question\.id\s*={2,3}\s*['"`](q\d{3,})['"`]/g,
+  },
+  {
+    label: 'byId lookup',
+    pattern: /byId\.get\(\s*['"`](q\d{3,})['"`]\s*\)/g,
+  },
+  {
+    label: 'residual map key',
+    pattern: /(?:^|[{,\s])['"`]?(q\d{3,})['"`]?\s*:/gm,
+  },
+];
 
 function actualStaticQuestions() {
   const context = { window: {} };
@@ -21,6 +35,37 @@ function actualStaticQuestions() {
     timeout: 3000,
   });
   return context.window.SMT_QUESTIONS;
+}
+
+function firstGeneratedQuestionNumber() {
+  const firstGenerated = buildSiteQuestionBank().questions.find(
+    (question) => question.questionProvenance !== 'uhr',
+  );
+  assert.ok(firstGenerated, 'question bank should include generated questions');
+  return Number(firstGenerated.id.replace(/^q/, ''));
+}
+
+function lineNumberForIndex(source, index) {
+  return source.slice(0, index).split(/\r?\n/).length;
+}
+
+function hardcodedGeneratedIdFindings(relativePath) {
+  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  const firstGeneratedNumber = firstGeneratedQuestionNumber();
+  const findings = [];
+
+  for (const { label, pattern } of generatedIdLiteralPatterns) {
+    pattern.lastIndex = 0;
+    for (const match of source.matchAll(pattern)) {
+      const id = match[1];
+      const numericId = Number(id.replace(/^q/, ''));
+      if (numericId < firstGeneratedNumber) continue;
+      const lineNumber = lineNumberForIndex(source, match.index ?? 0);
+      findings.push(`${relativePath}:${lineNumber} hardcodes generated ${label} ${id}`);
+    }
+  }
+
+  return findings;
 }
 
 test('published question types stay answerable by quiz runtime', () => {
@@ -32,6 +77,16 @@ test('published question types stay answerable by quiz runtime', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
+});
+
+test('mutation fixtures derive generated question ids from source ids', () => {
+  const scannedFiles = [
+    'tests/content-published-question-types.test.js',
+    'tests/content-authored-source-parity.test.js',
+    'scripts/derived-content.test.js',
+  ];
+
+  assert.deepEqual(scannedFiles.flatMap(hardcodedGeneratedIdFindings), []);
 });
 
 test('published true/false question banks omit UI-afforded prefixes', () => {
