@@ -91,12 +91,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt enligt UHR-materialet: Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Enligt UHR-materialet ligger Sveriges nordligaste del norr om polcirkeln.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        "True or false according to the UHR material: Sweden's northernmost part lies north of the Arctic Circle.",
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        "According to the UHR material, Sweden's northernmost part lies north of the Arctic Circle.",
       );
   }
   return contents;
