@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
+import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
@@ -12,7 +13,7 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildQuestionSpeechText } from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -322,6 +323,11 @@ export default function Screen() {
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}
             language={language}
+          />
+          <FeedbackAudioButton
+            enabled={audioEnabled}
+            language={language}
+            text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
           <AdBanner placement="quiz_completed_interstitial" />
