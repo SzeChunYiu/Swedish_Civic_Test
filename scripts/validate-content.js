@@ -13317,11 +13317,22 @@ function validateUhrSourceMaterialLinkParity() {
   if (!sourcesRoute.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
     reject(`app/sources.tsx must mention ${EXPECTED_UHR_SOURCE.titleKeyword}`);
   }
-  if (!sourcesRoute.includes('content/uhr-section-map.json')) {
-    reject('app/sources.tsx must mention content/uhr-section-map.json');
+  const forbiddenLearnerFacingSourceCopy = [
+    'content/uhr-section-map.json',
+    'content/question-bank.csv',
+    'spreadsheet-friendly',
+    'kalkylbladsvänliga',
+  ];
+  for (const forbiddenCopy of forbiddenLearnerFacingSourceCopy) {
+    if (sourcesRoute.includes(forbiddenCopy)) {
+      reject(`app/sources.tsx learner-facing copy must not mention ${forbiddenCopy}`);
+    }
   }
-  if (!sourcesRoute.includes('content/question-bank.csv')) {
-    reject('app/sources.tsx must mention content/question-bank.csv');
+  if (!sourcesRoute.includes('Varje övningsfråga visar en källrad med UHR:s kapitel')) {
+    reject('app/sources.tsx must explain Swedish learner-visible source lines');
+  }
+  if (!sourcesRoute.includes('Every practice question shows a source line with the UHR chapter')) {
+    reject('app/sources.tsx must explain English learner-visible source lines');
   }
   if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
     reject('app/sources.tsx must render the UHR material URL through an Expo Link');
