@@ -404,19 +404,35 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.deepEqual(await getStoredMockExamAccess({ date: '2026-05-17T09:30:00.000Z', storage }), {
     completedMockExamsByDate: {},
+    completedMockExamSessionIdsByDate: {},
     completedMockExamsToday: 0,
     dateKey: '2026-05-17',
     rewardedExtraExamCredits: 0,
   });
 
-  await recordStoredMockExamCompletion({ date: '2026-05-17T10:00:00.000Z', storage });
+  await recordStoredMockExamCompletion({
+    date: '2026-05-17T10:00:00.000Z',
+    sessionId: 'mock-exam-1',
+    storage,
+  });
+  const duplicateSnapshot = await recordStoredMockExamCompletion({
+    date: '2026-05-17T10:05:00.000Z',
+    sessionId: 'mock-exam-1',
+    storage,
+  });
   const todaySnapshot = await recordStoredMockExamCompletion({
     date: '2026-05-17T11:00:00.000Z',
+    sessionId: 'mock-exam-2',
     storage,
   });
 
+  assert.equal(duplicateSnapshot.completedMockExamsToday, 1);
   assert.equal(todaySnapshot.completedMockExamsToday, 2);
   assert.equal(todaySnapshot.completedMockExamsByDate['2026-05-17'], 2);
+  assert.deepEqual(todaySnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-1',
+    'mock-exam-2',
+  ]);
 
   const tomorrowSnapshot = await getStoredMockExamAccess({
     date: '2026-05-18T08:00:00.000Z',
@@ -425,6 +441,10 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.equal(tomorrowSnapshot.completedMockExamsToday, 0);
   assert.equal(tomorrowSnapshot.completedMockExamsByDate['2026-05-17'], 2);
+  assert.deepEqual(tomorrowSnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-1',
+    'mock-exam-2',
+  ]);
 
   assert.equal(
     (
@@ -459,6 +479,10 @@ test('mock exam access persistence stores daily completions and rewarded credits
       '2026-05-17': 2.8,
       invalid: 9,
     },
+    completedMockExamSessionIdsByDate: {
+      '2026-05-17': [' mock-exam-legacy ', '', 'mock-exam-legacy', 'bad/session'],
+      invalid: ['mock-exam-invalid-date'],
+    },
     rewardedExtraExamCredits: 1.9,
   });
   const seededSnapshot = await getStoredMockExamAccess({
@@ -467,7 +491,41 @@ test('mock exam access persistence stores daily completions and rewarded credits
   });
 
   assert.deepEqual(seededSnapshot.completedMockExamsByDate, { '2026-05-17': 2 });
+  assert.deepEqual(seededSnapshot.completedMockExamSessionIdsByDate, {
+    '2026-05-17': ['mock-exam-legacy'],
+  });
   assert.equal(seededSnapshot.rewardedExtraExamCredits, 1);
+
+  const seededNewCompletionSnapshot = await recordStoredMockExamCompletion({
+    date: '2026-05-17T09:15:00.000Z',
+    sessionId: 'mock-exam-new',
+    storage: seededStorage,
+  });
+  assert.equal(seededNewCompletionSnapshot.completedMockExamsToday, 3);
+  assert.deepEqual(seededNewCompletionSnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-legacy',
+    'mock-exam-new',
+  ]);
+
+  const invalidSessionStorage = createMemoryMockExamAccessStorage();
+  await assert.rejects(
+    () =>
+      recordStoredMockExamCompletion({
+        date: '2026-05-17T09:00:00.000Z',
+        sessionId: '   ',
+        storage: invalidSessionStorage,
+      }),
+    /valid sessionId/,
+  );
+  assert.equal(
+    (
+      await getStoredMockExamAccess({
+        date: '2026-05-17T09:10:00.000Z',
+        storage: invalidSessionStorage,
+      })
+    ).completedMockExamsToday,
+    0,
+  );
 
   assert.equal(typeof createSecureStoreMockExamAccessStorage().getItemAsync, 'function');
 
@@ -494,6 +552,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
     await recordStoredMockExamCompletion({
       date: '2026-05-18T09:00:00.000Z',
+      sessionId: 'mock-exam-web-1',
       storage: webStorage,
     });
 
@@ -523,6 +582,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
     }),
     {
       completedMockExamsByDate: {},
+      completedMockExamSessionIdsByDate: {},
       completedMockExamsToday: 0,
       dateKey: '2026-05-17',
       rewardedExtraExamCredits: 0,
@@ -1390,10 +1450,12 @@ test('exam screen does not import ad components', () => {
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
   assert.match(examSource, /useMockExamAccess/);
   assert.match(examSource, /recordExamCompletion/);
+  assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
   assert.match(examSource, /Unlock extra exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion/);
+  assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ sessionId, storage \}\)/);
   assert.match(accessHookSource, /grantStoredRewardedExtraExamCredit/);
   assert.match(accessHookSource, /consumeStoredRewardedExtraExamCredit/);
   assert.match(accessHookSource, /createWebMockExamAccessStorage/);
