@@ -90,6 +90,7 @@ const QUESTION_BANK_CSV_HEADER = [
   'difficulty',
   'reviewStatus',
   'tags',
+  'questionProvenance',
 ];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
@@ -5903,6 +5904,7 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
@@ -12672,6 +12674,7 @@ function validateQuestionBankCsvContract() {
       question.difficulty,
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
+      getQuestionProvenance(question),
     ];
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
