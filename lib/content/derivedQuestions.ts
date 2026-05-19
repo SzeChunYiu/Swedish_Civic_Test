@@ -232,57 +232,6 @@ function englishGerundPhrase(value: string): string {
   return [gerund, ...rest].join(' ');
 }
 
-function englishCivicActionClause(value: string): string {
-  return lowerFirst(stripLeadingPurposeEn(value).trim())
-    .replace(/^many people voting\b/i, 'many people vote')
-    .replace(/\bgetting involved\b/gi, 'get involved')
-    .replace(/\blearning about\b/gi, 'learn about')
-    .replace(/^fewer people taking\b/i, 'fewer people take')
-    .replace(/^people avoiding\b/i, 'people avoid')
-    .replace(/^only authorities being allowed\b/i, 'only authorities are allowed')
-    .replace(/^people with (.+?) living closer\b/i, 'people with $1 live closer')
-    .replace(/\band feeling included\b/i, 'and feel included')
-    .replace(/^people living\b/i, 'people live')
-    .replace(/^public services being available\b/i, 'public services are available')
-    .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
-}
-
-function webSocialMediaStatementSv(answer: string): string {
-  if (/^Vem som helst kan skapa innehåll där/i.test(answer)) {
-    return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
-  }
-  if (/^Bara ansvariga utgivare får skriva inlägg där/i.test(answer)) {
-    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
-  }
-  if (/^Allt innehåll godkänns först av staten/i.test(answer)) {
-    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
-  }
-  if (/^Innehållet är alltid mer pålitligt/i.test(answer)) {
-    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
-  }
-  return `På webben och i sociala medier gäller att ${lowerFirst(
-    answer.replace(/\bdär\b/gi, 'på webben och i sociala medier'),
-  )}`;
-}
-
-function webSocialMediaStatementEn(answer: string): string {
-  if (/^Anyone can create content there/i.test(answer)) {
-    return 'On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media';
-  }
-  if (/^Only responsible publishers may write posts there/i.test(answer)) {
-    return 'On the web and in social media, only responsible publishers may write posts';
-  }
-  if (/^All content is first approved by the state/i.test(answer)) {
-    return 'On the web and in social media, all content is first approved by the state';
-  }
-  if (/^The content is always more reliable/i.test(answer)) {
-    return 'Content on the web and in social media is always more reliable than news in newspapers';
-  }
-  return `On the web and in social media, ${lowerFirst(
-    answer.replace(/\bthere\b/gi, 'on the web and in social media'),
-  )}`;
-}
-
 function swedishCommonToDoStatement(timePhrase: string, answer: string): string {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -306,20 +255,6 @@ function englishCommonToDoStatement(timePhrase: string, answer: string): string 
     return `On ${time}, it is common to ${activity}`;
   }
   return `On ${time}, ${activity} are common`;
-}
-
-function englishCommonCelebrationMode(answer: string): string {
-  const activity = stripLeadingPurposeEn(answer).trim();
-  const celebrateMatch = activity.match(/^celebrate with (.+)$/i);
-  if (celebrateMatch) return `with ${lowerFirst(celebrateMatch[1])}`;
-  if (
-    /^(?:celebrate|eat|light|open|hold|wear|serve|welcome|arrange|gather|dance|sing|go)\b/i.test(
-      activity,
-    )
-  ) {
-    return `by ${englishGerundPhrase(activity)}`;
-  }
-  return `with ${lowerFirst(activity)}`;
 }
 
 function swedishHabitualPredicate(answer: string): string {
@@ -401,6 +336,24 @@ function englishTraditionalCelebrationAnswer(answer: string): string {
   return lowerFirst(answer);
 }
 
+function swedishMentionedExample(answer: string, category: string): string {
+  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
+  if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
+  return `${answer} nämns som exempel på ${category}`;
+}
+
+function englishMentionedExample(answer: string, category: string): string {
+  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
+  if (built) {
+    return `The building of ${built[1]} ${built[2]} is mentioned as an example of ${category}`;
+  }
+  return `${answer} ${englishSubjectVerb(answer, 'is', 'are')} mentioned as ${englishSubjectVerb(
+    answer,
+    'an example',
+    'examples',
+  )} of ${category}`;
+}
+
 function swedishPurposeClause(value: string): string {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
 }
@@ -452,94 +405,18 @@ function englishChristianHolidayStatement(
   return `${answer} are Christian holidays that ${lowerFirst(subject)} celebrate even if ${condition}`;
 }
 
-function swedishGainedRightStatement(subject: string, answer: string, timePhrase: string): string {
+function swedishGainedRightStatement(subject: string, answer: string): string {
   const activity = stripLeadingPurposeSv(answer).replace(/\bi landet\b/i, 'i Sverige');
-  if (/^bli Sveriges största religiösa grupp$/i.test(activity)) {
-    return `${upperFirst(subject)} blev Sveriges största religiösa grupp på ${timePhrase}`;
-  }
   return `${upperFirst(subject)} fick rätt att ${lowerFirst(activity)}`;
 }
 
-function englishGainedRightStatement(subject: string, answer: string, timePhrase: string): string {
-  const activity = stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden');
-  if (/^become Sweden’s largest religious group$/i.test(activity)) {
-    return `${upperFirst(subject)} became Sweden’s largest religious group in ${timePhrase}`;
-  }
-  return `${upperFirst(subject)} gained the right to ${lowerFirst(activity)}`;
+function englishGainedRightStatement(subject: string, answer: string): string {
+  return `${upperFirst(subject)} gained the right to ${lowerFirst(
+    stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
+  )}`;
 }
 
-function whyTargetStatementSv(target: string): string {
-  const cleaned = stripFinalPunctuation(target);
-
-  let match = cleaned.match(
-    /^(kan|ska|måste|bör|får)\s+(.+?)\s+(vara|bli|ha|göra|skapa|ersätta|ge|påverka|spridas|delta|rösta)\b(.*)$/i,
-  );
-  if (match) {
-    return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
-  }
-
-  match = cleaned.match(/^behövs\s+(.+?)\s+(när|för|i|på|av)\b(.*)$/i);
-  if (match) {
-    return `${lowerLeadingSwedishClauseStart(match[1])} behövs ${match[2]}${match[3]}`;
-  }
-
-  match = cleaned.match(/^(behövs|finns)\s+(.+)$/i);
-  if (match) return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()}`;
-
-  return lowerLeadingSwedishClauseStart(cleaned);
-}
-
-function whyTargetStatementEn(target: string): string {
-  const cleaned = stripFinalPunctuation(target);
-
-  let match = cleaned.match(
-    /^(can|could|should|must|will|would|may|might)\s+(.+?)\s+(be|have|do|make|create|spread|replace|give|become)\b(.*)$/i,
-  );
-  if (match) {
-    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
-  }
-
-  match = cleaned.match(/^(is|are|was|were)\s+(.+?)\s+((?:needed|required|allowed|called)\b.*)$/i);
-  if (match) {
-    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3]}`;
-  }
-
-  return lowerLeadingEnglishClauseStart(cleaned);
-}
-
-function swedishReasonClause(value: string): string {
-  return lowerFirst(value).replace(/\bsom publiceras är alltid\b/i, 'som publiceras alltid är');
-}
-
-function reasonAnswerClauseSv(answer: string): string {
-  const stripped = stripLeadingPurposeSv(answer);
-  if (/^för att|^att\s+/i.test(answer.trim())) return `att ${swedishReasonClause(stripped)}`;
-  if (
-    /(^|[\s,])(?:hade|saknade|var|är|kan|ska|måste|gör|behöver|får|blir|har)(?=$|[\s,.?!])/i.test(
-      stripped,
-    )
-  ) {
-    return `att ${swedishReasonClause(stripped)}`;
-  }
-  return lowerFirst(stripped).replace(/\beU\b/g, 'EU');
-}
-
-function reasonAnswerClauseEn(answer: string): string {
-  const stripped = stripLeadingPurposeEn(answer);
-  if (/^to\b/i.test(answer.trim())) return `to ${lowerFirst(stripped)}`;
-  if (/\b(?:had|was|were|is|are|can|must|should|does|do|has|have|makes|gives)\b/i.test(stripped)) {
-    return `that ${lowerFirst(stripped)}`;
-  }
-  return lowerFirst(stripped);
-}
-
-function reasonStatementSv(answer: string, target?: string): string {
-  if (target) {
-    return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
-      answer,
-    )}`.replace(/\beU\b/g, 'EU');
-  }
-
+function reasonStatementSv(answer: string): string {
   const stripped = stripLeadingPurposeSv(answer);
   if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
@@ -548,11 +425,7 @@ function reasonStatementSv(answer: string, target?: string): string {
   return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
 
-function reasonStatementEn(answer: string, target?: string): string {
-  if (target) {
-    return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
-  }
-
+function reasonStatementEn(answer: string): string {
   const stripped = stripLeadingPurposeEn(answer);
   if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
@@ -587,14 +460,6 @@ function embeddedEnglishClause(value: string): string {
 }
 
 function replaceLeadingSwedishSubject(subject: string, value: string): string {
-  if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
-    if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
-      return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
-    }
-    if (/^Det är förbjudet att gifta sig med en person av samma kön$/i.test(value.trim())) {
-      return 'Äktenskap mellan personer av samma kön är förbjudet i Sverige';
-    }
-  }
   const normalizedSubject = upperFirst(subject.trim());
   return value
     .replace(/^De\s+/i, `${normalizedSubject} `)
@@ -635,58 +500,21 @@ function describesStatementEn(subject: string, answer: string): string {
   if (/^They should\s+/i.test(answer) && /free media/i.test(subject)) {
     return `Free media in a democracy should ${lowerFirst(answer.replace(/^They should\s+/i, ''))}`;
   }
-  if (
-    /^(?:People|Public services|Political engagement)\b/i.test(answer) &&
-    /^integration\b/i.test(subject)
-  ) {
-    return `${upperFirst(subject)} means ${englishCivicActionClause(answer)}`;
-  }
   if (/^To\s+/i.test(answer)) {
     return `${upperFirst(subject)} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
 }
 
-function importantRolesStatementSv(subject: string, context: string, answer: string): string {
-  if (/^Att\s+/i.test(answer)) {
-    return `I ${context} har ${lowerFirst(subject)} viktiga uppgifter: att ${lowerLeadingSwedishClauseStart(
-      stripLeadingPurposeSv(answer),
-    )}`;
-  }
-  if (/^De ska\s+/i.test(answer)) {
-    return `I ${context} ska ${lowerFirst(subject)} ${lowerFirst(answer.replace(/^De ska\s+/i, ''))}`;
-  }
-  return replaceLeadingSwedishSubject(subject, answer);
-}
-
-function importantRolesStatementEn(subject: string, context: string, answer: string): string {
-  if (/^To inform, enable public debate, and scrutinize people with power$/i.test(answer)) {
-    return `In ${context}, ${lowerFirst(
-      subject,
-    )} play important roles: informing, enabling public debate, and scrutinizing people with power`;
-  }
-  if (/^To\s+/i.test(answer)) {
-    return `In ${context}, ${lowerFirst(subject)} play an important role: ${englishGerundPhrase(
-      answer,
-    )}`;
-  }
-  if (/^They should\s+/i.test(answer)) {
-    return `In ${context}, ${lowerFirst(subject)} should ${lowerFirst(
-      answer.replace(/^They should\s+/i, ''),
-    )}`;
-  }
-  return replaceLeadingEnglishSubject(subject, answer);
-}
-
 function commonStatementSv(subject: string, answer: string): string {
-  if (/^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i.test(answer)) {
+  if (/^Gemensamma\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
   }
   return replaceLeadingSwedishSubject(subject, answer);
 }
 
 function commonStatementEn(subject: string, answer: string): string {
-  if (/^(?:Shared|The power|Responsibility|Direct)\s+/i.test(answer)) {
+  if (/^Shared\s+/i.test(answer)) {
     return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
@@ -739,29 +567,6 @@ function supportStatementEn(subject: string, answer: string): string {
     return `${upperFirst(subject)} is ${lowerLeadingEnglishArticle(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
-}
-
-function conditionalPartyOutcomeSv(context: string, condition: string, answer: string): string {
-  const partyCondition = condition.match(/^ett parti får (.+)$/i);
-  const partyOutcome = answer.trim().match(/^partiet får (.+)$/i);
-  if (partyCondition && partyOutcome) {
-    return `I ${context} får ett parti som får ${partyCondition[1]} ${lowerFirst(partyOutcome[1])}`;
-  }
-
-  const outcome = lowerFirst(answer).replace(/^partiet får\s+/i, 'partiet ');
-  return `I ${context} får ${outcome} om ${condition}`;
-}
-
-function conditionalPartyOutcomeEn(context: string, condition: string, answer: string): string {
-  const partyCondition = condition.match(/^a party receives (.+)$/i);
-  const partyOutcome = answer.trim().match(/^the party receives (.+)$/i);
-  if (partyCondition && partyOutcome) {
-    return `In ${context}, a party that receives ${partyCondition[1]} receives ${lowerFirst(
-      partyOutcome[1],
-    )}`;
-  }
-
-  return `In ${context}, ${lowerFirst(answer)} if ${condition}`;
 }
 
 function stripTrueFalsePromptSv(value: string): string {
@@ -1097,90 +902,6 @@ function generatedTrueFalseStatementEn(
   return truthStatementEn(civicStatementEn(source, option));
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function usableClozeCandidate(value: string): boolean {
-  const trimmed = value.trim();
-  return trimmed.length >= 3 || /^[A-ZÅÄÖ]{2,}$/.test(trimmed);
-}
-
-function uniqueClozeCandidates(candidates: string[]): string[] {
-  return [
-    ...new Set(
-      candidates
-        .map((candidate) => candidate.trim())
-        .filter((candidate) => candidate && usableClozeCandidate(candidate)),
-    ),
-  ].sort((a, b) => b.length - a.length);
-}
-
-function replaceClozeCandidate(statement: string, candidates: string[]): string | null {
-  for (const candidate of uniqueClozeCandidates(candidates)) {
-    const pattern = new RegExp(escapeRegExp(candidate), 'i');
-    if (pattern.test(statement)) {
-      const replaced = statement.replace(pattern, '...');
-      if (/[A-Za-zÅÄÖåäö0-9]/.test(replaced.replace(/\.\.\./g, ''))) return replaced;
-    }
-  }
-  return null;
-}
-
-function singleChoiceClozePromptSv(source: PracticeQuestion): string {
-  const option = correctOption(source);
-  const answer = stripFinalPunctuation(answerLabel(option));
-  const strippedPurpose = stripLeadingPurposeSv(answer);
-  const strippedMust = stripLeadingMustSv(answer);
-  const statement = stripFinalPunctuation(civicStatementSv(source, option));
-  const cloze = replaceClozeCandidate(statement, [
-    answer,
-    lowerFirst(answer),
-    upperFirst(answer),
-    strippedPurpose,
-    lowerFirst(strippedPurpose),
-    upperFirst(strippedPurpose),
-    strippedMust,
-    lowerFirst(strippedMust),
-    swedishCalledAnswer(answer),
-    swedishPurposeClause(answer),
-    frontedManyActionSv(answer),
-    reasonAnswerClauseSv(answer),
-    swedishTraditionalCelebrationAnswer(answer),
-  ]);
-
-  if (cloze) return ensureSentence(cloze);
-  return `${stripFinalPunctuation(source.questionSv)} ...?`;
-}
-
-function singleChoiceClozePromptEn(source: PracticeQuestion): string {
-  const option = correctOption(source);
-  const answer = stripFinalPunctuation(answerTextEn(option));
-  const strippedPurpose = stripLeadingPurposeEn(answer);
-  const strippedBy = stripLeadingByEn(answer);
-  const statement = stripFinalPunctuation(civicStatementEn(source, option));
-  const cloze = replaceClozeCandidate(statement, [
-    answer,
-    lowerFirst(answer),
-    upperFirst(answer),
-    strippedPurpose,
-    lowerFirst(strippedPurpose),
-    upperFirst(strippedPurpose),
-    strippedBy,
-    lowerFirst(strippedBy),
-    englishCalledAnswer(answer),
-    englishGerundPhrase(answer),
-    englishCivicActionClause(answer),
-    englishInfinitive(answer),
-    manyPeopleActionEn(answer),
-    reasonAnswerClauseEn(answer),
-    englishTraditionalCelebrationAnswer(answer),
-  ]);
-
-  if (cloze) return ensureSentence(cloze);
-  return `${stripFinalPunctuation(source.questionEn)} ...?`;
-}
-
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
@@ -1199,472 +920,14 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  return rephrasedSingleChoiceQuestionSv(source);
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  return rephrasedSingleChoiceQuestionEn(source);
-}
-
-function completionPrompt(statement: string, answerCandidates: string[]): string | null {
-  const cleanStatement = stripFinalPunctuation(statement).trim();
-
-  for (const answer of answerCandidates) {
-    const cleanAnswer = stripFinalPunctuation(answer).trim();
-    if (!cleanAnswer || cleanStatement.toLocaleLowerCase() === cleanAnswer.toLocaleLowerCase()) {
-      continue;
-    }
-
-    const replaced = ensureSentence(
-      cleanStatement.replace(new RegExp(escapeRegExp(cleanAnswer), 'i'), '...'),
-    );
-    if (replaced.includes('...')) return replaced;
-  }
-
-  return null;
-}
-
-function singleChoiceCompletionPromptSv(source: PracticeQuestion): string {
-  const answer = answerLabel(correctOption(source));
-  return (
-    completionPrompt(civicStatementSv(source, correctOption(source)), [
-      answer,
-      stripLeadingPurposeSv(answer),
-    ]) ?? followUpSingleChoiceQuestionSv(source)
-  );
-}
-
-function singleChoiceCompletionPromptEn(source: PracticeQuestion): string {
-  const answer = answerTextEn(correctOption(source));
-  return (
-    completionPrompt(civicStatementEn(source, correctOption(source)), [
-      answer,
-      stripLeadingPurposeEn(answer),
-      stripLeadingByEn(answer),
-    ]) ?? followUpSingleChoiceQuestionEn(source)
-  );
-}
-
-function followUpSingleChoiceQuestionSv(source: PracticeQuestion): string {
-  return asQuestion(`Vad är korrekt om ${singleChoiceTopicSv(source)}`);
-}
-
-function followUpSingleChoiceQuestionEn(source: PracticeQuestion): string {
-  return asQuestion(`What is correct about ${singleChoiceTopicEn(source)}`);
-}
-
-function singleChoiceTopicSv(source: PracticeQuestion): string {
-  const q = stripFinalPunctuation(source.questionSv);
-  let match = q.match(/^Vilket påstående (?:beskriver|stämmer om) (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vilka krav gäller för att (.+)$/i);
-  if (match) return `att ${lowerFirst(match[1])}`;
-
-  match = q.match(/^Vad gäller för (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vad händer i (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vad innebär (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vad gör (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Hur hjälper (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vilken roll har (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vilket stöd kan (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vad skyddar (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^Vad fick (.+?) rätt att göra (.+)$/i);
-  if (match) return `${match[1]} ${match[2]}`;
-
-  match = q.match(/^Vad kan hända med (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  return lowerFirst(source.uhrReference?.section ?? 'frågan');
-}
-
-function singleChoiceTopicEn(source: PracticeQuestion): string {
-  const q = stripFinalPunctuation(source.questionEn);
-  let match = q.match(/^Which statement (?:describes|is correct about) (.+)$/i);
-  if (match) return lowerLeadingEnglishArticle(match[1]);
-
-  match = q.match(/^Which requirements apply to (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^What applies to (.+)$/i);
-  if (match) return lowerLeadingEnglishArticle(match[1]);
-
-  match = q.match(/^What happens in (.+)$/i);
-  if (match) return lowerLeadingEnglishArticle(match[1]);
-
-  match = q.match(/^What does (.+?) mean$/i);
-  if (match) return lowerLeadingEnglishArticle(match[1]);
-
-  match = q.match(/^What do (.+?) do/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^How does (.+)$/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^What role do (.+?) have/i);
-  if (match) return lowerFirst(match[1]);
-
-  match = q.match(/^What support can (.+?) provide/i);
-  if (match) return match[1];
-
-  match = q.match(/^What does (.+?) protect/i);
-  if (match) return match[1];
-
-  match = q.match(/^What did (.+?) gain the right to do (.+)$/i);
-  if (match) return `${match[1]} ${match[2]}`;
-
-  match = q.match(/^What can happen to (.+)$/i);
-  if (match) return lowerLeadingEnglishArticle(match[1]);
-
-  return lowerLeadingEnglishArticle(source.uhrReference?.section ?? 'the question');
-}
-
-function rephrasedSingleChoiceQuestionSv(source: PracticeQuestion): string {
-  const q = stripFinalPunctuation(source.questionSv);
-  let match = q.match(/^Var ligger (.+)$/i);
-  if (match) return asQuestion(`I vilken del av världen ligger ${match[1]}`);
-
-  match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
-  if (match) return asQuestion(`Vilken ungefärlig sträcka har ${match[1]} ${match[2]}`);
-
-  match = q.match(/^Vad heter (.+)$/i);
-  if (match) return asQuestion(`Vilket namn har ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilka öar är Sveriges två största$/i);
-  if (match) return 'Vilka är Sveriges två största öar?';
-
-  match = q.match(/^Vilka är (.+)$/i);
-  if (match) return asQuestion(`Vilka räknas som ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Ungefär hur många (.+?) bor i Sverige$/i);
-  if (match) return asQuestion(`Hur många ${match[1]} bor ungefär i Sverige`);
-
-  match = q.match(/^Vilka (.+?) är viktiga i Sverige$/i);
-  if (match) return asQuestion(`Vilka ${match[1]} räknas som viktiga i Sverige`);
-
-  match = q.match(/^Vad betyder (.+)$/i);
-  if (match) return asQuestion(`Hur förklaras ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilket av följande ingår i (.+)$/i);
-  if (match) return asQuestion(`Vad ingår i ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilket är ett sätt att (.+)$/i);
-  if (match) return asQuestion(`Hur kan man ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad kallas det när (.+)$/i);
-  if (match) return asQuestion(`Vilket begrepp beskriver när ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Hur kan (.+)$/i);
-  if (match) return asQuestion(`På vilket sätt kan ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Hur väljer (.+)$/i);
-  if (match) return asQuestion(`På vilket sätt väljer ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Hur många (.+)$/i);
-  if (match) return asQuestion(`Vilket antal gäller för ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vem väljer (.+)$/i);
-  if (match) return asQuestion(`Vem är det som väljer ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Hur gammal måste man ha fyllt för att (.+)$/i);
-  if (match) return asQuestion(`Vilken ålder krävs för att ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return asQuestion(`Vad innebär det att ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilken av följande uppgifter har (.+)$/i);
-  if (match) return asQuestion(`Vilken uppgift har ${match[1]}`);
-
-  match = q.match(/^Vilket påstående beskriver (.+)$/i);
-  if (match) return asQuestion(`Vilken beskrivning passar för ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilken är (.+)$/i);
-  if (match) return asQuestion(`Vad är ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilket exempel beskriver (.+)$/i);
-  if (match) return asQuestion(`Vilket exempel passar för ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Hur ofta hålls (.+)$/i);
-  if (match) return asQuestion(`Med vilket intervall hålls ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilka krav gäller för att (.+)$/i);
-  if (match) return asQuestion(`Vilka krav måste uppfyllas för att ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Varför (.+)$/i);
-  if (match) return asQuestion(`Av vilken anledning ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad händer i (.+)$/i);
-  if (match) return asQuestion(`Vad blir följden i ${lowerFirst(match[1])}`);
-
-  match = q.match(
-    /^Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen$/i,
-  );
-  if (match) return 'Vilken minsta röstandel krävs för att ett parti ska komma in i riksdagen?';
-
-  match = q.match(/^Vilken lista innehåller bara (.+)$/i);
-  if (match) return asQuestion(`Vilken lista består bara av ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad säger (.+?) om (.+)$/i);
-  if (match) return asQuestion(`Hur beskriver ${match[1]} ${lowerFirst(match[2])}`);
-
-  match = q.match(/^Vad reglerar (.+)$/i);
-  if (match) return asQuestion(`Vad styr ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad innebär (.+)$/i);
-  if (match) return asQuestion(`Vad betyder ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
-  if (match) return asQuestion(`Vilka myndigheter hör till ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad gäller för (.+)$/i);
-  if (match) return asQuestion(`Vilken regel gäller för ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Från vilken ålder är (.+)$/i);
-  if (match) return asQuestion(`Vid vilken ålder är ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilket svar beskriver (.+)$/i);
-  if (match) return asQuestion(`Vilken beskrivning passar för ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilket påstående stämmer om (.+)$/i);
-  if (match) return asQuestion(`Vilken uppgift stämmer om ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Sedan vilket år är (.+)$/i);
-  if (match) return asQuestion(`Från vilket år är ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad beslutade (.+)$/i);
-  if (match) return asQuestion(`Vilket beslut fattade ${match[1]}`);
-
-  match = q.match(/^Vad är (.+)$/i);
-  if (match) return asQuestion(`Vilken uppgift gäller ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Hur hjälper (.+)$/i);
-  if (match) return asQuestion(`På vilket sätt hjälper ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Genom vilka (.+)$/i);
-  if (match) return asQuestion(`Via vilka ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vilket år (.+)$/i);
-  if (match) return asQuestion(`Under vilket år ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad arbetar (.+?) för$/i);
-  if (match) return asQuestion(`Vilket mål arbetar ${match[1]} för`);
-
-  match = q.match(/^Vad valde (.+?) att göra (.+)$/i);
-  if (match) return asQuestion(`Vad gjorde ${match[1]} ${match[2]}`);
-
-  match = q.match(/^När (.+)$/i);
-  if (match) return asQuestion(`Vid vilken tid ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad brukar (.+)$/i);
-  if (match) return asQuestion(`Vad är vanligt att ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad uppmärksammas (.+)$/i);
-  if (match) return asQuestion(`Vad markerar man ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad handlar (.+)$/i);
-  if (match) return asQuestion(`Vad står ${lowerFirst(match[1])} för`);
-
-  match = q.match(/^Vad är typiskt för (.+)$/i);
-  if (match) return asQuestion(`Vad kännetecknar ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad finns (.+)$/i);
-  if (match) return asQuestion(`Vad kan finnas ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Vad fick (.+?) rätt att göra (.+)$/i);
-  if (match) return asQuestion(`Vilken rätt fick ${match[1]} ${match[2]}`);
-
-  match = q.match(/^Vilka riktningar inom (.+)$/i);
-  if (match) return asQuestion(`Vilka inriktningar inom ${lowerFirst(match[1])}`);
-
-  return `Kunskapsfråga: ${source.questionSv}`;
-}
-
-function rephrasedSingleChoiceQuestionEn(source: PracticeQuestion): string {
-  const q = stripFinalPunctuation(source.questionEn);
-  let match = q.match(/^Where is (.+?) located$/i);
-  if (match) return asQuestion(`In which part of the world is ${match[1]} located`);
-
-  match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
-  if (match) return asQuestion(`What approximate distance does ${match[1]} stretch ${match[2]}`);
-
-  match = q.match(/^What is the name of (.+)$/i);
-  if (match) return asQuestion(`What name does ${lowerLeadingEnglishArticle(match[1])} have`);
-
-  match = q.match(/^What is (.+?) called$/i);
-  if (match) return asQuestion(`What name is used for ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^Which islands are Sweden's two largest$/i);
-  if (match) return "Which are Sweden's two largest islands?";
-
-  match = q.match(/^Which are (.+)$/i);
-  if (match) return asQuestion(`Which ones count as ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^Approximately how many (.+?) live in Sweden$/i);
-  if (match) return asQuestion(`How many ${match[1]} live in Sweden approximately`);
-
-  match = q.match(/^Which (.+?) are important in Sweden$/i);
-  if (match) return asQuestion(`Which ${match[1]} count as important in Sweden`);
-
-  match = q.match(/^What does (.+?) mean$/i);
-  if (match) return asQuestion(`How is ${lowerLeadingEnglishArticle(match[1])} explained`);
-
-  match = q.match(/^Which of the following is part of (.+)$/i);
-  if (match) return asQuestion(`What is part of ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^Which is a way to (.+)$/i);
-  if (match) return asQuestion(`How can people ${lowerFirst(match[1])}`);
-
-  match = q.match(/^What is it called when (.+)$/i);
-  if (match) return asQuestion(`What concept describes when ${lowerFirst(match[1])}`);
-
-  match = q.match(/^How can (.+)$/i);
-  if (match) return asQuestion(`In what way can ${lowerFirst(match[1])}`);
-
-  match = q.match(/^How do (.+)$/i);
-  if (match) return asQuestion(`In what way do ${lowerFirst(match[1])}`);
-
-  match = q.match(/^How many (.+)$/i);
-  if (match) return asQuestion(`What number applies to ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Who chooses (.+)$/i);
-  if (match) return asQuestion(`Who is responsible for choosing ${lowerFirst(match[1])}`);
-
-  match = q.match(/^How old must a person be to (.+)$/i);
-  if (match) return asQuestion(`What age is required to ${lowerFirst(match[1])}`);
-
-  match = q.match(/^What does it mean that (.+)$/i);
-  if (match) return asQuestion(`What is meant by saying that ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Which of the following tasks belongs to (.+)$/i);
-  if (match) return asQuestion(`Which task belongs to ${match[1]}`);
-
-  match = q.match(/^Which statement describes (.+)$/i);
-  if (match) return asQuestion(`Which description fits ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^What is the foremost task of (.+)$/i);
-  if (match) return asQuestion(`What is ${lowerLeadingEnglishArticle(match[1])} foremost task`);
-
-  match = q.match(/^Which example describes (.+)$/i);
-  if (match) return asQuestion(`Which example fits ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^How often are (.+?) held in Sweden$/i);
-  if (match) return asQuestion(`At what interval are ${lowerFirst(match[1])} held in Sweden`);
-
-  match = q.match(/^Which requirements apply to (.+)$/i);
-  if (match) return asQuestion(`Which requirements must be met for ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Why (.+)$/i);
-  if (match) return asQuestion(`For what reason ${lowerFirst(match[1])}`);
-
-  match = q.match(/^What happens in (.+)$/i);
-  if (match) return asQuestion(`What is the result in ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
-  if (match) return 'What minimum vote share is required for a party to enter the Riksdag?';
-
-  match = q.match(/^Which list contains only (.+)$/i);
-  if (match)
-    return asQuestion(`Which list consists only of ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^What does (.+?) say about (.+)$/i);
-  if (match)
-    return asQuestion(`How does ${match[1]} describe ${lowerLeadingEnglishArticle(match[2])}`);
-
-  match = q.match(/^What does (.+?) regulate$/i);
-  if (match) return asQuestion(`What does ${match[1]} govern`);
-
-  match = q.match(/^What does (.+?) mean$/i);
-  if (match) return asQuestion(`What is meant by ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^Which authorities are part of (.+)$/i);
-  if (match)
-    return asQuestion(`Which authorities belong to ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^What applies to (.+)$/i);
-  if (match) return asQuestion(`Which rule applies to ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^From what age is (.+)$/i);
-  if (match) return asQuestion(`At what age is ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Which answer describes (.+)$/i);
-  if (match) return asQuestion(`Which description fits ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^Which statement is correct about (.+)$/i);
-  if (match)
-    return asQuestion(`Which fact is correct about ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^Since what year has (.+)$/i);
-  if (match) return asQuestion(`From what year has ${lowerFirst(match[1])}`);
-
-  match = q.match(/^What did (.+?) decide (.+)$/i);
-  if (match) return asQuestion(`Which decision did ${match[1]} make ${match[2]}`);
-
-  match = q.match(/^What is one (?:role|task) of (.+)$/i);
-  if (match) return asQuestion(`Which role belongs to ${match[1]}`);
-
-  match = q.match(/^How does (.+)$/i);
-  if (match) return asQuestion(`In what way does ${lowerFirst(match[1])}`);
-
-  match = q.match(/^Through which (.+?) does (.+?) mainly take place$/i);
-  if (match) return asQuestion(`Which ${match[1]} does ${match[2]} mainly use`);
-
-  match = q.match(/^Through which (.+)$/i);
-  if (match) return asQuestion(`Through which ${lowerFirst(match[1])}`);
-
-  match = q.match(/^In what year did (.+)$/i);
-  if (match) return asQuestion(`During which year did ${lowerFirst(match[1])}`);
-
-  match = q.match(/^What does (.+?) work (?:to do|for)$/i);
-  if (match) return asQuestion(`What goal does ${match[1]} work for`);
-
-  match = q.match(/^What did (.+?) choose to do (.+)$/i);
-  if (match) return asQuestion(`What did ${match[1]} do ${match[2]}`);
-
-  match = q.match(/^When (.+)$/i);
-  if (match) return asQuestion(`At what time ${lowerFirst(match[1])}`);
-
-  match = q.match(/^What usually happens (.+)$/i);
-  if (match) return asQuestion(`What commonly happens ${match[1]}`);
-
-  match = q.match(/^What is marked (.+)$/i);
-  if (match) return asQuestion(`What do people mark ${match[1]}`);
-
-  match = q.match(/^What is (.+?) largely about in Sweden$/i);
-  if (match)
-    return asQuestion(`What is the focus of ${lowerLeadingEnglishArticle(match[1])} in Sweden`);
-
-  match = q.match(/^What is typical of (.+)$/i);
-  if (match) return asQuestion(`What characterizes ${lowerLeadingEnglishArticle(match[1])}`);
-
-  match = q.match(/^What exists (.+)$/i);
-  if (match) return asQuestion(`What can exist ${match[1]}`);
-
-  match = q.match(/^What did (.+?) gain the right to do (.+)$/i);
-  if (match) return asQuestion(`Which right did ${match[1]} gain ${match[2]}`);
-
-  match = q.match(/^Which branches within (.+)$/i);
-  if (match) return asQuestion(`Which branches of ${lowerLeadingEnglishArticle(match[1])}`);
-
-  return `Study question: ${source.questionEn}`;
+  return `Which answer best matches? ${source.questionEn}`;
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
@@ -1689,12 +952,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vilka är Sveriges fyra grundlagar$/i);
-  if (match) return `Sveriges fyra grundlagar är ${lowerFirst(answer)}`;
-
-  match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
-  if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
-
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
 
@@ -1713,13 +970,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
 
-  match = q.match(/^Hur kan (.+?) påverka (.+?) och delta i (.+)$/i);
-  if (match) {
-    const method = answer.replace(/^Genom att\s+/i, '');
-    return `${upperFirst(match[1])} kan påverka ${match[2]} och delta i ${
-      match[3]
-    } genom att ${lowerFirst(method)}`;
-  }
+  match = q.match(/^Vilket är ett sätt att (.+)$/i);
+  if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
@@ -1756,13 +1008,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
-  match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
-  if (match) {
-    return `${upperFirst(match[1])} blir ${match[2]} när ${lowerFirst(
-      stripLeadingPurposeSv(answer),
-    )}`;
-  }
-
   match = q.match(/^Vilka tre nivåer delar (.+)$/i);
   if (match) return `${upperFirst(answer)} delar ${match[1]}`;
 
@@ -1772,10 +1017,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilken uppgift har (.+)$/i);
   if (match) return `${upperFirst(match[1])} har uppgiften ${swedishPurposeClause(answer)}`;
-
-  match = q.match(/^Vilken rätt har (.+?) i (.+)$/i);
-  if (match)
-    return `I ${match[2]} har ${match[1]} rätt att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vad är en uppgift för (.+)$/i);
   if (match) return `En uppgift för ${match[1]} är ${swedishPurposeClause(answer)}`;
@@ -1788,6 +1029,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilken är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket exempel beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
 
   match = q.match(/^Hur ofta hålls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
@@ -1821,13 +1065,16 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
 
   match = q.match(/^Varför (.+)$/i);
-  if (match) return reasonStatementSv(answer, match[1]);
+  if (match) return reasonStatementSv(answer);
 
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
 
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
-  if (match) return conditionalPartyOutcomeSv(match[1], match[2], answer);
+  if (match) {
+    const outcome = lowerFirst(answer).replace(/^partiet får\s+/i, 'partiet ');
+    return `I ${match[1]} får ${outcome} om ${match[2]}`;
+  }
 
   match = q.match(/^Vilken lista innehåller (.+)$/i);
   if (match) return `Listan med ${lowerFirst(answer)} innehåller ${match[1]}`;
@@ -1878,23 +1125,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad finansierar staten inom (.+)$/i);
   if (match) return `Staten finansierar ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vad ingår i (.+)$/i);
-  if (match) return `${upperFirst(match[1])} omfattar ${lowerFirst(answer)}`;
-
-  match = q.match(/^Vilket ansvar har (.+?) för (.+)$/i);
-  if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
-
-  match = q.match(/^Vilken hjälp kan (.+?) få av (.+?) för att (.+)$/i);
-  if (match)
-    return `${upperFirst(match[2])} kan erbjuda ${lowerFirst(match[1])} ${lowerFirst(
-      answer,
-    )} för att ${match[3]}`;
-
   match = q.match(/^Vilket ansvar har (.+?) inom (.+)$/i);
   if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
-
-  match = q.match(/^Vilka viktiga uppgifter har (.+?) i (.+)$/i);
-  if (match) return importantRolesStatementSv(match[1], match[2], answer);
 
   match = q.match(/^Vilket svar ger exempel på (.+)$/i);
   if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
@@ -1902,6 +1134,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
     return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
 
   match = q.match(/^När firas (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
@@ -2001,9 +1236,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad uppmärksammas på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} uppmärksammas ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
-  if (match) return webSocialMediaStatementSv(answer);
-
   match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
   if (match) return `På olika platser i Sverige finns ${lowerFirst(answer)} för ${match[1]}`;
 
@@ -2022,8 +1254,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^När byggdes (.+)$/i);
   if (match) return `${upperFirst(match[1])} byggdes ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
-  if (match) return `${answer} finns i ${match[1]}`;
+  match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
+  if (match) return `${answer} nämns som exempel i ${match[1]}`;
 
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
@@ -2045,13 +1277,13 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} var ${lowerFirst(answer)} under ${match[2]}`;
 
   match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
-  if (match) return swedishGainedRightStatement(match[1], answer, match[2]);
+  if (match) return swedishGainedRightStatement(match[1], answer);
 
-  match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
-  if (match) return `${answer} finns i ${match[2]}`;
+  match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
+  if (match) return `${answer} nämns som exempel i ${match[2]}`;
 
-  match = q.match(/^Vad bidrog till (.+)$/i);
-  if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
+  match = q.match(/^Vad nämns som exempel på (.+)$/i);
+  if (match) return swedishMentionedExample(answer, match[1]);
 
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
@@ -2140,14 +1372,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
 
-  match = q.match(/^What are (.+)$/i);
-  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
-
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
-
-  match = q.match(/^Which (.+?) are (.+?) responsible for$/i);
-  if (match) return `${upperFirst(match[2])} are responsible for ${lowerFirst(answer)}`;
 
   match = q.match(/^Which three companies are called (.+) in Sweden$/i);
   if (match) return `${answer} are called ${match[1]} in Sweden`;
@@ -2164,12 +1390,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which of the following is part of (.+)$/i);
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
 
-  match = q.match(/^How can (.+?) influence (.+?) and participate in (.+)$/i);
-  if (match) {
-    return `${upperFirst(match[1])} can influence ${match[2]} and participate in ${
-      match[3]
-    } by ${lowerFirst(stripLeadingByEn(answer))}`;
-  }
+  match = q.match(/^Which is a way to (.+)$/i);
+  if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
@@ -2214,11 +1436,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What does it mean to (.+)$/i);
   if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
-  match = q.match(/^What can make (.+?) (stronger)$/i);
-  if (match) {
-    return `${upperFirst(match[1])} becomes ${match[2]} when ${englishCivicActionClause(answer)}`;
-  }
-
   match = q.match(/^Which three levels share (.+)$/i);
   if (match) return `${upperFirst(answer)} share ${match[1]}`;
 
@@ -2232,10 +1449,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What is one role of (.+)$/i);
   if (match) return `One role of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
-  match = q.match(/^What right do (.+?) have in (.+)$/i);
-  if (match)
-    return `In ${match[2]}, ${match[1]} have the right to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
-
   match = q.match(/^Which statement describes (.+)$/i);
   if (match) return describesStatementEn(match[1], answer);
 
@@ -2248,6 +1461,10 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
       stripLeadingPurposeEn(answer),
     )}`;
   }
+
+  match = q.match(/^Which example describes (.+)$/i);
+  if (match)
+    return `${upperFirst(answer)} ${englishSubjectVerb(answer, 'belongs', 'belong')} among ${match[1]}`;
 
   match = q.match(/^How often are (.+) held in Sweden$/i);
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
@@ -2281,13 +1498,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     )}`;
 
   match = q.match(/^Why (.+)$/i);
-  if (match) return reasonStatementEn(answer, match[1]);
+  if (match) return reasonStatementEn(answer);
 
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
 
   match = q.match(/^What happens in (.+?) if (.+)$/i);
-  if (match) return conditionalPartyOutcomeEn(match[1], match[2], answer);
+  if (match) return `In ${match[1]}, ${lowerFirst(answer)} if ${match[2]}`;
 
   match = q.match(/^Which list contains (.+)$/i);
   if (match) return `The list with ${lowerLeadingEnglishArticle(answer)} contains ${match[1]}`;
@@ -2339,29 +1556,17 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What does the state finance within (.+)$/i);
   if (match) return `The state finances ${lowerFirst(answer)}`;
 
-  match = q.match(/^What is included in (.+)$/i);
-  if (match) return `${upperFirst(match[1])} includes ${lowerFirst(answer)}`;
-
-  match = q.match(/^What responsibility does (.+?) have for (.+)$/i);
-  if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
-
-  match = q.match(/^What help can (.+?) receive from (.+?) to (.+)$/i);
-  if (match)
-    return `${upperFirst(match[2])} can offer ${lowerFirst(match[1])} ${lowerFirst(
-      answer,
-    )} to ${match[3]}`;
-
   match = q.match(/^What responsibility do (.+?) have within (.+)$/i);
   if (match) return `${upperFirst(match[1])} are responsible for ${englishGerundPhrase(answer)}`;
-
-  match = q.match(/^What important roles do (.+?) play in (.+)$/i);
-  if (match) return importantRolesStatementEn(match[1], match[2], answer);
 
   match = q.match(/^Which answer gives examples of (.+)$/i);
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
 
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
 
   match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
@@ -2386,13 +1591,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(
       answer,
     ).replace(/^Cooperation\b/, 'cooperation')}`;
-
-  match = q.match(/^What was (.+?) important for$/i);
-  if (match)
-    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(
-      /^Cooperation\b/,
-      'cooperation',
-    )}`;
 
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
@@ -2422,14 +1620,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What does (.+?) work to do$/i);
   if (match) return `${upperFirst(match[1])} works to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
-
-  match = q.match(/^What does (.+?) promote$/i);
-  if (match) {
-    if (/^Only\s+/i.test(answer)) {
-      return `${upperFirst(match[1])} promotes only ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
-    }
-    return `${upperFirst(match[1])} promotes ${lowerFirst(answer)}`;
-  }
 
   match = q.match(/^What does (.+?) work for$/i);
   if (match) {
@@ -2465,12 +1655,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
 
-  match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
-  if (match)
-    return `${match[1]} is commonly ${match[2].toLowerCase()} ${englishCommonCelebrationMode(
-      answer,
-    )}`;
-
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)
     return `On ${stripTrailingComma(match[1])}, families commonly ${lowerFirst(
@@ -2491,9 +1675,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
-
-  match = q.match(/^What is important to remember about the web and social media$/i);
-  if (match) return webSocialMediaStatementEn(answer);
 
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)
@@ -2519,8 +1700,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^When were (.+?) built$/i);
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
 
-  match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
-  if (match) return `${answer} exist in ${match[1]}`;
+  match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
+  if (match) return `${answer} are mentioned as examples in ${match[1]}`;
 
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
@@ -2542,13 +1723,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} was ${lowerFirst(answer)} during ${match[2]}`;
 
   match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
-  if (match) return englishGainedRightStatement(match[1], answer, match[2]);
+  if (match) return englishGainedRightStatement(match[1], answer);
 
-  match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
-  if (match) return `${answer} are found in ${match[2]}`;
+  match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
+  if (match) return `${answer} are mentioned as examples in ${match[2]}`;
 
-  match = q.match(/^What contributed to (.+)$/i);
-  if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
+  match = q.match(/^What is mentioned as an example of (.+)$/i);
+  if (match) return englishMentionedExample(answer, match[1]);
 
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;
@@ -2584,9 +1765,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
-
-  match = q.match(/^At (.+?) in Sweden, what do many people do with (.+)$/i);
-  if (match) return `At ${match[1]}, ${manyPeopleActionEn(answer)}`;
 
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
@@ -2681,26 +1859,20 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
   );
 }
 
-export function derivePublishedQuestionVariants(
-  source: PracticeQuestion,
-  startId: number,
-): PracticeQuestion[] {
-  const published = publishedCopy(source);
-  return [
-    buildSingleChoiceVariant(published, nextId(startId, 0)),
-    buildTrueStatementVariant(published, nextId(startId, 1)),
-    buildFalseStatementVariant(published, nextId(startId, 2)),
-    buildAnswerJudgementVariant(published, nextId(startId, 3)),
-  ];
-}
-
 export function derivePublishedQuestions(
   sourceQuestions: PracticeQuestion[],
   startId = 101,
 ): PracticeQuestion[] {
-  return sourceQuestions.flatMap((source, index) =>
-    derivePublishedQuestionVariants(source, startId + index * 4),
-  );
+  return sourceQuestions.flatMap((source, index) => {
+    const published = publishedCopy(source);
+    const offset = index * 4;
+    return [
+      buildSingleChoiceVariant(published, nextId(startId, offset)),
+      buildTrueStatementVariant(published, nextId(startId, offset + 1)),
+      buildFalseStatementVariant(published, nextId(startId, offset + 2)),
+      buildAnswerJudgementVariant(published, nextId(startId, offset + 3)),
+    ];
+  });
 }
 
 export function publishQuestions(sourceQuestions: PracticeQuestion[]): PracticeQuestion[] {

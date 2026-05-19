@@ -23,14 +23,8 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeTypographyTokensValidated, 22);
   assert.equal(summary.themeShadowTokensValidated, 2);
   assert.equal(summary.themeMotionTokensValidated, 7);
-  assert.equal(summary.themeContrastPairsValidated, 27);
-  assert.equal(summary.themeContrastValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(themeIndex, /export \{ colors \} from '\.\/colors';/);
-  assert.match(
-    themeIndex,
-    /export \{ flagColors, SWEDISH_FLAG_BLUE, SWEDISH_FLAG_GOLD \} from '\.\/flag';/,
-  );
   assert.match(themeIndex, /export \{ space \} from '\.\/spacing';/);
   assert.match(themeIndex, /export \{ typography \} from '\.\/typography';/);
 });
@@ -58,37 +52,4 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.1 expected 8, found -8/);
-});
-
-test('theme token schema rejects semantic color contrast drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/theme/colors.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        "const warning = '#8a5700' satisfies ColorToken;",
-        "const warning = '#c77700' satisfies ColorToken;",
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /theme contrast warning on warningSoft ratio [0-9.]+ below 4\.5/,
-  );
 });
