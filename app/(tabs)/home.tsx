@@ -16,6 +16,8 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
+import { dashboardSummary } from '../../lib/learning/dashboardStats';
+import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
@@ -38,6 +40,10 @@ type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
   dailyGoalTitle: string;
+  dashboardAccessibilityLabel: (summary: string) => string;
+  dashboardCta: string;
+  dashboardSummary: (count: number) => string;
+  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -78,6 +84,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
     dailyGoalTitle: 'Dagens mål',
+    dashboardAccessibilityLabel: (summary) => `Öppna framstegsöversikten. ${summary}`,
+    dashboardCta: 'Visa översikt',
+    dashboardSummary: (count) => `${count} svar den här veckan`,
+    dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
@@ -145,6 +155,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
     dailyGoalTitle: "Today's goal",
+    dashboardAccessibilityLabel: (summary) => `Open the progress dashboard. ${summary}`,
+    dashboardCta: 'View dashboard',
+    dashboardSummary: (count) => `${count} answers this week`,
+    dashboardTitle: 'Progress dashboard',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
@@ -262,6 +276,26 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
+  const dashboardProgress = useMemo(
+    () =>
+      buildDashboardProgressSnapshot({
+        answerDates,
+        dailyGoalAnswers,
+        mockExamSessions,
+        questionProgress,
+        totalXp,
+      }),
+    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+  );
+  const dashboardQuestionChapterIndex = useMemo(
+    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
+    [],
+  );
+  const dashboard = useMemo(
+    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
+    [dashboardProgress, dashboardQuestionChapterIndex],
+  );
+  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -294,6 +328,18 @@ export default function Screen() {
           tone="accent"
         />
       </View>
+      <Link
+        accessibilityLabel={copy.dashboardAccessibilityLabel(dashboardSummaryLine)}
+        accessibilityRole="link"
+        href="/dashboard"
+        style={styles.dashboardLink}
+      >
+        <View style={styles.dashboardLinkContent}>
+          <Text style={styles.dashboardTitle}>{copy.dashboardTitle}</Text>
+          <Text style={styles.dashboardSummaryText}>{dashboardSummaryLine}</Text>
+          <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
+        </View>
+      </Link>
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -430,6 +476,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
+  },
+  dashboardLink: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    minHeight: space[6],
+    padding: space[2],
+    textDecorationLine: 'none',
+  },
+  dashboardLinkContent: {
+    gap: space[0.5],
+  },
+  dashboardTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  dashboardSummaryText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dashboardCta: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
   },
   readinessCard: {
     gap: space[1.5],

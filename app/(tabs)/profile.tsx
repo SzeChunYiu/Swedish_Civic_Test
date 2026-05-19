@@ -22,6 +22,10 @@ type ProfileCopy = {
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
+  dashboardAccessibilityLabel: string;
+  dashboardCta: string;
+  dashboardSubtitle: string;
+  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -45,6 +49,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
+    dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
+    dashboardCta: 'Visa översikt',
+    dashboardSubtitle: 'Aktivitet, kapitelprogress och XP visas på en egen sida.',
+    dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
@@ -67,6 +75,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
+    dashboardAccessibilityLabel: 'Open progress dashboard',
+    dashboardCta: 'View dashboard',
+    dashboardSubtitle: 'Activity, chapter progress, and XP live on a dedicated page.',
+    dashboardTitle: 'Progress dashboard',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',
@@ -197,6 +209,18 @@ export default function Screen() {
       </Card>
 
       <Card style={styles.cardWide}>
+        <SectionHeader title={copy.dashboardTitle} subtitle={copy.dashboardSubtitle} />
+        <Link
+          accessibilityLabel={copy.dashboardAccessibilityLabel}
+          accessibilityRole="link"
+          href="/dashboard"
+          style={styles.dashboardLink}
+        >
+          {copy.dashboardCta}
+        </Link>
+      </Card>
+
+      <Card style={styles.cardWide}>
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
         <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
@@ -238,6 +262,18 @@ const styles = StyleSheet.create({
     fontSize: typography.sectionTitle.fontSize,
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
+  },
+  dashboardLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   settingsLink: {
     alignSelf: 'flex-start',
