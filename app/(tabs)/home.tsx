@@ -7,6 +7,7 @@ import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
+import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
@@ -286,6 +287,7 @@ export default function Screen() {
       }
     >
       <SwedishFlagBand />
+      <CountdownBanner language={language} />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
