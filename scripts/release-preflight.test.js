@@ -30,6 +30,25 @@ function disabledGoogleMobileAdsPattern() {
   return new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i');
 }
 
+function deferredRealAdsDisabledPattern() {
+  return new RegExp(['deferred', 'real', 'ads', 'disabled'].join('[-\\s]+'), 'i');
+}
+
+function oldRealAdsDisabledFlagPattern() {
+  return new RegExp(['REAL_ADS', 'ENABLED_FOR_V1=false'].join('_'), 'i');
+}
+
+function assertNoLegacyAdsPosture(source) {
+  [
+    oldRealAdsDisabledFlagPattern(),
+    deferredRealAdsDisabledPattern(),
+    staleDisabledAdsDecisionPattern(),
+    /real\s+ads\s+remain\s+disabled/i,
+    /AdMob\s+is\s+deferred/i,
+    disabledGoogleMobileAdsPattern(),
+  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
+}
+
 function storeRecordReadyEvidence(extra = '') {
   return [
     `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
@@ -99,7 +118,7 @@ test('checked-in local evidence stubs keep blocked current ad-supported shape', 
     assert.doesNotMatch(source, /com\.billyyiu\.swedishcivictest(?!"?\.removeads)/);
     assert.doesNotMatch(source, /REAL_ADS_ENABLED_FOR_V1/);
     assert.doesNotMatch(source, /real ads? (?:is|are )?disabled/i);
-    assert.doesNotMatch(source, /deferred-real-ads-disabled/i);
+    assert.doesNotMatch(source, deferredRealAdsDisabledPattern());
   }
 });
 
@@ -143,7 +162,17 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     [
       '#!/bin/sh',
       'if [ "$1 $2 $3" = "--yes eas-cli@18.13.0 --version" ]; then echo "eas-cli/18.13.0 test"; exit 0; fi',
-      'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
+      ...(options.easWhoamiMixedFailure
+        ? [
+            'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then',
+            '  echo "eas-cli@19.0.1 is now available. Proceeding with outdated version." >&2',
+            '  echo "Not logged in"',
+            '  exit 1',
+            'fi',
+          ]
+        : [
+            'if [ "$1 $2" = "--yes eas-cli@18.13.0" ] && [ "$3" = "whoami" ]; then echo "expo-user"; exit 0; fi',
+          ]),
       'echo "unexpected npx command: $@" >&2',
       'exit 2',
       '',
@@ -1495,6 +1524,28 @@ test('release preflight can pass after recorded external evidence and EAS auth a
   );
 });
 
+test('release preflight eas-auth failure preserves stderr warning and stdout auth blocker', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-eas-auth-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir, { easWhoamiMixedFailure: true });
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const easAuth = report.gates.find((gate) => gate.id === 'eas-auth');
+  assert.equal(easAuth.status, 'BLOCKED');
+  assert.match(easAuth.evidence, /eas-cli@19\.0\.1 is now available/i);
+  assert.match(easAuth.evidence, /Proceeding with outdated version/i);
+  assert.match(easAuth.evidence, /Not logged in/i);
+});
+
 test('release preflight blocks stale public URL evidence when live check fails', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-public-url-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
@@ -2245,6 +2296,39 @@ test('release evidence template is synchronized with ad-supported store and priv
   assert.doesNotMatch(template, oldRealAdsEnvFlagPattern());
   assert.doesNotMatch(template, staleDisabledAdsDecisionPattern());
   assert.doesNotMatch(template, disabledGoogleMobileAdsPattern());
+});
+
+test('checked-in post-EAS evidence instructions reject legacy disabled-ad posture', () => {
+  const runbook = read('publishing/post-eas-auth-runbook.md');
+  const releaseGatesSource = read('reports/release-gates.json');
+  const questionnaireSource = read(
+    'reports/store-policy-questionnaires/store-policy-questionnaires.json',
+  );
+  const releaseGates = readJson('reports/release-gates.json').gates;
+  const questionnaire = readJson(
+    'reports/store-policy-questionnaires/store-policy-questionnaires.json',
+  );
+
+  for (const source of [runbook, releaseGatesSource, questionnaireSource]) {
+    assertNoLegacyAdsPosture(source);
+  }
+
+  assert.match(runbook, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(runbook, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(runbook, /real AdMob app\/unit IDs/i);
+  assert.match(runbook, /29 SEK/i);
+  assert.match(runbook, /ATT and UMP consent/i);
+
+  assert.match(releaseGates['store-records'].evidence, /ad-supported v1\.0/i);
+  assert.match(releaseGates['store-records'].evidence, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(releaseGates['privacy-review'].evidence, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(releaseGates['privacy-review'].evidence, /app-ads\.txt/i);
+  assert.match(releaseGates['privacy-review'].evidence, /29 SEK Remove Ads/i);
+  assert.match(releaseGates['privacy-review'].evidence, /ATT\/UMP/i);
+  assert.ok(questionnaire.evidenceBasis.includes('publishing/admob-progress.md'));
+  assert.ok(questionnaire.evidenceBasis.includes('reports/store-records/store-records.json'));
+  assert.match(questionnaire.google.notes, /ad-supported Google Mobile Ads/i);
+  assert.match(questionnaire.google.notes, /concrete AdMob app records/i);
 });
 
 test('release preflight blocks local store record evidence missing store URLs', () => {

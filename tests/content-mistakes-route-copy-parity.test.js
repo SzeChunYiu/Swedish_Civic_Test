@@ -3,8 +3,20 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+
+const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+};
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -155,4 +167,73 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /mistakes route must read stored wrong-answer review text/,
   );
+});
+
+test('mistake review store drops corrupt persisted selected-answer reviews', () => {
+  const answeredAt = '2026-05-19T10:00:00.000Z';
+  const longAnswer = 'x'.repeat(501);
+  const storage = createMemoryMMKV({
+    mistakeReviewState: JSON.stringify({
+      wrongAnswerReviews: {
+        q001: {
+          answeredAt,
+          questionId: 'q001',
+          selectedOptionTextEn: '  Wrong answer  ',
+          selectedOptionTextSv: '  Fel svar  ',
+        },
+        qBadDate: {
+          answeredAt: 'not-a-date',
+          questionId: 'qBadDate',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qMismatched: {
+          answeredAt,
+          questionId: 'other-id',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        '': {
+          answeredAt,
+          questionId: '',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qBlankEn: {
+          answeredAt,
+          questionId: 'qBlankEn',
+          selectedOptionTextEn: '   ',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qBlankSv: {
+          answeredAt,
+          questionId: 'qBlankSv',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: '   ',
+        },
+        qTooLong: {
+          answeredAt,
+          questionId: 'qTooLong',
+          selectedOptionTextEn: longAnswer,
+          selectedOptionTextSv: 'Fel svar',
+        },
+      },
+    }),
+  });
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': storage,
+    },
+  );
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {
+    q001: {
+      answeredAt,
+      questionId: 'q001',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+  });
 });

@@ -189,7 +189,10 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /aria-haspopup="menu"/);
   assert.match(source, /accessibilityState=\{\{ expanded: open \}\}/);
   assert.match(source, /if \(!option\.available\) return;/);
+  assert.match(source, /aria-disabled=\{!opt\.available\}/);
+  assert.match(source, /aria-selected=\{selected\}/);
   assert.match(source, /disabled=\{!opt\.available\}/);
+  assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
   assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
   assert.match(source, /accessible=\{false\}/);
@@ -204,6 +207,10 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.doesNotMatch(
     source,
     /<Pressable[\s\S]*accessibilityLabel=\{copy\.closeLabel\}[\s\S]*styles\.backdrop/,
+  );
+  assert.doesNotMatch(
+    source,
+    /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*selected, disabled: !opt\.available/,
   );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -1037,6 +1044,7 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
 
 test('premium banner announces Remove Ads purchase status changes', () => {
   const source = read('components/monetization/PremiumBanner.tsx');
+  const placementCtaSource = read('components/monetization/RemoveAdsPlacementCta.tsx');
   const homeSource = read('app/(tabs)/home.tsx');
   const profileSource = read('app/(tabs)/profile.tsx');
 
@@ -1071,6 +1079,9 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Återställ köp av Ta bort annonser/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
   assert.match(source, /Tidsatta övningsprov är redan annonsfria/);
+  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
+  assert.doesNotMatch(placementCtaSource, /\bProv är redan annonsfria\b/);
+  assert.doesNotMatch(placementCtaSource, /\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i);
   assert.doesNotMatch(source, /\bprov förblir annonsfria\b/i);
   assert.match(source, /Remove Ads/);
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
@@ -1083,6 +1094,7 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(profileSource, /language=\{language\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(placementCtaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('profile shell copy follows Swedish and English settings language', () => {
@@ -1159,6 +1171,29 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
   assert.match(read('lib/quiz/questionText.ts'), /Fråga saknas/);
   assert.match(read('lib/quiz/questionText.ts'), /Question unavailable/);
   assert.match(read('components/quiz/UHRReferenceCard.tsx'), /Source reference unavailable/);
+});
+
+test('search route turns the header search action into a searchable glossary reference', () => {
+  const source = read('app/search.tsx');
+  const glossary = read('data/glossary.ts');
+
+  assert.match(source, /import \{ glossaryTerms \} from '\.\.\/data\/glossary';/);
+  assert.match(source, /import \{ chapters \} from '\.\.\/data\/chapters';/);
+  assert.match(source, /TextInput/);
+  assert.match(source, /type SearchRouteCopy =/);
+  assert.match(source, /const searchRouteCopy: Record<AppLanguage, SearchRouteCopy>/);
+  assert.match(source, /const \[query, setQuery\] = useState\(''\);/);
+  assert.match(source, /normalizeSearchText/);
+  assert.match(source, /const filteredTerms = useMemo/);
+  assert.match(source, /placeholderTextColor=\{colors\.textPlaceholder\}/);
+  assert.match(source, /href=\{`\/chapter\/\$\{term\.chapterId\}`\}/);
+  assert.match(source, /Inga begrepp matchar din sökning/);
+  assert.match(source, /No terms match your search/);
+  assert.match(source, /civic reference terms/);
+  assert.match(source, /samhällsbegrepp/);
+  assert.match(glossary, /id: 'demokrati'/);
+  assert.match(glossary, /termSv: 'Allemansrätten'/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('audio button disables playback when speech text is unavailable', () => {
@@ -1480,6 +1515,15 @@ test('exam auto-submits at timeout and explains unanswered scoring', () => {
   const source = read('app/(tabs)/exam.tsx');
 
   assert.match(source, /shouldAutoSubmitExam/);
+  assert.match(
+    source,
+    /if \(!examUnlocked \|\| submitted \|\| remainingSeconds <= 0\) return undefined;/,
+  );
+  assert.match(source, /examActive: examUnlocked/);
+  assert.doesNotMatch(
+    source,
+    /accessDecision\.canStartExam && accessDecision\.reason !== 'rewarded_exam_credit'/,
+  );
   assert.match(source, /setSubmitted\(true\)/);
   assert.match(source, /timeExpiredBadge: 'Tiden gick ut'/);
   assert.match(source, /timeExpiredBadge: 'Time expired'/);

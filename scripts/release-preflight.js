@@ -1216,6 +1216,12 @@ function commandSucceeds(command, args) {
   };
 }
 
+function commandEvidence(result, fallback = '') {
+  const streams = [result.stderr, result.stdout].filter(Boolean);
+  const combined = [...new Set(streams)].join('\n');
+  return combined || fallback;
+}
+
 function skippedExternalCheck(command, args) {
   return {
     ok: false,
@@ -1506,35 +1512,35 @@ function buildReport() {
       'expo-doctor',
       'Expo Doctor native dependency checks',
       expoDoctor.ok ? 'READY' : 'BLOCKED',
-      expoDoctor.ok ? expoDoctor.stdout : expoDoctor.stderr || expoDoctor.stdout,
+      expoDoctor.ok ? expoDoctor.stdout : commandEvidence(expoDoctor),
       'Run `npm exec -- expo-doctor` and fix any Expo/native dependency findings.',
     ),
     gate(
       'web-export',
       'Web production export smoke',
       webExport.ok ? 'READY' : 'BLOCKED',
-      webExport.ok ? webExport.stdout : webExport.stderr || webExport.stdout,
+      webExport.ok ? webExport.stdout : commandEvidence(webExport),
       'Run `npm run release:web-export-smoke` and fix any Expo web export errors.',
     ),
     gate(
       'native-prebuild',
       'Android/iOS native prebuild smoke',
       nativePrebuild.ok ? 'READY' : 'BLOCKED',
-      nativePrebuild.ok ? nativePrebuild.stdout : nativePrebuild.stderr || nativePrebuild.stdout,
+      nativePrebuild.ok ? nativePrebuild.stdout : commandEvidence(nativePrebuild),
       'Run `npm run release:native-prebuild-smoke` and fix any Expo native prebuild warnings or errors.',
     ),
     gate(
       'eas-cli',
       'Pinned npx EAS CLI',
       easVersion.ok ? 'READY' : 'BLOCKED',
-      easVersion.ok ? easVersion.stdout : easVersion.stderr || easVersion.stdout,
+      easVersion.ok ? easVersion.stdout : commandEvidence(easVersion),
       'Run `npx --yes eas-cli@18.13.0 --version`.',
     ),
     gate(
       'eas-auth',
       'Expo/EAS authentication',
       easWhoami.ok ? 'READY' : 'BLOCKED',
-      easWhoami.ok ? easWhoami.stdout : easWhoami.stderr || easWhoami.stdout || 'Not logged in',
+      easWhoami.ok ? easWhoami.stdout : commandEvidence(easWhoami, 'Not logged in'),
       'Log in to Expo/EAS or provide an approved Expo token, then rerun `npx --yes eas-cli@18.13.0 whoami`.',
     ),
     evidenceGate(
