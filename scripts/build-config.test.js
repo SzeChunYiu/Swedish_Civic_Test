@@ -1586,7 +1586,11 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   );
   fs.writeFileSync(
     path.join(bundleDir, 'entry-test.js'),
-    'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}}; const icon = {uri:"/assets/icon.png"};',
+    [
+      'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}};',
+      'const icon = {uri:"/assets/icon.png"};',
+      'const routes = ["./_layout.tsx","./(tabs)/home.tsx","./about-the-test.tsx","./chapter/[chapterId].tsx","./quiz/[sessionId].tsx"];',
+    ].join(' '),
   );
 
   const result = spawnSync(process.execPath, ['scripts/prepare-web-export.js', outputDir], {
@@ -1698,6 +1702,46 @@ test('dist-web e2e server rejects missing or stale freshness markers before serv
     () => assertDistWebReady(outputDir, repoRoot),
     /web-export-freshness\.json[\s\S]*npm run build:web:export/,
   );
+});
+
+test('web export postbuild rejects an empty Expo Router route context', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-empty-router-context-'));
+  const outputDir = path.join(tmpDir, 'dist-web');
+  const bundleDir = path.join(outputDir, '_expo/static/js/web');
+  fs.mkdirSync(bundleDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(outputDir, 'index.html'),
+    [
+      '<!DOCTYPE html>',
+      '<html>',
+      '<body>',
+      '<div id="root"></div>',
+      '<script data-web-export-loader="true">window.__entry = true;</script>',
+      '</body>',
+      '</html>',
+      '',
+    ].join('\n'),
+  );
+  fs.writeFileSync(
+    path.join(outputDir, '404.html'),
+    fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8'),
+  );
+  fs.writeFileSync(
+    path.join(bundleDir, 'entry-test.js'),
+    'function o(){let e=new Error("No modules in context");throw e.code="MODULE_NOT_FOUND"}o.keys=()=>[];',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/prepare-web-export.js', '--check', outputDir],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /empty Expo Router route context/);
 });
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
