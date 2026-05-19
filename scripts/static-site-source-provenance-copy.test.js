@@ -42,6 +42,12 @@ function termsContentParagraph(indexHtml) {
   return paragraphMatch[1];
 }
 
+function faqRoute(indexHtml) {
+  const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
+  assert.ok(faqMatch, 'static FAQ section should be present');
+  return faqMatch[0];
+}
+
 function appTranslationValues(appSource, includeKey) {
   const values = [];
   const entryPattern = /"([^"]+)": "((?:\\.|[^"\\])*)"/g;
@@ -64,6 +70,14 @@ function sourceProvenanceSurface() {
   return [sourcesRoute(indexHtml), termsContentParagraph(indexHtml), ...sourceAndTermsTranslations]
     .join('\n')
     .replace(/<[^>]+>/g, ' ');
+}
+
+function faqProvenanceSurface() {
+  const indexHtml = read('site/index.html');
+  const appJs = read('site/app.js');
+  const faqTranslations = appTranslationValues(appJs, (key) => key.startsWith('faq.'));
+
+  return [faqRoute(indexHtml), ...faqTranslations].join('\n').replace(/<[^>]+>/g, ' ');
 }
 
 test('static source claims match the shipped question-bank source titles', () => {
@@ -101,4 +115,14 @@ test('static source provenance copy rejects unshipped external source families',
     /Primary sources\s+8/i,
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+});
+
+test('static FAQ provenance copy does not imply a public question bank', () => {
+  const surface = faqProvenanceSurface();
+
+  assert.doesNotMatch(surface, /\bpublic bank\b/i);
+  assert.doesNotMatch(surface, /offentliga banken/i);
+  assert.match(surface, /UHR's public study material|UHR:s offentliga studiematerial/i);
+  assert.match(surface, /Sverige i fokus/i);
+  assert.match(surface, /source citation|k[aä]llh[aä]nvisning/i);
 });
