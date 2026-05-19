@@ -110,6 +110,11 @@ export const expoRouterRootStackScreens = [
     purpose: 'Search route registered in the root stack',
   },
   {
+    name: 'dashboard',
+    file: 'app/dashboard.tsx',
+    purpose: 'Progress dashboard route registered in the root stack',
+  },
+  {
     name: '+not-found',
     file: 'app/+not-found.tsx',
     purpose: 'Unknown-route recovery screen registered in the root stack',
@@ -196,6 +201,8 @@ export const expoRouterRootLayoutGlobalPlacements = [
 
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
+  '/about-the-test',
+  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -205,6 +212,7 @@ export const expoRouterNativeIntentStaticRoutes = [
   '/practice',
   '/privacy',
   '/profile',
+  '/search',
   '/settings',
   '/sources',
   '/support',
@@ -236,15 +244,39 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/practice?mode=review#question',
   },
   {
-    input: 'swedish-civic-test://app/chapter/ch01?from=learn',
+    input: '/about-the-test',
+    expectedPath: '/about-the-test',
+  },
+  {
+    input: '/dashboard',
+    expectedPath: '/dashboard',
+  },
+  {
+    input: '/dashboard?from=home',
+    expectedPath: '/dashboard?from=home',
+  },
+  {
+    input: 'almost-swedish://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
   },
   {
-    input: 'swedish-civic-test://quiz/q001',
+    input: 'almost-swedish://app/dashboard',
+    expectedPath: '/dashboard',
+  },
+  {
+    input: 'almost-swedish://app/about-the-test',
+    expectedPath: '/about-the-test',
+  },
+  {
+    input: 'almost-swedish://app/search?q=riksdag',
+    expectedPath: '/search?q=riksdag',
+  },
+  {
+    input: 'almost-swedish://quiz/q001',
     expectedPath: '/quiz/q001',
   },
   {
-    input: 'swedish-civic-test://app/not-real',
+    input: 'almost-swedish://app/not-real',
     expectedPath: '/home',
   },
 ] as const satisfies readonly ExpoRouterNativeIntentRuntimeSample[];
@@ -254,7 +286,8 @@ export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-inten
 export const expoRouterWebDocumentMetaDescriptions = [
   {
     language: 'sv',
-    description: 'Öva svensk samhällskunskap med offlinequiz, lokala framsteg och källreferenser.',
+    description:
+      'Öva svensk samhällskunskap med övningar utan uppkoppling, lokalt sparade framsteg och tydliga källhänvisningar.',
   },
   {
     language: 'en',
@@ -336,7 +369,7 @@ export const expoRouterShellContract = {
   themeColorToken: 'colors.canvas',
   statusBarStyle: 'auto',
   nativeFallbackHref: '/home',
-  appScheme: 'swedish-civic-test',
+  appScheme: 'almost-swedish',
 } as const;
 
 export type ExpoRouterShellFilePath = (typeof expoRouterShellFiles)[number]['file'];
