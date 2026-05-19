@@ -80,7 +80,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.',
     descriptionEn:
       'Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.',
-    questionCount: 55,
+    questionCount: 30,
   },
   {
     id: 'ch10',

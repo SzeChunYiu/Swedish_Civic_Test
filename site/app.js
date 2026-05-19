@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------
    Almost Swedish — site behaviour
    - hash routing (/, /privacy, /support, /terms, /sources)
-   - language toggle with localStorage persistence
+   - language toggle (EN/SV) with localStorage persistence
    - try-a-question demo card
 ------------------------------------------------------------------ */
 
@@ -142,7 +142,7 @@ const i18n = window.i18n = {
     "numbers.1": "questions sourced from public records",
     "numbers.2": "chapters covering history, society & rights",
     "numbers.3": "daily — a fika-sized study habit",
-    "numbers.4": "to start. No login. Study progress stays local.",
+    "numbers.4": "to start. No login. No tracking.",
 
     "chap.eyebrow": "What's inside",
     "chap.h1": "From kanelbullar to",
@@ -352,10 +352,6 @@ const i18n = window.i18n = {
     "ad.placeholder": "Your AdSense slot will render here.",
     "ad.anchor.placeholder": "Anchor ad slot",
     "ad.native.placeholder": "Native sponsored row",
-    "a11y.settings.open": "Settings",
-    "a11y.close": "Close",
-    "a11y.ad.close": "Close ad",
-    "a11y.studyBuddy": "Study buddy",
     "practice.kicker": "Practice round",
     "practice.title": "Ten questions.",
     "practice.subtitle": "No pressure.",
@@ -374,7 +370,7 @@ const i18n = window.i18n = {
     "brand": "Almost Swedish",
     "nav.home": "Hem",
     "nav.practice": "Öva",
-    "nav.mock": "Övningsprov",
+    "nav.mock": "Provexempel",
     "nav.ebook": "E-bok",
     "nav.support": "Support",
     "nav.privacy": "Integritet",
@@ -386,7 +382,7 @@ const i18n = window.i18n = {
     "hero.h1a": "Plugga materialet.",
     "hero.h1b": "Öva med källor.",
     "hero.h1c": "Känn dig lugnare på provdagen.",
-    "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett tidsatt övningsprov som känns mindre läskigt än småprat med grannen.",
+    "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett provexempel som känns mindre läskigt än småprat med grannen.",
     "hero.cta1": "Börja plugga — det är gratis",
     "hero.cta2": "Testa en fråga",
     "hero.stat1": "samhällsfrågor",
@@ -428,7 +424,7 @@ const i18n = window.i18n = {
     "numbers.1": "frågor från offentliga källor",
     "numbers.2": "kapitel om historia, samhälle & rättigheter",
     "numbers.3": "om dagen — en fika-stor studievana",
-    "numbers.4": "att börja. Ingen inloggning. Studieframsteg stannar lokalt.",
+    "numbers.4": "att börja. Ingen inloggning. Ingen spårning.",
 
     "chap.eyebrow": "Vad ingår",
     "chap.h1": "Från kanelbullar till",
@@ -468,8 +464,8 @@ const i18n = window.i18n = {
     "chap.11.t": "Migration, uppehållstillstånd & medborgarskap",
     "chap.11.d": "Den faktiska vägen till passet. Vägar, krav, skillnaden mellan PUT, medborgarskap och \"bara på besök\".",
     "chap.11.m2": "~9 min",
-    "chap.12.t": "Övningsprov & överlevnadsguide",
-    "chap.12.d": "Tidsatta övningsprov i full längd som hjälper dig träna provsituationen. Plus en \"så här packar du väskan\"-lista.",
+    "chap.12.t": "Provexempel & överlevnadsguide",
+    "chap.12.d": "Tidsatta fullängdsprov som ser ut och känns som det riktiga. Plus en \"så här packar du väskan\"-lista.",
     "chap.12.m2": "60 min styck",
     "chap.13.t": "Traditioner, helgdagar & vardagskultur",
 
@@ -494,7 +490,7 @@ const i18n = window.i18n = {
     "faq.3.q": "Behöver jag ett konto?",
     "faq.3.a": "Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.",
     "faq.4.q": "Är den gratis?",
-    "faq.4.a": "Gratis att börja, plugga och göra övningsprov. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.",
+    "faq.4.a": "Gratis att börja, plugga och göra provexempel. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.",
     "faq.5.q": "Fungerar den på svenska också?",
     "faq.5.a": "Ja. Växla med EN / SV-knappen i menyn, eller byt inne i appen. Många använder båda samtidigt — läs frågan på svenska, kika på engelska när det kör ihop sig.",
     "faq.6.q": "Delas mina data med någon?",
@@ -545,7 +541,7 @@ const i18n = window.i18n = {
     "support.s1.li2": "Otydlig svenska i en fråga eller förklaring.",
     "support.s1.li3": "En trasig källänk eller saknad referens.",
     "support.s1.li4": "Ett ljudproblem — klipp som hackar, fel uttal, tystnad där det borde vara tal.",
-    "support.s1.li5": "Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett övningsprov som inte går att avsluta.",
+    "support.s1.li5": "Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett provexempel som inte går att avsluta.",
     "support.s1.li6": "Ett butik- eller bygge-problem — krasch vid start, betalningskrångel, en nedladdning som vägrar.",
     "support.s2.t": "Vad du bör inkludera",
     "support.s2.p": "Hjälp oss hjälpa dig snabbare:",
@@ -625,10 +621,10 @@ const i18n = window.i18n = {
     "footer.app.1": "Varför den finns",
     "footer.app.2": "Testa en fråga",
     "footer.app.3": "Kapitel",
-    "footer.app.4": "Övningsprov",
+    "footer.app.4": "Provexempel",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Finstilta",
-    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra övningsprov.",
+    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.",
     "footer.h.honest": "Ärlig friskrivning",
     "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
     "footer.copyright": "© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.",
@@ -638,10 +634,6 @@ const i18n = window.i18n = {
     "ad.placeholder": "AdSense-yta visas här.",
     "ad.anchor.placeholder": "Ankarannons",
     "ad.native.placeholder": "Sponsrad rad",
-    "a11y.settings.open": "Inställningar",
-    "a11y.close": "Stäng",
-    "a11y.ad.close": "Stäng annons",
-    "a11y.studyBuddy": "Studiekompis",
     "practice.kicker": "Övningsrunda",
     "practice.title": "Tio frågor.",
     "practice.subtitle": "Ingen press.",
@@ -675,41 +667,12 @@ function smtDynamicI18nValue(key, lang) {
   return undefined;
 }
 
-function smtI18nValue(key, lang) {
-  const dynamicValue = smtDynamicI18nValue(key, lang);
-  if (dynamicValue !== undefined) return dynamicValue;
-  const dict = i18n[lang] || i18n.en;
-  if (dict && dict[key] !== undefined) return dict[key];
-  return i18n.en && i18n.en[key];
-}
-window.smtI18nValue = smtI18nValue;
-
-function smtStaticControlLabel(key, lang) {
-  return smtI18nValue(key, lang || document.documentElement.lang || "en") || "";
-}
-window.smtStaticControlLabel = smtStaticControlLabel;
-
-function smtUpdateStaticControlLabels(lang) {
-  const activeLang = lang || document.documentElement.lang || "en";
-  document.querySelectorAll("[data-a11y-label]").forEach((el) => {
-    const key = el.dataset && el.dataset.a11yLabel;
-    const value = key ? smtStaticControlLabel(key, activeLang) : "";
-    if (!value || typeof el.setAttribute !== "function") return;
-    el.setAttribute("aria-label", value);
-  });
-}
-window.smtUpdateStaticControlLabels = smtUpdateStaticControlLabels;
-
 function applyLang(lang) {
-  const direction = lang === "ar" ? "rtl" : "ltr";
   document.documentElement.lang = lang;
-  document.documentElement.dir = direction;
-  if (typeof document.documentElement.setAttribute === "function") {
-    document.documentElement.setAttribute("dir", direction);
-  }
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
-    const value = smtI18nValue(key, lang);
+    const dynamicValue = smtDynamicI18nValue(key, lang);
+    const value = dynamicValue === undefined ? i18n[lang] && i18n[lang][key] : dynamicValue;
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
@@ -717,7 +680,6 @@ function applyLang(lang) {
   document.querySelectorAll(".lang button[data-lang]").forEach((b) => {
     b.classList.toggle("is-on", b.dataset.lang === lang);
   });
-  smtUpdateStaticControlLabels(lang);
   try { localStorage.setItem("smt_lang", lang); } catch {}
 }
 window.applyLang = applyLang;
@@ -812,8 +774,6 @@ function smtLoadAdSense() {
 function smtApplyConsent(choice) {
   // 'all' = personalised, 'min' = non-personalised (NPA=1)
   if (choice === "all" || choice === "min") {
-    window.adsbygoogle = window.adsbygoogle || [];
-    window.adsbygoogle.requestNonPersonalizedAds = choice === "min" ? 1 : 0;
     document.querySelectorAll("ins.adsbygoogle").forEach((el) => {
       if (choice === "min") el.setAttribute("data-npa", "1");
       else el.removeAttribute("data-npa");
@@ -1047,10 +1007,6 @@ const SMT_QUIZ = { i: 0, score: 0, answers: [], scope: "" };
 
 function smtQuizCurrentLang() {
   try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
-}
-
-function smtQuizFxPrefersReducedMotion(fx) {
-  return !!(fx && typeof fx.prefersReducedMotion === "function" && fx.prefersReducedMotion());
 }
 
 function smtQuizEscapeHtml(value) {
@@ -1302,17 +1258,13 @@ function smtQuizRender() {
     if (fx) {
       fx.countUp(document.getElementById("score-num"), 0, correct, 1100);
       if (pct === 100) {
-        if (!smtQuizFxPrefersReducedMotion(fx)) {
-          setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
-        }
+        setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
         if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
           "Lysande! 10/10. Tell people I helped.",
           "Lysande! 10/10. Berätta att jag hjälpte."
         );
       } else if (pct >= 70) {
-        if (!smtQuizFxPrefersReducedMotion(fx)) {
-          setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
-        }
+        setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
       }
     }
     return;
@@ -1332,7 +1284,6 @@ function smtQuizRender() {
 
   const opts = smtQuizDisplayOptions(q, sessionId).map(({ option: o, originalIndex, displayIndex }) => {
     const letter = String.fromCharCode(65 + displayIndex);
-    const optionText = smtQuizEscapeHtml(o[lang] || o.en);
     let cls = "";
     if (answered) {
       if (originalIndex === q.answer) cls = "is-correct";
@@ -1341,7 +1292,7 @@ function smtQuizRender() {
     return `
       <button class="quiz__opt ${cls}" data-i="${originalIndex}" ${answered ? "disabled" : ""}>
         <span class="key">${letter}</span>
-        <span>${optionText}</span>
+        <span>${o[lang] || o.en}</span>
       </button>`;
   }).join("");
 
@@ -1349,10 +1300,9 @@ function smtQuizRender() {
   if (answered) {
     const right = ans === q.answer;
     const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
-    const explanation = smtQuizEscapeHtml(q.why[lang] || q.why.en);
     feedback = `
       <div class="quiz__feedback ${right ? "" : "is-wrong"}">
-        <b>${right ? copy.correct : copy.wrong}</b> ${explanation}
+        <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
         ${smtQuizSourceRow(q, lang, "quiz__feedback-source")}
         <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
@@ -1368,8 +1318,8 @@ function smtQuizRender() {
   stage.innerHTML = `
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
-      <div class="quiz__crumb">${smtQuizEscapeHtml(q.chapter)}</div>
-      <h2 class="quiz__q">${smtQuizEscapeHtml(q.q[lang] || q.q.en)}</h2>
+      <div class="quiz__crumb">${q.chapter}</div>
+      <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
       ${sourceRow}
       <div class="quiz__opts">${opts}</div>
       ${feedback}
@@ -1440,7 +1390,7 @@ document.addEventListener("click", (e) => {
     smtQuizRender();
 
     // pulse correct option subtly after re-render
-    if (!correct && !smtQuizFxPrefersReducedMotion(fx)) {
+    if (!correct) {
       requestAnimationFrame(() => {
         const right = document.querySelector("#quiz-stage .quiz__opt.is-correct");
         if (right) right.classList.add("is-pulse");
