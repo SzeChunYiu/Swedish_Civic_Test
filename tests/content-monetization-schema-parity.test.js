@@ -25,13 +25,17 @@ test('monetization TypeScript schema stays in parity with validator expectations
   const summary = JSON.parse(match[0]);
   const monetizationTypes = fs.readFileSync(path.join(repoRoot, 'types/monetization.ts'), 'utf8');
 
-  assert.equal(summary.monetizationTypeUnionsValidated, 1);
+  assert.equal(summary.monetizationTypeUnionsValidated, 2);
   assert.equal(summary.monetizationTypeInterfacesValidated, 3);
   assert.equal(summary.monetizationTypeSchemaParityValidated, true);
   assert.equal(summary.effectiveEntitlementExpiryOrderingCasesValidated, 3);
   assert.equal(summary.effectiveEntitlementExpiryOrderingParityValidated, true);
   assert.match(monetizationTypes, /export type AdPlacement =/);
   assert.match(monetizationTypes, /'rewarded_extra_exam'/);
+  assert.match(
+    monetizationTypes,
+    /export type BannerAdPlacement = 'home_banner' \| 'chapter_list_banner';/,
+  );
   assert.match(monetizationTypes, /export interface PremiumEntitlements/);
   assert.match(monetizationTypes, /adsDisabled: boolean;/);
   assert.match(monetizationTypes, /export interface MonetizationState/);

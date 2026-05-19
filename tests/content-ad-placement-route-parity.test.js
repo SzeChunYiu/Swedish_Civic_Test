@@ -22,6 +22,14 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const webBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
   const nativeAdCardSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
@@ -39,12 +47,17 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     'utf8',
   );
 
+  assert.equal(summary.bannerAdPlacementTypeCasesValidated, 3);
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.nativeAdAssetDirectChildrenValidated, 5);
   assert.equal(summary.adPlacementRouteParityValidated, true);
   assert.equal(summary.adCopySvRewardedPracticeExamCasesValidated, 7);
   assert.equal(summary.adCopySvRewardedPracticeExamNaturalnessValidated, true);
+  assert.match(webBannerSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(webBannerSource, /\bAdPlacement\b/);
+  assert.match(nativeBannerSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(nativeBannerSource, /\bAdPlacement\b/);
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
     homeSource,
@@ -123,6 +136,82 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+});
+
+test('ad placement route parity rejects non-banner placements routed through AdBanner', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<AdBanner placement="home_banner" />',
+        '<AdBanner placement="quiz_completed_interstitial" />\\n<AdBanner placement="results_native" />\\n<AdBanner placement="rewarded_extra_exam" />',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/home\.tsx must not pass non-banner placement quiz_completed_interstitial to AdBanner/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/home\.tsx must not pass non-banner placement results_native to AdBanner/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/home\.tsx must not pass non-banner placement rewarded_extra_exam to AdBanner/,
+  );
+});
+
+test('ad placement route parity rejects AdBanner widening back to all ad placements', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (
+    normalizedPath.endsWith('/components/monetization/AdBanner.tsx') ||
+    normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')
+  ) {
+    return originalReadFileSync.call(this, filePath, ...args).replace(/BannerAdPlacement/g, 'AdPlacement');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /web AdBanner props must use BannerAdPlacement|web AdBanner must not accept the full AdPlacement union/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native AdBanner props must use BannerAdPlacement|native AdBanner must not accept the full AdPlacement union/,
+  );
 });
 
 test('ad placement route parity rejects practice interstitials routed through BannerAd', () => {
