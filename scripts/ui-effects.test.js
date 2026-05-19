@@ -115,6 +115,14 @@ test('badge preserves a readable accessibility label when visual text is upperca
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('shared status badge token pairs are covered by theme contrast validation', () => {
+  const source = read('scripts/validate-content.js');
+
+  assert.match(source, /\{ foreground: 'badgeBlueText', background: 'badgeBlueBg' \}/);
+  assert.match(source, /\{ foreground: 'success', background: 'successSoft' \}/);
+  assert.match(source, /\{ foreground: 'warning', background: 'warningSoft' \}/);
+});
+
 test('provenance badge source note uses tokenized toggle feedback', () => {
   const source = read('components/quiz/ProvenanceBadge.tsx');
 

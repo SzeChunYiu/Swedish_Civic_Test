@@ -3335,6 +3335,36 @@ const EXPECTED_THEME_COLOR_TOKENS = [
   'swedishBlue',
   'swedishGold',
 ];
+const MINIMUM_AA_CONTRAST_RATIO = 4.5;
+const EXPECTED_THEME_CONTRAST_PAIRS = [
+  { foreground: 'text', background: 'canvas' },
+  { foreground: 'text', background: 'surface' },
+  { foreground: 'text', background: 'surfaceWarm' },
+  { foreground: 'text', background: 'surfaceMuted' },
+  { foreground: 'text', background: 'focusSoft' },
+  { foreground: 'textSoft', background: 'surface' },
+  { foreground: 'textSecondary', background: 'surface' },
+  { foreground: 'textSecondary', background: 'surfaceWarm' },
+  { foreground: 'textMuted', background: 'surface' },
+  { foreground: 'textMuted', background: 'surfaceWarm' },
+  { foreground: 'textDisclaimer', background: 'surface' },
+  { foreground: 'textPlaceholder', background: 'surface' },
+  { foreground: 'accent', background: 'surface' },
+  { foreground: 'accentActive', background: 'surface' },
+  { foreground: 'accentActive', background: 'focusSoft' },
+  { foreground: 'surface', background: 'accent' },
+  { foreground: 'surface', background: 'accentActive' },
+  { foreground: 'surface', background: 'success' },
+  { foreground: 'surface', background: 'warning' },
+  { foreground: 'badgeBlueText', background: 'badgeBlueBg' },
+  { foreground: 'success', background: 'successSoft' },
+  { foreground: 'warning', background: 'warningSoft' },
+  { foreground: 'navy', background: 'surface' },
+  { foreground: 'teal', background: 'surface' },
+  { foreground: 'purple', background: 'surface' },
+  { foreground: 'pink', background: 'surface' },
+  { foreground: 'brown', background: 'surface' },
+];
 const EXPECTED_THEME_SPACE_VALUES = {
   hairline: 2,
   micro: 3,
@@ -6555,6 +6585,86 @@ function isColorToken(value) {
   );
 }
 
+function parseColorChannels(value) {
+  if (typeof value !== 'string') return null;
+
+  const hexMatch = value.match(/^#([0-9a-fA-F]{6})$/);
+  if (hexMatch) {
+    const hex = hexMatch[1];
+    return {
+      red: Number.parseInt(hex.slice(0, 2), 16),
+      green: Number.parseInt(hex.slice(2, 4), 16),
+      blue: Number.parseInt(hex.slice(4, 6), 16),
+      alpha: 1,
+    };
+  }
+
+  const rgbMatch = value.match(/^rgba?\((.+)\)$/i);
+  if (!rgbMatch) return null;
+
+  const parts = rgbMatch[1].split(',').map((part) => part.trim());
+  if (parts.length < 3 || parts.length > 4) return null;
+
+  const [red, green, blue] = parts.slice(0, 3).map(Number);
+  const alpha = parts.length === 4 ? Number(parts[3]) : 1;
+  if (
+    ![red, green, blue].every(
+      (channel) => Number.isFinite(channel) && channel >= 0 && channel <= 255,
+    ) ||
+    !Number.isFinite(alpha) ||
+    alpha < 0 ||
+    alpha > 1
+  ) {
+    return null;
+  }
+
+  return { red, green, blue, alpha };
+}
+
+function blendChannels(foreground, background) {
+  return {
+    red: foreground.red * foreground.alpha + background.red * (1 - foreground.alpha),
+    green: foreground.green * foreground.alpha + background.green * (1 - foreground.alpha),
+    blue: foreground.blue * foreground.alpha + background.blue * (1 - foreground.alpha),
+  };
+}
+
+function colorTokenToRgb(value, background = { red: 255, green: 255, blue: 255 }) {
+  const channels = parseColorChannels(value);
+  if (!channels) return null;
+  if (channels.alpha === 1) {
+    return { red: channels.red, green: channels.green, blue: channels.blue };
+  }
+  return blendChannels(channels, background);
+}
+
+function linearizedColorChannel(channel) {
+  const value = channel / 255;
+  return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+}
+
+function relativeLuminance(color) {
+  return (
+    0.2126 * linearizedColorChannel(color.red) +
+    0.7152 * linearizedColorChannel(color.green) +
+    0.0722 * linearizedColorChannel(color.blue)
+  );
+}
+
+function colorContrastRatio(foreground, background) {
+  const surfaceRgb = colorTokenToRgb(colors?.surface) || { red: 255, green: 255, blue: 255 };
+  const backgroundRgb = colorTokenToRgb(background, surfaceRgb);
+  if (!backgroundRgb) return null;
+  const foregroundRgb = colorTokenToRgb(foreground, backgroundRgb);
+  if (!foregroundRgb) return null;
+
+  const foregroundLuminance = relativeLuminance(foregroundRgb);
+  const backgroundLuminance = relativeLuminance(backgroundRgb);
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function extractStringConstantFromTs(source, constantName) {
   const sourceFile = ts.createSourceFile('source.tsx', source, ts.ScriptTarget.Latest, true);
   let value;
@@ -7357,6 +7467,7 @@ let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeContrastPairsValidated = 0;
+let themeContrastValidated = false;
 let themeTokenSchemaValidated = false;
 let themeContrastPairsAAValidated = false;
 let badgesValidated = 0;
@@ -14033,29 +14144,24 @@ function validateThemeTokenSchema() {
       themeColorTokensValidated += 1;
     }
 
+    let contrastValid = true;
     for (const pair of EXPECTED_THEME_CONTRAST_PAIRS) {
       const foreground = colors[pair.foreground];
       const background = colors[pair.background];
-      const ratio = contrastRatio(foreground, background);
-
-      if (ratio == null) {
+      const ratio = colorContrastRatio(foreground, background);
+      if (!Number.isFinite(ratio) || ratio < MINIMUM_AA_CONTRAST_RATIO) {
+        contrastValid = false;
         reject(
-          `theme contrast ${pair.foreground} on ${pair.background} requires 6-digit hex color tokens`,
-        );
-        continue;
-      }
-      if (ratio < pair.minimum) {
-        reject(
-          `theme contrast ${pair.foreground} on ${pair.background} ratio ${ratio.toFixed(
-            2,
-          )}:1 below ${pair.minimum}:1`,
+          `theme contrast ${pair.foreground} on ${pair.background} ratio ${
+            Number.isFinite(ratio) ? ratio.toFixed(2) : 'unreadable'
+          } below ${MINIMUM_AA_CONTRAST_RATIO}`,
         );
         continue;
       }
       themeContrastPairsValidated += 1;
     }
-    if (themeContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS.length) {
-      themeContrastPairsAAValidated = true;
+    if (contrastValid && themeContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS.length) {
+      themeContrastValidated = true;
     }
   }
 
@@ -14219,7 +14325,10 @@ function validateThemeTokenSchema() {
     themeShadowTokensValidated === EXPECTED_THEME_SHADOW_TOKENS.length &&
     themeContrastPairsAAValidated &&
     themeMotionTokensValidated ===
-      Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length + EXPECTED_THEME_MOTION_EASING.length + 2
+      Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length +
+        EXPECTED_THEME_MOTION_EASING.length +
+        2 &&
+    themeContrastValidated
   ) {
     themeTokenSchemaValidated = true;
   }
@@ -17320,7 +17429,7 @@ console.log(
       themeShadowTokensValidated,
       themeMotionTokensValidated,
       themeContrastPairsValidated,
-      themeContrastPairsAAValidated,
+      themeContrastValidated,
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
