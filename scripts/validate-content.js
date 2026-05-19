@@ -140,6 +140,12 @@ const STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY = [
   'Strong practice base',
   'Stark övningsgrund',
 ];
+const STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS = [
+  phrasePattern('gör ett ', 'quiz'),
+  phrasePattern('quiz', 'frågor'),
+  phrasePattern('quiz', 'pass'),
+  phrasePattern('quiz', 'et'),
+];
 const STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS = [
   phrasePattern('Format of ', 'the real test'),
   phrasePattern('multiple-choice ', 'and timed'),
@@ -4228,6 +4234,19 @@ function validateStaticV11ReadinessCopy() {
   return { unsupportedCopyValidated, requiredCopyValidated };
 }
 
+function validateStaticEbookSwedishQuizNaturalness() {
+  const source = loadText('site/ebook.js');
+  const offenders = STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS.filter((pattern) =>
+    pattern.test(source),
+  );
+
+  if (offenders.length > 0) {
+    fail('static ebook Swedish copy must avoid English quiz loanwords');
+  }
+
+  return STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS.length - offenders.length;
+}
+
 function validateStaticEbookPracticalTestClaims() {
   const source = loadText('site/ebook.js');
   let unsupportedPracticalClaimsValidated = 0;
@@ -7312,6 +7331,8 @@ let staticV11ReadinessRequiredCopyValidated = 0;
 let staticV11ReadinessCopyParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
+let staticEbookSwedishQuizLoanwordPatternsValidated = 0;
+let staticEbookSwedishQuizNaturalnessValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
@@ -7396,6 +7417,10 @@ staticSiteOutcomeSloganParityValidated =
   staticSiteOutcomeSloganPatternsValidated === UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
 staticHeadMetadataDescriptionsValidated = validateStaticHeadMetadataDescription();
 staticHeadMetadataDescriptionValidated = staticHeadMetadataDescriptionsValidated >= 1;
+staticEbookSwedishQuizLoanwordPatternsValidated = validateStaticEbookSwedishQuizNaturalness();
+staticEbookSwedishQuizNaturalnessValidated =
+  staticEbookSwedishQuizLoanwordPatternsValidated ===
+  STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS.length;
 {
   const staticV11Validation = validateStaticV11ReadinessCopy();
   staticV11ReadinessUnsupportedCopyValidated = staticV11Validation.unsupportedCopyValidated;
@@ -17237,6 +17262,8 @@ console.log(
       staticV11ReadinessCopyParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
+      staticEbookSwedishQuizLoanwordPatternsValidated,
+      staticEbookSwedishQuizNaturalnessValidated,
       staticEbookPracticalTestClaimPatternsValidated,
       staticEbookPracticalTestRequiredCopyValidated,
       staticEbookPracticalTestSourceUrlsValidated,
