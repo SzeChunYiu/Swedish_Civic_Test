@@ -825,7 +825,7 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
   'react-native-iap',
   'expo-tracking-transparency',
 ];
-const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.swedishcivictest';
+const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
@@ -6319,11 +6319,11 @@ function validateAppConfigSchema() {
     return;
   }
 
-  if (expo.name !== 'Sweden Citizenship Test Prep') {
+  if (expo.name !== 'Almost Swedish') {
     reject('app.json expo.name must identify the release app');
   }
-  if (expo.slug !== 'swedish-civic-test') {
-    reject('app.json expo.slug must be swedish-civic-test');
+  if (expo.slug !== 'almost-swedish') {
+    reject('app.json expo.slug must be almost-swedish');
   }
   if (expo.scheme !== expo.slug) {
     reject('app.json expo.scheme must match expo.slug');

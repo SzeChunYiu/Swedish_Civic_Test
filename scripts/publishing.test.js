@@ -70,18 +70,18 @@ function parseExternalBlockerRows(markdown) {
 
 test('store publishing metadata is prepared', () => {
   const appConfig = JSON.parse(read('app.json')).expo;
-  assert.equal(appConfig.name, 'Sweden Citizenship Test Prep');
-  assert.equal(appConfig.slug, 'swedish-civic-test');
-  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.swedishcivictest');
-  assert.equal(appConfig.android.package, 'com.billyyiu.swedishcivictest');
+  assert.equal(appConfig.name, 'Almost Swedish');
+  assert.equal(appConfig.slug, 'almost-swedish');
+  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(appConfig.android.package, 'com.billyyiu.almostswedish');
 
   const appStoreListing = read('publishing/app-store-listing.md');
-  assert.match(appStoreListing, /Sweden Citizenship Test Prep/);
+  assert.match(appStoreListing, /Almost Swedish/);
   assert.match(appStoreListing, /not official/i);
   assert.match(appStoreListing, /UHR/i);
 
   const googlePlayListing = read('publishing/google-play-listing.md');
-  assert.match(googlePlayListing, /Sweden Citizenship Test Prep/);
+  assert.match(googlePlayListing, /Almost Swedish/);
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
   assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
@@ -150,13 +150,13 @@ test('hostable public support, privacy, and app-ads files are prepared', () => {
   const privacy = read('publishing/public-site/privacy/index.html');
   const appAds = read('publishing/public-site/app-ads.txt');
 
-  assert.match(support, /Sweden Citizenship Test Prep support/i);
+  assert.match(support, /Almost Swedish support/i);
   assert.match(support, /content issue/i);
   assert.match(support, /no personal data/i);
   assert.match(support, /not affiliated/i);
   assert.match(support, /<html lang="en">/i);
 
-  assert.match(privacy, /Sweden Citizenship Test Prep privacy policy/i);
+  assert.match(privacy, /Almost Swedish privacy policy/i);
   assert.match(privacy, /no account/i);
   assert.match(privacy, /stored locally on the device/i);
   assertCurrentPublicPrivacyPosture(privacy);

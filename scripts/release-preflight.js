@@ -578,8 +578,8 @@ function validateStoreRecordEvidence(evidencePath) {
   if (evidence.status !== 'ready') {
     errors.push('status must be ready');
   }
-  if (evidence.bundleIdentifier !== 'com.billyyiu.swedishcivictest') {
-    errors.push('bundleIdentifier must be com.billyyiu.swedishcivictest');
+  if (evidence.bundleIdentifier !== 'com.billyyiu.almostswedish') {
+    errors.push('bundleIdentifier must be com.billyyiu.almostswedish');
   }
   if (!/^https:\/\/appstoreconnect\.apple\.com\//i.test(evidence.appStoreConnectUrl || '')) {
     errors.push('appStoreConnectUrl must be an App Store Connect URL');
@@ -689,8 +689,8 @@ function validateStoreCredentialEvidence(evidencePath) {
   if (!/^SHA256:[0-9a-f]{64}$/i.test(android.serviceAccountKeyFingerprint || '')) {
     errors.push('android.serviceAccountKeyFingerprint must be a SHA256 fingerprint');
   }
-  if (android.packageName !== 'com.billyyiu.swedishcivictest') {
-    errors.push('android.packageName must be com.billyyiu.swedishcivictest');
+  if (android.packageName !== 'com.billyyiu.almostswedish') {
+    errors.push('android.packageName must be com.billyyiu.almostswedish');
   }
   if (!android.credentialsSource || !String(android.credentialsSource).trim()) {
     errors.push('android.credentialsSource is required');
