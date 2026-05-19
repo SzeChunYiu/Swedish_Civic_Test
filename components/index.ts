@@ -3,6 +3,7 @@ export * from './ChapterProgressCard';
 export * from './ChapterRow';
 export * from './DisclaimerBanner';
 export * from './Divider';
+export * from './learning/BadgeRow';
 export * from './MockExamStatusBar';
 export * from './MockExamConfigPanel';
 export * from './OptionCard';
