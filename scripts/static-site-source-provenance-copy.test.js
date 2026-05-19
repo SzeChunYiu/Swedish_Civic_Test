@@ -102,3 +102,18 @@ test('static source provenance copy rejects unshipped external source families',
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
+
+test('static source provenance copy hides repo-internal paths from public Sources copy', () => {
+  const surface = sourceProvenanceSurface();
+
+  [
+    /site\/questions\.js/i,
+    /content\/uhr-section-map\.json/i,
+    /content\/question-bank\.csv/i,
+    /source copy/i,
+    /k[aä]llcopy/i,
+  ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+
+  assert.match(surface, /published question bank|publicerade fr[aå]gebanken/i);
+  assert.match(surface, /shipped question cards|publicerade fr[aå]gekort/i);
+});
