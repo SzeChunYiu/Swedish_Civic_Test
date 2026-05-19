@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
@@ -569,21 +570,20 @@ export default function Screen() {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <Pressable
+                <OptionCard
                   key={option.id}
+                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected, selected: isSelected }}
+                  label={optionText}
+                  languageOverride={language}
                   onPress={() =>
                     setAnswers((current) => ({ ...current, [question.id]: option.id }))
                   }
-                  style={[styles.option, isSelected ? styles.optionSelected : null]}
-                >
-                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
-                    {optionText}
-                  </Text>
-                </Pressable>
+                  state={isSelected ? 'selected' : 'idle'}
+                />
               );
             })}
           </View>
@@ -682,24 +682,6 @@ const styles = StyleSheet.create({
   },
   options: {
     gap: space[1],
-  },
-  option: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space[1.5],
-  },
-  optionSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  optionText: {
-    color: colors.textSoft,
-    fontSize: typography.navButton.fontSize,
-  },
-  optionTextSelected: {
-    color: colors.badgeBlueText,
-    fontWeight: typography.bodyBold.fontWeight,
   },
   actionButton: {
     minHeight: space[5] + space[0.5],
