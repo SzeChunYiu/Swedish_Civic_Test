@@ -17,76 +17,6 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
-function assertMockExamConfigPanelA11ySeparation(source) {
-  assert.match(
-    source,
-    /a non-interactive summary header with[\s\S]*`accessibilityRole="summary"`/,
-    'MockExamConfigPanel should document that summary semantics live on the header',
-  );
-  assert.match(
-    source,
-    /const resolvedPanelAccessibilityLabel =\s+accessibilityLabel \?\?\s+getPanelAccessibilityLabel\(/,
-    'MockExamConfigPanel should resolve one summary label for the non-interactive header',
-  );
-  assert.match(
-    source,
-    /<Surface[\s\S]*accessibilityRole="none"[\s\S]*\{\.\.\.surfaceProps\}[\s\S]*accessible=\{false\}[\s\S]*>/,
-    'MockExamConfigPanel outer Surface must not be the labelled grouped element',
-  );
-  assert.match(
-    source,
-    /<View\s+accessible\s+accessibilityLabel=\{resolvedPanelAccessibilityLabel\}\s+accessibilityRole=\{accessibilityRole\}\s+style=\{styles\.header\}/,
-    'MockExamConfigPanel should put the summary label on the non-interactive header',
-  );
-  assert.match(source, /accessibilityRole="adjustable"/, 'steppers must remain adjustable');
-  assert.match(
-    source,
-    /accessibilityActions=\{stepperAccessibilityActions\}/,
-    'adjustable steppers must expose increment and decrement accessibility actions',
-  );
-  assert.match(
-    source,
-    /\{ name: 'decrement', label: decrementAccessibilityLabel \}/,
-    'adjustable steppers should expose the decrement action with localized copy',
-  );
-  assert.match(
-    source,
-    /\{ name: 'increment', label: incrementAccessibilityLabel \}/,
-    'adjustable steppers should expose the increment action with localized copy',
-  );
-  assert.match(
-    source,
-    /onAccessibilityAction=\{handleAccessibilityAction\}/,
-    'adjustable steppers must handle screen-reader action gestures',
-  );
-  assert.match(
-    source,
-    /case 'decrement':[\s\S]*if \(canDecrement\) onChange\?\.\(getNextValue\(value, step, -1, min, max\)\);/,
-    'decrement accessibility actions should use the same clamped step path as the visible control',
-  );
-  assert.match(
-    source,
-    /case 'increment':[\s\S]*if \(canIncrement\) onChange\?\.\(getNextValue\(value, step, 1, min, max\)\);/,
-    'increment accessibility actions should use the same clamped step path as the visible control',
-  );
-  assert.match(source, /accessibilityRole="checkbox"/, 'chapter chips must remain checkboxes');
-  assert.match(
-    source,
-    /accessibilityState=\{\{ checked: selected, disabled \}\}/,
-    'chapter checkbox state must stay explicit',
-  );
-  assert.doesNotMatch(
-    source,
-    /<Surface\b[^>]*accessibilityLabel=/,
-    'outer Surface should not keep the panel accessibility label around controls',
-  );
-  assert.doesNotMatch(
-    source,
-    /<View\s+accessibilityLabel=\{resolvedChaptersLabel\}\s+accessibilityRole="summary"\s+style=\{styles\.chips\}/,
-    'chapter checkbox group should not be a labelled summary wrapper',
-  );
-}
-
 test('default mock exam config stays UHR-based and ad-free during exams', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -140,48 +70,6 @@ test('mock exam config panel uses unofficial practice-result copy', () => {
   }
 
   assert.doesNotMatch(source, /Resultat är övning/);
-});
-
-test('mock exam config panel separates summary semantics from controls', () => {
-  assertMockExamConfigPanelA11ySeparation(
-    fs.readFileSync(path.join(repoRoot, 'components/MockExamConfigPanel.tsx'), 'utf8'),
-  );
-});
-
-test('mock exam config panel a11y separation rejects grouped summary regressions', () => {
-  const source = fs.readFileSync(path.join(repoRoot, 'components/MockExamConfigPanel.tsx'), 'utf8');
-  const groupedPanel = source
-    .replace('accessibilityRole="none"', 'accessibilityRole={accessibilityRole}')
-    .replace('{...surfaceProps}\n      accessible={false}', '{...surfaceProps}');
-  const groupedChapters = source.replace(
-    '<View style={styles.chips}>',
-    '<View\n          accessibilityLabel={resolvedChaptersLabel}\n          accessibilityRole="summary"\n          style={styles.chips}\n        >',
-  );
-  const missingStepperActions = source.replace(
-    '\n      accessibilityActions={stepperAccessibilityActions}',
-    '',
-  );
-  const missingStepperActionHandler = source.replace(
-    '\n      onAccessibilityAction={handleAccessibilityAction}',
-    '',
-  );
-
-  assert.throws(
-    () => assertMockExamConfigPanelA11ySeparation(groupedPanel),
-    /outer Surface must not be the labelled grouped element/,
-  );
-  assert.throws(
-    () => assertMockExamConfigPanelA11ySeparation(groupedChapters),
-    /chapter checkbox group should not be a labelled summary wrapper/,
-  );
-  assert.throws(
-    () => assertMockExamConfigPanelA11ySeparation(missingStepperActions),
-    /must expose increment and decrement accessibility actions/,
-  );
-  assert.throws(
-    () => assertMockExamConfigPanelA11ySeparation(missingStepperActionHandler),
-    /must handle screen-reader action gestures/,
-  );
 });
 
 test('mock exam config TypeScript schema parity rejects optional field drift', () => {

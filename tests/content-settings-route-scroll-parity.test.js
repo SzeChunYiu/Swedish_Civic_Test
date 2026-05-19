@@ -21,7 +21,7 @@ test('settings route keeps mobile content inside a scrollable root', () => {
 
   assert.equal(summary.settingsRouteScrollRulesValidated, 5);
   assert.equal(summary.settingsRouteScrollParityValidated, true);
-  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, TextInput, View \}/);
+  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,

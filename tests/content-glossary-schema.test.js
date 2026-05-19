@@ -84,7 +84,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -132,7 +132,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
