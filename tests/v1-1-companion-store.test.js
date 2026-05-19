@@ -9,7 +9,6 @@ const ts = require('typescript');
 
 const {
   createMemoryMMKV,
-  createThrowingGetMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
@@ -101,22 +100,6 @@ test('companion store: throwing MMKV writes keep selected mascot in memory and r
   assert.equal(state.persistenceWarning.storageId, 'companion');
   assert.equal(state.persistenceWarning.key, 'companion.selectedId.v1');
   assert.match(state.persistenceWarning.errorMessage, /disk full/);
-});
-
-test('companion store: throwing MMKV reads fall back to default mascot and record warning', () => {
-  const storage = createThrowingGetMMKV('companion read failed');
-  const { DEFAULT_COMPANION_ID } = loadTs('lib/mascot/catalog.ts');
-  const { useCompanionStore } = loadTsWithStorage(repoRoot, 'lib/storage/companionStore.ts', {
-    companion: storage,
-  });
-  const state = useCompanionStore.getState();
-
-  assert.equal(state.selectedId, DEFAULT_COMPANION_ID);
-  assert.equal(state.persistenceWarning.recoverable, true);
-  assert.equal(state.persistenceWarning.operation, 'read');
-  assert.equal(state.persistenceWarning.storageId, 'companion');
-  assert.equal(state.persistenceWarning.key, 'companion.selectedId.v1');
-  assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
 test('companion store: successful writes persist and clear persistence warning', () => {

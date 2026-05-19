@@ -1,4 +1,4 @@
-# AdMob + IAP — operator setup runbook
+# AdMob + "Remove Ads" IAP — operator setup runbook
 
 These steps need a human account owner; the factory cannot create accounts,
 generate real ad unit IDs, or create store products. Do these, paste the IDs
@@ -58,34 +58,7 @@ Product model: **non-consumable**, one-time unlock, sets `adsDisabled=true`.
 
 Hand the factory: the two product IDs + confirm prices live.
 
-## Part C — "Pro Lifetime" in-app purchase (59 SEK, one-time, v1.1)
-
-Only start this after v1.0 mobile is live and the Pro lane resumes. This is a
-separate non-consumable from v1.0 Remove Ads.
-
-Product model: **non-consumable**, one-time Pro unlock, sets the Pro Lifetime
-entitlement and includes ad-free behavior.
-
-### Apple — App Store Connect
-
-1. App Store Connect → your app → **In-App Purchases** → Create →
-   **Non-Consumable**.
-2. Reference Name: `Pro Lifetime`; Product ID:
-   `com.billyyiu.almostswedish.prolifetime`.
-3. Price: pick the tier closest to **59 SEK** (Sweden) — Apple sets the matrix
-   for other countries automatically.
-4. Add localized display name/description (EN + SV), review screenshot.
-
-### Google — Play Console
-
-1. Play Console → your app → Monetize → Products → **In-app products** → Create.
-2. Product ID: `com.billyyiu.almostswedish.prolifetime`.
-3. Price: **59 SEK**. Activate the product.
-
-Hand the factory: confirm the Pro Lifetime product ID
-`com.billyyiu.almostswedish.prolifetime` is live at 59 SEK on both stores.
-
-## Part D — Compliance (factory drafts, operator submits)
+## Part C — Compliance (factory drafts, operator submits)
 
 - iOS: enable **App Tracking Transparency** — the factory adds the ATT prompt
   (`expo-tracking-transparency`); you approve the wording.
@@ -95,7 +68,7 @@ Hand the factory: confirm the Pro Lifetime product ID
   to declare: ads SDK collects device/ad identifiers, plus the IAP. You submit
   those answers in the consoles when creating the store records.
 
-## Part E — Hand-off checklist (paste back to the operator session)
+## Part D — Hand-off checklist (paste back to the operator session)
 
 ```
 [ ] AdMob iOS App ID:        ca-app-pub-____~____
@@ -104,8 +77,6 @@ Hand the factory: confirm the Pro Lifetime product ID
 [ ] app-ads.txt publisher line
 [ ] iOS IAP product id:      com.billyyiu.swedishcivictest.removeads (price live: Y/N)
 [ ] Android IAP product id:  removeads (price live: Y/N)
-[ ] iOS Pro Lifetime id:     com.billyyiu.almostswedish.prolifetime (59 SEK live: Y/N)
-[ ] Android Pro Lifetime id: com.billyyiu.almostswedish.prolifetime (59 SEK live: Y/N)
 [ ] Sandbox/license tester accounts created
 [ ] EAS build access granted to factory for preview builds
 ```
