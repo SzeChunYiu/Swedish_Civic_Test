@@ -248,6 +248,14 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/practice?mode=review#question',
   },
   {
+    input: '/search?q=riksdag',
+    expectedPath: '/search?q=riksdag',
+  },
+  {
+    input: '/search?query=riksdag',
+    expectedPath: '/search?query=riksdag',
+  },
+  {
     input: '/about-the-test',
     expectedPath: '/about-the-test',
   },
