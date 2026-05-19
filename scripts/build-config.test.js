@@ -44,6 +44,28 @@ test('release validation includes dependency security audit', () => {
   assert.equal(pkg.overrides.postcss, '8.5.10');
 });
 
+test('release validation runs Expo Doctor before long suites', () => {
+  const pkg = readJson('package.json');
+  const validateScript = pkg.scripts.validate;
+
+  assert.equal(pkg.scripts['test:expo-doctor'], 'npm exec -- expo-doctor');
+  assert.match(validateScript, /npm run test:expo-doctor/);
+  assert.ok(
+    validateScript.indexOf('npm run audit:release') <
+      validateScript.indexOf('npm run test:expo-doctor'),
+    'validate should run the security audit before Expo Doctor',
+  );
+  assert.ok(
+    validateScript.indexOf('npm run test:expo-doctor') < validateScript.indexOf('npm test'),
+    'validate should run Expo Doctor before the long npm test suite',
+  );
+  assert.ok(
+    validateScript.indexOf('npm run test:expo-doctor') <
+      validateScript.indexOf('npm run validate:content'),
+    'validate should run Expo Doctor before content validation',
+  );
+});
+
 test('GitHub release secrets check reports whether EXPO_TOKEN is configured without leaking values', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'github-release-secrets-check-'));
   const reportPath = path.join(tmpDir, 'github-secrets.md');
@@ -929,6 +951,7 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   const workflowPath = path.join(repoRoot, '.github/workflows/release-validation.yml');
   assert.equal(fs.existsSync(workflowPath), true);
 
+  const pkg = readJson('package.json');
   const workflow = fs.readFileSync(workflowPath, 'utf8');
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /branches:\s*\[\s*main\s*\]/);
@@ -938,7 +961,13 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.match(workflow, /actions\/upload-artifact@v6/);
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
+  assert.match(workflow, /npm run test:expo-doctor/);
   assert.match(workflow, /npm run validate/);
+  assert.match(pkg.scripts.validate, /npm run test:expo-doctor/);
+  assert.ok(
+    workflow.indexOf('npm run test:expo-doctor') < workflow.indexOf('npm run validate'),
+    'release workflow should run Expo Doctor before the full validation suite',
+  );
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
