@@ -168,8 +168,9 @@ export function freezeBannerCopy(
   result: StreakWithFreezeResult,
   language: 'sv' | 'en',
 ): string | null {
-  if (result.rescuedThisRun.length === 0) return null;
+  const rescuedDayCount = result.freezeState.rescuedDayKeys?.length ?? 0;
+  if (result.rescuedThisRun.length === 0 && rescuedDayCount === 0) return null;
   return language === 'sv'
-    ? `Strecket räddat — du har ${result.freezeState.available} fryser kvar.`
+    ? `Sviten är räddad — ${result.freezeState.available} svitskydd kvar.`
     : `Streak protected — ${result.freezeState.available} freezes left.`;
 }

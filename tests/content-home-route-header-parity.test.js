@@ -22,7 +22,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 88);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.match(source, /type HomeCopy =/);
@@ -41,10 +41,15 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Readiness indicator/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
+  assert.match(source, /calculateStreakWithFreeze/);
+  assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
+  assert.match(source, /Svitskydd/);
+  assert.match(source, /Streak freeze/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /helper=\{dayStreakHelper\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
   assert.match(source, /\{copy\.readinessTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
