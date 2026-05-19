@@ -1,8 +1,9 @@
-import { StyleSheet, Text } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { getQuestionProvenance } from '../../lib/content/provenance';
+import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { PracticeQuestion } from '../../types/content';
 
 type ProvenanceBadgeCopy = {
@@ -10,6 +11,8 @@ type ProvenanceBadgeCopy = {
   supplementaryLabel: string;
   editorialLabel: string;
   accessibilityPrefix: string;
+  sourceNotePrefix: string;
+  sourceNoteHint: string;
 };
 
 const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy> = {
@@ -18,25 +21,38 @@ const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy> = {
     supplementaryLabel: 'Tilläggsfråga',
     editorialLabel: 'Redaktionell',
     accessibilityPrefix: 'Källtyp',
+    sourceNotePrefix: 'Källanteckning',
+    sourceNoteHint: 'Visar en kort källanteckning.',
   },
   en: {
     uhrLabel: 'UHR source',
     supplementaryLabel: 'Supplementary',
     editorialLabel: 'Editorial',
     accessibilityPrefix: 'Provenance',
+    sourceNotePrefix: 'Source note',
+    sourceNoteHint: 'Shows a short source note.',
   },
 };
 
-export function ProvenanceBadge({
-  question,
-  language = 'sv',
-}: {
+/**
+ * Defaults: `language="sv"`, localized provenance label and source note copy,
+ * `accessibilityRole="button"`, collapsed source note, and token-sized hit
+ * slop. Pass `language` when the surrounding question card is rendered in
+ * English support mode.
+ */
+export interface ProvenanceBadgeProps {
   question?: PracticeQuestion;
   language?: AppLanguage;
-}) {
+}
+
+export function ProvenanceBadge({ question, language = 'sv' }: ProvenanceBadgeProps) {
+  const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
+
   if (!question) return null;
+
   const copy = provenanceBadgeCopy[language];
   const provenance = getQuestionProvenance(question);
+  const sourceNoteText = getProvenanceDescription(provenance, language);
   const label =
     provenance === 'uhr'
       ? copy.uhrLabel
@@ -45,44 +61,97 @@ export function ProvenanceBadge({
         : copy.editorialLabel;
   const tone =
     provenance === 'uhr'
-      ? styles.uhr
+      ? { badge: styles.uhrBadge, label: styles.uhrLabel }
       : provenance === 'derived'
-        ? styles.supplementary
-        : styles.editorial;
+        ? { badge: styles.supplementaryBadge, label: styles.supplementaryLabel }
+        : { badge: styles.editorialBadge, label: styles.editorialLabel };
+  const noteLabel = `${copy.sourceNotePrefix}: ${sourceNoteText}`;
 
   return (
-    <Text
-      accessibilityRole="text"
-      accessibilityLabel={`${copy.accessibilityPrefix}: ${label}`}
-      style={[styles.badge, tone]}
-    >
-      {label}
-    </Text>
+    <View style={styles.container}>
+      <Pressable
+        accessibilityHint={copy.sourceNoteHint}
+        accessibilityLabel={`${copy.accessibilityPrefix}: ${label}. ${noteLabel}`}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: sourceNoteVisible }}
+        hitSlop={space[1]}
+        onBlur={() => setSourceNoteVisible(false)}
+        onFocus={() => setSourceNoteVisible(true)}
+        onPress={() => setSourceNoteVisible(true)}
+        style={({ pressed }) => [
+          styles.badge,
+          tone.badge,
+          sourceNoteVisible ? styles.badgeExpanded : null,
+          pressed ? styles.badgePressed : null,
+        ]}
+      >
+        <Text style={[styles.label, tone.label]}>{label}</Text>
+      </Pressable>
+      {sourceNoteVisible ? (
+        <Text accessibilityRole="text" style={styles.sourceNote}>
+          {noteLabel}
+        </Text>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignSelf: 'flex-start',
+    gap: space[0.75],
+  },
   badge: {
     alignSelf: 'flex-start',
     borderRadius: radius.pill,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
+    borderWidth: space.hairline,
+    minHeight: space[6],
+    justifyContent: 'center',
     overflow: 'hidden',
     paddingHorizontal: space[1.25],
     paddingVertical: space[0.5],
+  },
+  badgeExpanded: {
+    borderColor: colors.focus,
+  },
+  badgePressed: {
+    transform: [{ scale: motion.pressedScale }],
+  },
+  label: {
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
     textTransform: 'uppercase',
   },
-  uhr: {
+  sourceNote: {
+    ...typography.disclaimer,
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
+    color: colors.textSecondary,
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[1],
+  },
+  uhrBadge: {
     backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueBg,
+  },
+  uhrLabel: {
     color: colors.badgeBlueText,
   },
-  supplementary: {
+  supplementaryBadge: {
     backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+  },
+  supplementaryLabel: {
     color: colors.text,
   },
-  editorial: {
+  editorialBadge: {
     backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+  },
+  editorialLabel: {
     color: colors.textMuted,
   },
 });

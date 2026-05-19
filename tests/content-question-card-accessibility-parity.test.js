@@ -15,6 +15,57 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function readProvenanceBadgeSource() {
+  return fs.readFileSync(path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'), 'utf8');
+}
+
+function assertProvenanceBadgeSourceNoteDisclosure(source) {
+  const provenanceHelperSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/provenance.ts'),
+    'utf8',
+  );
+  const requiredRules = [
+    [/import \{ useState \} from 'react';/, 'source-note state'],
+    [/Pressable, StyleSheet, Text, View/, 'pressable badge imports'],
+    [/getProvenanceDescription,/, 'localized provenance description import'],
+    [/export interface ProvenanceBadgeProps \{/, 'explicit props interface'],
+    [/const \[sourceNoteVisible, setSourceNoteVisible\] = useState\(false\);/, 'collapsed default'],
+    [
+      /const sourceNoteText = getProvenanceDescription\(provenance, language\);/,
+      'localized source note lookup',
+    ],
+    [/sourceNotePrefix: 'Källanteckning'/, 'Swedish source-note prefix'],
+    [/sourceNotePrefix: 'Source note'/, 'English source-note prefix'],
+    [/accessibilityRole="button"/, 'button role'],
+    [/accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/, 'expanded state'],
+    [/hitSlop=\{space\[1\]\}/, 'token hit slop'],
+    [/onFocus=\{\(\) => setSourceNoteVisible\(true\)\}/, 'focus disclosure'],
+    [/onPress=\{\(\) => setSourceNoteVisible\(true\)\}/, 'press disclosure'],
+    [/sourceNoteVisible \? \(/, 'conditional source-note render'],
+    [/\{noteLabel\}/, 'visible source-note label'],
+  ];
+
+  for (const [pattern, label] of requiredRules) {
+    assert.match(source, pattern, `ProvenanceBadge missing ${label}`);
+  }
+
+  assert.match(
+    provenanceHelperSource,
+    /descriptionSv: 'Direkt från UHR:s utbildningsmaterial Sverige i fokus\.'/,
+    'provenance helper missing Swedish UHR source note',
+  );
+  assert.match(
+    provenanceHelperSource,
+    /descriptionEn: "Directly from UHR's study material Sverige i fokus\."/,
+    'provenance helper missing English UHR source note',
+  );
+  assert.doesNotMatch(
+    source,
+    /accessibilityRole="text"[\s\S]*style=\{\[styles\.badge, tone\]\}/,
+    'ProvenanceBadge should not regress to a static text-only badge',
+  );
+}
+
 test('quiz QuestionCard keeps question text and accessibility summary in parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionCard.tsx'), 'utf8');
@@ -64,6 +115,19 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);
   assert.match(helperSource, /fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/);
+});
+
+test('QuestionCard provenance badge reveals localized source notes on press or focus', () => {
+  assertProvenanceBadgeSourceNoteDisclosure(readProvenanceBadgeSource());
+});
+
+test('QuestionCard provenance badge parity rejects static source-note drift', () => {
+  const mutatedSource = readProvenanceBadgeSource().replace(
+    '        onFocus={() => setSourceNoteVisible(true)}\n',
+    '',
+  );
+
+  assert.throws(() => assertProvenanceBadgeSourceNoteDisclosure(mutatedSource), /focus disclosure/);
 });
 
 test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {
