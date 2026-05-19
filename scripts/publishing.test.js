@@ -9,12 +9,24 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function readJson(relativePath) {
+  return JSON.parse(read(relativePath));
+}
+
 function staleWords(...words) {
   return new RegExp(words.join('\\s+'), 'i');
 }
 
 function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
+}
+
+function staleNativeIdentifierPattern() {
+  return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+}
+
+function disabledGoogleMobileAdsPattern() {
+  return new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i');
 }
 
 function assertNoStalePublicPrivacyPosture(source) {
@@ -79,12 +91,44 @@ test('store publishing metadata is prepared', () => {
   assert.match(appStoreListing, /Almost Swedish/);
   assert.match(appStoreListing, /not official/i);
   assert.match(appStoreListing, /UHR/i);
+  assertCurrentPublicPrivacyPosture(appStoreListing);
+  assert.match(appStoreListing, /in-app purchase/i);
+  assert.match(appStoreListing, /removes ads only/i);
+  assert.match(appStoreListing, /full question bank remains available\s+without purchase/i);
+  assert.doesNotMatch(
+    appStoreListing,
+    /unlock(?:s|ed)?\s+(?:study|question|content|exam)|paid\s+(?:study|question|content|exam)|purchase\s+unlock/i,
+  );
 
   const googlePlayListing = read('publishing/google-play-listing.md');
   assert.match(googlePlayListing, /Almost Swedish/);
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
   assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
+});
+
+test('release evidence template matches ad-supported app store posture', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  const template = read('reports/release-evidence-template.md');
+
+  assert.match(template, new RegExp(appConfig.ios.bundleIdentifier, 'i'));
+  assert.match(template, new RegExp(appConfig.android.package, 'i'));
+  assert.match(template, /AdMob app ID/i);
+  assert.match(template, /app-ads\.txt/i);
+  assert.match(template, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(template, /adMob\.appAdsTxtReviewed:\s*true/i);
+  assert.match(template, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(template, /Remove Ads/i);
+  assert.match(template, /29 SEK/i);
+  assert.match(template, /non-consumable/i);
+  assert.match(template, /generated binary\/build|generated binary/i);
+  assert.match(template, /App Tracking Transparency|ATT/i);
+  assert.match(template, /Google UMP|UMP consent/i);
+
+  assert.doesNotMatch(template, staleNativeIdentifierPattern());
+  assert.doesNotMatch(template, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
+  assert.doesNotMatch(template, staleWords('real', 'ads', 'disabled'));
+  assert.doesNotMatch(template, disabledGoogleMobileAdsPattern());
 });
 
 test('privacy labels and data safety answers match ad-supported release practices', () => {
@@ -132,6 +176,63 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.doesNotMatch(dataSafety, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
   assert.doesNotMatch(dataSafety, staleWords('real', 'ads', 'disabled'));
   assert.doesNotMatch(dataSafety, staleWords('test', 'app', 'IDs'));
+});
+
+test('blocked local release evidence stubs model current ads and IAP posture', () => {
+  const storeRecords = readJson('reports/store-records/store-records.json');
+  const privacyReview = readJson('reports/privacy-review/privacy-review.json');
+  const storeRecordsSource = read('reports/store-records/store-records.json');
+  const privacyReviewSource = read('reports/privacy-review/privacy-review.json');
+
+  assert.equal(storeRecords.status, 'blocked');
+  assert.equal(storeRecords.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.packageName, 'com.billyyiu.almostswedish');
+  assert.equal(
+    storeRecords.supportUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
+  );
+  assert.equal(
+    storeRecords.privacyUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
+  );
+  assert.equal(storeRecords.adMob.realAdsEnabled, true);
+  assert.match(storeRecords.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.iosAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.androidAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.equal(
+    storeRecords.adMob.appAdsTxtUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt',
+  );
+  assert.equal(
+    storeRecords.adMob.appAdsTxtPublisherLine,
+    'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0',
+  );
+  assert.equal(storeRecords.listingMetadata.appStoreListingPath, 'publishing/app-store-listing.md');
+  assert.equal(
+    storeRecords.listingMetadata.googlePlayListingPath,
+    'publishing/google-play-listing.md',
+  );
+
+  assert.equal(privacyReview.status, 'blocked');
+  assert.equal(privacyReview.reviewedBuild.version, '1.0.0');
+  assert.equal(privacyReview.applePrivacyLabels.path, 'publishing/privacy-labels.md');
+  assert.equal(privacyReview.googlePlayDataSafety.path, 'publishing/google-play-data-safety.md');
+  assert.equal(privacyReview.googleMobileAds.sdkPresent, true);
+  assert.equal(privacyReview.googleMobileAds.testAppIds, true);
+  assert.equal(privacyReview.googleMobileAds.realAdsEnabled, true);
+  assert.match(privacyReview.googleMobileAds.gate, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/);
+  assert.match(privacyReview.googleMobileAds.gate, /Remove Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /29 SEK/);
+  assert.match(privacyReview.googleMobileAds.gate, /ATT and UMP consent/i);
+  assert.notEqual(privacyReview.disabledSdks.realAds, true);
+  assert.notEqual(privacyReview.disabledSdks.purchases, true);
+
+  for (const source of [storeRecordsSource, privacyReviewSource]) {
+    assert.doesNotMatch(source, /com\.billyyiu\.swedishcivictest(?!"?\.removeads)/);
+    assert.doesNotMatch(source, /REAL_ADS_ENABLED_FOR_V1/);
+    assert.doesNotMatch(source, staleWords('real', 'ads', 'disabled'));
+    assert.doesNotMatch(source, /deferred-real-ads-disabled/i);
+  }
 });
 
 test('public support and privacy URL copy is ready for hosting', () => {
