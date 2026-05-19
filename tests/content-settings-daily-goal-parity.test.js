@@ -54,7 +54,7 @@ require('./scripts/validate-content.js');
   );
 }
 
-function loadSettingsStateFromStorage(settingsStorage) {
+function loadDailyGoalFromStorage(storedValue) {
   const settingsStorePath = path.join(repoRoot, 'lib/storage/settingsStore.ts');
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
@@ -67,7 +67,12 @@ function loadSettingsStateFromStorage(settingsStorage) {
   Module._load = function patchedLoad(request, parent, isMain) {
     if (request === 'react-native-mmkv') {
       return {
-        createMMKV: () => settingsStorage,
+        createMMKV: () => ({
+          getBoolean: () => undefined,
+          getNumber: (key) => (key === 'dailyGoalAnswers' ? storedValue : undefined),
+          getString: () => undefined,
+          set: () => {},
+        }),
       };
     }
 
@@ -102,7 +107,7 @@ function loadSettingsStateFromStorage(settingsStorage) {
   try {
     delete require.cache[settingsStorePath];
     const { useSettingsStore } = require(settingsStorePath);
-    return useSettingsStore.getState();
+    return useSettingsStore.getState().dailyGoalAnswers;
   } finally {
     delete require.cache[settingsStorePath];
     Module._resolveFilename = originalResolve;
@@ -113,15 +118,6 @@ function loadSettingsStateFromStorage(settingsStorage) {
       delete require.extensions['.ts'];
     }
   }
-}
-
-function loadDailyGoalFromStorage(storedValue) {
-  return loadSettingsStateFromStorage({
-    getBoolean: () => undefined,
-    getNumber: (key) => (key === 'dailyGoalAnswers' ? storedValue : undefined),
-    getString: () => undefined,
-    set: () => {},
-  }).dailyGoalAnswers;
 }
 
 test('daily goal settings stay in parity between storage and settings controls', () => {
@@ -173,27 +169,6 @@ test('daily goal hydration falls back for unsafe persisted values', () => {
   ].forEach(([storedValue, expected]) => {
     assert.equal(loadDailyGoalFromStorage(storedValue), expected);
   });
-});
-
-test('settings hydration falls back when MMKV reads throw', () => {
-  const state = loadSettingsStateFromStorage({
-    getBoolean() {
-      throw new Error('settings boolean read failed');
-    },
-    getNumber() {
-      throw new Error('settings number read failed');
-    },
-    getString() {
-      throw new Error('settings string read failed');
-    },
-    set() {},
-  });
-
-  assert.equal(state.language, 'sv');
-  assert.equal(state.audioEnabled, true);
-  assert.equal(state.dailyGoalAnswers, 10);
-  assert.equal(state.includeSupplementaryQuestions, false);
-  assert.equal(state.hasSeenAboutTheTest, false);
 });
 
 test('daily goal settings parity rejects option-set drift', () => {

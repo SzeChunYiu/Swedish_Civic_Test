@@ -45,27 +45,17 @@ const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = {
   },
 };
 
-/**
- * Defaults: `language="sv"`, `completedCount=0`, inferred `questionCount`
- * from the chapter when present, and a grouped accessibility summary for
- * standalone cards. Set `accessibilitySummary={false}` when the card is inside
- * a parent link that already owns the accessible name.
- */
-export interface ChapterCardProps {
-  accessibilitySummary?: boolean;
-  chapter?: Chapter;
-  completedCount?: number;
-  language?: AppLanguage;
-  questionCount?: number;
-}
-
 export function ChapterCard({
-  accessibilitySummary = true,
   chapter,
   questionCount = chapter?.questionCount ?? 0,
   completedCount = 0,
   language = 'sv',
-}: ChapterCardProps) {
+}: {
+  chapter?: Chapter;
+  questionCount?: number;
+  completedCount?: number;
+  language?: AppLanguage;
+}) {
   const copy = chapterCardCopy[language];
   const progress = questionCount > 0 ? completedCount / questionCount : 0;
   const status =
@@ -91,12 +81,7 @@ export function ChapterCard({
     .join('. ');
 
   return (
-    <Card
-      accessible={accessibilitySummary}
-      accessibilityLabel={accessibilitySummary ? chapterAccessibilityLabel : undefined}
-      elevated
-      style={styles.card}
-    >
+    <Card accessibilityLabel={chapterAccessibilityLabel} elevated style={styles.card}>
       <View style={styles.headerRow}>
         <Badge tone={questionCount > 0 ? 'blue' : 'warm'}>{status}</Badge>
       </View>
