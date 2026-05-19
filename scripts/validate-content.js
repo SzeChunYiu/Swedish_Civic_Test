@@ -68,6 +68,8 @@ const QUESTION_BANK_CSV_HEADER = [
   'questionSv',
   'questionEn',
   'correctOptionId',
+  'optionSv',
+  'optionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
@@ -5335,6 +5337,15 @@ function parseCsvRows(csv) {
   }
 
   return rows;
+}
+
+function questionOptionPayload(question, field) {
+  return JSON.stringify(
+    question.options.map((option) => ({
+      id: option.id,
+      text: option[field],
+    })),
+  );
 }
 
 function optionIdsMatchQuestionType(question) {
@@ -12174,6 +12185,8 @@ function validateQuestionBankCsvContract() {
       question.questionSv,
       question.questionEn,
       question.correctOptionId,
+      questionOptionPayload(question, 'textSv'),
+      questionOptionPayload(question, 'textEn'),
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
