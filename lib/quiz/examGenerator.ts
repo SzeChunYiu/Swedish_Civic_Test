@@ -1,6 +1,6 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
 import { isUhrQuestion } from '../content/provenance';
-import { hashString, shuffleQuestionOptionsForSession } from './answerOptionShuffle';
+import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
 
 export type ExamOptions = {
   questionCount?: number;
@@ -43,7 +43,6 @@ export type ExamReviewItem = {
 };
 
 export type ExamAutoSubmitState = {
-  examActive: boolean;
   remainingSeconds: number;
   submitted: boolean;
   questionCount: number;
@@ -57,12 +56,11 @@ export function formatExamTime(remainingSeconds: number): string {
 }
 
 export function shouldAutoSubmitExam({
-  examActive,
   remainingSeconds,
   submitted,
   questionCount,
 }: ExamAutoSubmitState): boolean {
-  return examActive && !submitted && questionCount > 0 && remainingSeconds <= 0;
+  return !submitted && questionCount > 0 && remainingSeconds <= 0;
 }
 
 function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
@@ -70,35 +68,6 @@ function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
     ['reviewed', 'published'].includes(question.reviewStatus) &&
     Boolean(question.uhrReference?.chapter) &&
     isUhrQuestion(question)
-  );
-}
-
-function rotateBucketForSession(
-  bucket: PracticeQuestion[],
-  chapterId: string,
-  sessionId: string,
-): PracticeQuestion[] {
-  if (bucket.length < 2) return bucket;
-
-  const offset = hashString(`${sessionId}:${chapterId}:question-rotation`) % bucket.length;
-  if (offset === 0) return bucket;
-
-  return [...bucket.slice(offset), ...bucket.slice(0, offset)];
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isScorableExamQuestion(question: unknown): question is PracticeQuestion {
-  return (
-    isRecord(question) &&
-    typeof question.id === 'string' &&
-    question.id.length > 0 &&
-    typeof question.chapterId === 'string' &&
-    question.chapterId.length > 0 &&
-    typeof question.correctOptionId === 'string' &&
-    question.correctOptionId.length > 0
   );
 }
 
@@ -115,16 +84,13 @@ export function generateExam(
     chapterBuckets.set(question.chapterId, bucket);
   }
 
-  const sessionBuckets = [...chapterBuckets.entries()].map(([chapterId, bucket]) =>
-    rotateBucketForSession(bucket, chapterId, sessionId),
-  );
   const selected: PracticeQuestion[] = [];
   let round = 0;
 
   while (selected.length < targetCount) {
     let addedQuestionThisRound = false;
 
-    for (const bucket of sessionBuckets) {
+    for (const bucket of chapterBuckets.values()) {
       const question = bucket[round];
       if (!question) continue;
 
@@ -141,15 +107,11 @@ export function generateExam(
 }
 
 export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap): ExamResult {
-  const safeQuestions = Array.isArray(questions) ? questions.filter(isScorableExamQuestion) : [];
-  const safeAnswers = isRecord(answers) ? answers : {};
   const chapterMap = new Map<string, ExamChapterResult>();
   let correctCount = 0;
 
-  for (const question of safeQuestions) {
-    const candidateAnswer = safeAnswers[question.id];
-    const isCorrect =
-      typeof candidateAnswer === 'string' && candidateAnswer === question.correctOptionId;
+  for (const question of questions) {
+    const isCorrect = answers[question.id] === question.correctOptionId;
     if (isCorrect) correctCount += 1;
 
     const existing = chapterMap.get(question.chapterId) ?? {
@@ -164,8 +126,8 @@ export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap)
 
   return {
     correctCount,
-    totalCount: safeQuestions.length,
-    percent: safeQuestions.length > 0 ? Math.round((correctCount / safeQuestions.length) * 100) : 0,
+    totalCount: questions.length,
+    percent: questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0,
     chapterBreakdown: [...chapterMap.values()],
   };
 }

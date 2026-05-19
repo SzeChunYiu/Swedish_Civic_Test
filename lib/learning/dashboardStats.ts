@@ -125,33 +125,22 @@ export interface MockHistoryEntry {
   durationMs: number | null;
 }
 
-function validTimestampMs(value: string | undefined): number | null {
-  if (!value) return null;
-  const time = new Date(value).getTime();
-  return Number.isFinite(time) ? time : null;
-}
-
 export function mockHistory(progress: UserProgress): MockHistoryEntry[] {
-  const out: (MockHistoryEntry & { completedAtMs: number })[] = [];
+  const out: MockHistoryEntry[] = [];
   for (const session of progress.sessions ?? []) {
     if (session.mode !== 'exam') continue;
-    const completedAtMs = validTimestampMs(session.completedAt);
-    if (completedAtMs === null || !session.completedAt) continue;
-    const startedAtMs = validTimestampMs(session.startedAt);
-    const durationMs =
-      startedAtMs === null || startedAtMs > completedAtMs ? null : completedAtMs - startedAtMs;
+    if (!session.completedAt) continue;
     out.push({
-      completedAtMs,
       sessionId: session.id,
-      score:
-        typeof session.score === 'number' && Number.isFinite(session.score) ? session.score : null,
+      score: typeof session.score === 'number' ? session.score : null,
       completedAt: session.completedAt,
-      durationMs,
+      durationMs:
+        session.startedAt && session.completedAt
+          ? new Date(session.completedAt).getTime() - new Date(session.startedAt).getTime()
+          : null,
     });
   }
-  return out
-    .sort((a, b) => a.completedAtMs - b.completedAtMs)
-    .map(({ completedAtMs: _completedAtMs, ...entry }) => entry);
+  return out.sort((a, b) => a.completedAt.localeCompare(b.completedAt));
 }
 
 export function bestMockScore(progress: UserProgress): number | null {

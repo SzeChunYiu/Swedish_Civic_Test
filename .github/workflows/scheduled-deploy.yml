@@ -7,7 +7,7 @@ name: Scheduled Vercel deploy
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/15 * * * *'
   push:
     branches:
       - main
@@ -59,18 +59,5 @@ jobs:
             echo "::error::VERCEL_PRODUCTION_URL is required to verify deploy-hook production output."
             exit 1
           fi
-          max_attempts=10
-          poll_interval_seconds=30
-          echo "Polling live site for up to $((max_attempts * poll_interval_seconds)) seconds."
-          for attempt in $(seq 1 "$max_attempts"); do
-            if node scripts/check-live-site.js "$VERCEL_PRODUCTION_URL"; then
-              echo "Live smoke passed on attempt $attempt."
-              exit 0
-            fi
-            if [ "$attempt" -eq "$max_attempts" ]; then
-              echo "::error::Live smoke failed after $max_attempts attempts."
-              exit 1
-            fi
-            echo "Live smoke not ready on attempt $attempt; retrying in ${poll_interval_seconds}s."
-            sleep "$poll_interval_seconds"
-          done
+          sleep 30
+          node scripts/check-live-site.js "$VERCEL_PRODUCTION_URL"

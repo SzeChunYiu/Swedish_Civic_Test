@@ -9,8 +9,6 @@
 // drift between marketing copy and code.
 
 import type { ProTierEntitlements } from '../../types/monetization';
-import { PRO_LIFETIME_PRICE_LABEL } from './proLifetimePurchase';
-import { REMOVE_ADS_PRICE_LABEL } from './purchases';
 
 export type TierColumnId = 'free' | 'adFree' | 'pro';
 
@@ -35,15 +33,15 @@ export const TIER_COLUMNS: readonly TierColumn[] = [
     id: 'adFree',
     labelSv: 'Annonsfri',
     labelEn: 'Ad-Free',
-    priceSv: `${REMOVE_ADS_PRICE_LABEL} · engångsköp`,
-    priceEn: `${REMOVE_ADS_PRICE_LABEL} · one-time`,
+    priceSv: '29 kr · engångsköp',
+    priceEn: '29 SEK · one-time',
   },
   {
     id: 'pro',
     labelSv: 'Pro',
     labelEn: 'Pro',
-    priceSv: `${PRO_LIFETIME_PRICE_LABEL} · engångsköp`,
-    priceEn: `${PRO_LIFETIME_PRICE_LABEL} · one-time`,
+    priceSv: '59 kr · engångsköp',
+    priceEn: '59 SEK · one-time',
   },
 ];
 
@@ -76,10 +74,9 @@ export const TIER_ROWS: readonly TierRow[] = [
     id: 'ads',
     labelSv: 'Annonser',
     labelEn: 'Ads',
-    flag: 'adsDisabled',
     free: { kind: 'text', sv: 'vid sessionsskifte', en: 'at session boundaries' },
     adFree: { kind: 'text', sv: 'inga', en: 'none' },
-    pro: { kind: 'text', sv: 'inga', en: 'none' },
+    pro: { kind: 'text', sv: 'vid sessionsskifte', en: 'at session boundaries' },
   },
   {
     id: 'chapterPractice',
@@ -91,7 +88,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'mockExams',
-    labelSv: 'Övningsprov',
+    labelSv: 'Provexamina',
     labelEn: 'Mock exams',
     flag: 'unlimitedMockExams',
     free: { kind: 'text', sv: '3 / vecka', en: '3 / week' },
@@ -100,7 +97,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'mistakeReview',
-    labelSv: 'Öva missade frågor',
+    labelSv: 'Felgranskning',
     labelEn: 'Mistake review',
     flag: 'fullMistakeReview',
     free: { kind: 'text', sv: 'senaste 20', en: 'last 20' },
@@ -109,12 +106,30 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'spacedRepetition',
-    labelSv: 'Repetition med intervall',
+    labelSv: 'Distribuerad repetition',
     labelEn: 'Spaced repetition',
     flag: 'spacedRepetition',
     free: { kind: 'text', sv: '3 kort / dag', en: '3 cards / day' },
     adFree: { kind: 'text', sv: '3 kort / dag', en: '3 cards / day' },
     pro: { kind: 'text', sv: 'obegränsat', en: 'unlimited' },
+  },
+  {
+    id: 'highlights',
+    labelSv: 'Markeringar i e-bok',
+    labelEn: 'Ebook highlights',
+    flag: 'multiColorHighlights',
+    free: { kind: 'text', sv: 'endast gult', en: 'yellow only' },
+    adFree: { kind: 'text', sv: 'endast gult', en: 'yellow only' },
+    pro: { kind: 'text', sv: '4 färger + anteckningar', en: '4 colors + notes' },
+  },
+  {
+    id: 'notesExport',
+    labelSv: 'Exportera anteckningar (PDF / MD)',
+    labelEn: 'Notes export (PDF / MD)',
+    flag: 'notesExport',
+    free: CROSS,
+    adFree: CROSS,
+    pro: CHECK,
   },
   {
     id: 'nativeLangExplanations',
@@ -127,7 +142,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'customStudyPlan',
-    labelSv: 'Studieplan efter provdatum',
+    labelSv: 'Anpassad studieplan (provdatum)',
     labelEn: 'Custom study plan (test date)',
     flag: 'customStudyPlan',
     free: { kind: 'text', sv: 'endast nedräkning', en: 'countdown only' },
@@ -136,7 +151,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'predictedPass',
-    labelSv: 'Beräknad provberedskap',
+    labelSv: 'Provberedskap (%)',
     labelEn: 'Predicted pass probability',
     flag: 'predictedPassProbability',
     free: CROSS,
@@ -145,7 +160,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'confidenceSlider',
-    labelSv: 'Säkerhetsskala och kalibrering',
+    labelSv: 'Säkerhetsskala + kalibrering',
     labelEn: 'Confidence rating + calibration',
     flag: 'confidenceSlider',
     free: CROSS,
@@ -162,7 +177,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'accessibility',
-    labelSv: 'Lättläst typsnitt, textstorlek och mörkt läge',
+    labelSv: 'Lättläst typsnitt / textstorlek / mörkt läge',
     labelEn: 'Easy-read font / text size / dark mode',
     free: CHECK,
     adFree: CHECK,
@@ -187,11 +202,9 @@ export interface PaywallCtaLabels {
 
 export function paywallCtaLabels({ alreadyAdFree }: { alreadyAdFree: boolean }): PaywallCtaLabels {
   return {
-    primarySv: `Köp Pro · ${PRO_LIFETIME_PRICE_LABEL}`,
-    primaryEn: `Buy Pro · ${PRO_LIFETIME_PRICE_LABEL}`,
-    secondarySv: alreadyAdFree
-      ? 'Uppgradera till Pro'
-      : `Bara ta bort annonser · ${REMOVE_ADS_PRICE_LABEL}`,
-    secondaryEn: alreadyAdFree ? 'Upgrade to Pro' : `Just remove ads · ${REMOVE_ADS_PRICE_LABEL}`,
+    primarySv: 'Köp Pro · 59 kr',
+    primaryEn: 'Buy Pro · 59 SEK',
+    secondarySv: alreadyAdFree ? 'Uppgradera till Pro' : 'Bara ta bort annonser · 29 kr',
+    secondaryEn: alreadyAdFree ? 'Upgrade to Pro' : 'Just remove ads · 29 SEK',
   };
 }
