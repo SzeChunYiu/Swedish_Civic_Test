@@ -1087,6 +1087,22 @@ test('E2E specs centralize blocking modal cleanup helpers', () => {
   }
 });
 
+test('Playwright exported-web server port is configurable per worker', () => {
+  const config = fs.readFileSync(path.join(repoRoot, 'playwright.config.ts'), 'utf8');
+  const staticServer = fs.readFileSync(path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'), 'utf8');
+
+  assert.match(config, /const DEFAULT_E2E_PORT = 4173/);
+  assert.match(config, /process\.env\.E2E_PORT \?\? DEFAULT_E2E_PORT/);
+  assert.match(config, /const e2eBaseUrl = `http:\/\/127\.0\.0\.1:\$\{e2ePort\}`/);
+  assert.match(config, /baseURL: e2eBaseUrl/);
+  assert.match(config, /url: e2eBaseUrl/);
+  assert.match(config, /env: \{ PORT: String\(e2ePort\) \}/);
+  assert.doesNotMatch(config, /baseURL:\s*['"]http:\/\/127\.0\.0\.1:4173['"]/);
+  assert.doesNotMatch(config, /url:\s*['"]http:\/\/127\.0\.0\.1:4173['"]/);
+  assert.doesNotMatch(config, /command:\s*['"][^'"]*4173/);
+  assert.match(staticServer, /process\.env\.PORT \|\| 4173/);
+});
+
 test('manual external blocker loop workflow runs redacted evidence loop and uploads report', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/external-blocker-loop.yml');
   assert.equal(fs.existsSync(workflowPath), true);
