@@ -256,73 +256,8 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
-  /\bn(?:ä|a)mns\s+som\s+exempel\b/i,
-  /\bmentioned\s+as\s+examples?\b/i,
-  /\bn(?:ä|a)mns\s+som\s+en\s+anledning\b/i,
-  /\bmentioned\s+as\s+a\s+reason\b/i,
   /\bn(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l\b/i,
   /\bmentioned\s+as\s+(?:historical\s+)?reasons\b/i,
-];
-const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
-];
-const QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS = [
-  /\bsjukförsäkring\b/i,
-  /\bföräldraförsäkring\b/i,
-  /\barbetslöshetsförsäkring\b/i,
-  /\bsickness insurance\b/i,
-  /\bparental insurance\b/i,
-  /\bunemployment insurance\b/i,
-];
-const QUESTION_Q071_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
-  /\bhögre utbildning\b/i,
-  /\bforskning\b/i,
-  /\bhigher education\b/i,
-  /\bresearch\b/i,
-];
-const QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
-  /\bhögre utbildning\b/i,
-  /\bforskning vid högskolor och universitet\b/i,
-  /\bhigher education\b/i,
-  /\bresearch at colleges and universities\b/i,
-];
-const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
-  /\bWhat is common to do on All Saints(?:’|') Day\b/i,
-];
-const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
-const QUESTION_CHRISTMAS_TREE_ENGLISH_NATURALNESS_PATTERNS = [
-  /\btree at Christmas\b/i,
-  /\bbring a tree into the house\b/i,
-  /\bBring a tree\b/i,
-  /\bPlant a tree\b/i,
-  /\bDance around a tree\b/i,
-  /\bLight a tree\b/i,
-];
-const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat does the Council of Europe work for\??/i,
-  /\bThe Council of Europe works for\b/i,
-  /\bThe Council of Europe works only for\b/i,
-];
-const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
-  /\bbec(?:o|a)me important for\b/i,
-];
-const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
-  /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
-  /\bIn a Lucia procession,\s+one person is Lucia\b/i,
-];
-const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
-  /\bskatt och moms\b/i,
-  /\btax and VAT\b/i,
-  /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
-  /\bCompanies also pay tax,\s+and VAT is paid\b/i,
-  /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
-  /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
-];
-const QUESTION_SUCCESSION_VAT_DISTRACTOR_PATTERNS = [
-  /\bVilka varor som har moms\b/i,
-  /\bWhich goods have VAT\b/i,
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
