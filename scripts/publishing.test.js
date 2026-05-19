@@ -138,15 +138,17 @@ test('public support and privacy URL copy is ready for hosting', () => {
   const publicCopy = read('publishing/public-support-and-privacy.md');
   assert.match(publicCopy, /Support URL/i);
   assert.match(publicCopy, /Privacy Policy URL/i);
+  assert.match(publicCopy, /app-ads\.txt/i);
   assert.match(publicCopy, /no personal data/i);
   assert.match(publicCopy, /no account/i);
   assert.match(publicCopy, /not affiliated/i);
   assertCurrentPublicPrivacyPosture(publicCopy);
 });
 
-test('hostable public support and privacy pages are prepared', () => {
+test('hostable public support, privacy, and app-ads files are prepared', () => {
   const support = read('publishing/public-site/support/index.html');
   const privacy = read('publishing/public-site/privacy/index.html');
+  const appAds = read('publishing/public-site/app-ads.txt');
 
   assert.match(support, /Sweden Citizenship Test Prep support/i);
   assert.match(support, /content issue/i);
@@ -159,6 +161,8 @@ test('hostable public support and privacy pages are prepared', () => {
   assert.match(privacy, /stored locally on the device/i);
   assertCurrentPublicPrivacyPosture(privacy);
   assert.match(privacy, /<html lang="en">/i);
+
+  assert.equal(appAds.trim(), 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0');
 });
 
 test('post-EAS-auth runbook covers build, device, and store evidence sequence', () => {

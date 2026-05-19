@@ -6,10 +6,11 @@ addresses in both store records and in the release evidence file.
 
 ## Intended store fields
 
-| Store field        | Final value                                                            |
-| ------------------ | ---------------------------------------------------------------------- |
-| Support URL        | `https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/` |
-| Privacy Policy URL | `https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/` |
+| Store field        | Final value                                                               |
+| ------------------ | ------------------------------------------------------------------------- |
+| Support URL        | `https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/`    |
+| Privacy Policy URL | `https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/`    |
+| AdMob app-ads.txt  | `https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt` |
 
 ## Support URL page copy
 
@@ -62,12 +63,14 @@ reviewed and updated before submission.
 
 ## Hosting checklist
 
-- [x] Upload `publishing/public-site/support/index.html` and
-      `publishing/public-site/privacy/index.html` to the chosen public host.
-- [x] Publish these pages on a public HTTPS URL.
-- [x] Confirm the pages are reachable without login.
+- [x] Upload `publishing/public-site/support/index.html`,
+      `publishing/public-site/privacy/index.html`, and
+      `publishing/public-site/app-ads.txt` to the chosen public host.
+- [x] Publish these pages/files on public HTTPS URLs.
+- [x] Confirm the pages/files are reachable without login.
 - [x] Confirm the hosted text says no account, local progress storage, Google
       Mobile Ads, ATT/UMP consent, and the 29 SEK Remove Ads purchase.
+- [x] Confirm hosted `app-ads.txt` matches the local AdMob seller declaration.
 - [ ] Enter the Support URL in App Store Connect and Google Play Console.
 - [ ] Enter the Privacy Policy URL in App Store Connect and Google Play Console.
 - [x] Record final URLs in `reports/release-evidence-2026-05-15.md`.
