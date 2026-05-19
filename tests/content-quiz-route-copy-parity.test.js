@@ -26,8 +26,12 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /const copy = quizSessionCopy\[language\];/);
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Session \$\{currentSessionId\}/);
-  assert.match(source, /Försök igen med den här quizfrågan/);
+  assert.match(source, /Försök igen med den här övningsfrågan/);
   assert.match(source, /Try this quiz question again/);
+  const staleSwedishLoanwords = new RegExp(
+    [['Quiz', 'pass'].join(''), ['quiz', 'frågor'].join(''), ['quiz', 'frågan'].join('')].join('|'),
+  );
+  assert.doesNotMatch(source, staleSwedishLoanwords);
   assert.match(source, /<QuestionDisclaimer language=\{language\} \/>/);
   assert.match(source, /<QuestionCard question=\{question\} language=\{language\} \/>/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
