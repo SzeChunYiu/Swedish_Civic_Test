@@ -577,7 +577,7 @@ export function createMockPurchaseProvider({
       if (receiptValidationStatus !== 'valid') return { status: receiptValidationStatus };
       return createReceiptValidationResult(purchase);
     },
-    async requestRemoveAdsPurchase(productId) {
+    async requestRemoveAdsPurchase() {
       assertConnected();
       if (pendingPurchase) return null;
       ownedProductIdsSet.add(productId);
@@ -611,28 +611,6 @@ async function validateRemoveAdsReceipt(
     : createReceiptValidationResult(purchase);
 
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
-}
-
-async function runWithPurchaseProviderCleanup<T>(
-  provider: RemoveAdsPurchaseProvider,
-  operation: () => Promise<T>,
-): Promise<T> {
-  try {
-    const result = await operation();
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // A successful or pending purchase outcome must not be replaced by cleanup failure.
-    }
-    return result;
-  } catch (error) {
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // Preserve the original purchase, restore, or validation error for the caller.
-    }
-    throw error;
-  }
 }
 
 export async function buyRemoveAds({
