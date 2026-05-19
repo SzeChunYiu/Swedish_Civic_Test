@@ -807,6 +807,8 @@ function smtLoadAdSense() {
 function smtApplyConsent(choice) {
   // 'all' = personalised, 'min' = non-personalised (NPA=1)
   if (choice === "all" || choice === "min") {
+    window.adsbygoogle = window.adsbygoogle || [];
+    window.adsbygoogle.requestNonPersonalizedAds = choice === "min" ? 1 : 0;
     document.querySelectorAll("ins.adsbygoogle").forEach((el) => {
       if (choice === "min") el.setAttribute("data-npa", "1");
       else el.removeAttribute("data-npa");
