@@ -25,8 +25,8 @@ Required evidence rules:
 - [ ] Remove Ads purchase removed ads
 - [ ] Entitlement persisted after relaunch
 - [ ] Restore purchase restored entitlement
-- [ ] ATT prompt/status documented
-- [ ] EEA UMP consent prompt rendered
+- [ ] ATT prompt/status completed before UMP consent display or collection
+- [ ] EEA UMP consent prompt rendered after ATT status settled
 - [ ] Timed exam screens showed no ads
 
 ## Android
@@ -41,6 +41,6 @@ Required evidence rules:
 - [ ] Remove Ads purchase removed ads
 - [ ] Entitlement persisted after relaunch
 - [ ] Restore purchase restored entitlement
-- [ ] ATT prompt/status documented
-- [ ] EEA UMP consent prompt rendered
+- [ ] Android has no ATT prompt in this release QA path
+- [ ] EEA UMP consent prompt rendered without ATT sequencing
 - [ ] Timed exam screens showed no ads

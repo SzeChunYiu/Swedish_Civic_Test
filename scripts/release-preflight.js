@@ -139,14 +139,27 @@ const removeAdsDeviceQaPath =
 const removeAdsStep3Command =
   'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
 const releaseScopeOverrideId = 'release-scope-v11';
-const removeAdsDeviceQaChecks = [
+const removeAdsDeviceQaCommonChecks = [
   'AdMob test ads rendered on study screens',
   'Remove Ads purchase removed ads',
   'Entitlement persisted after relaunch',
   'Restore purchase restored entitlement',
-  'ATT prompt/status documented',
-  'EEA UMP consent prompt rendered',
   'Timed exam screens showed no ads',
+];
+const removeAdsDeviceQaPlatformChecks = {
+  iOS: [
+    'ATT prompt/status completed before UMP consent display or collection',
+    'EEA UMP consent prompt rendered after ATT status settled',
+  ],
+  Android: [
+    'Android has no ATT prompt in this release QA path',
+    'EEA UMP consent prompt rendered without ATT sequencing',
+  ],
+};
+const removeAdsDeviceQaChecks = [
+  ...removeAdsDeviceQaCommonChecks,
+  ...removeAdsDeviceQaPlatformChecks.iOS,
+  ...removeAdsDeviceQaPlatformChecks.Android,
 ];
 const removeAdsDeviceQaMetadata = [
   ['Device', /(?:iPhone|iPad|Pixel|Galaxy|Android|iOS|simulator|physical)/i],
@@ -661,7 +674,27 @@ function validateRemoveAdsDeviceQaReport(reportPath) {
       }
     }
 
-    for (const check of removeAdsDeviceQaChecks) {
+    const consentEvidenceLines = section
+      .split('\n')
+      .filter((line) => /ATT|UMP|both prompts|both consent prompts/i.test(line))
+      .join('\n');
+    if (
+      platform === 'iOS' &&
+      /ATT[\s\S]{0,80}UMP|UMP[\s\S]{0,80}ATT|both prompts|both consent prompts/i.test(
+        consentEvidenceLines,
+      ) &&
+      !/\b(before|after|settled|completed before|sequence|order)\b/i.test(consentEvidenceLines)
+    ) {
+      errors.push(
+        'iOS consent evidence must record ATT completion before UMP display or collection',
+      );
+    }
+
+    const expectedChecks = [
+      ...removeAdsDeviceQaCommonChecks,
+      ...removeAdsDeviceQaPlatformChecks[platform],
+    ];
+    for (const check of expectedChecks) {
       const pattern = new RegExp(`-\\s+\\[[xX]\\]\\s+${escapeRegExp(check)}\\b`);
       if (!pattern.test(section)) {
         errors.push(`${platform} missing checked manual check: ${check}`);

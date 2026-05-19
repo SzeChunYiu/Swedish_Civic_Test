@@ -694,14 +694,27 @@ function createDeviceAudioEvidence(platform, options = {}) {
   };
 }
 
-const removeAdsDeviceQaChecks = [
+const removeAdsDeviceQaCommonChecks = [
   'AdMob test ads rendered on study screens',
   'Remove Ads purchase removed ads',
   'Entitlement persisted after relaunch',
   'Restore purchase restored entitlement',
-  'ATT prompt/status documented',
-  'EEA UMP consent prompt rendered',
   'Timed exam screens showed no ads',
+];
+const removeAdsDeviceQaPlatformChecks = {
+  iOS: [
+    'ATT prompt/status completed before UMP consent display or collection',
+    'EEA UMP consent prompt rendered after ATT status settled',
+  ],
+  Android: [
+    'Android has no ATT prompt in this release QA path',
+    'EEA UMP consent prompt rendered without ATT sequencing',
+  ],
+};
+const removeAdsDeviceQaChecks = [
+  ...removeAdsDeviceQaCommonChecks,
+  ...removeAdsDeviceQaPlatformChecks.iOS,
+  ...removeAdsDeviceQaPlatformChecks.Android,
 ];
 
 function createRemoveAdsDeviceQaReport(options = {}) {
@@ -721,7 +734,15 @@ function createRemoveAdsDeviceQaReport(options = {}) {
   }
 
   const checked = options.checked === false ? ' ' : 'x';
-  const checklist = removeAdsDeviceQaChecks.map((check) => `- [${checked}] ${check}`).join('\n');
+  const checklistForPlatform = (platform) =>
+    [
+      ...removeAdsDeviceQaCommonChecks,
+      ...removeAdsDeviceQaPlatformChecks[platform],
+    ]
+      .map((check) => `- [${checked}] ${check}`)
+      .join('\n');
+  const iosChecklist = options.iosChecklist || checklistForPlatform('iOS');
+  const androidChecklist = options.androidChecklist || checklistForPlatform('Android');
   const body =
     options.body ||
     [
@@ -735,7 +756,7 @@ function createRemoveAdsDeviceQaReport(options = {}) {
       '- Reviewer: Release QA',
       '- Reviewed at: 2026-05-19T11:00:00Z',
       '',
-      checklist,
+      iosChecklist,
       '',
       '## Android',
       '',
@@ -745,7 +766,7 @@ function createRemoveAdsDeviceQaReport(options = {}) {
       '- Reviewer: Release QA',
       '- Reviewed at: 2026-05-19T11:05:00Z',
       '',
-      checklist,
+      androidChecklist,
       '',
     ].join('\n');
 
@@ -1134,6 +1155,43 @@ test('release preflight blocks generic Remove Ads device-QA prose', () => {
     assert.match(scopeGate.evidence, /generic "done" evidence/i);
     assert.match(scopeGate.evidence, /missing ## iOS section/i);
     assert.match(scopeGate.evidence, /missing ## Android section/i);
+  } finally {
+    deviceQaReport.cleanup();
+  }
+});
+
+test('release preflight blocks iOS consent evidence without ATT-before-UMP order', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-consent-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const unorderedIosChecklist = [
+    ...removeAdsDeviceQaCommonChecks.map((check) => `- [x] ${check}`),
+    '- [x] ATT and UMP consent prompts appeared during the device run',
+  ].join('\n');
+  const deviceQaReport = createRemoveAdsDeviceQaReport({
+    iosChecklist: unorderedIosChecklist,
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+    writeFakeReleaseCommands(tmpDir, { grepAlwaysPass: true });
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_DEVICE_QA_PATH: deviceQaReport.relativePath,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    assert.equal(scopeGate.status, 'BLOCKED');
+    assert.match(scopeGate.evidence, /ATT completion before UMP display or collection/i);
+    assert.match(
+      scopeGate.evidence,
+      /iOS missing checked manual check: ATT prompt\/status completed before UMP consent display or collection/i,
+    );
   } finally {
     deviceQaReport.cleanup();
   }

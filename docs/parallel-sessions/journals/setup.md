@@ -1219,3 +1219,12 @@ Verification: clean worktree from current `origin/main`; linked shared ignored `
 PR: pending from `task/scheduled-deploy-cadence-1779200400` at handoff commit time.
 Blocked? no for this release/deploy source guard; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: inspect the scheduled workflow cadence guard and rerun `npm run test:build-config` plus workflow source scan before acceptance.
+
+## Iteration 255 - 2026-05-19
+
+Task completed: MOBILE-ADS-CONSENT-SEQUENCE-DEVICE-QA-1 - split Remove Ads device-QA consent checks by platform so iOS must record ATT completion before UMP display/collection while Android records the UMP-only path.
+Artifacts changed: `reports/release-ads-iap-device-qa.md`, `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from claimed `origin/main` `838a35e2`; focused `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH node --test --test-name-pattern "Remove Ads device-QA|consent evidence|device-QA manual check" scripts/release-preflight.test.js` exit 0 with 4/4 passing; full `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH npm run test:release-preflight` exit 0 with 55/55 passing; same shared dependency path `npm run validate:content` exit 0; `node --check scripts/release-preflight.js && node --check scripts/release-preflight.test.js` exit 0; `npm run test:ownership` exit 0; `git diff --check` exit 0.
+PR: pending from `task/mobile-ads-device-qa-sequence-pane2-3999748` at handoff commit time.
+Blocked? no for this release/device-QA evidence gate.
+Next suggested validator action: inspect the platform-specific QA checklist and rerun `npm run test:release-preflight` plus `npm run validate:content` before accepting `MOBILE-ADS-CONSENT-SEQUENCE-DEVICE-QA-1`.
