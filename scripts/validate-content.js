@@ -2794,6 +2794,28 @@ const EXPECTED_THEME_MOTION_DURATIONS = {
   slow: 320,
 };
 const EXPECTED_THEME_MOTION_EASING = ['standard', 'press'];
+const EXPECTED_THEME_CONTRAST_PAIRS = [
+  { foreground: 'text', background: 'surface', minimum: 4.5 },
+  { foreground: 'text', background: 'canvas', minimum: 4.5 },
+  { foreground: 'textSecondary', background: 'surface', minimum: 4.5 },
+  { foreground: 'textSecondary', background: 'canvas', minimum: 4.5 },
+  { foreground: 'textSecondary', background: 'surfaceWarm', minimum: 4.5 },
+  { foreground: 'textMuted', background: 'surface', minimum: 4.5 },
+  { foreground: 'textMuted', background: 'canvas', minimum: 4.5 },
+  { foreground: 'textMuted', background: 'surfaceWarm', minimum: 4.5 },
+  { foreground: 'textDisclaimer', background: 'surface', minimum: 4.5 },
+  { foreground: 'textDisclaimer', background: 'canvas', minimum: 4.5 },
+  { foreground: 'textDisclaimer', background: 'surfaceWarm', minimum: 4.5 },
+  { foreground: 'textPlaceholder', background: 'surface', minimum: 4.5 },
+  { foreground: 'textPlaceholder', background: 'canvas', minimum: 4.5 },
+  { foreground: 'textPlaceholder', background: 'surfaceWarm', minimum: 4.5 },
+  { foreground: 'accent', background: 'surface', minimum: 4.5 },
+  { foreground: 'badgeBlueText', background: 'badgeBlueBg', minimum: 4.5 },
+  { foreground: 'success', background: 'surface', minimum: 4.5 },
+  { foreground: 'success', background: 'successSoft', minimum: 4.5 },
+  { foreground: 'warning', background: 'surface', minimum: 4.5 },
+  { foreground: 'warning', background: 'warningSoft', minimum: 4.5 },
+];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -6149,7 +6171,9 @@ let themeRadiusTokensValidated = 0;
 let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
+let themeContrastPairsValidated = 0;
 let themeTokenSchemaValidated = false;
+let themeContrastPairsAAValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
@@ -11054,6 +11078,35 @@ function validateMockExamAccessTypeSchemaParity() {
   }
 }
 
+function parseHexColorChannelPair(colorToken) {
+  const match = /^#([0-9a-fA-F]{6})$/.exec(colorToken || '');
+  if (!match) return null;
+
+  return [0, 2, 4].map((index) => parseInt(match[1].slice(index, index + 2), 16) / 255);
+}
+
+function relativeLuminance(colorToken) {
+  const channels = parseHexColorChannelPair(colorToken);
+  if (!channels) return null;
+
+  const [red, green, blue] = channels.map((channel) =>
+    channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(foreground, background) {
+  const foregroundLuminance = relativeLuminance(foreground);
+  const backgroundLuminance = relativeLuminance(background);
+
+  if (foregroundLuminance == null || backgroundLuminance == null) return null;
+
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function validateThemeTokenSchema() {
   let valid = true;
 
@@ -11085,6 +11138,31 @@ function validateThemeTokenSchema() {
         continue;
       }
       themeColorTokensValidated += 1;
+    }
+
+    for (const pair of EXPECTED_THEME_CONTRAST_PAIRS) {
+      const foreground = colors[pair.foreground];
+      const background = colors[pair.background];
+      const ratio = contrastRatio(foreground, background);
+
+      if (ratio == null) {
+        reject(
+          `theme contrast ${pair.foreground} on ${pair.background} requires 6-digit hex color tokens`,
+        );
+        continue;
+      }
+      if (ratio < pair.minimum) {
+        reject(
+          `theme contrast ${pair.foreground} on ${pair.background} ratio ${ratio.toFixed(
+            2,
+          )}:1 below ${pair.minimum}:1`,
+        );
+        continue;
+      }
+      themeContrastPairsValidated += 1;
+    }
+    if (themeContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS.length) {
+      themeContrastPairsAAValidated = true;
     }
   }
 
@@ -11249,6 +11327,7 @@ function validateThemeTokenSchema() {
     themeRadiusTokensValidated === Object.keys(EXPECTED_THEME_RADIUS_VALUES).length &&
     themeTypographyTokensValidated === EXPECTED_THEME_TYPOGRAPHY_TOKENS.length &&
     themeShadowTokensValidated === EXPECTED_THEME_SHADOW_TOKENS.length &&
+    themeContrastPairsAAValidated &&
     themeMotionTokensValidated ===
       Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length + EXPECTED_THEME_MOTION_EASING.length + 2
   ) {
@@ -13937,6 +14016,8 @@ console.log(
       themeTypographyTokensValidated,
       themeShadowTokensValidated,
       themeMotionTokensValidated,
+      themeContrastPairsValidated,
+      themeContrastPairsAAValidated,
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
