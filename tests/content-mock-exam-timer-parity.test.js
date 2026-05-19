@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -60,12 +60,14 @@ test('default mock exam timer stays in parity with configured duration', () => {
   const summary = JSON.parse(match[0]);
   const config = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
   const { formatExamTime, shouldAutoSubmitExam } = loadTs('lib/quiz/examGenerator.ts');
+  const examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const totalSeconds = config.durationMinutes * 60;
 
   assert.equal(summary.mockExamTimerParityValidated, true);
   assert.equal(formatExamTime(totalSeconds), expectedFormattedTime(totalSeconds));
   assert.equal(
     shouldAutoSubmitExam({
+      examActive: true,
       remainingSeconds: totalSeconds,
       submitted: false,
       questionCount: config.questionCount,
@@ -74,11 +76,120 @@ test('default mock exam timer stays in parity with configured duration', () => {
   );
   assert.equal(
     shouldAutoSubmitExam({
+      examActive: true,
       remainingSeconds: 0,
       submitted: false,
       questionCount: config.questionCount,
     }),
     true,
   );
+  assert.equal(
+    shouldAutoSubmitExam({
+      examActive: false,
+      remainingSeconds: 0,
+      submitted: false,
+      questionCount: config.questionCount,
+    }),
+    false,
+  );
   assert.equal(formatExamTime(-1), '00:00');
+  assert.match(
+    examRoute,
+    /if \(!examUnlocked \|\| submitted \|\| remainingSeconds <= 0\) return undefined;/,
+  );
+  assert.match(examRoute, /examActive: examUnlocked/);
+  assert.doesNotMatch(
+    examRoute,
+    /accessDecision\.canStartExam && accessDecision\.reason !== 'rewarded_exam_credit'/,
+  );
+});
+
+test('mock exam timer parity rejects route timer effects that run before explicit start', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;', 'if (submitted || remainingSeconds <= 0) return undefined;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /mock exam timer interval must wait for the explicit start state/,
+  );
+});
+
+test('mock exam timer parity rejects auto-submit without the explicit start guard', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('examActive: examUnlocked,', 'examActive: true,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /mock exam auto-submit must be gated by the explicit start state/,
+  );
+});
+
+test('mock exam timer parity rejects free or premium auto-unlock regressions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const accessLoading = !accessReady || !entitlementsReady;', "const accessLoading = !accessReady || !entitlementsReady;\\n  if (accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit') {\\n    setExamUnlocked(true);\\n  }");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /mock exam route must not auto-unlock free or premium exams before Start is pressed/,
+  );
 });

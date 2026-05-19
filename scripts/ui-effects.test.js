@@ -1455,6 +1455,15 @@ test('exam auto-submits at timeout and explains unanswered scoring', () => {
   const source = read('app/(tabs)/exam.tsx');
 
   assert.match(source, /shouldAutoSubmitExam/);
+  assert.match(
+    source,
+    /if \(!examUnlocked \|\| submitted \|\| remainingSeconds <= 0\) return undefined;/,
+  );
+  assert.match(source, /examActive: examUnlocked/);
+  assert.doesNotMatch(
+    source,
+    /accessDecision\.canStartExam && accessDecision\.reason !== 'rewarded_exam_credit'/,
+  );
   assert.match(source, /setSubmitted\(true\)/);
   assert.match(source, /timeExpiredBadge: 'Tiden gick ut'/);
   assert.match(source, /timeExpiredBadge: 'Time expired'/);
