@@ -20,6 +20,10 @@ export function buildQuestionSpeechText(question: SpeakableQuestion): string {
 }
 
 export interface SpeakSwedishOptions {
+  onDone?: Speech.SpeechOptions['onDone'];
+  onError?: Speech.SpeechOptions['onError'];
+  onStart?: Speech.SpeechOptions['onStart'];
+  onStopped?: Speech.SpeechOptions['onStopped'];
   /** Playback rate. Default 1.0. expo-speech clamps engine-supported range. */
   rate?: number;
 }
@@ -32,9 +36,18 @@ export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): v
       ? Math.max(0.1, Math.min(2.0, options.rate))
       : undefined;
   try {
-    Speech.speak(speechText, { language: 'sv-SE', ...(rate !== undefined ? { rate } : {}) });
+    Speech.speak(speechText, {
+      language: 'sv-SE',
+      onDone: options.onDone,
+      onError: options.onError,
+      onStart: options.onStart,
+      onStopped: options.onStopped,
+      ...(rate !== undefined ? { rate } : {}),
+    });
   } catch (error) {
-    console.warn('Speech unavailable:', error);
+    const speechError = error instanceof Error ? error : new Error(String(error));
+    options.onError?.(speechError);
+    console.warn('Speech unavailable:', speechError);
   }
 }
 
