@@ -1201,3 +1201,12 @@ Verification: clean worktree from current `origin/main` `5ccf15d`; `NODE_OPTIONS
 PR: pending from current SETUP audit branch at handoff commit time.
 Blocked? yes - no fresh unblocked local SETUP source atom was found; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held unless fresh P0 site/release source evidence appears; keep production freshness separate until production serves current main and passes the hash-aware live smoke.
+
+## Iteration 252 - 2026-05-19
+
+Task completed: PROFILE-STUDY-SETUP-CTA-1 - moved the Profile Study setup settings shortcut into the Study setup card, added localized goal/language/audio CTA copy, and surfaced the current audio state as a setup badge.
+Artifacts changed: `app/(tabs)/profile.tsx`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `tests/content-profile-route-copy-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: branch rebased onto current `origin/main` `276e1c66`; linked shared `node_modules` in a clean worktree; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `profileRouteCopyLabelsValidated:42` and `profileRouteCopyParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-profile-route-copy-parity.test.js scripts/ui-effects.test.js` exit 0 with 54/54 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline` exit 0; targeted Prettier check exit 0; `git diff --check origin/main..HEAD` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; system-Chrome smoke against exported web with SPA fallback confirmed `/profile` renders `Studieinställningar`, the 48px settings CTA, audio badge, PremiumBanner and compliance links, and clicking the CTA routes to `/settings` with no console/page errors.
+PR: #912 `setup: make profile study setup actionable` updated after final rebase.
+Blocked? no for this Profile CTA atom.
+Next suggested validator action: inspect #912 and rerun the focused profile copy parity, UI-effects, validate:content, and exported-web Profile-to-Settings smoke if runtime evidence is needed.
