@@ -10928,7 +10928,7 @@ function validateProgressStoreSchemaParity() {
       'question progress hydration must normalize seenCount',
     ],
     [
-      "...(typeof item.bookmarked === 'boolean' ? { bookmarked: item.bookmarked } : {}),",
+      "if (typeof item.bookmarked === 'boolean') { normalizedQuestionProgress.bookmarked = item.bookmarked; }",
       'question progress hydration must preserve only boolean bookmark values',
     ],
     [
@@ -10940,12 +10940,12 @@ function validateProgressStoreSchemaParity() {
       'progress hydration must normalize persisted answerDates',
     ],
     [
-      'lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),',
-      'question progress hydration must normalize lastAnsweredAt timestamps',
+      'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
+      'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
     ],
     [
-      'nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),',
-      'question progress hydration must normalize nextReviewAt timestamps',
+      'if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;',
+      'question progress hydration must normalize and omit absent nextReviewAt timestamps',
     ],
     [
       'const completedAt = normalizeIsoTimestamp(item.completedAt);',
@@ -10961,8 +10961,16 @@ function validateProgressStoreSchemaParity() {
     ],
     ['score: clampScore(item.score ?? 0)', 'mock-exam hydration must clamp persisted score'],
     [
-      'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
+      'const serializedProgress = JSON.stringify(progress);',
+      'writeProgress must serialize progress once before persistence and readback',
+    ],
+    [
+      'progressStorage?.set(progressStateKey, serializedProgress);',
       'writeProgress must persist JSON through progressStateKey',
+    ],
+    [
+      'return normalizeProgress(JSON.parse(serializedProgress));',
+      'writeProgress must return the normalized JSON readback shape',
     ],
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
     ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
@@ -10989,8 +10997,15 @@ function validateProgressStoreSchemaParity() {
       'mock exam completion XP must update persisted total XP',
     ],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
-    ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
-    ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
+    [
+      'const persistedProgress = writeProgress(nextProgress);',
+      'progress mutations must persist and canonicalize nextProgress',
+    ],
+    ['return persistedProgress;', 'progress mutations must return persisted readback state'],
+    [
+      'const persistedProgress = writeProgress(emptyProgress);',
+      'resetProgress must persist and canonicalize the empty progress state',
+    ],
   ];
 
   requiredSnippets.forEach(([snippet, message]) => {
