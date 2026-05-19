@@ -1046,6 +1046,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
     'Provåtkomst',
     'Kontrollerar provåtkomst.',
+    'Det gick inte att läsa lokal åtkomst för övningsprov. Försök igen om en stund.',
     'Dagens kostnadsfria övningsprov är tillgängligt.',
     'Starta övningsprov',
     'Lås upp extra prov',
@@ -1076,6 +1077,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
     'Exam access',
     'Checking mock exam access.',
+    'Mock exam access could not be checked on this device. Try again in a moment.',
     'Daily free mock exam available.',
     'Start mock exam',
     'Unlock extra exam',
@@ -3356,6 +3358,7 @@ const EXPECTED_MOCK_EXAM_ACCESS_TYPE_UNIONS = [
   {
     typeName: 'MockExamAccessReason',
     values: [
+      'access_read_failed',
       'free_exam_available',
       'premium_unlimited_mock_exams',
       'rewarded_exam_credit',
@@ -3370,6 +3373,7 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
   {
     name: 'MockExamAccessState',
     fields: [
+      { name: 'accessReadFailed', type: 'boolean', optional: true },
       { name: 'completedMockExamsToday', type: 'number', optional: false },
       {
         name: 'consentDecision',
