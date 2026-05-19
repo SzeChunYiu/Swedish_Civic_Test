@@ -96,6 +96,20 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /minWidth:\s*space\[6\]/);
 });
 
+test('LanguagePicker menu rows expose menu-item state semantics', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
+
+  assert.match(source, /accessibilityRole="menu"/);
+  assert.match(source, /accessibilityRole="menuitem"/);
+  assert.match(source, /aria-selected=\{selected\}/);
+  assert.match(source, /aria-disabled=\{!opt\.available\}/);
+  assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
+  assert.doesNotMatch(
+    source,
+    /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/,
+  );
+});
+
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
   const source = fs.readFileSync(
     path.join(ROOT, 'components', 'monetization', 'NativeAdCard.native.tsx'),

@@ -7,7 +7,7 @@ name: Scheduled Vercel deploy
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/30 * * * *'
   push:
     branches:
       - main
