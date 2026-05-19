@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-18T19:03:12.264Z",
+  "capturedAt": "2026-05-19T02:15:36.395Z",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "launchOverlayPolicy": "Visual smoke dismisses the launch sponsor overlay before every screenshot and rejects visible overlays.",
@@ -18,8 +18,8 @@
       "name": "index",
       "route": "/",
       "file": "index.png",
-      "bytes": 157282,
-      "sha256": "20973c212b3a52fbec18c3ccbf70e8c97e3e321e06385c99ad68a4f56bdd42b2",
+      "bytes": 133652,
+      "sha256": "8455fad94f3d91b9ce6185b1af9e66c1c396a7194477139c573bae86f2d6ef2d",
       "launchOverlayDismissed": true,
       "launchOverlayVisibleAfterDismissal": false
     },

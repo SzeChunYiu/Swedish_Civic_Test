@@ -3852,3 +3852,130 @@ Evidence: the public Privacy Policy URL artifact still tells store reviewers/use
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route RELEASE/COMPLY or SETUP/public-site to update the public privacy HTML/source copy and harden publishing/release guards against stale disabled-ads/no-data public privacy copy.
+
+Lane: REVIEWER
+Host/branch: billy / shared checkout `main` with existing queue/report dirt; detached review worktree `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-csv-options-zGCAmu/wt` at remote branch commit `ce6b1aa7`
+Role type and manager: fixed-quality / MANAGER-build then VALIDATOR
+Task / checklist item: Branch review for `QUESTION-BANK-CSV-OPTION-PAYLOAD-PARITY-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read required REVIEWER docs, `docs/parallel-sessions/AI_FACTORY.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and current queue state before testing.
+- Inspected `origin/task/data-integrity/csv-option-parity-1779172200` at `ce6b1aa7`; merge-base is latest `origin/main` `9a60a571`, and the diff touches `content/question-bank.csv`, `scripts/export-question-bank.js`, `scripts/validate-content.js`, and `tests/content-question-bank-csv-contract.test.js`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, 720-question export parity.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionBankCsvRowsValidated:720` and Card/Badge/MetricCard parity green.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-bank-csv-contract.test.js scripts/content-production.test.js tests/content-card-accessibility-parity.test.js tests/content-badge-accessibility-parity.test.js` - exit 0, 12/12 passing.
+- Direct all-row Node CSV scan - exit 0, all 720 rows have `optionSv` and `optionEn` JSON payloads matching `data/questions.ts`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- `git diff --check origin/main..HEAD` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 1 on the already-queued q150 stale expected explanation, unrelated to this CSV option-payload branch.
+Workspace contract: pass - no product source edited by REVIEWER; remote branch reviewed in a detached checkout.
+Findings queued: no new defect; added reviewer confirmation for `QUESTION-BANK-CSV-OPTION-PAYLOAD-PARITY-1`.
+Evidence: the option-payload CSV export and validation contract works on latest main and has executable drift rejection plus direct 720-row payload parity proof.
+PR (number + merged?): none from reviewer - branch evidence only.
+Accepted by worker? yes
+Next suggested validator action: accept/merge `ce6b1aa7` if manager source review agrees; keep q150 derived-content and release/local validation blockers separate.
+
+Lane: REVIEWER
+Host/branch: billy / shared checkout with existing unrelated dirt; detached review worktrees `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-csv-source-current-0tdiks/wt` at current main and `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-csv-source-tip-z79119/wt` at remote branch commit `cc10cf31`
+Role type and manager: fixed-quality / MANAGER-build then VALIDATOR
+Task / checklist item: Branch review for `QUESTION-BANK-CSV-SOURCE-METADATA-PARITY-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read required REVIEWER docs, `docs/parallel-sessions/AI_FACTORY.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and current queue state before testing.
+- Inspected `origin/task/question-bank-csv-source-metadata-177916` at updated commit `cc10cf31`; it adds UHR source title/url/retrieved metadata to the public CSV export/validator/test contract.
+- `git cherry-pick cc10cf31` onto current product main `ce01c423` - exit 1 with conflicts in `content/question-bank.csv` and `tests/content-question-bank-csv-contract.test.js`; cherry-pick was aborted.
+- Branch-vs-current-main diff shows stale non-CSV drift around `components/ui/Button.tsx`, `tests/content-button-accessibility-parity.test.js`, and `scripts/ui-effects.test.js`, plus the accepted option-payload CSV contract now on main.
+- On branch tip `cc10cf31`, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0, 720-question export parity.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `questionBankCsvRowsValidated:720`.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-bank-csv-contract.test.js scripts/content-production.test.js tests/content-source-material-link-parity.test.js` - exit 0, 9/9 passing.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- On branch tip, `git diff --check $(git merge-base origin/main HEAD)..HEAD` - exit 0.
+- Latest observed `origin/main` advanced to `80444ed3` with only `codex-tasks/claims.txt` beyond `ce01c423`, so product conflict posture is unchanged.
+Workspace contract: pass - no product source edited by REVIEWER; branch tested in detached worktrees only.
+Findings queued: `QUESTION-BANK-CSV-SOURCE-METADATA-PARITY-1 branch stale recheck`.
+Evidence: the UHR source metadata CSV implementation passes on its stale branch tip, but cannot be accepted until rebased/recreated on current main while preserving the accepted option-payload CSV columns and current Button contract.
+PR (number + merged?): none from reviewer - branch evidence only.
+Accepted by worker? blocked as-is; yes for source-metadata idea after rebase/recreate
+Next suggested validator action: reject/rebase the stale branch; require a current-main version that preserves `optionSv`/`optionEn`, Button contract changes, and focused CSV/source parity coverage.
+
+Lane: REVIEWER
+Host/branch: billy / shared checkout with existing unrelated dirt; detached review worktree `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-button-current-rS3rVf/wt` at current `origin/main` `5ccf86c6`
+Role type and manager: fixed-quality / MANAGER-uiux then VALIDATOR
+Task / checklist item: Current-main review of shared Button tokenized contract.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read required REVIEWER docs, `docs/parallel-sessions/AI_FACTORY.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and current queue state before testing.
+- Inspected the Button contract change: `components/ui/Button.tsx` now exports `ButtonVariant` and `ButtonProps`, documents defaults, uses `space.hairline`, `space[6]`, and `motion.pressedScale`; validator/parity tests now expect 20 Button accessibility rules and reject hardcoded touch-target drift.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `buttonAccessibilityRulesValidated:20` and `buttonAccessibilityParityValidated:true`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-button-accessibility-parity.test.js scripts/ui-effects.test.js scripts/content-production.test.js` - exit 0, 54/54 passing.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- `git diff --check` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 1 on the already-queued q150 stale expected explanation, unrelated to Button.
+Workspace contract: pass - no product source edited by REVIEWER; current main reviewed in a detached checkout.
+Findings queued: no new defect; added current-main green confirmation `REVIEWER-BUTTON-CONTRACT-CURRENT-GREEN-1`.
+Evidence: Button source, validator mirror, UI-effects guard, focused parity tests, typecheck, lint, and whitespace all pass on current main.
+PR (number + merged?): none from reviewer - queue/handoff only.
+Accepted by worker? yes
+Next suggested validator action: accept the Button tokenized contract if manager source review agrees; keep q150 derived-content and release/local blockers separate.
+
+Lane: REVIEWER
+Host/branch: billy / shared checkout with existing unrelated dirt; detached review worktree `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-badge-locked-current-f1EOjC/wt` at synthetic commit `f604d23d`
+Role type and manager: fixed-quality / MANAGER-uiux then VALIDATOR
+Task / checklist item: Branch review for `PROFILE-LOCKED-BADGE-PREVIEWS-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read required REVIEWER docs, `docs/parallel-sessions/AI_FACTORY.md`, `GOAL.md`, `docs/architecture.md`, `DESIGN.md`, and current queue state before testing.
+- Cherry-picked `origin/task/uiux-badge-locked-1779151787` commit `48203f1a` cleanly onto current product main `5bf794fd` as synthetic commit `f604d23d`.
+- Inspected diff: profile now renders all badge milestones as `BadgeRow` rows with localized locked/unlocked labels, locked hints, progress hints, and grouped row accessibility labels; badge catalog exposes localized title/description/locked-hint/progress helpers.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0 with `profileRouteCopyLabelsValidated:34` and `badgeMilestoneParityValidated:true`.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node --test scripts/learning.test.js scripts/ui-effects.test.js tests/content-badge-catalog-schema.test.js tests/content-profile-route-copy-parity.test.js scripts/content-production.test.js` - exit 0, 67/67 passing.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- `git diff --check origin/main..HEAD` - exit 0.
+- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:derived-content` - exit 1 on the already-queued q150 stale expected explanation, unrelated to profile badges.
+- Latest observed `origin/main` advanced to `de3feb5c` with only `codex-tasks/claims.txt` beyond `5bf794fd`, so product evidence is unchanged.
+Workspace contract: pass - no product source edited by REVIEWER; branch reviewed through a detached synthetic current-main cherry-pick.
+Findings queued: no new defect; added reviewer confirmation for `PROFILE-LOCKED-BADGE-PREVIEWS-1`.
+Evidence: locked badge previews and catalog/profile parity work on current product main with focused tests, content validation, typecheck, lint, and whitespace checks green.
+PR (number + merged?): none from reviewer - branch evidence only.
+Accepted by worker? yes, if rebased/applied onto current main
+Next suggested validator action: accept/rebase/merge `48203f1a` or equivalent if manager source review agrees; treat the older badge-description branch as superseded by this fuller locked-preview version.
+
+Lane: REVIEWER
+Host/branch: billy / shared checkout with existing unrelated dirt; detached review worktrees `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-csv-source-recheck-a6MOXT/wt` at current main and `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-csv-source-f5tip-MxKrGG/wt` at remote branch commit `f5f5bf32`
+Role type and manager: fixed-quality / MANAGER-build then VALIDATOR
+Task / checklist item: Forced-branch recheck for `QUESTION-BANK-CSV-SOURCE-METADATA-PARITY-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Fetched `origin`; `origin/task/question-bank-csv-source-metadata-177916` was force-updated from `cc10cf31` to `f5f5bf32`.
+- `git cherry-pick origin/task/question-bank-csv-source-metadata-177916` onto current `origin/main` `de3feb5c` - exit 1 with conflicts in `content/question-bank.csv` and `tests/content-question-bank-csv-contract.test.js`; cherry-pick was aborted.
+- On branch tip `f5f5bf32`, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node scripts/export-question-bank.js --check` - exit 0.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` - exit 0.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-question-bank-csv-contract.test.js tests/content-source-material-link-parity.test.js scripts/content-production.test.js` - exit 0, 9/9 passing.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` - exit 0.
+- On branch tip, `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run lint` - exit 0.
+- On branch tip, `git diff --check $(git merge-base origin/main HEAD)..HEAD` - exit 0.
+Workspace contract: pass - no product source edited by REVIEWER; force-updated branch tested in detached worktrees only.
+Findings queued: updated `QUESTION-BANK-CSV-SOURCE-METADATA-PARITY-1` stale-branch evidence for `f5f5bf32`.
+Evidence: source-metadata branch-tip gates are green, but current-main cherry-pick still conflicts with the accepted option-payload CSV contract.
+PR (number + merged?): none from reviewer - branch evidence only.
+Accepted by worker? blocked as-is; yes after current-main rebase/recreate
+Next suggested validator action: require a current-main source-metadata patch that preserves `optionSv`/`optionEn` and all CSV drift tests.
+
+Lane: REVIEWER
+Host/branch: billy / shared checkout with existing unrelated dirt; detached review worktree `/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-1/sct-reviewer-csv-correct-recheck-iabP34/wt` at current `origin/main` `2d5b35e5`
+Role type and manager: fixed-quality / MANAGER-build then VALIDATOR
+Task / checklist item: Current-main conflict recheck for `QUESTION-BANK-CSV-CORRECT-ANSWER-PARITY-1`.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- `git cherry-pick bfb063f1` onto current `origin/main` `2d5b35e5` - exit 1 with conflicts in `content/question-bank.csv`, `scripts/export-question-bank.js`, `scripts/validate-content.js`, and `tests/content-question-bank-csv-contract.test.js`; cherry-pick was aborted.
+- This supersedes the earlier accept/rebase note only on merge mechanics: the branch's isolated correct-answer tests were already green, but current main now has the accepted `optionSv`/`optionEn` CSV payload contract.
+Workspace contract: pass - no product source edited by REVIEWER; conflict checked in a detached worktree only.
+Findings queued: updated `QUESTION-BANK-CSV-CORRECT-ANSWER-PARITY-1` with current-main conflict evidence.
+Evidence: stale correct-answer branch conflicts with the current public CSV contract.
+PR (number + merged?): none from reviewer - branch evidence only.
+Accepted by worker? blocked as-is; yes after current-main rebase/recreate
+Next suggested validator action: require a current-main correct-answer CSV patch that preserves `optionSv`/`optionEn` and all existing CSV drift tests.

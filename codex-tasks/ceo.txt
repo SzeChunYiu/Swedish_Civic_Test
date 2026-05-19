@@ -1,23 +1,4 @@
-separate, and queue q011/q037/q071/q072 next; validator to accept only
-PR-backed, evidence-backed P0 atoms and to keep TRANSLATE-COMPLETE open while
-naturalness defects remain.
 
-Cycle update 2026-05-18T12:43:40+02:00
-Objective: keep the factory on P0 burn-down. TRANSLATE-COMPLETE remains the
-highest active gap. q010 is now on origin/main via PR #182 / `8d6cead`, and
-q011 is on origin/main via PR #180 / `793ec73`; current content priority is
-q037, then q071, q072, q021, and later validator-filed naturalness rows.
-Teams: hold local `civic-content` only. `origin/main` contains the
-research/verify/delight/mascot expansion queues from #186, but those teams are
-not represented as active acceptance rows in `TEAM_PLAN.md`, and P0 content
-work still outranks expansion. Do not start build, UIUX, QA, release, research,
-verify, delight, mascot, or LUNARC teams this cycle.
-Staffing evidence: live tmux shows only `civic-content` active with six panes.
-The clean `origin/main` staffing gate returned STAFF-UP for queued hosts but
-each line held with `reason=lunarc_requires_slurm_station`; no `--apply` was
-run. Decision: HOLD/add-none.
-Escalations: none needing human approval this cycle. VALIDATOR should reconcile
-or defer the #186 expansion queues into `TEAM_PLAN.md` before any future
 staffing request.
 Manager updates sent: content manager received a direct tmux update to treat
 q010/q011 as landed and route q037 next; validator was queued to accept only

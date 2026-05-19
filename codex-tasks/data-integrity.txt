@@ -1,7 +1,4 @@
-MANAGER-build acceptance/current-route update - 2026-05-19T01:16+02:00
 
-`REVIEWER-GENERATED-TF-Q270-Q271-REASON-TARGET-1` is accepted on current
-`origin/main` via DATA-INTEGRITY PR #809 / `81c3295`, and
 `REVIEWER-GENERATED-TF-EXPLANATION-META-1` is accepted via PR #819 /
 `8782487`.
 
