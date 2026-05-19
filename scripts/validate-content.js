@@ -7184,7 +7184,8 @@ let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
-let bannerAdPlacementTypeCasesValidated = 0;
+let removeAdsSourceWiringPredicateCasesValidated = 0;
+let removeAdsSourceWiringPredicateValidated = false;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let nativeAdAssetDirectChildrenValidated = 0;
@@ -8537,6 +8538,97 @@ function validateReleaseMonetizationPolicyParity() {
     releaseMonetizationPolicyFieldsValidated === EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS.length
   ) {
     releaseMonetizationPolicyParityValidated = true;
+  }
+}
+
+function validateRemoveAdsSourceWiringPredicate() {
+  let valid = true;
+  const sources = {};
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  for (const relativePath of [
+    'app/(tabs)/home.tsx',
+    'app/(tabs)/profile.tsx',
+    'components/monetization/PremiumBanner.tsx',
+    'lib/monetization/purchases.ts',
+  ]) {
+    try {
+      sources[relativePath] = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    } catch (error) {
+      reject(`${relativePath} could not be read for Remove Ads source wiring: ${error.message}`);
+      return;
+    }
+  }
+
+  const normalizedPurchasesSource = sources['lib/monetization/purchases.ts'].replace(/\s+/g, ' ');
+  const normalizedPremiumBannerSource =
+    sources['components/monetization/PremiumBanner.tsx'].replace(/\s+/g, ' ');
+  const paywallPlacementPattern =
+    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*language=\{language\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>/;
+  const sourceWiringCases = [
+    [
+      /export const REMOVE_ADS_PRICE_LABEL = '29 SEK';/.test(
+        sources['lib/monetization/purchases.ts'],
+      ),
+      'Remove Ads canonical price label must stay 29 SEK',
+    ],
+    [
+      normalizedPurchasesSource.includes('export async function buyRemoveAds') &&
+        normalizedPurchasesSource.includes(
+          'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+        ),
+      'buyRemoveAds must request the canonical Remove Ads product id',
+    ],
+    [
+      normalizedPurchasesSource.includes('export async function restoreRemoveAdsPurchase') &&
+        normalizedPurchasesSource.includes(
+          'const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
+        ),
+      'restoreRemoveAdsPurchase must restore the canonical Remove Ads product id',
+    ],
+    [
+      /import \{[\s\S]*REMOVE_ADS_PRICE_LABEL,[\s\S]*buyRemoveAds,[\s\S]*restoreRemoveAdsPurchase,[\s\S]*\} from '\.\.\/\.\.\/lib\/monetization\/purchases';/.test(
+        sources['components/monetization/PremiumBanner.tsx'],
+      ) &&
+        normalizedPremiumBannerSource.includes(
+          "action === 'buy' ? await buyRemoveAds(purchaseRuntime) : await restoreRemoveAdsPurchase(purchaseRuntime);",
+        ),
+      'PremiumBanner must wire buy and restore actions to distinct Remove Ads helpers',
+    ],
+    [
+      sources['components/monetization/PremiumBanner.tsx'].includes(
+        'copy.body(REMOVE_ADS_PRICE_LABEL)',
+      ) &&
+        sources['components/monetization/PremiumBanner.tsx'].includes(
+          'copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)',
+        ) &&
+        sources['components/monetization/PremiumBanner.tsx'].includes(
+          'copy.buyIdle(REMOVE_ADS_PRICE_LABEL)',
+        ),
+      'PremiumBanner must render the canonical 29 SEK Remove Ads price label',
+    ],
+    [
+      paywallPlacementPattern.test(sources['app/(tabs)/home.tsx']) &&
+        paywallPlacementPattern.test(sources['app/(tabs)/profile.tsx']),
+      'Home and Profile must surface the Remove Ads paywall with entitlement callbacks',
+    ],
+  ];
+
+  sourceWiringCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+
+    removeAdsSourceWiringPredicateCasesValidated += 1;
+  });
+
+  if (valid && removeAdsSourceWiringPredicateCasesValidated === sourceWiringCases.length) {
+    removeAdsSourceWiringPredicateValidated = true;
   }
 }
 
@@ -17045,6 +17137,7 @@ validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
+validateRemoveAdsSourceWiringPredicate();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
 validateEffectiveEntitlementExpiryOrderingParity();
@@ -17173,6 +17266,8 @@ console.log(
       adPlacementRouteParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
+      removeAdsSourceWiringPredicateCasesValidated,
+      removeAdsSourceWiringPredicateValidated,
       removeAdsEntitlementHookCasesValidated,
       removeAdsEntitlementHookParityValidated,
       premiumEntitlementStatesValidated,

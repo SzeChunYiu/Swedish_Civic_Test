@@ -73,6 +73,8 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
 
   assert.equal(summary.releaseMonetizationPolicyFieldsValidated, expectedPolicyFields.length);
   assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
+  assert.equal(summary.removeAdsSourceWiringPredicateCasesValidated, 6);
+  assert.equal(summary.removeAdsSourceWiringPredicateValidated, true);
   assert.equal(isReleaseMonetizationPolicyReady(), true);
   assert.deepEqual(Object.keys(releaseMonetizationPolicy), expectedPolicyFields);
   assert.deepEqual(releaseMonetizationPolicy.consentPromptsRequired, [
@@ -138,6 +140,66 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /releaseMonetizationPolicy\.removeAdsPriceLabel/,
+  );
+});
+
+test('Remove Ads source wiring predicate rejects paywall price drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('copy.body(REMOVE_ADS_PRICE_LABEL)', "copy.body('29 kronor')");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PremiumBanner must render the canonical 29 SEK Remove Ads price label/,
+  );
+});
+
+test('Remove Ads source wiring predicate rejects collapsed buy and restore actions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('await buyRemoveAds(purchaseRuntime)', 'await restoreRemoveAdsPurchase(purchaseRuntime)');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PremiumBanner must wire buy and restore actions to distinct Remove Ads helpers/,
   );
 });
 
