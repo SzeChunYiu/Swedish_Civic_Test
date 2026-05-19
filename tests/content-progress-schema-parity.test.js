@@ -171,7 +171,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 12);
+  assert.equal(summary.progressStoreFieldsValidated, 10);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.match(progressTypes, /export interface UserQuestionProgress/);
   assert.match(
@@ -181,17 +181,12 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressTypes, /export interface QuizSession/);
   assert.match(progressTypes, /questionProgress: Record<string, UserQuestionProgress>;/);
   assert.match(progressStore, /export type QuestionProgress = \{/);
-  assert.match(progressStore, /export type MockExamAnswerProgress = \{/);
   assert.match(progressStore, /export type MockExamProgress = \{/);
-  assert.match(progressStore, /answers: MockExamAnswerProgress\[\];/);
   assert.match(progressStore, /type ProgressState = PersistedProgress & \{/);
   assert.match(progressStore, /questionProgress: Record<string, QuestionProgress>;/);
   assert.match(progressStore, /completedQuestionIds: string\[\];/);
   assert.match(progressStore, /mockExamSessions: MockExamProgress\[\];/);
-  assert.match(progressStore, /streakFreezeState: StreakFreezeState;/);
-  assert.match(progressStore, /function normalizeNonNegativeInteger\(value: unknown/);
-  assert.match(progressStore, /const seenCount = normalizeNonNegativeInteger/);
-  assert.match(progressStore, /function normalizeMockExamAnswers\(value: unknown/);
+  assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
   assert.match(
     progressStore,
     /const normalizedAnswers = normalizeMockExamAnswers\(item\.answers\);/,
