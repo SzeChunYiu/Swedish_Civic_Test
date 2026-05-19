@@ -26,6 +26,14 @@ test('launch popup ad route suppression stays aligned with release-safe routes',
   const summary = JSON.parse(match[0]);
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
   const rootLayout = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
+  const webLaunchPopupAd = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/LaunchPopupAd.tsx'),
+    'utf8',
+  );
+  const nativeLaunchPopupAd = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+    'utf8',
+  );
 
   assert.equal(summary.launchAdSuppressedRoutesValidated, expectedSuppressedRoutes.length);
   assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
@@ -37,6 +45,14 @@ test('launch popup ad route suppression stays aligned with release-safe routes',
   assert.match(rootLayout, /usePathname\(\)/);
   assert.match(rootLayout, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
   assert.match(rootLayout, /!suppressLaunchPopupAd && entitlementsReady/);
+  assert.ok(
+    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') <
+      rootLayout.indexOf('<FirstRunAboutTheTestModal />'),
+    'root layout should render LaunchPopupAd before the first-run modal',
+  );
+  assert.match(webLaunchPopupAd, /deferFirstRunAboutModalForLaunchSession\(\);/);
+  assert.match(nativeLaunchPopupAd, /deferFirstRunAboutModalForLaunchSession\(\);/);
+  assert.match(nativeLaunchPopupAd, /if \(nativeLaunchPopupMayShow\) \{/);
 });
 
 test('launch popup ad route suppression rejects missing compliance routes', () => {
@@ -93,5 +109,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /root layout must derive launch ad suppression from current pathname/,
+  );
+});
+
+test('launch popup ad route suppression rejects native first-run deferral drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/LaunchPopupAd.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('deferFirstRunAboutModalForLaunchSession();', 'undefined;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native launch ad must defer the first-run About modal when eligible/,
   );
 });
