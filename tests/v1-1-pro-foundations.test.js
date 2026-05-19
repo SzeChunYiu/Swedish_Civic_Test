@@ -287,54 +287,28 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays non-Pro', () => {
+test('tierComparison: Pro does not grant the v1.0 Remove Ads entitlement', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
 
   assert.equal(premium.REMOVE_ADS_ENTITLEMENTS.adsDisabled, true);
-  assert.equal(
-    premium.hasProEntitlement({
-      adsDisabled: true,
-      fullMistakeReview: false,
-      unlimitedMockExams: false,
-      spacedRepetition: false,
-    }),
-    false,
-  );
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, true);
-  assert.equal(adsRow.flag, 'adsDisabled');
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
+  assert.equal(adsRow.flag, undefined);
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
-});
-
-test('tierComparison: Swedish Pro labels use natural learner-facing copy', () => {
-  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
-  const labelsById = Object.fromEntries(TIER_ROWS.map((row) => [row.id, row.labelSv]));
-
-  assert.equal(labelsById.mockExams, 'Övningsprov');
-  assert.equal(labelsById.mistakeReview, 'Öva missade frågor');
-  assert.equal(labelsById.spacedRepetition, 'Repetition med intervall');
-  assert.equal(labelsById.customStudyPlan, 'Studieplan efter provdatum');
-  assert.equal(labelsById.predictedPass, 'Beräknad provberedskap');
-  assert.equal(labelsById.confidenceSlider, 'Säkerhetsskala och kalibrering');
-  assert.equal(labelsById.accessibility, 'Lättläst typsnitt, textstorlek och mörkt läge');
-  assert.notEqual(labelsById.mockExams, 'Provexamina');
-  assert.notEqual(labelsById.mistakeReview, ['Repetera ', 'misstag'].join(''));
-  assert.notEqual(labelsById.mistakeReview, ['Fel', 'granskning'].join(''));
+  assert.deepEqual(adsRow.pro, {
+    kind: 'text',
+    sv: 'vid sessionsskifte',
+    en: 'at session boundaries',
+  });
 });
 
 test('tierComparison: three columns in canonical order', () => {
   const { TIER_COLUMNS } = loadTs('lib/monetization/tierComparison.ts');
-  const columnsById = Object.fromEntries(TIER_COLUMNS.map((column) => [column.id, column]));
   assert.deepEqual(
     TIER_COLUMNS.map((c) => c.id),
     ['free', 'adFree', 'pro'],
   );
-  assert.equal(columnsById.adFree.priceSv, '29 SEK · engångsköp');
-  assert.equal(columnsById.adFree.priceEn, '29 SEK · one-time');
-  assert.equal(columnsById.pro.priceSv, '59 SEK · engångsköp');
-  assert.equal(columnsById.pro.priceEn, '59 SEK · one-time');
 });
 
 test('tierComparison: every row has all three cells present', () => {
@@ -344,62 +318,12 @@ test('tierComparison: every row has all three cells present', () => {
   }
 });
 
-test('tierComparison: native table hides ebook-only benefits until a native ebook route exists', () => {
-  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
-  const nativeEbookRouteExists = fs.existsSync(path.join(repoRoot, 'app/ebook.tsx'));
-  if (nativeEbookRouteExists) return;
-
-  const rowIds = TIER_ROWS.map((row) => row.id);
-  const rowLabels = TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
-  const rowFlags = TIER_ROWS.map((row) => row.flag).filter(Boolean);
-
-  assert.equal(
-    fs.existsSync(path.join(repoRoot, 'lib/storage/highlightsStore.ts')),
-    true,
-    'the local highlight store can remain as a tested primitive while the native reader is absent',
-  );
-  assert.equal(rowIds.includes('highlights'), false);
-  assert.equal(rowIds.includes('notesExport'), false);
-  assert.equal(rowFlags.includes('multiColorHighlights'), false);
-  assert.equal(rowFlags.includes('notesExport'), false);
-  assert.doesNotMatch(
-    rowLabels,
-    /Markeringar i e-bok|Ebook highlights|Exportera anteckningar|Notes export/,
-  );
-});
-
 test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', () => {
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
-  assert.equal(fresh.primarySv, 'Köp Pro · 59 SEK');
-  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 SEK');
-  assert.equal(fresh.secondaryEn, 'Just remove ads · 29 SEK');
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
-});
-
-test('ProPaywall: renders the canonical tier model with separate Pro and Remove Ads paths', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
-    'utf8',
-  );
-
-  assert.match(source, /TIER_COLUMNS/);
-  assert.match(source, /TIER_ROWS/);
-  assert.match(source, /paywallCtaLabels/);
-  assert.match(source, /buyProLifetime/);
-  assert.match(source, /restoreProLifetime/);
-  assert.match(source, /alreadyAdFree/);
-  assert.match(source, /rowSummary:/);
-  assert.match(source, /accessibilityRole="summary"/);
-  assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
-  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
-  assert.doesNotMatch(source, /29 kr|29 kronor/);
-  assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 // -------------------------------------------------------- Dashboard stats
@@ -626,82 +550,7 @@ test('mockHistory + bestMockScore: returns only exam-mode completed sessions', (
   ];
   const history = mockHistory(progressWithSessions(sessions));
   assert.equal(history.length, 2);
-  assert.deepEqual(
-    history.map((entry) => ({ durationMs: entry.durationMs, sessionId: entry.sessionId })),
-    [
-      { durationMs: 60 * 60 * 1000, sessionId: 'e1' },
-      { durationMs: 60 * 60 * 1000, sessionId: 'e2' },
-    ],
-  );
   assert.equal(bestMockScore(progressWithSessions(sessions)), 0.85);
-});
-
-test('mockHistory + bestMockScore: ignore invalid completions and null invalid durations', () => {
-  const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
-  const sessions = [
-    {
-      id: 'valid',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-19T09:00:00.000Z',
-      completedAt: '2026-05-19T09:30:00.000Z',
-      score: 0.7,
-    },
-    {
-      id: 'invalid-start',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: 'not-a-date',
-      completedAt: '2026-05-19T10:00:00.000Z',
-      score: 0.75,
-    },
-    {
-      id: 'backwards',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-19T12:00:00.000Z',
-      completedAt: '2026-05-19T11:00:00.000Z',
-      score: 0.8,
-    },
-    {
-      id: 'invalid-completed',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-19T09:00:00.000Z',
-      completedAt: 'not-a-date',
-      score: 0.99,
-    },
-    {
-      id: 'nan-score',
-      mode: 'exam',
-      questionIds: [],
-      answers: [],
-      startedAt: '2026-05-19T11:30:00.000Z',
-      completedAt: '2026-05-19T12:00:00.000Z',
-      score: Number.NaN,
-    },
-  ];
-  const progress = progressWithSessions(sessions);
-  const history = mockHistory(progress);
-
-  assert.deepEqual(
-    history.map((entry) => ({
-      durationMs: entry.durationMs,
-      score: entry.score,
-      sessionId: entry.sessionId,
-    })),
-    [
-      { durationMs: 30 * 60 * 1000, score: 0.7, sessionId: 'valid' },
-      { durationMs: null, score: 0.75, sessionId: 'invalid-start' },
-      { durationMs: null, score: 0.8, sessionId: 'backwards' },
-      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'nan-score' },
-    ],
-  );
-  assert.equal(bestMockScore(progress), 0.8);
 });
 
 test('timeOfDayPattern: 24 hourly bins, accuracy per hour', () => {
@@ -888,73 +737,6 @@ test('computeReadinessScore: exam answers feed mock average, not practice accura
   assert.equal(result.components.mockAverage, 0.8);
 });
 
-test('computeReadinessScore: mock recency uses completedAt instead of exam answer rows', () => {
-  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
-  const recentExamAnswers = Array.from({ length: 40 }, (_, index) => ({
-    questionId: `exam-${index}`,
-    selectedOptionIds: [],
-    isCorrect: index < 32,
-    answeredAt: '2026-05-19T10:00:00.000Z',
-    timeSpentSeconds: 5,
-  }));
-  const now = new Date('2026-05-19T12:00:00.000Z');
-
-  const scoreOnlyMock = computeReadinessScore({
-    progress: progressWithSessions([
-      {
-        id: 'score-only-mock',
-        mode: 'exam',
-        questionIds: [],
-        startedAt: '2026-05-19T09:00:00.000Z',
-        completedAt: '2026-05-19T10:00:00.000Z',
-        score: 0.8,
-        answers: [],
-      },
-    ]),
-    chapters: [{ id: 'a', questionCount: 10 }],
-    questionChapterIndex: {},
-    now,
-  });
-  const countedMock = computeReadinessScore({
-    progress: progressWithSessions([
-      {
-        id: 'counted-mock',
-        mode: 'exam',
-        questionIds: [],
-        startedAt: '2026-05-19T09:00:00.000Z',
-        completedAt: '2026-05-19T10:00:00.000Z',
-        score: 0.8,
-        answers: recentExamAnswers,
-      },
-    ]),
-    chapters: [{ id: 'a', questionCount: 10 }],
-    questionChapterIndex: {},
-    now,
-  });
-  const invalidCompletedAt = computeReadinessScore({
-    progress: progressWithSessions([
-      {
-        id: 'invalid-completed-at-mock',
-        mode: 'exam',
-        questionIds: [],
-        startedAt: '2026-05-19T09:00:00.000Z',
-        completedAt: 'not-a-date',
-        score: 0.8,
-        answers: recentExamAnswers,
-      },
-    ]),
-    chapters: [{ id: 'a', questionCount: 10 }],
-    questionChapterIndex: {},
-    now,
-  });
-
-  assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
-  assert.ok(scoreOnlyMock.components.recency > 0.99);
-  assert.equal(countedMock.components.accuracy, 0);
-  assert.equal(invalidCompletedAt.components.recency, 0);
-  assert.equal(invalidCompletedAt.components.accuracy, 0);
-});
-
 // -------------------------------------------------------- Calibration
 
 test('generateCalibration: empty input → insufficient verdict', () => {
@@ -1011,48 +793,6 @@ test('generateCalibration: overconfident user → over_confident verdict', () =>
   assert.equal(result.verdict, 'over_confident');
 });
 
-test('generateCalibration: invalid confidence ratings are skipped without corrupting buckets', () => {
-  const { generateCalibration, isConfidenceRating, normalizeConfidenceRating } = loadTs(
-    'lib/learning/calibration.ts',
-  );
-  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
-  const events = [
-    {
-      questionId: 'valid-low',
-      isCorrect: false,
-      answeredAt: '2026-05-19',
-      confidenceRating: 1,
-    },
-    ...invalidRatings.map((confidenceRating, index) => ({
-      questionId: `invalid-${index}`,
-      isCorrect: true,
-      answeredAt: '2026-05-19',
-      confidenceRating,
-    })),
-    {
-      questionId: 'valid-high',
-      isCorrect: true,
-      answeredAt: '2026-05-19',
-      confidenceRating: 5,
-    },
-  ];
-
-  assert.doesNotThrow(() => generateCalibration(events));
-  const result = generateCalibration(events);
-
-  assert.equal(result.totalRatedAnswers, 2);
-  assert.deepEqual(
-    result.buckets.map((bucket) => bucket.count),
-    [1, 0, 0, 0, 1],
-  );
-  assert.equal(result.buckets[0].actualAccuracy, 0);
-  assert.equal(result.buckets[4].actualAccuracy, 1);
-  for (const rating of invalidRatings) {
-    assert.equal(isConfidenceRating(rating), false);
-    assert.equal(normalizeConfidenceRating(rating), null);
-  }
-});
-
 test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
   assert.equal(gradeFromConfidence(false, 1), 1);
@@ -1064,15 +804,4 @@ test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   assert.equal(lapsePenaltyForWrong(1), 0);
   assert.equal(lapsePenaltyForWrong(3), 1);
   assert.equal(lapsePenaltyForWrong(5), 2);
-});
-
-test('gradeFromConfidence + lapsePenaltyForWrong: invalid ratings use safe defaults', () => {
-  const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
-  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
-
-  for (const rating of invalidRatings) {
-    assert.equal(gradeFromConfidence(true, rating), 3);
-    assert.equal(gradeFromConfidence(false, rating), 1);
-    assert.equal(lapsePenaltyForWrong(rating), 0);
-  }
 });

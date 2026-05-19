@@ -47,10 +47,6 @@
       "ad.placeholder": "AdSense 广告将显示在此处。",
       "ad.anchor.placeholder": "底部锚定广告",
       "ad.native.placeholder": "原生赞助行",
-      "a11y.settings.open": "设置",
-      "a11y.close": "关闭",
-      "a11y.ad.close": "关闭广告",
-      "a11y.studyBuddy": "学习伙伴",
 
       "consent.title": "Cookie,刚刚好。",
       "consent.body": "我们使用 Google AdSense 显示少量广告。AdSense 会设置 cookie 并可能用于个性化广告。全部接受、仅必要,或阅读<a href=\"#/privacy\">隐私页面</a>。",
@@ -131,10 +127,6 @@
       "ad.placeholder": "AdSense 廣告將顯示在此處。",
       "ad.anchor.placeholder": "底部錨定廣告",
       "ad.native.placeholder": "原生贊助列",
-      "a11y.settings.open": "設定",
-      "a11y.close": "關閉",
-      "a11y.ad.close": "關閉廣告",
-      "a11y.studyBuddy": "學習夥伴",
 
       "consent.title": "Cookie,剛剛好。",
       "consent.body": "我們使用 Google AdSense 顯示少量廣告。AdSense 會設定 cookie 並可能用於個人化廣告。全部接受、僅必要,或閱讀<a href=\"#/privacy\">隱私頁面</a>。",
@@ -215,10 +207,6 @@
       "ad.placeholder": "ستظهر إعلانات AdSense هنا.",
       "ad.anchor.placeholder": "إعلان سفلي",
       "ad.native.placeholder": "صف إعلاني أصلي",
-      "a11y.settings.open": "الإعدادات",
-      "a11y.close": "إغلاق",
-      "a11y.ad.close": "إغلاق الإعلان",
-      "a11y.studyBuddy": "رفيق الدراسة",
 
       "consent.title": "ملفات تعريف الارتباط، باعتدال.",
       "consent.body": "نستخدم Google AdSense لعرض إعلانات قليلة. يستخدم AdSense ملفات تعريف الارتباط وقد يستخدمها لتخصيص الإعلانات. اقبل الكل أو الضروري فقط، أو اقرأ <a href=\"#/privacy\">صفحة الخصوصية</a>.",
@@ -299,10 +287,6 @@
       "ad.placeholder": "Goobta xayaysiinta AdSense halkan ayey ka soo bixi doontaa.",
       "ad.anchor.placeholder": "Xayaysiin barxad",
       "ad.native.placeholder": "Saf xayaysiin asal ah",
-      "a11y.settings.open": "Goobinta",
-      "a11y.close": "Xir",
-      "a11y.ad.close": "Xir xayaysiiska",
-      "a11y.studyBuddy": "Saaxiibka barashada",
 
       "consent.title": "Cookies, si lagom ah.",
       "consent.body": "Waxaan u isticmaalnaa Google AdSense si aan u tusno xayaysiimo yar. AdSense waxay isticmaashaa cookies waxayna isticmaali kartaa qaab gaar ah. Aqbal dhammaan, kaliya kuwa muhiimka ah, ama akhri <a href=\"#/privacy\">bogga asturnaanta</a>.",
@@ -349,7 +333,6 @@
   // Merge into the main i18n dictionary (defined in app.js)
   if (window.i18n) {
     Object.assign(window.i18n, extra);
-    if (window.smtUpdateStaticControlLabels) window.smtUpdateStaticControlLabels();
   } else {
     // app.js hasn't loaded yet — stash for it
     window.__i18n_extra = extra;
