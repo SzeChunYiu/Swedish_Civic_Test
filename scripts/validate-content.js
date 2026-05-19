@@ -990,8 +990,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     file: 'app/(tabs)/home.tsx',
     component: 'AdBanner',
     placement: 'home_banner',
-    pattern:
-      /<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s+\/>/,
+    pattern: /<AdBanner\s+placement="home_banner"\s+\/>/,
   },
   {
     file: 'app/(tabs)/learn.tsx',
@@ -6762,6 +6761,27 @@ function validateAdPlacementRouteParity() {
     if (!spec.pattern.test(source)) {
       reject(`${spec.file} must render ${spec.component} placement ${spec.placement}`);
       routeIsValid = false;
+    }
+
+    if (spec.file === 'app/(tabs)/home.tsx') {
+      if (!source.includes('entitlementsReady: monetizationEntitlementsReady')) {
+        reject('Home must read entitlementsReady before rendering monetization surfaces');
+        routeIsValid = false;
+      }
+      if (
+        !/monetizationEntitlementsReady\s*&&\s*!monetizationEntitlements\.adsDisabled/.test(source)
+      ) {
+        reject('Home pricing wedge must stay hidden until Remove Ads entitlements resolve');
+        routeIsValid = false;
+      }
+      if (!/\{monetizationEntitlementsReady\s*\?\s*\(\s*<PremiumBanner/.test(source)) {
+        reject('Home paywall must stay hidden until Remove Ads entitlements resolve');
+        routeIsValid = false;
+      }
+      if (/<AdBanner\s+entitlements=\{monetizationEntitlements\}/.test(source)) {
+        reject('Home ad banner must not receive initial free entitlements before they resolve');
+        routeIsValid = false;
+      }
     }
 
     if (!safePlacements.includes(spec.placement)) {
