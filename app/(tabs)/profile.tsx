@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
@@ -14,7 +15,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
@@ -50,8 +51,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Öppna inställningar',
-    openSettingsAccessibilityLabel: 'Öppna inställningar',
+    openSettings: 'Ändra mål, språk och ljud',
+    openSettingsAccessibilityLabel: 'Ändra mål, språk och ljud',
     questionsHelper: 'frågor',
     streakFreezeBadge: 'Svitskydd',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
@@ -72,8 +73,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Open settings',
-    openSettingsAccessibilityLabel: 'Open settings',
+    openSettings: 'Edit goal, language, and audio',
+    openSettingsAccessibilityLabel: 'Edit goal, language, and audio',
     questionsHelper: 'questions',
     streakFreezeBadge: 'Streak freeze',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
@@ -179,6 +180,20 @@ export default function Screen() {
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
         </View>
+        <Link
+          accessibilityLabel={copy.openSettingsAccessibilityLabel}
+          accessibilityRole="link"
+          asChild
+          href="/settings"
+        >
+          <Button
+            accessibilityLabel={copy.openSettingsAccessibilityLabel}
+            accessibilityRole="link"
+            style={styles.settingsLink}
+          >
+            {copy.openSettings}
+          </Button>
+        </Link>
       </Card>
 
       <Card style={styles.cardWide}>
@@ -193,15 +208,6 @@ export default function Screen() {
         runtimeOptions={purchaseRuntime}
       />
       <ComplianceLinks />
-
-      <Link
-        accessibilityLabel={copy.openSettingsAccessibilityLabel}
-        accessibilityRole="link"
-        href="/settings"
-        style={styles.settingsLink}
-      >
-        {copy.openSettings}
-      </Link>
     </ScreenShell>
   );
 }
@@ -235,13 +241,6 @@ const styles = StyleSheet.create({
   },
   settingsLink: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
+    minHeight: space[6],
   },
 });
