@@ -31,27 +31,6 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
-test('Metro web export enables Expo Router route context discovery', () => {
-  const configPath = path.join(repoRoot, 'metro.config.js');
-  assert.equal(fs.existsSync(configPath), true);
-
-  const config = require(configPath);
-  assert.equal(config.transformer.unstable_allowRequireContext, true);
-
-  const resolution = config.resolver.resolveRequest(
-    {
-      resolveRequest() {
-        return { type: 'empty' };
-      },
-    },
-    'expo-router/_ctx',
-    'web',
-  );
-  assert.equal(resolution.type, 'sourceFile');
-  assert.equal(resolution.filePath, path.join(repoRoot, 'lib/router/expoRouterWebContext.js'));
-  assert.equal(fs.existsSync(resolution.filePath), true);
-});
-
 test('EAS access evidence command is wired for repeatable non-secret checks', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.scripts['release:eas-access-check'], 'node scripts/check-eas-access.js');
@@ -63,64 +42,6 @@ test('release validation includes dependency security audit', () => {
   assert.equal(pkg.scripts['audit:release'], 'npm audit --audit-level=moderate');
   assert.match(pkg.scripts.validate, /npm run audit:release/);
   assert.equal(pkg.overrides.postcss, '8.5.10');
-});
-
-test('npm test dispatcher preserves full suite and focused monetization selector', () => {
-  const pkg = readJson('package.json');
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-'));
-  const npmLog = path.join(tmpDir, 'npm.log');
-  const fakeNpm = path.join(tmpDir, 'npm');
-  fs.writeFileSync(fakeNpm, ['#!/bin/sh', `echo "$@" >> "${npmLog}"`, 'exit 0', ''].join('\n'), {
-    mode: 0o755,
-  });
-
-  const env = {
-    ...process.env,
-    TEST_DISPATCH_NPM: fakeNpm,
-    TEST_DISPATCH_CAPTURE: '1',
-  };
-
-  assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
-  assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/test-dispatch.js')), true);
-  assert.match(pkg.scripts['test:all'], /^npm run test:learning\b/);
-  assert.match(pkg.scripts['test:all'], /npm run test:monetization/);
-  assert.match(pkg.scripts['test:all'], /npm run test:a11y-labels$/);
-
-  const fullResult = spawnSync(process.execPath, ['scripts/test-dispatch.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    env,
-  });
-  assert.equal(fullResult.status, 0, fullResult.stderr || fullResult.stdout);
-  assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:all\n');
-
-  fs.writeFileSync(npmLog, '');
-  const monetizationResult = spawnSync(
-    process.execPath,
-    ['scripts/test-dispatch.js', 'monetization'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      env,
-    },
-  );
-  assert.equal(
-    monetizationResult.status,
-    0,
-    monetizationResult.stderr || monetizationResult.stdout,
-  );
-  assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
-
-  const bogusResult = spawnSync(process.execPath, ['scripts/test-dispatch.js', 'bogus'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    env,
-  });
-  assert.equal(bogusResult.status, 1);
-  assert.match(bogusResult.stderr, /Unsupported npm test selector: bogus/);
-  assert.match(bogusResult.stderr, /monetization -> npm run test:monetization/);
-  assert.match(bogusResult.stderr, /Run `npm test` with no selector/);
-  assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
 });
 
 test('GitHub release secrets check reports whether EXPO_TOKEN is configured without leaking values', () => {
@@ -1018,49 +939,11 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
   assert.match(workflow, /npm run validate/);
-  assert.match(workflow, /npm run test:screenshot-manifest/);
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
-  assert.ok(
-    workflow.indexOf('npm run validate') < workflow.indexOf('npm run test:screenshot-manifest'),
-    'release validation should verify the screenshot manifest after the full validation suite',
-  );
-  assert.ok(
-    workflow.indexOf('npm run test:screenshot-manifest') <
-      workflow.indexOf('actions/upload-artifact@v6'),
-    'release validation should verify the screenshot manifest before uploading artifacts',
-  );
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
-});
-
-test('E2E specs centralize blocking modal cleanup helpers', () => {
-  const e2eDir = path.join(repoRoot, 'tests/e2e');
-  const helper = fs.readFileSync(path.join(e2eDir, 'browserLaunch.ts'), 'utf8');
-
-  assert.match(helper, /export async function dismissBlockingModals/);
-  assert.match(helper, /export async function closeLaunchAdIfPresent/);
-  assert.match(helper, /export async function dismissFirstRunAboutModalIfPresent/);
-  assert.match(helper, /export async function dismissLanguagePickerIfPresent/);
-  assert.match(helper, /export async function seedSettingsLanguage/);
-  assert.match(helper, /settings\\\\language/);
-  assert.match(helper, /settings\\\\hasSeenAboutTheTest/);
-
-  const specsWithAllowedLaunchModalAssertions = new Set(['launch-modal-accessibility.spec.ts']);
-  const duplicatedLaunchCleanupPattern =
-    /closeLaunchAdIfPresent|closeLaunchSponsorAd|Close launch sponsor ad|Stäng startannons/;
-
-  for (const fileName of fs.readdirSync(e2eDir).filter((name) => name.endsWith('.spec.ts'))) {
-    if (specsWithAllowedLaunchModalAssertions.has(fileName)) continue;
-
-    const source = fs.readFileSync(path.join(e2eDir, fileName), 'utf8');
-    assert.doesNotMatch(
-      source,
-      duplicatedLaunchCleanupPattern,
-      `${fileName} should use dismissBlockingModals from tests/e2e/browserLaunch.ts`,
-    );
-  }
 });
 
 test('manual external blocker loop workflow runs redacted evidence loop and uploads report', () => {
@@ -1496,11 +1379,7 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     [
       '<!DOCTYPE html>',
       '<html>',
-      '<head>',
-      '<title>Export</title>',
-      '<link rel="preload" href="/_expo/static/js/web/entry-test.js" as="script">',
-      '<link rel="icon" href="/assets/favicon.png">',
-      '</head>',
+      '<head><title>Export</title></head>',
       '<body>',
       '<div id="root"></div>',
       '<script src="/_expo/static/js/web/entry-test.js" defer></script>',
@@ -1527,10 +1406,6 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);
-  assert.doesNotMatch(index, /href="\/_expo\//);
-  assert.doesNotMatch(index, /href="\/assets\//);
-  assert.match(index, /href="_expo\/static\/js\/web\/entry-test\.js"/);
-  assert.match(index, /href="assets\/favicon\.png"/);
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);

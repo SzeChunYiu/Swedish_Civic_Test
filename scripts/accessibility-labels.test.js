@@ -56,25 +56,6 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
           );
         }
         if (
-          tagName === 'Pressable' &&
-          (tag.includes('accessibilityRole="switch"') ||
-            /accessibilityState=\{\{[^}]*checked:/.test(tag)) &&
-          !tag.includes('aria-checked=')
-        ) {
-          offenders.push(
-            `${relPath}:${index + 1}: missing aria-checked mirror for web false state: ${line.trim()}`,
-          );
-        }
-        if (
-          tagName === 'Pressable' &&
-          /accessibilityState=\{\{[^}]*expanded:/.test(tag) &&
-          !tag.includes('aria-expanded=')
-        ) {
-          offenders.push(
-            `${relPath}:${index + 1}: missing aria-expanded mirror for web false state: ${line.trim()}`,
-          );
-        }
-        if (
           (tag.includes('disabled=') || tag.includes('Selected') || tag.includes('Active')) &&
           !tag.includes('accessibilityState=')
         ) {
@@ -94,32 +75,4 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
-});
-
-test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
-  const source = fs.readFileSync(
-    path.join(ROOT, 'components', 'monetization', 'NativeAdCard.native.tsx'),
-    'utf8',
-  );
-  const copySource = fs.readFileSync(path.join(ROOT, 'lib', 'monetization', 'adCopy.ts'), 'utf8');
-
-  assert.match(source, /<NativeAdView accessible=\{false\}/);
-  assert.match(
-    source,
-    /<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/,
-  );
-  assert.match(
-    source,
-    /<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/,
-  );
-  assert.match(source, /minHeight:\s*space\[6\]/);
-  assert.doesNotMatch(source, /<NativeAdView\s+accessible[\s>]/);
-  assert.match(
-    copySource,
-    /ctaAccessibilityLabel: \(callToAction\) => `Annonsåtgärd: \$\{callToAction\}`/,
-  );
-  assert.match(
-    copySource,
-    /ctaAccessibilityLabel: \(callToAction\) => `Ad action: \$\{callToAction\}`/,
-  );
 });

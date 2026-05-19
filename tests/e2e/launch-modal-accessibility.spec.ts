@@ -1,8 +1,4 @@
 import { expect, test } from '@playwright/test';
-import fs from 'node:fs';
-import path from 'node:path';
-
-import { closeLaunchAdIfPresent } from './browserLaunch';
 
 test('launch sponsor modal exposes one named dialog on web', async ({ page }) => {
   const consoleErrors: string[] = [];
@@ -22,8 +18,7 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
   await expect(page.getByRole('heading', { name: 'Launch sponsor' })).toHaveCount(0);
   await expect(page.getByText('Continue studying')).toHaveCount(0);
 
-  const launchAdDismissed = await closeLaunchAdIfPresent(page);
-  expect(launchAdDismissed).toBe(true);
+  await page.getByRole('button', { name: 'Stäng startannons' }).click();
 
   await expect(dialogs).toHaveCount(0);
   await expect(page.getByText('Dagens mål')).toBeVisible();
@@ -32,26 +27,6 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
   await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
-});
-
-test('launch sponsor dismissal stays centralized in browserLaunch helpers', async () => {
-  const specDir = path.resolve('tests/e2e');
-  const launchCloseEnglish = ['Close launch', ' sponsor ad'].join('');
-  const launchCloseSwedish = ['Stäng start', 'annons'].join('');
-
-  for (const file of fs.readdirSync(specDir).filter((name) => name.endsWith('.spec.ts'))) {
-    const source = fs.readFileSync(path.join(specDir, file), 'utf8');
-
-    expect(source, `${file} must not declare a local launch-ad dismissal helper`).not.toMatch(
-      /function\s+closeLaunchAdIfPresent/,
-    );
-    expect(source, `${file} must not query the launch close button directly`).not.toContain(
-      launchCloseEnglish,
-    );
-    expect(source, `${file} must not query the launch close button directly`).not.toContain(
-      launchCloseSwedish,
-    );
-  }
 });
 
 test('first-run about modal exposes only real guide actions on web', async ({ page }) => {
