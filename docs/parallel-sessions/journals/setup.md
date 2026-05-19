@@ -1156,3 +1156,12 @@ Verification: clean worktree from current `origin/main` `16b63dd`; `NODE_OPTIONS
 PR: pending from `task/setup/readiness-mock-scores-1779150000` at handoff commit time.
 Blocked? no for this readiness/mock-score atom.
 Next suggested validator action: inspect the progress-store mock exam history, rerun the focused readiness/progress/exam parity tests, and repeat the exported-web mock completion smoke if runtime evidence is needed.
+
+## Iteration 247 - 2026-05-19
+
+Task completed: REVIEWER-HOME-UI-EFFECTS-RED-1 - aligned the Home UI-effects guard with the current Home header contract by requiring the readiness indicator header alongside the daily-goal and feedback card headers.
+Artifacts changed: `scripts/ui-effects.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `7455e0d`, then rebased onto `72ccf60`; pre-fix `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:ui-effects` reproduced the red 49/50 result with `home screen exposes dashboard card titles as headers` asserting 3 headers against an expected 2; post-fix after rebase `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:ui-effects` exit 0 with 50/50 passing; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s npm run validate:content` exit 0 with `homeRouteHeadersValidated:5` and `homeRouteHeaderParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:ownership` exit 0; `node --check scripts/ui-effects.test.js` exit 0; `npx --no-install prettier --check scripts/ui-effects.test.js` exit 0; `git diff --check origin/main..HEAD` exit 0. Full `NODE_OPTIONS='--v8-pool-size=1' timeout 900s npm run validate` remains red on current main at the unrelated content-owned `scripts/derived-content.test.js` q002 explanation expectation after passing typecheck, lint, format, audit, and early test suites.
+PR: pending from `task/setup/home-ui-effects-1779151283` at handoff commit time.
+Blocked? no for this SETUP UI-effects guard; full validation has a separate content-owned red outside this lane's write scope.
+Next suggested validator action: inspect the Home header guard update and rerun `npm run test:ui-effects` plus `npm run validate:content`; route the unrelated `test:derived-content` failure to CONTENT/DATA-INTEGRITY before using full `npm run validate` as a release gate.
