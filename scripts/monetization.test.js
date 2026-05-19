@@ -387,6 +387,40 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
   );
 });
 
+test('rewarded extra exam ad copy uses Swedish practice-exam wording', () => {
+  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
+  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
+  const rewardedPlacementLabel = adBannerCopy.sv.placementLabels.rewarded_extra_exam;
+  const liveAccessibilityLabel = adBannerCopy.sv.accessibilityLabel(
+    rewardedPlacementLabel,
+    adBannerCopy.sv.liveStatus,
+  );
+  const testAccessibilityLabel = adBannerCopy.sv.accessibilityLabel(
+    rewardedPlacementLabel,
+    adBannerCopy.sv.testStatus,
+  );
+  const placementCtaTitle = `Ta bort annonser vid ${rewardedPlacementLabel.toLowerCase()}`;
+
+  for (const renderedCopy of [
+    rewardedPlacementLabel,
+    liveAccessibilityLabel,
+    testAccessibilityLabel,
+    placementCtaTitle,
+  ]) {
+    assert.match(renderedCopy, /övningsprov/i);
+    assert.doesNotMatch(renderedCopy, /\bextra prov\b|\bprov\b|\bprovet\b/i);
+  }
+
+  assert.equal(rewardedPlacementLabel, 'Annons för extra övningsprov');
+  assert.match(placementCtaSource, /adBannerCopy\[language\]\.placementLabels\[placement\]/);
+  assert.match(placementCtaSource, /copy\.title\(placementLabel\)/);
+  assert.doesNotMatch(adCopySource, /\bAnnons för extra prov\b|\bextra prov\b/i);
+});
+
 test('rewarded extra exam access honors real-ad consent readiness', () => {
   withEnv(
     {
