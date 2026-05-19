@@ -600,6 +600,17 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
   );
   const defaultResult = await showRewardedExtraExamAd();
+  const confirmedResult = await showRewardedExtraExamAd({
+    confirmReward: () => true,
+  });
+  const rejectedResult = await showRewardedExtraExamAd({
+    confirmReward: () => false,
+  });
+  const failedConfirmationResult = await showRewardedExtraExamAd({
+    confirmReward: () => {
+      throw new Error('preview did not complete');
+    },
+  });
   const removeAdsResult = await showRewardedExtraExamAd({
     entitlements: { adsDisabled: true },
   });
@@ -616,16 +627,24 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.deepEqual(defaultResult, {
+  assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
+  assert.deepEqual(confirmedResult, {
     reward: {
       amount: 1,
       type: 'extra_mock_exam',
     },
     status: 'earned_reward',
   });
+  assert.deepEqual(rejectedResult, { status: 'closed_without_reward' });
+  assert.deepEqual(failedConfirmationResult, { status: 'closed_without_reward' });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
   assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
   assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
+  assert.match(webRewardedAdSource, /confirmReward\?: RewardedExtraExamRewardConfirmation;/);
+  assert.match(
+    webRewardedAdSource,
+    /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};[\s\S]*\}/,
+  );
   assert.match(nativeRewardedAdSource, /initializeGoogleMobileAdsAfterConsent/);
   assert.match(nativeRewardedAdSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
   assert.match(
