@@ -1,13 +1,10 @@
-CEO/GM cycle 2026-05-20T03:36:55+02:00
+CEO/GM cycle 2026-05-18T22:46:00+02:00
 Decision: HOLD/add-none.
-Evidence: latest observed `origin/main` during this cycle was `8c95ca29`.
-`codex-tasks/P0.md` still has unchecked SHUFFLE-FIX, TRANSLATE-COMPLETE,
-SOURCE-CITATION, and CRITICAL-REVIEWER standing work. `csup staff
---scenario=resume --dry-run` reported queued local work (`work=10`,
-`blockers=10`, `prompts=5`) but held the local lane on
-`reason=lunarc_requires_slurm_station`; other configured lanes reported
-STAFF-DOWN/no queued work.
-Routing: keep active work P0-only. DATA-INTEGRITY/VALIDATOR own generated
-prompt and source-citation defects; CONTENT/VALIDATOR own English naturalness
-atoms. Do not run `--apply`, launch non-P0 side work, or run external deploy
-CLI from this pane.
+Evidence: current `origin/main` is `7c690c0`; q451-q500 DATA-INTEGRITY
+cleanup is accepted via PR #703 / `c6299ce`; q501-q550 VERIFY is refreshed;
+REVIEWER-RELEASE-GATES-1 is accepted via PR #707 / `9d40c89`. Staffing
+remains blocked by `reason=lunarc_requires_slurm_station`, and factory audit
+remains RED for `missing:project_config`.
+Routing: DATA-INTEGRITY next owns q501-q550 for
+q526/q527/q530/q531/q535/q542/q543. q551-q600 stays behind q501-q550 unless
+VALIDATOR explicitly reorders. SITE-P0-5 remains external deploy freshness.

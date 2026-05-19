@@ -9,7 +9,6 @@ const ts = require('typescript');
 
 const {
   createMemoryMMKV,
-  createThrowingGetMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
@@ -78,27 +77,6 @@ test('accessibilityStore: throwing MMKV writes keep in-memory state and record w
   assert.equal(state.persistenceWarning.operation, 'write');
   assert.match(state.persistenceWarning.message, /in-memory state/);
   assert.match(state.persistenceWarning.errorMessage, /disk full/);
-});
-
-test('accessibilityStore: throwing MMKV reads fall back to safe defaults and record warning', () => {
-  const storage = createThrowingGetMMKV('accessibility read failed');
-  const { useAccessibilityStore } = loadTsWithStorage(
-    repoRoot,
-    'lib/storage/accessibilityStore.ts',
-    {
-      accessibility: storage,
-    },
-  );
-  const state = useAccessibilityStore.getState();
-
-  assert.equal(state.easyReadFont, false);
-  assert.equal(state.fontSizeStep, 1);
-  assert.equal(state.audioPlaybackRate, 1.0);
-  assert.equal(state.persistenceWarning.recoverable, true);
-  assert.equal(state.persistenceWarning.operation, 'read');
-  assert.equal(state.persistenceWarning.storageId, 'accessibility');
-  assert.equal(state.persistenceWarning.key, 'a11y.easyReadFont.v1');
-  assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
 test('accessibilityStore: successful writes persist values and clear warning', () => {

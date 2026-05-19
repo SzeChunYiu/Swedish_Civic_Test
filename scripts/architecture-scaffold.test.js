@@ -40,7 +40,6 @@ const architectureTargetFiles = [
   'components/learning/Flashcard.tsx',
   'components/learning/AudioButton.tsx',
   'components/monetization/AdBanner.tsx',
-  'components/monetization/PracticeInterstitialAd.tsx',
   'components/monetization/PremiumBanner.tsx',
   'data/chapters.ts',
   'data/questions.ts',
@@ -214,12 +213,9 @@ const monetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
-  'components/monetization/PracticeInterstitialAd.native.tsx',
-  'components/monetization/PracticeInterstitialAd.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
-  'app/(tabs)/practice.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/(tabs)/exam.tsx',
 ];
@@ -496,11 +492,7 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
   const tsconfig = readJson('tsconfig.json');
   const babelConfig = readText('babel.config.js');
 
-  assert.equal(packageJson.main, 'index.js');
-  assert.match(
-    fs.readFileSync(path.join(repoRoot, 'index.js'), 'utf8'),
-    /require\.context\(\s*['"]\.\/app['"]/,
-  );
+  assert.equal(packageJson.main, 'expo-router/entry');
   assert.equal(packageJson.scripts.start, 'expo start');
   assert.equal(packageJson.scripts.typecheck, 'tsc --noEmit');
   assert.equal(packageJson.dependencies.expo.startsWith('~54.'), true);
