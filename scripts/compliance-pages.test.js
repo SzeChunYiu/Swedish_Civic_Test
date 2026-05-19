@@ -72,3 +72,30 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Legal and sources/);
   assert.match(complianceLinks, /Support/);
 });
+
+test('static public copy does not make pass or passport outcome claims', () => {
+  const publicSiteFiles = ['site/app.js', 'site/index.html', 'site/tweaks.jsx', 'site/buddies.js'];
+  const forbiddenOutcomeSlogans = [
+    /Pass the test/,
+    /Earn the passport/,
+    /Study,\s*fika,\s*pass/,
+    /Pass big/,
+    /Pass like a dancing queen/,
+    /Pass with pulla/,
+    /Klara provet/,
+    /Få passet/,
+    /Klara stort/,
+  ];
+
+  for (const file of publicSiteFiles) {
+    const source = read(file);
+    for (const pattern of forbiddenOutcomeSlogans) {
+      assert.doesNotMatch(source, pattern, `${file} should avoid ${pattern}`);
+    }
+  }
+
+  assert.match(read('site/app.js'), /Study the material\./);
+  assert.match(read('site/app.js'), /Känn dig förberedd\./);
+  assert.match(read('site/index.html'), /Study with sources\./);
+  assert.match(read('site/buddies.js'), /Plugga källan, gör provexempel/);
+});

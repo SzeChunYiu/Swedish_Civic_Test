@@ -49,9 +49,9 @@ const SMT_PALETTES = {
 };
 
 const SMT_SLOGANS = {
-  midsommar: { a: "Pass the test.", b: "Earn the passport.", c: "Brag at midsommar." },
-  abba:      { a: "Take a chance.", b: "Mamma mia, study.", c: "Pass like a dancing queen." },
-  fika:      { a: "Sip the coffee.", b: "Open the app.",     c: "Pass with pulla." },
+  midsommar: { a: "Study the material.", b: "Know what matters.", c: "Arrive prepared." },
+  abba:      { a: "Take a chance.", b: "Read one chapter.", c: "Then another." },
+  fika:      { a: "Sip the coffee.", b: "Open the app.",     c: "Study one page." },
   serious:   { a: "Study Sweden's", b: "civic test.",        c: "On your phone." },
 };
 
