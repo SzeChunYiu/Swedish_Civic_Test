@@ -13,11 +13,12 @@ import type {
   RemoveAdsPurchaseProvider,
   RemoveAdsPurchaseRecord,
 } from './purchases';
+import { appStoreProductIds } from './appStoreIdentity';
 import { createNativePurchaseProvider, createSecureStorePurchaseStorage } from './purchases';
 import { PRO_LIFETIME_ENTITLEMENTS, unionEntitlements } from './premium';
 import type { PremiumEntitlements, ProTierEntitlements } from '../../types/monetization';
 
-export const PRO_LIFETIME_PRODUCT_ID = 'com.billyyiu.swedishcivictest.prolifetime';
+export const PRO_LIFETIME_PRODUCT_ID = appStoreProductIds.proLifetime;
 export const PRO_LIFETIME_PRICE_LABEL = '59 SEK';
 export const PRO_LIFETIME_STORAGE_KEY = 'monetization.proLifetime.entitled.v1';
 
