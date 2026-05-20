@@ -7551,8 +7551,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området."
     },
     "source": {
       "title": "Sverige i fokus",
