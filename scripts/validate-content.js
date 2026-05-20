@@ -4844,6 +4844,40 @@ function englishCivicActionClause(value) {
     .replace(/^public services being available\b/i, 'public services are available')
     .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
 }
+function webSocialMediaStatementSv(answer) {
+  if (/^Vem som helst kan skapa innehåll där/i.test(answer)) {
+    return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
+  }
+  if (/^Bara ansvariga utgivare får skriva inlägg där/i.test(answer)) {
+    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
+  }
+  if (/^Allt innehåll godkänns först av staten/i.test(answer)) {
+    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
+  }
+  if (/^Innehållet är alltid mer pålitligt/i.test(answer)) {
+    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
+  }
+  return `På webben och i sociala medier gäller att ${lowerFirst(
+    answer.replace(/\bdär\b/gi, 'på webben och i sociala medier'),
+  )}`;
+}
+function webSocialMediaStatementEn(answer) {
+  if (/^Anyone can create content there/i.test(answer)) {
+    return 'On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media';
+  }
+  if (/^Only responsible publishers may write posts there/i.test(answer)) {
+    return 'On the web and in social media, only responsible publishers may write posts';
+  }
+  if (/^All content is first approved by the state/i.test(answer)) {
+    return 'On the web and in social media, all content is first approved by the state';
+  }
+  if (/^The content is always more reliable/i.test(answer)) {
+    return 'Content on the web and in social media is always more reliable than news in newspapers';
+  }
+  return `On the web and in social media, ${lowerFirst(
+    answer.replace(/\bthere\b/gi, 'on the web and in social media'),
+  )}`;
+}
 function swedishCommonToDoStatement(timePhrase, answer) {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -4866,6 +4900,19 @@ function englishCommonToDoStatement(timePhrase, answer) {
     return `On ${time}, it is common to ${activity}`;
   }
   return `On ${time}, ${activity} are common`;
+}
+function englishCommonCelebrationMode(answer) {
+  const activity = stripLeadingPurposeEn(answer).trim();
+  const celebrateMatch = activity.match(/^celebrate with (.+)$/i);
+  if (celebrateMatch) return `with ${lowerFirst(celebrateMatch[1])}`;
+  if (
+    /^(?:celebrate|eat|light|open|hold|wear|serve|welcome|arrange|gather|dance|sing|go)\b/i.test(
+      activity,
+    )
+  ) {
+    return `by ${englishGerundPhrase(activity)}`;
+  }
+  return `with ${lowerFirst(activity)}`;
 }
 function swedishHabitualPredicate(answer) {
   return lowerFirst(answer).replace(/\barrangerar\b/i, 'arrangera');
