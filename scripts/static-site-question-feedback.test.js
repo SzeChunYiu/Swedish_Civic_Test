@@ -65,6 +65,10 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function phrase(parts) {
+  return parts.join(' ');
+}
+
 function createRenderContext({
   hash = '#/practice?c=1',
   language = 'en',
@@ -173,6 +177,20 @@ test('static Practice answer feedback renders citation and independent-study dis
   assert.match(html, /Provenance: UHR\. Source note:/);
   assert.match(html, /Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7/);
   assert.match(html, /Independent study practice, not a real exam or an official UHR question\./);
+});
+
+test('static provenance badge copy avoids positive UHR authority wording', () => {
+  const source = read('site/practice.js');
+
+  assert.match(source, /Based on UHR's study material Sverige i fokus/);
+  assert.match(source, /app-authored, UHR-referenced practice question/);
+  assert.doesNotMatch(source, new RegExp(phrase(['Directly', 'from', 'UHR']), 'i'));
+  assert.doesNotMatch(source, new RegExp(phrase(['Direkt', 'från', 'UHR']), 'i'));
+  assert.doesNotMatch(
+    source,
+    new RegExp(phrase(['generated', 'from', 'a', 'UHR', 'question']), 'i'),
+  );
+  assert.doesNotMatch(source, new RegExp(phrase(['genererats', 'från', 'en', 'UHR-fråga']), 'i'));
 });
 
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
