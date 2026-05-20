@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getAdUnit, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
@@ -17,6 +17,20 @@ type LaunchPopupAdCopy = {
   liveBody: string;
   testBody: string;
   title: string;
+};
+
+type FocusableView = View & {
+  focus?: () => void;
+};
+
+type RestorableElement = Element & {
+  focus?: (options?: { preventScroll?: boolean }) => void;
+};
+
+type WebKeyboardEvent = {
+  key: string;
+  preventDefault: () => void;
+  stopPropagation: () => void;
 };
 
 const launchPopupAdCopy: Record<AppLanguage, LaunchPopupAdCopy> = {
@@ -59,10 +73,116 @@ function getInitialVisibility(entitlements: Pick<PremiumEntitlements, 'adsDisabl
   return shouldShow;
 }
 
+function isRestorableElement(element: Element | null): element is RestorableElement {
+  return Boolean(element && typeof (element as RestorableElement).focus === 'function');
+}
+
+function isModalElement(element: Element | null): boolean {
+  return Boolean(element?.closest('[aria-modal="true"]'));
+}
+
+function findLaunchFocusFallback(): RestorableElement | null {
+  if (Platform.OS !== 'web' || typeof document === 'undefined') return null;
+
+  const selectors = [
+    'a[aria-label="Sök"]',
+    'a[aria-label="Search"]',
+    '[role="link"][aria-label="Sök"]',
+    '[role="link"][aria-label="Search"]',
+    'a.top-bar-action-link[aria-label]',
+    '[role="link"][aria-label]',
+    'button[aria-label]',
+    '[role="button"][aria-label]',
+  ];
+
+  for (const selector of selectors) {
+    const element = document.querySelector(selector);
+
+    if (isRestorableElement(element) && !isModalElement(element)) {
+      return element;
+    }
+  }
+
+  return null;
+}
+
+function getLaunchFocusRestoreTarget(): RestorableElement | null {
+  if (Platform.OS !== 'web' || typeof document === 'undefined') return null;
+
+  const activeElement = document.activeElement;
+
+  if (
+    isRestorableElement(activeElement) &&
+    activeElement !== document.body &&
+    activeElement !== document.documentElement &&
+    !isModalElement(activeElement)
+  ) {
+    return activeElement;
+  }
+
+  return findLaunchFocusFallback();
+}
+
 export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupAdProps) {
   const language = useSettingsStore((state) => state.language);
   const copy = launchPopupAdCopy[language];
-  const [visible, setVisible] = useState(() => getInitialVisibility(entitlements));
+  const closeButtonRef = useRef<View | null>(null);
+  const restoreFocusRef = useRef<RestorableElement | null>(null);
+  const [visible, setVisible] = useState(() => {
+    const initialVisible = getInitialVisibility(entitlements);
+
+    if (initialVisible) {
+      restoreFocusRef.current = getLaunchFocusRestoreTarget();
+    }
+
+    return initialVisible;
+  });
+
+  const focusLaunchCloseButton = useCallback(() => {
+    if (Platform.OS !== 'web') return;
+
+    (closeButtonRef.current as FocusableView | null)?.focus?.();
+  }, []);
+
+  const restoreLaunchFocus = useCallback(() => {
+    if (Platform.OS !== 'web') return;
+
+    const target = restoreFocusRef.current ?? findLaunchFocusFallback();
+    restoreFocusRef.current = null;
+
+    if (!target) return;
+
+    requestAnimationFrame(() => {
+      if (target.isConnected === false) return;
+
+      target.focus?.({ preventScroll: true });
+    });
+  }, []);
+
+  const dismissLaunchPopupAd = useCallback(() => {
+    setVisible(false);
+    restoreLaunchFocus();
+  }, [restoreLaunchFocus]);
+
+  const handleDialogKeyDown = useCallback(
+    (event: WebKeyboardEvent) => {
+      switch (event.key) {
+        case 'Escape':
+          event.preventDefault();
+          event.stopPropagation();
+          dismissLaunchPopupAd();
+          break;
+        case 'Tab':
+          event.preventDefault();
+          event.stopPropagation();
+          focusLaunchCloseButton();
+          break;
+        default:
+          break;
+      }
+    },
+    [dismissLaunchPopupAd, focusLaunchCloseButton],
+  );
 
   useEffect(() => {
     if (visible) {
@@ -82,10 +202,35 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
 
     launchPopupShownThisRuntime = true;
     deferFirstRunAboutModalForLaunchSession();
+    restoreFocusRef.current = getLaunchFocusRestoreTarget();
     setVisible(true);
   }, [entitlements, visible]);
 
+  useEffect(() => {
+    if (!visible || Platform.OS !== 'web') return;
+
+    if (!restoreFocusRef.current) {
+      restoreFocusRef.current = getLaunchFocusRestoreTarget();
+    }
+
+    requestAnimationFrame(focusLaunchCloseButton);
+  }, [focusLaunchCloseButton, visible]);
+
+  useEffect(() => {
+    if (!visible || Platform.OS !== 'web' || typeof document === 'undefined') return;
+
+    document.addEventListener('keydown', handleDialogKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', handleDialogKeyDown, true);
+    };
+  }, [handleDialogKeyDown, visible]);
+
   const unit = getAdUnit('app_open_launch');
+
+  if (!visible) {
+    return null;
+  }
 
   return (
     <Modal
@@ -94,7 +239,7 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
       animationType="fade"
       transparent
       visible={visible}
-      onRequestClose={() => setVisible(false)}
+      onRequestClose={dismissLaunchPopupAd}
     >
       <View style={styles.backdrop}>
         <View style={styles.card}>
@@ -107,7 +252,8 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
             accessibilityLabel={copy.closeAccessibilityLabel}
             accessibilityRole="button"
             hitSlop={space[1]}
-            onPress={() => setVisible(false)}
+            onPress={dismissLaunchPopupAd}
+            ref={closeButtonRef}
             style={({ pressed }) => [
               styles.closeButton,
               pressed ? styles.closeButtonPressed : null,

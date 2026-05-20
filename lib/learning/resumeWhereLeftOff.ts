@@ -91,7 +91,8 @@ export function resumeBannerCopy(
   return language === 'sv'
     ? {
         title: 'Fortsätt där du slutade',
-        subtitle: `${n} fråga${n === 1 ? '' : 'r'} avklarade i detta kapitel`,
+        subtitle:
+          n === 1 ? '1 fråga avklarad i detta kapitel' : `${n} frågor avklarade i detta kapitel`,
       }
     : {
         title: 'Continue where you left off',

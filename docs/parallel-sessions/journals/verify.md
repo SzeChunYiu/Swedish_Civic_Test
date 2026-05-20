@@ -398,3 +398,13 @@ Verification (commands + result): UHR official `Sverige i fokus` PDF was fetched
 PR (number + merged?): pending at handoff edit time
 Accepted by worker? yes
 Next suggested validator action: fold q301-q350 current evidence into DATA-INTEGRITY generated single-choice meta-stem cleanup, then continue rolling VERIFY with q351-q400 or the next current changed/due slice after active generated-output routes land.
+
+Lane: VERIFY
+Host/branch: isolated clone `Swedish_Civic_Test_verify_clone`, branch `task/verify/pane4-q156`
+Role type and manager: dynamic-worker; manager/escalation VALIDATOR
+Task / checklist item: rolling recently-changed content check for q156/q780-q783 social-insurance wording
+Changed artifacts: `docs/verify/ledger.md`, `docs/verify/q156-social-insurance-2026-05-20.md`, `docs/parallel-sessions/journals/verify.md`
+Verification (commands + result): read required lane docs; opened official UHR `Sverige i fokus` PDF, `Välfärdssamhället`, `Statligt finansierad välfärd`, printed p. 30; inspected `data/additionalQuestions.ts`, `content/question-bank.csv`, `site/questions.js`, and `codex-tasks/open.txt`; `content/question-bank.csv` current row count is 795; q156 current source wording is UHR-supported and natural; q780/q783 remain generated single-choice meta-prompt defects already queued; q781/q782 remain bare-list true/false defects already queued; `git diff --check` passed; `NODE_PATH=/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test/node_modules PATH=/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/Swedish_Civic_Test/node_modules/.bin:$PATH npm run validate:content -- --json` passed with 795 published questions and 795 UHR references validated. Local `pdfinfo`/`pdftotext` were unavailable in the clone, so citation text was verified through the official PDF text exposed by browser/PDF extraction.
+PR (number + merged?): pending
+Accepted by worker? yes
+Next suggested validator action: route the already-open generated-output fixes, then refresh the VERIFY ledger inventory from 720 to the current 795 exported rows.
