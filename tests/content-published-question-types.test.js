@@ -143,8 +143,96 @@ test('criminal-responsibility age copy is date-stamped to the current main-rule 
   assert.equal(summary.criminalResponsibilityCurrentnessSourceMetadataValidated, true);
   assert.equal(summary.criminalResponsibilityCurrentnessSourceRetrievedAt, '2026-05-20');
   assert.equal(summary.criminalResponsibilityCurrentnessProposalEffectiveDate, '2026-08-02');
+  assert.match(summary.criminalResponsibilityCurrentnessValidationDate, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(summary.criminalResponsibilityCurrentnessEffectiveDateRecheckDue, false);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated, true);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt, null);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateStatus, null);
   assert.equal(summary.criminalResponsibilityCurrentnessQuestionsValidated, 5);
   assert.equal(summary.criminalResponsibilityCurrentnessParityValidated, true);
+});
+
+test('criminal-responsibility age copy fails closed on the proposal effective date without a recheck', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const RealDate = Date;
+class MockDate extends RealDate {
+  constructor(...args) {
+    super(...(args.length ? args : ['2026-08-02T12:00:00.000Z']));
+  }
+  static now() {
+    return new RealDate('2026-08-02T12:00:00.000Z').getTime();
+  }
+}
+global.Date = MockDate;
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q044 criminal-responsibility proposal outcome must be rechecked on or after 2026-08-02/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q044 criminal-responsibility source metadata must be retrieved on or after 2026-08-02 once that date is reached/,
+  );
+});
+
+test('criminal-responsibility age copy accepts an explicit post-effective provisional recheck', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const RealDate = Date;
+class MockDate extends RealDate {
+  constructor(...args) {
+    super(...(args.length ? args : ['2026-08-02T12:00:00.000Z']));
+  }
+  static now() {
+    return new RealDate('2026-08-02T12:00:00.000Z').getTime();
+  }
+}
+global.Date = MockDate;
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
+    return String(contents)
+      .replace("retrievedAt: '2026-05-20'", "retrievedAt: '2026-08-02'")
+      .replace(
+        'postEffectiveDateRecheck: {\\n    recheckedAt: null,\\n    status: null,',
+        "postEffectiveDateRecheck: {\\n    recheckedAt: '2026-08-02',\\n    status: 'confirmed-still-provisional',",
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.criminalResponsibilityCurrentnessEffectiveDateRecheckDue, true);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated, true);
+  assert.equal(
+    summary.criminalResponsibilityCurrentnessPostEffectiveDateStatus,
+    'confirmed-still-provisional',
+  );
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt, '2026-08-02');
 });
 
 test('criminal-responsibility age copy rejects undated 13-year proposal wording', () => {
