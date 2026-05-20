@@ -1838,7 +1838,7 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
     'Öva med UHR-refererade frågor och förklaringar.',
     'Följ framsteg lokalt på din enhet utan konto.',
-    'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
+    'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du missat.',
     'Förbered dig lugnt för samhällskunskapsprovet',
   ],
   en: [
@@ -1852,6 +1852,10 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Prepare calmly for the civic test',
   ],
 };
+const FORBIDDEN_ONBOARDING_SV_MISTAKE_REVIEW_COPY = [
+  /repetition av misstag/i,
+  /upprepning av misstag/i,
+];
 const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'onboarding route must import AppLanguage from settings'],
   ['type OnboardingCopy = {', 'onboarding route must define a typed copy contract'],
@@ -9469,6 +9473,14 @@ function validateOnboardingRouteCopyParity() {
 
   EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!onboardingRoute.includes(snippet)) reject(message);
+  });
+
+  FORBIDDEN_ONBOARDING_SV_MISTAKE_REVIEW_COPY.forEach((pattern) => {
+    if (pattern.test(onboardingRoute)) {
+      reject(
+        'onboarding route Swedish mistake-review copy must describe reviewing missed questions, not repeating mistakes',
+      );
+    }
   });
 
   const seenLabels = new Set();
