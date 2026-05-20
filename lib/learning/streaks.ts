@@ -4,6 +4,10 @@ type AnsweredProgress = {
   lastAnsweredAt?: string;
 };
 
+type AnswerAttempt = {
+  answeredAt?: string;
+};
+
 export function getLocalDateKey(date: Date = new Date()): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -48,4 +52,35 @@ export function countAnswersForLocalDate(
 
     return getLocalDateKey(answeredAt) === targetDate;
   }).length;
+}
+
+function countAttemptsForLocalDate(
+  answerAttempts: readonly AnswerAttempt[] = [],
+  date: Date = new Date(),
+): number {
+  const targetDate = getLocalDateKey(date);
+
+  return answerAttempts.filter((attempt) => {
+    if (!attempt?.answeredAt) return false;
+
+    const answeredAt = new Date(attempt.answeredAt);
+    if (Number.isNaN(answeredAt.getTime())) return false;
+
+    return getLocalDateKey(answeredAt) === targetDate;
+  }).length;
+}
+
+export function countAnswerAttemptsForLocalDate({
+  answerAttempts = [],
+  questionProgress = {},
+  date = new Date(),
+}: {
+  answerAttempts?: readonly AnswerAttempt[];
+  questionProgress?: Record<string, AnsweredProgress | undefined>;
+  date?: Date;
+}): number {
+  const persistedAttempts = countAttemptsForLocalDate(answerAttempts, date);
+  return persistedAttempts > 0
+    ? persistedAttempts
+    : countAnswersForLocalDate(questionProgress, date);
 }
