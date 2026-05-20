@@ -425,6 +425,12 @@ const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
 };
+const UNSUPPORTED_SETTINGS_LANGUAGE_SCOPE_LABELS = [
+  ['Fråge', 'språk'].join(''),
+  ['Byt fråge', 'språk till ${label}'].join(''),
+  ['Question ', 'language'].join(''),
+  ['Set question ', 'language to ${label}'].join(''),
+];
 const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
   sv: [
     '5-minutersövning',
@@ -1711,9 +1717,9 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
   {
-    label: 'question language section title',
+    label: 'study language section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.questionLanguageTitle\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.studyLanguageTitle\}\s*<\/Text>/,
   },
   {
     label: 'audio section title',
@@ -1721,9 +1727,19 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.audioTitle\}\s*<\/Text>/,
   },
   {
+    label: 'theme section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.themeModeTitle\}\s*<\/Text>/,
+  },
+  {
     label: 'daily goal section title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
+  },
+  {
+    label: 'import section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.importTitle\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
@@ -1737,10 +1753,42 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Dagligt mål',
     'Stäng av ljud',
     'Slå på ljud',
-    'Byt frågespråk till ${label}',
-    'Frågespråk',
+    'Bekräfta import',
+    'Bekräfta lokal studiedataimport',
+    'Klistra in JSON innan du förhandsgranskar.',
+    'JSON kunde inte läsas.',
+    'Importen har fel format eller okända toppnivåfält.',
+    'Importversionen stöds inte.',
+    'Importen innehåller köp-, kvitto- eller IAP-fält. Ta bort dem och återställ köp via appbutiken.',
+    'Importen innehåller inga stödda studiedata.',
+    'Klistra in JSON-export',
+    'Klistra in exporten här',
+    'Förhandsgranska import',
+    'Förhandsgranska lokal studiedataimport',
+    'Köp, kvitton och IAP-data importeras inte. Använd appbutikens återställning för köp.',
+    'Återställ importfält',
+    'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
+    'Importen är klar.',
+    '${count} bokmärken',
+    '${count} frågor med sparad progression',
+    '${count} dagar med FSRS-repetition',
+    '${count} FSRS-repetitionskort',
+    '${count} provhistorikposter',
+    '${count} inställningar',
+    'Studiesvit och frysstatus ingår',
+    'Sammanfattning före import',
+    '${count} granskningar av fel svar',
+    'Importera studiedata',
+    'Byt studiespråk till ${label}',
+    'Studiespråk',
     'Ställ in dagligt mål till ${goal} svar',
-    'Styr studiespråk, ljud och ditt dagliga mål.',
+    'Välj tema: ${label}',
+    'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    'Mörkt',
+    'Ljust',
+    'Tema: ${label}',
+    'Tema',
+    'Följ systemet',
     'Inställningar',
     'Svenska',
     'Engelskt stöd',
@@ -1755,10 +1803,42 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Daily goal',
     'Disable audio',
     'Enable audio',
-    'Set question language to ${label}',
-    'Question language',
+    'Confirm import',
+    'Confirm local study data import',
+    'Paste JSON before previewing.',
+    'JSON could not be read.',
+    'The import has the wrong format or unknown top-level fields.',
+    'This import version is not supported.',
+    'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.',
+    'The import does not contain supported study data.',
+    'Paste JSON export',
+    'Paste the export here',
+    'Preview import',
+    'Preview local study data import',
+    'Purchases, receipts, and IAP data are not imported. Use the app store restore flow for purchases.',
+    'Reset import field',
+    'Paste a local study data export in JSON format. You will see a summary before anything is written.',
+    'Import complete.',
+    '${count} bookmarks',
+    '${count} questions with saved progress',
+    '${count} FSRS review days',
+    '${count} FSRS review cards',
+    '${count} mock exam history entries',
+    '${count} settings',
+    'Study streak and freeze status included',
+    'Summary before import',
+    '${count} wrong-answer reviews',
+    'Import study data',
+    'Set study language to ${label}',
+    'Study language',
     'Set daily goal to ${goal} answers',
-    'Control study language, audio, and your daily goal.',
+    'Choose theme: ${label}',
+    'Control study language, audio, theme, and your daily goal.',
+    'Dark',
+    'Light',
+    'Theme: ${label}',
+    'Theme',
+    'Use system',
     'Settings',
     'Swedish',
     'English support',
@@ -1798,10 +1878,15 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   ['{copy.backToProfile}', 'settings back link must render localized copy'],
   ['{copy.title}', 'settings title must render localized copy'],
   ['{copy.subtitle}', 'settings subtitle must render localized copy'],
-  ['{copy.questionLanguageTitle}', 'settings language section must render localized copy'],
+  ['{copy.studyLanguageTitle}', 'settings language section must render localized copy'],
   [
     'accessibilityLabel={copy.languageAccessibilityLabel(label)}',
     'settings language buttons must expose localized accessibility copy',
+  ],
+  ['aria-checked={language === value}', 'settings language options must expose checked state'],
+  [
+    'accessibilityState={{ checked: language === value }}',
+    'settings language options must mirror checked state to accessibilityState',
   ],
   ['{copy.audioTitle}', 'settings audio section must render localized copy'],
   [
@@ -1820,6 +1905,14 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     'accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}',
     'settings daily-goal buttons must expose localized accessibility copy',
+  ],
+  [
+    'aria-checked={dailyGoalAnswers === goal}',
+    'settings daily-goal options must expose checked state',
+  ],
+  [
+    'accessibilityState={{ checked: dailyGoalAnswers === goal }}',
+    'settings daily-goal options must mirror checked state to accessibilityState',
   ],
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
@@ -1920,7 +2013,8 @@ const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern:
+      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -9388,6 +9482,21 @@ function validateSettingsRouteCopyParity() {
   EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!settingsRoute.includes(snippet)) reject(message);
   });
+  UNSUPPORTED_SETTINGS_LANGUAGE_SCOPE_LABELS.forEach((label) => {
+    if (settingsRoute.includes(label)) {
+      reject(
+        `settings route must describe the app-wide study language, not ${JSON.stringify(label)}`,
+      );
+    }
+  });
+  if (
+    /aria-selected=\{(?:language === value|dailyGoalAnswers === goal)\}/.test(settingsRoute) ||
+    /accessibilityState=\{\{\s*selected:\s*(?:language === value|dailyGoalAnswers === goal)\s*\}\}/.test(
+      settingsRoute,
+    )
+  ) {
+    reject('settings route language and daily-goal options must use radio semantics');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -10603,10 +10712,17 @@ function validateLocalizationLanguageContract() {
   if (!settingsRoute.includes('Svenska') || !settingsRoute.includes('Engelskt stöd')) {
     reject('app/settings.tsx must expose Swedish labels for language buttons in Swedish mode');
   }
-  if (!settingsRoute.includes('Byt frågespråk till ${label}')) {
+  UNSUPPORTED_SETTINGS_LANGUAGE_SCOPE_LABELS.forEach((label) => {
+    if (settingsRoute.includes(label)) {
+      reject(
+        `app/settings.tsx must not expose narrow language scope label ${JSON.stringify(label)}`,
+      );
+    }
+  });
+  if (!settingsRoute.includes('Byt studiespråk till ${label}')) {
     reject('app/settings.tsx language buttons must expose Swedish accessibility text');
   }
-  if (!settingsRoute.includes('Set question language to ${label}')) {
+  if (!settingsRoute.includes('Set study language to ${label}')) {
     reject('app/settings.tsx language buttons must expose label-derived accessibility text');
   }
 

@@ -19,7 +19,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 44);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 92);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -27,6 +27,10 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /const copy = settingsCopy\[language\];/);
   assert.match(source, /Styr studiespråk, ljud, tema och ditt dagliga mål\./);
   assert.match(source, /Control study language, audio, theme, and your daily goal\./);
+  assert.match(source, /Byt studiespråk till \$\{label\}/);
+  assert.match(source, /Set study language to \$\{label\}/);
+  assert.match(source, /Studiespråk/);
+  assert.match(source, /Study language/);
   assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
   assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);

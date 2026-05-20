@@ -59,7 +59,7 @@ type SettingsCopy = {
   importSummaryWrongAnswers: (count: number) => string;
   importTitle: string;
   languageAccessibilityLabel: (label: string) => string;
-  questionLanguageTitle: string;
+  studyLanguageTitle: string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
   setThemeModeAccessibilityLabel: (label: string) => string;
   subtitle: string;
@@ -121,8 +121,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSummaryTitle: 'Sammanfattning före import',
     importSummaryWrongAnswers: (count) => `${count} granskningar av fel svar`,
     importTitle: 'Importera studiedata',
-    languageAccessibilityLabel: (label) => `Byt frågespråk till ${label}`,
-    questionLanguageTitle: 'Frågespråk',
+    languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
+    studyLanguageTitle: 'Studiespråk',
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
     setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
     subtitle: 'Styr studiespråk, ljud, tema och ditt dagliga mål.',
@@ -183,8 +183,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSummaryTitle: 'Summary before import',
     importSummaryWrongAnswers: (count) => `${count} wrong-answer reviews`,
     importTitle: 'Import study data',
-    languageAccessibilityLabel: (label) => `Set question language to ${label}`,
-    questionLanguageTitle: 'Question language',
+    languageAccessibilityLabel: (label) => `Set study language to ${label}`,
+    studyLanguageTitle: 'Study language',
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
     setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
     subtitle: 'Control study language, audio, theme, and your daily goal.',
@@ -344,11 +344,11 @@ export default function Screen() {
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.questionLanguageTitle}
+          {copy.studyLanguageTitle}
         </Text>
         <View
-          aria-label={copy.questionLanguageTitle}
-          accessibilityLabel={copy.questionLanguageTitle}
+          aria-label={copy.studyLanguageTitle}
+          accessibilityLabel={copy.studyLanguageTitle}
           accessibilityRole="radiogroup"
           style={styles.row}
         >

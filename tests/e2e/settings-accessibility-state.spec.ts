@@ -17,15 +17,15 @@ test('settings controls expose selected and checked state on web', async ({ page
   const swedishLanguage = page.getByLabel('Set study language to Swedish');
   const englishLanguage = page.getByLabel('Set study language to English support');
 
-  await expect(englishLanguage).toHaveAttribute('aria-selected', 'true');
-  await expect(swedishLanguage).toHaveAttribute('aria-selected', 'false');
+  await expect(englishLanguage).toHaveAttribute('aria-checked', 'true');
+  await expect(swedishLanguage).toHaveAttribute('aria-checked', 'false');
 
   const tenAnswers = page.getByLabel('Set daily goal to 10 answers');
   const twentyAnswers = page.getByLabel('Set daily goal to 20 answers');
   await twentyAnswers.click();
 
-  await expect(twentyAnswers).toHaveAttribute('aria-selected', 'true');
-  await expect(tenAnswers).toHaveAttribute('aria-selected', 'false');
+  await expect(twentyAnswers).toHaveAttribute('aria-checked', 'true');
+  await expect(tenAnswers).toHaveAttribute('aria-checked', 'false');
 
   const enabledAudio = page.getByRole('switch', { name: 'Disable audio' });
   await expect(enabledAudio).toHaveAttribute('aria-checked', 'true');
@@ -37,11 +37,11 @@ test('settings controls expose selected and checked state on web', async ({ page
   await page.reload({ waitUntil: 'networkidle' });
 
   await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
-    'aria-selected',
+    'aria-checked',
     'true',
   );
   await expect(page.getByLabel('Set daily goal to 20 answers')).toHaveAttribute(
-    'aria-selected',
+    'aria-checked',
     'true',
   );
   await expect(page.getByRole('switch', { name: 'Enable audio' })).toHaveAttribute(
