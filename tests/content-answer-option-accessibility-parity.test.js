@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-answer-option-accessibility'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -46,7 +50,7 @@ test('quiz AnswerOption keeps feedback labels and selection state in accessibili
   );
   assert.match(source, /if \(tone !== 'idle'\) return tone;/);
   assert.match(source, /return selected \? 'selected' : 'idle';/);
-  assert.match(source, /return language === 'en' \? option\.textEn : option\.textSv;/);
+  assert.match(source, /return getQuestionOptionText\(option, language\);/);
 });
 
 test('AnswerOption accessibility parity rejects English-only Swedish idle labels', () => {
@@ -66,6 +70,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-answer-option-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -96,6 +101,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-answer-option-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -126,6 +132,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-answer-option-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],

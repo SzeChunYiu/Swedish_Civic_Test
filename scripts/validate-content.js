@@ -2927,8 +2927,8 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
       /function getOptionCardState\(tone: AnswerTone, selected: boolean\): OptionCardState \{\s*if \(tone !== 'idle'\) return tone;\s*return selected \? 'selected' : 'idle';\s*\}/,
   },
   {
-    label: 'English and Swedish option label switch',
-    pattern: /return language === 'en' \? option\.textEn : option\.textSv;/,
+    label: 'shared localized option text helper',
+    pattern: /return getQuestionOptionText\(option, language\);/,
   },
 ];
 const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
@@ -7594,6 +7594,16 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-answer-option-accessibility')) {
+  validateAnswerOptionAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    answerOptionAccessibilityRulesValidated,
+    answerOptionAccessibilityParityValidated,
   });
   process.exit(0);
 }
