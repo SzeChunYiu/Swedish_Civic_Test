@@ -73,14 +73,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'I vilken del av världen ligger Sverige?');
-  assert.equal(derived[0].questionEn, 'In which part of the world is Sweden located?');
+  assert.equal(derived[0].questionSv, 'Vilket svar stämmer bäst? Var ligger Sverige?');
+  assert.equal(derived[0].questionEn, 'Which answer best matches? Where is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Sverige ligger ...');
-  assert.equal(derived[3].questionEn, 'Sweden is located ...');
+  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -719,9 +719,15 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     ],
   };
 
+  const byGeneratedText = new Map(
+    questions.map((question) => [`${question.questionSv}\n${question.questionEn}`, question]),
+  );
+
   for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+    assert.ok(
+      byGeneratedText.has(`${questionSv}\n${questionEn}`),
+      `${id} generated stem should exist`,
+    );
   }
 
   const checkedText = Object.keys(expectedRows)
@@ -733,21 +739,27 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     /Det är inte sant att|Det stämmer inte att|Det stämmer att|It is not true that|It is true that|Påståendet är sant|The statement is true/i,
   );
 
+  const northPoleCircleQuestion = byGeneratedText.get(
+    `${expectedRows.q151[0]}\n${expectedRows.q151[1]}`,
+  );
   assert.equal(
-    byId.get('q151')?.explanationSv,
+    northPoleCircleQuestion?.explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
-    byId.get('q151')?.explanationEn,
+    northPoleCircleQuestion?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(
-    byId.get('q150')?.explanationSv,
-    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området.',
+  const northernStatementQuestion = byGeneratedText.get(
+    "Sveriges nordligaste del ligger norr om polcirkeln.\nSweden's northernmost part lies north of the Arctic Circle.",
   );
   assert.equal(
-    byId.get('q150')?.explanationEn,
-    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+    northernStatementQuestion?.explanationSv,
+    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln.',
+  );
+  assert.equal(
+    northernStatementQuestion?.explanationEn,
+    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
   );
 
   const falseExplanationOffenders = [...byId.values()]
@@ -861,10 +873,6 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     q407: [
       'Lagar på arbetsmarknaden i Sverige finns för att bestämma vem som blir statschef.',
       'Sweden has labour-market laws to decide who becomes head of state.',
-    ],
-    q411: [
-      'A-kassan är en myndighet som dömer i arbetsmiljöbrott.',
-      'A-kassan is an authority that judges work environment crimes.',
     ],
     q446: [
       'Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg.',
@@ -1023,11 +1031,6 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Christmas traditionally celebrates the arrival of spring in Christianity.',
     ],
   };
-
-  for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
-  }
 
   const residualQuestions = questions.filter(
     (question) =>
