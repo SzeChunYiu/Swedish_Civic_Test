@@ -19,7 +19,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 32);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 84);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -41,6 +41,14 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /aria-checked=\{dailyGoalAnswers === goal\}/);
   assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
   assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
+  assert.match(source, /previewLocalStudyDataImport\(importText\)/);
+  assert.match(source, /applyLocalStudyDataImport\(result\.preview\)/);
+  assert.match(source, /Importera studiedata/);
+  assert.match(source, /Import study data/);
+  assert.match(source, /Köp, kvitton och IAP-data importeras inte/);
+  assert.match(source, /Purchases, receipts, and IAP data are not imported/);
+  assert.match(source, /accessibilityLabel=\{copy\.importPasteLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.confirmImportAccessibilityLabel\}/);
   assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
   assert.doesNotMatch(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
 });
