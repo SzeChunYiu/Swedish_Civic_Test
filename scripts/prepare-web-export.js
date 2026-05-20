@@ -1,10 +1,31 @@
 #!/usr/bin/env node
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
 const WEB_MANIFEST_HREF = 'manifest.webmanifest';
+const WEB_EXPORT_FRESHNESS_MARKER = 'web-export-freshness.json';
+const WEB_EXPORT_FRESHNESS_VERSION = 1;
 const PNG_SIGNATURE = '89504e470d0a1a0a';
+const WEB_EXPORT_SOURCE_INPUTS = [
+  'app',
+  'app.json',
+  'assets',
+  'babel.config.js',
+  'components',
+  'data',
+  'lib',
+  'metro.config.js',
+  'package-lock.json',
+  'package.json',
+  'playwright.config.ts',
+  'public',
+  'scripts/prepare-web-export.js',
+  'tests/e2e',
+  'tsconfig.json',
+  'types',
+];
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -25,6 +46,10 @@ function escapeRegExp(literal) {
 
 function readJsonFile(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function toPosixPath(filePath) {
+  return filePath.split(path.sep).join('/');
 }
 
 function readThemeCanvasColor() {
@@ -229,6 +254,112 @@ function walkFiles(directory, predicate) {
   return files;
 }
 
+function listWebExportSourceFiles(repoRoot = process.cwd()) {
+  const files = new Map();
+  const resolvedRepoRoot = path.resolve(repoRoot);
+
+  function addFile(filePath) {
+    const relativePath = path.relative(resolvedRepoRoot, filePath);
+    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+      return;
+    }
+    files.set(toPosixPath(relativePath), filePath);
+  }
+
+  for (const sourceInput of WEB_EXPORT_SOURCE_INPUTS) {
+    const sourcePath = path.join(resolvedRepoRoot, sourceInput);
+    if (!fs.existsSync(sourcePath)) {
+      continue;
+    }
+
+    const stat = fs.statSync(sourcePath);
+    if (stat.isDirectory()) {
+      for (const sourceFile of walkFiles(sourcePath)) {
+        if (fs.statSync(sourceFile).isFile()) {
+          addFile(sourceFile);
+        }
+      }
+    } else if (stat.isFile()) {
+      addFile(sourcePath);
+    }
+  }
+
+  return [...files.keys()].sort();
+}
+
+function buildWebExportSourceFingerprint(options = {}) {
+  const repoRoot = path.resolve(options.repoRoot ?? process.cwd());
+  const sourceFiles = listWebExportSourceFiles(repoRoot);
+  const hash = crypto.createHash('sha256');
+
+  for (const relativePath of sourceFiles) {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath));
+    hash.update(relativePath);
+    hash.update('\0');
+    hash.update(String(source.length));
+    hash.update('\0');
+    hash.update(source);
+    hash.update('\0');
+  }
+
+  return {
+    hash: hash.digest('hex'),
+    sourceFileCount: sourceFiles.length,
+  };
+}
+
+function webExportFreshnessMarkerPath(outputDir) {
+  return path.join(outputDir, WEB_EXPORT_FRESHNESS_MARKER);
+}
+
+function writeWebExportFreshnessMarker(outputDir, options = {}) {
+  const fingerprint = buildWebExportSourceFingerprint(options);
+  const marker = {
+    version: WEB_EXPORT_FRESHNESS_VERSION,
+    generatedAt: new Date().toISOString(),
+    generatedBy: 'scripts/prepare-web-export.js',
+    sourceHash: fingerprint.hash,
+    sourceFileCount: fingerprint.sourceFileCount,
+    sourceInputs: WEB_EXPORT_SOURCE_INPUTS,
+  };
+
+  fs.writeFileSync(webExportFreshnessMarkerPath(outputDir), `${JSON.stringify(marker, null, 2)}\n`);
+  return marker;
+}
+
+function assertWebExportFreshness(outputDir, options = {}) {
+  const markerPath = webExportFreshnessMarkerPath(outputDir);
+  if (!fs.existsSync(markerPath)) {
+    throw new Error(
+      `${markerPath} is missing. Run \`npm run build:web:export\` first so E2E serves a fresh web export.`,
+    );
+  }
+
+  const marker = readJsonFile(markerPath);
+  if (marker.version !== WEB_EXPORT_FRESHNESS_VERSION) {
+    throw new Error(
+      `${markerPath} has unsupported freshness marker version ${JSON.stringify(marker.version)}. Run \`npm run build:web:export\` first.`,
+    );
+  }
+  if (typeof marker.sourceHash !== 'string' || marker.sourceHash.length === 0) {
+    throw new Error(`${markerPath} is missing sourceHash. Run \`npm run build:web:export\` first.`);
+  }
+
+  const current = buildWebExportSourceFingerprint(options);
+  if (marker.sourceHash !== current.hash || marker.sourceFileCount !== current.sourceFileCount) {
+    throw new Error(
+      [
+        'dist-web is stale for the current app/components/tests source tree.',
+        `Freshness marker sourceHash=${marker.sourceHash} sourceFileCount=${marker.sourceFileCount};`,
+        `current sourceHash=${current.hash} sourceFileCount=${current.sourceFileCount}.`,
+        'Run `npm run build:web:export` first.',
+      ].join(' '),
+    );
+  }
+
+  return { current, marker };
+}
+
 function toRelativeBundlePath(bundlePath) {
   return bundlePath.replace(/^\/+/, '');
 }
@@ -291,6 +422,8 @@ function prepare(outputDir) {
       fs.writeFileSync(jsFile, rewritten);
     }
   }
+
+  writeWebExportFreshnessMarker(outputDir);
 }
 
 function check(outputDir) {
@@ -319,6 +452,8 @@ function check(outputDir) {
       throw new Error(`${jsFile} still contains root-relative exported asset URLs`);
     }
   }
+
+  assertWebExportFreshness(outputDir);
 }
 
 function main() {
@@ -345,10 +480,16 @@ if (require.main === module) {
 }
 
 module.exports = {
+  WEB_EXPORT_FRESHNESS_MARKER,
+  WEB_EXPORT_FRESHNESS_VERSION,
   check,
   prepare,
+  assertWebExportFreshness,
+  buildWebExportSourceFingerprint,
   rewriteHtml,
   rewriteRootRelativeHtmlAssetPaths,
   rewriteRootRelativeBundlePaths,
   assertWebManifestContract,
+  webExportFreshnessMarkerPath,
+  writeWebExportFreshnessMarker,
 };
