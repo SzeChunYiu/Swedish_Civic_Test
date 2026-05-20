@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const { assertStaticV11ReadinessCopySource } = require('./static-v11-readiness-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -120,20 +121,24 @@ function renderDashboard(language) {
 test('static v1.1 dashboard frames the score as a local practice signal', () => {
   const source = read('site/v11.js');
 
-  [
-    /['"`]Readiness['"`]/,
-    /['"`]Din beredskap['"`]/,
-    /['"`]Almost ready['"`]/,
-    /['"`]Nästan redo['"`]/,
-  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
+  assert.deepEqual(assertStaticV11ReadinessCopySource(source), {
+    requiredCopyValidated: 12,
+    unsupportedPatternsValidated: 4,
+  });
 
-  [
-    'Local practice signal',
-    'Lokal övningssignal',
-    'Based only on practice and mock attempts on this device, not an official result forecast.',
-    'Bygger bara på övningar och övningsprov på den här enheten, inte en officiell prognos.',
-  ].forEach((copy) =>
-    assert.match(source, new RegExp(copy.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))),
+  assert.throws(
+    () => assertStaticV11ReadinessCopySource(source.replace('Local practice signal', 'Readiness')),
+    /unsupported readiness\/pass-prediction copy/,
+  );
+  assert.throws(
+    () =>
+      assertStaticV11ReadinessCopySource(
+        source.replace(
+          'Based only on practice and mock attempts on this device, not an official result forecast.',
+          '',
+        ),
+      ),
+    /must keep local-practice labels/,
   );
 });
 

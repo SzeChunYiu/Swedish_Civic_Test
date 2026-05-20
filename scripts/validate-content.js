@@ -18,6 +18,13 @@ const {
   findStaticHeadMetadataTitleIssues,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
+const {
+  STATIC_V11_REQUIRED_READINESS_COPY,
+  STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS,
+  findMissingStaticV11ReadinessCopyInSource,
+  findUnsupportedStaticV11ReadinessCopyInSource,
+  formatStaticV11ReadinessCopyIssues,
+} = require('./static-v11-readiness-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -42,6 +49,7 @@ const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 159;
 const EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
+  'scripts/static-v11-readiness-copy-guard.js',
   'scripts/compliance-pages.test.js',
 ]);
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
@@ -72,6 +80,7 @@ const TRUE_FALSE_OPTIONS = [
 ];
 const STATIC_VALIDATION_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
+  'scripts/static-v11-readiness-copy-guard.js',
   'scripts/compliance-pages.test.js',
   'scripts/static-site-source-provenance-copy.test.js',
 ]);
@@ -79,6 +88,10 @@ const STATIC_VALIDATION_IMPORT_CHECKS = Object.freeze([
   {
     label: 'static outcome copy guard',
     script: "require('./scripts/static-outcome-copy-guard')",
+  },
+  {
+    label: 'static v1.1 readiness copy guard',
+    script: "require('./scripts/static-v11-readiness-copy-guard')",
   },
 ]);
 const STATIC_I18N_ARABIC_HIGH_FREQUENCY_KEYS = Object.freeze([
@@ -4214,6 +4227,34 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
+function validateStaticV11ReadinessCopy() {
+  const source = loadText('site/v11.js');
+  const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
+  const missing = findMissingStaticV11ReadinessCopyInSource(source);
+
+  if (offenders.length > 0) {
+    fail(
+      `static v1.1 dashboard exposes unsupported readiness/pass-prediction copy:\n${formatStaticV11ReadinessCopyIssues(
+        offenders,
+      )}`,
+    );
+  }
+
+  if (missing.length > 0) {
+    fail(
+      `static v1.1 dashboard is missing local-practice labels, component labels, or non-official caveats:\n${formatStaticV11ReadinessCopyIssues(
+        missing,
+      )}`,
+    );
+  }
+
+  return {
+    requiredCopyValidated: STATIC_V11_REQUIRED_READINESS_COPY.length - missing.length,
+    unsupportedPatternsValidated:
+      STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length - offenders.length,
+  };
+}
+
 const STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN = [
   /Spaced repetition/i,
   /\bquiz\b/i,
@@ -7371,6 +7412,9 @@ let staticI18nArabicHighFrequencyLabelsValidated = 0;
 let staticI18nArabicForbiddenFragmentsValidated = 0;
 let staticI18nArabicEnglishFallbacksValidated = 0;
 let staticI18nArabicNaturalnessValidated = false;
+let staticV11ReadinessUnsupportedPatternsValidated = 0;
+let staticV11ReadinessRequiredCopyValidated = 0;
+let staticV11ReadinessCopyParityValidated = false;
 let staticValidationSyntaxFilesValidated = 0;
 let staticValidationImportChecksValidated = 0;
 let staticValidationSyntaxGateValidated = false;
@@ -7400,6 +7444,27 @@ let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+
+if (process.argv.includes('--focus-static-v11-readiness-copy')) {
+  validateStaticValidationSyntaxGate();
+  const readinessValidation = validateStaticV11ReadinessCopy();
+  staticV11ReadinessUnsupportedPatternsValidated = readinessValidation.unsupportedPatternsValidated;
+  staticV11ReadinessRequiredCopyValidated = readinessValidation.requiredCopyValidated;
+  staticV11ReadinessCopyParityValidated =
+    staticV11ReadinessUnsupportedPatternsValidated ===
+      STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
+    staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_READINESS_COPY.length;
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticV11ReadinessUnsupportedPatternsValidated,
+    staticV11ReadinessRequiredCopyValidated,
+    staticV11ReadinessCopyParityValidated,
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
 
 if (process.argv.includes('--focus-native-quiz-copy')) {
   validateQuizRouteHeaderParity();
@@ -7555,6 +7620,15 @@ staticEbookOutcomeClaimParityValidated =
     staticI18nArabicForbiddenFragmentsValidated === STATIC_I18N_ARABIC_FORBIDDEN_FRAGMENTS.length &&
     staticI18nArabicEnglishFallbacksValidated ===
       Object.keys(STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY).length;
+}
+{
+  const readinessValidation = validateStaticV11ReadinessCopy();
+  staticV11ReadinessUnsupportedPatternsValidated = readinessValidation.unsupportedPatternsValidated;
+  staticV11ReadinessRequiredCopyValidated = readinessValidation.requiredCopyValidated;
+  staticV11ReadinessCopyParityValidated =
+    staticV11ReadinessUnsupportedPatternsValidated ===
+      STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
+    staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_READINESS_COPY.length;
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
@@ -16046,6 +16120,9 @@ console.log(
       staticI18nArabicForbiddenFragmentsValidated,
       staticI18nArabicEnglishFallbacksValidated,
       staticI18nArabicNaturalnessValidated,
+      staticV11ReadinessUnsupportedPatternsValidated,
+      staticV11ReadinessRequiredCopyValidated,
+      staticV11ReadinessCopyParityValidated,
       staticValidationSyntaxFilesValidated,
       staticValidationImportChecksValidated,
       staticValidationSyntaxGateValidated,
