@@ -161,7 +161,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.supportedLanguagesValidated, 2);
   assert.equal(summary.localizationStringsValidated, summary.localizationStrings);
   assert.equal(summary.languageSettingsParityValidated, true);
-  assert.equal(summary.settingsStoreFieldsValidated, 10);
+  assert.equal(summary.settingsStoreFieldsValidated, 12);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
   assert.equal(summary.settingsDailyGoalOptionsValidated, 4);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
@@ -172,7 +172,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 12);
+  assert.equal(summary.progressStoreFieldsValidated, 14);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);

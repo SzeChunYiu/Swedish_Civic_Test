@@ -87,12 +87,14 @@ test('settings store schema stays in parity with persisted settings state', () =
     'utf8',
   );
 
-  assert.equal(summary.settingsStoreFieldsValidated, 10);
+  assert.equal(summary.settingsStoreFieldsValidated, 12);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
   assert.match(settingsStore, /type SettingsState = \{/);
   assert.match(settingsStore, /language: AppLanguage;/);
   assert.match(settingsStore, /audioEnabled: boolean;/);
   assert.match(settingsStore, /dailyGoalAnswers: number;/);
+  assert.match(settingsStore, /persistenceWarning: StoragePersistenceWarning \| null;/);
+  assert.match(settingsStore, /clearPersistenceWarning: \(\) => void;/);
   assert.match(settingsStore, /setLanguage: \(language: AppLanguage\) => void;/);
   assert.match(settingsStore, /setAudioEnabled: \(enabled: boolean\) => void;/);
   assert.match(settingsStore, /setDailyGoalAnswers: \(answerCount: number\) => void;/);

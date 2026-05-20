@@ -6,6 +6,7 @@ import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp } from '../learning/xp';
+import { createStoragePersistenceWarning, type StoragePersistenceWarning } from './persistence';
 
 export type QuestionProgress = {
   questionId: string;
@@ -156,11 +157,18 @@ function readProgress(): PersistedProgress {
   }
 }
 
-function writeProgress(progress: PersistedProgress): void {
-  progressStorage?.set(progressStateKey, JSON.stringify(progress));
+function writeProgress(progress: PersistedProgress): StoragePersistenceWarning | null {
+  try {
+    progressStorage?.set(progressStateKey, JSON.stringify(progress));
+    return null;
+  } catch (error) {
+    return createStoragePersistenceWarning('progress', progressStateKey, error);
+  }
 }
 
 type ProgressState = PersistedProgress & {
+  persistenceWarning: StoragePersistenceWarning | null;
+  clearPersistenceWarning: () => void;
   markQuestionCompleted: (questionId: string) => void;
   recordAnswer: (questionId: string, isCorrect: boolean) => void;
   recordMockExamSession: (session: MockExamProgressInput) => void;
@@ -173,6 +181,8 @@ const initialProgress = readProgress();
 
 export const useProgressStore = create<ProgressState>((set) => ({
   ...initialProgress,
+  persistenceWarning: null,
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
   markQuestionCompleted: (questionId) =>
     set((state) => {
       if (state.completedQuestionIds.includes(questionId)) return state;
@@ -185,9 +195,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
 
-      return nextProgress;
+      return { ...nextProgress, persistenceWarning };
     }),
   recordAnswer: (questionId, isCorrect) =>
     set((state) => {
@@ -227,9 +237,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
 
-      return nextProgress;
+      return { ...nextProgress, persistenceWarning };
     }),
   recordMockExamSession: (session) =>
     set((state) => {
@@ -252,9 +262,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: [...otherSessions, nextSession],
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
 
-      return nextProgress;
+      return { ...nextProgress, persistenceWarning };
     }),
   setStreakFreezeState: (streakFreezeState) =>
     set((state) => {
@@ -268,9 +278,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState,
       };
-      writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
 
-      return nextProgress;
+      return { ...nextProgress, persistenceWarning };
     }),
   toggleBookmark: (questionId) =>
     set((state) => {
@@ -292,12 +302,12 @@ export const useProgressStore = create<ProgressState>((set) => ({
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
-      writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
 
-      return nextProgress;
+      return { ...nextProgress, persistenceWarning };
     }),
   resetProgress: () => {
-    writeProgress(emptyProgress);
-    set(emptyProgress);
+    const persistenceWarning = writeProgress(emptyProgress);
+    set({ ...emptyProgress, persistenceWarning });
   },
 }));
