@@ -180,6 +180,15 @@ const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   retrievedAt: '2026-05-20',
   proposalSubmittedAt: '2026-04-16',
   proposalEffectiveDate: '2026-08-02',
+  postEffectiveDateRecheck: {
+    recheckedAt: null,
+    status: null,
+    allowedStatuses: [
+      'confirmed-still-provisional',
+      'confirmed-law-updated',
+      'confirmed-rejected-or-withdrawn',
+    ],
+  },
   officialSources: [
     {
       label: 'current-law-main-rule',
@@ -7520,6 +7529,11 @@ let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
 let criminalResponsibilityCurrentnessProposalEffectiveDate = null;
+let criminalResponsibilityCurrentnessValidationDate = null;
+let criminalResponsibilityCurrentnessEffectiveDateRecheckDue = false;
+let criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated = false;
+let criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt = null;
+let criminalResponsibilityCurrentnessPostEffectiveDateStatus = null;
 let criminalResponsibilityCurrentnessQuestionsValidated = 0;
 let criminalResponsibilityCurrentnessParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
@@ -16110,6 +16124,17 @@ function criminalResponsibilityCurrentnessRows() {
   return [sourceQuestion, ...generatedRows].filter(Boolean);
 }
 
+function currentUtcIsoDate() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+    .toISOString()
+    .slice(0, 10);
+}
+
+function compareIsoDates(left, right) {
+  return left.localeCompare(right);
+}
+
 function validateCriminalResponsibilityCurrentness() {
   const rows = criminalResponsibilityCurrentnessRows();
   let allRowsAreValid = true;
@@ -16130,6 +16155,54 @@ function validateCriminalResponsibilityCurrentness() {
   if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate !== '2026-08-02') {
     rejectMetadata('criminal-responsibility proposal effective-date metadata is invalid');
   }
+  const postEffectiveDateRecheck =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.postEffectiveDateRecheck ?? {};
+  const proposalEffectiveDate = CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
+  criminalResponsibilityCurrentnessValidationDate = currentUtcIsoDate();
+  criminalResponsibilityCurrentnessEffectiveDateRecheckDue =
+    compareIsoDates(criminalResponsibilityCurrentnessValidationDate, proposalEffectiveDate) >= 0;
+  criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt =
+    postEffectiveDateRecheck.recheckedAt ?? null;
+  criminalResponsibilityCurrentnessPostEffectiveDateStatus =
+    postEffectiveDateRecheck.status ?? null;
+
+  let postEffectiveDateRecheckIsValid = !criminalResponsibilityCurrentnessEffectiveDateRecheckDue;
+  if (criminalResponsibilityCurrentnessEffectiveDateRecheckDue) {
+    postEffectiveDateRecheckIsValid = true;
+
+    if (
+      !isIsoDate(postEffectiveDateRecheck.recheckedAt) ||
+      compareIsoDates(postEffectiveDateRecheck.recheckedAt, proposalEffectiveDate) < 0
+    ) {
+      postEffectiveDateRecheckIsValid = false;
+      rejectMetadata(
+        `q044 criminal-responsibility proposal outcome must be rechecked on or after ${proposalEffectiveDate}`,
+      );
+    }
+
+    if (
+      compareIsoDates(CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt, proposalEffectiveDate) < 0
+    ) {
+      postEffectiveDateRecheckIsValid = false;
+      rejectMetadata(
+        `q044 criminal-responsibility source metadata must be retrieved on or after ${proposalEffectiveDate} once that date is reached`,
+      );
+    }
+
+    if (
+      !Array.isArray(postEffectiveDateRecheck.allowedStatuses) ||
+      !postEffectiveDateRecheck.allowedStatuses.includes(postEffectiveDateRecheck.status)
+    ) {
+      postEffectiveDateRecheckIsValid = false;
+      rejectMetadata(
+        `q044 criminal-responsibility proposal outcome status must be one of ${(
+          postEffectiveDateRecheck.allowedStatuses ?? []
+        ).join(', ')}`,
+      );
+    }
+  }
+  criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated =
+    postEffectiveDateRecheckIsValid;
 
   CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.forEach((source) => {
     if (!/^https:\/\/www\.(?:riksdagen|regeringen)\.se\//.test(source.url)) {
@@ -17731,6 +17804,11 @@ console.log(
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,
       criminalResponsibilityCurrentnessProposalEffectiveDate,
+      criminalResponsibilityCurrentnessValidationDate,
+      criminalResponsibilityCurrentnessEffectiveDateRecheckDue,
+      criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated,
+      criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt,
+      criminalResponsibilityCurrentnessPostEffectiveDateStatus,
       criminalResponsibilityCurrentnessQuestionsValidated,
       criminalResponsibilityCurrentnessParityValidated,
       staticSiteQuestionBankQuestionsValidated,
