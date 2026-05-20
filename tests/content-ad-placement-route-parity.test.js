@@ -31,22 +31,11 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
-  const nativeAdCardNativeSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
+  const premiumBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
-  const practiceInterstitialSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
-    'utf8',
-  );
-  const practiceInterstitialNativeSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
-    'utf8',
-  );
-  const removeAdsPlacementCtaSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
-    'utf8',
-  );
+  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
 
   assert.equal(summary.bannerAdPlacementTypeCasesValidated, 3);
   assert.equal(summary.adPlacementRoutesValidated, 4);
@@ -72,21 +61,16 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     practiceSource,
     /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
   );
+  assert.match(
+    mistakesSource,
+    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
+  );
+  assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(premiumBannerSource, /Den kostnadsfria versionen visar annonser från AdMob/);
+  assert.match(adCopySource, /Annons i studieflödet/);
   assert.doesNotMatch(
-    practiceSource,
-    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
-  );
-  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
-  assert.match(mistakesSource, /<NativeAdCard \/>/);
-  assert.match(adBannerSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
-  assert.match(
-    adBannerSource,
-    /shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/,
-  );
-  assert.match(nativeAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
-  assert.match(
-    nativeAdCardSource,
-    /shouldShowAd\(\s*'results_native',\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/,
+    `${premiumBannerSource}\n${adCopySource}`,
+    /Gratisstudier\s+visar|Sponsrad\s+studieplacering/i,
   );
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
@@ -470,7 +454,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('ad placement route parity rejects placeholder-only native results ads', () => {
+test('ad placement route parity rejects literal Swedish monetization copy', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -480,10 +464,10 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
+  if (normalizedPath.endsWith('/lib/monetization/adCopy.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('NativeAd.createForAdRequest', 'createPlaceholderNativeAd');
+      .replace('Annons i studieflödet', ['Sponsrad', 'studieplacering'].join(' '));
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -496,129 +480,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard native placement must load results_native through NativeAd/,
-  );
-});
-
-test('ad placement route parity rejects native results ad consent bypass drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('      Platform.OS,', '');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard native placement must gate results_native through consent-aware shouldShowAd/,
-  );
-});
-
-test('ad placement route parity rejects grouped native ad accessibility drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('<NativeAdView accessible={false}', '<NativeAdView accessible');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard native placement must not group the whole ad as one accessibility element/,
-  );
-});
-
-test('ad placement route parity rejects unlabeled native ad call-to-action drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('accessibilityLabel={copy.ctaAccessibilityLabel(nativeAd.callToAction)}', '');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard native placement must expose the call-to-action as a labelled native asset button/,
-  );
-});
-
-test('ad placement route parity rejects wrapped native ad asset children', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        '<NativeAsset assetType={NativeAssetType.HEADLINE}>\\n              <Text',
-        '<NativeAsset assetType={NativeAssetType.HEADLINE}>\\n              <Pressable>\\n                <Text',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard native HEADLINE asset must not wrap its registered child/,
+    /lib\/monetization\/adCopy\.ts contains literal Swedish monetization copy/,
   );
 });

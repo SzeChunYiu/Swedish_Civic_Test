@@ -42,12 +42,8 @@ type PremiumBannerCopy = {
 
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
-    bodyActive:
-      'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen.',
-    bodyIdle: (price) =>
-      `Hela frågebanken och alla 13 ämnen ingår gratis. Betala ${price} en gång för att ta bort annonser från studieskärmar; provläget är redan annonsfritt.`,
-    buyAccessibilityHint:
-      'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
+    body: (price) =>
+      `Den kostnadsfria versionen visar annonser från AdMob. Betala ${price} en gång för att ta bort annonser från studieskärmarna. Proven förblir annonsfria.`,
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyHint: 'Startar ett engångsköp som tar bort annonser från studieskärmar.',
     buyIdle: (price) => `Köp ${price}`,

@@ -43,7 +43,7 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
       results_native: 'Annons i resultat och misstag',
       rewarded_extra_exam: 'Annons för extra övningsprov',
     },
-    previewHint: 'Sponsrad annonsförhandsvisning.',
+    previewHint: 'Förhandsvisning av annonsplats.',
     removeAdsHint: 'Döljs när Ta bort annonser är aktivt.',
     testStatus: 'AdMob-testannons aktiv - webbförhandsvisning',
   },
@@ -67,24 +67,12 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
 
 export const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy> = {
   sv: {
-    ctaAccessibilityLabel: (callToAction) => `Annonsåtgärd: ${callToAction}`,
-    ctaHint: 'Aktiverar annonsens åtgärd.',
-    live: {
-      accessibilityLabel:
-        'Annons: Google AdMob-placering. Visas inte i tidsatta övningsprov. Döljs när Ta bort annonser är aktivt.',
-      eyebrow: 'Annons',
-      hint: 'Annons från Google AdMob. Döljs när Ta bort annonser är aktivt.',
-      meta: 'Google AdMob-placering. Visas inte i tidsatta övningsprov.',
-      title: 'Annons från Google AdMob',
-    },
-    test: {
-      accessibilityLabel:
-        'Inbyggd testannons: AdMob-testplacering. Förhandsvisning som inte visas i tidsatta övningsprov. Döljs när Ta bort annonser är aktivt.',
-      eyebrow: 'Inbyggd testannons',
-      hint: 'Testannonsförhandsvisning. Döljs när Ta bort annonser är aktivt.',
-      meta: 'AdMob-testplacering. Visas inte i tidsatta övningsprov.',
-      title: 'AdMob-testannons',
-    },
+    accessibilityLabel:
+      'Inbyggd testannons: Annons i studieflödet. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
+    eyebrow: 'Inbyggd testannons',
+    hint: 'Förhandsvisning av annonsplats. Döljs när Ta bort annonser är aktivt.',
+    meta: 'Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov.',
+    title: 'Annons i studieflödet',
   },
   en: {
     ctaAccessibilityLabel: (callToAction) => `Ad action: ${callToAction}`,

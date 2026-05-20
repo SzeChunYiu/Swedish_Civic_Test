@@ -84,7 +84,7 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
-      'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
+      'Dina mål, språkval, sviter och märken sparas bara på den här enheten, så att dina studier förblir privata.',
     title: 'Framsteg utan konto',
     xpMetric: 'XP',
   },
