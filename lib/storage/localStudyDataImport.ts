@@ -137,12 +137,25 @@ function readProgressSection(value: Record<string, unknown>): unknown {
 }
 
 function readMistakeReviewSection(value: Record<string, unknown>): unknown {
-  if (value.mistakeReview !== undefined) return value.mistakeReview;
-  if (value.mistakeReviews !== undefined) return value.mistakeReviews;
+  if (value.mistakeReview !== undefined) return normalizeWrongAnswerReviewIds(value.mistakeReview);
+  if (value.mistakeReviews !== undefined)
+    return normalizeWrongAnswerReviewIds(value.mistakeReviews);
   if (value.wrongAnswerReviews !== undefined) {
-    return { wrongAnswerReviews: value.wrongAnswerReviews };
+    return normalizeWrongAnswerReviewIds({ wrongAnswerReviews: value.wrongAnswerReviews });
   }
   return undefined;
+}
+
+function normalizeWrongAnswerReviewIds(value: unknown): unknown {
+  if (!isRecord(value) || !isRecord(value.wrongAnswerReviews)) return value;
+
+  const wrongAnswerReviews = Object.fromEntries(
+    Object.entries(value.wrongAnswerReviews).map(([questionId, review]) => [
+      questionId,
+      isRecord(review) ? { ...review, questionId } : review,
+    ]),
+  );
+  return { ...value, wrongAnswerReviews };
 }
 
 function readReviewSection(value: Record<string, unknown>): unknown {
