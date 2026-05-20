@@ -3,8 +3,27 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+
+const { createThrowingReadMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+};
+
+function loadSettingsStateFromStorage(storage) {
+  const { useSettingsStore } = loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', {
+    settings: storage,
+  });
+  return useSettingsStore.getState();
+}
 
 function runValidationWithSettingsRoutePatch(search, replacement) {
   return spawnSync(
@@ -46,8 +65,12 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.equal(summary.settingsAudioLabelsValidated, 2);
   assert.equal(summary.settingsAudioParityValidated, true);
   assert.match(settingsStore, /const audioEnabledKey = 'audioEnabled';/);
-  assert.match(settingsStore, /settingsStorage\?\.getBoolean\(audioEnabledKey\)/);
+  assert.match(settingsStore, /const storedValue = readStorageBoolean\(audioEnabledKey\);/);
   assert.match(settingsStore, /return storedValue \?\? true;/);
+  assert.match(
+    settingsStore,
+    /function readStorageBoolean\(key: string\): boolean \| undefined \{[\s\S]*settingsStorage\?\.getBoolean\(key\);[\s\S]*return undefined;/,
+  );
   assert.match(settingsRoute, /accessibilityRole="switch"/);
   assert.match(settingsRoute, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(settingsRoute, /setAudioEnabled\(!audioEnabled\)/);
@@ -64,6 +87,12 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsRoute, /Audio disabled/);
 });
 
+test('audio setting hydration falls back when MMKV getBoolean throws', () => {
+  const state = loadSettingsStateFromStorage(createThrowingReadMMKV('settings read failed'));
+
+  assert.equal(state.audioEnabled, true);
+});
+
 test('audio setting parity rejects missing route labels', () => {
   const result = runValidationWithSettingsRoutePatch('Audio disabled', 'Audio enabled');
 
@@ -71,6 +100,37 @@ test('audio setting parity rejects missing route labels', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /app\/settings\.tsx is missing audio label "Audio disabled"/,
+  );
+});
+
+test('audio setting parity rejects a mute path that does not stop active speech', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/storage/settingsStore.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("import { stopSpeech } from '../audio/speak';\\n\\n", '')
+      .replace('    if (!audioEnabled) {\\n      stopSpeech();\\n    }\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /setAudioEnabled\(false\) must stop any in-flight speech before muting/,
   );
 });
 
@@ -87,24 +147,15 @@ test('settings store schema stays in parity with persisted settings state', () =
     'utf8',
   );
 
-  assert.equal(summary.settingsStoreFieldsValidated, 16);
+  assert.equal(summary.settingsStoreFieldsValidated, 10);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
   assert.match(settingsStore, /type SettingsState = \{/);
   assert.match(settingsStore, /language: AppLanguage;/);
   assert.match(settingsStore, /audioEnabled: boolean;/);
   assert.match(settingsStore, /dailyGoalAnswers: number;/);
-  assert.match(settingsStore, /studyReminderEnabled: boolean;/);
-  assert.match(settingsStore, /studyReminderHour: number;/);
-  assert.match(settingsStore, /studyReminderMinute: number;/);
-  assert.match(settingsStore, /studyReminderPermissionStatus: StudyReminderPermissionStatus;/);
-  assert.match(settingsStore, /studyReminderNotificationId: string \| null;/);
   assert.match(settingsStore, /setLanguage: \(language: AppLanguage\) => void;/);
   assert.match(settingsStore, /setAudioEnabled: \(enabled: boolean\) => void;/);
   assert.match(settingsStore, /setDailyGoalAnswers: \(answerCount: number\) => void;/);
-  assert.match(
-    settingsStore,
-    /setStudyReminderState: \(reminderState: StudyReminderPersistedState\) => void;/,
-  );
   assert.match(settingsStore, /createMMKV\(\{ id: 'settings' \}\)/);
 });
 

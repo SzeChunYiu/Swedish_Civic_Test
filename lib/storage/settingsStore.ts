@@ -2,30 +2,18 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
-export type AppLanguage = 'sv' | 'en';
-export type StudyReminderPermissionStatus = 'undetermined' | 'granted' | 'denied';
+import { stopSpeech } from '../audio/speak';
 
-export type StudyReminderPersistedState = {
-  studyReminderEnabled: boolean;
-  studyReminderHour: number;
-  studyReminderMinute: number;
-  studyReminderPermissionStatus: StudyReminderPermissionStatus;
-  studyReminderNotificationId: string | null;
-};
+export type AppLanguage = 'sv' | 'en';
 
 const languageKey = 'language';
 const audioEnabledKey = 'audioEnabled';
 const dailyGoalKey = 'dailyGoalAnswers';
 const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
-const studyReminderEnabledKey = 'studyReminderEnabled';
-const studyReminderHourKey = 'studyReminderHour';
-const studyReminderMinuteKey = 'studyReminderMinute';
-const studyReminderPermissionStatusKey = 'studyReminderPermissionStatus';
-const studyReminderNotificationIdKey = 'studyReminderNotificationId';
-
-const defaultStudyReminderHour = 18;
-const defaultStudyReminderMinute = 0;
+const defaultDailyGoalAnswers = 10;
+const minDailyGoalAnswers = 1;
+const maxDailyGoalAnswers = 50;
 
 let settingsStorage: MMKV | null = null;
 
@@ -35,72 +23,102 @@ try {
   settingsStorage = null;
 }
 
+function readStorageString(key: string): string | undefined {
+  try {
+    return settingsStorage?.getString(key);
+  } catch {
+    return undefined;
+  }
+}
+
+function readStorageBoolean(key: string): boolean | undefined {
+  try {
+    return settingsStorage?.getBoolean(key);
+  } catch {
+    return undefined;
+  }
+}
+
+function readStorageNumber(key: string): number | undefined {
+  try {
+    return settingsStorage?.getNumber(key);
+  } catch {
+    return undefined;
+  }
+}
+
 function readLanguage(): AppLanguage {
-  const language = settingsStorage?.getString(languageKey);
+  const language = readStorageString(languageKey);
   return language === 'en' ? 'en' : 'sv';
 }
 
 function readAudioEnabled(): boolean {
-  const storedValue = settingsStorage?.getBoolean(audioEnabledKey);
+  const storedValue = readStorageBoolean(audioEnabledKey);
   return storedValue ?? true;
 }
 
+function normalizeDailyGoalAnswers(answerCount: number | undefined): number {
+  if (
+    typeof answerCount !== 'number' ||
+    !Number.isFinite(answerCount) ||
+    !Number.isInteger(answerCount)
+  ) {
+    return defaultDailyGoalAnswers;
+  }
+
+  if (answerCount < minDailyGoalAnswers || answerCount > maxDailyGoalAnswers) {
+    return defaultDailyGoalAnswers;
+  }
+
+  return answerCount;
+}
+
 function readDailyGoalAnswers(): number {
-  const storedValue = settingsStorage?.getNumber(dailyGoalKey);
-  return storedValue && storedValue > 0 ? storedValue : 10;
+  const storedValue = readStorageNumber(dailyGoalKey);
+  return normalizeDailyGoalAnswers(storedValue);
 }
 
 function readIncludeSupplementary(): boolean {
-  const storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
+  const storedValue = readStorageBoolean(includeSupplementaryKey);
   return storedValue ?? false;
 }
 
 function readHasSeenAboutTheTest(): boolean {
-  const storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
+  const storedValue = readStorageBoolean(hasSeenAboutTheTestKey);
   return storedValue ?? false;
 }
 
-function readStudyReminderHour(): number {
-  const storedValue = settingsStorage?.getNumber(studyReminderHourKey);
-  if (typeof storedValue !== 'number' || !Number.isFinite(storedValue)) {
-    return defaultStudyReminderHour;
+export type ImportableSettings = Partial<{
+  language: AppLanguage;
+  audioEnabled: boolean;
+  dailyGoalAnswers: number;
+  includeSupplementaryQuestions: boolean;
+  hasSeenAboutTheTest: boolean;
+}>;
+
+export function normalizeImportedSettings(value: unknown): ImportableSettings {
+  if (!value || typeof value !== 'object') return {};
+
+  const candidate = value as Record<string, unknown>;
+  const settings: ImportableSettings = {};
+  if (candidate.language === 'sv' || candidate.language === 'en') {
+    settings.language = candidate.language;
   }
-  return Math.max(0, Math.min(23, Math.round(storedValue)));
-}
-
-function readStudyReminderMinute(): number {
-  const storedValue = settingsStorage?.getNumber(studyReminderMinuteKey);
-  if (typeof storedValue !== 'number' || !Number.isFinite(storedValue)) {
-    return defaultStudyReminderMinute;
+  if (typeof candidate.audioEnabled === 'boolean') {
+    settings.audioEnabled = candidate.audioEnabled;
   }
-  return Math.max(0, Math.min(59, Math.round(storedValue)));
-}
+  if (typeof candidate.dailyGoalAnswers === 'number') {
+    const safeGoal = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);
+    if (safeGoal === candidate.dailyGoalAnswers) settings.dailyGoalAnswers = safeGoal;
+  }
+  if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
+    settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;
+  }
+  if (typeof candidate.hasSeenAboutTheTest === 'boolean') {
+    settings.hasSeenAboutTheTest = candidate.hasSeenAboutTheTest;
+  }
 
-function readStudyReminderPermissionStatus(): StudyReminderPermissionStatus {
-  const storedValue = settingsStorage?.getString(studyReminderPermissionStatusKey);
-  if (storedValue === 'granted' || storedValue === 'denied') return storedValue;
-  return 'undetermined';
-}
-
-function readStudyReminderNotificationId(): string | null {
-  const storedValue = settingsStorage?.getString(studyReminderNotificationIdKey);
-  return storedValue ? storedValue : null;
-}
-
-function persistStudyReminderState(reminderState: StudyReminderPersistedState): void {
-  const safeHour = Math.max(0, Math.min(23, Math.round(reminderState.studyReminderHour)));
-  const safeMinute = Math.max(0, Math.min(59, Math.round(reminderState.studyReminderMinute)));
-  settingsStorage?.set(studyReminderEnabledKey, reminderState.studyReminderEnabled);
-  settingsStorage?.set(studyReminderHourKey, safeHour);
-  settingsStorage?.set(studyReminderMinuteKey, safeMinute);
-  settingsStorage?.set(
-    studyReminderPermissionStatusKey,
-    reminderState.studyReminderPermissionStatus,
-  );
-  settingsStorage?.set(
-    studyReminderNotificationIdKey,
-    reminderState.studyReminderNotificationId ?? '',
-  );
+  return settings;
 }
 
 type SettingsState = {
@@ -109,17 +127,11 @@ type SettingsState = {
   dailyGoalAnswers: number;
   includeSupplementaryQuestions: boolean;
   hasSeenAboutTheTest: boolean;
-  studyReminderEnabled: boolean;
-  studyReminderHour: number;
-  studyReminderMinute: number;
-  studyReminderPermissionStatus: StudyReminderPermissionStatus;
-  studyReminderNotificationId: string | null;
   setLanguage: (language: AppLanguage) => void;
   setAudioEnabled: (enabled: boolean) => void;
   setDailyGoalAnswers: (answerCount: number) => void;
   setIncludeSupplementaryQuestions: (include: boolean) => void;
   markAboutTheTestSeen: () => void;
-  setStudyReminderState: (reminderState: StudyReminderPersistedState) => void;
 };
 
 export const useSettingsStore = create<SettingsState>((set) => ({
@@ -128,21 +140,21 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   dailyGoalAnswers: readDailyGoalAnswers(),
   includeSupplementaryQuestions: readIncludeSupplementary(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
-  studyReminderEnabled: settingsStorage?.getBoolean(studyReminderEnabledKey) ?? false,
-  studyReminderHour: readStudyReminderHour(),
-  studyReminderMinute: readStudyReminderMinute(),
-  studyReminderPermissionStatus: readStudyReminderPermissionStatus(),
-  studyReminderNotificationId: readStudyReminderNotificationId(),
   setLanguage: (language) => {
     settingsStorage?.set(languageKey, language);
     set({ language });
   },
   setAudioEnabled: (audioEnabled) => {
+    if (!audioEnabled) {
+      stopSpeech();
+    }
     settingsStorage?.set(audioEnabledKey, audioEnabled);
     set({ audioEnabled });
   },
   setDailyGoalAnswers: (dailyGoalAnswers) => {
-    const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));
+    const safeGoal = normalizeDailyGoalAnswers(
+      Math.max(minDailyGoalAnswers, Math.min(maxDailyGoalAnswers, Math.round(dailyGoalAnswers))),
+    );
     settingsStorage?.set(dailyGoalKey, safeGoal);
     set({ dailyGoalAnswers: safeGoal });
   },
@@ -154,15 +166,26 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     settingsStorage?.set(hasSeenAboutTheTestKey, true);
     set({ hasSeenAboutTheTest: true });
   },
-  setStudyReminderState: (reminderState) => {
-    const safeHour = Math.max(0, Math.min(23, Math.round(reminderState.studyReminderHour)));
-    const safeMinute = Math.max(0, Math.min(59, Math.round(reminderState.studyReminderMinute)));
-    const safeState = {
-      ...reminderState,
-      studyReminderHour: safeHour,
-      studyReminderMinute: safeMinute,
-    };
-    persistStudyReminderState(safeState);
-    set(safeState);
-  },
 }));
+
+export function importSettingsSnapshot(value: unknown): ImportableSettings {
+  const importedSettings = normalizeImportedSettings(value);
+  if (importedSettings.language !== undefined) {
+    settingsStorage?.set(languageKey, importedSettings.language);
+  }
+  if (importedSettings.audioEnabled !== undefined) {
+    settingsStorage?.set(audioEnabledKey, importedSettings.audioEnabled);
+  }
+  if (importedSettings.dailyGoalAnswers !== undefined) {
+    settingsStorage?.set(dailyGoalKey, importedSettings.dailyGoalAnswers);
+  }
+  if (importedSettings.includeSupplementaryQuestions !== undefined) {
+    settingsStorage?.set(includeSupplementaryKey, importedSettings.includeSupplementaryQuestions);
+  }
+  if (importedSettings.hasSeenAboutTheTest !== undefined) {
+    settingsStorage?.set(hasSeenAboutTheTestKey, importedSettings.hasSeenAboutTheTest);
+  }
+
+  useSettingsStore.setState(importedSettings);
+  return importedSettings;
+}
