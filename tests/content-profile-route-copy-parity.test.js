@@ -19,15 +19,16 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 40);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 36);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
-  assert.match(source, /const localizedBadgeTitles: Record<AppLanguage, Record<string, string>>/);
+  assert.match(source, /getBadgeTitle\(badge, language\)/);
+  assert.doesNotMatch(source, /localizedBadgeTitles/);
+  assert.doesNotMatch(source, /badge\.title/);
   assert.match(source, /const copy = profileCopy\[language\]/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Progress without an account/);
-  assert.match(source, /Första övningen/);
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
@@ -100,7 +101,7 @@ require('./scripts/validate-content.js');
   assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
 });
 
-test('profile route copy parity rejects badge-title localization drift', () => {
+test('profile route copy parity rejects English-only badge fallback drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -113,7 +114,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("first_practice: 'Första övningen'", "first_practice: 'First practice'");
+      .replace(
+        'getBadgeTitle(badge, language)',
+        "language === 'en' ? badge.titleEn : badge.titleEn",
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -124,5 +128,8 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /profile badge summary must render titles from the bilingual badge catalog/,
+  );
 });

@@ -1,7 +1,9 @@
 export type Badge = {
+  descriptionEn: string;
+  descriptionSv: string;
   id: string;
-  title: string;
-  description: string;
+  titleEn: string;
+  titleSv: string;
 };
 
 type BadgeInput = {
@@ -13,26 +15,42 @@ type BadgeInput = {
 
 export const badgeCatalog: Record<string, Badge> = {
   first_practice: {
+    descriptionEn: 'Answered your first practice question.',
+    descriptionSv: 'Svarade på din första övningsfråga.',
     id: 'first_practice',
-    title: 'First practice',
-    description: 'Answered your first practice question.',
+    titleEn: 'First practice',
+    titleSv: 'Första övningen',
   },
   streak_3: {
+    descriptionEn: 'Practiced on three days in a row.',
+    descriptionSv: 'Övade tre dagar i rad.',
     id: 'streak_3',
-    title: 'Three-day streak',
-    description: 'Practiced on three days in a row.',
+    titleEn: 'Three-day streak',
+    titleSv: 'Tre dagars svit',
   },
   level_2: {
+    descriptionEn: 'Earned enough XP to reach level 2.',
+    descriptionSv: 'Samlade tillräckligt med XP för att nå nivå 2.',
     id: 'level_2',
-    title: 'Level 2',
-    description: 'Earned enough XP to reach level 2.',
+    titleEn: 'Level 2',
+    titleSv: 'Nivå 2',
   },
   mistake_reviewer: {
+    descriptionEn: 'Created at least one mistake review item.',
+    descriptionSv: 'Skapade minst en fråga att repetera efter ett misstag.',
     id: 'mistake_reviewer',
-    title: 'Mistake reviewer',
-    description: 'Created at least one mistake review item.',
+    titleEn: 'Mistake reviewer',
+    titleSv: 'Misstagsrepetition',
   },
 };
+
+export function getBadgeTitle(badge: Badge, language: 'sv' | 'en') {
+  return language === 'en' ? badge.titleEn : badge.titleSv;
+}
+
+export function getBadgeDescription(badge: Badge, language: 'sv' | 'en') {
+  return language === 'en' ? badge.descriptionEn : badge.descriptionSv;
+}
 
 export function deriveBadges({
   completedQuestionCount,
