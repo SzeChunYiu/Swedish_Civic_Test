@@ -10,7 +10,7 @@ declare global {
 }
 
 const siteRoot = path.resolve('site');
-const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'so'] as const;
+const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'so', 'tr'] as const;
 
 type ExtraLocale = (typeof extraLocales)[number];
 
@@ -40,6 +40,8 @@ const forbiddenOutcomeSlogans = [
   /احصل على الجواز/,
   /imtixaanka uga gud/i,
   /hel baasaboorka/i,
+  /sınavı geç/i,
+  /pasaportu al/i,
 ];
 
 type StaticSite = {
