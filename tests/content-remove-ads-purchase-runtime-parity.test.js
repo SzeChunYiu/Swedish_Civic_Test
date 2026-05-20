@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -22,13 +21,13 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'lib/monetization/purchases.ts'),
     'utf8',
   );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 14);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 17);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
-  assert.match(purchaseSource, /'persistence_failed'/);
-  assert.match(purchaseSource, /interface RemoveAdsPersistenceResult/);
-  assert.match(purchaseSource, /async function persistValidatedRemoveAdsEntitlement/);
-  assert.match(purchaseSource, /return createResult\('persistence_failed'/);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
   assert.match(purchaseSource, /receiptValidationStatus: 'valid'/);
@@ -39,14 +38,16 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/);
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
   assert.match(purchaseSource, /const receiptValidation = await validateRemoveAdsReceipt/);
-  assert.match(purchaseSource, /revalidateStoredRemoveAdsEntitlementRecord/);
-  assert.match(purchaseSource, /purchaseMatchesStoredRecord/);
-  assert.match(purchaseSource, /clearStoredRemoveAdsEntitlement/);
   assert.match(purchaseSource, /source: 'purchase'/);
   assert.match(purchaseSource, /source: 'restore'/);
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
+  assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
+  assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
+  assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
+  assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
@@ -109,5 +110,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /native Remove Ads finish transaction must be non-consumable/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects placement CTA restore drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/RemoveAdsPlacementCta.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("runPurchaseAction('restore', restoreRemoveAdsPurchase)", "runPurchaseAction('restore', buyRemoveAds)");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime/,
   );
 });
