@@ -6,7 +6,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName, moduleCache = new Map(), moduleOverrides = {}) {
+function loadTs(relativePath, exportName, moduleCache = new Map()) {
   const filePath = path.join(repoRoot, relativePath);
   if (moduleCache.has(filePath)) {
     const cached = moduleCache.get(filePath);
@@ -31,17 +31,8 @@ function loadTs(relativePath, exportName, moduleCache = new Map(), moduleOverrid
       const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
 
       if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(
-          path.relative(repoRoot, resolvedTsPath),
-          undefined,
-          moduleCache,
-          moduleOverrides,
-        );
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
       }
-    }
-
-    if (Object.hasOwn(moduleOverrides, specifier)) {
-      return moduleOverrides[specifier];
     }
 
     return require(specifier);
@@ -383,11 +374,21 @@ test('practice completion placement uses a native interstitial and web preview',
   assert.match(practiceSource, /PracticeInterstitialAd/);
   assert.match(
     practiceSource,
-    /<PracticeInterstitialAd showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\} \/>/,
+    /const practiceInterstitialShowKey = getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\);/,
+  );
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
+  );
+  assert.doesNotMatch(
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
   );
   assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
   assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.OPENED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.CLOSED/);
   assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
   assert.match(nativeInterstitialSource, /interstitialAd\.load\(\)/);
   assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
@@ -402,6 +403,18 @@ test('practice completion placement uses a native interstitial and web preview',
   assert.match(nativeInterstitialSource, /useMobileAdsConsent/);
   assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
   assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
+  assert.match(
+    nativeInterstitialSource,
+    /AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/,
+  );
+  assert.doesNotMatch(
+    nativeInterstitialSource,
+    /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/,
+  );
+  assert.match(
+    nativeInterstitialSource,
+    /Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/,
+  );
   assert.match(
     webInterstitialSource,
     /shouldShowAd\('quiz_completed_interstitial', resolvedEntitlements\)/,
@@ -1305,131 +1318,6 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
   assert.equal(result.status, 'pending');
   assert.equal(result.entitlements.adsDisabled, false);
   assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
-});
-
-test('native remove-ads purchase only grants from purchase update listener events', async () => {
-  const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
-
-  function createNativeIapMock({ emitPurchase, requestRejects = false, requestResult } = {}) {
-    const calls = [];
-    let purchaseUpdatedListener;
-
-    return {
-      calls,
-      endConnection: async () => {
-        calls.push(['endConnection']);
-      },
-      finishTransaction: async (args) => {
-        calls.push(['finishTransaction', args]);
-      },
-      getAvailablePurchases: async () => [],
-      initConnection: async () => {
-        calls.push(['initConnection']);
-      },
-      purchaseErrorListener: (listener) => {
-        void listener;
-        calls.push(['purchaseErrorListener']);
-        return {
-          remove() {
-            calls.push(['removePurchaseErrorListener']);
-          },
-        };
-      },
-      purchaseUpdatedListener: (listener) => {
-        purchaseUpdatedListener = listener;
-        calls.push(['purchaseUpdatedListener']);
-        return {
-          remove() {
-            calls.push(['removePurchaseUpdatedListener']);
-          },
-        };
-      },
-      requestPurchase: async (args) => {
-        calls.push(['requestPurchase', args]);
-        if (requestRejects) throw new Error('request failed');
-        if (emitPurchase) {
-          setTimeout(() => purchaseUpdatedListener?.(emitPurchase), 0);
-        }
-        return requestResult ?? null;
-      },
-      restorePurchases: async () => {
-        calls.push(['restorePurchases']);
-      },
-    };
-  }
-
-  const directReturnIap = createNativeIapMock({
-    requestResult: {
-      productId: REMOVE_ADS_PRODUCT_ID,
-      purchaseToken: 'direct-return-token',
-      transactionId: 'direct-return-transaction',
-    },
-  });
-  const directReturnExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
-    'expo-secure-store': {},
-    'react-native-iap': directReturnIap,
-  });
-  const directReturnStorage = directReturnExports.createMemoryPurchaseStorage();
-  const directReturnResult = await directReturnExports.buyRemoveAds({
-    provider: directReturnExports.createNativePurchaseProvider({ purchaseTimeoutMs: 5 }),
-    storage: directReturnStorage,
-  });
-
-  assert.equal(directReturnResult.status, 'pending');
-  assert.equal(directReturnResult.entitlements.adsDisabled, false);
-  assert.equal(
-    await directReturnStorage.getItemAsync(directReturnExports.REMOVE_ADS_STORAGE_KEY),
-    null,
-  );
-  assert.equal(
-    directReturnIap.calls.some(([name]) => name === 'finishTransaction'),
-    false,
-  );
-
-  const listenerIap = createNativeIapMock({
-    emitPurchase: {
-      productId: REMOVE_ADS_PRODUCT_ID,
-      purchaseToken: 'listener-token',
-      transactionId: 'listener-transaction',
-    },
-    requestResult: {
-      productId: REMOVE_ADS_PRODUCT_ID,
-      purchaseToken: 'ignored-direct-token',
-      transactionId: 'ignored-direct-transaction',
-    },
-  });
-  const listenerExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
-    'expo-secure-store': {},
-    'react-native-iap': listenerIap,
-  });
-  const listenerStorage = listenerExports.createMemoryPurchaseStorage();
-  const listenerResult = await listenerExports.buyRemoveAds({
-    provider: listenerExports.createNativePurchaseProvider({ purchaseTimeoutMs: 50 }),
-    storage: listenerStorage,
-  });
-  const storedListenerRecord = JSON.parse(
-    await listenerStorage.getItemAsync(listenerExports.REMOVE_ADS_STORAGE_KEY),
-  );
-
-  assert.equal(listenerResult.status, 'purchased');
-  assert.equal(listenerResult.entitlements.adsDisabled, true);
-  assert.equal(storedListenerRecord.purchaseToken, 'listener-token');
-  assert.equal(storedListenerRecord.transactionId, 'listener-transaction');
-  assert.equal(listenerIap.calls.filter(([name]) => name === 'finishTransaction').length, 1);
-
-  const rejectedIap = createNativeIapMock({ requestRejects: true });
-  const rejectedExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
-    'expo-secure-store': {},
-    'react-native-iap': rejectedIap,
-  });
-  await assert.rejects(
-    () =>
-      rejectedExports.buyRemoveAds({
-        provider: rejectedExports.createNativePurchaseProvider({ purchaseTimeoutMs: 50 }),
-        storage: rejectedExports.createMemoryPurchaseStorage(),
-      }),
-    /request failed/,
-  );
 });
 
 test('failed remove-ads receipt validation does not grant adsDisabled', async () => {

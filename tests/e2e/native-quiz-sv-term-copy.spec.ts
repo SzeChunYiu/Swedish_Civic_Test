@@ -8,6 +8,7 @@ import {
 } from './browserLaunch';
 
 const viewport = { width: 390, height: 844 };
+const staleChapterStartCopy = ['Starta', 'kapitelövning'].join(' ');
 
 async function openChapter(page: Page, language: AppLanguage) {
   await page.setViewportSize(viewport);
@@ -32,15 +33,16 @@ test('chapter detail and routed quiz render natural Swedish study terms', async 
   await openChapter(page, 'sv');
 
   const body = page.locator('body');
-  await expect(page.getByLabel('Starta kapitelövning för Landet Sverige')).toBeVisible();
-  await expect(body).toContainText('Starta kapitelövning');
+  await expect(page.getByLabel('Starta frågepass för Landet Sverige')).toBeVisible();
+  await expect(body).toContainText('Starta frågepass');
   await expect(body).toContainText('Övningsfrågor');
+  await expect(body).not.toContainText(staleChapterStartCopy);
   await expect(body).not.toContainText('Starta quiz');
   await expect(body).not.toContainText('Quizpass');
   await expect(body).not.toContainText('quizfrågor');
   await expect(body).not.toContainText('quizfrågan');
 
-  await page.getByLabel('Starta kapitelövning för Landet Sverige').click();
+  await page.getByLabel('Starta frågepass för Landet Sverige').press('Enter');
 
   await expect(page).toHaveURL(/\/quiz\/q001$/);
   await expect(body).toContainText('Frågepass');
@@ -69,15 +71,17 @@ test('chapter detail and routed quiz keep English quiz copy in support mode', as
   await expect(page.getByLabel('Start quiz for The country of Sweden')).toBeVisible();
   await expect(body).toContainText('Start quiz');
   await expect(body).toContainText('Practice questions');
-  await expect(body).not.toContainText('Starta kapitelövning');
+  await expect(body).not.toContainText(staleChapterStartCopy);
+  await expect(body).not.toContainText('Starta frågepass');
   await expect(body).not.toContainText('Frågepass');
 
-  await page.getByLabel('Start quiz for The country of Sweden').click();
+  await page.getByLabel('Start quiz for The country of Sweden').press('Enter');
 
   await expect(page).toHaveURL(/\/quiz\/q001$/);
   await expect(body).toContainText('Quiz session');
   await expect(body).toContainText('Session q001');
-  await expect(body).not.toContainText('Starta kapitelövning');
+  await expect(body).not.toContainText(staleChapterStartCopy);
+  await expect(body).not.toContainText('Starta frågepass');
   await expect(body).not.toContainText('Frågepass q001');
 
   await page
