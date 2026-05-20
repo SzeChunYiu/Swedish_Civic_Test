@@ -1,10 +1,57 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
+const Module = require('node:module');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function loadProgressStoreWithStubs() {
+  const originalResolve = Module._resolveFilename;
+  const originalLoad = Module._load;
+  const originalTsLoader = require.extensions['.ts'];
+  const stubs = {
+    'react-native-mmkv': { createMMKV: () => null },
+    zustand: {
+      create: (factory) => {
+        const set = (partial) =>
+          Object.assign(state, typeof partial === 'function' ? partial(state) : partial);
+        const get = () => state;
+        const state = factory(set, get);
+        return () => state;
+      },
+    },
+  };
+
+  Module._resolveFilename = function patchedResolve(request, ...args) {
+    if (Object.prototype.hasOwnProperty.call(stubs, request)) return `__stub__:${request}`;
+    return originalResolve.call(this, request, ...args);
+  };
+  Module._load = function patchedLoad(request, ...args) {
+    if (Object.prototype.hasOwnProperty.call(stubs, request)) return stubs[request];
+    return originalLoad.call(this, request, ...args);
+  };
+  require.extensions['.ts'] = function tsLoader(module, filename) {
+    const source = fs.readFileSync(filename, 'utf8');
+    const transpiled = ts.transpileModule(source, {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+      fileName: filename,
+    }).outputText;
+    module._compile(transpiled, filename);
+  };
+
+  try {
+    const progressStorePath = path.join(repoRoot, 'lib/storage/progressStore.ts');
+    delete require.cache[progressStorePath];
+    return require(progressStorePath);
+  } finally {
+    Module._resolveFilename = originalResolve;
+    Module._load = originalLoad;
+    require.extensions['.ts'] = originalTsLoader;
+  }
+}
 
 test('progress question schema stays in parity with persisted progress records', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -40,8 +87,114 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /completedQuestionIds: string\[\];/);
   assert.match(
     progressStore,
-    /progressStorage\?\.set\(progressStateKey, JSON\.stringify\(progress\)\);/,
+    /progressStorage\?\.set\(progressStateKey, JSON\.stringify\(normalizedProgress\)\);/,
   );
+  assert.match(progressStore, /function normalizeNonNegativeInteger/);
+  assert.match(progressStore, /questionProgress\[questionId\] = normalizeQuestionProgress/);
+  assert.match(progressStore, /normalizeMockExamProgress\(session as Partial<MockExamProgress>\)/);
+});
+
+test('progress store normalizes corrupt persisted numeric counters', () => {
+  const { __progressStoreTestHooks } = loadProgressStoreWithStubs();
+  const normalized = __progressStoreTestHooks.normalizeProgress({
+    completedQuestionIds: ['q1', 7, 'q2'],
+    questionProgress: {
+      q1: {
+        seenCount: Number.POSITIVE_INFINITY,
+        correctCount: Number.NaN,
+        wrongCount: -3,
+        correctStreak: 2.8,
+        bookmarked: 'yes',
+      },
+      q2: {
+        seenCount: 3.8,
+        correctCount: 9,
+        wrongCount: 4,
+        correctStreak: 8,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+      },
+      q3: {
+        seenCount: 5,
+        correctCount: 2,
+        wrongCount: 4,
+        correctStreak: 3,
+      },
+    },
+    totalXp: Number.POSITIVE_INFINITY,
+    answerDates: ['2026-05-19', 42, '2026-05-19'],
+    mockExamSessions: [
+      {
+        sessionId: 'm1',
+        score: Number.POSITIVE_INFINITY,
+        completedAt: '2026-05-19T11:00:00.000Z',
+        correctCount: 4.9,
+        totalCount: 3.2,
+      },
+      {
+        sessionId: 'm2',
+        score: 0.8,
+        completedAt: '2026-05-19T12:00:00.000Z',
+        correctCount: 2,
+        totalCount: Number.NaN,
+      },
+      {
+        sessionId: 'bad',
+        score: 0.9,
+        correctCount: 1,
+        totalCount: 1,
+      },
+    ],
+    streakFreezeState: {
+      available: Number.POSITIVE_INFINITY,
+      lastEarnedAt: 17,
+      lifetimeEarned: 2.8,
+      lifetimeSpent: 9,
+      rescuedDayKeys: ['2026-05-18', 7, '2026-05-18'],
+    },
+  });
+
+  assert.deepEqual(normalized.completedQuestionIds, ['q1', 'q2']);
+  assert.deepEqual(normalized.answerDates, ['2026-05-19']);
+  assert.equal(normalized.totalXp, 0);
+  assert.deepEqual(normalized.questionProgress.q1, {
+    questionId: 'q1',
+    seenCount: 0,
+    correctCount: 0,
+    wrongCount: 0,
+    correctStreak: 0,
+    lastAnsweredAt: undefined,
+    nextReviewAt: undefined,
+    bookmarked: undefined,
+  });
+  assert.equal(normalized.questionProgress.q2.seenCount, 3);
+  assert.equal(normalized.questionProgress.q2.correctCount, 3);
+  assert.equal(normalized.questionProgress.q2.wrongCount, 0);
+  assert.equal(normalized.questionProgress.q2.correctStreak, 3);
+  assert.equal(normalized.questionProgress.q3.seenCount, 5);
+  assert.equal(normalized.questionProgress.q3.correctCount, 2);
+  assert.equal(normalized.questionProgress.q3.wrongCount, 3);
+  assert.equal(normalized.questionProgress.q3.correctStreak, 2);
+  assert.deepEqual(normalized.mockExamSessions, [
+    {
+      sessionId: 'm1',
+      score: 0,
+      completedAt: '2026-05-19T11:00:00.000Z',
+      correctCount: 3,
+      totalCount: 3,
+    },
+    {
+      sessionId: 'm2',
+      score: 0.8,
+      completedAt: '2026-05-19T12:00:00.000Z',
+      correctCount: 0,
+      totalCount: 0,
+    },
+  ]);
+  assert.equal(normalized.streakFreezeState.available, 0);
+  assert.match(normalized.streakFreezeState.lastEarnedAt, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(normalized.streakFreezeState.lifetimeEarned, 2);
+  assert.equal(normalized.streakFreezeState.lifetimeSpent, 2);
+  assert.deepEqual(normalized.streakFreezeState.rescuedDayKeys, ['2026-05-18']);
 });
 
 test('progress type schema parity rejects session optionality drift', () => {
