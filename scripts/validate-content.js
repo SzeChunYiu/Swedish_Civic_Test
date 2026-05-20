@@ -99,6 +99,55 @@ const STATIC_VALIDATION_IMPORT_CHECKS = Object.freeze([
     script: "require('./scripts/static-v11-readiness-copy-guard')",
   },
 ]);
+const STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS = Object.freeze([
+  'hero.eyebrow',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'consent.title',
+  'consent.body',
+  'consent.min',
+  'consent.all',
+  'settings.title',
+  'settings.theme',
+  'settings.theme.light',
+  'settings.theme.dark',
+  'settings.theme.auto',
+  'settings.language',
+  'settings.text',
+  'settings.misc',
+  'settings.consent.reset',
+  'settings.savedHint',
+  'settings.done',
+  'footer.t1',
+  'footer.t2',
+  'footer.h.study',
+  'footer.h.legal',
+  'footer.h.about',
+  'footer.h.fika',
+]);
+const STATIC_I18N_SOMALI_EXPECTED_COPY = Object.freeze({
+  'hero.lede':
+    'Qalab barasho deggan oo aan rasmi ahayn oo kaa caawinaya aqoonta bulshada Iswiidhan. Cutubyo gaaban, tababar kooban, iyo imtixaan tijaabo ah ayaa ka dhigaya dib-u-eegista mid fudud.',
+  'hero.cta1': 'Bilow tababarka',
+  'hero.cta2': 'Isku day hal su’aal',
+  'consent.body':
+    'Waxaan isticmaalnaa Google AdSense si aan u muujinno xayaysiisyo kooban. AdSense waxay isticmaashaa cookies, waxaana laga yaabaa inay u adeegsato xayaysiisyo la shakhsiyeeyay. Aqbal dhammaan, kaliya kuwa lagama maarmaanka ah, ama akhri <a href="#/privacy">bogga asturnaanta</a>.',
+  'settings.title': 'Dejinta',
+  'settings.theme': 'Muuqaalka',
+  'settings.theme.auto': 'Si otomaatig ah',
+  'settings.consent.reset': 'Dib u deji oggolaanshaha cookies / xayaysiinta…',
+  'settings.done': 'Dhammay',
+  'footer.t1': 'Si cad wax u baro.',
+  'footer.t2': 'Ku tababar ilo cad.',
+});
+const STATIC_I18N_SOMALI_FORBIDDEN_FRAGMENTS = Object.freeze([
+  'Goobinta',
+  'Toosan',
+  'Gudaha',
+  'qaab gaar ah',
+  'ka yaraan cabsida ka yaraan',
+]);
 const STATIC_I18N_ARABIC_HIGH_FREQUENCY_KEYS = Object.freeze([
   'hero.eyebrow',
   'hero.lede',
@@ -154,8 +203,14 @@ const STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY = Object.freeze({
   'consent.body': 'We use Google AdSense',
   'settings.title': 'Settings',
   'settings.theme': 'Theme',
+  'settings.theme.light': 'Light',
+  'settings.theme.dark': 'Dark',
   'settings.theme.auto': 'Auto',
+  'settings.language': 'Language',
+  'settings.text': 'Text size',
+  'settings.misc': 'Other',
   'settings.consent.reset': 'Reset cookie',
+  'settings.savedHint': 'Changes save automatically',
   'settings.done': 'Done',
   'footer.about.p': 'built by people',
   'footer.fika': 'Fika-tested',
@@ -4033,6 +4088,63 @@ function validateStaticValidationSyntaxGate() {
   if (valid) staticValidationSyntaxGateValidated = true;
 }
 
+function countStaticI18nEnglishFallbackChecks(keys) {
+  return keys.filter((key) => Boolean(STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY[key])).length;
+}
+
+function validateStaticI18nSomaliNaturalness() {
+  const result = {
+    requiredCopyValidated: 0,
+    highFrequencyLabelsValidated: 0,
+    forbiddenFragmentsValidated: 0,
+    englishFallbacksValidated: 0,
+  };
+  const extra = loadStaticI18nExtras();
+  const somali = extra.so;
+
+  if (!somali || typeof somali !== 'object' || Array.isArray(somali)) {
+    fail('static Somali i18n dictionary must exist');
+    return result;
+  }
+
+  for (const [key, expected] of Object.entries(STATIC_I18N_SOMALI_EXPECTED_COPY)) {
+    if (somali[key] === expected) {
+      result.requiredCopyValidated += 1;
+    } else {
+      fail(`Somali static-site ${key} should use reviewed local copy`);
+    }
+  }
+
+  for (const key of STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS) {
+    const value = somali[key];
+    if (typeof value === 'string' && value.trim()) {
+      result.highFrequencyLabelsValidated += 1;
+    } else {
+      fail(`Somali static-site ${key} must be a non-empty string`);
+      continue;
+    }
+
+    const englishFallback = STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY[key];
+    if (!englishFallback) continue;
+    if (new RegExp(escapeRegExp(englishFallback), 'i').test(value)) {
+      fail(`Somali static-site ${key} still uses English fallback`);
+    } else {
+      result.englishFallbacksValidated += 1;
+    }
+  }
+
+  const serializedSomali = Object.values(somali).join('\n');
+  for (const fragment of STATIC_I18N_SOMALI_FORBIDDEN_FRAGMENTS) {
+    if (new RegExp(escapeRegExp(fragment), 'i').test(serializedSomali)) {
+      fail(`Somali static-site dictionary still contains ${fragment}`);
+    } else {
+      result.forbiddenFragmentsValidated += 1;
+    }
+  }
+
+  return result;
+}
+
 function validateStaticI18nArabicNaturalness() {
   const result = {
     requiredCopyValidated: 0,
@@ -7196,6 +7308,10 @@ const expectedGeneratedPublishedQuestions =
     ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
     : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+const applyQuestionLocalizationPilot = loadTs(
+  'data/questionLocalizations.ts',
+  'applyQuestionLocalizationPilot',
+);
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
@@ -7568,6 +7684,11 @@ let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
 let staticHeadMetadataParityValidated = false;
+let staticI18nSomaliRequiredCopyValidated = 0;
+let staticI18nSomaliHighFrequencyLabelsValidated = 0;
+let staticI18nSomaliForbiddenFragmentsValidated = 0;
+let staticI18nSomaliEnglishFallbacksValidated = 0;
+let staticI18nSomaliNaturalnessValidated = false;
 let staticI18nArabicRequiredCopyValidated = 0;
 let staticI18nArabicHighFrequencyLabelsValidated = 0;
 let staticI18nArabicForbiddenFragmentsValidated = 0;
@@ -7957,6 +8078,21 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
 {
+  const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
+  staticI18nSomaliRequiredCopyValidated = somaliI18nValidation.requiredCopyValidated;
+  staticI18nSomaliHighFrequencyLabelsValidated = somaliI18nValidation.highFrequencyLabelsValidated;
+  staticI18nSomaliForbiddenFragmentsValidated = somaliI18nValidation.forbiddenFragmentsValidated;
+  staticI18nSomaliEnglishFallbacksValidated = somaliI18nValidation.englishFallbacksValidated;
+  staticI18nSomaliNaturalnessValidated =
+    staticI18nSomaliRequiredCopyValidated ===
+      Object.keys(STATIC_I18N_SOMALI_EXPECTED_COPY).length &&
+    staticI18nSomaliHighFrequencyLabelsValidated ===
+      STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS.length &&
+    staticI18nSomaliForbiddenFragmentsValidated === STATIC_I18N_SOMALI_FORBIDDEN_FRAGMENTS.length &&
+    staticI18nSomaliEnglishFallbacksValidated ===
+      countStaticI18nEnglishFallbackChecks(STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS);
+}
+{
   const arabicI18nValidation = validateStaticI18nArabicNaturalness();
   staticI18nArabicRequiredCopyValidated = arabicI18nValidation.requiredCopyValidated;
   staticI18nArabicHighFrequencyLabelsValidated = arabicI18nValidation.highFrequencyLabelsValidated;
@@ -7969,7 +8105,7 @@ staticEbookOutcomeClaimParityValidated =
       STATIC_I18N_ARABIC_HIGH_FREQUENCY_KEYS.length &&
     staticI18nArabicForbiddenFragmentsValidated === STATIC_I18N_ARABIC_FORBIDDEN_FRAGMENTS.length &&
     staticI18nArabicEnglishFallbacksValidated ===
-      Object.keys(STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY).length;
+      countStaticI18nEnglishFallbackChecks(STATIC_I18N_ARABIC_HIGH_FREQUENCY_KEYS);
 }
 {
   const readinessValidation = validateStaticV11ReadinessCopy();
@@ -16739,6 +16875,11 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
+      staticI18nSomaliRequiredCopyValidated,
+      staticI18nSomaliHighFrequencyLabelsValidated,
+      staticI18nSomaliForbiddenFragmentsValidated,
+      staticI18nSomaliEnglishFallbacksValidated,
+      staticI18nSomaliNaturalnessValidated,
       staticI18nArabicRequiredCopyValidated,
       staticI18nArabicHighFrequencyLabelsValidated,
       staticI18nArabicForbiddenFragmentsValidated,
