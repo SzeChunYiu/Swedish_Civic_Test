@@ -113,7 +113,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(
     practiceInterstitialNativeSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
   assert.match(practiceInterstitialNativeSource, /useMobileAdsConsent/);
   assert.match(practiceInterstitialNativeSource, /requestNonPersonalizedAdsOnly/);
@@ -168,7 +168,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(nativeAdCardNativeSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(
     nativeAdCardNativeSource,
-    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
@@ -503,10 +503,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/monetization/NativeAdCard.native.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        "shouldShowAd('results_native', resolvedEntitlements, mobileAdsConsent.decision.consentDecision)",
-        "shouldShowAd('results_native', resolvedEntitlements)",
-      );
+      .replace('      Platform.OS,', '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
