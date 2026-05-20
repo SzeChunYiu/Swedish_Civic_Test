@@ -3,7 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export type AppLanguage = 'sv' | 'en';
 
@@ -32,31 +32,6 @@ try {
   settingsStorage = null;
 }
 
-function readLanguage(): AppLanguage {
-  const language = settingsStorage?.getString(languageKey);
-  return language === 'en' ? 'en' : 'sv';
-}
-
-function readAudioEnabled(): boolean {
-  const storedValue = settingsStorage?.getBoolean(audioEnabledKey);
-  return storedValue ?? true;
-}
-
-function readDailyGoalAnswers(): number {
-  const storedValue = settingsStorage?.getNumber(dailyGoalKey);
-  return storedValue && storedValue > 0 ? storedValue : 10;
-}
-
-function readIncludeSupplementary(): boolean {
-  const storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
-  return storedValue ?? false;
-}
-
-function readHasSeenAboutTheTest(): boolean {
-  const storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
-  return storedValue ?? false;
-}
-
 type SettingsState = {
   language: AppLanguage;
   audioEnabled: boolean;
@@ -71,6 +46,16 @@ type SettingsState = {
   markAboutTheTestSeen: () => void;
   clearPersistenceWarning: () => void;
 };
+
+type InitialSettingsState = Pick<
+  SettingsState,
+  | 'audioEnabled'
+  | 'dailyGoalAnswers'
+  | 'hasSeenAboutTheTest'
+  | 'includeSupplementaryQuestions'
+  | 'language'
+  | 'persistenceWarning'
+>;
 
 export type ImportableSettings = Partial<
   Pick<
@@ -110,13 +95,73 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   return settings;
 }
 
+function readInitialSettings(): InitialSettingsState {
+  const settings: InitialSettingsState = {
+    language: 'sv',
+    audioEnabled: true,
+    dailyGoalAnswers: 10,
+    includeSupplementaryQuestions: false,
+    hasSeenAboutTheTest: false,
+    persistenceWarning: null,
+  };
+
+  const reads: Array<{
+    apply: (value: unknown) => void;
+    key: string;
+    read: () => unknown;
+  }> = [
+    {
+      key: languageKey,
+      read: () => settingsStorage?.getString(languageKey),
+      apply: (value) => {
+        settings.language = value === 'en' ? 'en' : 'sv';
+      },
+    },
+    {
+      key: audioEnabledKey,
+      read: () => settingsStorage?.getBoolean(audioEnabledKey),
+      apply: (value) => {
+        settings.audioEnabled = typeof value === 'boolean' ? value : true;
+      },
+    },
+    {
+      key: dailyGoalKey,
+      read: () => settingsStorage?.getNumber(dailyGoalKey),
+      apply: (value) => {
+        settings.dailyGoalAnswers = typeof value === 'number' && value > 0 ? value : 10;
+      },
+    },
+    {
+      key: includeSupplementaryKey,
+      read: () => settingsStorage?.getBoolean(includeSupplementaryKey),
+      apply: (value) => {
+        settings.includeSupplementaryQuestions = typeof value === 'boolean' ? value : false;
+      },
+    },
+    {
+      key: hasSeenAboutTheTestKey,
+      read: () => settingsStorage?.getBoolean(hasSeenAboutTheTestKey),
+      apply: (value) => {
+        settings.hasSeenAboutTheTest = typeof value === 'boolean' ? value : false;
+      },
+    },
+  ];
+
+  for (const item of reads) {
+    const { value, warning } = readRecoverably(settingsStorage, settingsStorageId, item.key, () =>
+      item.read(),
+    );
+    if (warning && !settings.persistenceWarning) settings.persistenceWarning = warning;
+    item.apply(value);
+  }
+
+  return settings;
+}
+
+const initialSettings = readInitialSettings();
+
 export const useSettingsStore = create<SettingsState>((set) => ({
-  language: readLanguage(),
-  audioEnabled: readAudioEnabled(),
-  dailyGoalAnswers: readDailyGoalAnswers(),
-  includeSupplementaryQuestions: readIncludeSupplementary(),
-  hasSeenAboutTheTest: readHasSeenAboutTheTest(),
-  persistenceWarning: null,
+  ...initialSettings,
   setLanguage: (language) => {
     const persistenceWarning = writeRecoverably(
       settingsStorage,

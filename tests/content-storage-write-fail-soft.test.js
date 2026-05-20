@@ -6,6 +6,7 @@ const ts = require('typescript');
 
 const {
   createMemoryMMKV,
+  createThrowingReadMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
@@ -108,6 +109,77 @@ test('mistake-review writes keep selected answers and expose dismissible warning
   state.clearPersistenceWarning();
   state = useMistakeReviewStore.getState();
   assert.equal(state.persistenceWarning, null);
+});
+
+test('local study stores fail soft when MMKV reads throw during hydration', () => {
+  const settingsStorage = createThrowingReadMMKV('settings read failed');
+  const { useSettingsStore } = loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', {
+    settings: settingsStorage,
+  });
+
+  let settingsState = useSettingsStore.getState();
+  assert.equal(settingsState.language, 'sv');
+  assert.equal(settingsState.audioEnabled, true);
+  assert.equal(settingsState.dailyGoalAnswers, 10);
+  assert.equal(settingsState.includeSupplementaryQuestions, false);
+  assert.equal(settingsState.hasSeenAboutTheTest, false);
+  assert.equal(settingsState.persistenceWarning.recoverable, true);
+  assert.equal(settingsState.persistenceWarning.storageId, 'settings');
+  assert.equal(settingsState.persistenceWarning.key, 'language');
+  assert.equal(settingsState.persistenceWarning.operation, 'read');
+  assert.match(settingsState.persistenceWarning.errorMessage, /settings read failed/);
+
+  settingsState.setLanguage('en');
+  settingsState = useSettingsStore.getState();
+  assert.equal(settingsState.language, 'en');
+  assert.equal(settingsState.persistenceWarning, null);
+
+  const mistakeReviewStorage = createThrowingReadMMKV('mistake-review read failed');
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': mistakeReviewStorage,
+    },
+  );
+
+  let mistakeReviewState = useMistakeReviewStore.getState();
+  assert.deepEqual(mistakeReviewState.wrongAnswerReviews, {});
+  assert.equal(mistakeReviewState.persistenceWarning.recoverable, true);
+  assert.equal(mistakeReviewState.persistenceWarning.storageId, 'mistake-review');
+  assert.equal(mistakeReviewState.persistenceWarning.key, 'mistakeReviewState');
+  assert.equal(mistakeReviewState.persistenceWarning.operation, 'read');
+  assert.match(mistakeReviewState.persistenceWarning.errorMessage, /mistake-review read failed/);
+
+  mistakeReviewState.recordWrongAnswerReview({
+    questionId: 'q001',
+    selectedOptionTextEn: 'Southern Europe',
+    selectedOptionTextSv: 'Södra Europa',
+  });
+  mistakeReviewState = useMistakeReviewStore.getState();
+  assert.equal(mistakeReviewState.wrongAnswerReviews.q001.selectedOptionTextEn, 'Southern Europe');
+  assert.equal(mistakeReviewState.persistenceWarning, null);
+
+  const progressStorage = createThrowingReadMMKV('progress read failed');
+  const { useProgressStore } = loadTsWithStorage(repoRoot, 'lib/storage/progressStore.ts', {
+    progress: progressStorage,
+  });
+
+  let progressState = useProgressStore.getState();
+  assert.deepEqual(progressState.completedQuestionIds, []);
+  assert.deepEqual(progressState.questionProgress, {});
+  assert.equal(progressState.totalXp, 0);
+  assert.equal(progressState.persistenceWarning.recoverable, true);
+  assert.equal(progressState.persistenceWarning.storageId, 'progress');
+  assert.equal(progressState.persistenceWarning.key, 'progressState');
+  assert.equal(progressState.persistenceWarning.operation, 'read');
+  assert.match(progressState.persistenceWarning.errorMessage, /progress read failed/);
+
+  progressState.recordAnswer('q001', true);
+  progressState = useProgressStore.getState();
+  assert.deepEqual(progressState.completedQuestionIds, ['q001']);
+  assert.equal(progressState.questionProgress.q001.correctCount, 1);
+  assert.equal(progressState.persistenceWarning, null);
 });
 
 test('routes render localized storage warning notices with dismiss hooks', () => {

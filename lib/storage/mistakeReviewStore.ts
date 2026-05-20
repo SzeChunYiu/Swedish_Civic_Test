@@ -3,7 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export type MistakeAnswerReview = {
   answeredAt: string;
@@ -86,14 +86,21 @@ export function normalizeImportedMistakeReview(value: unknown): PersistedMistake
   return normalizeMistakeReview(value);
 }
 
-function readMistakeReview(): PersistedMistakeReview {
-  const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
-  if (!rawReview) return emptyMistakeReview;
+function readMistakeReview(): PersistedMistakeReview & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const { value: rawReview, warning } = readRecoverably(
+    mistakeReviewStorage,
+    mistakeReviewStorageId,
+    mistakeReviewStateKey,
+    () => mistakeReviewStorage?.getString(mistakeReviewStateKey),
+  );
+  if (!rawReview) return { ...emptyMistakeReview, persistenceWarning: warning };
 
   try {
-    return normalizeMistakeReview(JSON.parse(rawReview));
+    return { ...normalizeMistakeReview(JSON.parse(rawReview)), persistenceWarning: warning };
   } catch {
-    return emptyMistakeReview;
+    return { ...emptyMistakeReview, persistenceWarning: warning };
   }
 }
 
@@ -121,7 +128,6 @@ const initialMistakeReview = readMistakeReview();
 
 export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   ...initialMistakeReview,
-  persistenceWarning: null,
   clearWrongAnswerReviews: () => {
     const persistenceWarning = writeMistakeReview(emptyMistakeReview);
     set({ ...emptyMistakeReview, persistenceWarning });

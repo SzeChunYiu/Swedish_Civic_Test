@@ -9,7 +9,7 @@ import { createInitialFreezeState, type StreakFreezeState } from '../learning/st
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export type QuestionProgress = {
   questionId: string;
@@ -338,20 +338,22 @@ export function normalizeImportedProgress(value: unknown): PersistedProgress {
   return normalizeProgress(value);
 }
 
-function readProgress(): PersistedProgress {
-  let rawProgress: string | undefined;
-  try {
-    rawProgress = progressStorage?.getString(progressStateKey);
-  } catch {
-    return emptyProgress;
-  }
+function readProgress(): PersistedProgress & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const { value: rawProgress, warning } = readRecoverably(
+    progressStorage,
+    progressStorageId,
+    progressStateKey,
+    () => progressStorage?.getString(progressStateKey),
+  );
 
-  if (!rawProgress) return emptyProgress;
+  if (!rawProgress) return { ...emptyProgress, persistenceWarning: warning };
 
   try {
-    return normalizeProgress(JSON.parse(rawProgress));
+    return { ...normalizeProgress(JSON.parse(rawProgress)), persistenceWarning: warning };
   } catch {
-    return emptyProgress;
+    return { ...emptyProgress, persistenceWarning: warning };
   }
 }
 
@@ -383,7 +385,6 @@ const initialProgress = readProgress();
 
 export const useProgressStore = create<ProgressState>((set) => ({
   ...initialProgress,
-  persistenceWarning: null,
   markQuestionCompleted: (questionId) =>
     set((state) => {
       if (state.completedQuestionIds.includes(questionId)) return state;
