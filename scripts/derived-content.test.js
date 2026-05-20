@@ -1070,7 +1070,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q081', 'trueStatement')]: [
       'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',
-      'The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.',
+      'The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.',
     ],
     [generatedQuestionId(sourceQuestions, 'q082', 'trueStatement')]: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
