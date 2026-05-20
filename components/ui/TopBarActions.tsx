@@ -1,6 +1,6 @@
 import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
@@ -27,6 +27,13 @@ type TopBarActionLinkProps = {
   href: Href;
 };
 
+type TopBarAudioSwitchProps = {
+  accessibilityLabel: string;
+  audioEnabled: boolean;
+  iconSize: number;
+  onToggle: () => void;
+};
+
 const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
   sv: {
     audioEnabled: 'Ljud är på, tryck för att stänga av',
@@ -45,6 +52,31 @@ const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
 };
 
 const defaultIconSize = space[3];
+const topBarActionLinkClassName = 'top-bar-action-link';
+const topBarActionLinkStyleElementId = 'top-bar-action-link-style';
+
+function useTopBarActionLinkWebStyles() {
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    if (document.getElementById(topBarActionLinkStyleElementId)) return;
+
+    const styleElement = document.createElement('style');
+    styleElement.id = topBarActionLinkStyleElementId;
+    styleElement.textContent = `
+.${topBarActionLinkClassName}:hover,
+.${topBarActionLinkClassName}:focus-visible {
+  background-color: ${colors.focusSoft};
+  transform: scale(${motion.hoverScale});
+}
+
+.${topBarActionLinkClassName}:active {
+  background-color: ${colors.focusSoft};
+  transform: scale(${motion.pressedScale});
+}
+`;
+    document.head.appendChild(styleElement);
+  }, []);
+}
 
 /**
  * Defaults: reads language and audio state from settings, renders token-sized
@@ -55,6 +87,8 @@ export interface TopBarActionsProps {
 }
 
 export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps = {}) {
+  useTopBarActionLinkWebStyles();
+
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
@@ -63,16 +97,12 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
   return (
     <View style={styles.row}>
       <LanguagePicker />
-      <Pressable
-        accessibilityRole="switch"
+      <TopBarAudioSwitch
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
-        accessibilityState={{ checked: audioEnabled }}
-        hitSlop={space[1]}
-        onPress={() => setAudioEnabled(!audioEnabled)}
-        style={({ pressed }) => [styles.iconButton, pressed ? styles.iconButtonPressed : null]}
-      >
-        <AudioIcon size={iconSize} muted={!audioEnabled} />
-      </Pressable>
+        audioEnabled={audioEnabled}
+        iconSize={iconSize}
+        onToggle={() => setAudioEnabled(!audioEnabled)}
+      />
       <TopBarActionLink href="/search" accessibilityLabel={copy.search}>
         <SearchIcon size={iconSize} />
       </TopBarActionLink>
@@ -86,6 +116,49 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
   );
 }
 
+function TopBarAudioSwitch({
+  accessibilityLabel,
+  audioEnabled,
+  iconSize,
+  onToggle,
+}: TopBarAudioSwitchProps) {
+  const [isFocused, setIsFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  const webInteractionHandlers =
+    Platform.OS === 'web'
+      ? {
+          onBlur: () => setIsFocused(false),
+          onFocus: () => setIsFocused(true),
+          onHoverIn: () => setIsHovered(true),
+          onHoverOut: () => {
+            setIsHovered(false);
+            setIsPressed(false);
+          },
+        }
+      : {};
+
+  return (
+    <Pressable
+      {...webInteractionHandlers}
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ checked: audioEnabled }}
+      hitSlop={space[1]}
+      onPress={onToggle}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      style={[
+        styles.iconButton,
+        isFocused || isHovered ? styles.iconButtonHover : null,
+        isPressed ? styles.iconButtonPressed : null,
+      ]}
+    >
+      <AudioIcon size={iconSize} muted={!audioEnabled} />
+    </Pressable>
+  );
+}
+
 function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -93,14 +166,13 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
-          onBlur: () => {
-            setIsFocused(false);
+          onBlur: () => setIsFocused(false),
+          onFocus: () => setIsFocused(true),
+          onMouseEnter: () => setIsHovered(true),
+          onMouseLeave: () => {
+            setIsHovered(false);
             setIsPressed(false);
           },
-          onFocus: () => setIsFocused(true),
-          onMouseDown: () => setIsPressed(true),
-          onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => setIsHovered(false),
         }
       : {};
 
@@ -137,6 +209,10 @@ const styles = StyleSheet.create({
     minHeight: space[6],
     minWidth: space[6],
   },
+  iconButtonHover: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.hoverScale }],
+  },
   iconButtonPressed: {
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
@@ -144,12 +220,9 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
-    display: 'flex',
-    height: space[6],
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],
-    width: space[6],
   },
   iconLinkHover: {
     backgroundColor: colors.focusSoft,

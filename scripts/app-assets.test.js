@@ -2,22 +2,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-require.extensions['.ts'] = function tsLoader(module, filename) {
-  const source = fs.readFileSync(filename, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-    fileName: filename,
-  }).outputText;
-  module._compile(transpiled, filename);
-};
-
-function loadTs(relativePath) {
-  return require(path.join(repoRoot, relativePath));
-}
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
@@ -32,14 +18,24 @@ function pngDimensions(relativePath) {
   };
 }
 
+function assertHexColor(value, label) {
+  assert.match(value, /^#[0-9a-f]{6}$/i, `${label} should be a six-digit hex color`);
+}
+
 test('release app assets are configured and present at store-safe sizes', () => {
   const app = readJson('app.json').expo;
+  const splashDimensions = pngDimensions('assets/splash-icon.png');
+
   assert.equal(app.icon, './assets/icon.png');
   assert.equal(app.splash.image, './assets/splash-icon.png');
+  assert.equal(app.splash.resizeMode, 'contain');
+  assert.equal(app.splash.backgroundColor, '#fffcf9');
   assert.equal(app.android.adaptiveIcon.foregroundImage, './assets/adaptive-icon.png');
-  assert.equal(app.android.adaptiveIcon.backgroundColor, '#005293');
+  assertHexColor(app.splash.backgroundColor, 'splash background');
+  assertHexColor(app.android.adaptiveIcon.backgroundColor, 'adaptive icon background');
+  assert.equal(app.android.adaptiveIcon.backgroundColor, app.splash.backgroundColor);
 
   assert.deepEqual(pngDimensions('assets/icon.png'), { width: 1024, height: 1024 });
   assert.deepEqual(pngDimensions('assets/adaptive-icon.png'), { width: 1024, height: 1024 });
-  assert.deepEqual(pngDimensions('assets/splash-icon.png'), { width: 1242, height: 2436 });
+  assert.deepEqual(splashDimensions, { width: 1024, height: 1024 });
 });
