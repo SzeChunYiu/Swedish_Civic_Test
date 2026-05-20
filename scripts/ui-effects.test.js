@@ -522,6 +522,26 @@ test('mock exam config controls are not nested inside labelled summary container
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('mock exam time heatmap keeps its summary separate from jump buttons', () => {
+  const source = read('components/MockExamTimeHeatmap.tsx');
+  const surfaceOpening = source.match(/<Surface[\s\S]*?>/)?.[0] ?? '';
+
+  assert.match(source, /const summaryAccessibilityLabel =/);
+  assert.match(source, /<Surface[\s\S]*accessible=\{false\}[\s\S]*accessibilityRole="none"/);
+  assert.match(
+    source,
+    /<Text\s+accessibilityRole="summary"\s+style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
+  );
+  assert.match(source, /accessibilityLabel=\{copy\.questionLabel\(/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /onPress=\{\(\) => onSelectQuestion\?\.\(answer\.questionId\)\}/);
+  assert.match(source, /Nära median/);
+  assert.match(source, /Near median/);
+  assert.doesNotMatch(surfaceOpening, /accessibilityLabel=/);
+  assert.doesNotMatch(surfaceOpening, /accessibilityRole="summary"/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings controls use token pressed feedback on all direct controls', () => {
   const source = read('app/settings.tsx');
 
