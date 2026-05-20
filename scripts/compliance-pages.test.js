@@ -162,10 +162,11 @@ test('static learner-facing slogans avoid pass and passport outcome promises', (
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
   assert.match(read('site/index.html'), /data-i18n="footer\.t1">Study the material\./);
-  assert.match(read('site/app.js'), /"hero\.h1a": "Study the material\."/);
-  assert.match(read('site/app.js'), /"hero\.h1b": "Practice with sources\."/);
-  assert.match(read('site/app.js'), /"hero\.h1a": "Plugga materialet\."/);
-  assert.match(read('site/app.js'), /"hero\.h1b": "Öva med källor\."/);
+  const siteAppSource = read('site/app.js');
+  assert.match(siteAppSource, /['"]hero\.h1a['"]:\s*['"]Study the material\.['"]/);
+  assert.match(siteAppSource, /['"]hero\.h1b['"]:\s*['"]Practice with sources\.['"]/);
+  assert.match(siteAppSource, /['"]hero\.h1a['"]:\s*['"]Plugga materialet\.['"]/);
+  assert.match(siteAppSource, /['"]hero\.h1b['"]:\s*['"]Öva med källor\.['"]/);
 });
 
 test('static head metadata description is neutral and non-empty', () => {

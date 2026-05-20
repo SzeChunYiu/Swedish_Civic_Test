@@ -262,6 +262,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
       assert.match(englishHtml, /Short, repeated sessions make it easier/);
       assert.match(swedishHtml, /Vad den h[aä]r boken [aä]r/);
       assert.match(swedishHtml, /gör en övning/);
+      assert.doesNotMatch(swedishHtml, /gör ett\s+quiz/i);
     } else {
       assert.doesNotMatch(englishHtml, /<div class="ebook__crumb">How to read this book<\/div>/);
       assert.doesNotMatch(

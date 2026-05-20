@@ -3779,6 +3779,13 @@ const STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED = [
   'kort övning',
   'realistisk tidskänsla',
 ];
+const STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_FORBIDDEN = [
+  /gör ett\s+quiz/i,
+  /quizfrågor/i,
+  /quizpass/i,
+  /quizet/i,
+];
+const STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED = ['gör en övning'];
 
 function validateStaticSiteSwedishStudyTerms() {
   const source = loadText('site/app.js');
@@ -3805,6 +3812,33 @@ function validateStaticSiteSwedishStudyTerms() {
   STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED.forEach((term) => {
     if (!swedishDictionary.includes(term)) {
       fail(`static site Swedish dictionary missing natural study term: ${term}`);
+      return;
+    }
+    requiredTermsValidated += 1;
+  });
+
+  return {
+    forbiddenTermsValidated,
+    requiredTermsValidated,
+  };
+}
+
+function validateStaticEbookSwedishStudyTerms() {
+  const source = loadText('site/ebook.js');
+  let forbiddenTermsValidated = 0;
+  let requiredTermsValidated = 0;
+
+  STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_FORBIDDEN.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static ebook Swedish copy contains stale quiz loanword phrase: ${pattern}`);
+      return;
+    }
+    forbiddenTermsValidated += 1;
+  });
+
+  STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED.forEach((term) => {
+    if (!source.includes(term)) {
+      fail(`static ebook Swedish copy missing natural study term: ${term}`);
       return;
     }
     requiredTermsValidated += 1;
@@ -6285,6 +6319,8 @@ let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
+let staticEbookSwedishStudyTermsValidated = 0;
+let staticEbookSwedishStudyTermNaturalnessValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -6551,6 +6587,17 @@ staticEbookOutcomeClaimParityValidated =
     studyTermValidation.forbiddenTermsValidated ===
       STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN.length &&
     studyTermValidation.requiredTermsValidated === STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED.length;
+}
+{
+  const ebookStudyTermValidation = validateStaticEbookSwedishStudyTerms();
+  staticEbookSwedishStudyTermsValidated =
+    ebookStudyTermValidation.forbiddenTermsValidated +
+    ebookStudyTermValidation.requiredTermsValidated;
+  staticEbookSwedishStudyTermNaturalnessValidated =
+    ebookStudyTermValidation.forbiddenTermsValidated ===
+      STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_FORBIDDEN.length &&
+    ebookStudyTermValidation.requiredTermsValidated ===
+      STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED.length;
 }
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
@@ -14464,6 +14511,8 @@ console.log(
       swedishPrivacyStreakCopyNaturalnessValidated,
       staticSiteSwedishStudyTermsValidated,
       staticSiteSwedishStudyTermNaturalnessValidated,
+      staticEbookSwedishStudyTermsValidated,
+      staticEbookSwedishStudyTermNaturalnessValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
