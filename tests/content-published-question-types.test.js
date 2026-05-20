@@ -16,6 +16,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
+const privateWelfareTaxFundingStiltedEnglishPattern = /\b(?:tax-funded|tax revenue pays for it)\b/i;
 const q071SocialInsuranceOverlapPattern =
   /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring|sickness insurance|parental insurance|unemployment insurance)\b/i;
 const traditionCommonToDoEnglishPattern =
@@ -31,6 +32,8 @@ const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
 const authoredWayToPromptPattern = /\b(?:Vilket är ett sätt att|Which is a way to)\b/i;
+const q036OldListPromptPattern =
+  /\b(?:Vilken lista innehåller|Which list contains|Listan med\b[^.?!]*\binnehåller|The list with\b[^.?!]*\bcontains)\b/i;
 const q026OldMunicipalResponsibilitiesPromptPattern =
   /\b(?:Vilket exempel beskriver kommunernas ansvar|Which example describes municipal responsibilities)\b/i;
 const q140OldChristmasPromptPattern =
@@ -127,6 +130,7 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
+  assert.equal(summary.questionPoliticalPartyOptionShapeValidated, 3);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -334,6 +338,90 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q156 uses stilted state-welfare English wording/,
+  );
+});
+
+test('private welfare source and exports use natural tax-funding English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    privateWelfareTaxFundingStiltedEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) =>
+      privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const q155 = generatedSiteBank.find((question) => question.id === 'q155');
+  const welfareVariantIds = ['q155', 'q776', 'q777', 'q778', 'q779'];
+  const welfareVariants = generatedSiteBank.filter((question) =>
+    welfareVariantIds.includes(question.id),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q155, 'q155 should be published in the site bank');
+  assert.equal(
+    q155.q.en,
+    'How can a welfare service be provided by a private company but still be funded by tax revenue?',
+  );
+  assert.equal(
+    q155.opts[q155.answer].en,
+    'A private company can provide the service while tax revenue funds it',
+  );
+  assert.equal(welfareVariants.length, welfareVariantIds.length);
+  for (const question of welfareVariants) {
+    assert.equal(
+      privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
+      false,
+    );
+  }
+});
+
+test('private welfare English naturalness guard rejects tax-funded calques', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'How can a welfare service be provided by a private company but still be funded by tax revenue?',
+        'How can a welfare service be private and still tax-funded?',
+      )
+      .replace(
+        'A private company can provide the service while tax revenue funds it',
+        'A private company can provide the service while tax revenue pays for it',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q155 uses stilted state-welfare English wording/,
   );
 });
 
@@ -1095,6 +1183,105 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('constitutional-laws source and generated prompts ask the civic concept directly', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q036OldListPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => q036OldListPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q036OldListPromptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const q036 = generatedSiteBank.find((question) => question.id === 'q036');
+  const q036SectionPractice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q036', 'singleChoice'),
+  );
+  const q036Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q036', 'judgement'),
+  );
+  const q036True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q036', 'trueStatement'),
+  );
+  const q036False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q036', 'falseStatement'),
+  );
+
+  assert.ok(q036, 'q036 should be published in the site bank');
+  assert.equal(q036.q.sv, 'Vilka är Sveriges fyra grundlagar?');
+  assert.equal(q036.q.en, "What are Sweden's four constitutional laws?");
+  assert.ok(q036SectionPractice, 'q036 section-practice generated variant should be published');
+  assert.equal(q036SectionPractice.q.sv, 'Sveriges fyra grundlagar är ...');
+  assert.equal(q036SectionPractice.q.en, "Sweden's four constitutional laws are ...");
+  assert.ok(q036Judgement, 'q036 judgement generated variant should be published');
+  assert.match(q036Judgement.q.sv, /Vilka är Sveriges fyra grundlagar/);
+  assert.match(q036Judgement.q.en, /What are Sweden's four constitutional laws/);
+  assert.equal(
+    q036True?.q.sv,
+    'Sveriges fyra grundlagar är regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen.',
+  );
+  assert.equal(
+    q036True?.q.en,
+    "Sweden's four constitutional laws are the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession.",
+  );
+  assert.equal(
+    q036False?.q.sv,
+    'Sveriges fyra grundlagar är skollagen, socialtjänstlagen, miljöbalken och semesterlagen.',
+  );
+  assert.equal(
+    q036False?.q.en,
+    "Sweden's four constitutional laws are the Education Act, Social Services Act, Environmental Code, and Annual Leave Act.",
+  );
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('constitutional-laws prompt guard rejects the old list wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vilka är Sveriges fyra grundlagar?',
+        'Vilken lista innehåller bara Sveriges fyra grundlagar?',
+      )
+      .replace(
+        "What are Sweden's four constitutional laws?",
+        "Which list contains only Sweden's four constitutional laws?",
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q036 asks about the answer instead of the civic concept/,
+  );
+});
+
 test('municipal responsibilities source and generated prompts ask directly about services', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -1571,6 +1758,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q145 uses unnatural secret-ballot Swedish voting pronoun/,
+  );
+});
+
+test('political-party options keep one grammatical answer shape', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace('Makt att ersätta domstolarna', 'De ersätter domstolarna')
+      .replace('The power to replace the courts', 'They replace the courts');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q033 mixes political-party option grammar shapes/,
   );
 });
 

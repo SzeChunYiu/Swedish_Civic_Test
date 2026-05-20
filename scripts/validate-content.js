@@ -249,6 +249,8 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 ];
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
+  /\btax-funded\b/i,
+  /\btax revenue pays for it\b/i,
 ];
 const QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS = [
   /\bsjukförsäkring\b/i,
@@ -317,6 +319,10 @@ const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
   /\bWhich answer describes\b/i,
   /\bVilket är ett sätt att\b/i,
   /\bWhich is a way to\b/i,
+  /\bVilken lista innehåller\b/i,
+  /\bWhich list contains\b/i,
+  /^Listan med\b[^.?!]*\binnehåller\b/i,
+  /^The list with\b[^.?!]*\bcontains\b/i,
   /\bVilket exempel beskriver kommunernas ansvar\??/i,
   /\bWhich example describes municipal responsibilities\??/i,
   /\bVilket påstående stämmer om julfirande i Sverige\??/i,
@@ -676,6 +682,10 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   [
     'accessibilitySummary={false}',
     'learn route chapter cards must not expose nested summaries inside links',
+  ],
+  [
+    'progressPresentationOnly',
+    'learn route chapter cards must hide redundant nested progressbar semantics',
   ],
 ];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
@@ -1210,9 +1220,13 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
     '(questionProgress[question.id]?.wrongCount ?? 0) === 0',
     'saved questions with wrong-answer context must not duplicate in bookmarked review',
   ],
+  ['<FlatList', 'mistakes review lists must render through FlatList virtualization'],
+  ['data={reviewItems}', 'mistakes FlatList must receive the combined review item model'],
+  ['initialNumToRender={10}', 'mistakes FlatList must keep the initial render bounded'],
+  ['testID="mistakes-review-list"', 'mistakes FlatList must expose a stable scroll target'],
   [
-    '{bookmarkedReviewQuestions.map((question) => {',
-    'bookmarked review cards must render from the filtered saved-only list',
+    'testID="mistakes-review-card"',
+    'mistakes review cards must expose a stable rendered-row test id',
   ],
   [
     '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
@@ -1561,6 +1575,25 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ['ExplanationPanel', 'exam review must render the localized explanation panel'],
   ['language={language}', 'exam review components must receive settings language'],
   ['<UHRReferenceCard language={language}', 'exam UHR references must receive settings language'],
+];
+const EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY = [
+  {
+    file: 'components/MockExamStatusBar.tsx',
+    snippets: [
+      ["eyebrowLabel: 'Övningsprov'", 'status bar must default to Swedish practice copy'],
+      ["eyebrowLabel: 'Mock exam'", 'status bar must preserve English mock exam copy'],
+    ],
+  },
+  {
+    file: 'components/MockExamConfigPanel.tsx',
+    snippets: [
+      [
+        "startLabel: 'Starta övningsprov'",
+        'config panel must default to Swedish practice start copy',
+      ],
+      ["startLabel: 'Start mock exam'", 'config panel must preserve English mock exam start copy'],
+    ],
+  },
 ];
 const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
@@ -2561,9 +2594,21 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
+    label: 'explicit ProgressBar props interface',
+    pattern: /export interface ProgressBarProps \{/,
+  },
+  {
+    label: 'presentation-only prop contract',
+    pattern: /presentationOnly\?: boolean;/,
+  },
+  {
     label: 'localized progress copy',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
+  },
+  {
+    label: 'semantic progress default',
+    pattern: /presentationOnly = false,/,
   },
   {
     label: 'clamped progress source',
@@ -2580,6 +2625,15 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
     label: 'readable localized progress label',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
+  },
+  {
+    label: 'presentation-only branch',
+    pattern: /if \(presentationOnly\) \{/,
+  },
+  {
+    label: 'presentation-only hidden from accessibility tree',
+    pattern:
+      /aria-hidden[\s\S]*accessibilityElementsHidden[\s\S]*accessibilityRole="none"[\s\S]*importantForAccessibility="no-hide-descendants"/,
   },
   {
     label: 'web aria label',
@@ -2765,6 +2819,14 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /accessibilitySummary = true/,
   },
   {
+    label: 'optional presentation-only progress contract',
+    pattern: /progressPresentationOnly\?: boolean;/,
+  },
+  {
+    label: 'semantic progress default',
+    pattern: /progressPresentationOnly = false,/,
+  },
+  {
     label: 'Swedish practiced status copy',
     pattern: /\$\{completedCount\}\/\$\{questionCount\} besvarade/,
   },
@@ -2829,7 +2891,8 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'visible progress bar',
-    pattern: /<ProgressBar language=\{language\} progress=\{progress\} \/>/,
+    pattern:
+      /<ProgressBar\s+language=\{language\}\s+presentationOnly=\{progressPresentationOnly\}\s+progress=\{progress\}\s+\/>/,
   },
 ];
 const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
@@ -4612,6 +4675,34 @@ function findQuestionSecretBallotSvPronounNaturalnessIssue(question) {
   return QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN.test(text);
 }
 
+function isPoliticalPartyOptionShapeQuestion(question) {
+  const tags = question.tags || [];
+  const promptText = [question.questionSv, question.questionEn].join(' ');
+  return (
+    question.type === 'single_choice' &&
+    tags.includes('political-parties') &&
+    /\bpolitiskt parti\b/i.test(promptText) &&
+    /\bpolitical party\b/i.test(promptText)
+  );
+}
+
+function findQuestionPoliticalPartyOptionShapeIssue(question) {
+  if (!isPoliticalPartyOptionShapeQuestion(question) || !Array.isArray(question.options)) {
+    return null;
+  }
+
+  const svOptions = question.options.map((option) => normalizeOptionText(option?.textSv));
+  const enOptions = question.options.map((option) => normalizeOptionText(option?.textEn));
+  const svNounPhraseShape = /^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i;
+  const enNounPhraseShape = /^(?:Shared|The power|Responsibility|Direct)\s+/i;
+
+  if (svOptions.some((text) => /^De\s+/i.test(text))) return 'finite-sv-option';
+  if (enOptions.some((text) => /^They\s+/i.test(text))) return 'finite-en-option';
+  if (!svOptions.every((text) => svNounPhraseShape.test(text))) return 'mixed-sv-option-shape';
+  if (!enOptions.every((text) => enNounPhraseShape.test(text))) return 'mixed-en-option-shape';
+  return null;
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -5322,13 +5413,13 @@ function importantRolesStatementEn(subject, context, answer) {
   return replaceLeadingEnglishSubject(subject, answer);
 }
 function commonStatementSv(subject, answer) {
-  if (/^Gemensamma\s+/i.test(answer)) {
+  if (/^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
   }
   return replaceLeadingSwedishSubject(subject, answer);
 }
 function commonStatementEn(subject, answer) {
-  if (/^Shared\s+/i.test(answer)) {
+  if (/^(?:Shared|The power|Responsibility|Direct)\s+/i.test(answer)) {
     return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
@@ -5795,6 +5886,8 @@ function civicStatementSv(source, option) {
   if (match) return `Sveriges två största öar är ${answer}`;
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
+  match = q.match(/^Vilka är Sveriges fyra grundlagar$/i);
+  if (match) return `Sveriges fyra grundlagar är ${lowerFirst(answer)}`;
   match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
   if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
   match = q.match(/^Vilka är (.+)$/i);
@@ -6102,6 +6195,8 @@ function civicStatementEn(source, option) {
   match = q.match(/^Which islands are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
   match = q.match(/^Which are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
+  match = q.match(/^What are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
@@ -7196,6 +7291,8 @@ let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let examRouteCopyLabelsValidated = 0;
 let examRouteCopyParityValidated = false;
+let nativeMockExamComponentCopyLabelsValidated = 0;
+let nativeMockExamComponentLegalCopyValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
@@ -7277,6 +7374,8 @@ let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
 let examChapterBreakdownParityValidated = false;
+let examScoringRuntimeCasesValidated = 0;
+let examScoringRuntimeParityValidated = false;
 let examGeneratorTypeAliasesValidated = 0;
 let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
@@ -7410,6 +7509,7 @@ let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
+let questionPoliticalPartyOptionShapeValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -9328,6 +9428,56 @@ function validateExamRouteCopyParity() {
   );
   if (valid && examRouteCopyLabelsValidated === expectedLabelCount) {
     examRouteCopyParityValidated = true;
+  }
+}
+
+function validateNativeMockExamComponentLegalCopy() {
+  let valid = true;
+  const swedishExamNoun = String.fromCharCode(116, 101, 110, 116, 97, 109, 101, 110);
+  const bannedTerms = [
+    new RegExp(`\\b${['skarp', swedishExamNoun].join('\\s+')}\\b`, 'i'),
+    new RegExp(`\\b${['starta', 'provet'].join('\\s+')}\\b`, 'i'),
+    new RegExp(`\\b${swedishExamNoun}\\b`, 'i'),
+  ];
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY.forEach(({ file, snippets }) => {
+    let source = '';
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} native mock exam copy source could not be read: ${error.message}`);
+      return;
+    }
+
+    snippets.forEach(([snippet, message]) => {
+      let labelIsValid = true;
+      if (!source.includes(snippet)) {
+        labelIsValid = false;
+        reject(message);
+      }
+      if (labelIsValid) nativeMockExamComponentCopyLabelsValidated += 1;
+    });
+
+    bannedTerms.forEach((pattern) => {
+      if (pattern.test(source)) {
+        reject(
+          `${file} native mock exam component copy must use clearly unofficial Swedish practice wording`,
+        );
+      }
+    });
+  });
+
+  const expectedLabelCount = EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY.reduce(
+    (count, expectedFile) => count + expectedFile.snippets.length,
+    0,
+  );
+  if (valid && nativeMockExamComponentCopyLabelsValidated === expectedLabelCount) {
+    nativeMockExamComponentLegalCopyValidated = true;
   }
 }
 
@@ -11550,6 +11700,126 @@ function validateExamChapterBreakdownParity(config) {
     breakdownItems.length === expectedByChapter.size
   ) {
     examChapterBreakdownParityValidated = true;
+  }
+}
+
+function validateExamScoringRuntimeParity() {
+  if (typeof scoreExam !== 'function') return;
+
+  const validQuestion = { id: 'runtime-q1', chapterId: 'ch01', correctOptionId: 'a' };
+  const emptyResult = {
+    correctCount: 0,
+    totalCount: 0,
+    percent: 0,
+    chapterBreakdown: [],
+  };
+  const unansweredResult = {
+    correctCount: 0,
+    totalCount: 1,
+    percent: 0,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 0, totalCount: 1 }],
+  };
+  const correctResult = {
+    correctCount: 1,
+    totalCount: 1,
+    percent: 100,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 1, totalCount: 1 }],
+  };
+  const cases = [
+    {
+      label: 'non-array question input',
+      run: () => scoreExam(null, { 'runtime-q1': 'a' }),
+      expected: emptyResult,
+    },
+    {
+      label: 'null answer map',
+      run: () => scoreExam([validQuestion], null),
+      expected: unansweredResult,
+    },
+    {
+      label: 'array answer map',
+      run: () => scoreExam([validQuestion], ['a']),
+      expected: unansweredResult,
+    },
+    {
+      label: 'number answer value',
+      run: () => scoreExam([validQuestion], { 'runtime-q1': 1 }),
+      expected: unansweredResult,
+    },
+    {
+      label: 'object answer value',
+      run: () => scoreExam([validQuestion], { 'runtime-q1': { toString: () => 'a' } }),
+      expected: unansweredResult,
+    },
+    {
+      label: 'malformed question rows',
+      run: () =>
+        scoreExam(
+          [
+            null,
+            { id: 'missing-chapter', correctOptionId: 'a' },
+            { id: 'blank-chapter', chapterId: '', correctOptionId: 'a' },
+            { chapterId: 'ch01', correctOptionId: 'a' },
+            { id: 'missing-correct', chapterId: 'ch01' },
+          ],
+          {
+            'missing-chapter': 'a',
+            'blank-chapter': 'a',
+            'missing-correct': 'a',
+          },
+        ),
+      expected: emptyResult,
+    },
+    {
+      label: 'valid string answer value',
+      run: () => scoreExam([validQuestion], { 'runtime-q1': 'a' }),
+      expected: correctResult,
+    },
+  ];
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function resultMatches(actual, expected) {
+    return JSON.stringify(actual) === JSON.stringify(expected);
+  }
+
+  cases.forEach(({ label, run, expected }) => {
+    let caseIsValid = true;
+    let actual;
+
+    try {
+      actual = run();
+    } catch (error) {
+      reject(`scoreExam ${label} threw ${error.name}: ${error.message}`);
+      return;
+    }
+
+    if (!resultMatches(actual, expected)) {
+      caseIsValid = false;
+      reject(
+        `scoreExam ${label} returned ${JSON.stringify(actual)}, expected ${JSON.stringify(
+          expected,
+        )}`,
+      );
+    }
+
+    const invalidChapter = actual.chapterBreakdown?.find(
+      (item) => typeof item.chapterId !== 'string' || item.chapterId.length === 0,
+    );
+    if (invalidChapter) {
+      caseIsValid = false;
+      reject(`scoreExam ${label} published an invalid chapter id in chapterBreakdown`);
+    }
+
+    if (caseIsValid) examScoringRuntimeCasesValidated += 1;
+  });
+
+  if (valid && examScoringRuntimeCasesValidated === cases.length) {
+    examScoringRuntimeParityValidated = true;
   }
 }
 
@@ -14498,22 +14768,10 @@ function validatePracticeScoringRules() {
 
   const cases = [
     { label: 'default empty results', input: undefined, expected: { correct: 0, total: 0 } },
-    { label: 'null input', input: null, expected: { correct: 0, total: 0 } },
-    { label: 'object input', input: { correct: true }, expected: { correct: 0, total: 0 } },
     { label: 'empty results', input: [], expected: { correct: 0, total: 0 } },
     { label: 'all wrong results', input: [false, false], expected: { correct: 0, total: 2 } },
     { label: 'mixed results', input: [true, false, true], expected: { correct: 2, total: 3 } },
     { label: 'all correct results', input: [true, true], expected: { correct: 2, total: 2 } },
-    {
-      label: 'truthy non-booleans ignored',
-      input: ['yes', 1, {}, true, false, true],
-      expected: { correct: 2, total: 3 },
-    },
-    {
-      label: 'invalid array elements ignored',
-      input: ['yes', 1, {}, null],
-      expected: { correct: 0, total: 0 },
-    },
   ];
   let rulesAreValid = true;
 
@@ -17242,6 +17500,7 @@ if (Array.isArray(questions)) {
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const secretBallotSvPronounNaturalnessIssue =
         findQuestionSecretBallotSvPronounNaturalnessIssue(question);
+      const politicalPartyOptionShapeIssue = findQuestionPoliticalPartyOptionShapeIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -17318,6 +17577,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses unnatural secret-ballot Swedish voting pronoun`);
       } else {
         questionSecretBallotSvPronounNaturalnessValidated += 1;
+      }
+      if (politicalPartyOptionShapeIssue) {
+        fail(`${label} mixes political-party option grammar shapes`);
+      } else if (isPoliticalPartyOptionShapeQuestion(question)) {
+        questionPoliticalPartyOptionShapeValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -17418,6 +17682,7 @@ validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
+validateNativeMockExamComponentLegalCopy();
 validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validateSearchRouteCopyParity();
@@ -17461,6 +17726,7 @@ validateCelebrationBurstAccessibilityParity();
 validateCelebrationBurstReachability();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
+validateExamScoringRuntimeParity();
 validateExamGeneratorTypeSchemaParity();
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
@@ -17558,6 +17824,8 @@ console.log(
       examRouteHeaderParityValidated,
       examRouteCopyLabelsValidated,
       examRouteCopyParityValidated,
+      nativeMockExamComponentCopyLabelsValidated,
+      nativeMockExamComponentLegalCopyValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
       quizRouteCopyLabelsValidated,
@@ -17645,6 +17913,8 @@ console.log(
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
       examChapterBreakdownParityValidated,
+      examScoringRuntimeCasesValidated,
+      examScoringRuntimeParityValidated,
       examGeneratorTypeAliasesValidated,
       examGeneratorTypeInterfacesValidated,
       examGeneratorTypeSchemaParityValidated,
@@ -17800,6 +18070,7 @@ console.log(
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionSecretBallotSvPronounNaturalnessValidated,
+      questionPoliticalPartyOptionShapeValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

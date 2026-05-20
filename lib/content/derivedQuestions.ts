@@ -670,14 +670,14 @@ function importantRolesStatementEn(subject: string, context: string, answer: str
 }
 
 function commonStatementSv(subject: string, answer: string): string {
-  if (/^Gemensamma\s+/i.test(answer)) {
+  if (/^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
   }
   return replaceLeadingSwedishSubject(subject, answer);
 }
 
 function commonStatementEn(subject: string, answer: string): string {
-  if (/^Shared\s+/i.test(answer)) {
+  if (/^(?:Shared|The power|Responsibility|Direct)\s+/i.test(answer)) {
     return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
@@ -1222,6 +1222,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
 
+  match = q.match(/^Vilka är Sveriges fyra grundlagar$/i);
+  if (match) return `Sveriges fyra grundlagar är ${lowerFirst(answer)}`;
+
   match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
   if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
 
@@ -1668,6 +1671,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} are ${answer}`;
 
   match = q.match(/^Which are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
+
+  match = q.match(/^What are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
 
   match = q.match(/^Which groups are (.+)$/i);
