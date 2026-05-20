@@ -7,6 +7,7 @@ const {
   assertStaticHeadMetadataDescriptionSource,
   assertStaticHeadMetadataTitleSource,
 } = require('./static-outcome-copy-guard');
+const { assertStaticV11ReadinessCopySource } = require('./static-v11-readiness-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -292,4 +293,18 @@ test('static mock-exam marketing avoids unsourced format and readiness claims', 
   assert.match(staticApp, /tidsatt övning/);
   assert.match(staticApp, /Det officiella upplägget kan ändras/);
   assert.match(staticApp, /Fortsätt repetera källmaterialet/);
+});
+
+test('static v1.1 dashboard copy stays scoped to local practice data', () => {
+  const staticV11 = read('site/v11.js');
+
+  assert.deepEqual(assertStaticV11ReadinessCopySource(staticV11), {
+    requiredCopyValidated: 12,
+    unsupportedPatternsValidated: 4,
+  });
+  assert.throws(
+    () =>
+      assertStaticV11ReadinessCopySource(staticV11.replace('Lokal övningssignal', 'Din beredskap')),
+    /unsupported readiness\/pass-prediction copy/,
+  );
 });
