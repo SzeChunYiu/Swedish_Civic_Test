@@ -1136,8 +1136,11 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   const removedVerifierExportName = ['REMOVE_ADS', 'VERIFIER', 'TOKEN'].join('_');
 
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  const appConfig = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8')).expo;
+  const expectedRemoveAdsProductId = `${appConfig.ios.bundleIdentifier}.removeads`;
   assert.equal(packageJson.dependencies['expo-secure-store'], '~15.0.8');
   assert.equal(packageJson.dependencies['react-native-iap'], '^15.3.0');
+  assert.equal(REMOVE_ADS_PRODUCT_ID, expectedRemoveAdsProductId);
   assert.match(REMOVE_ADS_PRODUCT_ID, /removeads$/);
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.equal(REMOVE_ADS_RECORD_SCHEMA_VERSION, 1);
@@ -1468,12 +1471,14 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
+  const appConfig = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8')).expo;
   const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
 
   assert.equal(isReleaseMonetizationPolicyReady(), true);
+  assert.equal(REMOVE_ADS_PRODUCT_ID, `${appConfig.ios.bundleIdentifier}.removeads`);
   assert.equal(releaseMonetizationPolicy.adSupportedByDefault, true);
   assert.equal(releaseMonetizationPolicy.adMobAppRecordRequired, true);
   assert.equal(releaseMonetizationPolicy.appAdsTxtReviewRequired, true);
