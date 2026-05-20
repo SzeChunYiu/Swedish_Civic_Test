@@ -15,10 +15,6 @@ function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
 
-const appStoreIdentitySource = read('lib/monetization/appStoreIdentity.ts');
-const proLifetimeSource = read('lib/monetization/proLifetimePurchase.ts');
-const proLifetimeProductId = 'com.billyyiu.almostswedish.prolifetime';
-
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -141,23 +137,6 @@ test('store publishing metadata is prepared', () => {
   assert.equal(appConfig.slug, 'almost-swedish');
   assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
   assert.equal(appConfig.android.package, 'com.billyyiu.almostswedish');
-  assert.match(
-    appStoreIdentitySource,
-    new RegExp(escapeRegExp(appConfig.ios.bundleIdentifier), 'i'),
-  );
-  assert.match(appStoreIdentitySource, /proLifetime:\s*`\$\{APP_NATIVE_IDENTIFIER\}\.prolifetime`/);
-  assert.match(proLifetimeSource, /appStoreProductIds\.proLifetime/);
-  assert.doesNotMatch(proLifetimeSource, staleNativeIdentifierPattern());
-  assert.doesNotMatch(appStoreIdentitySource, staleNativeIdentifierPattern());
-
-  for (const productSetupCopy of [
-    read('publishing/admob-iap-setup-runbook.md'),
-    read('publishing/operator-todo.md'),
-  ]) {
-    assert.match(productSetupCopy, /Pro Lifetime/i);
-    assert.match(productSetupCopy, new RegExp(escapeRegExp(proLifetimeProductId), 'i'));
-    assert.match(productSetupCopy, /59 SEK/i);
-  }
 
   const appStoreListing = read('publishing/app-store-listing.md');
   assert.match(appStoreListing, /Almost Swedish/);

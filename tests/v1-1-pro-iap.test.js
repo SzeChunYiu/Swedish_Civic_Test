@@ -22,6 +22,18 @@ function loadTs(rel) {
   return require(path.join(repoRoot, rel));
 }
 
+function read(rel) {
+  return fs.readFileSync(path.join(repoRoot, rel), 'utf8');
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function staleNativeIdentifierPattern() {
+  return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+}
+
 // Test fixtures: a minimal in-memory provider + storage.
 
 function makeMockProvider({ owned = false } = {}) {
@@ -71,6 +83,34 @@ test('proLifetime: product id + price label + storage key exported', () => {
   assert.equal(m.PRO_LIFETIME_PRODUCT_ID, 'com.billyyiu.almostswedish.prolifetime');
   assert.equal(m.PRO_LIFETIME_PRICE_LABEL, '59 SEK');
   assert.match(m.PRO_LIFETIME_STORAGE_KEY, /proLifetime/);
+});
+
+test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
+  const m = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const appStoreIdentitySource = read('lib/monetization/appStoreIdentity.ts');
+  const proLifetimeSource = read('lib/monetization/proLifetimePurchase.ts');
+  const publishingGateSource = read('scripts/publishing.test.js');
+
+  assert.match(appStoreIdentitySource, /APP_NATIVE_IDENTIFIER = 'com\.billyyiu\.almostswedish'/);
+  assert.match(appStoreIdentitySource, /proLifetime:\s*`\$\{APP_NATIVE_IDENTIFIER\}\.prolifetime`/);
+  assert.match(proLifetimeSource, /appStoreProductIds\.proLifetime/);
+  assert.doesNotMatch(appStoreIdentitySource, staleNativeIdentifierPattern());
+  assert.doesNotMatch(proLifetimeSource, staleNativeIdentifierPattern());
+  assert.doesNotMatch(publishingGateSource, /proLifetime|Pro Lifetime|PRO_LIFETIME/);
+
+  for (const productSetupCopy of [
+    read('publishing/admob-iap-setup-runbook.md'),
+    read('publishing/operator-todo.md'),
+  ]) {
+    assert.match(productSetupCopy, /v1\.1/i);
+    assert.match(productSetupCopy, /Pro Lifetime/i);
+    assert.match(productSetupCopy, new RegExp(escapeRegExp(m.PRO_LIFETIME_PRODUCT_ID), 'i'));
+    assert.match(productSetupCopy, new RegExp(escapeRegExp(m.PRO_LIFETIME_PRICE_LABEL), 'i'));
+    assert.match(
+      productSetupCopy,
+      /after v1\.0 is live|after v1\.0 mobile is LIVE|Do not merge\s+it with the v1\.0 Remove Ads product/i,
+    );
+  }
 });
 
 test('buyProLifetime: fresh buy persists entitlement and returns purchased status', async () => {
