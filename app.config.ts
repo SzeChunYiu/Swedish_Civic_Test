@@ -1,4 +1,4 @@
-import type { ExpoConfig } from 'expo/config';
+import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 declare const require: <T = unknown>(path: string) => T;
 
@@ -116,9 +116,14 @@ function configureGoogleMobileAdsPlugin(plugin: ExpoPlugin): ExpoPlugin {
   ];
 }
 
-export default function getExpoConfig(): ExpoConfig {
-  return {
+export default function getExpoConfig(context?: ConfigContext): ExpoConfig {
+  const baseConfig: ExpoConfig = {
     ...appJson.expo,
-    plugins: appJson.expo.plugins?.map(configureGoogleMobileAdsPlugin),
+    ...(context?.config ?? {}),
+  };
+
+  return {
+    ...baseConfig,
+    plugins: baseConfig.plugins?.map(configureGoogleMobileAdsPlugin),
   };
 }
