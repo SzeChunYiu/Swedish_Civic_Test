@@ -192,6 +192,17 @@ function englishInfinitive(value: string): string {
   return /^to\b/i.test(trimmed) ? trimmed : `to ${trimmed}`;
 }
 
+function englishMainResponsibilityAnswer(value: string): string {
+  const phrase = stripLeadingPurposeEn(value).trim();
+  if (/^be responsible for\s+/i.test(phrase)) {
+    return lowerFirst(phrase.replace(/^be responsible for\s+/i, ''));
+  }
+  if (/^(?:appoint|decide|judge|lead|pass|send|handle)\b/i.test(phrase)) {
+    return englishGerundPhrase(phrase);
+  }
+  return lowerFirst(phrase);
+}
+
 function englishAgePhrase(value: string): string {
   return value.replace(/^(\d+)\s+years$/i, 'age $1');
 }
@@ -556,59 +567,6 @@ function supportStatementSv(subject: string, answer: string): string {
 function supportStatementEn(subject: string, answer: string): string {
   if (/^(?:A|An)\s+/i.test(answer)) {
     return `${upperFirst(subject)} is ${lowerLeadingEnglishArticle(answer)}`;
-  }
-  return replaceLeadingEnglishSubject(subject, answer);
-}
-
-function incomeStatementSv(subject: string, answer: string): string {
-  const normalizedSubject = upperFirst(subject.trim());
-  const adSales = answer.match(/^De säljer\s+(.+?)\s+eller\s+tar betalt för\s+(.+)$/i);
-  if (adSales) {
-    return `${normalizedSubject} kan få inkomster genom att sälja ${lowerFirst(
-      adSales[1],
-    )} eller ta betalt för ${lowerFirst(adSales[2])}`;
-  }
-  if (/^Genom\s+/i.test(answer)) {
-    return `${normalizedSubject} kan få inkomster ${lowerFirst(answer)}`;
-  }
-  return replaceLeadingSwedishSubject(subject, answer);
-}
-
-function incomeStatementEn(subject: string, answer: string): string {
-  const normalizedSubject = upperFirst(subject.trim());
-  const adSales = answer.match(/^They sell\s+(.+?)\s+or charge for\s+(.+)$/i);
-  if (adSales) {
-    return `${normalizedSubject} can earn income by selling ${lowerFirst(
-      adSales[1],
-    )} or charging for ${lowerFirst(adSales[2])}`;
-  }
-  if (/^(?:Through|By)\s+/i.test(answer)) {
-    return `${normalizedSubject} can earn income ${lowerFirst(answer)}`;
-  }
-  return replaceLeadingEnglishSubject(subject, answer);
-}
-
-function webAndSocialMediaStatementSv(subject: string, answer: string): string {
-  if (/^webben och sociala medier$/i.test(subject)) {
-    const topic = 'på webben och i sociala medier';
-    const anyone = answer.match(/^Vem som helst kan skapa innehåll där,\s+och\s+(.+)$/i);
-    if (anyone) return `${upperFirst(topic)} kan vem som helst skapa innehåll, och ${anyone[1]}`;
-    const publishers = answer.match(/^Bara ansvariga utgivare får skriva inlägg där$/i);
-    if (publishers) return `${upperFirst(topic)} får bara ansvariga utgivare skriva inlägg`;
-    return answer.replace(/\bdär\b/gi, topic);
-  }
-  return replaceLeadingSwedishSubject(subject, answer);
-}
-
-function webAndSocialMediaStatementEn(subject: string, answer: string): string {
-  if (/^the web and social media$/i.test(subject)) {
-    const anyone = answer.match(/^Anyone can create content there,\s+and\s+(.+)$/i);
-    if (anyone)
-      return `On the web and in social media, anyone can create content, and ${anyone[1]}`;
-    const publishers = answer.match(/^Only responsible publishers may write posts there$/i);
-    if (publishers)
-      return `On the web and in social media, only responsible publishers may write posts`;
-    return answer.replace(/\bthere\b/gi, 'on the web and in social media');
   }
   return replaceLeadingEnglishSubject(subject, answer);
 }
@@ -1023,9 +981,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
-  match = q.match(/^Hur kan (.+?) få inkomster$/i);
-  if (match) return incomeStatementSv(match[1], answer);
-
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
   if (match)
     return `${upperFirst(match[1])} underlättar ${match[2]} genom att ${lowerFirst(
@@ -1166,9 +1121,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad gör (.+?) på arbetsmarknaden$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
-  match = q.match(/^Vad kännetecknar (.+)$/i);
-  if (match) return replaceLeadingSwedishSubject(match[1], answer);
-
   match = q.match(/^Vilken roll har (.+?) i (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
@@ -1297,12 +1249,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vad erbjuder (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} i Sverige erbjuder ${lowerFirst(answer)}`;
-
-  match = q.match(/^Hur publiceras (.+?) i dag$/i);
-  if (match) return replaceLeadingSwedishSubject(match[1], answer);
-
-  match = q.match(/^Vad är viktigt att komma ihåg om (.+)$/i);
-  if (match) return webAndSocialMediaStatementSv(match[1], answer);
 
   match = q.match(/^Vad är ett mål med (.+)$/i);
   if (match) return `Ett mål med ${match[1]} är ${swedishPurposeClause(answer)}`;
@@ -1455,9 +1401,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
 
-  match = q.match(/^How can (.+?) earn income$/i);
-  if (match) return incomeStatementEn(match[1], answer);
-
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
   if (match) {
     const method = /^By\s+/i.test(answer)
@@ -1519,6 +1462,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     return `The foremost task of ${lowerLeadingEnglishArticle(match[1])} is ${englishInfinitive(
       stripLeadingPurposeEn(answer),
     )}`;
+  }
+
+  match = q.match(/^What is the main responsibility of (.+)$/i);
+  if (match) {
+    return `The main responsibility of ${lowerLeadingEnglishArticle(
+      match[1],
+    )} is ${englishMainResponsibilityAnswer(answer)}`;
   }
 
   match = q.match(/^Which example describes (.+)$/i);
@@ -1607,9 +1557,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^What do (.+?) do in the labour market$/i);
-  if (match) return replaceLeadingEnglishSubject(match[1], answer);
-
-  match = q.match(/^What characterizes (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
 
   match = q.match(/^What role do (.+?) have in (.+)$/i);
@@ -1755,12 +1702,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What do (.+?) in Sweden offer$/i);
   if (match) return `${upperFirst(match[1])} in Sweden offer ${lowerFirst(answer)}`;
-
-  match = q.match(/^How are (.+?) published today$/i);
-  if (match) return replaceLeadingEnglishSubject(match[1], answer);
-
-  match = q.match(/^What is important to remember about (.+)$/i);
-  if (match) return webAndSocialMediaStatementEn(match[1], answer);
 
   match = q.match(/^What is one goal of (.+)$/i);
   if (match) return `One goal of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
