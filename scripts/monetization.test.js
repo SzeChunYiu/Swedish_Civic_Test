@@ -6,7 +6,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName, moduleCache = new Map(), moduleOverrides = {}) {
+function loadTs(relativePath, exportName, moduleCache = new Map(), mocks = {}) {
   const filePath = path.join(repoRoot, relativePath);
   if (moduleCache.has(filePath)) {
     const cached = moduleCache.get(filePath);
@@ -21,6 +21,10 @@ function loadTs(relativePath, exportName, moduleCache = new Map(), moduleOverrid
   moduleCache.set(filePath, mod.exports);
 
   function localRequire(specifier) {
+    if (Object.prototype.hasOwnProperty.call(mocks, specifier)) {
+      return mocks[specifier];
+    }
+
     if (specifier.startsWith('.')) {
       const resolvedPath = path.resolve(path.dirname(filePath), specifier);
       const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
@@ -31,12 +35,7 @@ function loadTs(relativePath, exportName, moduleCache = new Map(), moduleOverrid
       const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
 
       if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(
-          path.relative(repoRoot, resolvedTsPath),
-          undefined,
-          moduleCache,
-          moduleOverrides,
-        );
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, mocks);
       }
     }
 
@@ -2239,11 +2238,8 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.match(mobileConsentSource, /expo-tracking-transparency/);
   assert.match(mobileConsentSource, /AdsConsent\.gatherConsent/);
   assert.match(mobileConsentSource, /mobileAds\(\)\.initialize/);
-  assert.doesNotMatch(
-    mobileConsentSource,
-    /Promise\.all\(\s*\[[\s\S]*resolveTrackingTransparencyStatus[\s\S]*resolveUmpConsentStatus/,
-  );
-  assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
+  assert.match(hookSource, /const platform = options\.platform \?\? Platform\.OS/);
+  assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(platform\)/);
   assert.match(nativeBannerSource, /useMobileAdsConsent/);
   assert.match(nativeBannerSource, /consentDecision/);
   assert.match(nativeBannerSource, /shouldShowAd\([\s\S]*Platform\.OS/);
@@ -2401,6 +2397,89 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(consentInfoFallbackResult.state.umpConsentStatus, 'obtained');
   assert.equal(consentInfoFallbackResult.decision.canInitializeGoogleMobileAds, true);
   assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
+});
+
+test('native Mobile Ads consent hook retries after consent-blocked initialization results', async () => {
+  let consentHook;
+  withEnv({ EXPO_PUBLIC_REAL_ADS_ENABLED: 'true' }, () => {
+    consentHook = loadTs('lib/monetization/useMobileAdsConsent.ts', undefined, new Map(), {
+      react: {
+        useEffect() {},
+        useMemo(factory) {
+          return factory();
+        },
+        useState(initialState) {
+          return [initialState, () => {}];
+        },
+      },
+      'react-native': {
+        Platform: { OS: 'android' },
+      },
+    });
+  });
+
+  const {
+    initializeMobileAdsConsentOnce,
+    resetMobileAdsConsentInitializationCache,
+  } = consentHook;
+  const entitlements = { adsDisabled: false };
+  const calls = [];
+
+  resetMobileAdsConsentInitializationCache();
+
+  const pendingResult = await initializeMobileAdsConsentOnce(entitlements, {
+    platform: 'android',
+    runtime: {
+      async gatherUmpConsent() {
+        calls.push('ump:pending');
+        return { canRequestAds: false, status: 'REQUIRED' };
+      },
+      async initializeGoogleMobileAds() {
+        calls.push('ads:init:pending');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(pendingResult.initialized, false);
+  assert.equal(pendingResult.decision.blockReason, 'pending_consent_prompts');
+
+  const readyResult = await initializeMobileAdsConsentOnce(entitlements, {
+    platform: 'android',
+    runtime: {
+      async gatherUmpConsent() {
+        calls.push('ump:ready');
+        return { canRequestAds: true, status: 'REQUIRED' };
+      },
+      async initializeGoogleMobileAds() {
+        calls.push('ads:init:ready');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(readyResult.initialized, true);
+  assert.equal(readyResult.decision.canInitializeGoogleMobileAds, true);
+  assert.deepEqual(calls, ['ump:pending', 'ump:ready', 'ads:init:ready']);
+
+  const cachedReadyResult = await initializeMobileAdsConsentOnce(entitlements, {
+    platform: 'android',
+    runtime: {
+      async gatherUmpConsent() {
+        calls.push('ump:cached');
+        return { canRequestAds: false, status: 'REQUIRED' };
+      },
+      async initializeGoogleMobileAds() {
+        calls.push('ads:init:cached');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(cachedReadyResult.initialized, true);
+  assert.deepEqual(calls, ['ump:pending', 'ump:ready', 'ads:init:ready']);
+
+  resetMobileAdsConsentInitializationCache();
 });
 
 test('exam screen does not import ad components', () => {

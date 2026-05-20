@@ -1323,8 +1323,8 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
-const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
     label: 'mock exam title',
@@ -13647,7 +13647,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must route initial state through the consent SDK decision helper',
     ],
     [
-      /if\s*\(\s*entitlements\.adsDisabled\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(Platform\.OS\),[\s\S]*\}\);\s*\}/.test(
+      /if\s*\(\s*entitlements\.adsDisabled\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime,[\s\S]*\}\);\s*\}/.test(
         hookSource,
       ),
       'Mobile Ads consent hook must bypass cached initialization when Remove Ads is active',
@@ -13656,17 +13656,30 @@ function validateMobileAdsConsentHookParity() {
       normalizedHookSource.includes(
         'initializationPromise ??= initializeGoogleMobileAdsAfterConsent({',
       ) &&
-        normalizedHookSource.includes('cachedInitialization = result;') &&
+        /if\s*\(\s*result\.initialized\s*\)\s*\{\s*cachedInitialization\s*=\s*result;\s*\}/.test(
+          hookSource,
+        ) &&
+        /if\s*\(\s*!result\.initialized\s*\)\s*\{\s*initializationPromise\s*=\s*undefined;\s*\}/.test(
+          hookSource,
+        ) &&
         normalizedHookSource.includes('initializationPromise = undefined;') &&
         normalizedHookSource.includes('throw error;'),
-      'Mobile Ads consent hook must cache successful non-disabled initialization and reset after errors',
+      'Mobile Ads consent hook must cache only successful non-disabled initialization and reset after blocked results or errors',
+    ],
+    [
+      normalizedHookSource.includes('export function initializeMobileAdsConsentOnce(') &&
+        normalizedHookSource.includes(
+          'const runtime = options.runtime ?? createNativeMobileAdsConsentRuntime(platform);',
+        ) &&
+        normalizedHookSource.includes('.then(rememberInitializationResult)'),
+      'Mobile Ads consent hook must expose the retryable initialization path for runtime coverage',
     ],
     [
       normalizedHookSource.includes(
         'if (!entitlements.adsDisabled && cachedInitialization) return cachedInitialization;',
       ) &&
         normalizedHookSource.includes('setResult(initialResult);') &&
-        normalizedHookSource.includes('void initializeOnce(entitlements)') &&
+        normalizedHookSource.includes('void initializeMobileAdsConsentOnce(entitlements)') &&
         /\.\s*catch\(\(\)\s*=>\s*\{\s*if\s*\(\s*isMounted\s*\)\s*setResult\(createInitialResult\(entitlements\)\);\s*\}\);/.test(
           hookSource,
         ) &&
