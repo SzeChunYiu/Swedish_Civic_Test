@@ -9,6 +9,8 @@
 // drift between marketing copy and code.
 
 import type { ProTierEntitlements } from '../../types/monetization';
+import { PRO_LIFETIME_PRICE_LABEL } from './proLifetimePurchase';
+import { REMOVE_ADS_PRICE_LABEL } from './purchases';
 
 export type TierColumnId = 'free' | 'adFree' | 'pro';
 
@@ -33,15 +35,15 @@ export const TIER_COLUMNS: readonly TierColumn[] = [
     id: 'adFree',
     labelSv: 'Annonsfri',
     labelEn: 'Ad-Free',
-    priceSv: '29 kr · engångsköp',
-    priceEn: '29 SEK · one-time',
+    priceSv: `${REMOVE_ADS_PRICE_LABEL} · engångsköp`,
+    priceEn: `${REMOVE_ADS_PRICE_LABEL} · one-time`,
   },
   {
     id: 'pro',
     labelSv: 'Pro',
     labelEn: 'Pro',
-    priceSv: '59 kr · engångsköp',
-    priceEn: '59 SEK · one-time',
+    priceSv: `${PRO_LIFETIME_PRICE_LABEL} · engångsköp`,
+    priceEn: `${PRO_LIFETIME_PRICE_LABEL} · one-time`,
   },
 ];
 
@@ -185,9 +187,11 @@ export interface PaywallCtaLabels {
 
 export function paywallCtaLabels({ alreadyAdFree }: { alreadyAdFree: boolean }): PaywallCtaLabels {
   return {
-    primarySv: 'Köp Pro · 59 kr',
-    primaryEn: 'Buy Pro · 59 SEK',
-    secondarySv: alreadyAdFree ? 'Uppgradera till Pro' : 'Bara ta bort annonser · 29 kr',
-    secondaryEn: alreadyAdFree ? 'Upgrade to Pro' : 'Just remove ads · 29 SEK',
+    primarySv: `Köp Pro · ${PRO_LIFETIME_PRICE_LABEL}`,
+    primaryEn: `Buy Pro · ${PRO_LIFETIME_PRICE_LABEL}`,
+    secondarySv: alreadyAdFree
+      ? 'Uppgradera till Pro'
+      : `Bara ta bort annonser · ${REMOVE_ADS_PRICE_LABEL}`,
+    secondaryEn: alreadyAdFree ? 'Upgrade to Pro' : `Just remove ads · ${REMOVE_ADS_PRICE_LABEL}`,
   };
 }
