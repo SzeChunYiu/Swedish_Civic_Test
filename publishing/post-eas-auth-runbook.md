@@ -53,14 +53,14 @@ Required local JSON shape:
   "android": {
     "profile": "internal",
     "buildId": "android-build-100",
-    "buildUrl": "https://expo.dev/accounts/example/projects/almost-swedish/builds/android-build-100",
+    "buildUrl": "https://expo.dev/accounts/example/projects/swedish-civic-test/builds/android-build-100",
     "artifactType": "aab",
     "installOrTestStatus": "ready-for-device-smoke"
   },
   "ios": {
     "profile": "internal",
     "buildId": "ios-build-100",
-    "buildUrl": "https://expo.dev/accounts/example/projects/almost-swedish/builds/ios-build-100",
+    "buildUrl": "https://expo.dev/accounts/example/projects/swedish-civic-test/builds/ios-build-100",
     "artifactType": "ipa",
     "installOrTestStatus": "ready-for-testflight"
   }
@@ -147,8 +147,8 @@ Required local JSON shape:
 
 Record evidence for:
 
-- App Store Connect app record for `com.billyyiu.almostswedish`.
-- Google Play Console app record for `com.billyyiu.almostswedish`.
+- App Store Connect app record for `com.billyyiu.swedishcivictest`.
+- Google Play Console app record for `com.billyyiu.swedishcivictest`.
 - AdMob app record, or a recorded decision to keep real ads disabled for v1.0.
 - Public Support URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/.
 - Public Privacy Policy URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/.
@@ -177,7 +177,7 @@ Required local JSON shape:
   "android": {
     "serviceAccountEmail": "play-submit@swedish-civic-test.iam.gserviceaccount.com",
     "serviceAccountKeyFingerprint": "SHA256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-    "packageName": "com.billyyiu.almostswedish",
+    "packageName": "com.billyyiu.swedishcivictest",
     "credentialsSource": "local secure file outside git",
     "credentialsCheckedAt": "2026-05-16T01:25:00Z"
   }
@@ -233,7 +233,7 @@ Required local JSON shape:
 ```json
 {
   "status": "ready",
-  "bundleIdentifier": "com.billyyiu.almostswedish",
+  "bundleIdentifier": "com.billyyiu.swedishcivictest",
   "appStoreConnectUrl": "https://appstoreconnect.apple.com/apps/1234567890/appstore",
   "googlePlayConsoleUrl": "https://play.google.com/console/u/0/developers/123/app/497123",
   "supportUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/",

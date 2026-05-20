@@ -51,7 +51,7 @@ function assertNoLegacyAdsPosture(source) {
 
 function storeRecordReadyEvidence(extra = '') {
   return [
-    `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
+    `App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest.`,
     `Support URL ${supportUrl} and Privacy Policy URL ${privacyUrl} entered in both stores.`,
     `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
     extra,
@@ -255,7 +255,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
           'public-urls': {
             status: 'READY',
             evidence:
-              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/, Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/, and app-ads.txt URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt verified over HTTPS.',
+              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ verified over HTTPS and entered in both store records.',
           },
           'device-screenshots': {
             status: 'READY',
@@ -347,14 +347,15 @@ function createEasBuildEvidence(options = {}) {
       profile: 'internal',
       buildId: 'android-build-100',
       buildUrl:
-        'https://expo.dev/accounts/example/projects/almost-swedish/builds/android-build-100',
+        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/android-build-100',
       artifactType: 'aab',
       installOrTestStatus: 'ready-for-device-smoke',
     },
     ios: {
       profile: 'internal',
       buildId: 'ios-build-100',
-      buildUrl: 'https://expo.dev/accounts/example/projects/almost-swedish/builds/ios-build-100',
+      buildUrl:
+        'https://expo.dev/accounts/example/projects/swedish-civic-test/builds/ios-build-100',
       artifactType: 'ipa',
       installOrTestStatus: 'ready-for-testflight',
     },
@@ -398,9 +399,9 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
           },
           {
             id: 'public-urls',
-            label: 'Public support, privacy, and app-ads URLs',
+            label: 'Public support and privacy URLs',
             status: 'READY',
-            evidence: 'Support, Privacy Policy, and app-ads URLs returned HTTP 200.',
+            evidence: 'Support and Privacy Policy URLs returned HTTP 200.',
             nextAction: 'Enter URLs in both store records.',
           },
         ],
@@ -461,7 +462,7 @@ test('release completion audit command maps objective to preflight evidence befo
           },
           {
             id: 'public-urls',
-            label: 'Public support, privacy, and app-ads URLs',
+            label: 'Public support and privacy URLs',
             status: 'READY',
             evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
@@ -524,7 +525,7 @@ test('release issue update draft command writes tracker-ready status comment', (
           },
           {
             id: 'public-urls',
-            label: 'Public support, privacy, and app-ads URLs',
+            label: 'Public support and privacy URLs',
             status: 'READY',
             evidence: 'SzeChunYiu Pages returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
@@ -705,7 +706,7 @@ function createStoreRecordEvidence(options = {}) {
 
   const evidence = {
     status: 'ready',
-    bundleIdentifier: 'com.billyyiu.almostswedish',
+    bundleIdentifier: 'com.billyyiu.swedishcivictest',
     appStoreConnectUrl: 'https://appstoreconnect.apple.com/apps/1234567890/appstore',
     googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
     supportUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
@@ -761,10 +762,10 @@ function createStoreCredentialEvidence(options = {}) {
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
     android: {
-      serviceAccountEmail: 'play-submit@almost-swedish.iam.gserviceaccount.com',
+      serviceAccountEmail: 'play-submit@swedish-civic-test.iam.gserviceaccount.com',
       serviceAccountKeyFingerprint:
         'SHA256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
-      packageName: 'com.billyyiu.almostswedish',
+      packageName: 'com.billyyiu.swedishcivictest',
       credentialsSource: 'local secure file outside git',
       credentialsCheckedAt: '2026-05-16T01:25:00Z',
     },
@@ -1514,7 +1515,7 @@ test('release preflight blocks store records without support and privacy URL ent
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; AdMob app configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; AdMob app configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
@@ -2128,7 +2129,7 @@ test('release preflight blocks store record evidence without exact public URLs',
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
     },
   });
   writeFakeReleaseCommands(tmpDir);

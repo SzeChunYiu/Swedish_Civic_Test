@@ -19,7 +19,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 40);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 36);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
@@ -28,16 +28,8 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Första övningen/);
-  assert.match(source, /calculateStreakWithFreeze/);
-  assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
-  assert.match(source, /Svitskydd/);
-  assert.match(source, /Streak freeze/);
   assert.match(source, /<ScreenShell eyebrow=\{copy\.eyebrow\} title=\{copy\.title\}/);
   assert.match(source, /<MetricCard label=\{copy\.levelMetric\}/);
-  assert.match(
-    source,
-    /<MetricCard label=\{copy\.dayStreakMetric\} value=\{currentStreak\} helper=\{dayStreakHelper\}/,
-  );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
   assert.match(source, /entitlementsReady/);

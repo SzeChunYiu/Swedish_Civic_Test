@@ -33,10 +33,7 @@ export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
   const accessibilityLabel = copy.summary(totalAnswers, activeDays, maxDayCount);
 
   return (
-    <Card style={styles.card}>
-      <Text accessibilityRole="summary" style={styles.accessibilitySummary}>
-        {accessibilityLabel}
-      </Text>
+    <Card accessibilityLabel={accessibilityLabel} accessibilityRole="summary" style={styles.card}>
       <View style={styles.header}>
         <Text accessibilityRole="header" style={styles.title}>
           {copy.title}
@@ -48,7 +45,6 @@ export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
       ) : (
         <ScrollView
           accessibilityLabel={accessibilityLabel}
-          accessibilityRole="summary"
           aria-label={accessibilityLabel}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -69,13 +65,6 @@ export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
 }
 
 const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
   card: {
     gap: space[1.5],
   },

@@ -59,9 +59,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const copy = languagePickerCopy[language];
 
   const handleSelect = (option: LocaleOption) => {
-    if (!option.available) return;
-
-    setLanguage(option.fallback);
+    if (option.available) {
+      setLanguage(option.fallback);
+    }
     setOpen(false);
   };
 
@@ -127,7 +127,6 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                     accessibilityRole="button"
                     accessibilityLabel={`${opt.label}${opt.available ? '' : copy.unavailableSuffix}`}
                     accessibilityState={{ selected, disabled: !opt.available }}
-                    disabled={!opt.available}
                     hitSlop={space[1]}
                     onPress={() => handleSelect(opt)}
                     style={({ pressed }) => [
