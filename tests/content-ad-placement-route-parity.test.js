@@ -37,7 +37,12 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.practiceInterstitialQuestionCapValidated, true);
   assert.match(
     homeSource,
-    /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+    /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
+  );
+  assert.match(homeSource, /\{showRemoveAdsOffer \? \([\s\S]*<PricingWedge/);
+  assert.match(
+    homeSource,
+    /\{entitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /PracticeInterstitialAd/);
@@ -58,6 +63,20 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+});
+
+test('Home ad placement waits for Remove Ads entitlements before rendering', () => {
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+
+  assert.match(
+    homeSource,
+    /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
+  );
+  assert.match(homeSource, /\{showRemoveAdsOffer \? \([\s\S]*<PricingWedge/);
+  assert.match(
+    homeSource,
+    /\{entitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+  );
 });
 
 test('ad placement route parity rejects practice interstitial keys scoped to selected answers', () => {
