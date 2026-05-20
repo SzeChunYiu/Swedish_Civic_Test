@@ -255,6 +255,20 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
+const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
+const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat does the Council of Europe work for\??/i,
+  /\bThe Council of Europe works for\b/i,
+  /\bThe Council of Europe works only for\b/i,
+];
+const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
+  /\bbec(?:o|a)me important for\b/i,
+];
+const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
+  /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
+  /\bIn a Lucia procession,\s+one person is Lucia\b/i,
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4320,6 +4334,51 @@ function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionMayDayEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
+  if (!(question.tags || []).includes('council-of-europe')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
+function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('saltsjobaden')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
+function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
+  if (!(question.tags || []).includes('lucia-procession')) return null;
+
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -7179,6 +7238,11 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
+let questionMayDayEnglishNaturalnessValidated = 0;
+let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
+let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
+let questionLuciaExplanationRoleScaffoldValidated = 0;
+let questionSecretBallotSvPronounNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16641,6 +16705,13 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
+      const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
+      const councilOfEuropeWorkForEnglishNaturalnessIssue =
+        findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
+      const saltsjobadenAgreementEnglishNaturalnessIssue =
+        findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
+      const luciaExplanationRoleScaffoldIssue =
+        findQuestionLuciaExplanationRoleScaffoldIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
@@ -16685,6 +16756,26 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal common-to-do English wording`);
       } else {
         questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
+      }
+      if (mayDayEnglishNaturalnessIssue) {
+        fail(`${label} uses literal First of May English wording`);
+      } else {
+        questionMayDayEnglishNaturalnessValidated += 1;
+      }
+      if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
+        fail(`${label} uses literal Council of Europe work-for English wording`);
+      } else {
+        questionCouncilOfEuropeWorkForEnglishNaturalnessValidated += 1;
+      }
+      if (saltsjobadenAgreementEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
+      } else {
+        questionSaltsjobadenAgreementEnglishNaturalnessValidated += 1;
+      }
+      if (luciaExplanationRoleScaffoldIssue) {
+        fail(`${label} uses Lucia role-scaffold explanation wording`);
+      } else {
+        questionLuciaExplanationRoleScaffoldValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -17161,6 +17252,11 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
+      questionMayDayEnglishNaturalnessValidated,
+      questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+      questionSaltsjobadenAgreementEnglishNaturalnessValidated,
+      questionLuciaExplanationRoleScaffoldValidated,
+      questionSecretBallotSvPronounNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
