@@ -1064,6 +1064,8 @@ function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilken uppgift stämmer om ${statementTopicSv(source)}?`;
   }
+  const locationMatch = stripFinalPunctuation(source.questionSv).match(/^Var ligger (.+)$/i);
+  if (locationMatch) return `${upperFirst(locationMatch[1])} ligger ...`;
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
   return `Välj rätt alternativ: ${source.questionSv}`;
@@ -1073,6 +1075,8 @@ function judgementPromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which fact is correct about ${statementTopicEn(source)}?`;
   }
+  const locationMatch = stripFinalPunctuation(source.questionEn).match(/^Where is (.+) located$/i);
+  if (locationMatch) return `${locationMatch[1]} is located ...`;
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
   return `Choose the correct option: ${source.questionEn}`;
