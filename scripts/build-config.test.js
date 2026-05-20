@@ -10,7 +10,7 @@ const { REQUIRED_SECURITY_HEADERS } = require('./check-live-site');
 const { readWebDocumentMetadata } = require('./prepare-web-export.js');
 
 const repoRoot = path.resolve(__dirname, '..');
-const jsSyntaxGateRoots = ['scripts', 'tests'];
+const jsSyntaxGateRoots = ['scripts', 'site', 'tests'];
 // Static outcome/compliance parsing is covered by the dedicated static validation gate.
 const delegatedSyntaxGateFiles = new Set([
   'scripts/compliance-pages.test.js',
@@ -40,7 +40,7 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
-test('active JS and CJS scripts/tests parse before longer release checks run', () => {
+test('active JS, CJS, and static-site assets parse before longer release checks run', () => {
   const failures = jsSyntaxGateRoots
     .flatMap(collectJavaScriptSyntaxGateFiles)
     .flatMap((relativePath) => {
