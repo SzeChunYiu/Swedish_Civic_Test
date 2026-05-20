@@ -180,7 +180,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 12);
+  assert.equal(summary.progressStoreFieldsValidated, 13);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.ok(summary.reviewStoreHydrationCasesValidated >= 15);
   assert.equal(summary.reviewStoreHydrationParityValidated, true);
