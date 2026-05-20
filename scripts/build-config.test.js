@@ -950,6 +950,12 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.match(workflow, /actions\/upload-artifact@v6/);
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
+  assert.match(workflow, /npx playwright install --with-deps chromium/);
+  assert.ok(
+    workflow.indexOf('npx playwright install --with-deps chromium') <
+      workflow.indexOf('npm run validate'),
+    'release validation must install Chromium before npm run validate',
+  );
   assert.match(workflow, /npm run validate/);
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
@@ -974,6 +980,37 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.match(visualSmokeArtifactBlock, /playwright-report\//);
   assert.match(visualSmokeArtifactBlock, /reports\/2026-05-15-uiux-screenshots\//);
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+});
+
+test('static browser checks skip only outside CI when Chromium is unavailable', () => {
+  const helper = require('./static-browser-support');
+  const flagPaletteSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/static-site-flag-palette.test.js'),
+    'utf8',
+  );
+  const mobileNavSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/static-site-mobile-nav.test.js'),
+    'utf8',
+  );
+
+  assert.equal(
+    helper.resolveStaticChromiumExecutablePath({
+      bundledPath: '/missing/bundled/chromium',
+      env: {},
+      fileExists: () => false,
+      systemCandidates: ['/missing/system/chromium'],
+    }),
+    '',
+  );
+  assert.equal(helper.isCiEnvironment({ CI: 'true' }), true);
+  assert.equal(helper.isCiEnvironment({ GITHUB_ACTIONS: 'true' }), true);
+  assert.equal(helper.isCiEnvironment({}), false);
+  assert.match(
+    helper.staticChromiumUnavailableMessage('test'),
+    /playwright install --with-deps chromium/,
+  );
+  assert.match(flagPaletteSource, /launchStaticChromium\(t, 'static flag palette checks'\)/);
+  assert.match(mobileNavSource, /launchStaticChromium\(t, 'static mobile navigation checks'\)/);
 });
 
 test('manual external blocker loop workflow runs redacted evidence loop and uploads report', () => {

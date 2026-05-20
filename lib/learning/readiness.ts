@@ -16,7 +16,12 @@
 // through i18n to user-facing copy.
 
 import { perChapterProgress, mockHistory } from './dashboardStats';
-import type { UserProgress, UserQuestionProgress } from '../../types/progress';
+import type {
+  QuizAnswer,
+  QuizSession,
+  UserProgress,
+  UserQuestionProgress,
+} from '../../types/progress';
 import type { PracticeQuestion } from '../../types/content';
 import type { MockExamProgress } from '../storage/progressStore';
 
@@ -32,10 +37,10 @@ export interface ReadinessScore {
   verdict: ReadinessVerdict;
   /** Component contributions in 0..1, useful for "why?" tooltip. */
   components: {
-    accuracy: number;       // rolling accuracy 0..1
-    coverage: number;       // share of chapters with >= 1 answer
-    recency: number;        // 0..1 freshness weight
-    mockAverage: number;    // average of best mock per session, 0..1; 0 when none
+    accuracy: number; // rolling accuracy 0..1
+    coverage: number; // share of chapters with >= 1 answer
+    recency: number; // 0..1 freshness weight
+    mockAverage: number; // average of best mock per session, 0..1; 0 when none
   };
   /** True when we don't yet have enough data (verdict still set, but UI should soften copy). */
   isSparse: boolean;
@@ -118,17 +123,12 @@ export interface ReadinessInput {
   now?: Date;
 }
 
-function validAnsweredAt(value: unknown): string {
-  if (typeof value !== 'string') return '1970-01-01T00:00:00.000Z';
-  return Number.isNaN(new Date(value).getTime()) ? '1970-01-01T00:00:00.000Z' : value;
-}
-
 // Adapter: called by home.tsx with the flat store slices it already holds.
 export function computeReadinessFromQuestionProgress(input: {
-  questionProgress: Record<string, Partial<UserQuestionProgress>>;
+  questionProgress: Record<string, UserQuestionProgress>;
   questions: readonly PracticeQuestion[];
   chapters: readonly { id: string; questionCount: number }[];
-  mockExamSessions?: readonly Partial<MockExamProgress>[];
+  mockExamSessions?: readonly MockExamProgress[];
   now?: Date;
 }): ReadinessScore {
   // Build a minimal UserProgress so computeReadinessScore can run unchanged.
@@ -136,85 +136,91 @@ export function computeReadinessFromQuestionProgress(input: {
   for (const q of input.questions) {
     questionChapterIndex[q.id] = q.chapterId;
   }
+  const studyAnswers: QuizAnswer[] = Object.entries(input.questionProgress).flatMap(
+    ([questionId, progress]) => {
+      if (!progress.lastAnsweredAt) return [];
+      const answeredAt = progress.lastAnsweredAt;
+      const seenCount = Math.max(
+        0,
+        progress.seenCount ?? progress.correctCount + progress.wrongCount,
+        progress.correctCount + progress.wrongCount,
+      );
+      const correctCount = Math.min(Math.max(0, progress.correctCount), seenCount);
+      const wrongCount = Math.min(
+        Math.max(0, progress.wrongCount),
+        Math.max(0, seenCount - correctCount),
+      );
+      const residualCount = Math.max(0, seenCount - correctCount - wrongCount);
 
-  const answers = Object.entries(input.questionProgress).flatMap(([questionId, progress]) => {
-    const correctCount = Math.max(0, Math.round(progress.correctCount ?? 0));
-    const wrongCount = Math.max(0, Math.round(progress.wrongCount ?? 0));
-    const seenCount = Math.max(0, Math.round(progress.seenCount ?? correctCount + wrongCount));
-    const total = Math.max(seenCount, correctCount + wrongCount);
-    const answeredAt = validAnsweredAt(progress.lastAnsweredAt);
+      return Array.from({ length: correctCount }, () => ({
+        questionId,
+        selectedOptionIds: [],
+        isCorrect: true,
+        answeredAt,
+        timeSpentSeconds: 0,
+      })).concat(
+        Array.from({ length: wrongCount + residualCount }, () => ({
+          questionId,
+          selectedOptionIds: [],
+          isCorrect: false,
+          answeredAt,
+          timeSpentSeconds: 0,
+        })),
+      );
+    },
+  );
 
-    return Array.from({ length: total }, (_, index) => ({
-      questionId,
-      selectedOptionIds: [],
-      isCorrect: index < correctCount,
-      answeredAt,
-      timeSpentSeconds: 0,
-    }));
-  });
-
-  const studySessions =
-    answers.length > 0
+  const studySessions: QuizSession[] =
+    studyAnswers.length > 0
       ? [
           {
             id: 'persisted-question-progress',
             mode: 'study' as const,
-            questionIds: [...new Set(answers.map((answer) => answer.questionId))],
-            answers,
-            startedAt: answers[0].answeredAt,
+            questionIds: [...new Set(studyAnswers.map((answer) => answer.questionId))],
+            answers: studyAnswers,
+            startedAt: studyAnswers
+              .map((answer) => answer.answeredAt)
+              .sort((a, b) => a.localeCompare(b))[0],
           },
         ]
       : [];
 
-  const mockSessions = (input.mockExamSessions ?? []).map((s, index) => ({
-    id: typeof s.sessionId === 'string' && s.sessionId ? s.sessionId : `mock-${index + 1}`,
-    mode: 'exam' as const,
-    questionIds: [],
-    answers: Array.from({ length: Math.max(0, Math.round(s.correctCount ?? 0)) }, () => ({
-      questionId: '',
-      selectedOptionIds: [],
-      isCorrect: true,
-      answeredAt: validAnsweredAt(s.completedAt),
-      timeSpentSeconds: 0,
-    })).concat(
-      Array.from(
-        { length: Math.max(0, Math.round((s.totalCount ?? 0) - (s.correctCount ?? 0))) },
-        () => ({
+  const mockSessions: QuizSession[] = (input.mockExamSessions ?? []).map((s) => {
+    const totalCount = Math.max(0, Math.round(s.totalCount ?? 0));
+    const correctCount = Math.min(Math.max(0, Math.round(s.correctCount ?? 0)), totalCount);
+
+    return {
+      id: s.sessionId,
+      mode: 'exam' as const,
+      questionIds: [],
+      answers: Array.from({ length: correctCount }, () => ({
+        questionId: '',
+        selectedOptionIds: [],
+        isCorrect: true,
+        answeredAt: s.completedAt,
+        timeSpentSeconds: 0,
+      })).concat(
+        Array.from({ length: totalCount - correctCount }, () => ({
           questionId: '',
           selectedOptionIds: [],
           isCorrect: false,
-          answeredAt: validAnsweredAt(s.completedAt),
+          answeredAt: s.completedAt,
           timeSpentSeconds: 0,
-        }),
+        })),
       ),
-    ),
-    startedAt: validAnsweredAt(s.completedAt),
-    completedAt: validAnsweredAt(s.completedAt),
-    score: typeof s.score === 'number' ? s.score : undefined,
-  }));
+      startedAt: s.completedAt,
+      completedAt: s.completedAt,
+      score: s.score,
+    };
+  });
 
-  const sessions: UserProgress['sessions'] = [...studySessions, ...mockSessions];
+  const sessions: QuizSession[] = studySessions.concat(mockSessions);
   const progress: UserProgress = {
     totalXp: 0,
     level: 1,
     currentStreak: 0,
     dailyGoalAnswers: 10,
-    questionProgress: Object.fromEntries(
-      Object.entries(input.questionProgress).map(([questionId, item]) => [
-        questionId,
-        {
-          questionId,
-          seenCount: Math.max(0, Math.round(item.seenCount ?? 0)),
-          correctCount: Math.max(0, Math.round(item.correctCount ?? 0)),
-          wrongCount: Math.max(0, Math.round(item.wrongCount ?? 0)),
-          correctStreak: Math.max(0, Math.round(item.correctStreak ?? 0)),
-          lastAnsweredAt: item.lastAnsweredAt,
-          nextReviewAt: item.nextReviewAt,
-          confidence: item.confidence,
-          bookmarked: item.bookmarked,
-        },
-      ]),
-    ),
+    questionProgress: input.questionProgress,
     sessions,
   };
   return computeReadinessScore({
@@ -250,10 +256,7 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
   const score = Math.round(clamp01(blended) * 100);
 
   // Sparse: too little data to be meaningful.
-  const totalAnswers = (input.progress.sessions ?? []).reduce(
-    (n, s) => n + s.answers.length,
-    0,
-  );
+  const totalAnswers = (input.progress.sessions ?? []).reduce((n, s) => n + s.answers.length, 0);
   const isSparse = totalAnswers < 30;
 
   return {
