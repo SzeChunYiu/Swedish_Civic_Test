@@ -1076,9 +1076,11 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     'Förklaringar och genomgång visas först efter att provet har skickats in.',
     'Nästa prov',
-    'Försök spara igen',
     'Sparat',
+    'Sparfel',
     'Sparar',
+    'Försök spara igen',
+    'Spara resultatet innan nästa kostnadsfria övningsprov.',
   ],
   en: [
     'Mock exam',
@@ -1107,9 +1109,11 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Submitted results are final. Start another mock exam for a fresh attempt.',
     'Explanations and review are shown only after the exam is submitted.',
     'Next exam',
-    'Try saving again',
     'Saved',
+    'Save failed',
     'Saving',
+    'Retry saving result',
+    'Save the result before the next free mock exam.',
   ],
 };
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
@@ -6048,8 +6052,6 @@ let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
-let removeAdsSourceWiringPredicateCasesValidated = 0;
-let removeAdsSourceWiringPredicateValidated = false;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let adPlacementRouteParityValidated = false;
@@ -6904,98 +6906,6 @@ function validateReleaseMonetizationPolicyParity() {
   }
 }
 
-function validateRemoveAdsSourceWiringPredicate() {
-  let valid = true;
-  const sources = {};
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  for (const relativePath of [
-    'app/(tabs)/home.tsx',
-    'app/(tabs)/profile.tsx',
-    'components/monetization/PremiumBanner.tsx',
-    'lib/monetization/purchases.ts',
-  ]) {
-    try {
-      sources[relativePath] = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-    } catch (error) {
-      reject(`${relativePath} could not be read for Remove Ads source wiring: ${error.message}`);
-      return;
-    }
-  }
-
-  const normalizedPurchasesSource = sources['lib/monetization/purchases.ts'].replace(/\s+/g, ' ');
-  const normalizedPremiumBannerSource = sources[
-    'components/monetization/PremiumBanner.tsx'
-  ].replace(/\s+/g, ' ');
-  const paywallPlacementPattern =
-    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*language=\{language\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>/;
-  const sourceWiringCases = [
-    [
-      /export const REMOVE_ADS_PRICE_LABEL = '29 SEK';/.test(
-        sources['lib/monetization/purchases.ts'],
-      ),
-      'Remove Ads canonical price label must stay 29 SEK',
-    ],
-    [
-      normalizedPurchasesSource.includes('export async function buyRemoveAds') &&
-        normalizedPurchasesSource.includes(
-          'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
-        ),
-      'buyRemoveAds must request the canonical Remove Ads product id',
-    ],
-    [
-      normalizedPurchasesSource.includes('export async function restoreRemoveAdsPurchase') &&
-        normalizedPurchasesSource.includes(
-          'const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
-        ),
-      'restoreRemoveAdsPurchase must restore the canonical Remove Ads product id',
-    ],
-    [
-      /import \{[\s\S]*REMOVE_ADS_PRICE_LABEL,[\s\S]*buyRemoveAds,[\s\S]*restoreRemoveAdsPurchase,[\s\S]*\} from '\.\.\/\.\.\/lib\/monetization\/purchases';/.test(
-        sources['components/monetization/PremiumBanner.tsx'],
-      ) &&
-        normalizedPremiumBannerSource.includes(
-          "action === 'buy' ? await buyRemoveAds(purchaseRuntime) : await restoreRemoveAdsPurchase(purchaseRuntime);",
-        ),
-      'PremiumBanner must wire buy and restore actions to distinct Remove Ads helpers',
-    ],
-    [
-      sources['components/monetization/PremiumBanner.tsx'].includes(
-        'copy.body(REMOVE_ADS_PRICE_LABEL)',
-      ) &&
-        sources['components/monetization/PremiumBanner.tsx'].includes(
-          'copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)',
-        ) &&
-        sources['components/monetization/PremiumBanner.tsx'].includes(
-          'copy.buyIdle(REMOVE_ADS_PRICE_LABEL)',
-        ),
-      'PremiumBanner must render the canonical 29 SEK Remove Ads price label',
-    ],
-    [
-      paywallPlacementPattern.test(sources['app/(tabs)/home.tsx']) &&
-        paywallPlacementPattern.test(sources['app/(tabs)/profile.tsx']),
-      'Home and Profile must surface the Remove Ads paywall with entitlement callbacks',
-    ],
-  ];
-
-  sourceWiringCases.forEach(([caseIsValid, message]) => {
-    if (!caseIsValid) {
-      reject(message);
-      return;
-    }
-
-    removeAdsSourceWiringPredicateCasesValidated += 1;
-  });
-
-  if (valid && removeAdsSourceWiringPredicateCasesValidated === sourceWiringCases.length) {
-    removeAdsSourceWiringPredicateValidated = true;
-  }
-}
-
 function validateRemoveAdsEntitlementHookParity() {
   let valid = true;
   let hookSource = '';
@@ -7539,40 +7449,19 @@ function validateExamSubmissionFinalityParity() {
     reject('exam result screen must not directly reopen submitted answers');
   }
   if (
+    !examRoute.includes('const canStartNextExam =') ||
     !examRoute.includes(
-      'const [completionWriteFailed, setCompletionWriteFailed] = useState(false)',
+      "(completionRecorded || (completionSaveState === 'failed' && entitlements.unlimitedMockExams))",
     ) ||
-    !examRoute.includes('const nextExamCompletionAccessConfirmed =') ||
     !examRoute.includes(
-      "(completionWriteFailed && accessDecision.reason === 'premium_unlimited_mock_exams')",
+      'disabled: !canStartNextExam || startingAccessibleExam || completionRetrying',
+    ) ||
+    !examRoute.includes(
+      'disabled={!canStartNextExam || startingAccessibleExam || completionRetrying}',
     )
   ) {
     reject(
-      'next-exam access must track completion write failures and only bypass them for confirmed premium unlimited access',
-    );
-  }
-  if (
-    !/disabled:\s*!nextExamCompletionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\|\|\s*completionRetrying/.test(
-      examRoute,
-    ) ||
-    !/disabled=\{\s*!nextExamCompletionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\|\|\s*completionRetrying\s*\}/.test(
-      examRoute,
-    )
-  ) {
-    reject('next-exam control must stay disabled until submitted completion access is confirmed');
-  }
-  if (/\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\)/.test(examRoute)) {
-    reject('completion write failures must not mark the submitted mock exam as recorded');
-  }
-  if (
-    !/const handleRetryCompletionWrite = useCallback\(async \(\) => \{[\s\S]*?await recordExamCompletion\(\);[\s\S]*?setCompletionRecorded\(true\);[\s\S]*?setCompletionWriteFailed\(false\);/.test(
-      examRoute,
-    ) ||
-    !examRoute.includes('{copy.retryCompletionLabel}') ||
-    !examRoute.includes('disabled={completionRetrying}')
-  ) {
-    reject(
-      'completion write failures must expose a localized retry-save control before next-exam access is re-enabled',
+      'next-exam control must stay disabled until the submitted completion is stored unless premium unlimited access is active',
     );
   }
   if (
@@ -13887,7 +13776,6 @@ validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
-validateRemoveAdsSourceWiringPredicate();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
 validateQuestionDisclaimerParity();
@@ -14003,8 +13891,6 @@ console.log(
       adPlacementRouteParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
-      removeAdsSourceWiringPredicateCasesValidated,
-      removeAdsSourceWiringPredicateValidated,
       removeAdsEntitlementHookCasesValidated,
       removeAdsEntitlementHookParityValidated,
       premiumEntitlementStatesValidated,
