@@ -16,7 +16,7 @@ import type { ReviewCard, ReviewGrade } from '../learning/spacedRepetition';
 import { createNewCard, gradeCard, isDue, sortByDueAscending } from '../learning/spacedRepetition';
 import { getLocalDateKey } from '../learning/streaks';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
@@ -115,13 +115,18 @@ function normalize(value: unknown): PersistedReviews {
   return { byId, gradedPerDay };
 }
 
-function read(): PersistedReviews {
-  const raw = reviewStorage?.getString(REVIEW_STORE_KEY);
-  if (!raw) return EMPTY;
+function read(): {
+  state: PersistedReviews;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, () =>
+    reviewStorage?.getString(REVIEW_STORE_KEY),
+  );
+  if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
   try {
-    return normalize(JSON.parse(raw));
+    return { state: normalize(JSON.parse(result.value)), persistenceWarning: result.warning };
   } catch {
-    return EMPTY;
+    return { state: EMPTY, persistenceWarning: result.warning };
   }
 }
 
@@ -143,8 +148,8 @@ type ReviewState = PersistedReviews & {
 const initial = read();
 
 export const useReviewStore = create<ReviewState>((set, get) => ({
-  ...initial,
-  persistenceWarning: null,
+  ...initial.state,
+  persistenceWarning: initial.persistenceWarning,
   ensureCard: (questionId, now) => {
     const existing = get().byId[questionId];
     if (existing) return existing;
