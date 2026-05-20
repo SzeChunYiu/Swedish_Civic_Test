@@ -9611,18 +9611,33 @@ function validateExamSubmissionFinalityParity() {
   ) {
     reject('next-exam control must stay disabled until the submitted completion is stored');
   }
-  if (
-    !examRoute.includes('const recordMockExamSession = useProgressStore') ||
-    !examRoute.includes('recordMockExamSession({') ||
-    !examRoute.includes(
-      'score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0',
-    ) ||
-    !examRoute.includes('completedAt: new Date().toISOString()')
-  ) {
+  const persistsCompletedMockExam =
+    examRoute.includes('const recordMockExamSession = useProgressStore') &&
+    examRoute.includes('recordMockExamSession({') &&
+    examRoute.includes('sessionId: examSessionId') &&
+    examRoute.includes('score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0') &&
+    examRoute.includes(
+      'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString()',
+    ) &&
+    examRoute.includes('correctCount: resultCorrectCount') &&
+    examRoute.includes('totalCount: resultTotalCount') &&
+    examRoute.includes('questionTimings:') &&
+    examRoute.includes('submittedExamSession?.answers') &&
+    examRoute.includes('timeSpentSeconds: answer.timeSpentSeconds');
+  if (!persistsCompletedMockExam) {
     reject('exam result submission must persist a completed mock-exam score for readiness');
   }
 
   if (valid) examSubmissionFinalityParityValidated = true;
+}
+
+if (process.argv.includes('--focus-exam-submission-finality-parity')) {
+  validateExamSubmissionFinalityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    examSubmissionFinalityParityValidated,
+  });
+  process.exit(0);
 }
 
 function countExamRouteHeaderOccurrences(source, { styleName, pattern }) {
