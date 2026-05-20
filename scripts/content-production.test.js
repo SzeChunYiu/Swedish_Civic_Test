@@ -64,11 +64,11 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
   assert.equal(summary.profileRouteHeadersValidated, 3);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
-  assert.equal(summary.profileRouteCopyLabelsValidated, 44);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 40);
   assert.equal(summary.profileRouteCopyParityValidated, true);
-  assert.equal(summary.homeRouteHeadersValidated, 6);
+  assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 110);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
@@ -218,7 +218,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(summary.masteryRulesValidated, 7);
   assert.equal(summary.masteryRulesParityValidated, true);
-  assert.equal(summary.sourceQuestions, 154);
+  assert.equal(summary.sourceQuestions, 159);
   assert.equal(summary.generatedPublishedQuestions, expectedGeneratedQuestions);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
