@@ -1,12 +1,27 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import {
+  applyLocalStudyDataImport,
+  previewLocalStudyDataImport,
+  type LocalStudyDataImportErrorCode,
+  type LocalStudyDataImportPreview,
+  type LocalStudyDataImportSummary,
+} from '../lib/storage/localStudyDataImport';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, radius, shadows, space, typography } from '../lib/theme';
@@ -220,6 +235,9 @@ export default function Screen() {
   const copy = settingsCopy[language];
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const [importText, setImportText] = useState('');
+  const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
+  const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
   const themeOptions: { value: ThemeMode; label: string }[] = [
     { value: 'system', label: copy.themeSystemLabel },
     { value: 'light', label: copy.themeLightLabel },
@@ -227,6 +245,43 @@ export default function Screen() {
   ];
   const activeThemeLabel =
     themeOptions.find((option) => option.value === themeMode)?.label ?? copy.themeSystemLabel;
+
+  const handleImportTextChange = (value: string) => {
+    setImportText(value);
+    setImportPreview(null);
+    setImportFeedback(null);
+  };
+
+  const handlePreviewImport = () => {
+    const result = previewLocalStudyDataImport(importText);
+    if (!result.ok) {
+      setImportPreview(null);
+      setImportFeedback({ tone: 'error', text: copy.importErrorMessage(result.code) });
+      return;
+    }
+
+    setImportPreview(result.preview);
+    setImportFeedback(null);
+  };
+
+  const handleConfirmImport = () => {
+    if (!importPreview) return;
+
+    try {
+      applyLocalStudyDataImport(importPreview);
+      setImportPreview(null);
+      setImportText('');
+      setImportFeedback({ tone: 'success', text: copy.importSuccess });
+    } catch {
+      setImportFeedback({ tone: 'error', text: copy.importErrorMessage('invalid_schema') });
+    }
+  };
+
+  const handleResetImport = () => {
+    setImportText('');
+    setImportPreview(null);
+    setImportFeedback(null);
+  };
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
@@ -393,7 +448,7 @@ export default function Screen() {
           multiline
           onChangeText={handleImportTextChange}
           placeholder={copy.importPastePlaceholder}
-          placeholderTextColor={colors.textPlaceholder}
+          placeholderTextColor={themeColors.textPlaceholder}
           style={styles.importInput}
           textAlignVertical="top"
           value={importText}
@@ -525,6 +580,9 @@ function createStyles(themeColors: ThemeColors) {
       paddingHorizontal: space[1.5],
       paddingVertical: space[0.75],
     },
+    controlPressed: {
+      opacity: 0.72,
+    },
     pillActive: {
       backgroundColor: themeColors.badgeBlueBg,
       borderColor: themeColors.badgeBlueText,
@@ -564,10 +622,86 @@ function createStyles(themeColors: ThemeColors) {
       paddingHorizontal: space[2],
       paddingVertical: space[1.25],
     },
+    secondaryButtonPressed: {
+      backgroundColor: themeColors.accentActive,
+      opacity: 0.9,
+    },
     secondaryButtonText: {
       color: themeColors.surface,
       fontSize: typography.navButton.fontSize,
       fontWeight: typography.navButton.fontWeight,
+    },
+    disclaimerText: {
+      color: themeColors.textDisclaimer,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    importInput: {
+      backgroundColor: themeColors.canvas,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: StyleSheet.hairlineWidth,
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+      minHeight: space[18],
+      padding: space[1.5],
+    },
+    importActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    outlineButton: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      minHeight: space[5] + space[0.5],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1.25],
+    },
+    outlineButtonPressed: {
+      backgroundColor: themeColors.surfaceWarm,
+      opacity: 0.9,
+    },
+    outlineButtonText: {
+      color: themeColors.accent,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+    },
+    importSummary: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1],
+      padding: space[1.5],
+    },
+    summaryTitle: {
+      color: themeColors.text,
+      fontSize: typography.bodyBold.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.bodyBold.lineHeight,
+    },
+    summaryText: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    feedbackText: {
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.body.lineHeight,
+    },
+    feedbackError: {
+      color: themeColors.warning,
+    },
+    feedbackSuccess: {
+      color: themeColors.success,
     },
   });
 }
