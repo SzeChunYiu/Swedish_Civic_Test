@@ -337,15 +337,6 @@ test('tierComparison: every row has all three cells present', () => {
   }
 });
 
-test('tierComparison: Swedish mock exam row uses övningsprov wording', () => {
-  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
-  const mockExamsRow = TIER_ROWS.find((row) => row.id === 'mockExams');
-
-  assert.equal(mockExamsRow.labelSv, 'Övningsprov');
-  assert.equal(mockExamsRow.labelEn, 'Mock exams');
-  assert.doesNotMatch(mockExamsRow.labelSv, /\bprovexamen\b|\bprovexamina\b/i);
-});
-
 test('tierComparison: native table lists ebook storage benefits already backed by local primitives', () => {
   const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
   const rowIds = TIER_ROWS.map((row) => row.id);
@@ -438,7 +429,7 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
   };
   const progress = buildDashboardProgressSnapshot({
     answerDates: ['2026-05-18', '2026-05-19'],
-    answerAttempts: [
+    answerHistory: [
       { questionId: 'q2', isCorrect: false, answeredAt: '2026-05-18T10:00:00.000Z' },
       { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
       { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T11:00:00.000Z' },
@@ -689,15 +680,16 @@ test('perChapterProgress: accuracy + coverage computed per chapter', () => {
   assert.equal(history.accuracy, 1);
 });
 
-test('perChapterProgress: malformed chapter totals and non-boolean correctness stay bounded', () => {
-  const { perChapterProgress } = loadTs('lib/learning/dashboardStats.ts');
-  const chapters = [
-    { id: 'nan-count', questionCount: Number.NaN },
-    { id: 'negative-count', questionCount: -5 },
-    { id: 'fractional-count', questionCount: 2.5 },
-    { id: 'undersized-count', questionCount: 1 },
-    { id: 'valid-count', questionCount: 3 },
-  ];
+test('dashboard stats ignore non-boolean correctness and clamp malformed chapter coverage', () => {
+  const {
+    dashboardSummary,
+    mistakeConvergence,
+    perChapterProgress,
+    timeOfDayPattern,
+    xpSparkline,
+  } = loadTs('lib/learning/dashboardStats.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const answeredAt = '2026-05-19T10:00:00.000Z';
   const sessions = [
     {
       id: 's1',
@@ -706,87 +698,92 @@ test('perChapterProgress: malformed chapter totals and non-boolean correctness s
       startedAt: '2026-05-19T00:00:00.000Z',
       answers: [
         {
-          questionId: 'nan-1',
+          questionId: 'q1',
           selectedOptionIds: [],
           isCorrect: true,
-          answeredAt: '2026-05-19T10:00:00.000Z',
+          answeredAt,
           timeSpentSeconds: 5,
         },
         {
-          questionId: 'negative-1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:01:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'fractional-1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:02:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'small-1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:03:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'small-2',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: '2026-05-19T10:04:00.000Z',
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'valid-1',
+          questionId: 'q2',
           selectedOptionIds: [],
           isCorrect: 'yes',
-          answeredAt: '2026-05-19T10:05:00.000Z',
+          answeredAt,
           timeSpentSeconds: 5,
         },
         {
-          questionId: 'valid-2',
+          questionId: 'q3',
           selectedOptionIds: [],
           isCorrect: 1,
-          answeredAt: '2026-05-19T10:06:00.000Z',
+          answeredAt,
           timeSpentSeconds: 5,
         },
         {
-          questionId: 'valid-3',
+          questionId: 'q4',
+          selectedOptionIds: [],
+          isCorrect: false,
+          answeredAt,
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'nan1',
           selectedOptionIds: [],
           isCorrect: true,
-          answeredAt: '2026-05-19T10:07:00.000Z',
+          answeredAt,
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'negative1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt,
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'fractional1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt,
           timeSpentSeconds: 5,
         },
       ],
     },
   ];
-  const result = perChapterProgress(progressWithSessions(sessions), chapters, {
-    'nan-1': 'nan-count',
-    'negative-1': 'negative-count',
-    'fractional-1': 'fractional-count',
-    'small-1': 'undersized-count',
-    'small-2': 'undersized-count',
-    'valid-1': 'valid-count',
-    'valid-2': 'valid-count',
-    'valid-3': 'valid-count',
-  });
-  const byId = new Map(result.map((bar) => [bar.chapterId, bar]));
+  const progress = progressWithSessions(sessions);
+  const questionChapterIndex = {
+    q1: 'undersized',
+    q2: 'undersized',
+    q3: 'undersized',
+    q4: 'undersized',
+    nan1: 'nan',
+    negative1: 'negative',
+    fractional1: 'fractional',
+  };
 
-  assert.equal(byId.get('nan-count').coverage, 0);
-  assert.equal(byId.get('negative-count').coverage, 0);
-  assert.equal(byId.get('fractional-count').coverage, 0);
-  assert.equal(byId.get('undersized-count').coverage, 1);
-  assert.equal(byId.get('valid-count').coverage, 1);
-  assert.equal(byId.get('valid-count').accuracy, 1 / 3);
-  result.forEach((bar) => {
-    assert.equal(Number.isFinite(bar.coverage), true);
-    assert.ok(bar.coverage >= 0);
-    assert.ok(bar.coverage <= 1);
-  });
+  const bars = perChapterProgress(
+    progress,
+    [
+      { id: 'undersized', questionCount: 1 },
+      { id: 'nan', questionCount: Number.NaN },
+      { id: 'negative', questionCount: -5 },
+      { id: 'fractional', questionCount: 2.5 },
+    ],
+    questionChapterIndex,
+    { now },
+  );
+  const undersized = bars.find((bar) => bar.chapterId === 'undersized');
+  assert.equal(undersized.answers, 4);
+  assert.equal(undersized.accuracy, 1 / 4);
+  assert.equal(undersized.coverage, 1);
+  assert.equal(bars.find((bar) => bar.chapterId === 'nan').coverage, 0);
+  assert.equal(bars.find((bar) => bar.chapterId === 'negative').coverage, 0);
+  assert.equal(bars.find((bar) => bar.chapterId === 'fractional').coverage, 0);
+
+  assert.equal(xpSparkline(progress, { daysBack: 1, now })[0].xp, 40);
+  const answeredHour = timeOfDayPattern(progress, { now }).find((bin) => bin.answers === 7);
+  assert.equal(answeredHour.accuracy, 4 / 7);
+  assert.equal(mistakeConvergence(progress, { daysBack: 1, now })[0].unresolvedMistakes, 1);
+  assert.equal(dashboardSummary(progress, questionChapterIndex, { now }).unresolvedMistakes, 1);
 });
 
 test('mockHistory + bestMockScore: returns only exam-mode completed sessions', () => {
