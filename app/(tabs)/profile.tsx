@@ -8,8 +8,16 @@ import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import { deriveBadges, getBadgeDescription, getBadgeTitle } from '../../lib/learning/badges';
-import { calculateStreak } from '../../lib/learning/streaks';
+import {
+  deriveBadges,
+  getAllBadges,
+  getBadgeDescription,
+  getBadgeLockedHint,
+  getBadgeProgressHint,
+  getBadgeTitle,
+  type BadgeInput,
+} from '../../lib/learning/badges';
+import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -18,6 +26,8 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
+  badgeLocked: string;
+  badgeUnlocked: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
@@ -39,6 +49,8 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
+    badgeLocked: 'Låst',
+    badgeUnlocked: 'Upplåst',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
@@ -59,6 +71,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
+    badgeLocked: 'Locked',
+    badgeUnlocked: 'Unlocked',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
@@ -98,12 +112,14 @@ export default function Screen() {
     (count, progress) => count + progress.wrongCount,
     0,
   );
-  const badges = deriveBadges({
+  const badgeInput: BadgeInput = {
     completedQuestionCount: completedQuestionIds.length,
     currentStreak,
     level,
     wrongAnswerCount,
-  });
+  };
+  const badges = deriveBadges(badgeInput);
+  const unlockedBadgeIds = new Set(badges.map((badge) => badge.id));
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
@@ -132,18 +148,28 @@ export default function Screen() {
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
-        {badges.length ? (
-          <View style={styles.badgeList}>
-            {badges.map((badge) => {
-              const title = getBadgeTitle(badge, language);
-              const description = getBadgeDescription(badge, language);
+        <View style={styles.badgeList}>
+          {getAllBadges().map((badge) => {
+            const unlocked = unlockedBadgeIds.has(badge.id);
+            const title = getBadgeTitle(badge, language);
+            const description = unlocked
+              ? getBadgeDescription(badge, language)
+              : getBadgeLockedHint(badge, language);
+            const progressHint = getBadgeProgressHint(badge, badgeInput, language);
+            const statusLabel = unlocked ? copy.badgeUnlocked : copy.badgeLocked;
 
-              return <BadgeRow key={badge.id} title={title} description={description} />;
-            })}
-          </View>
-        ) : (
-          <Text style={styles.emptyBadgeText}>{copy.noBadges}</Text>
-        )}
+            return (
+              <BadgeRow
+                key={badge.id}
+                title={title}
+                description={description}
+                progressHint={progressHint}
+                statusLabel={statusLabel}
+                unlocked={unlocked}
+              />
+            );
+          })}
+        </View>
       </Card>
 
       <PremiumBanner
