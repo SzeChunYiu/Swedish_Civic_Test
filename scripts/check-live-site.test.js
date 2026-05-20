@@ -43,6 +43,15 @@ function currentAssets() {
       '.practice__inner--wide { max-width: 1080px; }',
       '.hub__grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }',
     ].join('\n'),
+    '/app.js': [
+      'const SMT_ADS = {',
+      '  publisherId: "ca-pub-2451892671779738",',
+      '  slots: { inline: "", anchor: "" },',
+      '};',
+      'function smtIsRealAdSenseSlotId(slotId) { return /^[0-9]{8,}$/.test(String(slotId || "")) && !/^0+$/.test(String(slotId || "")); }',
+      'function smtStaticAdsAreConfigured() { return false; }',
+      '"Ad space reserved while reviewed AdSense slots are configured.";',
+    ].join('\n'),
     '/practice.js': [
       'function renderPracticeHub(){ return `<a class="hub__card" href="#/mock">hub__grid</a>`; }',
       'function renderMockLanding(){}',
@@ -58,6 +67,8 @@ function staleAssets() {
   return {
     '/index.html': '<main data-page="/"><div id="hero"></div></main>',
     '/styles.css': '.practice__inner { max-width: 720px; }',
+    '/app.js':
+      'const SMT_ADS = { publisherId: "ca-pub-2451892671779738" }; "Your AdSense slot will render here.";',
     '/practice.js': 'function renderPractice(){ return "old"; }',
     '/ebook.js': 'const copy = "Svenska översättningen kommer i v1.1";',
     '/questions.js': generatedQuestions(57, 'stale'),
@@ -139,6 +150,8 @@ test('live site check rejects stale deploy assets', async () => {
         'static question bank',
         'static question bank content',
         'practice hub assets',
+        'static head metadata description',
+        'static AdSense slot config',
         'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',
@@ -146,6 +159,80 @@ test('live site check rejects stale deploy assets', async () => {
       ],
     );
   });
+});
+
+test('live site check rejects missing, blank, or outcome meta descriptions', async () => {
+  const cases = [
+    {
+      label: 'missing description',
+      indexHtml: currentAssets()['/index.html'].replace(
+        /<meta name="description" content="[^"]+">\n/,
+        '',
+      ),
+      expectedDetails: /missing static meta description/,
+    },
+    {
+      label: 'blank description',
+      indexHtml: currentAssets()['/index.html'].replace(
+        /<meta name="description" content="[^"]+">/,
+        '<meta name="description" content="">',
+      ),
+      expectedDetails: /blank static meta description/,
+    },
+    {
+      label: 'outcome description',
+      indexHtml: currentAssets()['/index.html'].replace(
+        /<meta name="description" content="[^"]+">/,
+        '<meta name="description" content="Pass the test.">',
+      ),
+      expectedDetails: /static meta description English pass-the-test slogan/,
+    },
+  ];
+
+  for (const { indexHtml, expectedDetails, label } of cases) {
+    await withStaticServer({ ...currentAssets(), '/index.html': indexHtml }, async (baseUrl) => {
+      const result = await checkLiveSite(baseUrl, {
+        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+        requiredQuestionCount: 715,
+      });
+      const failedCheck = result.checks.find(
+        (check) => check.name === 'static head metadata description',
+      );
+      assert.equal(result.ok, false, `${label} should fail live-site validation`);
+      assert.equal(failedCheck?.ok, false, `${label} should fail the metadata check`);
+      assert.match(failedCheck?.details ?? '', expectedDetails);
+    });
+  }
+});
+
+test('live site check rejects placeholder static AdSense slot IDs', async () => {
+  const placeholderIndex = [
+    currentAssets()['/index.html'],
+    '<ins class="adsbygoogle" data-ad-client="ca-pub-2451892671779738" data-ad-slot="0000000001"></ins>',
+    '<p>Your AdSense slot will render here.</p>',
+  ].join('\n');
+
+  await withStaticServer(
+    {
+      ...currentAssets(),
+      '/index.html': placeholderIndex,
+      '/app.js': 'const SMT_ADS = { publisherId: "ca-pub-2451892671779738" };',
+    },
+    async (baseUrl) => {
+      const result = await checkLiveSite(baseUrl, {
+        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+        requiredQuestionCount: 715,
+      });
+      const failedCheck = result.checks.find(
+        (check) => check.name === 'static AdSense slot config',
+      );
+      assert.equal(result.ok, false);
+      assert.equal(failedCheck?.ok, false);
+      assert.match(failedCheck?.details ?? '', /data-ad-slot/);
+      assert.match(failedCheck?.details ?? '', /Your AdSense slot will render here/);
+      assert.match(failedCheck?.details ?? '', /without an explicit slot config/);
+    },
+  );
 });
 
 test('live site check rejects same-count stale question banks', async () => {
