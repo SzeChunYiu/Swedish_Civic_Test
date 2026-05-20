@@ -22,7 +22,7 @@ type DashboardLocaleFixture = {
 const dashboardLocales: DashboardLocaleFixture[] = [
   {
     activityTitle: 'Aktiva dagar',
-    chapterProgressTitle: 'Kapitelprogress',
+    chapterProgressTitle: 'Kapitelframsteg',
     dashboardLinkLabel: /Öppna framstegsöversikten/,
     language: 'sv',
     profilePath: '/profile',
