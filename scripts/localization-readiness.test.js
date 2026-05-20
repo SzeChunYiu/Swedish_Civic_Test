@@ -65,3 +65,19 @@ test('runtime availability stays fail-closed until readiness gate allows it', ()
     }
   }
 });
+
+
+test('Chinese picker rows carry native coming-soon badges without enabling release', () => {
+  const localesSource = fs.readFileSync(localesPath, 'utf8');
+  const pickerSource = fs.readFileSync(path.join(repoRoot, 'components/ui/LanguagePicker.tsx'), 'utf8');
+  const readiness = readJson(readinessPath);
+
+  assert.match(localesSource, /code: 'zh-Hans',[\s\S]*comingSoonLabel: '正在准备'/);
+  assert.match(localesSource, /code: 'zh-Hant',[\s\S]*comingSoonLabel: '準備中'/);
+  assert.match(pickerSource, /const comingSoonLabel = opt\.comingSoonLabel \?\? copy\.comingSoon;/);
+  assert.match(pickerSource, /<Text style=\{styles\.comingSoonText\}>\{comingSoonLabel\}<\/Text>/);
+  assert.equal(readiness.locales['zh-Hans'].appAvailable, false);
+  assert.equal(readiness.locales['zh-Hans'].releaseGate, 'blocked');
+  assert.equal(readiness.locales['zh-Hant'].appAvailable, false);
+  assert.equal(readiness.locales['zh-Hant'].releaseGate, 'blocked');
+});

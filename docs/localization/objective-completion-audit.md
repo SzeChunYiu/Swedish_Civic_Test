@@ -31,7 +31,7 @@ translated languages. Concrete deliverables are:
 | Word-level glossary/audit workspaces | `locales/{ar,ckb,fa,pl,so,ti,tr,uk,zh-Hans,zh-Hant}/` | README, glossary, phrasebook, and audit files exist for all listed language workspaces. | yes, phase 1 |
 | Runtime fail-closed state | `docs/localization/readiness.json`; `lib/i18n/locales.ts`; `node --test scripts/localization-readiness.test.js` | Picker targets `ar/fa/so/ti/pl/tr/zh-Hans/zh-Hant` are unavailable and blocked; test passes. | yes |
 | Actual website/static copy improvement | `site/i18n-extras.js`; `scripts/static-site-i18n-extras-cultural-copy.test.js` | Static extra copy improved for `zh-Hans`, `zh-Hant`, `ar`, `so`; guard covers pass/passport slogans and Chinese punctuation. | partial |
-| Actual app UI strings translated | `docs/localization/readiness.json` has `uiStrings: "not_started"` for target picker locales | Full app UI translations are not done. | no |
+| Actual app UI strings translated | `docs/localization/readiness.json` has `uiStrings: "not_started"`; `lib/i18n/locales.ts` and `components/ui/LanguagePicker.tsx` include native Chinese coming-soon badges | Full app UI translations are not done; only a tiny language-picker unavailable badge slice exists for `zh-Hans`/`zh-Hant`. | partial |
 | Question bank and answer explanations translated | `docs/localization/readiness.json` has `questionContent: "not_started"` for target picker locales | No target-language question/content translation is complete. | no |
 | Accessibility labels and screen-reader text translated | readiness entries show `missing`, `missing_rtl_runtime_review`, `missing_cjk_runtime_review`, or `missing_geez_script_review` | Accessibility/runtime review remains missing. | no |
 | Native review completed | readiness entries show `nativeReview: "missing"` for target picker locales | Native review is missing. | no |
@@ -68,6 +68,7 @@ Corpus-only workspaces outside the runtime picker:
 - `#1614` improved Simplified and Traditional Chinese static-site copy and added
   the cultural-copy guard.
 - `#1617` improved Arabic and Somali static-site copy and extended the guard.
+- `#1619` added this objective audit and explicitly marked the broader objective incomplete.
 - `#1611` summarized phase-1 readiness status.
 - `#1602`, `#1603`, `#1606`, `#1607`, and `#1608` closed the remaining
   phase-1 glossary/audit workspaces for Polish, Tigrinya, Traditional Chinese,
@@ -90,12 +91,16 @@ Corpus-only workspaces outside the runtime picker:
 
 ## Recommended next round
 
-Start a small, reviewable app-UI translation slice for `zh-Hans` because the
-original user complaint came from a native Chinese speaker:
+After the native Chinese coming-soon badge slice, continue with a larger but still
+bounded `zh-Hans` app UI surface because the original user complaint came from a
+native Chinese speaker:
 
-1. Identify the app settings/language-picker string source.
-2. Add native Simplified Chinese candidates from `locales/zh-Hans/phrasebook.md`.
-3. Keep `zh-Hans.available=false` and `releaseGate=blocked`.
-4. Add targeted tests proving fallback/blocking still works and the translated
+1. Translate settings + language-picker modal copy into native Simplified Chinese
+   in a preview/testable structure without adding `zh-Hans` to `AppLanguage` or
+   making it selectable.
+2. Keep `zh-Hans.available=false`, `uiStrings=not_started`, and
+   `releaseGate=blocked` until all app UI/content/native/accessibility blockers
+   are closed.
+3. Add targeted tests proving fallback/blocking still works and the translated
    slice avoids pass/passport outcome promises.
-5. PR and merge the slice before moving to the next surface or language.
+4. PR and merge the slice before moving to question content or another language.
