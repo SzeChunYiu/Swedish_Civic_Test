@@ -129,6 +129,23 @@ test('validate-content mirrors production civic statement prompt patterns', () =
   assert.deepEqual(enValidatorPatterns, enProductionPatterns);
 });
 
+test('validate-content uses production helper for expected generated variant output', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /\bderivePublishedQuestionVariants\b/);
+  assert.doesNotMatch(
+    validatorSource,
+    /\bfunction expectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\b/,
+  );
+  assert.doesNotMatch(
+    validatorSource,
+    /\bexpectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\(/,
+  );
+});
+
 test('derived civic statement handlers reject source-recall and obsolete example-describes prompts', () => {
   const productionSource = fs.readFileSync(
     path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
@@ -169,7 +186,9 @@ test('derived civic statement handlers reject source-recall and obsolete example
 });
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { derivePublishedQuestions, derivePublishedQuestionVariants } = loadTs(
+    'lib/content/derivedQuestions.ts',
+  );
   const source = {
     id: 'q001',
     chapterId: 'ch01',
@@ -192,6 +211,7 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   };
 
   const derived = derivePublishedQuestions([source], 101);
+  assert.deepEqual(derivePublishedQuestionVariants(source, 101), derived);
   assert.equal(derived.length, 4);
   assert.deepEqual(
     derived.map((question) => question.id),
