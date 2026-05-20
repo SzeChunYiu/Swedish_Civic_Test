@@ -71,6 +71,19 @@ function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
   );
 }
 
+function rotateBucketForSession(
+  bucket: PracticeQuestion[],
+  chapterId: string,
+  sessionId: string,
+): PracticeQuestion[] {
+  if (bucket.length < 2) return bucket;
+
+  const offset = hashString(`${sessionId}:${chapterId}:question-rotation`) % bucket.length;
+  if (offset === 0) return bucket;
+
+  return [...bucket.slice(offset), ...bucket.slice(0, offset)];
+}
+
 export function generateExam(
   questions: PracticeQuestion[] = [],
   { questionCount = 20, sessionId = 'mock-exam' }: ExamOptions = {},

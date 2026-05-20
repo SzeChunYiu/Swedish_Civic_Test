@@ -22,7 +22,7 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     'utf8',
   );
 
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 23);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 25);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/);
   assert.match(source, /language = 'sv'/);

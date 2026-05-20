@@ -102,17 +102,48 @@ function containsAll(source, needles) {
   return needles.every((needle) => source.includes(needle));
 }
 
+function normalizeHeaderValue(value) {
+  return String(value ?? '')
+    .trim()
+    .replace(/\s*,\s*/g, ', ')
+    .replace(/\s+/g, ' ');
+}
+
+function findRequiredSecurityHeaderIssues(headers) {
+  return REQUIRED_SECURITY_HEADERS.flatMap((expected) => {
+    const actual = headers.get(expected.key);
+    if (!actual) {
+      return [`missing ${expected.name}`];
+    }
+
+    const normalizedActual = normalizeHeaderValue(actual).toLowerCase();
+    const normalizedExpected = normalizeHeaderValue(expected.value).toLowerCase();
+    if (normalizedActual !== normalizedExpected) {
+      return [
+        `${expected.name} expected "${expected.value}", found "${normalizeHeaderValue(actual)}"`,
+      ];
+    }
+
+    return [];
+  });
+}
+
 async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [index, styles, practice, ebook, questions] = await Promise.all([
-    fetchText(baseUrl, 'index.html'),
-    fetchText(baseUrl, 'styles.css'),
-    fetchText(baseUrl, 'practice.js'),
-    fetchText(baseUrl, 'ebook.js'),
-    fetchText(baseUrl, 'questions.js'),
+  const [indexAsset, stylesAsset, practiceAsset, ebookAsset, questionsAsset] = await Promise.all([
+    fetchAsset(baseUrl, 'index.html'),
+    fetchAsset(baseUrl, 'styles.css'),
+    fetchAsset(baseUrl, 'practice.js'),
+    fetchAsset(baseUrl, 'ebook.js'),
+    fetchAsset(baseUrl, 'questions.js'),
   ]);
+  const index = indexAsset.text;
+  const styles = stylesAsset.text;
+  const practice = practiceAsset.text;
+  const ebook = ebookAsset.text;
+  const questions = questionsAsset.text;
 
   const questionCount = readStaticQuestionCount(questions);
   const questionBankHash = hashStaticQuestionBank(questions);
@@ -146,6 +177,19 @@ async function checkLiveSite(inputUrl, options = {}) {
     ]) && containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
       ? pass('practice hub assets')
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
+  );
+
+  const staticHeadMetadataDescriptionIssues = findStaticHeadMetadataDescriptionIssues(
+    index,
+    'index.html',
+  );
+  checks.push(
+    staticHeadMetadataDescriptionIssues.length === 0
+      ? pass('static head metadata description')
+      : fail(
+          'static head metadata description',
+          formatUnsupportedStaticOutcomeSlogans(staticHeadMetadataDescriptionIssues),
+        ),
   );
 
   checks.push(
@@ -203,6 +247,8 @@ if (require.main === module) {
 
 module.exports = {
   checkLiveSite,
+  fetchText,
+  findRequiredSecurityHeaderIssues,
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,

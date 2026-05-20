@@ -52,6 +52,7 @@ test('practice session separates retry from next-question advancement', () => {
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
+  assert.notEqual(getPracticeInterstitialShowKey('q2', 'practice-session-1'), firstFeedbackShowKey);
 });
 
 test('chapter quiz session id resolves to the first question in that chapter', () => {

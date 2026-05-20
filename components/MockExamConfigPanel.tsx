@@ -60,6 +60,7 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     questionCountLabel: 'Frågor',
     resetLabel: 'Återställ',
     selectedChaptersValueLabel: (count) => (count === 1 ? '1 valt' : `${count} valda`),
+    sourceScopeLabel: 'UHR-baserade frågor',
     startLabel: 'Starta provet',
   },
   en: {
@@ -80,6 +81,7 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     questionCountLabel: 'Questions',
     resetLabel: 'Reset',
     selectedChaptersValueLabel: (count) => `${count} selected`,
+    sourceScopeLabel: 'UHR-based questions',
     startLabel: 'Start exam',
   },
 };
