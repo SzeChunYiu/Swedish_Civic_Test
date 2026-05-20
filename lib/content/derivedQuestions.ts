@@ -2205,20 +2205,26 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
   );
 }
 
+export function derivePublishedQuestionVariants(
+  source: PracticeQuestion,
+  startId: number,
+): PracticeQuestion[] {
+  const published = publishedCopy(source);
+  return [
+    buildSingleChoiceVariant(published, nextId(startId, 0)),
+    buildTrueStatementVariant(published, nextId(startId, 1)),
+    buildFalseStatementVariant(published, nextId(startId, 2)),
+    buildAnswerJudgementVariant(published, nextId(startId, 3)),
+  ];
+}
+
 export function derivePublishedQuestions(
   sourceQuestions: PracticeQuestion[],
   startId = 101,
 ): PracticeQuestion[] {
-  return sourceQuestions.flatMap((source, index) => {
-    const published = publishedCopy(source);
-    const offset = index * 4;
-    return [
-      buildSingleChoiceVariant(published, nextId(startId, offset)),
-      buildTrueStatementVariant(published, nextId(startId, offset + 1)),
-      buildFalseStatementVariant(published, nextId(startId, offset + 2)),
-      buildAnswerJudgementVariant(published, nextId(startId, offset + 3)),
-    ];
-  });
+  return sourceQuestions.flatMap((source, index) =>
+    derivePublishedQuestionVariants(source, startId + index * 4),
+  );
 }
 
 export function publishQuestions(sourceQuestions: PracticeQuestion[]): PracticeQuestion[] {
