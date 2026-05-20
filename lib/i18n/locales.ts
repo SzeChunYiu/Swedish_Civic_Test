@@ -15,6 +15,8 @@ export type LocaleOption = {
   rtl: boolean;
   /** Falls back to this AppLanguage when 'available' is false. */
   fallback: AppLanguage;
+  /** Optional native unavailable badge for languages with reviewed phase-1 copy. */
+  comingSoonLabel?: string;
 };
 
 /**
@@ -104,6 +106,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: false,
     fallback: 'en',
+    comingSoonLabel: '正在准备',
   },
   {
     code: 'zh-Hant',
@@ -113,6 +116,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: false,
     fallback: 'en',
+    comingSoonLabel: '準備中',
   },
 ];
 
