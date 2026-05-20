@@ -7407,6 +7407,8 @@ let progressStoreFieldsValidated = 0;
 let progressStoreSchemaParityValidated = false;
 let reviewStoreHydrationCasesValidated = 0;
 let reviewStoreHydrationParityValidated = false;
+let highlightsStoreHydrationCasesValidated = 0;
+let highlightsStoreHydrationValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -12863,6 +12865,126 @@ function validateReviewStoreHydrationParity() {
   }
 }
 
+function validateHighlightsStoreHydrationEvidence() {
+  let valid = true;
+  let highlightsStoreSource = '';
+  let highlightsStoreTestSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    highlightsStoreSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/storage/highlightsStore.ts'),
+      'utf8',
+    );
+    highlightsStoreTestSource = fs.readFileSync(
+      path.join(repoRoot, 'tests/v1-1-highlights-store.test.js'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`highlights store hydration source could not be read: ${error.message}`);
+    return;
+  }
+
+  const testContentScript = packageMetadata?.scripts?.['test:content'];
+  if (typeof testContentScript !== 'string') {
+    reject('package.json scripts.test:content must be a string');
+  } else if (
+    countPatternOccurrences(testContentScript, /tests\/v1-1-highlights-store\.test\.js/) !== 1
+  ) {
+    reject('package.json test:content must run tests/v1-1-highlights-store.test.js exactly once');
+  }
+
+  const normalizedStore = highlightsStoreSource.replace(/\s+/g, ' ');
+  const requiredStoreSnippets = [
+    ['readRecoverably', 'highlights store must report recoverable read failures'],
+    ['writeRecoverably', 'highlights store must report recoverable write failures'],
+    [
+      'function isNonEmptyString(value: unknown): value is string',
+      'highlights hydration must reject blank chapter, highlight, and block ids',
+    ],
+    [
+      'function isCanonicalIsoTimestamp(value: unknown): value is string',
+      'highlights hydration must reject invalid timestamps',
+    ],
+    [
+      'function isValidOffset(value: unknown): value is number',
+      'highlights hydration must reject fractional, non-finite, negative, or oversized offsets',
+    ],
+    [
+      'h.endOffset <= h.startOffset',
+      'highlights hydration must reject reversed or zero-length ranges',
+    ],
+    ['!isValidNote(h.note)', 'highlights hydration must reject oversized notes'],
+    [
+      'state: normalize(JSON.parse(result.value))',
+      'highlights store must normalize parsed persisted JSON before hydration',
+    ],
+  ];
+
+  requiredStoreSnippets.forEach(([snippet, message]) => {
+    if (!normalizedStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  const normalizedTest = highlightsStoreTestSource.replace(/\s+/g, ' ');
+  const requiredFixtureSnippets = [
+    [
+      "test('highlights store: corrupt persisted highlight rows are dropped on hydration'",
+      'corrupt persisted highlight hydration fixture',
+    ],
+    ["'': [makeHighlight({ id: 'blank-chapter' })]", 'blank chapter fixture'],
+    ["makeHighlight({ id: '', color: 'yellow' })", 'blank highlight id fixture'],
+    ["makeHighlight({ id: 'blank-block', blockId: '' })", 'blank block id fixture'],
+    ["makeHighlight({ id: 'negative-start', startOffset: -1 })", 'negative offset fixture'],
+    ["makeHighlight({ id: 'fractional-start', startOffset: 1.5 })", 'fractional offset fixture'],
+    [
+      "makeHighlight({ id: 'reversed-range', startOffset: 12, endOffset: 3 })",
+      'reversed range fixture',
+    ],
+    [
+      "makeHighlight({ id: 'infinite-end', endOffset: Number.POSITIVE_INFINITY })",
+      'non-finite offset fixture',
+    ],
+    ["makeHighlight({ id: 'bad-color', color: 'orange' })", 'invalid color fixture'],
+    [
+      "makeHighlight({ id: 'bad-created-at', createdAt: '2026-05-19' })",
+      'invalid timestamp fixture',
+    ],
+    [
+      "makeHighlight({ id: 'bad-updated-at', updatedAt: 'not-a-date' })",
+      'invalid updatedAt fixture',
+    ],
+    ["makeHighlight({ id: 'oversized-note', note: 'A'.repeat(2001) })", 'oversized note fixture'],
+    [
+      "assert.deepEqual(Object.keys(state.byChapter), ['ch01', 'ch02']);",
+      'survivor chapter assertion',
+    ],
+    ["['valid-green']", 'valid yellow/free color survivor assertion'],
+    ["['valid-pink']", 'valid Pro color survivor assertion'],
+    [
+      'assert.equal(state.byChapter.ch02[0].updatedAt, state.byChapter.ch02[0].createdAt);',
+      'updatedAt fallback assertion',
+    ],
+  ];
+
+  requiredFixtureSnippets.forEach(([snippet, message]) => {
+    if (!normalizedTest.includes(snippet)) {
+      reject(`highlights store corrupt-hydration fixture missing ${message}`);
+      return;
+    }
+    highlightsStoreHydrationCasesValidated += 1;
+  });
+
+  if (valid && highlightsStoreHydrationCasesValidated === requiredFixtureSnippets.length) {
+    highlightsStoreHydrationValidated = true;
+  }
+}
+
 function validateContentTypeSchemaParity() {
   let valid = true;
   let contentTypesSource = '';
@@ -17266,6 +17388,7 @@ validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateReviewStoreHydrationParity();
+validateHighlightsStoreHydrationEvidence();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validatePracticeFlowParity();
@@ -17494,6 +17617,8 @@ console.log(
       progressStoreSchemaParityValidated,
       reviewStoreHydrationCasesValidated,
       reviewStoreHydrationParityValidated,
+      highlightsStoreHydrationCasesValidated,
+      highlightsStoreHydrationValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
