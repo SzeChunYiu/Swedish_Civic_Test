@@ -226,6 +226,26 @@ function staleReleaseAdEvidenceTerms(source) {
     .map(([, label]) => label);
 }
 
+function staleReleaseAdEvidenceGate(id, label, staleTerms) {
+  const matchCount = staleTerms.length;
+  return gate(
+    id,
+    label,
+    'BLOCKED',
+    `Gate ${id} evidence in ${evidencePath} still uses obsolete ad-disablement release posture (${matchCount} pattern match${
+      matchCount === 1 ? '' : 'es'
+    }). Replace it with current ad-supported Google Mobile Ads, ATT/UMP consent, and 29 SEK Remove Ads IAP evidence before relying on this gate.`,
+    `Replace obsolete ad-disablement evidence for ${id} in ${evidencePath} with current ad-supported release evidence.`,
+  );
+}
+
+function staleReleaseAdEvidenceError(staleTerms) {
+  const matchCount = staleTerms.length;
+  return `obsolete ad-disablement evidence (${matchCount} pattern match${
+    matchCount === 1 ? '' : 'es'
+  })`;
+}
+
 function listFiles(root) {
   if (!exists(root)) return [];
 
@@ -350,12 +370,12 @@ function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
   const normalizedPurchasesSource = purchasesSource.replace(/\s+/g, ' ');
   const step3Checks = [
     [
-      (/export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
+      /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
         purchasesSource,
       ) ||
         /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*`\$\{APP_NATIVE_IDENTIFIER\}\.removeads`/.test(
           purchasesSource,
-        )),
+        ),
       'Remove Ads product id must be an exported reverse-DNS removeads identifier',
     ],
     [
@@ -870,7 +890,7 @@ function validateStoreRecordEvidence(evidencePath) {
   const errors = [];
   const staleTerms = staleReleaseAdEvidenceTerms(source);
   if (staleTerms.length > 0) {
-    errors.push(`stale disabled-real-ads evidence: ${staleTerms.join(', ')}`);
+    errors.push(staleReleaseAdEvidenceError(staleTerms));
   }
 
   if (evidence.status !== 'ready') {
@@ -1013,7 +1033,7 @@ function validateStorePolicyQuestionnaireEvidence(evidencePath) {
   const errors = [];
   const staleTerms = staleReleaseAdEvidenceTerms(source);
   if (staleTerms.length > 0) {
-    errors.push(`stale disabled-real-ads evidence: ${staleTerms.join(', ')}`);
+    errors.push(staleReleaseAdEvidenceError(staleTerms));
   }
 
   if (evidence.status !== 'reviewed') {
@@ -1127,7 +1147,7 @@ function validatePrivacyReviewEvidence(evidencePath) {
   const errors = [];
   const staleTerms = staleReleaseAdEvidenceTerms(source);
   if (staleTerms.length > 0) {
-    errors.push(`stale disabled-real-ads evidence: ${staleTerms.join(', ')}`);
+    errors.push(staleReleaseAdEvidenceError(staleTerms));
   }
 
   if (evidence.status !== 'reviewed') {
@@ -1539,12 +1559,16 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
   const recorded = manualEvidence.gates[id];
   const status = recorded?.status === 'READY' ? 'READY' : 'BLOCKED';
   const recordedEvidence = typeof recorded?.evidence === 'string' ? recorded.evidence.trim() : '';
+  const staleTerms = staleReleaseAdEvidenceTerms(recordedEvidence);
+
+  if (recordedEvidence.length > 0 && staleTerms.length > 0) {
+    return staleReleaseAdEvidenceGate(id, label, staleTerms);
+  }
 
   if (status === 'READY' && recordedEvidence.length > 0) {
     const blockedTerms = [
       ...blockedEvidencePatterns,
       ...(gateSpecificBlockedEvidencePatterns[id] || []),
-      ...staleReleaseAdEvidencePatterns,
     ]
       .filter(([pattern]) => pattern.test(recordedEvidence))
       .map(([, label]) => label);
