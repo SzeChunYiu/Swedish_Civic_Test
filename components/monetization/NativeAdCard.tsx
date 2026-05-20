@@ -1,12 +1,12 @@
-import { Platform, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
-import { nativeAdCardCopy } from '../../lib/monetization/adCopy';
-import { shouldShowAd } from '../../lib/monetization/ads';
+import { getNativeAdCardCopy } from '../../lib/monetization/adCopy';
+import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
+import { colors, space, typography } from '../../lib/theme';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
-import { colors, space, typography } from '../../lib/theme';
 
 export function NativeAdCard({
   entitlements,
@@ -14,16 +14,12 @@ export function NativeAdCard({
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
   const language = useSettingsStore((state) => state.language);
-  const copy = nativeAdCardCopy[language];
+  const unit = getAdUnit('results_native');
+  const copy = getNativeAdCardCopy(language, unit);
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
 
-  if (
-    !entitlementsReady ||
-    !shouldShowAd('results_native', resolvedEntitlements, undefined, Platform.OS)
-  ) {
-    return null;
-  }
+  if (!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)) return null;
 
   return (
     <Card accessibilityHint={copy.hint} accessibilityLabel={copy.accessibilityLabel}>
