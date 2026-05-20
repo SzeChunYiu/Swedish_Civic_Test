@@ -335,6 +335,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\barbetar för endast\b/i,
   /\bworks for only\b/i,
   /\b(?:den näst största i Sverige|the second largest in Sweden)\b/i,
+  /Äktenskap mellan personer av samma kön i Sverige är (?:tillåtet|förbjudet) att gifta sig med en person av samma kön\b/i,
   /,\s*,/,
   /\bit is common to large bonfires\b/i,
   /\bbrukar\s+\S+\s+arrangerar\b/i,
@@ -4878,6 +4879,14 @@ function embeddedEnglishClause(value) {
   return lowerLeadingEnglishClauseStart(stripLeadingPurposeEn(value));
 }
 function replaceLeadingSwedishSubject(subject, value) {
+  if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
+    if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
+      return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
+    }
+    if (/^Det är förbjudet att gifta sig med en person av samma kön$/i.test(value.trim())) {
+      return 'Äktenskap mellan personer av samma kön är förbjudet i Sverige';
+    }
+  }
   const normalizedSubject = upperFirst(subject.trim());
   return value
     .replace(/^De\s+/i, `${normalizedSubject} `)
