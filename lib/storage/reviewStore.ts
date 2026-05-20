@@ -15,13 +15,16 @@ import { create } from 'zustand';
 import type { ReviewCard, ReviewGrade } from '../learning/spacedRepetition';
 import { createNewCard, gradeCard, isDue, sortByDueAscending } from '../learning/spacedRepetition';
 import { getLocalDateKey } from '../learning/streaks';
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
+const reviewStorageId = 'reviews';
 
 let reviewStorage: MMKV | null = null;
 try {
-  reviewStorage = createMMKV({ id: 'reviews' });
+  reviewStorage = createMMKV({ id: reviewStorageId });
 } catch {
   reviewStorage = null;
 }
@@ -33,19 +36,62 @@ interface PersistedReviews {
 }
 
 const EMPTY: PersistedReviews = { byId: {}, gradedPerDay: {} };
+const REVIEW_CARD_STATES = new Set<ReviewCard['state']>([
+  'new',
+  'learning',
+  'review',
+  'relearning',
+]);
+const minReviewDifficulty = 1;
+const maxReviewDifficulty = 10;
+const minReviewStabilityDays = 1;
+const maxReviewStabilityDays = 365 * 5;
+const maxPersistedReviewCounter = 10000;
 
-function isReviewCard(value: unknown): value is ReviewCard {
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date.toISOString() === value;
+}
+
+function isLocalDateKey(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function isFiniteNumberInRange(value: unknown, min: number, max: number): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
+}
+
+function isNonNegativeInteger(value: unknown, max = Number.MAX_SAFE_INTEGER): value is number {
+  return (
+    typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value) &&
+    value >= 0 &&
+    value <= max
+  );
+}
+
+function isReviewCard(id: string, value: unknown): value is ReviewCard {
   if (!value || typeof value !== 'object') return false;
   const v = value as Partial<ReviewCard>;
   return (
-    typeof v.questionId === 'string' &&
-    typeof v.difficulty === 'number' &&
-    typeof v.stability === 'number' &&
-    typeof v.reps === 'number' &&
-    typeof v.lapses === 'number' &&
-    typeof v.state === 'string' &&
-    (v.lastReviewAt === null || typeof v.lastReviewAt === 'string') &&
-    typeof v.dueAt === 'string'
+    isNonEmptyString(id) &&
+    v.questionId === id &&
+    isFiniteNumberInRange(v.difficulty, minReviewDifficulty, maxReviewDifficulty) &&
+    isFiniteNumberInRange(v.stability, minReviewStabilityDays, maxReviewStabilityDays) &&
+    isNonNegativeInteger(v.reps, maxPersistedReviewCounter) &&
+    isNonNegativeInteger(v.lapses, maxPersistedReviewCounter) &&
+    v.state !== undefined &&
+    REVIEW_CARD_STATES.has(v.state) &&
+    (v.lastReviewAt === null || isIsoTimestamp(v.lastReviewAt)) &&
+    isIsoTimestamp(v.dueAt)
   );
 }
 
@@ -55,13 +101,13 @@ function normalize(value: unknown): PersistedReviews {
   const byId: Record<string, ReviewCard> = {};
   if (candidate.byId && typeof candidate.byId === 'object') {
     for (const [id, card] of Object.entries(candidate.byId)) {
-      if (isReviewCard(card)) byId[id] = card;
+      if (isReviewCard(id, card)) byId[id] = card;
     }
   }
   const gradedPerDay: Record<string, number> = {};
   if (candidate.gradedPerDay && typeof candidate.gradedPerDay === 'object') {
     for (const [day, count] of Object.entries(candidate.gradedPerDay)) {
-      if (typeof count === 'number' && Number.isFinite(count) && count >= 0) {
+      if (isLocalDateKey(day) && isNonNegativeInteger(count, maxPersistedReviewCounter)) {
         gradedPerDay[day] = count;
       }
     }
@@ -69,33 +115,41 @@ function normalize(value: unknown): PersistedReviews {
   return { byId, gradedPerDay };
 }
 
-function read(): PersistedReviews {
-  const raw = reviewStorage?.getString(REVIEW_STORE_KEY);
-  if (!raw) return EMPTY;
+function read(): {
+  state: PersistedReviews;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, () =>
+    reviewStorage?.getString(REVIEW_STORE_KEY),
+  );
+  if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
   try {
-    return normalize(JSON.parse(raw));
+    return { state: normalize(JSON.parse(result.value)), persistenceWarning: result.warning };
   } catch {
-    return EMPTY;
+    return { state: EMPTY, persistenceWarning: result.warning };
   }
 }
 
-function write(state: PersistedReviews): void {
-  reviewStorage?.set(REVIEW_STORE_KEY, JSON.stringify(state));
+function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
+  return writeRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, JSON.stringify(state));
 }
 
 type ReviewState = PersistedReviews & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
   /** Get-or-create a card for the question. */
   ensureCard: (questionId: string, now?: string) => ReviewCard;
   /** Grade a card; returns the new card. */
   grade: (questionId: string, grade: ReviewGrade, now?: string) => ReviewCard;
   /** Reset all reviews (used by "clear progress" in settings). */
   clearAll: () => void;
+  clearPersistenceWarning: () => void;
 };
 
 const initial = read();
 
 export const useReviewStore = create<ReviewState>((set, get) => ({
-  ...initial,
+  ...initial.state,
+  persistenceWarning: initial.persistenceWarning,
   ensureCard: (questionId, now) => {
     const existing = get().byId[questionId];
     if (existing) return existing;
@@ -105,8 +159,8 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
         byId: { ...state.byId, [questionId]: card },
         gradedPerDay: state.gradedPerDay,
       };
-      write(next);
-      return next;
+      const persistenceWarning = write(next);
+      return { ...next, persistenceWarning };
     });
     return card;
   },
@@ -119,14 +173,15 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
       byId: { ...state.byId, [questionId]: next },
       gradedPerDay: { ...state.gradedPerDay, [dayKey]: (state.gradedPerDay[dayKey] ?? 0) + 1 },
     };
-    write(nextState);
-    set(nextState);
+    const persistenceWarning = write(nextState);
+    set({ ...nextState, persistenceWarning });
     return next;
   },
   clearAll: () => {
-    write(EMPTY);
-    set(EMPTY);
+    const persistenceWarning = write(EMPTY);
+    set({ ...EMPTY, persistenceWarning });
   },
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 // ---- Pure selectors (usable outside React) ---------------------------------
