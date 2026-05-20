@@ -7939,6 +7939,44 @@ function validateAdPlacementRouteParity() {
       reject(`${label} must not accept the full AdPlacement union`);
       sourceIsValid = false;
     }
+    if (label === 'native AdBanner') {
+      if (!source.includes('const unit = getAdUnit(placement);')) {
+        reject('native AdBanner must inspect the configured ad unit');
+        sourceIsValid = false;
+      }
+      if (
+        !/const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner must derive the status label from unit.testOnly');
+        sourceIsValid = false;
+      }
+      if (
+        /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel,\s*copy\.liveStatus\)\}/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner accessibility label must not hardcode live ad status');
+        sourceIsValid = false;
+      }
+      if (!/accessibilityLabel=\{accessibilityLabel\}/.test(source)) {
+        reject('native AdBanner must pass the derived accessibility label');
+        sourceIsValid = false;
+      }
+      if (!source.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+        reject('native AdBanner must resolve banner units by Platform.OS');
+        sourceIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner must gate banner visibility by Platform.OS');
+        sourceIsValid = false;
+      }
+    }
 
     if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
   }
