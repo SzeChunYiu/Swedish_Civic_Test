@@ -9,10 +9,17 @@ const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank'
 const {
   generatedFixtureIdExpression,
   generatedFixtureIdHelperSource,
+  generatedQuestionId,
 } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
+const stateWelfareStiltedEnglishPattern =
+  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
+const buddhistHinduOldPromptPattern =
+  /\b(?:Vad finns på olika platser i Sverige för buddhister och hinduer|What exists in different places in Sweden for Buddhists and Hindus)\b/i;
+const buddhistHinduRedundantGeneratedPattern =
+  /\b(?:På olika platser i Sverige finns (?:buddhistiska och hinduiska församlingar och tempel|statliga myndigheter som väljer religion) för buddhister och hinduer|In different places in Sweden, there are (?:Buddhist and Hindu congregations and temples|government agencies that choose religion) for Buddhists and Hindus)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -151,6 +158,257 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q044 criminal-responsibility age currentness uses stale proposal wording/,
+  );
+});
+
+test('state welfare source and exports use natural social-insurance English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    stateWelfareStiltedEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => stateWelfareStiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const q156 = generatedSiteBank.find((question) => question.id === 'q156');
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q156, 'q156 should be published in the site bank');
+  assert.match(q156.q.en, /state-funded social insurance systems/);
+  assert.match(q156.why.en, /state funds social insurance systems/);
+});
+
+test('state welfare English naturalness guard rejects literal state-security wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
+        'Which state-funded security systems can provide financial support during illness, parenthood, or unemployment?',
+      )
+      .replace(
+        'The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance.',
+        'The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q156 uses stilted state-welfare English wording/,
+  );
+});
+
+test('free-media source prompts ask the civic concept directly in exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const answerKeyPromptPattern = /\b(?:Vilket svar beskriver|Which answer describes)\b/i;
+  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => answerKeyPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => answerKeyPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => answerKeyPromptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q045 = generatedSiteBank.find((question) => question.id === 'q045');
+  const q045True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q045', 'trueStatement'),
+  );
+  const q045False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q045', 'falseStatement'),
+  );
+
+  assert.ok(q045, 'q045 should be published in the site bank');
+  assert.equal(q045.q.sv, 'Vilka viktiga uppgifter har fria medier i en demokrati?');
+  assert.equal(q045.q.en, 'What important roles do free media play in a democracy?');
+  assert.ok(q045True, 'q045 true generated variant should be published');
+  assert.equal(
+    q045True.q.sv,
+    'I en demokrati har fria medier viktiga uppgifter: att informera, möjliggöra samhällsdebatt och granska personer med makt.',
+  );
+  assert.equal(
+    q045True.q.en,
+    'In a democracy, free media play important roles: informing, enabling public debate, and scrutinizing people with power.',
+  );
+  assert.ok(q045False, 'q045 false generated variant should be published');
+  assert.equal(q045False.q.sv, 'I en demokrati ska fria medier ersätta politiska val.');
+  assert.equal(q045False.q.en, 'In a democracy, free media should replace political elections.');
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('free-media source prompt guard rejects answer-key wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vilka viktiga uppgifter har fria medier i en demokrati?',
+        'Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?',
+      )
+      .replace(
+        'What important roles do free media play in a democracy?',
+        'Which answer describes an important role of free media in a democracy?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q045 source prompt asks about the answer instead of the civic concept/,
+  );
+});
+
+test('Buddhist and Hindu congregation source and exports use direct prompts', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceSiteQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const generatedById = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const q108 = generatedById.get('q108');
+  const q108True = generatedById.get(
+    generatedQuestionId(sourceSiteQuestions, 'q108', 'trueStatement'),
+  );
+  const q108False = generatedById.get(
+    generatedQuestionId(sourceSiteQuestions, 'q108', 'falseStatement'),
+  );
+  const textForQuestion = (question) =>
+    [
+      question.q?.sv,
+      question.q?.en,
+      question.why?.sv,
+      question.why?.en,
+      ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
+    ].join(' ');
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) => {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    return (
+      buddhistHinduOldPromptPattern.test(source) ||
+      buddhistHinduRedundantGeneratedPattern.test(source)
+    );
+  });
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => {
+      const text = textForQuestion(question);
+      return (
+        buddhistHinduOldPromptPattern.test(text) ||
+        buddhistHinduRedundantGeneratedPattern.test(text)
+      );
+    })
+    .map((question) => question.id);
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q108, 'q108 should be published in the site bank');
+  assert.ok(q108True, 'q108 true-statement variant should be published in the site bank');
+  assert.ok(q108False, 'q108 false-statement variant should be published in the site bank');
+  assert.equal(
+    q108.q.sv,
+    'Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?',
+  );
+  assert.equal(
+    q108.q.en,
+    'What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?',
+  );
+  assert.equal(
+    q108True.q.sv,
+    'Buddhistiska och hinduiska församlingar och tempel finns i Sverige.',
+  );
+  assert.equal(q108True.q.en, 'Buddhist and Hindu congregations and temples exist in Sweden.');
+  assert.equal(q108False.q.sv, 'Statliga myndigheter som väljer religion finns i Sverige.');
+  assert.equal(q108False.q.en, 'Government agencies that choose religion exist in Sweden.');
+});
+
+test('Buddhist and Hindu prompt naturalness guard rejects vague source prompt', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?',
+        'Vad finns på olika platser i Sverige för buddhister och hinduer?',
+      )
+      .replace(
+        'What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?',
+        'What exists in different places in Sweden for Buddhists and Hindus?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q108 uses vague Buddhist\/Hindu source prompt wording/,
   );
 });
 
@@ -554,43 +812,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects answer-key source prompts', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Var ligger Sverige?',
-        'Vilket svar ger exempel på Sveriges läge?',
-      )
-      .replace(
-        'Where is Sweden located?',
-        'Which answer gives examples of Sweden’s location?',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q001 asks about an answer choice instead of the civic concept/,
-  );
-});
-
 test('published question schema rejects generated true/false grammar-splice stems', () => {
   const result = spawnSync(
     process.execPath,
@@ -612,6 +833,38 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "Sweden's northernmost part lies north of the Arctic Circle.",
         'It is true that Approximately almost 11 million people live in Sweden.',
       );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects same-sex marriage infinitive splices', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      'Sveriges nordligaste del ligger norr om polcirkeln.',
+      'Äktenskap mellan personer av samma kön i Sverige är tillåtet att gifta sig med en person av samma kön.',
+    );
   }
   return contents;
 };
@@ -934,7 +1187,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
-test('published question schema rejects generated social-insurance list fragments', () => {
+test('published question schema rejects generated true/false bare answer phrases', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -951,15 +1204,19 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const socialInsuranceListResiduals = {",
-        "  [generatedFixtureId('q156', 1)]: { questionSv: 'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring.', questionEn: 'Sickness insurance, parental insurance, and unemployment insurance.' },",
-        "  [generatedFixtureId('q156', 2)]: { questionSv: 'Vårdcentraler, sjukhus och regional kollektivtrafik.', questionEn: 'Health centres, hospitals, and regional public transport.' },",
+        "const bareAnswerPhraseResiduals = {",
+        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
+        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
+        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
+        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
+        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
+        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  socialInsuranceListResiduals[question.id]",
+        "  bareAnswerPhraseResiduals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...socialInsuranceListResiduals[question.id],",
+        "        ...bareAnswerPhraseResiduals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -976,7 +1233,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 6);
 });
 
 test('published question schema rejects generated true/false statement-about-statement stems', () => {
@@ -1188,43 +1445,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /contains a generated true\/false explanation meta-judgement/,
-  );
-});
-
-test('published question schema rejects authored answer-judgement explanation boilerplate', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = String(originalReadFileSync.call(this, filePath, ...args));
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return contents
-      .replace(
-        'Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.',
-        'Sverige ligger i Norden i norra Europa, därför är alternativet om Norden i norra Europa rätt. Därför är Norden rätt svar. Det gör Norden till rätt svar.',
-      )
-      .replace(
-        'Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.',
-        'Sweden is in the Nordic region in northern Europe, so the answer about the Nordic region is correct. That makes the Nordic region the correct answer. Sweden is in the Nordic region, so the Nordic region is the correct answer.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q001 explanation contains answer-judgement boilerplate/,
   );
 });
 
@@ -1570,6 +1790,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q116', 2)]: { questionSv: 'Regeringsformen skyddar att staten väljer religion åt varje invånare.', questionEn: 'The Instrument of Government protects that the state chooses a religion for each resident.' },",
         "  [generatedFixtureId('q117', 2)]: { questionSv: 'Många svenskar firar id al-fitr och Newroz även om de inte ser sig som religiösa.', questionEn: 'Many Swedes celebrate Eid al-Fitr and Newroz even if they do not see themselves as religious.' },",
         "  [generatedFixtureId('q120', 1)]: { questionSv: 'Judar fick rätt att bo i landet och utöva sin religion.', questionEn: 'Jews gained the right to live in the country and practice their religion.' },",
+        "  [generatedFixtureId('q120', 2)]: { questionSv: 'Judar fick rätt att bli Sveriges största religiösa grupp.', questionEn: 'Jews gained the right to become Sweden’s largest religious group.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q606Residuals[question.id]",
@@ -1592,7 +1813,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 5);
 });
 
 test('published question schema rejects residual q656-q705 proper-noun lowercasing', () => {
@@ -1683,6 +1904,51 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 3);
+});
+
+test('published question schema rejects generated proportional-party referent splices', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const proportionalPartyResiduals = {",
+        "  [generatedFixtureId('q034', 1)]: { questionSv: 'I ett proportionellt val får partiet 20 procent av platserna om ett parti får 20 procent av rösterna.', questionEn: 'In a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.' },",
+        "  [generatedFixtureId('q034', 2)]: { questionSv: 'I ett proportionellt val får partiet alla platser om ett parti får 20 procent av rösterna.', questionEn: 'In a proportional election, the party receives all seats if a party receives 20 percent of the votes.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  proportionalPartyResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...proportionalPartyResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects source-material generated option fallbacks', () => {

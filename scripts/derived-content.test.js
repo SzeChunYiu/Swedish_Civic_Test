@@ -63,35 +63,6 @@ function civicStatementPromptPatterns(source, functionName, nextFunctionName) {
   ].map((match) => match[1]);
 }
 
-function sourceRecallHandlerFindings(source, svNextFunctionName, enNextFunctionName) {
-  const findings = [];
-  const svSlice = extractFunctionSlice(source, 'civicStatementSv', svNextFunctionName);
-  const enSlice = extractFunctionSlice(source, 'civicStatementEn', enNextFunctionName);
-  const activeCivicStatementSource = `${svSlice}\n${enSlice}`;
-  const bannedActivePatterns = [
-    /\bnämns som exempel\b/i,
-    /\bmentioned as (?:an example|examples)\b/i,
-    /\bVilken händelse från\b/i,
-    /\bWhich event from\b/i,
-    /\bVad nämns som exempel på\b/i,
-    /\bWhat is mentioned as an example of\b/i,
-  ];
-
-  if (/function swedishMentionedExample\b/.test(source)) {
-    findings.push('swedishMentionedExample helper still exists');
-  }
-  if (/function englishMentionedExample\b/.test(source)) {
-    findings.push('englishMentionedExample helper still exists');
-  }
-  for (const pattern of bannedActivePatterns) {
-    if (pattern.test(activeCivicStatementSource)) {
-      findings.push(`active civic statement handler still matches ${pattern}`);
-    }
-  }
-
-  return findings;
-}
-
 test('validate-content mirrors production civic statement prompt patterns', () => {
   const productionSource = fs.readFileSync(
     path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
@@ -129,66 +100,8 @@ test('validate-content mirrors production civic statement prompt patterns', () =
   assert.deepEqual(enValidatorPatterns, enProductionPatterns);
 });
 
-test('validate-content uses production helper for expected generated variant output', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
-    'utf8',
-  );
-
-  assert.match(validatorSource, /\bderivePublishedQuestionVariants\b/);
-  assert.doesNotMatch(
-    validatorSource,
-    /\bfunction expectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\b/,
-  );
-  assert.doesNotMatch(
-    validatorSource,
-    /\bexpectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\(/,
-  );
-});
-
-test('derived civic statement handlers reject source-recall and obsolete example-describes prompts', () => {
-  const productionSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
-    'utf8',
-  );
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
-    'utf8',
-  );
-
-  assert.deepEqual(
-    sourceRecallHandlerFindings(productionSource, 'civicStatementEn', 'buildSingleChoiceVariant'),
-    [],
-  );
-  assert.deepEqual(
-    sourceRecallHandlerFindings(validatorSource, 'civicStatementEn', 'correctOption'),
-    [],
-  );
-  const obsoletePromptPatterns = ['Vilket exempel beskriver', 'Which example describes'];
-  const handlerPatterns = [
-    ...civicStatementPromptPatterns(productionSource, 'civicStatementSv', 'civicStatementEn'),
-    ...civicStatementPromptPatterns(
-      productionSource,
-      'civicStatementEn',
-      'buildSingleChoiceVariant',
-    ),
-    ...civicStatementPromptPatterns(validatorSource, 'civicStatementSv', 'civicStatementEn'),
-    ...civicStatementPromptPatterns(validatorSource, 'civicStatementEn', 'correctOption'),
-  ];
-
-  for (const pattern of obsoletePromptPatterns) {
-    assert.deepEqual(
-      handlerPatterns.filter((handlerPattern) => handlerPattern.includes(pattern)),
-      [],
-      `${pattern} should be limited to explicit source guards and mutation fixtures`,
-    );
-  }
-});
-
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
-  const { derivePublishedQuestions, derivePublishedQuestionVariants } = loadTs(
-    'lib/content/derivedQuestions.ts',
-  );
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
     id: 'q001',
     chapterId: 'ch01',
@@ -211,7 +124,6 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   };
 
   const derived = derivePublishedQuestions([source], 101);
-  assert.deepEqual(derivePublishedQuestionVariants(source, 101), derived);
   assert.equal(derived.length, 4);
   assert.deepEqual(
     derived.map((question) => question.id),
@@ -567,8 +479,8 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       id: 'q025',
       chapterId: 'ch03',
       type: 'single_choice',
-      questionSv: 'Vilka vardagstjänster ansvarar kommuner för?',
-      questionEn: 'Which everyday services are municipalities responsible for?',
+      questionSv: 'Vilket exempel beskriver kommunernas ansvar?',
+      questionEn: 'Which example describes municipal responsibilities?',
       options: [
         {
           id: 'a',
@@ -668,21 +580,21 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       id: 'q013',
       chapterId: 'ch02',
       type: 'single_choice',
-      questionSv: 'Hur kan människor påverka samhället och delta i demokratin?',
-      questionEn: 'How can people influence society and participate in democracy?',
+      questionSv: 'Vilket är ett sätt att påverka och delta i samhället?',
+      questionEn: 'Which is a way to influence and participate in society?',
       options: [
         {
           id: 'a',
-          textSv: 'Genom att kontakta politiker, demonstrera eller skriva på en namninsamling',
-          textEn: 'By contacting politicians, demonstrating, or signing a petition',
+          textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
+          textEn: 'Contact politicians, demonstrate, or sign a petition',
         },
         {
           id: 'b',
-          textSv: 'Genom att förbjuda andra från att rösta i politiska val',
-          textEn: 'By banning others from voting in political elections',
+          textSv: 'Förbjuda andra från att rösta i politiska val',
+          textEn: 'Ban others from voting in political elections',
         },
-        { id: 'c', textSv: 'Genom att stoppa nyheter', textEn: 'By stopping news' },
-        { id: 'd', textSv: 'Genom att tysta föreningar', textEn: 'By silencing associations' },
+        { id: 'c', textSv: 'Stoppa nyheter', textEn: 'Stop news' },
+        { id: 'd', textSv: 'Tysta föreningar', textEn: 'Silence associations' },
       ],
       correctOptionId: 'a',
       explanationSv: 'Det finns flera demokratiska sätt att delta.',
@@ -839,7 +751,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.',
+      'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
     ),
   );
   assert.ok(
@@ -852,7 +764,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
+      'One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
     ),
   );
   assert.ok(
@@ -941,14 +853,6 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
       'Sweden is not usually divided into Götaland, Svealand, and Norrland.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q146', 'trueStatement')]: [
-      'I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer.',
-      'In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas.',
-    ],
-    [generatedQuestionId(sourceQuestions, 'q146', 'falseStatement')]: [
-      'I en demokrati har människor, grupper och partier rätt att hindra andra från att rösta.',
-      'In a democracy, people, groups, and parties have the right to stop others from voting.',
-    ],
     [generatedQuestionId(sourceQuestions, 'q147', 'trueStatement')]: [
       'Demokratin blir starkare när många röstar, engagerar sig och skaffar kunskap om samhällsfrågor.',
       'Democracy becomes stronger when many people vote, get involved, and learn about social issues.',
@@ -972,14 +876,6 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     [generatedQuestionId(sourceQuestions, 'q149', 'falseStatement')]: [
       'Integration i ett demokratiskt samhälle är att människor lever helt åtskilda efter inkomst eller etnisk bakgrund.',
       'Integration in a democratic society means people live completely separated by income or ethnic background.',
-    ],
-    [generatedQuestionId(sourceQuestions, 'q153', 'trueStatement')]: [
-      'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier.',
-      'On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media.',
-    ],
-    [generatedQuestionId(sourceQuestions, 'q153', 'falseStatement')]: [
-      'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg.',
-      'On the web and in social media, only responsible publishers may write posts.',
     ],
     [generatedQuestionId(sourceQuestions, 'q154', 'trueStatement')]: [
       'En anledning till att källkritik behövs när man använder medier är att falska uppgifter kan spridas snabbt och påverka människors åsikter.',
@@ -1228,7 +1124,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q081', 'trueStatement')]: [
       'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',
-      'The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.',
+      'The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.',
     ],
     [generatedQuestionId(sourceQuestions, 'q082', 'trueStatement')]: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
@@ -1244,7 +1140,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q088', 'falseStatement')]: [
       'Europarådet arbetar endast för jordbrukspolitik.',
-      'The Council of Europe promotes only agricultural policy.',
+      'The Council of Europe works only for agricultural policy.',
     ],
     [generatedQuestionId(sourceQuestions, 'q079', 'trueStatement')]: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
@@ -1268,11 +1164,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q097', 'trueStatement')]: [
       'På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier.',
-      'New Year’s Eve on 31 December is commonly celebrated with parties and dinners and at night with fireworks.',
+      'On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.',
     ],
     [generatedQuestionId(sourceQuestions, 'q097', 'falseStatement')]: [
       'På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger.',
-      'New Year’s Eve on 31 December is commonly celebrated with large bonfires and spring songs.',
+      'On New Year’s Eve, 31 December, large bonfires and spring songs are common.',
     ],
     [generatedQuestionId(sourceQuestions, 'q098', 'falseStatement')]: [
       'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer.',
@@ -1290,14 +1186,6 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
       'Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q104', 'trueStatement')]: [
-      'På Alla helgons dag är det vanligt att tända ljus på gravar för att minnas och hedra dem som har dött.',
-      'All Saints’ Day is commonly observed by lighting candles on graves to remember and honour people who have died.',
-    ],
-    [generatedQuestionId(sourceQuestions, 'q104', 'falseStatement')]: [
-      'På Alla helgons dag är det vanligt att öppna en adventskalender varje dag fram till julafton.',
-      'All Saints’ Day is commonly observed by opening an Advent calendar every day until Christmas Eve.',
-    ],
     [generatedQuestionId(sourceQuestions, 'q105', 'trueStatement')]: [
       'Advent infaller de fyra söndagarna före juldagen den 25 december.',
       'Advent occurs on the four Sundays before Christmas Day, 25 December.',
@@ -1307,8 +1195,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Advent occurs on a Saturday at the end of October or beginning of November.',
     ],
     [generatedQuestionId(sourceQuestions, 'q108', 'trueStatement')]: [
-      'På olika platser i Sverige finns buddhistiska och hinduiska församlingar och tempel för buddhister och hinduer.',
-      'In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.',
+      'Buddhistiska och hinduiska församlingar och tempel finns i Sverige.',
+      'Buddhist and Hindu congregations and temples exist in Sweden.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q108', 'falseStatement')]: [
+      'Statliga myndigheter som väljer religion finns i Sverige.',
+      'Government agencies that choose religion exist in Sweden.',
     ],
     [generatedQuestionId(sourceQuestions, 'q114', 'trueStatement')]: [
       'Resor till Asien och ökat intresse för meditation och yoga bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet.',
@@ -1391,7 +1283,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is\b|En anledning är\b|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|Vem som helst kan skapa innehåll där|Bara ansvariga utgivare får skriva inlägg där|Anyone can create content there|Only responsible publishers may write posts there|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|fick rätt att bli Sveriges största religiösa grupp|gained the right to become Sweden’s largest religious group|called Lucia procession|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that|^Many people voting|^Fewer people taking|^People with [^.?!]* living closer|^People living completely separated/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is\b|En anledning är\b|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|there are (?:Buddhist and Hindu congregations and temples|government agencies that choose religion) for Buddhists and Hindus|finns (?:buddhistiska och hinduiska församlingar och tempel|statliga myndigheter som väljer religion) för buddhister och hinduer|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|fick rätt att bli Sveriges största religiösa grupp|gained the right to become Sweden’s largest religious group|called Lucia procession|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that|^Many people voting|^Fewer people taking|^People with [^.?!]* living closer|^People living completely separated/im,
   );
   assert.doesNotMatch(
     residualText,

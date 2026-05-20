@@ -251,6 +251,10 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
 ];
+const QUESTION_BUDDHIST_HINDU_SOURCE_PROMPT_NATURALNESS_PATTERNS = [
+  /\bVad finns på olika platser i Sverige för buddhister och hinduer\b/i,
+  /\bWhat exists in different places in Sweden for Buddhists and Hindus\b/i,
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -264,8 +268,8 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
 const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
-  /\bVilket svar ger exempel på\b/i,
-  /\bWhich answer gives examples of\b/i,
+  /\bVilket svar beskriver\b/i,
+  /\bWhich answer describes\b/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
@@ -310,6 +314,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bOne reason is that so\b/i,
   /\bhave\s+[^.?!]*\bin common\b/i,
   /\bhar\s+[^.?!]*\bgemensamt\b/i,
+  /\bfår partiet\b[^.?!]*\bom ett parti får\b/i,
+  /\bthe party receives\b[^.?!]*\bif a party receives\b/i,
   /\bcommon to\s+(?:eating|lighting|opening|holding)\b/i,
   /\bcelebrates The\b/,
   /\bfirar traditionellt (?!Jesu födelse\b)[A-ZÅÄÖ]/,
@@ -335,12 +341,15 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\barbetar för endast\b/i,
   /\bworks for only\b/i,
   /\b(?:den näst största i Sverige|the second largest in Sweden)\b/i,
+  /Äktenskap mellan personer av samma kön i Sverige är (?:tillåtet|förbjudet) att gifta sig med en person av samma kön\b/i,
   /,\s*,/,
   /\bit is common to large bonfires\b/i,
   /\bbrukar\s+\S+\s+arrangerar\b/i,
   /\b(?:spreadinging|welcominging)\b/i,
   /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
   /\bthere are buddhist and Hindu\b/,
+  /\bthere are (?:Buddhist and Hindu congregations and temples|government agencies that choose religion) for Buddhists and Hindus\b/i,
+  /\bfinns (?:buddhistiska och hinduiska församlingar och tempel|statliga myndigheter som väljer religion) för buddhister och hinduer\b/i,
   /\bcalled Lucia procession\b/i,
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
@@ -354,6 +363,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /\bfick rätt att bli Sveriges största religiösa grupp\b/i,
+  /\bgained the right to become Sweden’s largest religious group\b/i,
   /^Many people voting\b/i,
   /^Fewer people taking\b/i,
   /^People with [^.?!]*\bliving closer\b/i,
@@ -760,6 +771,10 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Daglig övning',
     'Fortsätt på ${stageTitle}',
     'Fortsätt på nästa kapitel',
+    'Öppna nästa kapitel',
+    'Gå till mockprov',
+    '${title}: öppna nästa kapitel i steget.',
+    '${title}: gå till mockprov när steget är klart.',
     'Pågår',
     'Klar',
     'Nästa',
@@ -833,6 +848,10 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Daily practice',
     'Continue with ${stageTitle}',
     'Continue the next chapter',
+    'Open next chapter',
+    'Go to mock exam',
+    '${title}: open the next chapter in this stage.',
+    '${title}: go to the mock exam after completing this stage.',
     'In progress',
     'Done',
     'Next',
@@ -915,6 +934,11 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home route must derive guided path progress from stored answers',
   ],
   ['resumeHref={guidedPathResumeHref}', 'home route guided path must provide a resume destination'],
+  ['cta: stageCopy.cta(isCompleted)', 'home route guided path must provide stage-level CTA copy'],
+  [
+    'ctaAccessibilityLabel: stageCopy.ctaAccessibilityLabel(stageCopy.title, isCompleted)',
+    'home route guided path must provide localized stage CTA accessibility copy',
+  ],
   [
     'dailyProgress={progress}',
     'home route guided path must reuse the daily-practice progress signal',
@@ -1349,6 +1373,10 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     "import { ResultSummary } from '../../components/ResultSummary';",
     'exam result must import the shared ResultSummary',
   ],
+  [
+    "import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';",
+    'exam result must import the mock-exam time heatmap',
+  ],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
   [
     '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
@@ -1376,6 +1404,7 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam chapter breakdown must use selected-language chapter names',
   ],
   ['<ResultSummary', 'exam result must render the shared ResultSummary'],
+  ['<MockExamTimeHeatmap', 'exam result must render the mock-exam time heatmap'],
   ['languageOverride={language}', 'exam result summary must receive settings language'],
   [
     'metricLabel={copy.correctCount(result.correctCount, result.totalCount)}',
@@ -1603,8 +1632,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta kapitelövning',
-    'Starta kapitelövning för ${chapterTitle}',
+    'Starta frågepass',
+    'Starta frågepass för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -4267,6 +4296,14 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionBuddhistHinduSourcePromptNaturalnessIssue(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_BUDDHIST_HINDU_SOURCE_PROMPT_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionNestedMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
@@ -4751,14 +4788,19 @@ function swedishChristianHolidayStatement(subject, condition, answer) {
 function englishChristianHolidayStatement(subject, condition, answer) {
   return `${answer} are Christian holidays that ${lowerFirst(subject)} celebrate even if ${condition}`;
 }
-function swedishGainedRightStatement(subject, answer) {
+function swedishGainedRightStatement(subject, answer, timePhrase) {
   const activity = stripLeadingPurposeSv(answer).replace(/\bi landet\b/i, 'i Sverige');
+  if (/^bli Sveriges största religiösa grupp$/i.test(activity)) {
+    return `${upperFirst(subject)} blev Sveriges största religiösa grupp på ${timePhrase}`;
+  }
   return `${upperFirst(subject)} fick rätt att ${lowerFirst(activity)}`;
 }
-function englishGainedRightStatement(subject, answer) {
-  return `${upperFirst(subject)} gained the right to ${lowerFirst(
-    stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
-  )}`;
+function englishGainedRightStatement(subject, answer, timePhrase) {
+  const activity = stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden');
+  if (/^become Sweden’s largest religious group$/i.test(activity)) {
+    return `${upperFirst(subject)} became Sweden’s largest religious group in ${timePhrase}`;
+  }
+  return `${upperFirst(subject)} gained the right to ${lowerFirst(activity)}`;
 }
 function whyTargetStatementSv(target) {
   const cleaned = stripFinalPunctuation(target);
@@ -4858,6 +4900,14 @@ function embeddedEnglishClause(value) {
   return lowerLeadingEnglishClauseStart(stripLeadingPurposeEn(value));
 }
 function replaceLeadingSwedishSubject(subject, value) {
+  if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
+    if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
+      return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
+    }
+    if (/^Det är förbjudet att gifta sig med en person av samma kön$/i.test(value.trim())) {
+      return 'Äktenskap mellan personer av samma kön är förbjudet i Sverige';
+    }
+  }
   const normalizedSubject = upperFirst(subject.trim());
   return value
     .replace(/^De\s+/i, `${normalizedSubject} `)
@@ -4903,6 +4953,35 @@ function describesStatementEn(subject, answer) {
   }
   if (/^To\s+/i.test(answer)) {
     return `${upperFirst(subject)} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+function importantRolesStatementSv(subject, context, answer) {
+  if (/^Att\s+/i.test(answer)) {
+    return `I ${context} har ${lowerFirst(subject)} viktiga uppgifter: att ${lowerLeadingSwedishClauseStart(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+  if (/^De ska\s+/i.test(answer)) {
+    return `I ${context} ska ${lowerFirst(subject)} ${lowerFirst(answer.replace(/^De ska\s+/i, ''))}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+function importantRolesStatementEn(subject, context, answer) {
+  if (/^To inform, enable public debate, and scrutinize people with power$/i.test(answer)) {
+    return `In ${context}, ${lowerFirst(
+      subject,
+    )} play important roles: informing, enabling public debate, and scrutinizing people with power`;
+  }
+  if (/^To\s+/i.test(answer)) {
+    return `In ${context}, ${lowerFirst(subject)} play an important role: ${englishGerundPhrase(
+      answer,
+    )}`;
+  }
+  if (/^They should\s+/i.test(answer)) {
+    return `In ${context}, ${lowerFirst(subject)} should ${lowerFirst(
+      answer.replace(/^They should\s+/i, ''),
+    )}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
 }
@@ -4959,6 +5038,25 @@ function supportStatementEn(subject, answer) {
     return `${upperFirst(subject)} is ${lowerLeadingEnglishArticle(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
+}
+function conditionalPartyOutcomeSv(context, condition, answer) {
+  const partyCondition = condition.match(/^ett parti får (.+)$/i);
+  const partyOutcome = answer.trim().match(/^partiet får (.+)$/i);
+  if (partyCondition && partyOutcome) {
+    return `I ${context} får ett parti som får ${partyCondition[1]} ${lowerFirst(partyOutcome[1])}`;
+  }
+
+  const outcome = lowerFirst(answer).replace(/^partiet får\s+/i, 'partiet ');
+  return `I ${context} får ${outcome} om ${condition}`;
+}
+function conditionalPartyOutcomeEn(context, condition, answer) {
+  const partyCondition = condition.match(/^a party receives (.+)$/i);
+  const partyOutcome = answer.trim().match(/^the party receives (.+)$/i);
+  if (partyCondition && partyOutcome) {
+    return `In ${context}, a party that receives ${partyCondition[1]} receives ${lowerFirst(partyOutcome[1])}`;
+  }
+
+  return `In ${context}, ${lowerFirst(answer)} if ${condition}`;
 }
 function stripTrueFalsePromptSv(value) {
   return stripFinalPunctuation(value.replace(/^Sant eller falskt:\s*/i, ''));
@@ -5365,10 +5463,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
-  if (match) {
-    const outcome = lowerFirst(answer).replace(/^partiet får\s+/i, 'partiet ');
-    return `I ${match[1]} får ${outcome} om ${match[2]}`;
-  }
+  if (match) return conditionalPartyOutcomeSv(match[1], match[2], answer);
   match = q.match(/^Vilken lista innehåller (.+)$/i);
   if (match) return `Listan med ${lowerFirst(answer)} innehåller ${match[1]}`;
   match = q.match(/^Vad säger (.+?) om (.+)$/i);
@@ -5413,8 +5508,8 @@ function civicStatementSv(source, option) {
     )} för att ${match[3]}`;
   match = q.match(/^Vilket ansvar har (.+?) inom (.+)$/i);
   if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
-  match = q.match(/^Vilka verksamheter är exempel på (.+)$/i);
-  if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
+  match = q.match(/^Vilka viktiga uppgifter har (.+?) i (.+)$/i);
+  if (match) return importantRolesStatementSv(match[1], match[2], answer);
   match = q.match(/^Vilket svar ger exempel på (.+)$/i);
   if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
   match = q.match(/^Vad förändrades genom (.+)$/i);
@@ -5490,6 +5585,10 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} infaller ${lowerFirst(answer)}`;
   match = q.match(/^Vad uppmärksammas på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} uppmärksammas ${lowerFirst(answer)}`;
+  match = q.match(
+    /^Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige$/i,
+  );
+  if (match) return `${answer} finns i Sverige`;
   match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
   if (match) return `På olika platser i Sverige finns ${lowerFirst(answer)} för ${match[1]}`;
   match = q.match(/^Vilka högtider är exempel på (.+)$/i);
@@ -5520,7 +5619,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad var (.+?) under (.+?) innan (.+)$/i);
   if (match) return `${upperFirst(match[1])} var ${lowerFirst(answer)} under ${match[2]}`;
   match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
-  if (match) return swedishGainedRightStatement(match[1], answer);
+  if (match) return swedishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[2]}`;
   match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
@@ -5686,7 +5785,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
   match = q.match(/^What happens in (.+?) if (.+)$/i);
-  if (match) return `In ${match[1]}, ${lowerFirst(answer)} if ${match[2]}`;
+  if (match) return conditionalPartyOutcomeEn(match[1], match[2], answer);
   match = q.match(/^Which list contains (.+)$/i);
   if (match) return `The list with ${lowerLeadingEnglishArticle(answer)} contains ${match[1]}`;
   match = q.match(/^What does (.+?) say about (.+)$/i);
@@ -5733,8 +5832,8 @@ function civicStatementEn(source, option) {
     )} to ${match[3]}`;
   match = q.match(/^What responsibility do (.+?) have within (.+)$/i);
   if (match) return `${upperFirst(match[1])} are responsible for ${englishGerundPhrase(answer)}`;
-  match = q.match(/^Which services are examples of (.+)$/i);
-  if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
+  match = q.match(/^What important roles do (.+?) play in (.+)$/i);
+  if (match) return importantRolesStatementEn(match[1], match[2], answer);
   match = q.match(/^Which answer gives examples of (.+)$/i);
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^What changed through (.+)$/i);
@@ -5812,6 +5911,10 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} occurs ${englishOccurrencePhrase(answer)}`;
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
+  match = q.match(
+    /^What kinds of congregations and temples are there for Buddhists and Hindus in Sweden$/i,
+  );
+  if (match) return `${answer} exist in Sweden`;
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)
     return `In different places in Sweden, there are ${lowerEnglishNounPhrase(answer)} for ${match[1]}`;
@@ -5846,7 +5949,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^What was (.+?) during (.+?) before (.+)$/i);
   if (match) return `${upperFirst(match[1])} was ${lowerFirst(answer)} during ${match[2]}`;
   match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
-  if (match) return englishGainedRightStatement(match[1], answer);
+  if (match) return englishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
   match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
@@ -6982,9 +7085,9 @@ let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
-let questionAnswerKeyPromptStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
+let questionBuddhistHinduSourcePromptNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -8715,12 +8818,13 @@ function validateExamSubmissionFinalityParity() {
   if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||
     !examRoute.includes('recordMockExamSession({') ||
+    !examRoute.includes('answers: completedExamSession.answers.map') ||
     !examRoute.includes(
       'score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0',
     ) ||
-    !examRoute.includes('completedAt: new Date().toISOString()')
+    !examRoute.includes('completedAt: completedExamSession.completedAt')
   ) {
-    reject('exam result submission must persist a completed mock-exam score for readiness');
+    reject('exam result submission must persist completed mock-exam score and timing history');
   }
 
   if (valid) examSubmissionFinalityParityValidated = true;
@@ -11973,6 +12077,26 @@ function validateProgressStoreSchemaParity() {
     ],
     ['score: clampScore(item.score ?? 0)', 'mock-exam hydration must clamp persisted score'],
     [
+      'export type MockExamAnswerProgress = {',
+      'progress store must type persisted mock-exam answer timing rows',
+    ],
+    [
+      'answers: MockExamAnswerProgress[];',
+      'mock-exam progress must persist normalized answer timing rows',
+    ],
+    [
+      'function normalizeMockExamAnswers(value: unknown): MockExamAnswerProgress[]',
+      'mock-exam answer timing rows must hydrate through a normalizer',
+    ],
+    [
+      'const normalizedAnswers = normalizeMockExamAnswers(item.answers);',
+      'mock-exam hydration must normalize persisted answer timing rows',
+    ],
+    [
+      'const normalizedAnswers = normalizeMockExamAnswers(session.answers);',
+      'recordMockExamSession must normalize submitted answer timing rows',
+    ],
+    [
       'const serializedProgress = JSON.stringify(progress);',
       'writeProgress must serialize progress once before persistence and readback',
     ],
@@ -12039,6 +12163,7 @@ function validateProgressStoreSchemaParity() {
     'lastAnsweredAt: item.lastAnsweredAt',
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
+    'timeSpentSeconds: item.timeSpentSeconds',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
     'bookmarked: item.bookmarked,',
     'bookmarked: Boolean(item.bookmarked)',
@@ -15377,6 +15502,9 @@ function validateAuthoredSourceParity() {
         `${label} authored true/false source explanation contains answer-judgement boilerplate`,
       );
     }
+    if (findQuestionAnswerKeyPrompt(question)) {
+      reject(`${label} source prompt asks about the answer instead of the civic concept`);
+    }
 
     if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
       authoredSourceQuestionsValidated += 1;
@@ -16156,6 +16284,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
+      const buddhistHinduSourcePromptNaturalnessIssue =
+        findQuestionBuddhistHinduSourcePromptNaturalnessIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
@@ -16183,9 +16313,7 @@ if (Array.isArray(questions)) {
         questionJudgementMetaStemsValidated += 1;
       }
       if (answerKeyPrompt) {
-        fail(`${label} asks about an answer choice instead of the civic concept`);
-      } else {
-        questionAnswerKeyPromptStemsValidated += 1;
+        fail(`${label} asks about the answer instead of the civic concept`);
       }
       if (generatedTrueFalseNaturalnessIssue) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
@@ -16196,6 +16324,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted state-welfare English wording`);
       } else {
         questionStateWelfareEnglishNaturalnessValidated += 1;
+      }
+      if (buddhistHinduSourcePromptNaturalnessIssue) {
+        fail(`${label} uses vague Buddhist/Hindu source prompt wording`);
+      } else {
+        questionBuddhistHinduSourcePromptNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16661,9 +16794,9 @@ console.log(
       questionAuthorityBoundaryTextValidated,
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
-      questionAnswerKeyPromptStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
+      questionBuddhistHinduSourcePromptNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
