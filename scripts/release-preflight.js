@@ -350,12 +350,12 @@ function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
   const normalizedPurchasesSource = purchasesSource.replace(/\s+/g, ' ');
   const step3Checks = [
     [
-      (/export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
+      /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
         purchasesSource,
       ) ||
         /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*`\$\{APP_NATIVE_IDENTIFIER\}\.removeads`/.test(
           purchasesSource,
-        )),
+        ),
       'Remove Ads product id must be an exported reverse-DNS removeads identifier',
     ],
     [

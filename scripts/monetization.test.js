@@ -1069,7 +1069,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   }
 });
 
-
 test('remove-ads buy persists before native finish and leaves failed persistence unfinished', async () => {
   const { REMOVE_ADS_PRODUCT_ID, REMOVE_ADS_STORAGE_KEY, buyRemoveAds } = loadTs(
     'lib/monetization/purchases.ts',
