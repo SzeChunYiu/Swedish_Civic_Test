@@ -31,7 +31,7 @@ translated languages. Concrete deliverables are:
 | Word-level glossary/audit workspaces | `locales/{ar,ckb,fa,pl,so,ti,tr,uk,zh-Hans,zh-Hant}/` | README, glossary, phrasebook, and audit files exist for all listed language workspaces. | yes, phase 1 |
 | Runtime fail-closed state | `docs/localization/readiness.json`; `lib/i18n/locales.ts`; `node --test scripts/localization-readiness.test.js` | Picker targets `ar/fa/so/ti/pl/tr/zh-Hans/zh-Hant` are unavailable and blocked; test passes. | yes |
 | Actual website/static copy improvement | `site/i18n-extras.js`; `scripts/static-site-i18n-extras-cultural-copy.test.js` | Static extra copy improved for `zh-Hans`, `zh-Hant`, `ar`, `ckb`, `fa`, `pl`, `so`, `ti`, `tr`, `uk`; guard covers pass/passport slogans, Turkish outcome promises, and Chinese punctuation. | partial |
-| Actual app UI strings translated | `docs/localization/readiness.json` has `uiStrings: "not_started"`; `lib/i18n/locales.ts` and `components/ui/LanguagePicker.tsx` include native coming-soon badges for all blocked picker target locales | Full app UI translations are not done; zh-Hans now has preview-only settings, language-picker, main entry-point, quiz-feedback, mock-exam, mistake-review, dashboard, learning/chapter-card, compliance, privacy, monetization, onboarding, about-test, support, sources, and search copy slices in `lib/localization/zhHansUiPreview.ts`, and blocked picker target locales have native unavailable badges. | partial |
+| Actual app UI strings translated | `docs/localization/readiness.json` has `uiStrings: "not_started"`; `lib/i18n/locales.ts` and `components/ui/LanguagePicker.tsx` include native coming-soon badges for all blocked picker target locales | Full app UI translations are not done; zh-Hans now has preview-only settings, language-picker, main entry-point, quiz-feedback, mock-exam, mistake-review, dashboard, learning/chapter-card, compliance, privacy, monetization, onboarding, about-test, support, sources, and search copy slices in `lib/localization/zhHansUiPreview.ts`; Somali now has a preview-only settings + core study-entry slice in `lib/localization/soUiPreview.ts`; blocked picker target locales have native unavailable badges. | partial |
 | Question bank and answer explanations translated | `docs/localization/readiness.json` has `questionContent: "not_started"` for target picker locales | No target-language question/content translation is complete. | no |
 | Accessibility labels and screen-reader text translated | readiness entries show `missing`, `missing_rtl_runtime_review`, `missing_cjk_runtime_review`, or `missing_geez_script_review` | Accessibility/runtime review remains missing. | no |
 | Native review completed | readiness entries show `nativeReview: "missing"` for target picker locales | Native review is missing. | no |
@@ -77,7 +77,8 @@ Corpus-only workspaces outside the runtime picker:
 - `#1645` added preview-only Simplified Chinese mock-exam setup/results and mistake-review labels while keeping `zh-Hans` blocked.
 - `#1646` added preview-only Simplified Chinese dashboard, learning-path, chapter-card, and progress-card labels while keeping `zh-Hans` blocked.
 - `#1648` added preview-only Simplified Chinese legal/compliance, privacy/local-storage, monetization/paywall, and ad-removal labels while keeping `zh-Hans` blocked.
-- This branch adds preview-only Simplified Chinese onboarding, about-test, support, sources, and search route copy while keeping `zh-Hans` blocked.
+- `#1649` added preview-only Simplified Chinese onboarding, about-test, support, sources, and search route copy while keeping `zh-Hans` blocked.
+- This branch adds preview-only Somali settings, language-picker, home/practice, and feedback copy in `lib/localization/soUiPreview.ts` while keeping `so` blocked.
 - `#1611` summarized phase-1 readiness status.
 - `#1602`, `#1603`, `#1606`, `#1607`, and `#1608` closed the remaining
   phase-1 glossary/audit workspaces for Polish, Tigrinya, Traditional Chinese,
@@ -100,9 +101,9 @@ Corpus-only workspaces outside the runtime picker:
 
 ## Recommended next round
 
-After the preview-only `zh-Hans` high-frequency route slice, continue with implementation planning for wiring preview copy into app code behind a non-selectable review mode, or begin the same preview-only app UI treatment for the next priority language.
+After the preview-only Somali settings/core-study slice, continue the Somali app UI treatment before any release enablement:
 
-1. Do not make `zh-Hans` selectable until full UI, question content, native review, and CJK runtime checks are complete.
-2. If wiring preview copy, keep it behind explicit preview/test hooks rather than `AppLanguage`.
+1. Add preview-only Somali copy for mock-exam, mistakes, dashboard, and learning/chapter-card surfaces.
+2. Keep `so.available=false`, `uiStrings=not_started`, and `releaseGate=blocked` until full UI/content/native/accessibility blockers are closed.
 3. Add targeted tests proving fallback/blocking still works and the translated slice avoids pass/passport outcome promises.
 4. PR and merge the slice before moving to question content or another language.
