@@ -42,7 +42,9 @@ type PremiumBannerCopy = {
 
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
-    body: (price) =>
+    bodyActive:
+      'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen.',
+    bodyIdle: (price) =>
       `Hela frågebanken och alla 13 ämnen ingår gratis. Betala ${price} en gång för att ta bort annonser från studieskärmar; provläget är redan annonsfritt.`,
     buyAccessibilityHint:
       'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
@@ -71,7 +73,9 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     titleIdle: 'Ta bort annonser',
   },
   en: {
-    body: (price) =>
+    bodyActive:
+      'Purchase confirmed. Study ads are disabled on this device, and Restore stays available if this store account needs to be checked again.',
+    bodyIdle: (price) =>
       `The full question bank and all 13 topics are free. Pay ${price} once to remove ads from study screens; exams stay ad-free.`,
     buyAccessibilityHint:
       'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
