@@ -9,8 +9,9 @@ const repoRoot = path.resolve(__dirname, '..');
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-settings-store'],
+    ['scripts/validate-content.js', '--focus-settings-route-copy'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
@@ -38,6 +39,12 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
   assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
+  assert.match(source, /\$\{count\} repetitionsdagar/);
+  assert.match(source, /\$\{count\} repetitionskort/);
+  assert.match(source, /Studiesvit och svitskydd ingår/);
+  assert.match(source, /\$\{count\} FSRS review days/);
+  assert.match(source, /\$\{count\} FSRS review cards/);
+  assert.doesNotMatch(source, /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
@@ -66,8 +73,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-store');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -97,8 +103,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-store');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -125,8 +130,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-store');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -136,6 +140,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /settings route language buttons must choose visible labels from settings language/,
+  );
+});
+
+test('settings route copy parity rejects Swedish import-summary scheduler jargon', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('\${count} repetitionsdagar', '\${count} dagar med FSRS-repetition')
+      .replace('\${count} repetitionskort', '\${count} FSRS-repetitionskort')
+      .replace('Studiesvit och svitskydd ingår', 'Studiesvit och frysstatus ingår');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route Swedish import summary copy must hide scheduler jargon/,
   );
 });
 
@@ -158,8 +195,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-store');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },

@@ -45,6 +45,18 @@ test('npm test keeps selector routing in the project dispatcher', () => {
   assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
 });
 
+test('question report link parity runs through its focused validator path', () => {
+  const pkg = readPackageJson();
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-report-link-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(pkg.scripts['test:content'], /tests\/content-question-report-link-parity\.test\.js/);
+  assert.match(source, /--focus-question-report-link-parity/);
+  assert.match(source, /process\.argv\.push\('--focus-question-report-link-parity'\)/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -89,6 +101,33 @@ test('package npm test selector enters the dispatcher before running suites', ()
   }
 });
 
+test('answer shuffle parity uses the focused content validator path', () => {
+  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
+  const parityTest = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-answer-shuffle-parity.test.js'),
+    'utf8',
+  );
+  const focusBlockStart = validator.indexOf(
+    "process.argv.includes('--focus-answer-shuffle-parity')",
+  );
+  const focusBlockEnd =
+    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
+  const focusBlock =
+    focusBlockStart === -1 || focusBlockEnd === -1
+      ? ''
+      : validator.slice(focusBlockStart, focusBlockEnd);
+  const focusFlagMatches = parityTest.match(/--focus-answer-shuffle-parity/g) || [];
+
+  assert.notEqual(focusBlockStart, -1, 'validate-content needs the answer-shuffle focus flag');
+  assert.match(focusBlock, /validateAnswerShuffleDistributionParity\(\);/);
+  assert.match(focusBlock, /answerShuffleDistributionParityValidated/);
+  assert.match(focusBlock, /publishedQuestions/);
+  assert.ok(
+    focusFlagMatches.length >= 3,
+    'positive and mutation answer-shuffle checks should use the focused validator',
+  );
+});
+
 test('answer feedback focused content validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,
@@ -112,6 +151,50 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
+test('exam submission finality focused validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused exam submission validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.examSubmissionFinalityParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'progressQuestionSchemaParityValidated'),
+    false,
+  );
+});
+
+test('UHR reference card focused content validation runs only its accessibility summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-uhr-reference-card-accessibility'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused UHR reference validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 15);
+  assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
+    false,
+  );
+});
 test('unsupported npm test selectors fail before running any suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
   const npmLog = path.join(tmpDir, 'npm.log');
