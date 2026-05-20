@@ -19,16 +19,15 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 36);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 48);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
-  assert.match(source, /getBadgeTitle\(badge, language\)/);
-  assert.doesNotMatch(source, /localizedBadgeTitles/);
-  assert.doesNotMatch(source, /badge\.title/);
+  assert.match(source, /const localizedBadgeTitles: Record<AppLanguage, Record<string, string>>/);
   assert.match(source, /const copy = profileCopy\[language\]/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Progress without an account/);
+  assert.match(source, /Första övningen/);
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
@@ -40,9 +39,11 @@ test('profile route shell copy stays keyed by the settings language', () => {
     /<MetricCard label=\{copy\.dayStreakMetric\} value=\{currentStreak\} helper=\{dayStreakHelper\}/,
   );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
+  assert.match(source, /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\)/);
+  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+  assert.match(source, /\{copy\.settingsShortcutHelper\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
-  assert.match(source, /accessibilityLabel=\{copy\.studySetupCtaAccessibilityLabel\}/);
-  assert.match(source, /\{copy\.studySetupCta\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /href="\/settings"/);
 });
 
@@ -103,7 +104,7 @@ require('./scripts/validate-content.js');
   assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
 });
 
-test('profile route copy parity rejects English-only badge fallback drift', () => {
+test('profile route copy parity rejects badge-title localization drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -116,10 +117,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        'getBadgeTitle(badge, language)',
-        "language === 'en' ? badge.titleEn : badge.titleEn",
-      );
+      .replace("first_practice: 'Första övningen'", "first_practice: 'First practice'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -130,8 +128,5 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /profile badge summary must render titles from the bilingual badge catalog/,
-  );
+  assert.match(`${result.stdout}\n${result.stderr}`, /profile route is missing sv copy/);
 });

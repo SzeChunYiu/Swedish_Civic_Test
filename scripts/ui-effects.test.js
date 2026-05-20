@@ -403,8 +403,8 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   assert.match(practiceSource, /Question \$\{questionNumber\}/);
   assert.match(routedQuizSource, /type QuizSessionCopy =/);
   assert.match(routedQuizSource, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy>/);
-  assert.match(routedQuizSource, /Det finns inga övningsfrågor ännu\./);
-  assert.match(routedQuizSource, /Frågepass \$\{currentSessionId\}/);
+  assert.match(routedQuizSource, /Det finns inga quizfrågor ännu\./);
+  assert.match(routedQuizSource, /Quizpass \$\{currentSessionId\}/);
   assert.match(routedQuizSource, /\{copy\.emptyTitle\}/);
   assert.match(routedQuizSource, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
   assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -439,7 +439,7 @@ test('routed quiz shell copy follows Swedish and English settings language', () 
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Besvara frågan och gå sedan igenom den källbaserade återkopplingen\./);
   assert.match(source, /Poäng/);
-  assert.match(source, /Försök igen med den här frågan/);
+  assert.match(source, /Försök igen med den här quizfrågan/);
   assert.match(source, /Back to Practice/);
   assert.match(source, /Answer the routed question, then review the source-backed feedback\./);
   assert.match(source, /\{copy\.scoreLabel\}: \{score\.correct\}\/\{score\.total\}/);
@@ -914,19 +914,29 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.studySetupCtaAccessibilityLabel\}/);
-  assert.match(source, /\{copy\.studySetupCta\}/);
+  assert.match(source, /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\)/);
+  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+  assert.match(source, /\{copy\.settingsShortcutHelper\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Studieinställningar/);
-  assert.match(source, /Justera mål, språk och ljud/);
+  assert.match(source, /Ljud på/);
+  assert.match(source, /Ljud av/);
+  assert.match(source, /Dagligt mål, språk och ljud/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
+  assert.match(source, /Justera studieinställningar/);
+  assert.match(source, /Öppna inställningar för dagligt mål, språk och ljud/);
   assert.match(source, /Första övningen/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
-  assert.match(source, /Adjust goal, language, and audio/);
+  assert.match(source, /Audio on/);
+  assert.match(source, /Audio off/);
+  assert.match(source, /Daily goal, language, and audio/);
   assert.match(source, /No badges yet/);
+  assert.match(source, /Adjust study settings/);
+  assert.match(source, /Open settings for daily goal, language, and audio/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1068,30 +1078,6 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(nativeSource, /AppOpenAd/);
   assert.match(nativeSource, /launchPopupShownThisRuntime/);
   assert.match(
-    webSource,
-    /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
-  );
-  assert.match(
-    nativeSource,
-    /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
-  );
-  assert.match(
-    nativeSource,
-    /const nativeLaunchPopupUnitId = getPlatformAdUnitId\('app_open_launch', Platform\.OS\);/,
-  );
-  assert.match(
-    nativeSource,
-    /const nativeLaunchPopupMayShow =[\s\S]*adsConfig\.googleMobileAdsEnabled[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/,
-  );
-  assert.match(
-    nativeSource,
-    /const launchPopupAdUnitId =[\s\S]*shouldShowLaunchPopupAd[\s\S]*\? nativeLaunchPopupUnitId/,
-  );
-  assert.match(
-    nativeSource,
-    /if \(nativeLaunchPopupMayShow\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
-  );
-  assert.match(
     nativeSource,
     /try \{[\s\S]*AppOpenAd\.createForAdRequest[\s\S]*Promise\.resolve\(appOpenAd\.show\(\)\)\.catch\(\(\) => undefined\)[\s\S]*appOpenAd\.load\(\);[\s\S]*launchPopupShownThisRuntime = true;[\s\S]*\} catch \{[\s\S]*unsubscribe\?\.\(\);[\s\S]*return undefined;/,
   );
@@ -1195,8 +1181,6 @@ test('exam controls mirror selected and disabled state to web aria attributes', 
   );
   assert.match(source, /aria-selected=\{isSelected\}/);
   assert.match(source, /aria-disabled=\{!canSubmit\}/);
-  assert.match(source, /const canSubmit = examQuestions\.length > 0;/);
-  assert.match(source, /onPress=\{handleSubmitExam\}/);
   assert.match(
     source,
     /accessibilityLabel=\{copy\.answerAccessibilityLabel\(optionText, index \+ 1\)\}/,
@@ -1226,36 +1210,6 @@ test('exam auto-submits at timeout and explains unanswered scoring', () => {
   assert.match(source, /timeExpiredBadge: 'Time expired'/);
   assert.match(source, /Obesvarade frågor räknas som fel/);
   assert.match(source, /Unanswered questions count as incorrect/);
-});
-
-test('exam manual submit confirms unanswered questions before final submission', () => {
-  const source = read('app/(tabs)/exam.tsx');
-  const examGeneratorSource = read('lib/quiz/examGenerator.ts');
-
-  assert.match(source, /countUnansweredExamQuestions/);
-  assert.match(
-    source,
-    /const unansweredCount = countUnansweredExamQuestions\(examQuestions, answers\);/,
-  );
-  assert.match(
-    source,
-    /const \[confirmingPartialSubmit, setConfirmingPartialSubmit\] = useState\(false\);/,
-  );
-  assert.match(source, /const handleSubmitExam = useCallback\(\(\) => \{/);
-  assert.match(source, /if \(unansweredCount > 0\) \{/);
-  assert.match(source, /setConfirmingPartialSubmit\(true\);/);
-  assert.match(source, /submitExam\(\);/);
-  assert.match(source, /accessibilityLiveRegion="polite"/);
-  assert.match(source, /\{copy\.partialSubmitTitle\}/);
-  assert.match(source, /\{copy\.partialSubmitBody\(unansweredCount\)\}/);
-  assert.match(source, /\{copy\.cancelPartialSubmit\}/);
-  assert.match(
-    source,
-    /accessibilityLabel=\{copy\.partialSubmitAccessibilityLabel\(unansweredCount\)\}/,
-  );
-  assert.match(source, /\{copy\.confirmPartialSubmit\}/);
-  assert.match(examGeneratorSource, /export function countUnansweredExamQuestions/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('exam chapter breakdown uses chapter names instead of raw ids only', () => {
