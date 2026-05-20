@@ -3,6 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
+const FAVICON_SOURCE = path.resolve(__dirname, '../assets/favicon.svg');
+const FAVICON_FILE_NAME = 'favicon.svg';
+const FAVICON_LINK = `<link href="${FAVICON_FILE_NAME}" rel="icon" type="image/svg+xml" />`;
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -100,12 +103,21 @@ function createRuntimeLoader(bundlePath) {
   ].join('\n');
 }
 
-function rewriteHtml(html) {
-  if (html.includes(HTML_LOADER_MARKER)) {
+function ensureFaviconLink(html) {
+  if (new RegExp(`<link[^>]+href=["']${FAVICON_FILE_NAME}["'][^>]+rel=["']icon["']`).test(html)) {
     return html;
   }
 
-  return html.replace(
+  return html.replace('</head>', `    ${FAVICON_LINK}\n  </head>`);
+}
+
+function rewriteHtml(html) {
+  const htmlWithFavicon = ensureFaviconLink(html);
+  if (htmlWithFavicon.includes(HTML_LOADER_MARKER)) {
+    return htmlWithFavicon;
+  }
+
+  return htmlWithFavicon.replace(
     /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
     (_match, bundlePath) => createRuntimeLoader(bundlePath),
   );
@@ -118,7 +130,9 @@ function rewriteRootRelativeBundlePaths(source) {
 function prepare(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
+  const faviconPath = path.join(outputDir, FAVICON_FILE_NAME);
   assertFile(indexPath);
+  assertFile(FAVICON_SOURCE);
 
   const originalIndex = fs.readFileSync(indexPath, 'utf8');
   const preparedIndex = rewriteHtml(originalIndex);
@@ -128,6 +142,7 @@ function prepare(outputDir) {
 
   fs.writeFileSync(indexPath, preparedIndex);
   fs.writeFileSync(fallbackPath, preparedIndex);
+  fs.copyFileSync(FAVICON_SOURCE, faviconPath);
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
   for (const jsFile of jsFiles) {
@@ -142,8 +157,10 @@ function prepare(outputDir) {
 function check(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
+  const faviconPath = path.join(outputDir, FAVICON_FILE_NAME);
   assertFile(indexPath);
   assertFile(fallbackPath);
+  assertFile(faviconPath);
 
   const index = fs.readFileSync(indexPath, 'utf8');
   const fallback = fs.readFileSync(fallbackPath, 'utf8');
@@ -152,6 +169,9 @@ function check(outputDir) {
   }
   if (!index.includes(HTML_LOADER_MARKER)) {
     throw new Error('index.html is missing the web export runtime loader');
+  }
+  if (!index.includes(FAVICON_LINK)) {
+    throw new Error('index.html is missing the local favicon link');
   }
   if (/src="\/_expo\//.test(index) || /href="\/_expo\//.test(index)) {
     throw new Error('index.html still contains root-relative Expo bundle URLs');
@@ -192,6 +212,7 @@ if (require.main === module) {
 module.exports = {
   check,
   prepare,
+  ensureFaviconLink,
   rewriteHtml,
   rewriteRootRelativeBundlePaths,
 };

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Swedish Civic Test">
+  <rect width="64" height="64" rx="14" fill="#006AA7" />
+  <rect x="18" width="8" height="64" fill="#FECC00" />
+  <rect y="28" width="64" height="8" fill="#FECC00" />
+  <circle cx="45" cy="19" r="7" fill="#F5F7FA" />
+  <path
+    d="M38 43c4-7 12-7 16 0"
+    fill="none"
+    stroke="#F5F7FA"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+</svg>
