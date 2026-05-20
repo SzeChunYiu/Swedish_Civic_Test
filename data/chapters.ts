@@ -258,7 +258,7 @@ export const chapters: Chapter[] = [
       tr: 'İnsan hakları, toplumsal cinsiyet eşitliği, çocuk hakları, azınlık hakları ve ayrımcılık.',
       uk: 'Права людини, гендерна рівність, права дітей, права меншин та дискримінація.',
     },
-    questionCount: 55,
+    questionCount: 80,
   },
   {
     id: 'ch08',
