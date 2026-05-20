@@ -4684,6 +4684,34 @@ function findQuestionPoliticalPartyOptionShapeIssue(question) {
   return null;
 }
 
+function isChristmasEveOptionShapeQuestion(question) {
+  const tags = question.tags || [];
+  const promptText = [question.questionSv, question.questionEn].join(' ');
+  return (
+    question.type === 'single_choice' &&
+    tags.includes('christmas-eve') &&
+    /\bjulafton\b/i.test(promptText) &&
+    /\bChristmas Eve\b/i.test(promptText)
+  );
+}
+
+function findQuestionChristmasEveOptionShapeIssue(question) {
+  if (!isChristmasEveOptionShapeQuestion(question) || !Array.isArray(question.options)) {
+    return null;
+  }
+
+  const svOptions = question.options.map((option) => normalizeOptionText(option?.textSv));
+  const enOptions = question.options.map((option) => normalizeOptionText(option?.textEn));
+  const svBaseVerbShape = /^(?:Samlas|Tända|Delta|Fira)\b/i;
+  const enBaseVerbShape = /^(?:Gather|Light|Take|Celebrate)\b/i;
+
+  if (svOptions.some((text) => /^Att\s+samlas\b/i.test(text))) return 'infinitive-sv-option';
+  if (enOptions.some((text) => /^To\s+gather\b/i.test(text))) return 'infinitive-en-option';
+  if (!svOptions.every((text) => svBaseVerbShape.test(text))) return 'mixed-sv-option-shape';
+  if (!enOptions.every((text) => enBaseVerbShape.test(text))) return 'mixed-en-option-shape';
+  return null;
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -7489,6 +7517,7 @@ let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
 let questionPoliticalPartyOptionShapeValidated = 0;
+let questionChristmasEveOptionShapeValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -17430,6 +17459,7 @@ if (Array.isArray(questions)) {
       const secretBallotSvPronounNaturalnessIssue =
         findQuestionSecretBallotSvPronounNaturalnessIssue(question);
       const politicalPartyOptionShapeIssue = findQuestionPoliticalPartyOptionShapeIssue(question);
+      const christmasEveOptionShapeIssue = findQuestionChristmasEveOptionShapeIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -17511,6 +17541,11 @@ if (Array.isArray(questions)) {
         fail(`${label} mixes political-party option grammar shapes`);
       } else if (isPoliticalPartyOptionShapeQuestion(question)) {
         questionPoliticalPartyOptionShapeValidated += 1;
+      }
+      if (christmasEveOptionShapeIssue) {
+        fail(`${label} mixes Christmas Eve option grammar shapes`);
+      } else if (isChristmasEveOptionShapeQuestion(question)) {
+        questionChristmasEveOptionShapeValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -17997,6 +18032,7 @@ console.log(
       questionLuciaExplanationRoleScaffoldValidated,
       questionSecretBallotSvPronounNaturalnessValidated,
       questionPoliticalPartyOptionShapeValidated,
+      questionChristmasEveOptionShapeValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
