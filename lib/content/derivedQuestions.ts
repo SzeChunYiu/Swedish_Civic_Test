@@ -1847,6 +1847,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
       answer,
     ).replace(/^Cooperation\b/, 'cooperation')}`;
 
+  match = q.match(/^What was (.+?) important for$/i);
+  if (match)
+    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(
+      /^Cooperation\b/,
+      'cooperation',
+    )}`;
+
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
     return `The goal of ${match[1]} during ${match[2]} was to ${lowerFirst(
@@ -1886,6 +1893,14 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} works for ${lowerFirst(answer)}`;
   }
 
+  match = q.match(/^What does (.+?) promote$/i);
+  if (match) {
+    if (/^Only\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} promotes only ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
+    }
+    return `${upperFirst(match[1])} promotes ${lowerFirst(answer)}`;
+  }
+
   match = q.match(/^What did (.+?) choose to do (.+)$/i);
   if (match)
     return `${upperFirst(match[1])} chose to ${lowerFirst(stripLeadingPurposeEn(answer))} ${
@@ -1909,6 +1924,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
+
+  match = q.match(/^How is (.+?) commonly celebrated in Sweden$/i);
+  if (match) {
+    const timePhrase = match[1].replace(/\s+on\s+(\d{1,2}\s+\w+)$/i, ', $1');
+    return englishCommonToDoStatement(timePhrase, answer);
+  }
 
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)

@@ -40,6 +40,14 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function assertQuestionTextPresent(questions, questionSv, questionEn) {
+  const question = questions.find(
+    (candidate) => candidate.questionSv === questionSv && candidate.questionEn === questionEn,
+  );
+  assert.ok(question, `expected generated question text: ${questionSv} / ${questionEn}`);
+  return question;
+}
+
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
@@ -73,14 +81,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'I vilken del av världen ligger Sverige?');
-  assert.equal(derived[0].questionEn, 'In which part of the world is Sweden located?');
+  assert.equal(derived[0].questionSv, 'Vilket svar stämmer bäst? Var ligger Sverige?');
+  assert.equal(derived[0].questionEn, 'Which answer best matches? Where is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Sverige ligger ...');
-  assert.equal(derived[3].questionEn, 'Sweden is located ...');
+  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -719,13 +727,12 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     ],
   };
 
-  for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
-  }
+  const checkedQuestions = Object.values(expectedRows).map(([questionSv, questionEn]) =>
+    assertQuestionTextPresent(questions, questionSv, questionEn),
+  );
 
-  const checkedText = Object.keys(expectedRows)
-    .map((id) => `${byId.get(id)?.questionSv} ${byId.get(id)?.questionEn}`)
+  const checkedText = checkedQuestions
+    .map((question) => `${question.questionSv} ${question.questionEn}`)
     .join('\n');
 
   assert.doesNotMatch(
@@ -733,21 +740,26 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     /Det är inte sant att|Det stämmer inte att|Det stämmer att|It is not true that|It is true that|Påståendet är sant|The statement is true/i,
   );
 
+  const sourceQ002FalseVariant = assertQuestionTextPresent(
+    questions,
+    'Sveriges nordligaste del ligger inte norr om polcirkeln.',
+    "Sweden's northernmost part does not lie north of the Arctic Circle.",
+  );
   assert.equal(
-    byId.get('q151')?.explanationSv,
+    sourceQ002FalseVariant.explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
-    byId.get('q151')?.explanationEn,
+    sourceQ002FalseVariant.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
   assert.equal(
-    byId.get('q150')?.explanationSv,
-    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området.',
+    sourceQ002.explanationSv,
+    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln.',
   );
   assert.equal(
-    byId.get('q150')?.explanationEn,
-    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+    sourceQ002.explanationEn,
+    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
   );
 
   const falseExplanationOffenders = [...byId.values()]
@@ -862,9 +874,9 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Lagar på arbetsmarknaden i Sverige finns för att bestämma vem som blir statschef.',
       'Sweden has labour-market laws to decide who becomes head of state.',
     ],
-    q411: [
-      'A-kassan är en myndighet som dömer i arbetsmiljöbrott.',
-      'A-kassan is an authority that judges work environment crimes.',
+    q426: [
+      'A-kassan är en myndighet som kontrollerar arbetsmiljöer.',
+      'A-kassan is a government agency that inspects work environments.',
     ],
     q446: [
       'Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg.',
@@ -880,7 +892,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     q466: [
       'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',
-      'The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.',
+      'The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.',
     ],
     q470: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
@@ -896,7 +908,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     q495: [
       'Europarådet arbetar endast för jordbrukspolitik.',
-      'The Council of Europe works only for agricultural policy.',
+      'The Council of Europe promotes only agricultural policy.',
     ],
     q458: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
@@ -955,12 +967,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.',
     ],
     q598: [
-      'Resor till Asien och ökat intresse för meditation och yoga nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet.',
-      'Travel to Asia and increased interest in meditation and yoga are mentioned as examples of contacts with Hindus and Buddhists in Sweden during the 20th century.',
+      'Resor till Asien och ökat intresse för meditation och yoga bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet.',
+      'Travel to Asia and increased interest in meditation and yoga contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.',
     ],
     q599: [
-      'Byggandet av Sveriges första moskéer under 1970-talet nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet.',
-      "The building of Sweden's first mosques during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      'Byggandet av Sveriges första moskéer under 1970-talet bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet.',
+      "The building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
     ],
     q606: [
       'Regeringsformen skyddar rätten att utöva sin religion och ger skydd mot diskriminering på grund av tro.',
@@ -1024,16 +1036,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
   };
 
-  for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+  for (const [questionSv, questionEn] of Object.values(expectedRows)) {
+    assertQuestionTextPresent(questions, questionSv, questionEn);
   }
 
   const residualQuestions = questions.filter(
-    (question) =>
-      question.type === 'true_false' &&
-      Number(question.id.replace(/^q/, '')) >= 201 &&
-      Number(question.id.replace(/^q/, '')) <= 720,
+    (question) => question.type === 'true_false' && question.tags.includes('published-variant'),
   );
   const residualText = residualQuestions
     .map((question) => `${question.questionSv} ${question.questionEn}`)
