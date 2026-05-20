@@ -2484,6 +2484,49 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects authored explanation answer-option judgement wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q001'",
+        "    ? {",
+        "        ...question,",
+        "        explanationSv: 'Rätt svar är att Sverige ligger i norra Europa; de andra alternativen är fel.',",
+        "        explanationEn: 'The correct answer is that Sweden is in northern Europe; the other options are incorrect.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 uses answer-option judgement wording in its explanation/,
+  );
+});
+
 test('published question schema rejects generated true-answer explanation meta wording', () => {
   const result = spawnSync(
     process.execPath,

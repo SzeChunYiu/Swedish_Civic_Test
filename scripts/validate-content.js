@@ -444,6 +444,18 @@ const AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS = [
   /\b(?:True|False)\s+is\s+correct\b/i,
   /\bwhile False\b/i,
 ];
+const AUTHORED_EXPLANATION_OPTION_JUDGEMENT_PATTERNS = [
+  /\bRätt svar är\b/i,
+  /\bThe correct answer is\b/i,
+  /\balternativen\b[^.?!;]*(?:är\s+)?(?:därför\s+)?fel\b/i,
+  /\bde andra alternativen\b[^.?!;]*(?:fel|inkorrekta)\b/i,
+  /\bvilket gör de andra alternativen\b[^.?!;]*(?:fel|inkorrekta)\b/i,
+  /\bthe other (?:options|alternatives)\b[^.?!;]*(?:wrong|incorrect)\b/i,
+  /\bother alternatives\b[^.?!;]*(?:wrong|incorrect)\b/i,
+  /\balternatives\b[^.?!;]*(?:are\s+)?therefore\s+incorrect\b/i,
+  /\bwrong answers\b/i,
+  /\bwrong here\b/i,
+];
 const GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [/\bmaterialet\b/i, /\bfrom the material\b/i];
 const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Inget av alternativen stämmer',
@@ -4667,6 +4679,11 @@ function findAuthoredTrueFalseExplanationBoilerplate(question) {
   return AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findAuthoredExplanationOptionJudgementIssue(question) {
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return AUTHORED_EXPLANATION_OPTION_JUDGEMENT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionFalseAnswerExplanationMismatch(question) {
   if (
     question.type !== 'true_false' ||
@@ -7452,6 +7469,7 @@ let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
+let questionAuthoredExplanationOptionJudgementValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -17393,6 +17411,8 @@ if (Array.isArray(questions)) {
       const secretBallotSvPronounNaturalnessIssue =
         findQuestionSecretBallotSvPronounNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
+      const authoredExplanationOptionJudgementIssue =
+        findAuthoredExplanationOptionJudgementIssue(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
         findGeneratedTrueFalseExplanationMetaIssue(question);
@@ -17471,6 +17491,11 @@ if (Array.isArray(questions)) {
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
+      }
+      if (authoredExplanationOptionJudgementIssue) {
+        fail(`${label} uses answer-option judgement wording in its explanation`);
+      } else {
+        questionAuthoredExplanationOptionJudgementValidated += 1;
       }
       if (falseAnswerExplanationMismatch) {
         fail(`${label} contains a false-answer explanation that says True is correct`);
@@ -17953,6 +17978,7 @@ console.log(
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionSecretBallotSvPronounNaturalnessValidated,
+      questionAuthoredExplanationOptionJudgementValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

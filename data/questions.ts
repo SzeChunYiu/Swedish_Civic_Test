@@ -417,9 +417,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker.',
+      'Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki beskriver andra samhällsfenomen.',
     explanationEn:
-      'Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.',
+      'Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy describe other social or political concepts.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -525,9 +525,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen.',
+      'Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 används inte för antalet ledamöter i riksdagen.',
     explanationEn:
-      'The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.',
+      'The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 are not used for the number of Riksdag members.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -569,9 +569,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap.',
+      'Man måste ha fyllt 18 år för att ha rösträtt. I riksdagsval krävs också svenskt medborgarskap.',
     explanationEn:
-      'A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.',
+      'A person must have turned 18 to have the right to vote. Voting in a Riksdag election also requires Swedish citizenship.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Val och röstning',
