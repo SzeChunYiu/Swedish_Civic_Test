@@ -2,6 +2,8 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import { stopSpeech } from '../audio/speak';
+
 export type AppLanguage = 'sv' | 'en';
 
 const languageKey = 'language';
@@ -149,6 +151,9 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ language });
   },
   setAudioEnabled: (audioEnabled) => {
+    if (!audioEnabled) {
+      stopSpeech();
+    }
     settingsStorage?.set(audioEnabledKey, audioEnabled);
     set({ audioEnabled });
   },
