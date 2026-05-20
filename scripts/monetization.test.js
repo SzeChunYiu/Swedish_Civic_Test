@@ -1068,6 +1068,12 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
+  assert.match(paywallSource, /entitlementStatus/);
+  assert.match(paywallSource, /read_failed/);
+  assert.match(paywallSource, /confirmedAdsDisabled/);
+  assert.match(paywallSource, /entitlementStateUnresolved/);
+  assert.match(paywallSource, /disabled=\{activeAction !== null \|\| confirmedAdsDisabled\}/);
+  assert.match(paywallSource, /disabled=\{activeAction !== null\}/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
   assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
@@ -1075,6 +1081,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /Provläget är redan annonsfritt/);
+  assert.match(paywallSource, /Purchase state could not be checked/);
+  assert.match(paywallSource, /Köpet kunde inte kontrolleras/);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
@@ -1084,7 +1092,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(
     homeSource,
-    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*entitlementStatus=\{monetizationEntitlementStatus\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(placementCtaSource, /useRemoveAdsEntitlements/);
@@ -1115,6 +1123,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(mistakesSource, /import \{ RemoveAdsPlacementCta \}/);
   assert.match(mistakesSource, /<RemoveAdsPlacementCta \/>\s*<NativeAdCard \/>/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);
+  assert.match(profileSource, /entitlementStatus: monetizationEntitlementStatus/);
+  assert.match(profileSource, /entitlementStatus=\{monetizationEntitlementStatus\}/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });

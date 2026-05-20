@@ -15,6 +15,8 @@ const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
   adsDisabled: true,
 };
 
+export type RemoveAdsEntitlementStatus = 'loading' | 'ready' | 'read_failed';
+
 let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
 let sharedRemoveAdsEntitlementsVersion = 0;
@@ -57,6 +59,7 @@ export function useRemoveAdsEntitlements({
 } = {}) {
   const [entitlements, setCurrentEntitlements] = useState(initialEntitlements);
   const [entitlementsReady, setEntitlementsReady] = useState(false);
+  const [entitlementStatus, setEntitlementStatus] = useState<RemoveAdsEntitlementStatus>('loading');
   const purchaseRuntime = useMemo(
     () => runtimeOptions ?? createDefaultPurchaseRuntimeOptions(initialEntitlements.adsDisabled),
     [initialEntitlements.adsDisabled, runtimeOptions],
@@ -64,6 +67,7 @@ export function useRemoveAdsEntitlements({
   const applyEntitlements = useCallback((nextEntitlements: PremiumEntitlements) => {
     setCurrentEntitlements(nextEntitlements);
     setEntitlementsReady(true);
+    setEntitlementStatus('ready');
   }, []);
   const setEntitlements = useCallback((nextEntitlements: PremiumEntitlements) => {
     publishRemoveAdsEntitlements(nextEntitlements);
@@ -77,6 +81,7 @@ export function useRemoveAdsEntitlements({
     });
 
     setEntitlementsReady(false);
+    setEntitlementStatus('loading');
 
     if (sharedRemoveAdsEntitlements) {
       applyEntitlements(sharedRemoveAdsEntitlements);
@@ -103,6 +108,7 @@ export function useRemoveAdsEntitlements({
         } else {
           setCurrentEntitlements(AD_BLOCKED_PENDING_ENTITLEMENTS);
           setEntitlementsReady(false);
+          setEntitlementStatus('read_failed');
         }
       });
 
@@ -115,6 +121,7 @@ export function useRemoveAdsEntitlements({
   return {
     entitlements,
     entitlementsReady,
+    entitlementStatus,
     purchaseRuntime,
     setEntitlements,
   };
@@ -130,12 +137,15 @@ export function useResolvedAdEntitlements(
     }),
     [explicitEntitlements?.adsDisabled],
   );
-  const { entitlements, entitlementsReady } = useRemoveAdsEntitlements({ initialEntitlements });
+  const { entitlements, entitlementsReady, entitlementStatus } = useRemoveAdsEntitlements({
+    initialEntitlements,
+  });
 
   if (explicitEntitlements) {
     return {
       entitlements: explicitEntitlements,
       entitlementsReady: true,
+      entitlementStatus: 'ready' as const,
     };
   }
 
@@ -143,11 +153,13 @@ export function useResolvedAdEntitlements(
     return {
       entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS,
       entitlementsReady: false,
+      entitlementStatus,
     };
   }
 
   return {
     entitlements,
     entitlementsReady,
+    entitlementStatus,
   };
 }

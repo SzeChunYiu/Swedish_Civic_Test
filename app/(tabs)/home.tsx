@@ -258,6 +258,7 @@ export default function Screen() {
   const router = useRouter();
   const {
     entitlements: monetizationEntitlements,
+    entitlementStatus: monetizationEntitlementStatus,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -535,6 +536,7 @@ export default function Screen() {
 
       <PremiumBanner
         entitlements={monetizationEntitlements}
+        entitlementStatus={monetizationEntitlementStatus}
         language={language}
         onEntitlementsChange={setMonetizationEntitlements}
         runtimeOptions={purchaseRuntime}

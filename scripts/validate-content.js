@@ -1067,7 +1067,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 6;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -7034,16 +7034,22 @@ function validateRemoveAdsEntitlementHookParity() {
       'Remove Ads entitlement hook must publish persisted purchase entitlements',
     ],
     [
-      /if\s*\(\s*explicitEntitlements\s*\)\s*\{\s*return\s*\{\s*entitlements:\s*explicitEntitlements,\s*entitlementsReady:\s*true,?\s*\};\s*\}/.test(
+      /if\s*\(\s*explicitEntitlements\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*explicitEntitlements,[\s\S]*entitlementsReady:\s*true,[\s\S]*entitlementStatus:\s*'ready'\s+as\s+const,[\s\S]*\};\s*\}/.test(
         hookSource,
       ),
       'explicit ad entitlements must bypass async purchase loading as ready',
     ],
     [
-      /if\s*\(\s*!entitlementsReady\s*\)\s*\{\s*return\s*\{\s*entitlements:\s*AD_BLOCKED_PENDING_ENTITLEMENTS,\s*entitlementsReady:\s*false,?\s*\};\s*\}/.test(
+      /if\s*\(\s*!entitlementsReady\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*AD_BLOCKED_PENDING_ENTITLEMENTS,[\s\S]*entitlementsReady:\s*false,[\s\S]*entitlementStatus,[\s\S]*\};\s*\}/.test(
         hookSource,
       ),
       'unresolved purchase state must return ad-blocked pending entitlements',
+    ],
+    [
+      normalizedHookSource.includes('setCurrentEntitlements(AD_BLOCKED_PENDING_ENTITLEMENTS);') &&
+        normalizedHookSource.includes('setEntitlementsReady(false);') &&
+        normalizedHookSource.includes("setEntitlementStatus('read_failed');"),
+      'failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state',
     ],
   ];
 
