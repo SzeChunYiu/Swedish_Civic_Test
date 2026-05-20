@@ -96,8 +96,34 @@ function assertResultSummaryFallbackParity(source) {
   }
 }
 
+function assertResultSummaryActionSeparation(source) {
+  assert.match(source, /const actionButtons = actions\?\.length \? \(/, 'action row extraction');
+  assert.match(source, /const summarySurface = \(/, 'summary surface extraction');
+  assert.match(source, /if \(!actionButtons\) return summarySurface;/, 'no-action fast path');
+  assert.match(
+    source,
+    /<View style=\{styles\.container\}>[\s\S]*\{summarySurface\}[\s\S]*\{actionButtons\}[\s\S]*<\/View>/,
+    'actions render as a sibling of the summary surface',
+  );
+  assert.match(source, /container:\s*\{\s*gap: space\[1\]/, 'tokenized summary/action gap');
+
+  const summarySurfaceMatch = source.match(
+    /const summarySurface = \([\s\S]*?<Surface[\s\S]*?<\/Surface>\s*\);/,
+  );
+
+  assert.ok(summarySurfaceMatch, 'ResultSummary must keep a named summary surface block');
+  assert.doesNotMatch(
+    summarySurfaceMatch[0],
+    /<Button\b/,
+    'labelled summary surface must not contain action buttons',
+  );
+}
+
 test('ResultSummary fallback labels follow the selected settings language', () => {
-  assertResultSummaryFallbackParity(readSource());
+  const source = readSource();
+
+  assertResultSummaryFallbackParity(source);
+  assertResultSummaryActionSeparation(source);
 });
 
 test('ResultSummary fallback parity rejects Swedish copy drift', () => {
@@ -113,10 +139,25 @@ test('ResultSummary fallback parity rejects Swedish copy drift', () => {
 });
 
 test('ResultSummary fallback parity rejects nested progress language drift', () => {
-  const mutatedSource = readSource().replace('        languageOverride={language}\n', '');
+  const mutatedSource = readSource().replace(
+    '        languageOverride={language}\n        progress={percent / 100}\n',
+    '        progress={percent / 100}\n',
+  );
 
   assert.throws(
     () => assertResultSummaryFallbackParity(mutatedSource),
     /nested progress language forwarding/,
+  );
+});
+
+test('ResultSummary action separation rejects nested action buttons', () => {
+  const mutatedSource = readSource().replace(
+    /\n    <\/Surface>\n  \);/,
+    '\n      <Button accessibilityRole="button" languageOverride={language}>Nested action</Button>\n    </Surface>\n  );',
+  );
+
+  assert.throws(
+    () => assertResultSummaryActionSeparation(mutatedSource),
+    /labelled summary surface must not contain action buttons/,
   );
 });

@@ -9,6 +9,7 @@ const ts = require('typescript');
 
 const {
   createMemoryMMKV,
+  createThrowingGetMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
@@ -90,6 +91,21 @@ test('highlights store: throwing MMKV writes keep highlight in memory and record
   assert.equal(state.persistenceWarning.storageId, 'ebook-highlights');
   assert.equal(state.persistenceWarning.key, 'ebook.highlights.v1');
   assert.match(state.persistenceWarning.errorMessage, /disk full/);
+});
+
+test('highlights store: throwing MMKV reads fall back to empty state and record warning', () => {
+  const storage = createThrowingGetMMKV('highlights read failed');
+  const { useHighlightsStore } = loadHighlightsStore({
+    'ebook-highlights': storage,
+  });
+  const state = useHighlightsStore.getState();
+
+  assert.deepEqual(state.byChapter, {});
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'ebook-highlights');
+  assert.equal(state.persistenceWarning.key, 'ebook.highlights.v1');
+  assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
 test('highlights store: successful writes persist JSON and corrupt reads still fall back', () => {
