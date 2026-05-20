@@ -687,8 +687,17 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
   ['entitlementsReady,', 'profile premium banner must read Remove Ads entitlement readiness'],
-  ['{entitlementsReady ? (', 'profile premium banner must fail closed while entitlements load'],
+  [
+    '{entitlementsReady ? (\n        <PremiumBanner',
+    'profile premium banner must fail closed while entitlements load',
+  ],
   ['language={language}', 'profile premium banner must receive the settings language'],
+  ['import { ProPaywall }', 'profile route must import the Pro tier comparison surface'],
+  ['<ProPaywall', 'profile route must render the Pro tier comparison surface'],
+  [
+    'alreadyAdFree={monetizationEntitlements.adsDisabled}',
+    'profile Pro tier comparison must distinguish existing Remove Ads owners',
+  ],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
