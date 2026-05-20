@@ -18,16 +18,19 @@ function valuesFor(locale) {
   return Object.values(loadExtras()[locale]);
 }
 
-test('Chinese i18n extras avoid pass/passport promises', () => {
+test('extra-language i18n copy avoids pass/passport promises', () => {
   const forbidden = [
     /通过测试。/,
     /拿到护照。/,
     /通過測試。/,
     /拿到護照。/,
-    /保证|保證/,
+    /اجتز الاختبار\./,
+    /احصل على الجواز\./,
+    /Imtixaanka uga gud\./,
+    /Hel baasaboorka\./,
   ];
 
-  for (const locale of ['zh-Hans', 'zh-Hant']) {
+  for (const locale of ['zh-Hans', 'zh-Hant', 'ar', 'so']) {
     const joined = valuesFor(locale).join('\n');
     for (const pattern of forbidden) {
       assert.doesNotMatch(joined, pattern, `${locale} contains unsupported outcome promise`);
@@ -49,6 +52,23 @@ test('Chinese hero and demo copy uses native study-app phrasing', () => {
   assert.equal(extras['zh-Hant']['hero.cta2'], '先試一題');
   assert.equal(extras['zh-Hant']['demo.h2'], '從一題開始。');
   assert.equal(extras['zh-Hant']['footer.t1'], '認真準備。');
+});
+
+
+
+test('Arabic and Somali hero copy uses study-oriented wording', () => {
+  const extras = loadExtras();
+
+  assert.equal(extras.ar['hero.h1a'], 'تدرّب على معرفة المجتمع السويدي.');
+  assert.equal(extras.ar['hero.h1b'], 'استعدّ بخطوات واضحة.');
+  assert.equal(extras.ar['hero.cta1'], 'ابدأ التدريب ←');
+  assert.equal(extras.ar['footer.t1'], 'استعدّ بهدوء.');
+
+  assert.equal(extras.so['hero.h1a'], 'Baro aqoonta bulshada Iswiidhan.');
+  assert.equal(extras.so['hero.h1b'], 'Isu diyaari tallaabo-tallaabo.');
+  assert.equal(extras.so['hero.cta1'], 'Bilow tababarka →');
+  assert.equal(extras.so['settings.title'], 'Dejinta');
+  assert.equal(extras.so['footer.t1'], 'Si deggan isu diyaari.');
 });
 
 test('Chinese i18n extras use CJK punctuation in prose', () => {
