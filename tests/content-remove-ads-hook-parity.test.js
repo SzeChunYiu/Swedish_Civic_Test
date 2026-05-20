@@ -111,15 +111,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-\`  defaultNativePurchaseRuntimeOptions ??= {
-    provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
-    storage: createSecureStorePurchaseStorage(),
-  };
-
-  return defaultNativePurchaseRuntimeOptions;\`,
-\`  return undefined;\`,
-      );
+      .replace('provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),', 'provider: createMockPurchaseProvider(),');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

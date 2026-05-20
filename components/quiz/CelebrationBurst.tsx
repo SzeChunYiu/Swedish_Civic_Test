@@ -67,6 +67,7 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
+    return () => progress.stopAnimation();
   }, [active, progress, reducedMotionEnabled]);
 
   if (!active) return null;

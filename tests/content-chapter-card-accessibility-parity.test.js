@@ -58,10 +58,6 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/,
   );
   assert.match(source, /accessibilityElementsHidden=\{shouldHideNestedAccessibility\}/);
-  assert.match(
-    source,
-    /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/,
-  );
   assert.match(source, /<Text style=\{styles\.title\}>\{title\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);

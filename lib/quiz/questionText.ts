@@ -19,9 +19,19 @@ const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = 
   sv: 'Fråga saknas',
   en: 'Question unavailable',
 };
-const QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE = QUESTION_DISPLAY_FALLBACKS as Partial<
-  Record<QuestionTextLanguage, string>
->;
+
+const QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE: Partial<Record<QuestionTextLanguage, string>> = {
+  ar: 'Question unavailable',
+  ckb: 'Question unavailable',
+  fa: 'Question unavailable',
+  so: 'Question unavailable',
+  ti: 'Question unavailable',
+  pl: 'Question unavailable',
+  tr: 'Question unavailable',
+  uk: 'Question unavailable',
+  'zh-Hans': 'Question unavailable',
+  'zh-Hant': 'Question unavailable',
+};
 
 const SOURCE_AUTHORITY_REPLACEMENTS = [
   {

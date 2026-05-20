@@ -8,6 +8,8 @@ import { colors, radius, shadows, space, typography } from '../../lib/theme';
  */
 export interface MetricCardProps extends Omit<ComponentProps<typeof View>, 'children' | 'style'> {
   accessibilityLabel?: string;
+  accessible?: boolean;
+  accessibilityRole?: ComponentProps<typeof View>['accessibilityRole'];
   helper?: string;
   label: string;
   style?: ComponentProps<typeof View>['style'];
