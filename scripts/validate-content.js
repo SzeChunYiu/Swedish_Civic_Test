@@ -496,11 +496,33 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Bokmärkt',
     'Ta bort bokmärket från den här frågan',
     'Bokmärk den här frågan',
+    'Starta övning med alla synliga frågor',
+    'Fortsätt genom hela frågebanken i ordning med direkt återkoppling.',
+    'Starta alla frågor',
+    'Alla frågor',
+    'Träffsäkerhet: ${accuracy} %',
+    '${title}: ${answered} av ${total} frågor besvarade, ${accuracy} % träffsäkerhet. Öva kapitlet.',
+    'Välj ett kapitel när du vill fokusera på ett område i taget.',
+    'Öva per kapitel',
+    '${answered} av ${total} frågor besvarade',
+    'Öva kapitlet',
     'Besvarade frågor: ${count}',
     'Det finns inga övningsfrågor ännu.',
+    'Övningsnav',
+    'Du har besvarat ${completed} av ${total} synliga frågor.',
+    'Starta blandad övning, ta en kort runda eller fokusera på ett kapitel.',
+    'Välj hur du vill öva',
+    'Gå till övningsprovet',
+    'Byt till tidsatt provträning när du vill testa uthållighet och tempo.',
+    'Gå till övningsprov',
+    'Övningsprov',
     'Nästa fråga',
     'Gå till nästa övningsfråga',
     'Fråga ${questionNumber}',
+    'Starta en snabb runda med ${count} frågor',
+    '${count} frågor blandade mellan kapitel, med obesvarade frågor först.',
+    'Starta snabb runda',
+    'Snabb runda',
     'Poäng',
     'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     'Försök igen',
@@ -522,11 +544,33 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Bookmarked',
     'Remove this question bookmark',
     'Bookmark this question',
+    'Start practice with all visible questions',
+    'Move through the full question bank in order with instant feedback.',
+    'Start all questions',
+    'All questions',
+    'Accuracy: ${accuracy}%',
+    '${title}: ${answered} of ${total} questions answered, ${accuracy}% accuracy. Practise this chapter.',
+    'Choose a chapter when you want to focus on one area at a time.',
+    'Practise by chapter',
+    '${answered} of ${total} questions answered',
+    'Practise chapter',
     'Completed questions: ${count}',
     'No practice questions are available yet.',
+    'Practice hub',
+    'You have answered ${completed} of ${total} visible questions.',
+    'Start mixed practice, take a short round, or focus on one chapter.',
+    'Choose how to practise',
+    'Go to the mock exam',
+    'Switch to timed exam practice when you want to test stamina and pace.',
+    'Go to mock exam',
+    'Mock exam',
     'Next question',
     'Move to the next practice question',
     'Question ${questionNumber}',
+    'Start a quick round with ${count} questions',
+    '${count} questions mixed across chapters, with unanswered questions first.',
+    'Start quick round',
+    'Quick round',
     'Score',
     'Answer, get instant feedback, then review the UHR source before moving on.',
     'Try again',
@@ -550,6 +594,8 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     'const practiceCopy: Record<AppLanguage, PracticeCopy> = {',
     'practice route copy must cover every AppLanguage value',
   ],
+  ['type PracticeScope', 'practice route must import the shared practice scope contract'],
+  ['const QUICK_ROUND_SIZE = 10;', 'practice route must define a bounded quick round size'],
   [
     'const language = useSettingsStore((state) => state.language);',
     'practice route must read language from settings store',
@@ -558,17 +604,44 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     'const copy = practiceCopy[language];',
     'practice route must select copy from settings language',
   ],
+  [
+    'const [practiceStarted, setPracticeStarted]',
+    'practice route must gate the first question behind the hub',
+  ],
   ['<Text>{copy.emptyTitle}</Text>', 'empty state must render localized copy'],
+  ['<Badge>{copy.hubBadge}</Badge>', 'practice hub badge must render localized copy'],
+  ['{copy.hubTitle}', 'practice hub title must render localized copy'],
+  [
+    '{copy.hubProgressSummary(visibleCompletedQuestionIds.length, filteredQuestions.length)}',
+    'practice hub must render localized overall progress copy',
+  ],
+  ['{copy.allPracticeCta}', 'all-practice hub action must render localized copy'],
+  ['{copy.quickRoundCta}', 'quick-round hub action must render localized copy'],
+  ['href="/exam"', 'practice hub mock exam CTA must link to the mock exam flow'],
+  ['{copy.chapterHubTitle}', 'chapter hub heading must render localized copy'],
+  ['{copy.chapterStartCta}', 'chapter practice card CTA must render localized copy'],
   ['<Badge>{copy.badge}</Badge>', 'practice badge must render localized copy'],
   ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
   ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
   [
-    '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
+    '{copy.completedQuestions(scopedCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
   ],
   [
     'getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'practice route must scope completed progress to the visible question bank',
+  ],
+  [
+    'getQuestionsForPracticeScope(',
+    'practice route must derive the selected practice bank from the hub scope',
+  ],
+  [
+    'getCompletedQuestionIdsForQuestionBank(selectedPracticeQuestions, completedQuestionIds)',
+    'practice route must scope completed progress to the selected practice bank',
+  ],
+  [
+    "onPress={() => startPractice({ type: 'chapter', chapterId: chapter.id })}",
+    'chapter card must start a chapter-scoped practice loop',
   ],
   [
     'accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}',
@@ -7103,6 +7176,7 @@ const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
 const getCompletedQuestionIdsForQuestionBank =
   practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
+const getQuestionsForPracticeScope = practiceFlowModule.getQuestionsForPracticeScope;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const getPracticeInterstitialShowKey = practiceSessionStoreModule.getPracticeInterstitialShowKey;
@@ -14305,7 +14379,8 @@ function validatePracticeFlowParity() {
   if (
     !Array.isArray(questions) ||
     typeof getPracticeQuestionForSession !== 'function' ||
-    typeof getCompletedQuestionIdsForQuestionBank !== 'function'
+    typeof getCompletedQuestionIdsForQuestionBank !== 'function' ||
+    typeof getQuestionsForPracticeScope !== 'function'
   ) {
     return;
   }
@@ -14386,8 +14461,60 @@ function validatePracticeFlowParity() {
       expectedScopedCompletedIds: [secondQuestion.id],
     },
   ];
+  const scopeQuestions = [
+    { id: 'q-scope-1a', chapterId: 'ch01' },
+    { id: 'q-scope-1b', chapterId: 'ch01' },
+    { id: 'q-scope-1c', chapterId: 'ch01' },
+    { id: 'q-scope-2a', chapterId: 'ch02' },
+    { id: 'q-scope-2b', chapterId: 'ch02' },
+    { id: 'q-scope-3a', chapterId: 'ch03' },
+    { id: 'q-scope-3b', chapterId: 'ch03' },
+    { id: 'q-scope-4a', chapterId: 'ch04' },
+    { id: 'q-scope-5a', chapterId: 'ch05' },
+  ];
+  const scopeCases = [
+    {
+      label: 'all scope preserves visible bank order',
+      completedQuestionIds: ['q-scope-1a'],
+      scope: { type: 'all' },
+      quickRoundSize: 4,
+      expectedIds: scopeQuestions.map((question) => question.id),
+    },
+    {
+      label: 'chapter scope returns only selected chapter',
+      completedQuestionIds: [],
+      scope: { type: 'chapter', chapterId: 'ch02' },
+      quickRoundSize: 4,
+      expectedIds: ['q-scope-2a', 'q-scope-2b'],
+    },
+    {
+      label: 'quick scope mixes unanswered questions by chapter',
+      completedQuestionIds: ['q-scope-1a', 'q-scope-2a'],
+      scope: { type: 'quick' },
+      quickRoundSize: 4,
+      expectedIds: ['q-scope-1b', 'q-scope-2b', 'q-scope-3a', 'q-scope-4a'],
+    },
+    {
+      label: 'quick scope fills from answered questions when unanswered is sparse',
+      completedQuestionIds: [
+        'q-scope-1a',
+        'q-scope-1b',
+        'q-scope-1c',
+        'q-scope-2a',
+        'q-scope-2b',
+        'q-scope-3a',
+        'q-scope-4a',
+        'q-scope-5a',
+      ],
+      scope: { type: 'quick' },
+      quickRoundSize: 3,
+      expectedIds: ['q-scope-3b', 'q-scope-1a', 'q-scope-2a'],
+    },
+  ];
   const expectedValidationCount =
-    cases.length + cases.filter((testCase) => testCase.expectedScopedCompletedIds).length;
+    cases.length +
+    cases.filter((testCase) => testCase.expectedScopedCompletedIds).length +
+    scopeCases.length;
 
   let valid = true;
 
@@ -14443,6 +14570,35 @@ function validatePracticeFlowParity() {
     } else if (expectedScopedCompletedIds) {
       practiceFlowCasesValidated += 1;
     }
+  });
+
+  scopeCases.forEach((testCase) => {
+    let scopedQuestions;
+    try {
+      scopedQuestions = getQuestionsForPracticeScope(
+        scopeQuestions,
+        testCase.completedQuestionIds,
+        testCase.scope,
+        testCase.quickRoundSize,
+      );
+    } catch (error) {
+      valid = false;
+      fail(`practice flow ${testCase.label} threw ${error.message}`);
+      return;
+    }
+
+    const actualIds = scopedQuestions.map((question) => question.id);
+    if (JSON.stringify(actualIds) !== JSON.stringify(testCase.expectedIds)) {
+      valid = false;
+      fail(
+        `practice flow ${testCase.label} returned ${JSON.stringify(
+          actualIds,
+        )}, expected ${JSON.stringify(testCase.expectedIds)}`,
+      );
+      return;
+    }
+
+    practiceFlowCasesValidated += 1;
   });
 
   if (valid && practiceFlowCasesValidated === expectedValidationCount) {
