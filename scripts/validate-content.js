@@ -284,6 +284,10 @@ const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
   /\bbec(?:o|a)me important for\b/i,
 ];
+const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
+  /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
+  /\bIn a Lucia procession,\s+one person is Lucia\b/i,
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4438,6 +4442,13 @@ function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
+  if (!(question.tags || []).includes('lucia-procession')) return null;
+
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -7321,6 +7332,7 @@ let questionStateWelfareCoverageSplitValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
+let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16660,6 +16672,8 @@ if (Array.isArray(questions)) {
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
+      const luciaExplanationRoleScaffoldIssue =
+        findQuestionLuciaExplanationRoleScaffoldIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const successionVatDistractorIssue = findQuestionSuccessionVatDistractorIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
@@ -16720,6 +16734,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
       } else {
         questionSaltsjobadenAgreementEnglishNaturalnessValidated += 1;
+      }
+      if (luciaExplanationRoleScaffoldIssue) {
+        fail(`${label} uses Lucia role-scaffold explanation wording`);
+      } else {
+        questionLuciaExplanationRoleScaffoldValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -17199,6 +17218,7 @@ console.log(
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
+      questionLuciaExplanationRoleScaffoldValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
