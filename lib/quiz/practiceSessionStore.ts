@@ -11,6 +11,13 @@ type PracticeSessionState = {
 
 const PRACTICE_SHUFFLE_SESSION_PREFIX = 'practice-session';
 
+export function getPracticeInterstitialShowKey(
+  questionId: string,
+  shuffleSessionId: string,
+): string {
+  return `${questionId}:${shuffleSessionId}`;
+}
+
 function nextPracticeShuffleSessionId(currentSessionId: string): string {
   const match = new RegExp(`^${PRACTICE_SHUFFLE_SESSION_PREFIX}-(\\d+)$`).exec(currentSessionId);
   const currentIndex = match ? Number(match[1]) : 0;

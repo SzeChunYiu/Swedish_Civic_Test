@@ -6,13 +6,6 @@ import { Card } from '../ui/Card';
 
 export type ActivityHeatmapCopy = {
   emptyState: string;
-  legend: {
-    high: string;
-    low: string;
-    medium: string;
-    none: string;
-    title: string;
-  };
   summary: (totalAnswers: number, activeDays: number, maxDayCount: number) => string;
   subtitle: string;
   title: string;
@@ -38,12 +31,6 @@ export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
   const activeDays = bins.filter((bin) => bin.count > 0).length;
   const maxDayCount = Math.max(0, ...bins.map((bin) => bin.count));
   const accessibilityLabel = copy.summary(totalAnswers, activeDays, maxDayCount);
-  const legendItems: { label: string; style: HeatStyle }[] = [
-    { label: copy.legend.none, style: 'heatZero' },
-    { label: copy.legend.low, style: 'heatSoft' },
-    { label: copy.legend.medium, style: 'heatMedium' },
-    { label: copy.legend.high, style: 'heatStrong' },
-  ];
 
   return (
     <Card style={styles.card}>
@@ -59,36 +46,23 @@ export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
       {totalAnswers === 0 ? (
         <Text style={styles.emptyState}>{copy.emptyState}</Text>
       ) : (
-        <>
-          <View style={styles.legend}>
-            <Text style={styles.legendTitle}>{copy.legend.title}</Text>
-            <View style={styles.legendItems}>
-              {legendItems.map((item) => (
-                <View key={item.style} style={styles.legendItem}>
-                  <View style={[styles.legendSwatch, styles[item.style]]} />
-                  <Text style={styles.legendText}>{item.label}</Text>
-                </View>
-              ))}
-            </View>
+        <ScrollView
+          accessibilityLabel={accessibilityLabel}
+          accessibilityRole="summary"
+          aria-label={accessibilityLabel}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          <View style={styles.heatmap}>
+            {bins.map((bin) => (
+              <View
+                key={bin.date}
+                accessibilityLabel={`${bin.date}: ${bin.count}`}
+                style={[styles.cell, styles[heatLevel(bin.count, maxDayCount)]]}
+              />
+            ))}
           </View>
-          <ScrollView
-            accessibilityLabel={accessibilityLabel}
-            accessibilityRole="summary"
-            aria-label={accessibilityLabel}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            <View style={styles.heatmap}>
-              {bins.map((bin) => (
-                <View
-                  key={bin.date}
-                  accessibilityLabel={`${bin.date}: ${bin.count}`}
-                  style={[styles.cell, styles[heatLevel(bin.count, maxDayCount)]]}
-                />
-              ))}
-            </View>
-          </ScrollView>
-        </>
+        </ScrollView>
       )}
     </Card>
   );
@@ -120,37 +94,6 @@ const styles = StyleSheet.create({
     lineHeight: typography.caption.lineHeight,
   },
   emptyState: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  legend: {
-    gap: space[0.75],
-  },
-  legendTitle: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  legendItems: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  legendItem: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[0.5],
-  },
-  legendSwatch: {
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
-    height: space[1.5],
-    width: space[1.5],
-  },
-  legendText: {
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
