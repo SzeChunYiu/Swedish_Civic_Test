@@ -251,6 +251,26 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
 ];
+const QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS = [
+  /\bsjukförsäkring\b/i,
+  /\bföräldraförsäkring\b/i,
+  /\barbetslöshetsförsäkring\b/i,
+  /\bsickness insurance\b/i,
+  /\bparental insurance\b/i,
+  /\bunemployment insurance\b/i,
+];
+const QUESTION_Q071_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
+  /\bhögre utbildning\b/i,
+  /\bforskning\b/i,
+  /\bhigher education\b/i,
+  /\bresearch\b/i,
+];
+const QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
+  /\bhögre utbildning\b/i,
+  /\bforskning vid högskolor och universitet\b/i,
+  /\bhigher education\b/i,
+  /\bresearch at colleges and universities\b/i,
+];
 const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
@@ -4305,6 +4325,41 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionStateWelfareCoverageOverlapIssue(question) {
+  if (question.id !== 'q071' && question.id !== 'q156') return null;
+
+  const correctAnswerText = [correctOption(question).textSv, correctOption(question).textEn].join(
+    ' ',
+  );
+  const learnerText = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  if (question.id === 'q071') {
+    const missingCoverage = QUESTION_Q071_HIGHER_EDUCATION_RESEARCH_PATTERNS.find(
+      (pattern) => !pattern.test(learnerText),
+    );
+    if (missingCoverage) return missingCoverage;
+    return QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS.find((pattern) =>
+      pattern.test(learnerText),
+    );
+  }
+
+  const higherEducationDrift = QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS.find((pattern) =>
+    pattern.test(learnerText),
+  );
+  if (higherEducationDrift) return higherEducationDrift;
+
+  const missingSocialInsurance = QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS.find(
+    (pattern) => !pattern.test(correctAnswerText),
+  );
+  return missingSocialInsurance || null;
+}
+
 function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   return QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(question.questionEn),
@@ -7161,6 +7216,7 @@ let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
+let questionStateWelfareCoverageSplitValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
@@ -16440,6 +16496,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
+      const stateWelfareCoverageOverlapIssue =
+        findQuestionStateWelfareCoverageOverlapIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
@@ -16481,6 +16539,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted state-welfare English wording`);
       } else {
         questionStateWelfareEnglishNaturalnessValidated += 1;
+      }
+      if (stateWelfareCoverageOverlapIssue) {
+        fail(`${label} overlaps q071/q156 state-welfare source coverage`);
+      } else if (question.id === 'q071' || question.id === 'q156') {
+        questionStateWelfareCoverageSplitValidated += 1;
       }
       if (traditionCommonToDoEnglishNaturalnessIssue) {
         fail(`${label} uses literal common-to-do English wording`);
@@ -16958,6 +17021,7 @@ console.log(
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
+      questionStateWelfareCoverageSplitValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
