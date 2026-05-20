@@ -24,6 +24,8 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 3);
   assert.equal(summary.citizenshipTimelineDateParityValidated, true);
   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
+  assert.equal(summary.countdownBannerHomeMountRulesValidated, 2);
+  assert.equal(summary.countdownBannerHomeMountParityValidated, true);
 
   const countdownBanner = fs.readFileSync(
     path.join(repoRoot, 'components/ui/CountdownBanner.tsx'),
@@ -54,6 +56,35 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   const homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   assert.match(homeRoute, /import \{ CountdownBanner \}/);
   assert.match(homeRoute, /<CountdownBanner language=\{language\} \/>/);
+});
+
+test('validate:content rejects removing the Home countdown banner mount', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return String(contents).replace('<CountdownBanner language={language} />', '');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Home route must mount CountdownBanner with the selected language/,
+  );
 });
 
 test('countdown banner parity rejects collapsing the civic test deadline into the rules date', () => {
