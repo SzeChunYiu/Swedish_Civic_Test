@@ -1247,6 +1247,7 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['{copy.emptyPracticeLink}', 'empty practice link must render localized copy'],
 ];
 const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20, 40];
+const EXPECTED_ONBOARDING_DAILY_GOAL_OPTIONS = [10, 20, 40];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
 const EXPECTED_DAILY_GOAL_MAX = 50;
@@ -2294,6 +2295,22 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
   sv: [
     'Justera inställningar',
     'Öppna inställningar',
+    'Välj ett mjukt dagligt mål',
+    'Börja med en takt som känns lätt att hålla. Du kan ändra den när som helst.',
+    'Lugn',
+    '10 svar per dag',
+    'En liten vana när du vill komma igång utan stress.',
+    'Välj lugnt dagligt mål med 10 svar',
+    'Regelbunden',
+    '20 svar per dag',
+    'För stadiga studiepass de flesta dagar.',
+    'Välj regelbundet dagligt mål med 20 svar',
+    'Seriös',
+    '40 svar per dag',
+    'När du vill träna mer inför ett närliggande övningsprov.',
+    'Välj seriöst dagligt mål med 40 svar',
+    'Bestäm senare',
+    'Fortsätt utan att välja dagligt mål',
     'Välkommen',
     'Börja studera',
     'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
@@ -2305,6 +2322,22 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
   ],
   en: [
     'Adjust settings',
+    'Choose a gentle daily goal',
+    'Start with a pace that feels easy to keep. You can change it anytime.',
+    'Casual',
+    '10 answers per day',
+    'A small habit when you want to get started without stress.',
+    'Choose casual daily goal with 10 answers',
+    'Regular',
+    '20 answers per day',
+    'For steady study on most days.',
+    'Choose regular daily goal with 20 answers',
+    'Serious',
+    '40 answers per day',
+    'When you want extra practice before an upcoming mock exam.',
+    'Choose serious daily goal with 40 answers',
+    'Decide later',
+    'Continue without choosing a daily goal',
     'Welcome',
     'Start studying',
     'Study Swedish civic concepts with English support when needed.',
@@ -2327,13 +2360,47 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding route must read language from settings store',
   ],
   [
+    'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
+    'onboarding route must read the persisted daily goal',
+  ],
+  [
+    'const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);',
+    'onboarding route must persist daily-goal presets through settings storage',
+  ],
+  [
     'const copy = onboardingCopy[language];',
     'onboarding route must select copy from settings language',
+  ],
+  [
+    'const onboardingDailyGoalPresetValues = [10, 20, 40] as const;',
+    'onboarding route must expose the competitive daily-goal preset values',
   ],
   ['{copy.eyebrow}', 'onboarding eyebrow must render localized copy'],
   ['{copy.title}', 'onboarding title must render localized copy'],
   ['{copy.subtitle}', 'onboarding subtitle must render localized copy'],
   ['{copy.steps.map((step, index) => (', 'onboarding steps must render localized copy'],
+  [
+    'copy.dailyGoalPresets[goal]',
+    'onboarding daily-goal presets must render localized copy by preset value',
+  ],
+  [
+    'accessibilityLabel={preset.accessibilityLabel}',
+    'onboarding daily-goal presets must expose localized accessibility labels',
+  ],
+  ['aria-selected={selected}', 'onboarding daily-goal presets must expose web selected state'],
+  [
+    'accessibilityState={{ selected }}',
+    'onboarding daily-goal presets must expose native selected state',
+  ],
+  [
+    'onPress={() => setDailyGoalAnswers(goal)}',
+    'onboarding daily-goal presets must persist through setDailyGoalAnswers',
+  ],
+  [
+    'accessibilityLabel={copy.decideLaterAccessibilityLabel}',
+    'onboarding decide-later link must expose localized accessibility copy',
+  ],
+  ['{copy.decideLater}', 'onboarding decide-later link must render localized copy'],
   [
     'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
     'onboarding start link must expose localized accessibility copy',
@@ -2423,7 +2490,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
 const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -12154,6 +12221,8 @@ function validateSettingsDailyGoalParity() {
   let valid = true;
   let settingsStore = '';
   let settingsRoute = '';
+  let onboardingRoute = '';
+  let homeRoute = '';
 
   function reject(message) {
     valid = false;
@@ -12163,6 +12232,8 @@ function validateSettingsDailyGoalParity() {
   try {
     settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
     settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+    onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   } catch (error) {
     reject(`settings daily-goal parity source could not be read: ${error.message}`);
     return;
@@ -12257,6 +12328,62 @@ function validateSettingsDailyGoalParity() {
   }
   if (!settingsRoute.includes('${answerCount} answers per day')) {
     reject('app/settings.tsx must render the persisted daily-goal count');
+  }
+
+  const onboardingGoalOptionMatch = onboardingRoute.match(
+    /const onboardingDailyGoalPresetValues = \[([^\]]+)\] as const;/,
+  );
+  const onboardingGoalOptions = onboardingGoalOptionMatch
+    ? onboardingGoalOptionMatch[1].split(',').map((value) => Number(value.trim()))
+    : [];
+  if (!arrayEquals(onboardingGoalOptions, EXPECTED_ONBOARDING_DAILY_GOAL_OPTIONS)) {
+    reject(
+      `app/onboarding.tsx daily goal presets are ${JSON.stringify(onboardingGoalOptions)}, expected ${JSON.stringify(
+        EXPECTED_ONBOARDING_DAILY_GOAL_OPTIONS,
+      )}`,
+    );
+  }
+  onboardingGoalOptions.forEach((goal) => {
+    if (!seenGoals.has(goal)) {
+      reject(`onboarding daily goal preset ${goal} must also exist in Settings`);
+    }
+  });
+  if (
+    !onboardingRoute.includes(
+      'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
+    )
+  ) {
+    reject('app/onboarding.tsx must read the persisted daily goal from settings storage');
+  }
+  if (
+    !onboardingRoute.includes(
+      'const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);',
+    )
+  ) {
+    reject('app/onboarding.tsx must use setDailyGoalAnswers from settings storage');
+  }
+  if (!onboardingRoute.includes('onPress={() => setDailyGoalAnswers(goal)}')) {
+    reject('onboarding daily goal presets must persist through setDailyGoalAnswers');
+  }
+  if (!onboardingRoute.includes('aria-selected={selected}')) {
+    reject('onboarding daily goal presets must mirror selected state to aria-selected');
+  }
+  if (!onboardingRoute.includes('accessibilityState={{ selected }}')) {
+    reject('onboarding daily goal presets must expose selected accessibility state');
+  }
+  if (
+    /streak survival|save your streak|lose your streak|rädda din svit|förlora din svit/i.test(
+      onboardingRoute,
+    )
+  ) {
+    reject('onboarding daily goal copy must stay low-pressure and avoid streak-survival framing');
+  }
+  if (
+    !homeRoute.includes(
+      'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
+    )
+  ) {
+    reject('Home must read the same persisted daily goal that onboarding writes');
   }
 
   if (valid && settingsDailyGoalOptionsValidated === EXPECTED_DAILY_GOAL_OPTIONS.length) {
