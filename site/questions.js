@@ -3139,31 +3139,31 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which statement about tax and VAT is correct?",
-      "sv": "Vilket påstående om skatt och moms stämmer?"
+      "en": "Who pays tax in Sweden?",
+      "sv": "Vilka betalar skatt i Sverige?"
     },
     "opts": [
       {
-        "en": "Companies also pay tax, and VAT is paid when buying goods and services",
-        "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster"
+        "en": "Both people who work and companies pay tax in Sweden",
+        "sv": "Både personer som arbetar och företag betalar skatt i Sverige"
       },
       {
-        "en": "Only people who work pay tax",
-        "sv": "Bara personer som arbetar betalar skatt"
+        "en": "Only people who work pay tax in Sweden",
+        "sv": "Bara personer som arbetar betalar skatt i Sverige"
       },
       {
-        "en": "VAT is a payroll tax paid only by employers",
-        "sv": "Moms är en skatt på lön som bara arbetsgivare betalar"
+        "en": "Only companies pay tax in Sweden",
+        "sv": "Bara företag betalar skatt i Sverige"
       },
       {
-        "en": "Welfare is financed only by private fees",
-        "sv": "Välfärden finansieras bara av privata avgifter"
+        "en": "Neither people who work nor companies pay tax in Sweden",
+        "sv": "Varken personer som arbetar eller företag betalar skatt i Sverige"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3175,8 +3175,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
-      "companies"
+      "companies",
+      "tax-liability"
     ]
   },
   {
@@ -19486,31 +19486,31 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about tax and VAT is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om skatt och moms stämmer?"
+      "en": "Which answer best matches? Who pays tax in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilka betalar skatt i Sverige?"
     },
     "opts": [
       {
-        "en": "Companies also pay tax, and VAT is paid when buying goods and services",
-        "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster"
+        "en": "Both people who work and companies pay tax in Sweden",
+        "sv": "Både personer som arbetar och företag betalar skatt i Sverige"
       },
       {
-        "en": "Only people who work pay tax",
-        "sv": "Bara personer som arbetar betalar skatt"
+        "en": "Only people who work pay tax in Sweden",
+        "sv": "Bara personer som arbetar betalar skatt i Sverige"
       },
       {
-        "en": "VAT is a payroll tax paid only by employers",
-        "sv": "Moms är en skatt på lön som bara arbetsgivare betalar"
+        "en": "Only companies pay tax in Sweden",
+        "sv": "Bara företag betalar skatt i Sverige"
       },
       {
-        "en": "Welfare is financed only by private fees",
-        "sv": "Välfärden finansieras bara av privata avgifter"
+        "en": "Neither people who work nor companies pay tax in Sweden",
+        "sv": "Varken personer som arbetar eller företag betalar skatt i Sverige"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19522,8 +19522,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "section-practice"
     ]
@@ -19534,8 +19534,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Companies also pay tax, and VAT is paid when buying goods and services.",
-      "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster."
+      "en": "Both people who work and companies pay tax in Sweden.",
+      "sv": "Både personer som arbetar och företag betalar skatt i Sverige."
     },
     "opts": [
       {
@@ -19549,8 +19549,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19562,8 +19562,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "true-false"
     ]
@@ -19574,8 +19574,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Only people who work pay tax.",
-      "sv": "Bara personer som arbetar betalar skatt."
+      "en": "Only people who work pay tax in Sweden.",
+      "sv": "Bara personer som arbetar betalar skatt i Sverige."
     },
     "opts": [
       {
@@ -19589,8 +19589,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19602,8 +19602,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "false-statement"
     ]
@@ -19614,31 +19614,31 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement about tax and VAT is correct?",
-      "sv": "Välj rätt alternativ: Vilket påstående om skatt och moms stämmer?"
+      "en": "Choose the correct option: Who pays tax in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka betalar skatt i Sverige?"
     },
     "opts": [
       {
-        "en": "Companies also pay tax, and VAT is paid when buying goods and services",
-        "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster"
+        "en": "Both people who work and companies pay tax in Sweden",
+        "sv": "Både personer som arbetar och företag betalar skatt i Sverige"
       },
       {
-        "en": "Only people who work pay tax",
-        "sv": "Bara personer som arbetar betalar skatt"
+        "en": "Only people who work pay tax in Sweden",
+        "sv": "Bara personer som arbetar betalar skatt i Sverige"
       },
       {
-        "en": "VAT is a payroll tax paid only by employers",
-        "sv": "Moms är en skatt på lön som bara arbetsgivare betalar"
+        "en": "Only companies pay tax in Sweden",
+        "sv": "Bara företag betalar skatt i Sverige"
       },
       {
-        "en": "Welfare is financed only by private fees",
-        "sv": "Välfärden finansieras bara av privata avgifter"
+        "en": "Neither people who work nor companies pay tax in Sweden",
+        "sv": "Varken personer som arbetar eller företag betalar skatt i Sverige"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19650,8 +19650,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "judgement"
     ]
