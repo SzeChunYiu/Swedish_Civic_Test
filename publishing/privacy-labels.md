@@ -63,7 +63,7 @@ release posture.
 - Confirm ATT prompt wording from `app.json` appears in the native build.
 - Confirm UMP consent appears in regions where consent is required.
 - Confirm Remove Ads purchase and restore use
-  `com.billyyiu.swedishcivictest.removeads` and the displayed price remains
+  `com.billyyiu.almostswedish.removeads` and the displayed price remains
   **29 SEK**.
 - Update this file before submission if analytics, crash reporting, accounts,
   remote content, or support collection is enabled.

@@ -13,6 +13,10 @@ function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
 
+const appStoreIdentitySource = read('lib/monetization/appStoreIdentity.ts');
+const proLifetimeSource = read('lib/monetization/proLifetimePurchase.ts');
+const proLifetimeProductId = 'com.billyyiu.almostswedish.prolifetime';
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
