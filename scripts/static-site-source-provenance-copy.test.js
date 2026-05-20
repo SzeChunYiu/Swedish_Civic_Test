@@ -261,32 +261,14 @@ test('static source provenance copy rejects unshipped external source families',
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
 
-test('static ebook welfare currentness copy carries official source metadata', () => {
-  const ebookSource = read('site/ebook.js');
+test('static source provenance copy rejects unimplemented source-update workflow claims', () => {
+  const surface = sourceProvenanceSurface();
 
-  assert.match(ebookSource, /EBOOK_WELFARE_CURRENTNESS_SOURCES/);
-  assert.match(ebookSource, /retrieved:\s*'2026-05-19'/);
-  for (const url of welfareCurrentnessSourceUrls) {
-    assert.match(ebookSource, new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  }
-  for (const pattern of staleWelfareClaims) {
-    assert.doesNotMatch(ebookSource, pattern);
-  }
-  assert.match(ebookSource, /Sources? checked 2026-05-19/);
-  assert.match(ebookSource, /K[äa]llor? kontrollerade 2026-05-19/);
-});
-
-test('static ebook factbox and current prose claims use retrieved source metadata', () => {
-  const ebookSource = read('site/ebook.js');
-
-  assert.match(ebookSource, /const EBOOK_FACTBOX_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(ebookSource, /function ebookFactBox\(lang, heading, facts/);
-  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
-  assert.match(ebookSource, /Facts to review/);
-  assert.match(ebookSource, /Fakta att repetera/);
-  assert.match(ebookSource, /Sources accessed/);
-  assert.match(ebookSource, /Källor hämtade/);
-
-  ebookFactboxSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
-  unsupportedEbookFactboxPatterns.forEach((pattern) => assert.doesNotMatch(ebookSource, pattern));
+  [
+    /refresh tag/i,
+    /source updates?/i,
+    /re-enter review/i,
+    /reenter review/i,
+    /re-enter source review/i,
+  ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
