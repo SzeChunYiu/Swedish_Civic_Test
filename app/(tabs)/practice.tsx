@@ -1,5 +1,5 @@
-import { Link, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -14,17 +14,15 @@ import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPan
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
-import {
-  buildDailyChallenge,
-  DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-  isDailyChallengeCompleted,
-} from '../../lib/learning/dailyChallenge';
+import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -75,18 +73,6 @@ type PracticeCopy = {
   chapterProgressLabel: (answered: number, total: number) => string;
   chapterStartCta: string;
   completedQuestions: (count: number) => string;
-  challengeBadge: string;
-  challengeCompletedTitle: string;
-  challengeCompletedSubtitle: string;
-  challengeHome: string;
-  challengeHomeAccessibilityLabel: string;
-  challengeProgress: (answeredCount: number, totalCount: number) => string;
-  challengeQuestionTitle: (questionNumber: number, totalCount: number) => string;
-  challengeResult: (correctCount: number, totalCount: number) => string;
-  challengeRetry: string;
-  challengeRetryAccessibilityLabel: string;
-  challengeSubtitle: string;
-  challengeTimer: (seconds: number) => string;
   emptyTitle: string;
   hubBadge: string;
   hubProgressSummary: (completed: number, total: number) => string;
@@ -141,22 +127,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     chapterProgressLabel: (answered, total) => `${answered} av ${total} frågor besvarade`,
     chapterStartCta: 'Öva kapitlet',
     completedQuestions: (count) => `Besvarade frågor: ${count}`,
-    challengeBadge: 'Dagens utmaning',
-    challengeCompletedTitle: 'Dagens utmaning är klar',
-    challengeCompletedSubtitle:
-      'Resultatet sparas lokalt för dagens datum. Du kan göra om passet utan konto.',
-    challengeHome: 'Till startsidan',
-    challengeHomeAccessibilityLabel: 'Gå tillbaka till startsidan efter dagens utmaning',
-    challengeProgress: (answeredCount, totalCount) =>
-      `Dagens utmaning: ${answeredCount}/${totalCount} besvarade`,
-    challengeQuestionTitle: (questionNumber, totalCount) =>
-      `Dagens fråga ${questionNumber} av ${totalCount}`,
-    challengeResult: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
-    challengeRetry: 'Gör om utmaningen',
-    challengeRetryAccessibilityLabel: 'Gör om dagens utmaning',
-    challengeSubtitle:
-      'Fem fasta frågor för dagens datum. Timern fortsätter tills passet är klart.',
-    challengeTimer: (seconds) => `${seconds} sekunder kvar`,
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
     hubBadge: 'Övningsnav',
     hubProgressSummary: (completed, total) =>
@@ -214,22 +184,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     chapterProgressLabel: (answered, total) => `${answered} of ${total} questions answered`,
     chapterStartCta: 'Practise chapter',
     completedQuestions: (count) => `Completed questions: ${count}`,
-    challengeBadge: 'Daily challenge',
-    challengeCompletedTitle: "Today's challenge is complete",
-    challengeCompletedSubtitle:
-      'The result is saved locally for today. You can retry the set without an account.',
-    challengeHome: 'Back to Home',
-    challengeHomeAccessibilityLabel: "Go back to Home after today's challenge",
-    challengeProgress: (answeredCount, totalCount) =>
-      `Daily challenge: ${answeredCount}/${totalCount} answered`,
-    challengeQuestionTitle: (questionNumber, totalCount) =>
-      `Daily question ${questionNumber} of ${totalCount}`,
-    challengeResult: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
-    challengeRetry: 'Retry challenge',
-    challengeRetryAccessibilityLabel: "Retry today's challenge",
-    challengeSubtitle:
-      "Five fixed questions for today's date. The timer keeps running until the set is complete.",
-    challengeTimer: (seconds) => `${seconds} seconds left`,
     emptyTitle: 'No practice questions are available yet.',
     hubBadge: 'Practice hub',
     hubProgressSummary: (completed, total) =>
@@ -310,8 +264,6 @@ function buildChapterPracticeSummaries(
 }
 
 export default function Screen() {
-  const { mode } = useLocalSearchParams<{ mode?: string }>();
-  const isChallengeMode = mode === 'challenge';
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
@@ -319,12 +271,18 @@ export default function Screen() {
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
-  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
-  const recordAnswer = useProgressStore((state) => state.recordAnswer);
-  const recordDailyChallengeCompletion = useProgressStore(
-    (state) => state.recordDailyChallengeCompletion,
+  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
+  const clearProgressPersistenceWarning = useProgressStore(
+    (state) => state.clearPersistenceWarning,
   );
+  const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
+  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
@@ -339,40 +297,45 @@ export default function Screen() {
   const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
     null,
   );
-  const [challengeAnswers, setChallengeAnswers] = useState<Record<string, boolean>>({});
-  const [challengeRetryActive, setChallengeRetryActive] = useState(false);
-  const [challengeStartedAt, setChallengeStartedAt] = useState(() => Date.now());
-  const [remainingChallengeSeconds, setRemainingChallengeSeconds] = useState(
-    DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-  );
+  const [practiceScope, setPracticeScope] = useState<PracticeScope>({ type: 'all' });
+  const [practiceStarted, setPracticeStarted] = useState(() => Boolean(activeQuestionId));
   const copy = practiceCopy[language];
-  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
-  const challengeQuestions = useMemo(
-    () =>
-      dailyChallenge.questionIds
-        .map((questionId) => questions.find((candidate) => candidate.id === questionId))
-        .filter((candidate): candidate is (typeof questions)[number] => Boolean(candidate)),
-    [dailyChallenge.questionIds],
-  );
-  const challengeCompletion = dailyChallengeCompletions[dailyChallenge.dayKey];
-  const challengeCompletedToday = isDailyChallengeCompleted(Object.keys(dailyChallengeCompletions));
-  const showChallengeCompletedSummary =
-    isChallengeMode &&
-    challengeCompletedToday &&
-    Boolean(challengeCompletion) &&
-    !challengeRetryActive;
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
-  const challengeAnsweredQuestionIds = useMemo(
-    () => Object.keys(challengeAnswers),
-    [challengeAnswers],
+  const visibleCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+    [completedQuestionIds, filteredQuestions],
   );
-  const practiceQuestionBank = isChallengeMode ? challengeQuestions : filteredQuestions;
+  const selectedPracticeQuestions = useMemo(
+    () =>
+      getQuestionsForPracticeScope(
+        filteredQuestions,
+        visibleCompletedQuestionIds,
+        practiceScope,
+        QUICK_ROUND_SIZE,
+      ),
+    [filteredQuestions, practiceScope, visibleCompletedQuestionIds],
+  );
+  const scopedCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(selectedPracticeQuestions, completedQuestionIds),
+    [completedQuestionIds, selectedPracticeQuestions],
+  );
+  const chapterPracticeSummaries = useMemo(
+    () =>
+      buildChapterPracticeSummaries(
+        filteredQuestions,
+        visibleCompletedQuestionIds,
+        questionProgress,
+        language,
+      ),
+    [filteredQuestions, language, questionProgress, visibleCompletedQuestionIds],
+  );
+  const quickRoundQuestionCount = Math.min(QUICK_ROUND_SIZE, filteredQuestions.length);
   const rawQuestion = getPracticeQuestionForSession(
-    practiceQuestionBank,
-    isChallengeMode ? challengeAnsweredQuestionIds : completedQuestionIds,
+    selectedPracticeQuestions,
+    scopedCompletedQuestionIds,
     activeQuestionId,
   );
   const question = useMemo(
@@ -380,110 +343,125 @@ export default function Screen() {
       rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
     [rawQuestion, shuffleSessionId],
   );
-  const completeDailyChallenge = useCallback(
-    (answers: Record<string, boolean>) => {
-      if (!isChallengeMode || challengeQuestions.length === 0) return;
+  const startPractice = (scope: PracticeScope) => {
+    setPracticeScope(scope);
+    setPracticeStarted(true);
+    advanceQuestion();
+  };
 
-      const answeredIds = Object.keys(answers);
-      const correctCount = answeredIds.filter((questionId) => answers[questionId]).length;
-      const totalCount = challengeQuestions.length;
-      recordDailyChallengeCompletion({
-        dayKey: dailyChallenge.dayKey,
-        questionIds: challengeQuestions.map((challengeQuestion) => challengeQuestion.id),
-        score: totalCount > 0 ? correctCount / totalCount : 0,
-        correctCount,
-        totalCount,
-        timeSpentSeconds: Math.min(
-          DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-          Math.max(0, Math.round((Date.now() - challengeStartedAt) / 1000)),
-        ),
-      });
-      setChallengeRetryActive(false);
-    },
-    [
-      challengeQuestions,
-      challengeStartedAt,
-      dailyChallenge.dayKey,
-      isChallengeMode,
-      recordDailyChallengeCompletion,
-    ],
-  );
-
-  useEffect(() => {
-    setChallengeAnswers({});
-    setChallengeRetryActive(false);
-    setChallengeStartedAt(Date.now());
-    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
-    resetSelection();
-  }, [dailyChallenge.dayKey, isChallengeMode, resetSelection]);
-
-  useEffect(() => {
-    if (!isChallengeMode || showChallengeCompletedSummary || challengeQuestions.length === 0) {
-      return undefined;
-    }
-
-    const interval = setInterval(() => {
-      setRemainingChallengeSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [challengeQuestions.length, isChallengeMode, showChallengeCompletedSummary]);
-
-  useEffect(() => {
-    if (
-      !isChallengeMode ||
-      showChallengeCompletedSummary ||
-      challengeQuestions.length === 0 ||
-      remainingChallengeSeconds > 0
-    ) {
-      return;
-    }
-
-    completeDailyChallenge(challengeAnswers);
-  }, [
-    challengeAnswers,
-    challengeQuestions.length,
-    completeDailyChallenge,
-    isChallengeMode,
-    remainingChallengeSeconds,
-    showChallengeCompletedSummary,
-  ]);
-
-  if (showChallengeCompletedSummary && challengeCompletion) {
+  if (!practiceStarted && !activeQuestionId) {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        <View style={styles.hero}>
-          <Badge tone="green">{copy.challengeBadge}</Badge>
-          <Text accessibilityRole="header" style={styles.title}>
-            {copy.challengeCompletedTitle}
+      <ScrollView style={styles.container} contentContainerStyle={styles.hubContent}>
+        <View style={styles.hubHero}>
+          <Badge>{copy.hubBadge}</Badge>
+          <Text accessibilityRole="header" style={styles.hubTitle}>
+            {copy.hubTitle}
           </Text>
-          <Text style={styles.subtitle}>{copy.challengeCompletedSubtitle}</Text>
-          <Text style={styles.score}>
-            {copy.challengeResult(challengeCompletion.correctCount, challengeCompletion.totalCount)}
+          <Text style={styles.subtitle}>{copy.hubSubtitle}</Text>
+          <ProgressBar
+            language={language}
+            progress={
+              filteredQuestions.length > 0
+                ? visibleCompletedQuestionIds.length / filteredQuestions.length
+                : 0
+            }
+          />
+          <Text style={styles.meta}>
+            {copy.hubProgressSummary(visibleCompletedQuestionIds.length, filteredQuestions.length)}
           </Text>
-          <View style={styles.feedbackActions}>
+        </View>
+
+        <View style={styles.hubActionGrid}>
+          <View style={styles.hubActionPanel}>
+            <Text accessibilityRole="header" style={styles.hubPanelTitle}>
+              {copy.allPracticeTitle}
+            </Text>
+            <Text style={styles.hubPanelBody}>{copy.allPracticeBody}</Text>
             <Button
-              accessibilityLabel={copy.challengeRetryAccessibilityLabel}
+              accessibilityLabel={copy.allPracticeAccessibilityLabel}
               accessibilityRole="button"
-              onPress={() => {
-                setChallengeAnswers({});
-                setChallengeRetryActive(true);
-                setChallengeStartedAt(Date.now());
-                setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
-                resetSelection();
-              }}
-              style={styles.feedbackButton}
+              accessibilityState={{ disabled: filteredQuestions.length === 0 }}
+              disabled={filteredQuestions.length === 0}
+              onPress={() => startPractice({ type: 'all' })}
+              style={styles.hubActionButton}
             >
-              {copy.challengeRetry}
+              {copy.allPracticeCta}
             </Button>
-            <Link
-              accessibilityLabel={copy.challengeHomeAccessibilityLabel}
-              accessibilityRole="link"
-              href="/home"
-              style={styles.challengeHomeLink}
+          </View>
+          <View style={styles.hubActionPanel}>
+            <Text accessibilityRole="header" style={styles.hubPanelTitle}>
+              {copy.quickRoundTitle}
+            </Text>
+            <Text style={styles.hubPanelBody}>{copy.quickRoundBody(quickRoundQuestionCount)}</Text>
+            <Button
+              accessibilityLabel={copy.quickRoundAccessibilityLabel(quickRoundQuestionCount)}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: quickRoundQuestionCount === 0 }}
+              disabled={quickRoundQuestionCount === 0}
+              onPress={() => startPractice({ type: 'quick' })}
+              style={styles.hubActionButton}
+              variant="secondary"
             >
-              {copy.challengeHome}
+              {copy.quickRoundCta}
+            </Button>
+          </View>
+          <View style={styles.hubActionPanel}>
+            <Text accessibilityRole="header" style={styles.hubPanelTitle}>
+              {copy.mockExamTitle}
+            </Text>
+            <Text style={styles.hubPanelBody}>{copy.mockExamBody}</Text>
+            <Link
+              accessibilityLabel={copy.mockExamAccessibilityLabel}
+              accessibilityRole="link"
+              href="/exam"
+              style={styles.examLink}
+            >
+              {copy.mockExamCta}
             </Link>
+          </View>
+        </View>
+
+        <View style={styles.chapterHub}>
+          <Text accessibilityRole="header" style={styles.chapterHubTitle}>
+            {copy.chapterHubTitle}
+          </Text>
+          <Text style={styles.chapterHubSubtitle}>{copy.chapterHubSubtitle}</Text>
+          <View style={styles.chapterGrid}>
+            {chapterPracticeSummaries.map((chapter) => (
+              <Pressable
+                key={chapter.id}
+                android_ripple={{ color: colors.focusSoft }}
+                aria-disabled={chapter.total === 0}
+                accessibilityLabel={copy.chapterCardAccessibilityLabel(
+                  chapter.title,
+                  chapter.answered,
+                  chapter.total,
+                  chapter.accuracy,
+                )}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: chapter.total === 0 }}
+                disabled={chapter.total === 0}
+                hitSlop={space[1]}
+                onPress={() => startPractice({ type: 'chapter', chapterId: chapter.id })}
+                style={({ pressed }) => [
+                  styles.chapterCard,
+                  chapter.total === 0 ? styles.chapterCardDisabled : null,
+                  pressed ? styles.chapterCardPressed : null,
+                ]}
+              >
+                <Text accessibilityRole="header" style={styles.chapterCardTitle}>
+                  {chapter.title}
+                </Text>
+                <Text style={styles.chapterCardDescription}>{chapter.description}</Text>
+                <Text style={styles.chapterCardMeta}>
+                  {copy.chapterProgressLabel(chapter.answered, chapter.total)}
+                </Text>
+                <Text style={styles.chapterCardMeta}>
+                  {copy.chapterAccuracyLabel(chapter.accuracy)}
+                </Text>
+                <Text style={styles.chapterCardCta}>{copy.chapterStartCta}</Text>
+              </Pressable>
+            ))}
           </View>
         </View>
       </ScrollView>
@@ -503,31 +481,28 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
-  const questionIndex = practiceQuestionBank.findIndex((candidate) => candidate.id === question.id);
+  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
+  const celebrationStreak = selectedIsCorrect
+    ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
+  const answerXp = hasSelectedAnswer
+    ? calculateAnswerXp({ isCorrect: selectedIsCorrect, explanationRead: true })
+    : 0;
+  const streakDays = calculateStreak(answerDates);
+  const level = calculateLevel(totalXp);
+  const correctStreak = questionProgress[question.id]?.correctStreak ?? 0;
+  const questionIndex = selectedPracticeQuestions.findIndex(
+    (candidate) => candidate.id === question.id,
+  );
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress =
-    practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
-  const challengeAnsweredCount = challengeAnsweredQuestionIds.length;
-  const metaText = isChallengeMode
-    ? copy.challengeProgress(challengeAnsweredCount, challengeQuestions.length)
-    : copy.completedQuestions(completedQuestionIds.length);
-  const titleText = isChallengeMode
-    ? copy.challengeQuestionTitle(questionNumber, challengeQuestions.length)
-    : copy.questionTitle(questionNumber);
-  const subtitleText = isChallengeMode ? copy.challengeSubtitle : copy.subtitle;
+    selectedPracticeQuestions.length > 0 ? questionNumber / selectedPracticeQuestions.length : 0;
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
 
     selectOption(question.id, optionId);
     recordAnswer(question.id, optionIsCorrect);
-    if (isChallengeMode) {
-      const nextChallengeAnswers = { ...challengeAnswers, [question.id]: optionIsCorrect };
-      setChallengeAnswers(nextChallengeAnswers);
-      if (Object.keys(nextChallengeAnswers).length >= challengeQuestions.length) {
-        completeDailyChallenge(nextChallengeAnswers);
-      }
-    }
 
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
@@ -541,18 +516,15 @@ export default function Screen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Badge>{isChallengeMode ? copy.challengeBadge : copy.badge}</Badge>
+        <Badge>{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
-          {titleText}
+          {copy.questionTitle(questionNumber)}
         </Text>
-        <Text style={styles.subtitle}>{subtitleText}</Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        {isChallengeMode ? (
-          <Text accessibilityLiveRegion="polite" style={styles.timer}>
-            {copy.challengeTimer(remainingChallengeSeconds)}
-          </Text>
-        ) : null}
-        <Text style={styles.meta}>{metaText}</Text>
+        <Text style={styles.meta}>
+          {copy.completedQuestions(scopedCompletedQuestionIds.length)}
+        </Text>
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
@@ -575,35 +547,31 @@ export default function Screen() {
               {isBookmarked ? copy.bookmarked : copy.bookmark}
             </Text>
           </Pressable>
-          {!isChallengeMode ? (
-            <Pressable
-              android_ripple={{ color: colors.focusSoft }}
-              accessibilityRole="switch"
-              accessibilityState={{ checked: includeSupplementary }}
-              accessibilityLabel={
-                includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
-              }
-              hitSlop={space[1]}
-              onBlur={() => setFocusedHeaderControl(null)}
-              onFocus={() => setFocusedHeaderControl('supplementary')}
-              onPress={() => setIncludeSupplementary(!includeSupplementary)}
-              style={({ pressed }) => [
-                styles.bookmarkButton,
-                includeSupplementary ? styles.bookmarkButtonActive : null,
-                focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
-                pressed ? styles.headerControlPressed : null,
-              ]}
+          <Pressable
+            android_ripple={{ color: colors.focusSoft }}
+            aria-checked={includeSupplementary}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: includeSupplementary }}
+            accessibilityLabel={
+              includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+            }
+            hitSlop={space[1]}
+            onBlur={() => setFocusedHeaderControl(null)}
+            onFocus={() => setFocusedHeaderControl('supplementary')}
+            onPress={() => setIncludeSupplementary(!includeSupplementary)}
+            style={({ pressed }) => [
+              styles.bookmarkButton,
+              includeSupplementary ? styles.bookmarkButtonActive : null,
+              focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
+              pressed ? styles.headerControlPressed : null,
+            ]}
+          >
+            <Text
+              style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
             >
-              <Text
-                style={[
-                  styles.bookmarkText,
-                  includeSupplementary ? styles.bookmarkTextActive : null,
-                ]}
-              >
-                {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
-              </Text>
-            </Pressable>
-          ) : null}
+              {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
+            </Text>
+          </Pressable>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
             aria-expanded={aboutSourcesOpen}
@@ -637,6 +605,16 @@ export default function Screen() {
         ) : null}
       </View>
       <QuestionDisclaimer />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearProgressPersistenceWarning}
+        warning={progressPersistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearMistakeReviewPersistenceWarning}
+        warning={mistakeReviewPersistenceWarning}
+      />
       <QuestionCard question={question} language={language} />
       <AudioButton
         enabled={audioEnabled}
@@ -893,12 +871,6 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
   },
-  timer: {
-    color: colors.warning,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
   provenanceBadge: {
     alignSelf: 'flex-start',
     borderRadius: radius.pill,
@@ -1017,20 +989,6 @@ const styles = StyleSheet.create({
   },
   feedbackButton: {
     minHeight: space[5] + space[0.5],
-  },
-  challengeHomeLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-    textAlign: 'center',
-    textDecorationLine: 'none',
   },
   score: {
     color: colors.success,

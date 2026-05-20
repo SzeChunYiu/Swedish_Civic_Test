@@ -1,91 +1,16 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const Module = require('node:module');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const {
+  createMemoryMMKV,
+  createThrowingSetMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
-const originalResolve = Module._resolveFilename;
-const originalLoad = Module._load;
-const storageById = new Map();
-
-function createFakeStorage(id) {
-  const values = new Map();
-
-  return {
-    id,
-    setCalls: [],
-    throwOnSet: false,
-    values,
-    getBoolean(key) {
-      const value = values.get(key);
-      return typeof value === 'boolean' ? value : undefined;
-    },
-    getNumber(key) {
-      const value = values.get(key);
-      return typeof value === 'number' ? value : undefined;
-    },
-    getString(key) {
-      const value = values.get(key);
-      return typeof value === 'string' ? value : undefined;
-    },
-    set(key, value) {
-      this.setCalls.push({ key, value });
-      if (this.throwOnSet) throw new Error(`${id} write failed`);
-      values.set(key, value);
-    },
-  };
-}
-
-function resolveLocalTs(parentFilename, request) {
-  const base = path.resolve(path.dirname(parentFilename), request);
-  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
-  return candidates.find(
-    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
-  );
-}
-
-Module._resolveFilename = function patchedResolve(request, parent, ...args) {
-  if (request === 'react-native-mmkv' || request === 'zustand') return `__stub__:${request}`;
-  if (request.startsWith('.') && parent?.filename) {
-    const localTsPath = resolveLocalTs(parent.filename, request);
-    if (localTsPath) return localTsPath;
-  }
-  return originalResolve.call(this, request, parent, ...args);
-};
-
-Module._load = function patchedLoad(request, parent, isMain) {
-  if (request === 'react-native-mmkv') {
-    return {
-      createMMKV: ({ id }) => {
-        if (!storageById.has(id)) storageById.set(id, createFakeStorage(id));
-        return storageById.get(id);
-      },
-    };
-  }
-
-  if (request === 'zustand') {
-    return {
-      create: (factory) => {
-        let state;
-        const setState = (partial, replace = false) => {
-          const next = typeof partial === 'function' ? partial(state) : partial;
-          if (next === state || next == null) return;
-          state = replace ? next : { ...state, ...next };
-        };
-        const getState = () => state;
-        state = factory(setState, getState);
-        const useStore = (selector) => (selector ? selector(state) : state);
-        useStore.getState = getState;
-        useStore.setState = setState;
-        return useStore;
-      },
-    };
-  }
-
-  return originalLoad.call(this, request, parent, isMain);
-};
 
 require.extensions['.ts'] = function tsLoader(module, filename) {
   const source = fs.readFileSync(filename, 'utf8');
@@ -96,100 +21,116 @@ require.extensions['.ts'] = function tsLoader(module, filename) {
   module._compile(transpiled, filename);
 };
 
-function resetStorageModules() {
-  storageById.clear();
-  for (const cacheKey of Object.keys(require.cache)) {
-    if (cacheKey.startsWith(path.join(repoRoot, 'lib/storage'))) delete require.cache[cacheKey];
-    if (cacheKey.startsWith(path.join(repoRoot, 'lib/learning'))) delete require.cache[cacheKey];
-  }
+function createFailOnceMMKV(message = 'disk full') {
+  const storage = createMemoryMMKV();
+  let shouldFail = true;
+
+  return {
+    ...storage,
+    set(key, value) {
+      if (shouldFail) {
+        shouldFail = false;
+        throw new Error(message);
+      }
+
+      storage.set(key, value);
+    },
+  };
 }
 
-function loadTs(relativePath) {
-  return require(path.join(repoRoot, relativePath));
-}
+test('progress writes keep in-memory answers and expose recoverable warnings', () => {
+  const storage = createFailOnceMMKV();
+  const { useProgressStore } = loadTsWithStorage(repoRoot, 'lib/storage/progressStore.ts', {
+    progress: storage,
+  });
 
-test('progress writes fail softly while preserving answered-question state', () => {
-  resetStorageModules();
-  const storage = createFakeStorage('progress');
-  storage.throwOnSet = true;
-  storageById.set('progress', storage);
-  const { useProgressStore } = loadTs('lib/storage/progressStore.ts');
+  useProgressStore.getState().recordAnswer('q001', false);
 
-  useProgressStore.getState().recordAnswer('q001', true);
+  let state = useProgressStore.getState();
+  assert.deepEqual(state.completedQuestionIds, ['q001']);
+  assert.equal(state.questionProgress.q001.wrongCount, 1);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.storageId, 'progress');
+  assert.equal(state.persistenceWarning.key, 'progressState');
+  assert.equal(state.persistenceWarning.operation, 'write');
+  assert.match(state.persistenceWarning.errorMessage, /disk full/);
 
-  const failedState = useProgressStore.getState();
-  assert.deepEqual(failedState.completedQuestionIds, ['q001']);
-  assert.equal(failedState.questionProgress.q001.seenCount, 1);
-  assert.equal(failedState.questionProgress.q001.correctCount, 1);
-  assert.equal(failedState.persistenceWarning.storageId, 'progress');
-  assert.equal(failedState.persistenceWarning.key, 'progressState');
-  assert.equal(failedState.persistenceWarning.operation, 'write');
-  assert.match(failedState.persistenceWarning.message, /progress write failed/);
-  assert.equal(storage.values.has('progressState'), false);
-
-  storage.throwOnSet = false;
-  useProgressStore.getState().toggleBookmark('q001');
-
-  const recoveredState = useProgressStore.getState();
-  assert.equal(recoveredState.questionProgress.q001.bookmarked, true);
-  assert.equal(recoveredState.persistenceWarning, null);
-  assert.equal(
-    JSON.parse(storage.values.get('progressState')).questionProgress.q001.bookmarked,
-    true,
-  );
+  state.toggleBookmark('q001');
+  state = useProgressStore.getState();
+  assert.equal(state.persistenceWarning, null);
+  assert.equal(state.questionProgress.q001.bookmarked, true);
+  assert.match(storage.values.get('progressState'), /"bookmarked":true/);
 });
 
-test('settings writes fail softly while preserving the selected setting in memory', () => {
-  resetStorageModules();
-  const storage = createFakeStorage('settings');
-  storage.throwOnSet = true;
-  storageById.set('settings', storage);
-  const { useSettingsStore } = loadTs('lib/storage/settingsStore.ts');
+test('settings writes keep in-memory choices and clear warnings after a later successful write', () => {
+  const storage = createFailOnceMMKV();
+  const { useSettingsStore } = loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', {
+    settings: storage,
+  });
 
-  useSettingsStore.getState().setDailyGoalAnswers(40);
+  useSettingsStore.getState().setLanguage('en');
 
-  const failedState = useSettingsStore.getState();
-  assert.equal(failedState.dailyGoalAnswers, 40);
-  assert.equal(failedState.persistenceWarning.storageId, 'settings');
-  assert.equal(failedState.persistenceWarning.key, 'dailyGoalAnswers');
-  assert.match(failedState.persistenceWarning.message, /settings write failed/);
-  assert.equal(storage.values.has('dailyGoalAnswers'), false);
+  let state = useSettingsStore.getState();
+  assert.equal(state.language, 'en');
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.storageId, 'settings');
+  assert.equal(state.persistenceWarning.key, 'language');
 
-  storage.throwOnSet = false;
-  useSettingsStore.getState().setAudioEnabled(false);
-
-  const recoveredState = useSettingsStore.getState();
-  assert.equal(recoveredState.audioEnabled, false);
-  assert.equal(recoveredState.persistenceWarning, null);
+  state.setAudioEnabled(false);
+  state = useSettingsStore.getState();
+  assert.equal(state.audioEnabled, false);
+  assert.equal(state.persistenceWarning, null);
   assert.equal(storage.values.get('audioEnabled'), false);
 });
 
-test('mistake review writes fail softly while preserving wrong-answer review state', () => {
-  resetStorageModules();
-  const storage = createFakeStorage('mistake-review');
-  storage.throwOnSet = true;
-  storageById.set('mistake-review', storage);
-  const { useMistakeReviewStore } = loadTs('lib/storage/mistakeReviewStore.ts');
+test('mistake-review writes keep selected answers and expose dismissible warnings', () => {
+  const storage = createThrowingSetMMKV('disk full');
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': storage,
+    },
+  );
 
   useMistakeReviewStore.getState().recordWrongAnswerReview({
-    questionId: 'q002',
-    selectedOptionTextEn: 'Wrong answer',
-    selectedOptionTextSv: 'Fel svar',
+    questionId: 'q001',
+    selectedOptionTextEn: 'Southern Europe',
+    selectedOptionTextSv: 'Södra Europa',
   });
 
-  const failedState = useMistakeReviewStore.getState();
-  assert.equal(failedState.wrongAnswerReviews.q002.selectedOptionTextEn, 'Wrong answer');
-  assert.equal(failedState.wrongAnswerReviews.q002.selectedOptionTextSv, 'Fel svar');
-  assert.equal(failedState.persistenceWarning.storageId, 'mistake-review');
-  assert.equal(failedState.persistenceWarning.key, 'mistakeReviewState');
-  assert.match(failedState.persistenceWarning.message, /mistake-review write failed/);
-  assert.equal(storage.values.has('mistakeReviewState'), false);
+  let state = useMistakeReviewStore.getState();
+  assert.equal(state.wrongAnswerReviews.q001.selectedOptionTextEn, 'Southern Europe');
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.storageId, 'mistake-review');
+  assert.equal(state.persistenceWarning.key, 'mistakeReviewState');
 
-  storage.throwOnSet = false;
-  useMistakeReviewStore.getState().clearWrongAnswerReviews();
+  state.clearPersistenceWarning();
+  state = useMistakeReviewStore.getState();
+  assert.equal(state.persistenceWarning, null);
+});
 
-  const recoveredState = useMistakeReviewStore.getState();
-  assert.deepEqual(recoveredState.wrongAnswerReviews, {});
-  assert.equal(recoveredState.persistenceWarning, null);
-  assert.deepEqual(JSON.parse(storage.values.get('mistakeReviewState')).wrongAnswerReviews, {});
+test('routes render localized storage warning notices with dismiss hooks', () => {
+  const componentSource = fs.readFileSync(
+    path.join(repoRoot, 'components/storage/PersistenceWarningNotice.tsx'),
+    'utf8',
+  );
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+
+  assert.match(componentSource, /const persistenceWarningNoticeCopy: Record<AppLanguage/);
+  assert.match(componentSource, /Sparades bara tillfälligt/);
+  assert.match(componentSource, /Saved only for this session/);
+  assert.match(componentSource, /accessibilityRole="alert"/);
+  assert.match(componentSource, /onPress=\{onDismiss\}/);
+
+  assert.match(practiceSource, /progressPersistenceWarning/);
+  assert.match(practiceSource, /clearProgressPersistenceWarning/);
+  assert.match(practiceSource, /mistakeReviewPersistenceWarning/);
+  assert.match(practiceSource, /clearMistakeReviewPersistenceWarning/);
+  assert.match(settingsSource, /persistenceWarning = useSettingsStore/);
+  assert.match(settingsSource, /clearPersistenceWarning = useSettingsStore/);
+  assert.match(mistakesSource, /progressPersistenceWarning/);
+  assert.match(mistakesSource, /mistakeReviewPersistenceWarning/);
 });

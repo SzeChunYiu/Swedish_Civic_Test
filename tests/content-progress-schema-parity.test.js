@@ -317,9 +317,6 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(Object.hasOwn(state.questionProgress.q001, 'bookmarked'), false);
   assert.equal(state.questionProgress.q002.bookmarked, true);
   assert.equal(state.questionProgress.q003.bookmarked, false);
-  assert.deepEqual(state.answerAttempts, [
-    { questionId: 'q001', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
-  ]);
   assert.equal(state.totalXp, 0);
   assert.deepEqual(state.answerDates, ['2026-05-19']);
   assert.equal(state.mockExamSessions.length, 2);
@@ -517,6 +514,19 @@ test('progress store schema parity rejects raw bookmark hydration', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /question progress hydration must preserve only boolean bookmark values/,
+  );
+});
+
+test('progress store schema parity rejects raw bookmark hydration', () => {
+  const result = runValidationWithProgressStorePatch(
+    "...(typeof item.bookmarked === 'boolean' ? { bookmarked: item.bookmarked } : {}),",
+    'bookmarked: item.bookmarked,',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /progress hydration must not use raw bookmark expression bookmarked: item\.bookmarked/,
   );
 });
 

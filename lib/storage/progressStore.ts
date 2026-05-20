@@ -6,6 +6,8 @@ import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
+import { writeRecoverably } from './persistenceWarning';
 
 export type QuestionProgress = {
   questionId: string;
@@ -40,6 +42,7 @@ export type MockExamProgress = {
 };
 
 const progressStateKey = 'progressState';
+const progressStorageId = 'progress';
 const maxHydratedQuestionAnswerCount = 10000;
 const maxHydratedAnswerAttemptCount = 10000;
 const maxHydratedTotalXp = 1000000;
@@ -53,7 +56,7 @@ const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
 let progressStorage: MMKV | null = null;
 
 try {
-  progressStorage = createMMKV({ id: 'progress' });
+  progressStorage = createMMKV({ id: progressStorageId });
 } catch {
   progressStorage = null;
 }
@@ -263,6 +266,9 @@ function normalizeProgress(value: unknown): PersistedProgress {
         correctCount,
         wrongCount,
         correctStreak,
+        lastAnsweredAt: normalizeIsoTimestamp(item.lastAnsweredAt),
+        nextReviewAt: normalizeIsoTimestamp(item.nextReviewAt),
+        ...(typeof item.bookmarked === 'boolean' ? { bookmarked: item.bookmarked } : {}),
       };
       const lastAnsweredAt = normalizeIsoTimestamp(item.lastAnsweredAt);
       const nextReviewAt = normalizeIsoTimestamp(item.nextReviewAt);
@@ -339,42 +345,55 @@ function readProgress(): PersistedProgress {
   }
 }
 
-function writeProgress(progress: PersistedProgress): PersistedProgress {
-  const normalizedProgress = normalizeProgress(progress);
-  progressStorage?.set(progressStateKey, JSON.stringify(normalizedProgress));
-  return normalizedProgress;
+function writeProgress(progress: PersistedProgress): RecoverablePersistenceWarning | null {
+  return writeRecoverably(
+    progressStorage,
+    progressStorageId,
+    progressStateKey,
+    JSON.stringify(progress),
+  );
 }
 
 type ProgressState = PersistedProgress & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
   markQuestionCompleted: (questionId: string) => void;
   recordAnswer: (questionId: string, isCorrect: boolean) => void;
   recordMockExamSession: (session: MockExamProgressInput) => void;
   setStreakFreezeState: (streakFreezeState: StreakFreezeState) => void;
   toggleBookmark: (questionId: string) => void;
   resetProgress: () => void;
+  clearPersistenceWarning: () => void;
 };
 
 const initialProgress = readProgress();
 
 export const useProgressStore = create<ProgressState>((set) => ({
   ...initialProgress,
+  persistenceWarning: null,
   markQuestionCompleted: (questionId) =>
     set((state) => {
-      const safeState = normalizeProgress(state);
-      if (safeState.completedQuestionIds.includes(questionId)) return safeState;
+      if (state.completedQuestionIds.includes(questionId)) return state;
 
       const nextProgress = {
-        ...safeState,
-        completedQuestionIds: [...safeState.completedQuestionIds, questionId],
+        completedQuestionIds: [...state.completedQuestionIds, questionId],
+        questionProgress: state.questionProgress,
+        answerAttempts: state.answerAttempts,
+        totalXp: state.totalXp,
+        answerDates: state.answerDates,
+        mockExamSessions: state.mockExamSessions,
+        streakFreezeState: state.streakFreezeState,
       };
-      return writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
+
+      return { ...nextProgress, persistenceWarning };
     }),
   recordAnswer: (questionId, isCorrect) =>
     set((state) => {
-      const safeState = normalizeProgress(state);
+      if (typeof isCorrect !== 'boolean') return state;
+
       const answeredAt = new Date().toISOString();
       const answerDate = getLocalDateKey(new Date(answeredAt));
-      const previous = safeState.questionProgress[questionId] ?? {
+      const previous = state.questionProgress[questionId] ?? {
         questionId,
         seenCount: 0,
         correctCount: 0,
@@ -391,47 +410,58 @@ export const useProgressStore = create<ProgressState>((set) => ({
         lastAnsweredAt: answeredAt,
         nextReviewAt: getNextReviewAt({ isCorrect, correctStreak, answeredAt }),
       };
-      const completedQuestionIds = safeState.completedQuestionIds.includes(questionId)
-        ? safeState.completedQuestionIds
-        : [...safeState.completedQuestionIds, questionId];
-      const answerDates = safeState.answerDates.includes(answerDate)
-        ? safeState.answerDates
-        : [...safeState.answerDates, answerDate];
+      const completedQuestionIds = state.completedQuestionIds.includes(questionId)
+        ? state.completedQuestionIds
+        : [...state.completedQuestionIds, questionId];
+      const answerDates = state.answerDates.includes(answerDate)
+        ? state.answerDates
+        : [...state.answerDates, answerDate];
+      const answerAttempts: AnswerAttemptProgress[] = [
+        ...state.answerAttempts,
+        { questionId, isCorrect, answeredAt },
+      ].slice(-maxHydratedAnswerAttemptCount);
       const nextProgress = {
         completedQuestionIds,
         questionProgress: {
-          ...safeState.questionProgress,
+          ...state.questionProgress,
           [questionId]: nextQuestionProgress,
         },
-        totalXp: safeState.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
+        answerAttempts,
+        totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
         answerDates,
-        mockExamSessions: safeState.mockExamSessions,
-        streakFreezeState: safeState.streakFreezeState,
+        mockExamSessions: state.mockExamSessions,
+        streakFreezeState: state.streakFreezeState,
       };
-      return writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
+
+      return { ...nextProgress, persistenceWarning };
     }),
   recordMockExamSession: (session) =>
     set((state) => {
-      const safeState = normalizeProgress(state);
       const completedAt = session.completedAt ?? new Date().toISOString();
+      const normalizedAnswers = normalizeMockExamAnswers(session.answers);
       const totalCount = normalizeNonNegativeInteger(
         session.totalCount,
-        0,
+        normalizedAnswers.length,
         maxHydratedMockQuestionCount,
       );
-      const correctCount = Math.min(
-        normalizeNonNegativeInteger(session.correctCount, 0, maxHydratedMockQuestionCount),
-        totalCount,
-      );
+      const answers = normalizedAnswers.slice(0, totalCount);
       const nextSession: MockExamProgress = {
         answers,
         sessionId: session.sessionId,
         score: clampScore(session.score),
         completedAt,
-        correctCount,
+        correctCount: Math.min(
+          normalizeNonNegativeInteger(
+            session.correctCount,
+            answers.filter((answer) => answer.isCorrect).length,
+            maxHydratedMockQuestionCount,
+          ),
+          totalCount,
+        ),
         totalCount,
       };
-      const existingSession = safeState.mockExamSessions.find(
+      const existingSession = state.mockExamSessions.find(
         (item) => item.sessionId === nextSession.sessionId,
       );
       const completionXp = existingSession
@@ -440,37 +470,42 @@ export const useProgressStore = create<ProgressState>((set) => ({
             answeredCount: nextSession.totalCount,
             correctCount: nextSession.correctCount,
           });
-      const otherSessions = safeState.mockExamSessions.filter(
+      const otherSessions = state.mockExamSessions.filter(
         (item) => item.sessionId !== nextSession.sessionId,
       );
       const nextProgress = {
-        completedQuestionIds: safeState.completedQuestionIds,
-        questionProgress: safeState.questionProgress,
-        totalXp: safeState.totalXp + completionXp,
-        answerDates: safeState.answerDates,
+        completedQuestionIds: state.completedQuestionIds,
+        questionProgress: state.questionProgress,
+        answerAttempts: state.answerAttempts,
+        totalXp: state.totalXp + completionXp,
+        answerDates: state.answerDates,
         mockExamSessions: [...otherSessions, nextSession],
-        streakFreezeState: safeState.streakFreezeState,
+        streakFreezeState: state.streakFreezeState,
       };
-      return writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
+
+      return { ...nextProgress, persistenceWarning };
     }),
   setStreakFreezeState: (streakFreezeState) =>
     set((state) => {
-      const safeState = normalizeProgress(state);
-      const safeStreakFreezeState = normalizeStreakFreezeState(streakFreezeState);
-      if (streakFreezeStatesEqual(safeState.streakFreezeState, safeStreakFreezeState)) {
-        return safeState;
-      }
+      if (streakFreezeStatesEqual(state.streakFreezeState, streakFreezeState)) return state;
 
       const nextProgress = {
-        ...safeState,
-        streakFreezeState: safeStreakFreezeState,
+        completedQuestionIds: state.completedQuestionIds,
+        questionProgress: state.questionProgress,
+        answerAttempts: state.answerAttempts,
+        totalXp: state.totalXp,
+        answerDates: state.answerDates,
+        mockExamSessions: state.mockExamSessions,
+        streakFreezeState,
       };
-      return writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
+
+      return { ...nextProgress, persistenceWarning };
     }),
   toggleBookmark: (questionId) =>
     set((state) => {
-      const safeState = normalizeProgress(state);
-      const previous = safeState.questionProgress[questionId] ?? {
+      const previous = state.questionProgress[questionId] ?? {
         questionId,
         seenCount: 0,
         correctCount: 0,
@@ -478,21 +513,26 @@ export const useProgressStore = create<ProgressState>((set) => ({
         correctStreak: 0,
       };
       const nextProgress = {
-        completedQuestionIds: safeState.completedQuestionIds,
+        completedQuestionIds: state.completedQuestionIds,
         questionProgress: {
-          ...safeState.questionProgress,
+          ...state.questionProgress,
           [questionId]: { ...previous, bookmarked: !previous.bookmarked },
         },
-        totalXp: safeState.totalXp,
-        answerDates: safeState.answerDates,
-        mockExamSessions: safeState.mockExamSessions,
-        streakFreezeState: safeState.streakFreezeState,
+        answerAttempts: state.answerAttempts,
+        totalXp: state.totalXp,
+        answerDates: state.answerDates,
+        mockExamSessions: state.mockExamSessions,
+        streakFreezeState: state.streakFreezeState,
       };
-      return writeProgress(nextProgress);
+      const persistenceWarning = writeProgress(nextProgress);
+
+      return { ...nextProgress, persistenceWarning };
     }),
   resetProgress: () => {
-    set(writeProgress(emptyProgress));
+    const persistenceWarning = writeProgress(emptyProgress);
+    set({ ...emptyProgress, persistenceWarning });
   },
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 export function importProgressSnapshot(value: unknown): PersistedProgress {
