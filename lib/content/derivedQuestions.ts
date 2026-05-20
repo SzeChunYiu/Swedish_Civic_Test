@@ -407,63 +407,22 @@ function englishGainedRightStatement(subject: string, answer: string): string {
   )}`;
 }
 
-function reasonAnswerClauseSv(answer: string): string {
+function reasonStatementSv(answer: string): string {
   const stripped = stripLeadingPurposeSv(answer);
-  if (/^för att|^att\s+/i.test(answer.trim())) return `att ${lowerFirst(stripped)}`;
-  if (
-    /^[A-ZÅÄÖ]/.test(stripped) &&
-    /\b(?:hade|saknade|var|är|kan|ska|måste|gör|gjorde|ger|skapar|ersätter)\b/i.test(stripped)
-  ) {
-    return `att ${lowerFirst(stripped)}`;
+  if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
+  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
+    return `En anledning är att ${stripped}`;
   }
-  return lowerFirst(stripped).replace(/\beU\b/g, 'EU');
+  return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
 
-function reasonAnswerClauseEn(answer: string): string {
+function reasonStatementEn(answer: string): string {
   const stripped = stripLeadingPurposeEn(answer);
-  if (/^to\b/i.test(answer.trim())) return `to ${lowerFirst(stripped)}`;
-  if (
-    /^[A-ZÅÄÖ]/.test(stripped) &&
-    /\b(?:had|was|were|is|are|can|must|should|gives|gave|makes|made|creates|created|replaces|replaced)\b/i.test(
-      stripped,
-    )
-  ) {
-    return `that ${lowerFirst(stripped)}`;
+  if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
+  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
+    return `One reason is that ${stripped}`;
   }
-  return lowerFirst(stripped);
-}
-
-function whyTargetStatementSv(target: string): string {
-  const statement = stripFinalPunctuation(target).trim();
-  const modal = statement.match(
-    /^(kan|ska|måste|bör|får)\s+(.+?)\s+(vara|bli|ha|göra|skapa|hota|påverka|räknas|kallas|ses)\b(.*)$/i,
-  );
-  if (modal) return `${lowerFirst(modal[2])} ${modal[1].toLowerCase()} ${modal[3]}${modal[4]}`;
-  return lowerFirst(statement);
-}
-
-function whyTargetStatementEn(target: string): string {
-  const statement = stripFinalPunctuation(target).trim();
-  const modal = statement.match(
-    /^(can|should|must|could|would|will)\s+(.+?)\s+(be|have|make|create|affect|threaten|replace|give)\b(.*)$/i,
-  );
-  if (modal) return `${lowerFirst(modal[2])} ${modal[1].toLowerCase()} ${modal[3]}${modal[4]}`;
-
-  const beVerb = statement.match(/^(is|are|was|were)\s+(.+?)\s+(.+)$/i);
-  if (beVerb) return `${lowerFirst(beVerb[2])} ${beVerb[1].toLowerCase()} ${beVerb[3]}`;
-
-  const doVerb = statement.match(/^(?:do|does|did)\s+(.+?)\s+(.+)$/i);
-  if (doVerb) return `${lowerFirst(doVerb[1])} ${doVerb[2]}`;
-
-  return lowerFirst(statement);
-}
-
-function reasonStatementSv(target: string, answer: string): string {
-  return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(answer)}`;
-}
-
-function reasonStatementEn(target: string, answer: string): string {
-  return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
+  return `One reason is ${lowerFirst(stripped)}`;
 }
 
 function frontedManyActionSv(answer: string): string {
@@ -597,6 +556,59 @@ function supportStatementSv(subject: string, answer: string): string {
 function supportStatementEn(subject: string, answer: string): string {
   if (/^(?:A|An)\s+/i.test(answer)) {
     return `${upperFirst(subject)} is ${lowerLeadingEnglishArticle(answer)}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+
+function incomeStatementSv(subject: string, answer: string): string {
+  const normalizedSubject = upperFirst(subject.trim());
+  const adSales = answer.match(/^De säljer\s+(.+?)\s+eller\s+tar betalt för\s+(.+)$/i);
+  if (adSales) {
+    return `${normalizedSubject} kan få inkomster genom att sälja ${lowerFirst(
+      adSales[1],
+    )} eller ta betalt för ${lowerFirst(adSales[2])}`;
+  }
+  if (/^Genom\s+/i.test(answer)) {
+    return `${normalizedSubject} kan få inkomster ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+
+function incomeStatementEn(subject: string, answer: string): string {
+  const normalizedSubject = upperFirst(subject.trim());
+  const adSales = answer.match(/^They sell\s+(.+?)\s+or charge for\s+(.+)$/i);
+  if (adSales) {
+    return `${normalizedSubject} can earn income by selling ${lowerFirst(
+      adSales[1],
+    )} or charging for ${lowerFirst(adSales[2])}`;
+  }
+  if (/^(?:Through|By)\s+/i.test(answer)) {
+    return `${normalizedSubject} can earn income ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+
+function webAndSocialMediaStatementSv(subject: string, answer: string): string {
+  if (/^webben och sociala medier$/i.test(subject)) {
+    const topic = 'på webben och i sociala medier';
+    const anyone = answer.match(/^Vem som helst kan skapa innehåll där,\s+och\s+(.+)$/i);
+    if (anyone) return `${upperFirst(topic)} kan vem som helst skapa innehåll, och ${anyone[1]}`;
+    const publishers = answer.match(/^Bara ansvariga utgivare får skriva inlägg där$/i);
+    if (publishers) return `${upperFirst(topic)} får bara ansvariga utgivare skriva inlägg`;
+    return answer.replace(/\bdär\b/gi, topic);
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+
+function webAndSocialMediaStatementEn(subject: string, answer: string): string {
+  if (/^the web and social media$/i.test(subject)) {
+    const anyone = answer.match(/^Anyone can create content there,\s+and\s+(.+)$/i);
+    if (anyone)
+      return `On the web and in social media, anyone can create content, and ${anyone[1]}`;
+    const publishers = answer.match(/^Only responsible publishers may write posts there$/i);
+    if (publishers)
+      return `On the web and in social media, only responsible publishers may write posts`;
+    return answer.replace(/\bthere\b/gi, 'on the web and in social media');
   }
   return replaceLeadingEnglishSubject(subject, answer);
 }
@@ -1011,6 +1023,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
+  match = q.match(/^Hur kan (.+?) få inkomster$/i);
+  if (match) return incomeStatementSv(match[1], answer);
+
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
   if (match)
     return `${upperFirst(match[1])} underlättar ${match[2]} genom att ${lowerFirst(
@@ -1097,7 +1112,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
 
   match = q.match(/^Varför (.+)$/i);
-  if (match) return reasonStatementSv(match[1], answer);
+  if (match) return reasonStatementSv(answer);
 
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
@@ -1149,6 +1164,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^Vad gör (.+?) på arbetsmarknaden$/i);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+
+  match = q.match(/^Vad kännetecknar (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
   match = q.match(/^Vilken roll har (.+?) i (.+)$/i);
@@ -1279,6 +1297,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vad erbjuder (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} i Sverige erbjuder ${lowerFirst(answer)}`;
+
+  match = q.match(/^Hur publiceras (.+?) i dag$/i);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+
+  match = q.match(/^Vad är viktigt att komma ihåg om (.+)$/i);
+  if (match) return webAndSocialMediaStatementSv(match[1], answer);
 
   match = q.match(/^Vad är ett mål med (.+)$/i);
   if (match) return `Ett mål med ${match[1]} är ${swedishPurposeClause(answer)}`;
@@ -1431,6 +1455,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
 
+  match = q.match(/^How can (.+?) earn income$/i);
+  if (match) return incomeStatementEn(match[1], answer);
+
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
   if (match) {
     const method = /^By\s+/i.test(answer)
@@ -1530,7 +1557,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     )}`;
 
   match = q.match(/^Why (.+)$/i);
-  if (match) return reasonStatementEn(match[1], answer);
+  if (match) return reasonStatementEn(answer);
 
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
@@ -1580,6 +1607,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^What do (.+?) do in the labour market$/i);
+  if (match) return replaceLeadingEnglishSubject(match[1], answer);
+
+  match = q.match(/^What characterizes (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
 
   match = q.match(/^What role do (.+?) have in (.+)$/i);
@@ -1725,6 +1755,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What do (.+?) in Sweden offer$/i);
   if (match) return `${upperFirst(match[1])} in Sweden offer ${lowerFirst(answer)}`;
+
+  match = q.match(/^How are (.+?) published today$/i);
+  if (match) return replaceLeadingEnglishSubject(match[1], answer);
+
+  match = q.match(/^What is important to remember about (.+)$/i);
+  if (match) return webAndSocialMediaStatementEn(match[1], answer);
 
   match = q.match(/^What is one goal of (.+)$/i);
   if (match) return `One goal of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
