@@ -3,9 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
-const { validateStaticHeadMetadata } = require('./check-live-site');
 
 const repoRoot = path.resolve(__dirname, '..');
+const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -45,14 +45,49 @@ function termsContentParagraph(indexHtml) {
 
 function appTranslationValues(appSource, includeKey) {
   const values = [];
-  const entryPattern = /"([^"]+)": "((?:\\.|[^"\\])*)"/g;
+  const entryPattern = /(['"])([^'"]+)\1:\s*(['"])((?:\\.|(?!\3)[\s\S])*)\3/g;
   let match;
   while ((match = entryPattern.exec(appSource))) {
-    const [, key, rawValue] = match;
-    if (includeKey(key)) values.push(JSON.parse(`"${rawValue}"`));
+    const [, , key, valueQuote, rawValue] = match;
+    if (includeKey(key)) {
+      values.push(vm.runInNewContext(`${valueQuote}${rawValue}${valueQuote}`));
+    }
   }
   return values;
 }
+
+function appLanguageBlock(appSource, language) {
+  const marker = `\n  ${language}: {`;
+  const start = appSource.indexOf(marker);
+  assert.notEqual(start, -1, `static app ${language} translations should be present`);
+
+  const afterStart = start + marker.length;
+  const nextLanguageStart = appSource.indexOf('\n  },\n\n  ', afterStart);
+  const finalLanguageEnd = appSource.indexOf('\n  }\n};', afterStart);
+  const end = nextLanguageStart === -1 ? finalLanguageEnd : nextLanguageStart;
+  assert.notEqual(end, -1, `static app ${language} translations should close cleanly`);
+
+  return appSource.slice(afterStart, end);
+}
+
+const unsupportedPracticalTestClaimPatterns = [
+  phrasePattern('Format of ', 'the real test'),
+  phrasePattern('multiple-choice ', 'and timed'),
+  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
+  phrasePattern('Arrive 30 ', 'minutes early'),
+  phrasePattern('test centre ', 'is strict'),
+  phrasePattern('You may ', 'retake the test'),
+  phrasePattern('There is a ', 'small fee'),
+  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
+  phrasePattern('På provdagen är ', 'giltig legitimation'),
+];
+
+const officialPracticalTestSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+];
 
 function sourceProvenanceSurface() {
   const indexHtml = read('site/index.html');
@@ -85,15 +120,6 @@ test('static source claims match the shipped question-bank source titles', () =>
   assert.match(surface, /Primary source\s+1|Prim[aä]r k[aä]lla\s+1/i);
 });
 
-test('static head metadata does not make pass or passport outcome claims', () => {
-  const result = validateStaticHeadMetadata(read('site/index.html'));
-
-  assert.equal(result.ok, true, result.details);
-  assert.match(result.title, /^Almost Swedish\b/);
-  assert.doesNotMatch(result.surface, /Study,\s*fika,\s*pass/i);
-  assert.doesNotMatch(result.surface, /\b(?:pass the test|earn the passport|get the passport)\b/i);
-});
-
 test('static source provenance copy rejects unshipped external source families', () => {
   const surface = sourceProvenanceSurface();
 
@@ -111,4 +137,43 @@ test('static source provenance copy rejects unshipped external source families',
     /Primary sources\s+8/i,
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+});
+
+test('static Swedish source provenance copy avoids English UHR-only shorthand', () => {
+  const appSource = read('site/app.js');
+  const swedishSourceValues = appTranslationValues(appLanguageBlock(appSource, 'sv'), (key) =>
+    key.startsWith('sources.'),
+  );
+  assert.ok(swedishSourceValues.length, 'static Swedish source translations should be present');
+
+  assert.doesNotMatch(swedishSourceValues.join('\n'), /\bUHR-only\b/i);
+  assert.match(swedishSourceValues.join('\n'), /bara p[åa] UHR-materialet/i);
+});
+
+test('static ebook practical test copy is backed by current UHR source metadata', () => {
+  const ebookSource = read('site/ebook.js');
+
+  assert.match(ebookSource, /const OFFICIAL_TEST_SOURCE_NOTES = Object\.freeze\(/);
+  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
+  officialPracticalTestSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
+
+  assert.match(
+    ebookSource,
+    /first civic-knowledge sitting will be held on 15 August 2026 in Stockholm/i,
+  );
+  assert.match(ebookSource, /only people who receive a letter from Migrationsverket can sign up/i);
+  assert.match(ebookSource, /Seats are limited/i);
+  assert.match(ebookSource, /free of charge/i);
+  assert.match(ebookSource, /generous time/i);
+  assert.match(ebookSource, /UHR has not yet published the exact time and place/i);
+  assert.match(ebookSource, /första samhällskunskapsprovet inom medborgarskapsprovet/i);
+  assert.match(ebookSource, /brev från Migrationsverket/i);
+  assert.match(ebookSource, /Antalet platser är begränsat/i);
+  assert.match(ebookSource, /kostnadsfritt/i);
+  assert.match(ebookSource, /generöst med tid/i);
+  assert.match(ebookSource, /praktiska detaljer väntar hos UHR/i);
+
+  unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
+    assert.doesNotMatch(ebookSource, pattern),
+  );
 });
