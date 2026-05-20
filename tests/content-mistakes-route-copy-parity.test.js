@@ -55,7 +55,11 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /function AnswerReviewBlock\(\{/);
   assert.match(source, /const bookmarkedReviewQuestions = questions\.filter\(/);
   assert.match(source, /\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\) === 0/);
-  assert.match(source, /\{bookmarkedReviewQuestions\.map\(\(question\) => \{/);
+  assert.match(source, /<FlatList/);
+  assert.match(source, /data=\{reviewItems\}/);
+  assert.match(source, /initialNumToRender=\{10\}/);
+  assert.match(source, /testID="mistakes-review-list"/);
+  assert.match(source, /testID="mistakes-review-card"/);
   assert.match(source, /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} \/>/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
