@@ -151,6 +151,22 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
+test('XP rules focused content validation runs only its parity summary', () => {
+  const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-xp-rules'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused XP validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.xpRulesValidated, 20);
+  assert.equal(summary.xpRulesParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'streakRulesParityValidated'), false);
+});
+
 test('exam submission finality focused validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,
