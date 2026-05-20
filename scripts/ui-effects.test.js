@@ -1376,6 +1376,7 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Inga märken ännu/);
   assert.match(source, /Ändra mål, språk och ljud/);
   assert.match(source, /Första övningen/);
+  assert.match(source, /Missade frågor/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
   assert.match(source, /No badges yet/);
