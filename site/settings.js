@@ -96,14 +96,19 @@
 
   // -------- SYNC CONTROL STATE --------
 
+  function setPressedState(el, on) {
+    el.classList.toggle("is-on", on);
+    el.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+
   function setSegment(group, value) {
     document.querySelectorAll(`[data-set="${group}"] button`).forEach((b) => {
-      b.classList.toggle("is-on", b.dataset.val === String(value));
+      setPressedState(b, b.dataset.val === String(value));
     });
   }
   function setPalette(value) {
     document.querySelectorAll(".set-palette").forEach((b) => {
-      b.classList.toggle("is-on", b.dataset.val === value);
+      setPressedState(b, b.dataset.val === value);
     });
   }
   function setCheckbox(group, on) {
@@ -133,7 +138,7 @@
     const cur = ls("smt_buddy", "dala");
     const lang = ls("smt_lang", "en");
     host.innerHTML = buddies.map((b) => `
-      <button class="buddy-card ${b.id === cur ? "is-on" : ""}" data-buddy="${b.id}" title="${b.name}">
+      <button class="buddy-card ${b.id === cur ? "is-on" : ""}" data-buddy="${b.id}" title="${b.name}" aria-pressed="${b.id === cur ? "true" : "false"}">
         <span class="buddy-card__svg">${b.svg}</span>
         <span class="buddy-card__name">${b.name}</span>
         <span class="buddy-card__sub">${b.subtitle[lang] || b.subtitle.en}</span>
@@ -178,7 +183,7 @@
       const id = buddy.dataset.buddy;
       if (window.smtSetBuddy) window.smtSetBuddy(id);
       lsSet("smt_buddy", id);
-      document.querySelectorAll(".buddy-card").forEach((c) => c.classList.toggle("is-on", c.dataset.buddy === id));
+      document.querySelectorAll(".buddy-card").forEach((c) => setPressedState(c, c.dataset.buddy === id));
       return;
     }
 

@@ -183,6 +183,26 @@ test(
       await page.click('#settings-open');
       const settingsOpen = await page.locator('#settings-modal').evaluate((node) => !node.hidden);
       assert.equal(settingsOpen, true, 'settings modal should open from the mobile topbar');
+
+      const pressedState = await page.locator('#settings-modal').evaluate(() =>
+        Array.from(
+          document.querySelectorAll(
+            '.set-segment button[data-val], .set-palette, #buddy-picker .buddy-card',
+          ),
+        ).map((button) => ({
+          isOn: button.classList.contains('is-on'),
+          pressed: button.getAttribute('aria-pressed'),
+          value: button.getAttribute('data-val') || button.getAttribute('data-buddy') || '',
+        })),
+      );
+      assert.ok(pressedState.length > 0, 'settings buttons should expose selected state');
+      pressedState.forEach((button) => {
+        assert.equal(
+          button.pressed,
+          button.isOn ? 'true' : 'false',
+          `${button.value} should mirror .is-on to aria-pressed`,
+        );
+      });
     } finally {
       if (browser) {
         await browser.close();
