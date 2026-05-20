@@ -87,6 +87,20 @@ Next suggested validator action:
 
 ## CEO cycle handoff
 
+2026-05-20T03:36:55+02:00: CEO cycle decision remains HOLD/add-none.
+Required CEO and GM operating docs were read from the project checkout. Latest
+observed `origin/main` during this cycle was `8c95ca29`. `codex-tasks/P0.md`
+still has unchecked SHUFFLE-FIX, TRANSLATE-COMPLETE, SOURCE-CITATION, and
+CRITICAL-REVIEWER standing work. Supervisor dry-run
+`/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/codex-supervisor/bin/csup staff --scenario=resume --dry-run`
+reported queued local work (`work=10`, `blockers=10`, `prompts=5`) but held
+the local lane on `reason=lunarc_requires_slurm_station`; other configured
+lanes reported STAFF-DOWN/no queued work. Do not run `--apply` or start
+non-P0 side work from this pane. Keep routing through existing managers:
+DATA-INTEGRITY/VALIDATOR for generated prompt and source-citation defects,
+CONTENT/VALIDATOR for English naturalness, and operator action for any
+external deploy/factory capacity blockers.
+
 2026-05-18T21:16:59+02:00: Executive cycle decision remains HOLD/add-none.
 Required CEO/GM operating docs were read from current `origin/main`. Latest
 observed `origin/main` is `268cc9d` (`manager-build: record ebook format
