@@ -565,9 +565,15 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(helperSource, /stripSourceAuthorityPhrasing/);
   assert.match(helperSource, /Enligt UHR-materialet/);
   assert.match(helperSource, /According to the UHR material/);
-  assert.match(source, /<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/);
+  assert.match(
+    source,
+    /<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
+  );
   assert.match(source, /<QuestionSourceCitation/);
-  assert.match(source, /accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}/,
+  );
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -600,8 +606,14 @@ test('chapter card groups title, translation, status, and description into an ac
   assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
   assert.match(source, /accessibilityMode = 'summary'/);
   assert.match(source, /const shouldGroupForAccessibility = accessibilityMode === 'summary';/);
-  assert.match(source, /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/);
-  assert.match(source, /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/,
+  );
+  assert.match(
+    source,
+    /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/,
+  );
   assert.match(source, /elevated/);
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
@@ -1019,8 +1031,8 @@ test('audio button disables playback when speech text is unavailable', () => {
 test('home screen surfaces focused review copy and review action', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /10,000-learner feedback pass/);
-  assert.match(source, /10 000 elevers återkoppling/);
+  assert.match(source, /Focused review/);
+  assert.match(source, /Fokuserad repetition/);
   assert.match(source, /Keep track of what needs review/);
   assert.match(source, /Håll koll på det som behöver övas/);
   assert.match(source, /Review saved questions/);
@@ -1065,9 +1077,20 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
+  assert.match(source, /import \{ RouteLink \} from '\.\.\/\.\.\/components\/ui\/RouteLink';/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /accessibilityLabel=\{copy\.startPracticeAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}/);
+  assert.match(source, /<View style=\{styles\.quickActions\}>/);
+  assert.match(
+    source,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.readinessCtaAccessibilityLabel\}[\s\S]*href="\/exam"[\s\S]*style=\{styles\.quickActionLink\}[\s\S]*\{copy\.readinessCta\}[\s\S]*<\/RouteLink>/,
+  );
+  assert.match(
+    source,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.feedbackLinkAccessibilityLabel\}[\s\S]*href="\/mistakes"[\s\S]*style=\{styles\.quickActionLink\}[\s\S]*\{copy\.feedbackLink\}[\s\S]*<\/RouteLink>/,
+  );
+  assert.match(source, /quickActionLink: \{[\s\S]*flexBasis: 180,[\s\S]*flexGrow: 1,/);
   assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
