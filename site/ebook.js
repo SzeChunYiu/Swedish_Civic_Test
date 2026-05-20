@@ -1609,12 +1609,62 @@
     },
 
     5: {
-      kicker: { en: 'Chapter 05 · Equality', sv: 'Kapitel 05 · Jämställdhet', 'zh-Hans': '第 05 章 · 平等', 'zh-Hant': '第 05 章 · 平等', 'ar': 'الفصل 05 · المساواة', 'ckb': 'بەشی 05 · یەکسانی', 'fa': 'فصل 05 · برابری', 'pl': 'Rozdział 05 · Równość', 'so': 'Cutubka 05 · Sinnaan', 'ti': 'ምዕራፍ 05 · ማዕርነት', 'tr': 'Bölüm 05 · Eşitlik', 'uk': 'Розділ 05 · Рівність' },
-      title: { en: 'Equality', sv: 'Jämställdhet', 'zh-Hans': '平等', 'zh-Hant': '平等', 'ar': 'المساواة', 'ckb': 'یەکسانی', 'fa': 'برابری', 'pl': 'Równość', 'so': 'Sinnaanta', 'ti': 'ማዕርነትን', 'tr': 'Eşitlik', 'uk': 'Рівність' },
-      title_em: { en: 'and the modern household.', sv: 'och det moderna hemmet.', 'zh-Hans': '与现代家庭。', 'zh-Hant': '與現代家庭。', 'ar': 'والأسرة الحديثة.', 'ckb': 'و خێزانی هاوچەرخ.', 'fa': 'و خانوار مدرن.', 'pl': 'i nowoczesne gospodarstwo domowe.', 'so': 'iyo qoyska casriga ah.', 'ti': 'ዘመናዊ ስድራ ቤትን።', 'tr': 've modern hane.', 'uk': 'та сучасне домогосподарство.' },
+      kicker: {
+        en: 'Chapter 05 · Equality',
+        sv: 'Kapitel 05 · Jämställdhet',
+        'zh-Hans': '第 05 章 · 平等',
+        'zh-Hant': '第 05 章 · 平等',
+        ar: 'الفصل 05 · المساواة',
+        ckb: 'بەشی 05 · یەکسانی',
+        fa: 'فصل 05 · برابری',
+        pl: 'Rozdział 05 · Równość',
+        so: 'Cutubka 05 · Sinnaan',
+        ti: 'ምዕራፍ 05 · ማዕርነት',
+        tr: 'Bölüm 05 · Eşitlik',
+        uk: 'Розділ 05 · Рівність',
+      },
+      title: {
+        en: 'Equality',
+        sv: 'Jämställdhet',
+        'zh-Hans': '平等',
+        'zh-Hant': '平等',
+        ar: 'المساواة',
+        ckb: 'یەکسانی',
+        fa: 'برابری',
+        pl: 'Równość',
+        so: 'Sinnaanta',
+        ti: 'ማዕርነትን',
+        tr: 'Eşitlik',
+        uk: 'Рівність',
+      },
+      title_em: {
+        en: 'and the modern household.',
+        sv: 'och det moderna hemmet.',
+        'zh-Hans': '与现代家庭。',
+        'zh-Hant': '與現代家庭。',
+        ar: 'والأسرة الحديثة.',
+        ckb: 'و خێزانی هاوچەرخ.',
+        fa: 'و خانوار مدرن.',
+        pl: 'i nowoczesne gospodarstwo domowe.',
+        so: 'iyo qoyska casriga ah.',
+        ti: 'ዘመናዊ ስድራ ቤትን።',
+        tr: 've modern hane.',
+        uk: 'та сучасне домогосподарство.',
+      },
       lede: {
         en: 'Sweden is a quiet feminist project. The laws are clearer than the dinner-table conversations, but both are worth knowing.',
-        sv: 'Sverige är ett tyst feministiskt projekt. Lagarna är tydligare än middagsbordssamtalen — men båda är värda att kunna.', 'zh-Hans': '瑞典是一项静悄悄的女性主义事业。法律比餐桌上的对话更清晰，但两者都值得了解。', 'zh-Hant': '瑞典是一項靜悄悄的女性主義事業。法律比餐桌上的對話更清晰，但兩者都值得了解。', 'ar': 'السويد مشروع نسوي هادئ. القوانين أوضح من الأحاديث على مائدة العشاء، لكن كليهما يستحق المعرفة.', 'ckb': 'سوید پڕۆژەیەکی فێمینیستی بێدەنگە. یاساکان ڕوونترن لە گفتوگۆکانی سەر مێزی نانی ئێوارە، بەڵام هەردووکیان شایانی زانینن.', 'fa': 'سوئد یک پروژهٔ فمینیستی آرام است. قوانین روشن‌تر از گفت‌وگوهای سر میز شام‌اند، اما هر دو ارزش دانستن دارند.', 'pl': 'Szwecja to cichy projekt feministyczny. Przepisy są jaśniejsze niż rozmowy przy stole, ale warto znać jedne i drugie.', 'so': 'Iswiidhan waa mashruuc feminist ah oo aamusan. Sharciyadu way ka cad yihiin wadahadallada miiska cuntada, laakiin labadaba way mudan yihiin in la ogaado.', 'ti': 'ሽወደን ህዱእ ናይ ሴትነት ፕሮጀክት እያ። እቶም ሕግታት ካብቲ ኣብ ጣውላ ምግቢ ዝግበር ዕላላት ዝያዳ ንጹራት እዮም፣ ክልቲኦም ግን ምፍላጦም ይጠቅም።', 'tr': 'İsveç sessiz bir feminist projedir. Yasalar, akşam yemeği sohbetlerinden daha açıktır, ama her ikisini de bilmeye değer.', 'uk': 'Швеція — це тихий феміністичний проєкт. Закони зрозуміліші за розмови за обіднім столом, але варто знати і те, і інше.' },
+        sv: 'Sverige är ett tyst feministiskt projekt. Lagarna är tydligare än middagsbordssamtalen — men båda är värda att kunna.',
+        'zh-Hans': '瑞典是一项静悄悄的女性主义事业。法律比餐桌上的对话更清晰，但两者都值得了解。',
+        'zh-Hant': '瑞典是一項靜悄悄的女性主義事業。法律比餐桌上的對話更清晰，但兩者都值得了解。',
+        ar: 'السويد مشروع نسوي هادئ. القوانين أوضح من الأحاديث على مائدة العشاء، لكن كليهما يستحق المعرفة.',
+        ckb: 'سوید پڕۆژەیەکی فێمینیستی بێدەنگە. یاساکان ڕوونترن لە گفتوگۆکانی سەر مێزی نانی ئێوارە، بەڵام هەردووکیان شایانی زانینن.',
+        fa: 'سوئد یک پروژهٔ فمینیستی آرام است. قوانین روشن‌تر از گفت‌وگوهای سر میز شام‌اند، اما هر دو ارزش دانستن دارند.',
+        pl: 'Szwecja to cichy projekt feministyczny. Przepisy są jaśniejsze niż rozmowy przy stole, ale warto znać jedne i drugie.',
+        so: 'Iswiidhan waa mashruuc feminist ah oo aamusan. Sharciyadu way ka cad yihiin wadahadallada miiska cuntada, laakiin labadaba way mudan yihiin in la ogaado.',
+        ti: 'ሽወደን ህዱእ ናይ ሴትነት ፕሮጀክት እያ። እቶም ሕግታት ካብቲ ኣብ ጣውላ ምግቢ ዝግበር ዕላላት ዝያዳ ንጹራት እዮም፣ ክልቲኦም ግን ምፍላጦም ይጠቅም።',
+        tr: 'İsveç sessiz bir feminist projedir. Yasalar, akşam yemeği sohbetlerinden daha açıktır, ama her ikisini de bilmeye değer.',
+        uk: 'Швеція — це тихий феміністичний проєкт. Закони зрозуміліші за розмови за обіднім столом, але варто знати і те, і інше.',
+      },
       body: {
         en: `
           <h2>Equal in law</h2>
@@ -1663,7 +1713,7 @@
           <p>女性的勞動力參與率位居世界前列（約 80%）。性別薪酬差距確實存在（約 10–12%），但正在縮小。孕產婦死亡率位居世界最低之列。</p>
           ${ebookFactBox('zh-Hant', null, '同性婚姻：2009 · 反歧視事由：7 · 育兒假：480 天 · 各方保留：每人 90 天。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>متساوون أمام القانون</h2>
+        ar: `<h2>متساوون أمام القانون</h2>
           <p>قانون مكافحة التمييز (<em>diskrimineringslagen</em>، 2008) يحمي من التمييز على سبعة أسس: الجنس، والهوية أو التعبير الجندري، والعرق، والدين أو المعتقد، والإعاقة، والميل الجنسي، والعمر. وهو يسري في العمل والتعليم والرعاية الصحية والسكن والخدمات العامة.</p>
           <h2>زواج المثليين والعائلات المتنوعة</h2>
           <p>زواج المثليين قانوني منذ 2009. ويجوز للأزواج من نفس الجنس التبنّي والحصول على علاج الخصوبة بشروط متساوية. ويجوز للأشخاص المتحولين جنسيًا تغيير جنسهم القانوني دون متطلبات طبية.</p>
@@ -1675,7 +1725,7 @@
           <p>مشاركة النساء في القوى العاملة من بين الأعلى في العالم (~80%). الفجوة في الأجور بين الجنسين حقيقية (~10–12%) لكنها تتقلص. ووفيات الأمهات من بين الأدنى في العالم.</p>
           ${ebookFactBox('ar', null, 'زواج المثليين: 2009 · أسس التمييز: 7 · إجازة الوالدين: 480 يومًا · المحجوز لكل والد: 90 يومًا لكل منهما.', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>یەکسان لەبەردەم یاسادا</h2>
+        ckb: `<h2>یەکسان لەبەردەم یاسادا</h2>
           <p>یاسای دژە جیاوازی (<em>diskrimineringslagen</em>، 2008) پاراستن دەکات لە جیاوازی لەسەر حەوت بنەما: ڕەگەز، ناسنامە یان دەربڕینی ڕەگەزی، نەتەوەیی، ئایین یان باوەڕ، کەمئەندامی، ئاراستەی سێکسی، و تەمەن. لە کار، پەروەردە، چاودێری تەندروستی، نیشتەجێبوون، و خزمەتگوزاری گشتیدا جێبەجێ دەکرێت.</p>
           <h2>هاوسەرگیری هاوڕەگەز و خێزانە جۆراوجۆرەکان</h2>
           <p>هاوسەرگیری هاوڕەگەز لە ساڵی 2009 ـەوە یاساییە. جووتە هاوڕەگەزەکان دەتوانن منداڵ بگرنە خۆ و بە مەرجی یەکسان دەستیان بگات بە چارەسەری زاوزێ. کەسانی ترانس دەتوانن ڕەگەزی یاساییان بگۆڕن بەبێ پێداویستی پزیشکی.</p>
@@ -1687,7 +1737,7 @@
           <p>بەشداری ژنان لە هێزی کاردا لە بەرزترینەکانی جیهانە (~80%). جیاوازی موچەی ڕەگەزی ڕاستەقینەیە (~10–12%) بەڵام کەم دەبێتەوە. مردنی دایکان لە کەمترینەکانی جیهانە.</p>
           ${ebookFactBox('ckb', null, 'هاوسەرگیری هاوڕەگەز: 2009 · بنەماکانی جیاوازی: 7 · مۆڵەتی دایک و باوک: 480 ڕۆژ · تەرخانکراو بۆ هەر دایک یان باوکێک: 90 ڕۆژ بۆ هەریەکەیان.', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>برابر در برابر قانون</h2>
+        fa: `<h2>برابر در برابر قانون</h2>
           <p>قانون مبارزه با تبعیض (<em>diskrimineringslagen</em>، 2008) از تبعیض بر هفت پایه محافظت می‌کند: جنسیت، هویت یا بیان جنسیتی، قومیت، دین یا باور، معلولیت، گرایش جنسی، و سن. این قانون در کار، آموزش، بهداشت، مسکن، و خدمات عمومی اعمال می‌شود.</p>
           <h2>ازدواج هم‌جنس و خانواده‌های رنگین‌کمانی</h2>
           <p>ازدواج هم‌جنس از سال 2009 قانونی است. زوج‌های هم‌جنس می‌توانند فرزندخواندگی بپذیرند و با شرایط برابر به درمان ناباروری دسترسی داشته باشند. افراد تراجنسیتی می‌توانند جنسیت قانونی خود را بدون الزامات پزشکی تغییر دهند.</p>
@@ -1699,7 +1749,7 @@
           <p>مشارکت زنان در نیروی کار از بالاترین‌ها در جهان است (~80%). شکاف دستمزد جنسیتی واقعی است (~10–12%) اما در حال کاهش است. مرگ‌ومیر مادران از کمترین‌ها در جهان است.</p>
           ${ebookFactBox('fa', null, 'ازدواج هم‌جنس: 2009 · پایه‌های تبعیض: 7 · مرخصی والدین: 480 روز · رزرو برای هر والد: 90 روز برای هرکدام.', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Równi wobec prawa</h2>
+        pl: `<h2>Równi wobec prawa</h2>
           <p>Ustawa o zakazie dyskryminacji (<em>diskrimineringslagen</em>, 2008) chroni przed dyskryminacją z siedmiu powodów: płci, tożsamości lub ekspresji płciowej, pochodzenia etnicznego, religii lub przekonań, niepełnosprawności, orientacji seksualnej i wieku. Obowiązuje w pracy, edukacji, opiece zdrowotnej, mieszkalnictwie i usługach publicznych.</p>
           <h2>Małżeństwa osób tej samej płci i tęczowe rodziny</h2>
           <p>Małżeństwa osób tej samej płci są legalne od 2009. Pary jednopłciowe mogą adoptować i korzystać z leczenia niepłodności na równych zasadach. Osoby transpłciowe mogą zmienić płeć prawną bez wymogów medycznych.</p>
@@ -1711,7 +1761,7 @@
           <p>Aktywność zawodowa kobiet należy do najwyższych na świecie (~80%). Luka płacowa między płciami jest realna (~10–12%), ale maleje. Śmiertelność okołoporodowa należy do najniższych na świecie.</p>
           ${ebookFactBox('pl', null, 'Małżeństwa osób tej samej płci: 2009 · Powody dyskryminacji: 7 · Urlop rodzicielski: 480 dni · Zarezerwowane na rodzica: po 90 dni.', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Sharci ahaan loo siman yahay</h2>
+        so: `<h2>Sharci ahaan loo siman yahay</h2>
           <p>Sharciga Takoorida (<em>diskrimineringslagen</em>, 2008) wuxuu ka ilaaliyaa takoorida toddoba sababood: jinsiga, aqoonsiga ama muujinta jinsiga, qowmiyadda, diinta ama caqiidada, naafanimada, jihada galmada iyo da'da. Wuxuu khuseeyaa shaqada, waxbarashada, daryeelka caafimaadka, guriyaynta iyo adeegyada dadweynaha.</p>
           <h2>Guurka isku-jinsiga ah iyo qoysaska qaansoroobaadka</h2>
           <p>Guurka isku-jinsiga ah waa sharci tan iyo 2009. Lammaanaha isku-jinsiga ahi waxay korsan karaan oo heli karaan daawaynta bacrinta shuruudo siman. Dadka dheddiga-labka beddelay (transgender) waxay beddeli karaan jinsigooda sharci iyaga oo aan u baahnayn shuruudo caafimaad.</p>
@@ -1723,7 +1773,7 @@
           <p>Ka qaybgalka haweenka ee xoogga shaqaale wuxuu ka mid yahay kuwa ugu sarreeya adduunka (~80%). Farqiga mushaharka u dhexeeya jinsiyadu waa dhab (~10–12%) laakiin wuu yaraanayaa. Dhimashada hooyada wuxuu ka mid yahay kuwa ugu hooseeya adduunka.</p>
           ${ebookFactBox('so', null, 'Guurka isku-jinsiga ah: 2009 · Sababaha takoorida: 7 · Fasaxa waalidnimada: 480 maalmood · Loo dhigay waalid kasta: 90 maalmood mid kasta.', ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>ኣብ ሕጊ ማዕረ</h2>
+        ti: `<h2>ኣብ ሕጊ ማዕረ</h2>
           <p>ሕጊ ኣንጻር ኣድልዎ (<em>diskrimineringslagen</em>, 2008) ኣብ ሸውዓተ መሰረታት ኣንጻር ኣድልዎ ይከላኸል፦ ጾታ፣ ጾታዊ መንነት ወይ ኣገላልጻ፣ ዓሌት፣ ሃይማኖት ወይ እምነት፣ ስንክልና፣ ጾታዊ ዝንባለን ዕድመን። ኣብ ስራሕ፣ ትምህርቲ፣ ክንክን ጥዕና፣ መንበሪ ኣባይትን ህዝባዊ ኣገልግሎታትን ይሰርሕ።</p>
           <h2>ሓደ ጾታ ሓዳርን ቀስተ ደመና ስድራቤታትን</h2>
           <p>ሓደ ጾታ ሓዳር ካብ 2009 ጀሚሩ ሕጋዊ እዩ። ሓደ ጾታ ጽምዲ ብማዕረ ኩነታት ክጥየሙን ናይ ጥንሲ ሕክምና ክረኽቡን ይኽእሉ። ጾታኦም ዝቐየሩ ሰባት (transgender) ብዘይ ሕክምናዊ ቅድመ ኩነት ሕጋዊ ጾታኦም ክቕይሩ ይኽእሉ።</p>
@@ -1735,7 +1785,7 @@
           <p>ተሳትፎ ኣንስቲ ኣብ ሓይሊ ዕዮ ካብ ናይ ዓለም እቲ ዝለዓለ እዩ (~80%)። እቲ ብጾታ ዝፍለ ናይ ደሞዝ ፍልልይ ሓቂ እዩ (~10–12%) ግን እናጎደለ ይኸይድ ኣሎ። ሞት ኣዴታት ካብ ናይ ዓለም እቲ ዝተሓተ እዩ።</p>
           ${ebookFactBox('ti', null, 'ሓደ ጾታ ሓዳር፦ 2009 · መሰረታት ኣድልዎ፦ 7 · ናይ ወለዲ ዕረፍቲ፦ 480 መዓልታት · ንነፍሲ ወከፍ ወላዲ ዝተሓዘ፦ 90 መዓልታት ነፍሲ ወከፍ።', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>Yasa önünde eşit</h2>
+        tr: `<h2>Yasa önünde eşit</h2>
           <p>Ayrımcılık Yasası (<em>diskrimineringslagen</em>, 2008) yedi temelde ayrımcılığa karşı korur: cinsiyet, cinsiyet kimliği veya ifadesi, etnik köken, din veya inanç, engellilik, cinsel yönelim ve yaş. İş, eğitim, sağlık hizmetleri, konut ve kamu hizmetlerinde geçerlidir.</p>
           <h2>Eşcinsel evlilik ve gökkuşağı aileler</h2>
           <p>Eşcinsel evlilik 2009'dan beri yasaldır. Eşcinsel çiftler eşit koşullarda evlat edinebilir ve doğurganlık tedavisine erişebilir. Transgender bireyler tıbbi gereklilik olmadan yasal cinsiyetlerini değiştirebilir.</p>
@@ -1745,9 +1795,9 @@
           <p>Yemek pişirme, temizlik, çocuk bakımı ve ev idaresi İsveç'te cinsiyete dayalı görevler değildir — en azından resmî olarak. Anketler, bunun ev işlerine harcanan zamanın en eşit olduğu ülke olduğunu gösteriyor. (İstatistikler, tıpkı ergenler gibi, biraz yalan söyler.)</p>
           <h2>Kadınlar ve çalışma</h2>
           <p>Kadınların iş gücüne katılımı dünyanın en yükseklerinden biridir (~%80). Cinsiyetler arası ücret farkı gerçektir (~%10–12) ama küçülüyor. Anne ölümleri dünyanın en düşüklerinden biridir.</p>
-          ${ebookFactBox('tr', null, 'Eşcinsel evlilik: 2009 · Ayrımcılık temelleri: 7 · Ebeveyn izni: 480 gün · Ebeveyn başına ayrılan: 90\'ar gün.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('tr', null, "Eşcinsel evlilik: 2009 · Ayrımcılık temelleri: 7 · Ebeveyn izni: 480 gün · Ebeveyn başına ayrılan: 90'ar gün.", ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Рівні перед законом</h2>
+        uk: `<h2>Рівні перед законом</h2>
           <p>Закон про заборону дискримінації (<em>diskrimineringslagen</em>, 2008) захищає від дискримінації за сімома ознаками: статі, гендерної ідентичності чи вираження, етнічного походження, релігії чи переконань, інвалідності, сексуальної орієнтації та віку. Він діє у праці, освіті, охороні здоров'я, житлі та публічних послугах.</p>
           <h2>Одностатеві шлюби та райдужні родини</h2>
           <p>Одностатеві шлюби легальні від 2009. Одностатеві пари можуть усиновлювати та отримувати лікування безпліддя на рівних умовах. Трансгендерні люди можуть змінити свою юридичну стать без медичних вимог.</p>
@@ -1763,12 +1813,64 @@
     },
 
     6: {
-      kicker: { en: 'Chapter 06 · Society', sv: 'Kapitel 06 · Samhälle', 'zh-Hans': '第 06 章 · 社会', 'zh-Hant': '第 06 章 · 社會', 'ar': 'الفصل 06 · المجتمع', 'ckb': 'بەشی 06 · کۆمەڵگا', 'fa': 'فصل 06 · جامعه', 'pl': 'Rozdział 06 · Społeczeństwo', 'so': 'Cutubka 06 · Bulsho', 'ti': 'ምዕራፍ 06 · ሕብረተሰብ', 'tr': 'Bölüm 06 · Toplum', 'uk': 'Розділ 06 · Суспільство' },
-      title: { en: 'Society, school,', sv: 'Samhälle, skola', 'zh-Hans': '社会、学校，', 'zh-Hant': '社會、學校，', 'ar': 'المجتمع والمدرسة', 'ckb': 'کۆمەڵگا، قوتابخانە،', 'fa': 'جامعه، مدرسه،', 'pl': 'Społeczeństwo, szkoła', 'so': 'Bulshada, iskuulka', 'ti': 'ሕብረተሰብ፣ ቤት ትምህርቲ', 'tr': 'Toplum, okul', 'uk': 'Суспільство, школа' },
-      title_em: { en: 'and healthcare.', sv: 'och vård.', 'zh-Hans': '以及医疗。', 'zh-Hant': '以及醫療。', 'ar': 'والرعاية الصحية.', 'ckb': 'و چاودێری تەندروستی.', 'fa': 'و بهداشت و درمان.', 'pl': 'i opieka zdrowotna.', 'so': 'iyo daryeelka caafimaadka.', 'ti': 'ክንክን ጥዕናን።', 'tr': 've sağlık hizmetleri.', 'uk': 'та охорона здоров\'я.' },
+      kicker: {
+        en: 'Chapter 06 · Society',
+        sv: 'Kapitel 06 · Samhälle',
+        'zh-Hans': '第 06 章 · 社会',
+        'zh-Hant': '第 06 章 · 社會',
+        ar: 'الفصل 06 · المجتمع',
+        ckb: 'بەشی 06 · کۆمەڵگا',
+        fa: 'فصل 06 · جامعه',
+        pl: 'Rozdział 06 · Społeczeństwo',
+        so: 'Cutubka 06 · Bulsho',
+        ti: 'ምዕራፍ 06 · ሕብረተሰብ',
+        tr: 'Bölüm 06 · Toplum',
+        uk: 'Розділ 06 · Суспільство',
+      },
+      title: {
+        en: 'Society, school,',
+        sv: 'Samhälle, skola',
+        'zh-Hans': '社会、学校，',
+        'zh-Hant': '社會、學校，',
+        ar: 'المجتمع والمدرسة',
+        ckb: 'کۆمەڵگا، قوتابخانە،',
+        fa: 'جامعه، مدرسه،',
+        pl: 'Społeczeństwo, szkoła',
+        so: 'Bulshada, iskuulka',
+        ti: 'ሕብረተሰብ፣ ቤት ትምህርቲ',
+        tr: 'Toplum, okul',
+        uk: 'Суспільство, школа',
+      },
+      title_em: {
+        en: 'and healthcare.',
+        sv: 'och vård.',
+        'zh-Hans': '以及医疗。',
+        'zh-Hant': '以及醫療。',
+        ar: 'والرعاية الصحية.',
+        ckb: 'و چاودێری تەندروستی.',
+        fa: 'و بهداشت و درمان.',
+        pl: 'i opieka zdrowotna.',
+        so: 'iyo daryeelka caafimaadka.',
+        ti: 'ክንክን ጥዕናን።',
+        tr: 've sağlık hizmetleri.',
+        uk: "та охорона здоров'я.",
+      },
       lede: {
         en: 'Sweden runs the boring parts of life — school, healthcare, eldercare — through the public sector, and is largely on first-name terms with its bureaucrats.',
-        sv: 'Sverige sköter livets tråkiga delar — skola, vård, äldreomsorg — i offentlig regi, och är på förnamn med byråkraterna.', 'zh-Hans': '瑞典把生活中那些枯燥的部分——学校、医疗、养老——都交由公共部门来运作，而且和它的公务员们大多以名相称、关系融洽。', 'zh-Hant': '瑞典把生活中那些枯燥的部分——學校、醫療、養老——都交由公共部門來運作，而且和它的公務員們大多以名相稱、關係融洽。', 'ar': 'تدير السويد الأجزاء المملّة من الحياة — المدرسة والرعاية الصحية ورعاية المسنّين — عبر القطاع العام، وهي على علاقة ودّية باسم الشخص الأول مع موظفيها البيروقراطيين إلى حد كبير.', 'ckb': 'سوید بەشە بێزارکەرەکانی ژیان — قوتابخانە، چاودێری تەندروستی، چاودێری بەساڵاچووان — لە ڕێگەی کەرتی گشتییەوە بەڕێوە دەبات، و زۆربەی کات بە ناوی یەکەمەوە لەگەڵ کارمەندە بیرۆکراتەکانیدا قسە دەکات.', 'fa': 'سوئد بخش‌های کسالت‌بار زندگی را — مدرسه، بهداشت، مراقبت از سالمندان — از طریق بخش عمومی اداره می‌کند و تا حد زیادی با کارمندان دیوان‌سالار خود به نام کوچک خطاب می‌شود.', 'pl': 'Szwecja prowadzi nudne części życia — szkołę, opiekę zdrowotną, opiekę nad seniorami — przez sektor publiczny i w dużej mierze jest ze swoimi urzędnikami na „ty”.', 'so': 'Iswiidhan waxay qaybaha caajiska ah ee nolosha — iskuulka, daryeelka caafimaadka, daryeelka waayeelka — ku maamushaa qaybta dawliga ah, badanaana magaca ayey ku wadaa la sarkaalkeeda.', 'ti': 'ሽወደን ነቶም ኣሰልችዉ ክፋላት ህይወት — ቤት ትምህርቲ፣ ክንክን ጥዕና፣ ክንክን ኣረጋውያን — ብህዝባዊ ጽላት ተካይዶም፣ ምስ ቢሮክራትታታ ድማ መብዛሕትኡ ግዜ ብስም ትዘራረብ።', 'tr': 'İsveç hayatın sıkıcı kısımlarını — okul, sağlık, yaşlı bakımı — kamu sektörü aracılığıyla yürütür ve bürokratlarıyla büyük ölçüde samimi (ismiyle hitap eden) bir ilişki içindedir.', 'uk': 'Швеція веде нудні частини життя — школу, охорону здоров\'я, догляд за літніми — через державний сектор і здебільшого спілкується зі своїми чиновниками на ім\'я.' },
+        sv: 'Sverige sköter livets tråkiga delar — skola, vård, äldreomsorg — i offentlig regi, och är på förnamn med byråkraterna.',
+        'zh-Hans':
+          '瑞典把生活中那些枯燥的部分——学校、医疗、养老——都交由公共部门来运作，而且和它的公务员们大多以名相称、关系融洽。',
+        'zh-Hant':
+          '瑞典把生活中那些枯燥的部分——學校、醫療、養老——都交由公共部門來運作，而且和它的公務員們大多以名相稱、關係融洽。',
+        ar: 'تدير السويد الأجزاء المملّة من الحياة — المدرسة والرعاية الصحية ورعاية المسنّين — عبر القطاع العام، وهي على علاقة ودّية باسم الشخص الأول مع موظفيها البيروقراطيين إلى حد كبير.',
+        ckb: 'سوید بەشە بێزارکەرەکانی ژیان — قوتابخانە، چاودێری تەندروستی، چاودێری بەساڵاچووان — لە ڕێگەی کەرتی گشتییەوە بەڕێوە دەبات، و زۆربەی کات بە ناوی یەکەمەوە لەگەڵ کارمەندە بیرۆکراتەکانیدا قسە دەکات.',
+        fa: 'سوئد بخش‌های کسالت‌بار زندگی را — مدرسه، بهداشت، مراقبت از سالمندان — از طریق بخش عمومی اداره می‌کند و تا حد زیادی با کارمندان دیوان‌سالار خود به نام کوچک خطاب می‌شود.',
+        pl: 'Szwecja prowadzi nudne części życia — szkołę, opiekę zdrowotną, opiekę nad seniorami — przez sektor publiczny i w dużej mierze jest ze swoimi urzędnikami na „ty”.',
+        so: 'Iswiidhan waxay qaybaha caajiska ah ee nolosha — iskuulka, daryeelka caafimaadka, daryeelka waayeelka — ku maamushaa qaybta dawliga ah, badanaana magaca ayey ku wadaa la sarkaalkeeda.',
+        ti: 'ሽወደን ነቶም ኣሰልችዉ ክፋላት ህይወት — ቤት ትምህርቲ፣ ክንክን ጥዕና፣ ክንክን ኣረጋውያን — ብህዝባዊ ጽላት ተካይዶም፣ ምስ ቢሮክራትታታ ድማ መብዛሕትኡ ግዜ ብስም ትዘራረብ።',
+        tr: 'İsveç hayatın sıkıcı kısımlarını — okul, sağlık, yaşlı bakımı — kamu sektörü aracılığıyla yürütür ve bürokratlarıyla büyük ölçüde samimi (ismiyle hitap eden) bir ilişki içindedir.',
+        uk: "Швеція веде нудні частини життя — школу, охорону здоров'я, догляд за літніми — через державний сектор і здебільшого спілкується зі своїми чиновниками на ім'я.",
+      },
       body: {
         en: `
           <h2>School</h2>
@@ -1817,7 +1919,7 @@
           <p>Socialtjänsten（社會服務局）為任何無法自食其力的人提供支持——經濟援助（försörjningsstöd）、兒童福利、成癮問題支持以及家庭幫助。在兒童面臨風險的情況下，他們還負有依法介入的義務。</p>
           ${ebookFactBox('zh-Hant', null, '義務教育：10 年（förskoleklass + 1–9 年級） · 醫療熱線：1177 · region 數量：21 · 大學學費：對居民免費。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>المدرسة</h2>
+        ar: `<h2>المدرسة</h2>
           <p>المدرسة الإلزامية (<em>grundskolan</em>) عشر سنوات، من سن 6 (الصف التحضيري، förskoleklass) حتى الصف التاسع. بعد ذلك ثلاث سنوات من المرحلة الثانوية العليا (<em>gymnasium</em>) — مساران أكاديمي أو مهني، وكلاهما مجاني. والجامعة مجانية أيضًا للمواطنين، ولمقيمي الاتحاد الأوروبي/المنطقة الاقتصادية الأوروبية، ولمن لديهم تصريح إقامة سويدي.</p>
           <p>قانون التعليم يضمن المساواة في الوصول بغضّ النظر عن الخلفية أو الجنس أو مكان السكن. توجد مدارس خاصة و"حرة" (<em>friskolor</em>) لكنها لا تستطيع فرض رسوم دراسية.</p>
           <h2>الرعاية الصحية</h2>
@@ -1829,7 +1931,7 @@
           <p>الخدمات الاجتماعية (Socialtjänsten) تدعم كل من لا يستطيع إعالة نفسه — المساعدة المالية (الدعم المعيشي، försörjningsstöd)، ورعاية الطفل، ودعم الإدمان، ومساعدة الأسرة. ولها أيضًا التزامات قانونية بالتدخل حيث يكون الطفل في خطر.</p>
           ${ebookFactBox('ar', null, 'المدرسة الإلزامية: 10 سنوات (förskoleklass + الصفوف 1–9) · الخط الساخن الصحي: 1177 · عدد الأقاليم: 21 · رسوم الجامعة: مجانية للمقيمين.', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>قوتابخانە</h2>
+        ckb: `<h2>قوتابخانە</h2>
           <p>قوتابخانەی ناچاری (<em>grundskolan</em>) دە ساڵە، لە تەمەنی 6 ـەوە (پۆلی پێش‌قوتابخانە، förskoleklass) تا پۆلی نۆیەم. دوای ئەوە، سێ ساڵ خوێندنی ئامادەیی (<em>gymnasium</em>) — ڕێڕەوی ئەکادیمی یان پیشەیی، هەردووکیان بەخۆڕاییە. زانکۆش بەخۆڕاییە بۆ هاوڵاتییان، دانیشتووانی یەکێتیی ئەوروپا/ناوچەی ئابووریی ئەوروپا، و ئەوانەی مۆڵەتی نیشتەجێبوونی سویدیان هەیە.</p>
           <p>یاسای پەروەردە دەستڕاگەیشتنی یەکسان دەستەبەر دەکات بەبێ گوێدانە ڕەچەڵەک، ڕەگەز، یان شوێنی نیشتەجێبوون. قوتابخانەی تایبەت و "ئازاد" (<em>friskolor</em>) هەن بەڵام ناتوانن کرێی خوێندن وەربگرن.</p>
           <h2>چاودێری تەندروستی</h2>
@@ -1841,7 +1943,7 @@
           <p>خزمەتگوزاری کۆمەڵایەتی (Socialtjänsten) پشتگیریی هەر کەسێک دەکات کە ناتوانێت خۆی بەخێو بکات — یارمەتیی دارایی (پشتگیریی بژێوی، försörjningsstöd)، خۆشگوزەرانیی منداڵ، پشتگیریی لادان لە مادە هۆشبەرەکان، یارمەتیی خێزان. هەروەها ئەرکی یاساییان هەیە بۆ دەستێوەردان لەو شوێنانەی منداڵێک لە مەترسیدایە.</p>
           ${ebookFactBox('ckb', null, 'قوتابخانەی ناچاری: 10 ساڵ (förskoleklass + پۆلەکانی 1–9) · هێڵی تەندروستی: 1177 · ژمارەی هەرێمەکان: 21 · کرێی زانکۆ: بەخۆڕایی بۆ دانیشتووان.', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>مدرسه</h2>
+        fa: `<h2>مدرسه</h2>
           <p>مدرسهٔ اجباری (<em>grundskolan</em>) ده سال است، از سن 6 (کلاس پیش‌دبستانی، förskoleklass) تا کلاس نهم. پس از آن، سه سال دبیرستان (<em>gymnasium</em>) — مسیر دانشگاهی یا فنی‌وحرفه‌ای، هر دو رایگان. دانشگاه نیز برای شهروندان، ساکنان اتحادیهٔ اروپا/منطقهٔ اقتصادی اروپا، و دارندگان اجازهٔ اقامت سوئدی رایگان است.</p>
           <p>قانون آموزش دسترسی برابر را صرف‌نظر از پیشینه، جنسیت، یا محل زندگی تضمین می‌کند. مدارس خصوصی و "آزاد" (<em>friskolor</em>) وجود دارند اما نمی‌توانند شهریه دریافت کنند.</p>
           <h2>بهداشت و درمان</h2>
@@ -1853,7 +1955,7 @@
           <p>خدمات اجتماعی (Socialtjänsten) از هر کسی که قادر به تأمین معاش خود نیست حمایت می‌کند — کمک مالی (کمک‌هزینهٔ معیشت، försörjningsstöd)، رفاه کودک، حمایت در برابر اعتیاد، کمک به خانواده. آن‌ها همچنین تعهدات قانونی برای مداخله در جایی که کودکی در خطر است دارند.</p>
           ${ebookFactBox('fa', null, 'مدرسهٔ اجباری: 10 سال (förskoleklass + کلاس‌های 1–9) · خط تلفن سلامت: 1177 · تعداد مناطق: 21 · شهریهٔ دانشگاه: رایگان برای ساکنان.', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Szkoła</h2>
+        pl: `<h2>Szkoła</h2>
           <p>Szkoła obowiązkowa (<em>grundskolan</em>) trwa dziesięć lat, od 6. roku życia (förskoleklass — klasa zerowa) do 9. klasy. Potem trzy lata szkoły średniej II stopnia (<em>gymnasium</em>) — w trybie ogólnokształcącym lub zawodowym, oba bezpłatne. Uniwersytet jest również bezpłatny dla obywateli, rezydentów EU/EEA oraz osób z szwedzkim zezwoleniem na pobyt.</p>
           <p>Ustawa oświatowa gwarantuje równy dostęp niezależnie od pochodzenia, płci czy miejsca zamieszkania. Szkoły prywatne i „wolne” (<em>friskolor</em>) istnieją, ale nie mogą pobierać czesnego.</p>
           <h2>Opieka zdrowotna</h2>
@@ -1865,7 +1967,7 @@
           <p>Socialtjänsten (służby społeczne) wspierają każdego, kto nie jest w stanie się utrzymać — pomoc finansowa (försörjningsstöd), opieka nad dziećmi, wsparcie w uzależnieniach, pomoc rodzinom. Mają też prawny obowiązek interweniować, gdy dziecku grozi niebezpieczeństwo.</p>
           ${ebookFactBox('pl', null, 'Szkoła obowiązkowa: 10 lat (förskoleklass + klasy 1–9) · Infolinia zdrowotna: 1177 · Liczba regionów: 21 · Czesne na uniwersytecie: bezpłatne dla rezydentów.', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Iskuulka</h2>
+        so: `<h2>Iskuulka</h2>
           <p>Iskuulka qasabka ah (<em>grundskolan</em>) waa toban sano, laga bilaabo da'da 6 (förskoleklass — fasalka ka horreeya dugsiga) ilaa fasalka 9-aad. Intaa ka dib, saddex sano oo dugsi sare ah (<em>gymnasium</em>) — waddooyin tacliimeed ama xirfadeed, labadaba waa bilaash. Jaamacaddu sidoo kale waa bilaash muwaadiniinta, dadka deggan EU/EEA, iyo dadka haysta sharciga deganaanshaha Iswiidhan.</p>
           <p>Sharciga Waxbarashada wuxuu dammaanad qaadayaa helitaan siman iyadoon loo eegin asalka, jinsiga ama meesha aad deggan tahay. Iskuullada gaarka loo leeyahay iyo kuwa "xorta ah" (<em>friskolor</em>) way jiraan laakiin lacag waxbarasho ma qaadan karaan.</p>
           <h2>Daryeelka caafimaadka</h2>
@@ -1877,7 +1979,7 @@
           <p>Socialtjänsten (adeegyada bulshada) waxay taageeraan qof kasta oo aan is-masruufi karin — caawimaad maaliyadeed (försörjningsstöd), daryeelka carruurta, taageerada balwadda, caawimaadda qoyska. Waxay sidoo kale leeyihiin waajibaad sharci ah inay farageliyaan halka ilmo khatar ku jiro.</p>
           ${ebookFactBox('so', null, 'Iskuulka qasabka ah: 10 sano (förskoleklass + fasallada 1–9) · Khadka caafimaadka: 1177 · Tirada region: 21 · Lacagta jaamacadda: bilaash dadka deggan.', ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>ቤት ትምህርቲ</h2>
+        ti: `<h2>ቤት ትምህርቲ</h2>
           <p>ግዴታዊ ቤት ትምህርቲ (<em>grundskolan</em>) ዓሰርተ ዓመት እዩ፣ ካብ 6 ዓመት (förskoleklass — ቅድመ ትምህርቲ ክፍሊ) ክሳብ 9 ክፍሊ። ድሕሪኡ፣ ሰለስተ ዓመት ላዕለዋይ ካልኣይ ደረጃ (<em>gymnasium</em>) — ኣካዳሚያዊ ወይ ሞያዊ መንገድታት፣ ክልቲኦም ብናጻ። ዩኒቨርሲቲ እውን ንዜጋታት፣ ነበርቲ EU/EEA ከምኡ’ውን ሽወደናዊ መንበሪ ፍቓድ ንዘለዎም ሰባት ብናጻ እዩ።</p>
           <p>ሕጊ ትምህርቲ ብዘይ ኣፈላላይ ድሕረ ባይታ፣ ጾታ ወይ መንበሪ ቦታ ማዕረ ተበጻሕነት የረጋግጽ። ብሕታውያንን „ናጻ” ኣብያተ ትምህርትን (<em>friskolor</em>) ኣለዉ ግን ክፍሊት ትምህርቲ ክወስዱ ኣይክእሉን።</p>
           <h2>ክንክን ጥዕና</h2>
@@ -1889,7 +1991,7 @@
           <p>Socialtjänsten (ማሕበራዊ ኣገልግሎታት) ንርእሱ ክናብ ዘይክእል ዝኾነ ሰብ ይድግፉ — ገንዘባዊ ሓገዝ (försörjningsstöd)፣ ድሕነት ቆልዑ፣ ደገፍ ወልፊ፣ ናይ ስድራ ሓገዝ። ቆልዓ ኣብ ሓደጋ ኣብ ዘለወሉ ጣልቃ ናይ ምእታው ሕጋዊ ግዴታታት እውን ኣለዎም።</p>
           ${ebookFactBox('ti', null, 'ግዴታዊ ቤት ትምህርቲ፦ 10 ዓመት (förskoleklass + ክፍሊ 1–9) · ናይ ጥዕና መስመር፦ 1177 · ቍጽሪ region፦ 21 · ናይ ዩኒቨርሲቲ ክፍሊት፦ ንነበርቲ ብናጻ።', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>Okul</h2>
+        tr: `<h2>Okul</h2>
           <p>Zorunlu okul (<em>grundskolan</em>) on yıldır; 6 yaşından (förskoleklass — okul öncesi sınıf) 9. sınıfa kadar. Ardından üç yıllık lise (<em>gymnasium</em>) — akademik veya mesleki kollar, ikisi de ücretsiz. Üniversite de vatandaşlar, EU/EEA sakinleri ve İsveç oturum izni olan kişiler için ücretsizdir.</p>
           <p>Eğitim Yasası, geçmiş, cinsiyet veya yaşadığınız yer ne olursa olsun eşit erişimi güvence altına alır. Özel ve "serbest" okullar (<em>friskolor</em>) vardır ama harç alamaz.</p>
           <h2>Sağlık hizmetleri</h2>
@@ -1901,7 +2003,7 @@
           <p>Socialtjänsten (sosyal hizmetler) geçimini sağlayamayan herkesi destekler — mali yardım (försörjningsstöd), çocuk refahı, bağımlılık desteği, aile yardımı. Bir çocuğun risk altında olduğu durumlarda müdahale etme yasal yükümlülükleri de vardır.</p>
           ${ebookFactBox('tr', null, 'Zorunlu okul: 10 yıl (förskoleklass + 1–9. sınıflar) · Sağlık hattı: 1177 · region sayısı: 21 · Üniversite harcı: sakinler için ücretsiz.', ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Школа</h2>
+        uk: `<h2>Школа</h2>
           <p>Обов'язкова школа (<em>grundskolan</em>) триває десять років, від 6 років (förskoleklass — підготовчий клас) до 9 класу. Після цього три роки старшої середньої школи (<em>gymnasium</em>) — академічний або професійний напрям, обидва безкоштовні. Університет також безкоштовний для громадян, мешканців EU/EEA та осіб зі шведським дозволом на проживання.</p>
           <p>Закон про освіту гарантує рівний доступ незалежно від походження, статі чи місця проживання. Приватні та „вільні” школи (<em>friskolor</em>) існують, але не можуть стягувати плату за навчання.</p>
           <h2>Охорона здоров'я</h2>
@@ -1911,18 +2013,68 @@
           <p>Догляд за літніми веде муніципалітет — домашня допомога (<em>hemtjänst</em>), спеціальне житло та екстрені сигналізації. Принцип — право жити самостійно якомога довше; на практиці це нерівномірно залежно від муніципалітету.</p>
           <h2>Соціальні служби</h2>
           <p>Socialtjänsten (соціальні служби) підтримують кожного, хто не може себе утримувати — фінансова допомога (försörjningsstöd), захист дітей, підтримка при залежностях, допомога родинам. Вони також мають юридичні обов'язки втручатися, коли дитина в небезпеці.</p>
-          ${ebookFactBox('uk', null, 'Обов\'язкова школа: 10 років (förskoleklass + класи 1–9) · Гаряча лінія здоров\'я: 1177 · Кількість region: 21 · Плата за університет: безкоштовно для мешканців.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('uk', null, "Обов'язкова школа: 10 років (förskoleklass + класи 1–9) · Гаряча лінія здоров'я: 1177 · Кількість region: 21 · Плата за університет: безкоштовно для мешканців.", ['uhrStudyMaterial'])}
         `,
       },
     },
 
     7: {
-      kicker: { en: 'Chapter 07 · Nature', sv: 'Kapitel 07 · Natur', 'zh-Hans': '第 07 章 · 自然', 'zh-Hant': '第 07 章 · 自然', 'ar': 'الفصل 07 · الطبيعة', 'ckb': 'بەشی 07 · سروشت', 'fa': 'فصل 07 · طبیعت', 'pl': 'Rozdział 07 · Przyroda', 'so': 'Cutubka 07 · Dabeecad', 'ti': 'ምዕራፍ 07 · ተፈጥሮ', 'tr': 'Bölüm 07 · Doğa', 'uk': 'Розділ 07 · Природа' },
-      title: { en: 'Nature, climate,', sv: 'Natur, klimat', 'zh-Hans': '自然、气候，', 'zh-Hant': '自然、氣候，', 'ar': 'الطبيعة والمناخ', 'ckb': 'سروشت، کەشوهەوا،', 'fa': 'طبیعت، اقلیم،', 'pl': 'Przyroda, klimat', 'so': 'Dabeecadda, cimilada', 'ti': 'ተፈጥሮ፣ ክሊማ', 'tr': 'Doğa, iklim', 'uk': 'Природа, клімат' },
-      title_em: { en: 'and allemansrätten.', sv: 'och allemansrätten.', 'zh-Hans': '以及 allemansrätten。', 'zh-Hant': '以及 allemansrätten。', 'ar': 'وحق الوصول العام (allemansrätten).', 'ckb': 'و مافی دەستڕاگەیشتنی گشتی (allemansrätten).', 'fa': 'و حق دسترسی همگانی (allemansrätten).', 'pl': 'i allemansrätten.', 'so': 'iyo allemansrätten.', 'ti': 'ከምኡ’ውን allemansrätten።', 'tr': 've allemansrätten.', 'uk': 'та allemansrätten.' },
+      kicker: {
+        en: 'Chapter 07 · Nature',
+        sv: 'Kapitel 07 · Natur',
+        'zh-Hans': '第 07 章 · 自然',
+        'zh-Hant': '第 07 章 · 自然',
+        ar: 'الفصل 07 · الطبيعة',
+        ckb: 'بەشی 07 · سروشت',
+        fa: 'فصل 07 · طبیعت',
+        pl: 'Rozdział 07 · Przyroda',
+        so: 'Cutubka 07 · Dabeecad',
+        ti: 'ምዕራፍ 07 · ተፈጥሮ',
+        tr: 'Bölüm 07 · Doğa',
+        uk: 'Розділ 07 · Природа',
+      },
+      title: {
+        en: 'Nature, climate,',
+        sv: 'Natur, klimat',
+        'zh-Hans': '自然、气候，',
+        'zh-Hant': '自然、氣候，',
+        ar: 'الطبيعة والمناخ',
+        ckb: 'سروشت، کەشوهەوا،',
+        fa: 'طبیعت، اقلیم،',
+        pl: 'Przyroda, klimat',
+        so: 'Dabeecadda, cimilada',
+        ti: 'ተፈጥሮ፣ ክሊማ',
+        tr: 'Doğa, iklim',
+        uk: 'Природа, клімат',
+      },
+      title_em: {
+        en: 'and allemansrätten.',
+        sv: 'och allemansrätten.',
+        'zh-Hans': '以及 allemansrätten。',
+        'zh-Hant': '以及 allemansrätten。',
+        ar: 'وحق الوصول العام (allemansrätten).',
+        ckb: 'و مافی دەستڕاگەیشتنی گشتی (allemansrätten).',
+        fa: 'و حق دسترسی همگانی (allemansrätten).',
+        pl: 'i allemansrätten.',
+        so: 'iyo allemansrätten.',
+        ti: 'ከምኡ’ውን allemansrätten።',
+        tr: 've allemansrätten.',
+        uk: 'та allemansrätten.',
+      },
       lede: {
         en: "Sweden is mostly forest, and the forest is mostly open to you. The rule is simple: don't disturb, don't destroy.",
-        sv: 'Sverige är mest skog, och skogen är mest öppen för dig. Regeln är enkel: stör inte, förstör inte.', 'zh-Hans': '瑞典大部分是森林，而森林大部分向你敞开。规则很简单：不打扰，不破坏。', 'zh-Hant': '瑞典大部分是森林，而森林大部分向你敞開。規則很簡單：不打擾，不破壞。', 'ar': 'السويد معظمها غابات، والغابة معظمها مفتوحة لك. القاعدة بسيطة: لا تُزعِج، ولا تُدمِّر.', 'ckb': 'سوید زۆربەی دارستانە، و دارستانیش زۆربەی بۆ تۆ کراوەیە. ڕێسا سادەیە: مەبە مایەی ئاژاوە، تێکمەدە.', 'fa': 'سوئد بیشتر جنگل است، و جنگل بیشتر برای شما باز است. قاعده ساده است: مزاحم نشو، تخریب نکن.', 'pl': 'Szwecja to głównie las, a las jest w większości otwarty dla ciebie. Zasada jest prosta: nie zakłócaj, nie niszcz.', 'so': 'Iswiidhan inta badan waa kayn, kayntuna inta badan way kuu furan tahay. Qaaciddadu waa fudud tahay: ha carqaladayn, ha burburin.', 'ti': 'ሽወደን መብዛሕትኣ ጫካ እያ፣ እቲ ጫካ ድማ መብዛሕትኡ ንዓኻ ክፉት እዩ። እቲ ሕጊ ቀሊል እዩ፦ ኣይተረብሽ፣ ኣይተበላሹ።', 'tr': 'İsveç çoğunlukla ormandır ve orman büyük ölçüde size açıktır. Kural basit: rahatsız etme, tahrip etme.', 'uk': 'Швеція — це переважно ліс, і ліс здебільшого відкритий для вас. Правило просте: не турбуй, не руйнуй.' },
+        sv: 'Sverige är mest skog, och skogen är mest öppen för dig. Regeln är enkel: stör inte, förstör inte.',
+        'zh-Hans': '瑞典大部分是森林，而森林大部分向你敞开。规则很简单：不打扰，不破坏。',
+        'zh-Hant': '瑞典大部分是森林，而森林大部分向你敞開。規則很簡單：不打擾，不破壞。',
+        ar: 'السويد معظمها غابات، والغابة معظمها مفتوحة لك. القاعدة بسيطة: لا تُزعِج، ولا تُدمِّر.',
+        ckb: 'سوید زۆربەی دارستانە، و دارستانیش زۆربەی بۆ تۆ کراوەیە. ڕێسا سادەیە: مەبە مایەی ئاژاوە، تێکمەدە.',
+        fa: 'سوئد بیشتر جنگل است، و جنگل بیشتر برای شما باز است. قاعده ساده است: مزاحم نشو، تخریب نکن.',
+        pl: 'Szwecja to głównie las, a las jest w większości otwarty dla ciebie. Zasada jest prosta: nie zakłócaj, nie niszcz.',
+        so: 'Iswiidhan inta badan waa kayn, kayntuna inta badan way kuu furan tahay. Qaaciddadu waa fudud tahay: ha carqaladayn, ha burburin.',
+        ti: 'ሽወደን መብዛሕትኣ ጫካ እያ፣ እቲ ጫካ ድማ መብዛሕትኡ ንዓኻ ክፉት እዩ። እቲ ሕጊ ቀሊል እዩ፦ ኣይተረብሽ፣ ኣይተበላሹ።',
+        tr: 'İsveç çoğunlukla ormandır ve orman büyük ölçüde size açıktır. Kural basit: rahatsız etme, tahrip etme.',
+        uk: 'Швеція — це переважно ліс, і ліс здебільшого відкритий для вас. Правило просте: не турбуй, не руйнуй.',
+      },
       body: {
         en: `
           <h2>The right of public access (allemansrätten)</h2>
@@ -1968,7 +2120,7 @@
           <p>瑞典近乎執著地進行回收。玻璃、金屬、紙張、塑膠、廚餘、電池和電子產品都要投入專門的回收箱，通常是在當地的 <em>återvinningscentral（回收中心）</em>。瓶罐回收（<em>pant</em>，回收押金）則會以一筆小額現金退還的形式返還給你。</p>
           ${ebookFactBox('zh-Hant', null, 'allemansrätten——公眾通行權 · 淨零目標年份：2045 · 最大湖泊：Vänern · 地貌主題：森林、湖泊、山脈和漫長的海岸線。', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'ar': `<h2>حق الوصول العام (allemansrätten)</h2>
+        ar: `<h2>حق الوصول العام (allemansrätten)</h2>
           <p>تقريبًا أي أرض في السويد — غابة، حقل، شاطئ — مفتوحة للمشي وقطف التوت والسباحة والبحث عن الطعام البري والتخييم (ليلة واحدة) والاستمتاع الهادئ. إنه عُرف، وليس قانونًا مكتوبًا، لكنه يؤخذ على محمل الجدّ.</p>
           <p>الشرط: <em>"Inte störa, inte förstöra"</em> — لا تُزعِج، ولا تُدمِّر. لا يجوز لك دخول الحدائق الخاصة أو نصب خيمة في مرأى أحدهم. ولا يجوز إشعال النار حين يكون هناك حظر على إشعال النار. ولا يجوز أخذ الخشب المتساقط للبيع، أو قطف الأنواع المحمية.</p>
           <h2>الجغرافيا</h2>
@@ -1979,7 +2131,7 @@
           <p>تعيد السويد التدوير بهوس. الزجاج والمعدن والورق والبلاستيك ونفايات الطعام والبطاريات والإلكترونيات كلها تذهب إلى حاويات مخصصة، غالبًا في مركز إعادة التدوير المحلي (<em>återvinningscentral</em>). وإرجاع الزجاجات والعلب (الوديعة، <em>pant</em>) يعود كاسترداد نقدي صغير.</p>
           ${ebookFactBox('ar', null, 'Allemansrätten — حق الوصول العام · سنة هدف صفر الانبعاثات الصافية: 2045 · أكبر بحيرة: Vänern · موضوعات المشهد الطبيعي: الغابات والبحيرات والجبال وساحل طويل.', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'ckb': `<h2>مافی دەستڕاگەیشتنی گشتی (allemansrätten)</h2>
+        ckb: `<h2>مافی دەستڕاگەیشتنی گشتی (allemansrätten)</h2>
           <p>بەنزیکەیی هەر زەوییەک لە سویددا — دارستان، کێڵگە، کەناری دەریا — کراوەیە بۆ پیاسەکردن، لێکردنەوەی توو، مەلەکردن، گەڕان بەدوای خۆراکی سروشتیدا، چادر هەڵدان (یەک شەو)، و چێژوەرگرتنی بێدەنگ. ئەمە نەریتە، نەک یاسایەکی نووسراو، بەڵام بەجدی وەردەگیرێت.</p>
           <p>مەرجەکە: <em>"Inte störa, inte förstöra"</em> — مەبە مایەی ئاژاوە، تێکمەدە. ناتوانیت بچیتە ناو باخچە تایبەتەکان یان چادر هەڵبدەیت لە بەرچاوی کەسێکدا. ناتوانیت ئاگر بکەیتەوە کاتێک قەدەغەی ئاگر هەیە. ناتوانیت دارە کەوتووەکان بۆ فرۆشتن ببەیت، یان جۆرە پارێزراوەکان لێبکەیتەوە.</p>
           <h2>جوگرافیا</h2>
@@ -1990,7 +2142,7 @@
           <p>سوید بە شێوەیەکی وەسواسی پیتاندنەوە دەکات. شووشە، کانزا، کاغەز، پلاستیک، پاشماوەی خواردن، پاتری، و ئەلیکترۆنیات هەموو دەچنە ناو سەتڵی تەرخانکراو، زۆرجار لە ناوەندی پیتاندنەوەی ناوخۆیی (<em>återvinningscentral</em>). گەڕاندنەوەی بوتڵ و قوتوو (سپاردە، <em>pant</em>) وەک گەڕاندنەوەی پارەیەکی بچووک دەگەڕێتەوە.</p>
           ${ebookFactBox('ckb', null, 'Allemansrätten — مافی دەستڕاگەیشتنی گشتی · ساڵی ئامانجی سفری دەردانی پاک: 2045 · گەورەترین دەریاچە: Vänern · بابەتەکانی دیمەنی سروشتی: دارستان، دەریاچە، چیا، و کەنارێکی درێژ.', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'fa': `<h2>حق دسترسی همگانی (allemansrätten)</h2>
+        fa: `<h2>حق دسترسی همگانی (allemansrätten)</h2>
           <p>تقریباً هر زمینی در سوئد — جنگل، دشت، ساحل — برای پیاده‌روی، چیدن توت، شنا، خوراک‌جویی، چادر زدن (یک شب)، و لذت آرام باز است. این یک عرف است، نه قانون مکتوب، اما جدی گرفته می‌شود.</p>
           <p>شرطش: <em>"Inte störa, inte förstöra"</em> — مزاحم نشو، تخریب نکن. نمی‌توانید وارد باغ‌های خصوصی شوید یا در منظرهٔ کسی چادر بزنید. نمی‌توانید هنگام ممنوعیت آتش، آتش روشن کنید. نمی‌توانید چوب افتاده را برای فروش بردارید، یا گونه‌های حفاظت‌شده را بچینید.</p>
           <h2>جغرافیا</h2>
@@ -2001,7 +2153,7 @@
           <p>سوئد وسواس‌گونه بازیافت می‌کند. شیشه، فلز، کاغذ، پلاستیک، پسماند غذا، باتری، و لوازم الکترونیکی همگی به سطل‌های اختصاصی می‌روند، اغلب در مرکز بازیافت محلی (<em>återvinningscentral</em>). بازگرداندن بطری و قوطی (ودیعه، <em>pant</em>) به‌صورت بازپرداخت نقدی کوچک برمی‌گردد.</p>
           ${ebookFactBox('fa', null, 'Allemansrätten — حق دسترسی همگانی · سال هدف انتشار صفر خالص: 2045 · بزرگ‌ترین دریاچه: Vänern · مضامین چشم‌انداز: جنگل‌ها، دریاچه‌ها، کوه‌ها، و خط ساحلی بلند.', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'pl': `<h2>Prawo do swobodnego dostępu do przyrody (allemansrätten)</h2>
+        pl: `<h2>Prawo do swobodnego dostępu do przyrody (allemansrätten)</h2>
           <p>Niemal każdy teren w Szwecji — las, pole, brzeg — jest otwarty do spacerów, zbierania jagód, kąpieli, zbieractwa, biwakowania (jedna noc) i cichego wypoczynku. To zwyczaj, a nie spisane prawo, ale traktuje się go poważnie.</p>
           <p>Haczyk: <em>„Inte störa, inte förstöra”</em> — nie zakłócaj, nie niszcz. Nie wolno wchodzić do prywatnych ogrodów ani rozbijać namiotu komuś na widoku. Nie wolno rozpalać ognia, gdy obowiązuje zakaz palenia ognisk. Nie wolno zabierać powalonego drewna na sprzedaż ani zbierać gatunków chronionych.</p>
           <h2>Geografia</h2>
@@ -2012,7 +2164,7 @@
           <p>Szwecja recyklinguje obsesyjnie. Szkło, metal, papier, plastik, odpady spożywcze, baterie i elektronika trafiają do osobnych pojemników, często w lokalnym <em>återvinningscentral</em> (punkcie recyklingu). Zwroty butelek i puszek (<em>pant</em> — kaucja) wracają jako niewielki zwrot gotówki.</p>
           ${ebookFactBox('pl', null, 'Allemansrätten — prawo do swobodnego dostępu do przyrody · Rok docelowy zerowej emisji netto: 2045 · Największe jezioro: Vänern · Motywy krajobrazu: lasy, jeziora, góry i długa linia brzegowa.', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'so': `<h2>Xaqa helitaanka dadweynaha (allemansrätten)</h2>
+        so: `<h2>Xaqa helitaanka dadweynaha (allemansrätten)</h2>
           <p>Ku dhowaad dhul kasta oo Iswiidhan ah — kayn, beer, xeeb — wuu u furan yahay socod, gunaynta beriiska, dabaasha, soo-uruurinta, degsiimo (hal habeen), iyo raaxo aamusan. Waa caado, ee maaha sharci qoraal ah, laakiin si dhab ah ayaa loo qaataa.</p>
           <p>Qabashada: <em>"Inte störa, inte förstöra"</em> — ha carqaladayn, ha burburin. Geli kartid beero gaar ah ama teendho dhig kartid meel qof ka muuqato. Dab shidi kartid marka mamnuucista dabku jirto. Qaadan kartid alwaax dhacay si aad u iibiso ama gurin kartid noocyo la ilaaliyo.</p>
           <h2>Juqraafiga</h2>
@@ -2023,7 +2175,7 @@
           <p>Iswiidhan si aad ah ayey wax dib ugu warshadaysaa. Dhalada, biraha, warqadda, balaastiga, qashinka cuntada, batariyada iyo qalabka elektarooniga ah dhammaantood waxay galaan weel gaar ah, badanaa kan maxalliga ah ee <em>återvinningscentral</em> (xarunta dib-u-warshadaynta). Soo-celinta dhalooyinka iyo daasadaha (<em>pant</em> — lacag-dhig) waxay ku soo noqdaan celin lacag yar.</p>
           ${ebookFactBox('so', null, 'Allemansrätten — xaqa helitaanka dadweynaha · Sannadka bartilmaameedka net-eber: 2045 · Harada ugu weyn: Vänern · Mawduucyada muuqaalka dhulka: kaynta, harooyinka, buuraha, iyo xeeb dheer.', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'ti': `<h2>ህዝባዊ ናይ ምብጻሕ መሰል (allemansrätten)</h2>
+        ti: `<h2>ህዝባዊ ናይ ምብጻሕ መሰል (allemansrätten)</h2>
           <p>ኣብ ሽወደን ዳርጋ ዝኾነ ይኹን መሬት — ጫካ፣ ግራት፣ ገምገም ባሕሪ — ንምኻድ፣ ቤሪ ንምልቃም፣ ንምሕንባስ፣ ካብ ተፈጥሮ ንምእካብ፣ ንምስፋር (ሓደ ለይቲ)ን ህዱእ ምዝንጋዕን ክፉት እዩ። ልምዲ እዩ፣ ጽሑፍ ሕጊ ኣይኮነን፣ ግን ብቑምነት ይውሰድ።</p>
           <p>እቲ ቅድመ ኩነት፦ <em>„Inte störa, inte förstöra”</em> — ኣይተረብሽ፣ ኣይተበላሹ። ናብ ብሕታዊ ጀርዲን ክትኣቱ ወይ ኣብ ናይ ሰብ ቅርዓት ድንኳን ክትተኽል ኣይፍቀደካን። ናይ ሓዊ ክልከላ ኣብ ዘለወሉ ሓዊ ክተንድድ ኣይፍቀደካን። ንዝወደቐ ዕንጨይቲ ንምሻጥ ክትወስድ ወይ ዝተሓለዉ ዓሌታት ክትልቅም ኣይፍቀደካን።</p>
           <h2>ጂኦግራፊ</h2>
@@ -2034,7 +2186,7 @@
           <p>ሽወደን ብኣዝዩ ዝለዓለ ደረጃ ዳግመ-ምጥቃም ትገብር። ቢለር፣ ብረት፣ ወረቐት፣ ፕላስቲክ፣ ጓሓፍ ምግቢ፣ ባትሪታትን ኤለክትሮኒካዊ ኣቕሑን ኩሎም ናብ ፍሉያት ኮፋታት ይኸዱ፣ መብዛሕትኡ ግዜ ኣብቲ ከባብያዊ <em>återvinningscentral</em> (ማእከል ዳግመ-ምጥቃም)። ናይ ጥርሙዝን ታኒካን መመለሲ (<em>pant</em> — ተመላሲ ገንዘብ) ከም ንእሽቶ ናይ ጥረ ገንዘብ ምምላስ ይምለስ።</p>
           ${ebookFactBox('ti', null, 'Allemansrätten — ህዝባዊ ናይ ምብጻሕ መሰል · ዓመተ ሸቶ ኔት-ዜሮ፦ 2045 · እቲ ዝዓበየ ቀላይ፦ Vänern · ኣርእስትታት መልክዕ መሬት፦ ጫካታት፣ ቀላያት፣ ኣኽራንን ነዊሕ ገምገም ባሕርን።', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'tr': `<h2>Kamuya açık erişim hakkı (allemansrätten)</h2>
+        tr: `<h2>Kamuya açık erişim hakkı (allemansrätten)</h2>
           <p>İsveç'teki hemen her arazi — orman, tarla, kıyı — yürüyüşe, böğürtlen toplamaya, yüzmeye, doğadan toplamaya, kamp yapmaya (bir gece) ve sessiz keyfe açıktır. Bu yazılı bir yasa değil, bir gelenektir ama ciddiye alınır.</p>
           <p>İşin püf noktası: <em>"Inte störa, inte förstöra"</em> — rahatsız etme, tahrip etme. Özel bahçelere giremez veya birinin manzarasına çadır kuramazsınız. Ateş yasağı varken ateş yakamazsınız. Devrik odunu satmak için alamaz veya korunan türleri toplayamazsınız.</p>
           <h2>Coğrafya</h2>
@@ -2045,7 +2197,7 @@
           <p>İsveç takıntılı biçimde geri dönüştürür. Cam, metal, kâğıt, plastik, gıda atığı, piller ve elektronik eşyaların hepsi, çoğu zaman yereldeki <em>återvinningscentral</em>'da (geri dönüşüm merkezi) ayrı kutulara gider. Şişe ve kutu iadeleri (<em>pant</em> — depozito) küçük bir nakit iade olarak geri döner.</p>
           ${ebookFactBox('tr', null, 'Allemansrätten — kamuya açık erişim hakkı · Net sıfır hedef yılı: 2045 · En büyük göl: Vänern · Manzara temaları: ormanlar, göller, dağlar ve uzun bir kıyı şeridi.', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
-        'uk': `<h2>Право вільного доступу до природи (allemansrätten)</h2>
+        uk: `<h2>Право вільного доступу до природи (allemansrätten)</h2>
           <p>Майже будь-яка земля у Швеції — ліс, поле, берег — відкрита для прогулянок, збирання ягід, купання, збиральництва, ночівлі в наметі (одна ніч) та тихого відпочинку. Це звичай, а не писаний закон, але до нього ставляться серйозно.</p>
           <p>Заковика: <em>„Inte störa, inte förstöra”</em> — не турбуй, не руйнуй. Не можна заходити в приватні сади чи ставити намет комусь на видноті. Не можна розпалювати вогонь під час заборони на вогнища. Не можна забирати повалену деревину на продаж чи збирати охоронювані види.</p>
           <h2>Географія</h2>
@@ -2060,12 +2212,64 @@
     },
 
     8: {
-      kicker: { en: 'Chapter 08 · Culture', sv: 'Kapitel 08 · Kultur', 'zh-Hans': '第 08 章 · 文化', 'zh-Hant': '第 08 章 · 文化', 'ar': 'الفصل 08 · الثقافة', 'ckb': 'بەشی 08 · کلتوور', 'fa': 'فصل 08 · فرهنگ', 'pl': 'Rozdział 08 · Kultura', 'so': 'Cutubka 08 · Dhaqan', 'ti': 'ምዕራፍ 08 · ባህሊ', 'tr': 'Bölüm 08 · Kültür', 'uk': 'Розділ 08 · Культура' },
-      title: { en: 'Culture, traditions,', sv: 'Kultur, traditioner', 'zh-Hans': '文化、传统，', 'zh-Hant': '文化、傳統，', 'ar': 'الثقافة والتقاليد', 'ckb': 'کلتوور، نەریتەکان،', 'fa': 'فرهنگ، سنت‌ها،', 'pl': 'Kultura, tradycje', 'so': 'Dhaqanka, caadooyinka', 'ti': 'ባህሊ፣ ባህልታት', 'tr': 'Kültür, gelenekler', 'uk': 'Культура, традиції' },
-      title_em: { en: 'and the Swedish calendar.', sv: 'och svenska kalendern.', 'zh-Hans': '以及瑞典的历法。', 'zh-Hant': '以及瑞典的曆法。', 'ar': 'والتقويم السويدي.', 'ckb': 'و ساڵنامەی سویدی.', 'fa': 'و تقویم سوئدی.', 'pl': 'i szwedzki kalendarz.', 'so': 'iyo jadwalka Iswiidhan.', 'ti': 'ከምኡ’ውን ሽወደናዊ ዓውደ-ኣዋርሕ።', 'tr': 've İsveç takvimi.', 'uk': 'та шведський календар.' },
+      kicker: {
+        en: 'Chapter 08 · Culture',
+        sv: 'Kapitel 08 · Kultur',
+        'zh-Hans': '第 08 章 · 文化',
+        'zh-Hant': '第 08 章 · 文化',
+        ar: 'الفصل 08 · الثقافة',
+        ckb: 'بەشی 08 · کلتوور',
+        fa: 'فصل 08 · فرهنگ',
+        pl: 'Rozdział 08 · Kultura',
+        so: 'Cutubka 08 · Dhaqan',
+        ti: 'ምዕራፍ 08 · ባህሊ',
+        tr: 'Bölüm 08 · Kültür',
+        uk: 'Розділ 08 · Культура',
+      },
+      title: {
+        en: 'Culture, traditions,',
+        sv: 'Kultur, traditioner',
+        'zh-Hans': '文化、传统，',
+        'zh-Hant': '文化、傳統，',
+        ar: 'الثقافة والتقاليد',
+        ckb: 'کلتوور، نەریتەکان،',
+        fa: 'فرهنگ، سنت‌ها،',
+        pl: 'Kultura, tradycje',
+        so: 'Dhaqanka, caadooyinka',
+        ti: 'ባህሊ፣ ባህልታት',
+        tr: 'Kültür, gelenekler',
+        uk: 'Культура, традиції',
+      },
+      title_em: {
+        en: 'and the Swedish calendar.',
+        sv: 'och svenska kalendern.',
+        'zh-Hans': '以及瑞典的历法。',
+        'zh-Hant': '以及瑞典的曆法。',
+        ar: 'والتقويم السويدي.',
+        ckb: 'و ساڵنامەی سویدی.',
+        fa: 'و تقویم سوئدی.',
+        pl: 'i szwedzki kalendarz.',
+        so: 'iyo jadwalka Iswiidhan.',
+        ti: 'ከምኡ’ውን ሽወደናዊ ዓውደ-ኣዋርሕ።',
+        tr: 've İsveç takvimi.',
+        uk: 'та шведський календар.',
+      },
       lede: {
         en: "If you don't know when midsummer is, you'll get a polite explanation. If you don't know what fika is, you'll get one whether you want it or not.",
-        sv: 'Vet du inte när midsommar är får du en artig förklaring. Vet du inte vad fika är får du en — vare sig du vill eller inte.', 'zh-Hans': '如果你不知道仲夏节是什么时候，你会得到一番礼貌的解释。如果你不知道 fika 是什么，那么不管你想不想，你都会被请去体验一次。', 'zh-Hant': '如果你不知道仲夏節是什麼時候，你會得到一番禮貌的解釋。如果你不知道 fika 是什麼，那麼不管你想不想，你都會被請去體驗一次。', 'ar': 'إن لم تكن تعرف متى منتصف الصيف، فستحصل على شرح مهذّب. وإن لم تكن تعرف ما هي القهوة الاجتماعية (fika)، فستحصل على واحدة سواء أردت أم لم ترد.', 'ckb': 'ئەگەر نەزانیت نیوەی هاوین کەیە، ڕوونکردنەوەیەکی بەڕێزانەت دەستدەکەوێت. ئەگەر نەزانیت فیکا (fika) چییە، یەکێکت دەستدەکەوێت جا بتەوێت یان نا.', 'fa': 'اگر ندانید نیمهٔ تابستان کِی است، توضیحی مؤدبانه دریافت می‌کنید. اگر ندانید فیکا (fika) چیست، چه بخواهید چه نخواهید یکی نصیبتان می‌شود.', 'pl': 'Jeśli nie wiesz, kiedy jest midsommar, dostaniesz uprzejme wyjaśnienie. Jeśli nie wiesz, czym jest fika, dostaniesz ją, czy chcesz, czy nie.', 'so': 'Haddii aanad ogayn goorta midsommar uu yahay, waxaad heli doontaa sharraxaad edeb leh. Haddii aanad ogayn waxa fika yahay, waad heli doontaa mid haddaad rabto iyo haddii kaleba.', 'ti': 'midsommar መዓስ ምዃኑ እንተ ዘይፈሊጥካ፣ ኣኽብሮታዊ መብርሂ ክትረክብ ኢኻ። fika እንታይ ምዃኑ እንተ ዘይፈሊጥካ፣ ትደልዮ ኣይትደልዮ ሓደ ክትረክብ ኢኻ።', 'tr': 'Midsommar\'ın ne zaman olduğunu bilmiyorsanız, kibar bir açıklama alırsınız. Fika\'nın ne olduğunu bilmiyorsanız, isteseniz de istemeseniz de bir tane alırsınız.', 'uk': 'Якщо ви не знаєте, коли midsommar, ви отримаєте ввічливе пояснення. Якщо ви не знаєте, що таке fika, ви отримаєте її, хочете того чи ні.' },
+        sv: 'Vet du inte när midsommar är får du en artig förklaring. Vet du inte vad fika är får du en — vare sig du vill eller inte.',
+        'zh-Hans':
+          '如果你不知道仲夏节是什么时候，你会得到一番礼貌的解释。如果你不知道 fika 是什么，那么不管你想不想，你都会被请去体验一次。',
+        'zh-Hant':
+          '如果你不知道仲夏節是什麼時候，你會得到一番禮貌的解釋。如果你不知道 fika 是什麼，那麼不管你想不想，你都會被請去體驗一次。',
+        ar: 'إن لم تكن تعرف متى منتصف الصيف، فستحصل على شرح مهذّب. وإن لم تكن تعرف ما هي القهوة الاجتماعية (fika)، فستحصل على واحدة سواء أردت أم لم ترد.',
+        ckb: 'ئەگەر نەزانیت نیوەی هاوین کەیە، ڕوونکردنەوەیەکی بەڕێزانەت دەستدەکەوێت. ئەگەر نەزانیت فیکا (fika) چییە، یەکێکت دەستدەکەوێت جا بتەوێت یان نا.',
+        fa: 'اگر ندانید نیمهٔ تابستان کِی است، توضیحی مؤدبانه دریافت می‌کنید. اگر ندانید فیکا (fika) چیست، چه بخواهید چه نخواهید یکی نصیبتان می‌شود.',
+        pl: 'Jeśli nie wiesz, kiedy jest midsommar, dostaniesz uprzejme wyjaśnienie. Jeśli nie wiesz, czym jest fika, dostaniesz ją, czy chcesz, czy nie.',
+        so: 'Haddii aanad ogayn goorta midsommar uu yahay, waxaad heli doontaa sharraxaad edeb leh. Haddii aanad ogayn waxa fika yahay, waad heli doontaa mid haddaad rabto iyo haddii kaleba.',
+        ti: 'midsommar መዓስ ምዃኑ እንተ ዘይፈሊጥካ፣ ኣኽብሮታዊ መብርሂ ክትረክብ ኢኻ። fika እንታይ ምዃኑ እንተ ዘይፈሊጥካ፣ ትደልዮ ኣይትደልዮ ሓደ ክትረክብ ኢኻ።',
+        tr: "Midsommar'ın ne zaman olduğunu bilmiyorsanız, kibar bir açıklama alırsınız. Fika'nın ne olduğunu bilmiyorsanız, isteseniz de istemeseniz de bir tane alırsınız.",
+        uk: 'Якщо ви не знаєте, коли midsommar, ви отримаєте ввічливе пояснення. Якщо ви не знаєте, що таке fika, ви отримаєте її, хочете того чи ні.',
+      },
       body: {
         en: `
           <h2>The big four</h2>
@@ -2123,7 +2327,7 @@
           <p>長期以來，瑞典透過移民不斷吸納新的傳統：Eid al-Fitr（開齋節，穆斯林）、Nouruz（波斯新年）、Newroz（庫爾德新年，也在 3 月 21 日）、Diwali（排燈節）等等。這些節日正日益成為公共生活的一部分——在學校、職場和城市廣場上被人們慶祝。</p>
           ${ebookFactBox('zh-Hant', null, '國慶日：6 月 6 日 · Midsommar：6 月的第三個星期五 · Lucia：12 月 13 日 · 主要慶祝的是聖誕夜（而非聖誕日）。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>الأربعة الكبار</h2>
+        ar: `<h2>الأربعة الكبار</h2>
           <ul>
                       <li><b>Midsommar</b> (منتصف الصيف) — ثالث جمعة في يونيو. عمود مايو، رنجة، شنابس، رقص كالضفادع. اليوم الفعلي للعطلة الذي تتطلّع إليه السويد طوال العام.</li>
                       <li><b>Påsk</b> (عيد الفصح) — البيض وزينة الريش، وأطفال يتنكّرون كساحرات الفصح (<em>påskkärringar</em>) يبادلون الرسومات بالحلوى.</li>
@@ -2138,7 +2342,7 @@
           <p>استوعبت السويد منذ زمن طويل تقاليد جديدة عبر الهجرة: Eid al-Fitr (عيد الفطر، إسلامي)، Nouruz (رأس السنة الفارسية)، Newroz (رأس السنة الكردية، أيضًا 21 مارس)، Diwali (ديوالي)، وغيرها. وهي على نحو متزايد جزء من الحياة العامة — يُحتفل بها في المدارس وأماكن العمل وساحات المدن.</p>
           ${ebookFactBox('ar', null, 'اليوم الوطني: 6 يونيو · Midsommar: ثالث جمعة في يونيو · Lucia: 13 ديسمبر · عشية عيد الميلاد (لا يومه) هي الاحتفال الرئيسي.', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>چوار گەورەکە</h2>
+        ckb: `<h2>چوار گەورەکە</h2>
           <ul>
                       <li><b>Midsommar</b> (نیوەی هاوین) — سێیەم هەینی مانگی حوزەیران. کۆڵەکەی ئایار، ماسی هیرینگ، شنابس، سەمای وەک بۆق. ئەو ڕۆژە پشووە ڕاستەقینەیەی کە سوید بەدرێژایی ساڵ چاوەڕێی دەکات.</li>
                       <li><b>Påsk</b> (جەژنی پاک) — هێلکە و ڕازاندنەوەی پەڕ، منداڵانێک وەک جادووگەرانی جەژنی پاک (<em>påskkärringar</em>) جل دەپۆشن و وێنەکێشان بە شیرینی دەگۆڕنەوە.</li>
@@ -2153,7 +2357,7 @@
           <p>سوید لەمێژە نەریتە نوێیەکانی لە ڕێگەی کۆچەوە هەڵمژیوە: Eid al-Fitr (جەژنی ڕەمەزان، ئیسلامی)، Nouruz (سەری ساڵی فارسی)، Newroz (نەورۆز، سەری ساڵی کوردی، هەروەها 21 ی ئازار)، Diwali (دیوالی)، و هیتر. ئەمانە بەشێوەیەکی زیادبوو بەشێکن لە ژیانی گشتی — لە قوتابخانە، شوێنی کار، و گۆڕەپانەکانی شار ئاهەنگیان بۆ دەگێڕدرێت.</p>
           ${ebookFactBox('ckb', null, 'ڕۆژی نیشتمانی: 6 ی حوزەیران · Midsommar: سێیەم هەینی مانگی حوزەیران · Lucia: 13 ی کانوونی یەکەم · شەوی کریسمس (نەک ڕۆژەکەی) ئاهەنگە سەرەکییەکەیە.', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>چهار بزرگ</h2>
+        fa: `<h2>چهار بزرگ</h2>
           <ul>
                       <li><b>Midsommar</b> (نیمهٔ تابستان) — سومین جمعهٔ ژوئن. ستون ماه مه، شاه‌ماهی، شنپس، رقص مانند قورباغه‌ها. روز تعطیلی واقعی که سوئد تمام سال در انتظارش است.</li>
                       <li><b>Påsk</b> (عید پاک) — تخم‌مرغ و تزیینات پر، بچه‌هایی که مانند جادوگران عید پاک (<em>påskkärringar</em>) لباس می‌پوشند و نقاشی‌ها را با آب‌نبات معاوضه می‌کنند.</li>
@@ -2168,7 +2372,7 @@
           <p>سوئد مدت‌هاست سنت‌های جدید را از طریق مهاجرت جذب کرده است: Eid al-Fitr (عید فطر، اسلامی)، Nouruz (نوروز، سال نوی ایرانی)، Newroz (سال نوی کردی، نیز 21 مارس)، Diwali (دیوالی)، و دیگران. این‌ها به‌طور فزاینده بخشی از زندگی عمومی‌اند — در مدارس، محل‌های کار، و میدان‌های شهر جشن گرفته می‌شوند.</p>
           ${ebookFactBox('fa', null, 'روز ملی: 6 ژوئن · Midsommar: سومین جمعهٔ ژوئن · Lucia: 13 دسامبر · شب کریسمس (نه روزش) جشن اصلی است.', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Wielka czwórka</h2>
+        pl: `<h2>Wielka czwórka</h2>
           <ul>
             <li><b>Midsommar</b> — trzeci piątek czerwca. Słup majowy, śledź, schnaps, taniec jak żaby. Prawdziwy dzień wolny, na który Szwecja czeka cały rok.</li>
             <li><b>Påsk (Wielkanoc)</b> — jajka i ozdoby z piór, dzieci przebrane za wielkanocne czarownice (<em>påskkärringar</em>) wymieniające rysunki na cukierki.</li>
@@ -2183,7 +2387,7 @@
           <p>Szwecja od dawna przyswaja nowe tradycje poprzez migrację: Eid al-Fitr (muzułmański), Nouruz (perski Nowy Rok), Newroz (kurdyjski Nowy Rok, również 21 marca), Diwali i inne. Coraz bardziej stają się one częścią życia publicznego — obchodzone w szkołach, miejscach pracy i na miejskich placach.</p>
           ${ebookFactBox('pl', null, 'Święto narodowe: 6 czerwca · Midsommar: trzeci piątek czerwca · Lucia: 13 grudnia · Wigilia (a nie Boże Narodzenie) jest głównym świętem.', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Afarta waaweyn</h2>
+        so: `<h2>Afarta waaweyn</h2>
           <ul>
             <li><b>Midsommar</b> — Jimcaha saddexaad ee Juun. Tiir Maajo, kalluunka herring, schnapps, qoob-ka-cayaar rahyada u eg. Maalinta fasaxa dhabta ah ee Iswiidhan sannadka oo dhan filinayso.</li>
             <li><b>Påsk (Iistarka)</b> — ukumo iyo qurxin baalal ah, carruur u labbisan saaxiraadka Iistarka (<em>påskkärringar</em>) oo sawirro ku beddanaya nacnac.</li>
@@ -2198,7 +2402,7 @@
           <p>Iswiidhan muddo dheer ayey caadooyin cusub ku soo dhowaysay socdaalka: Ciidul-Fidri / Eid al-Fitr (Muslim), Nouruz (Sannadka Cusub ee Faaris), Newroz (Sannadka Cusub ee Kurdiga, sidoo kale 21 Maarso), Diwali, iyo kuwo kale. Tani waxay si isa soo taraysa qayb ka noqonaysaa nolosha dadweynaha — waxaa lagu dabaaldegaa iskuullada, goobaha shaqada, iyo fagaarayaasha magaalada.</p>
           ${ebookFactBox('so', null, 'Maalinta qaranka: 6 Juun · Midsommar: Jimcaha saddexaad ee Juun · Lucia: 13 Diseembar · Habeenka Kirismaska (ee aan ahayn maalinta) ayaa ah dabaaldegga ugu weyn.', ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>እቶም ዓበይቲ ኣርባዕተ</h2>
+        ti: `<h2>እቶም ዓበይቲ ኣርባዕተ</h2>
           <ul>
             <li><b>Midsommar</b> — ሳልሳይ ዓርቢ ሰነ። ናይ ጉንቦት ዓንዲ፣ ሄሪንግ ዓሳ፣ schnapps፣ ከም እንቍርዓብ ምስዕሳዕ። እታ ሽወደን ምሉእ ዓመት እትጽበያ ናይ ሓቂ ናይ ዕረፍቲ መዓልቲ።</li>
             <li><b>Påsk (ፋሲካ)</b> — እንቋቝሖን ብላባ ዝተሰርሐ ምጽብባቕን፣ ከም ጠንቋሊ ፋሲካ (<em>påskkärringar</em>) ዝተኸድኑ ቆልዑ ስእልታት ብከረመላ ይልውጡ።</li>
@@ -2213,7 +2417,7 @@
           <p>ሽወደን ብመንገዲ ስደት ንነዊሕ ግዜ ሓደስቲ ባህልታት ክትቅበል ጸኒሓ፦ ዒድ ኣል-ፊጥር / Eid al-Fitr (ምስልምና)፣ Nouruz (ፋርሳዊ ሓድሽ ዓመት)፣ Newroz (ኩርዳዊ ሓድሽ ዓመት፣ ንሱ እውን 21 መጋቢት)፣ Diwali፣ ካልኦትን። እዚኦም እናወሰኹ ክፋል ህዝባዊ ህይወት ይኾኑ ኣለዉ — ኣብ ኣብያተ ትምህርቲ፣ ቦታታት ስራሕን ኣደባባያት ከተማን ይብዓሉ።</p>
           ${ebookFactBox('ti', null, 'ሃገራዊ መዓልቲ፦ 6 ሰነ · Midsommar፦ ሳልሳይ ዓርቢ ሰነ · Lucia፦ 13 ታሕሳስ · ድሮ ልደት (መዓልቲ ልደት ዘይኮነ) እቲ ቀንዲ በዓል እዩ።', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>Büyük dörtlü</h2>
+        tr: `<h2>Büyük dörtlü</h2>
           <ul>
             <li><b>Midsommar</b> — Haziran'ın üçüncü Cuması. Mayıs direği, ringa balığı, schnapps, kurbağa gibi dans. İsveç'in tüm yıl boyunca dört gözle beklediği o asıl tatil günü.</li>
             <li><b>Påsk (Paskalya)</b> — yumurtalar ve tüy süsler, Paskalya cadıları (<em>påskkärringar</em>) kılığına giren çocuklar çizimleri şekerle takas eder.</li>
@@ -2226,9 +2430,9 @@
           <p>6 Haziran — Sveriges nationaldag (İsveç ulusal günü) — Gustav Vasa'nın 1523'teki seçilişini ve 1809'daki anayasa değişikliğini anar. Ancak 2005'ten beri resmî tatildir ve hâlâ rolüne yerleşmektedir.</p>
           <h2>Yeni gelenekler</h2>
           <p>İsveç uzun süredir göç yoluyla yeni gelenekleri benimsemektedir: Ramazan Bayramı / Eid al-Fitr (Müslüman), Nevruz / Nouruz (Fars Yeni Yılı), Newroz (Kürt Yeni Yılı, yine 21 Mart), Diwali ve diğerleri. Bunlar giderek kamusal yaşamın bir parçası oluyor — okullarda, iş yerlerinde ve kent meydanlarında kutlanıyor.</p>
-          ${ebookFactBox('tr', null, 'Ulusal gün: 6 Haziran · Midsommar: Haziran\'ın üçüncü Cuması · Lucia: 13 Aralık · Asıl kutlama Noel Günü değil, Noel Arifesidir.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('tr', null, "Ulusal gün: 6 Haziran · Midsommar: Haziran'ın üçüncü Cuması · Lucia: 13 Aralık · Asıl kutlama Noel Günü değil, Noel Arifesidir.", ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Велика четвірка</h2>
+        uk: `<h2>Велика четвірка</h2>
           <ul>
             <li><b>Midsommar</b> — третя п'ятниця червня. Травневе дерево, оселедець, шнапс, танці „як жабки”. Той самий вихідний, на який Швеція чекає цілий рік.</li>
             <li><b>Påsk (Великдень)</b> — яйця та прикраси з пір'я, діти, вбрані великодніми відьмами (<em>påskkärringar</em>), що міняють малюнки на цукерки.</li>
@@ -2241,18 +2445,70 @@
           <p>6 червня — Sveriges nationaldag (шведське національне свято) — відзначає обрання Gustav Vasa у 1523 та конституційний перегляд 1809. Вихідним днем лише від 2005, і досі звикає до своєї ролі.</p>
           <h2>Нові традиції</h2>
           <p>Швеція давно вбирає нові традиції через міграцію: Eid al-Fitr (мусульманський), Nouruz (перський Новий рік), Newroz (курдський Новий рік, також 21 березня), Diwali та інші. Вони дедалі більше стають частиною публічного життя — їх святкують у школах, на робочих місцях і на міських площах.</p>
-          ${ebookFactBox('uk', null, 'Національне свято: 6 червня · Midsommar: третя п\'ятниця червня · Lucia: 13 грудня · Святвечір (а не сам Різдвяний день) є головним святкуванням.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('uk', null, "Національне свято: 6 червня · Midsommar: третя п'ятниця червня · Lucia: 13 грудня · Святвечір (а не сам Різдвяний день) є головним святкуванням.", ['uhrStudyMaterial'])}
         `,
       },
     },
 
     9: {
-      kicker: { en: 'Chapter 09 · Money', sv: 'Kapitel 09 · Pengar', 'zh-Hans': '第 09 章 · 金钱', 'zh-Hant': '第 09 章 · 金錢', 'ar': 'الفصل 09 · المال', 'ckb': 'بەشی 09 · پارە', 'fa': 'فصل 09 · پول', 'pl': 'Rozdział 09 · Pieniądze', 'so': 'Cutubka 09 · Lacag', 'ti': 'ምዕራፍ 09 · ገንዘብ', 'tr': 'Bölüm 09 · Para', 'uk': 'Розділ 09 · Гроші' },
-      title: { en: 'Money,', sv: 'Pengar,', 'zh-Hans': '金钱、', 'zh-Hant': '金錢、', 'ar': 'المال،', 'ckb': 'پارە،', 'fa': 'پول،', 'pl': 'Pieniądze,', 'so': 'Lacagta,', 'ti': 'ገንዘብ፣', 'tr': 'Para,', 'uk': 'Гроші,' },
-      title_em: { en: 'banks, and BankID.', sv: 'banker och BankID.', 'zh-Hans': '银行，以及 BankID。', 'zh-Hant': '銀行，以及 BankID。', 'ar': 'والبنوك، وBankID.', 'ckb': 'بانکەکان، و BankID.', 'fa': 'بانک‌ها، و BankID.', 'pl': 'banki i BankID.', 'so': 'bangiyada, iyo BankID.', 'ti': 'ባንክታትን BankIDን።', 'tr': 'bankalar ve BankID.', 'uk': 'банки та BankID.' },
+      kicker: {
+        en: 'Chapter 09 · Money',
+        sv: 'Kapitel 09 · Pengar',
+        'zh-Hans': '第 09 章 · 金钱',
+        'zh-Hant': '第 09 章 · 金錢',
+        ar: 'الفصل 09 · المال',
+        ckb: 'بەشی 09 · پارە',
+        fa: 'فصل 09 · پول',
+        pl: 'Rozdział 09 · Pieniądze',
+        so: 'Cutubka 09 · Lacag',
+        ti: 'ምዕራፍ 09 · ገንዘብ',
+        tr: 'Bölüm 09 · Para',
+        uk: 'Розділ 09 · Гроші',
+      },
+      title: {
+        en: 'Money,',
+        sv: 'Pengar,',
+        'zh-Hans': '金钱、',
+        'zh-Hant': '金錢、',
+        ar: 'المال،',
+        ckb: 'پارە،',
+        fa: 'پول،',
+        pl: 'Pieniądze,',
+        so: 'Lacagta,',
+        ti: 'ገንዘብ፣',
+        tr: 'Para,',
+        uk: 'Гроші,',
+      },
+      title_em: {
+        en: 'banks, and BankID.',
+        sv: 'banker och BankID.',
+        'zh-Hans': '银行，以及 BankID。',
+        'zh-Hant': '銀行，以及 BankID。',
+        ar: 'والبنوك، وBankID.',
+        ckb: 'بانکەکان، و BankID.',
+        fa: 'بانک‌ها، و BankID.',
+        pl: 'banki i BankID.',
+        so: 'bangiyada, iyo BankID.',
+        ti: 'ባንክታትን BankIDን።',
+        tr: 'bankalar ve BankID.',
+        uk: 'банки та BankID.',
+      },
       lede: {
         en: 'Sweden is one of the least cash-dependent countries on earth. Almost every transaction now passes through one little app.',
-        sv: 'Sverige är ett av världens minst kontantberoende länder. Nästan varje transaktion går genom en liten app.', 'zh-Hans': '瑞典是地球上最不依赖现金的国家之一。如今几乎每一笔交易都要经过一个小小的应用程序。', 'zh-Hant': '瑞典是地球上最不依賴現金的國家之一。如今幾乎每一筆交易都要經過一個小小的應用程式。', 'ar': 'السويد من أقل بلدان الأرض اعتمادًا على النقد. تمر تقريبًا كل معاملة الآن عبر تطبيق صغير واحد.', 'ckb': 'سوید یەکێکە لە کەمترین وڵاتانی سەر زەوی کە پشت بە پارەی کاش دەبەستن. ئێستا بەنزیکەیی هەموو مامەڵەیەک بەناو یەک ئەپڵیکەیشنی بچووکدا تێدەپەڕێت.', 'fa': 'سوئد یکی از کم‌وابسته‌ترین کشورها به پول نقد روی زمین است. اکنون تقریباً هر تراکنش از یک اپلیکیشن کوچک عبور می‌کند.', 'pl': 'Szwecja to jeden z najmniej zależnych od gotówki krajów na świecie. Niemal każda transakcja przechodzi teraz przez jedną małą aplikację.', 'so': 'Iswiidhan waa mid ka mid ah dalalka ugu yar ee lacag caddaan ah ku tiirsan adduunka. Ku dhowaad dhaqdhaqaaq kasta oo lacageed hadda wuxuu maraa hal app yar.', 'ti': 'ሽወደን ኣብ ዓለም ካብቶም ብጥረ ገንዘብ ኣዝዮም ዘይምርኮሱ ሃገራት ሓንቲ እያ። ዳርጋ ኩሉ ግብይት ሕጂ ብሓንቲ ንእሽቶ app ይሓልፍ።', 'tr': 'İsveç, dünyada nakde en az bağımlı ülkelerden biridir. Artık neredeyse her işlem küçük bir uygulamadan geçiyor.', 'uk': 'Швеція — одна з найменш залежних від готівки країн на Землі. Майже кожна транзакція тепер проходить через один маленький застосунок.' },
+        sv: 'Sverige är ett av världens minst kontantberoende länder. Nästan varje transaktion går genom en liten app.',
+        'zh-Hans':
+          '瑞典是地球上最不依赖现金的国家之一。如今几乎每一笔交易都要经过一个小小的应用程序。',
+        'zh-Hant':
+          '瑞典是地球上最不依賴現金的國家之一。如今幾乎每一筆交易都要經過一個小小的應用程式。',
+        ar: 'السويد من أقل بلدان الأرض اعتمادًا على النقد. تمر تقريبًا كل معاملة الآن عبر تطبيق صغير واحد.',
+        ckb: 'سوید یەکێکە لە کەمترین وڵاتانی سەر زەوی کە پشت بە پارەی کاش دەبەستن. ئێستا بەنزیکەیی هەموو مامەڵەیەک بەناو یەک ئەپڵیکەیشنی بچووکدا تێدەپەڕێت.',
+        fa: 'سوئد یکی از کم‌وابسته‌ترین کشورها به پول نقد روی زمین است. اکنون تقریباً هر تراکنش از یک اپلیکیشن کوچک عبور می‌کند.',
+        pl: 'Szwecja to jeden z najmniej zależnych od gotówki krajów na świecie. Niemal każda transakcja przechodzi teraz przez jedną małą aplikację.',
+        so: 'Iswiidhan waa mid ka mid ah dalalka ugu yar ee lacag caddaan ah ku tiirsan adduunka. Ku dhowaad dhaqdhaqaaq kasta oo lacageed hadda wuxuu maraa hal app yar.',
+        ti: 'ሽወደን ኣብ ዓለም ካብቶም ብጥረ ገንዘብ ኣዝዮም ዘይምርኮሱ ሃገራት ሓንቲ እያ። ዳርጋ ኩሉ ግብይት ሕጂ ብሓንቲ ንእሽቶ app ይሓልፍ።',
+        tr: 'İsveç, dünyada nakde en az bağımlı ülkelerden biridir. Artık neredeyse her işlem küçük bir uygulamadan geçiyor.',
+        uk: 'Швеція — одна з найменш залежних від готівки країн на Землі. Майже кожна транзакція тепер проходить через один маленький застосунок.',
+      },
       body: {
         en: `
           <h2>The Swedish krona (SEK)</h2>
@@ -2301,7 +2557,7 @@
           <p>分為三層：國家養老金（allmän pension）、透過雇主繳納的職業養老金（tjänstepension），以及任何個人儲蓄。國家養老金涵蓋基本需求；而其餘部分的重要性，往往超出人們的預期。</p>
           ${ebookFactBox('zh-Hant', null, '貨幣：瑞典克朗（SEK） · Riksbanken 成立：1668 · 公投反對歐元：2003 · 支付應用：Swish · 數位身分：BankID。', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'ar': `<h2>الكرونة السويدية (SEK)</h2>
+        ar: `<h2>الكرونة السويدية (SEK)</h2>
           <p>صوّتت السويد ضد تبنّي اليورو في 2003 وتستخدم الكرونة (kr). البنك المركزي السويدي (Riksbank) — المؤسَّس عام 1668 — يضع السياسة النقدية ويطبع النقد الذي لا يستخدمه أحد تقريبًا.</p>
           <h2>البطاقات والتطبيقات</h2>
           <p>النقد نادر. معظم المتاجر تقبل البطاقة فقط. الدفع من شخص إلى شخص يمرّ عبر <em>Swish</em> — تطبيق دفع عبر الهاتف بناه البنوك معًا. تُدخل رقم هاتف، والمبلغ، وملاحظة، وتنقر.</p>
@@ -2313,7 +2569,7 @@
           <p>ثلاث طبقات: معاش الدولة (allmän pension)، والمعاش المهني عبر صاحب عملك (tjänstepension)، وأي مدخرات خاصة. معاش الدولة يغطي الأساسيات؛ والبقية تهمّ أكثر مما يتوقع الناس.</p>
           ${ebookFactBox('ar', null, 'العملة: الكرونة السويدية (SEK) · تأسيس Riksbank: 1668 · صوّتت ضد اليورو: 2003 · تطبيق الدفع: Swish · الهوية الرقمية: BankID.', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'ckb': `<h2>کرۆنی سویدی (SEK)</h2>
+        ckb: `<h2>کرۆنی سویدی (SEK)</h2>
           <p>سوید لە 2003 دەنگی نا دا بە پەسەندکردنی یۆرۆ و کرۆن (kr) بەکاردێنێت. بانکی ناوەندیی سوید (Riksbank) — کە لە 1668 دامەزراوە — سیاسەتی دراوی دیاری دەکات و ئەو پارەیە چاپ دەکات کە بەنزیکەیی کەس بەکاری ناهێنێت.</p>
           <h2>کارت و ئەپڵیکەیشنەکان</h2>
           <p>پارەی کاش دەگمەنە. زۆربەی فرۆشگاکان تەنها کارت قبووڵ دەکەن. پارەدانی کەس‌بۆ‌کەس بەناو <em>Swish</em> ـدا دەبێت — ئەپڵیکەیشنێکی پارەدانی مۆبایل کە بانکەکان بەهاوبەشی دروستیان کردووە. ژمارەی تەلەفۆن، بڕەکە، و تێبینییەک دەنووسیت و دەیلێیت.</p>
@@ -2325,7 +2581,7 @@
           <p>سێ چین: خانەنشینیی دەوڵەت (allmän pension)، خانەنشینیی پیشەیی لە ڕێگەی کارفەرماکەتەوە (tjänstepension)، و هەر پاشەکەوتێکی تایبەت. خانەنشینیی دەوڵەت بنەڕەتییەکان دادەپۆشێت؛ ئەوەی ماوەش زیاتر گرنگە لەوەی خەڵک چاوەڕێی دەکەن.</p>
           ${ebookFactBox('ckb', null, 'دراو: کرۆنی سویدی (SEK) · دامەزراندنی Riksbank: 1668 · دەنگی نا بە یۆرۆ: 2003 · ئەپڵیکەیشنی پارەدان: Swish · ناسنامەی دیجیتاڵی: BankID.', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'fa': `<h2>کرون سوئد (SEK)</h2>
+        fa: `<h2>کرون سوئد (SEK)</h2>
           <p>سوئد در 2003 به پذیرش یورو رأی منفی داد و از کرون (kr) استفاده می‌کند. بانک مرکزی سوئد (Riksbank) — تأسیس‌شده در 1668 — سیاست پولی را تعیین می‌کند و پولی را چاپ می‌کند که تقریباً هیچ‌کس از آن استفاده نمی‌کند.</p>
           <h2>کارت‌ها و اپلیکیشن‌ها</h2>
           <p>پول نقد کمیاب است. بیشتر فروشگاه‌ها فقط کارت می‌پذیرند. پرداخت فرد‌به‌فرد از طریق <em>Swish</em> انجام می‌شود — یک اپلیکیشن پرداخت موبایلی که بانک‌ها مشترکاً ساخته‌اند. شمارهٔ تلفن، مبلغ، و یک یادداشت وارد می‌کنید و ضربه می‌زنید.</p>
@@ -2337,7 +2593,7 @@
           <p>سه لایه: مستمری دولتی (allmän pension)، مستمری شغلی از طریق کارفرما (tjänstepension)، و هر پس‌انداز خصوصی. مستمری دولتی نیازهای پایه را پوشش می‌دهد؛ بقیه بیش از آنچه مردم انتظار دارند اهمیت دارد.</p>
           ${ebookFactBox('fa', null, 'ارز: کرون سوئد (SEK) · تأسیس Riksbank: 1668 · رأی منفی به یورو: 2003 · اپلیکیشن پرداخت: Swish · هویت دیجیتال: BankID.', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'pl': `<h2>Korona szwedzka (SEK)</h2>
+        pl: `<h2>Korona szwedzka (SEK)</h2>
           <p>Szwecja w 2003 zagłosowała przeciw przyjęciu euro i używa korony (kr). Riksbank — bank centralny Szwecji, założony w 1668 — ustala politykę pieniężną i drukuje gotówkę, której prawie nikt nie używa.</p>
           <h2>Karty i aplikacje</h2>
           <p>Gotówka jest rzadkością. Większość sklepów przyjmuje tylko kartę. Płatności między osobami przechodzą przez <em>Swish</em> — aplikację płatności mobilnych zbudowaną wspólnie przez banki. Podajesz numer telefonu, kwotę, notatkę i stukasz.</p>
@@ -2349,7 +2605,7 @@
           <p>Trzy warstwy: emerytura państwowa (allmän pension), emerytura zakładowa przez pracodawcę (tjänstepension) oraz wszelkie oszczędności prywatne. Emerytura państwowa pokrywa podstawy; reszta liczy się bardziej, niż ludzie się spodziewają.</p>
           ${ebookFactBox('pl', null, 'Waluta: korona szwedzka (SEK) · Riksbank założony: 1668 · Głosowanie przeciw euro: 2003 · Aplikacja płatnicza: Swish · Tożsamość cyfrowa: BankID.', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'so': `<h2>Kronada Iswiidhan (SEK)</h2>
+        so: `<h2>Kronada Iswiidhan (SEK)</h2>
           <p>Iswiidhan waxay 2003 u codaysay ka soo horjeedka qaadashada euro waxayna isticmaashaa krona (kr). Riksbank — bankiga dhexe ee Iswiidhan, oo la aasaasay 1668 — wuxuu dejiyaa siyaasadda lacagta, wuxuuna daabacaa lacagta caddaanka ah oo ku dhowaad cidna isticmaaleyn.</p>
           <h2>Kaararka iyo app-yada</h2>
           <p>Lacagta caddaanku waa naadir. Dukaamada intooda badan waxay aqbalaan kaliya kaadhka. Lacag-bixinta qof-ilaa-qof waxay maraa <em>Swish</em> — app lacag-bixin moobiil ah oo ay bangiyadu si wadajir ah u dhiseen. Waxaad gelisaa lambar telefoon, qadarka, qoraal, oo taabataa.</p>
@@ -2361,7 +2617,7 @@
           <p>Saddex lakab: hawlgabka dawladda (allmän pension), hawlgabka shaqada ee loo marayo loo-shaqeeyahaaga (tjänstepension), iyo wax kayd gaar ah oo kasta. Hawlgabka dawladdu wuxuu daboolaa aasaasiga; inta kale way ka muhiimsan tahay sida dadku filayaan.</p>
           ${ebookFactBox('so', null, 'Lacagta: krona Iswiidhan (SEK) · Riksbank la aasaasay: 1668 · U codeeyay ka soo horjeedka euro: 2003 · App lacag-bixin: Swish · Aqoonsi dijitaal ah: BankID.', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'ti': `<h2>ሽወደናዊ ክሮና (SEK)</h2>
+        ti: `<h2>ሽወደናዊ ክሮና (SEK)</h2>
           <p>ሽወደን ኣብ 2003 ኣንጻር ምቕባል euro ድምጺ ሃበት krona (kr) ድማ ትጥቀም። Riksbank — ኣብ 1668 ዝተመስረተ ማእከላይ ባንክ ሽወደን — ናይ ገንዘብ ፖሊሲ ይውስን፣ ነቲ ዳርጋ ዋላ ሓደ ዘይጥቀመሉ ጥረ ገንዘብ ድማ ይሓትም።</p>
           <h2>ካርድታትን app-ታትን</h2>
           <p>ጥረ ገንዘብ ሳሕቲ እዩ። መብዛሕተን ድኳናት ካርድ ጥራይ እየን ዝቕበላ። ካብ ሰብ ናብ ሰብ ክፍሊት ብመንገዲ <em>Swish</em> ይኸይድ — ብባንክታት ብሓባር ዝተሰርሐ ናይ ሞባይል ክፍሊት app። ቍጽሪ ተሌፎን፣ መጠን፣ መዘክር ተእቱ ትትንክፍ።</p>
@@ -2373,7 +2629,7 @@
           <p>ሰለስተ ደረጃታት፦ መንግስታዊ ጥሮታ (allmän pension)፣ ብመንገዲ ወሃብ ስራሕካ ዝርከብ ሞያዊ ጥሮታ (tjänstepension)፣ ከምኡ’ውን ዝኾነ ብሕታዊ ቍጠባ። መንግስታዊ ጥሮታ ነቲ መሰረታዊ ይሽፍን፣ እቲ ዝተረፈ ካብቲ ሰባት ዝጽበይዎ ንላዕሊ ኣገዳሲ እዩ።</p>
           ${ebookFactBox('ti', null, 'ባጤራ፦ ሽወደናዊ krona (SEK) · Riksbank ዝተመስረተ፦ 1668 · ኣንጻር euro ድምጺ ምሃብ፦ 2003 · ናይ ክፍሊት app፦ Swish · ዲጂታላዊ መንነት፦ BankID።', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'tr': `<h2>İsveç kronu (SEK)</h2>
+        tr: `<h2>İsveç kronu (SEK)</h2>
           <p>İsveç 2003'te euroyu benimsemeye karşı oy verdi ve kronu (kr) kullanır. Riksbank — 1668'de kurulan İsveç merkez bankası — para politikasını belirler ve neredeyse hiç kimsenin kullanmadığı nakdi basar.</p>
           <h2>Kartlar ve uygulamalar</h2>
           <p>Nakit nadirdir. Çoğu mağaza yalnızca kart kabul eder. Kişiden kişiye ödeme <em>Swish</em> üzerinden yürür — bankaların ortaklaşa geliştirdiği bir mobil ödeme uygulaması. Bir telefon numarası, tutar, bir not girer ve dokunursunuz.</p>
@@ -2385,7 +2641,7 @@
           <p>Üç katman: devlet emekliliği (allmän pension), işvereniniz aracılığıyla mesleki emeklilik (tjänstepension) ve varsa özel tasarruflar. Devlet emekliliği temel ihtiyaçları karşılar; gerisi insanların beklediğinden daha çok önemlidir.</p>
           ${ebookFactBox('tr', null, 'Para birimi: İsveç kronu (SEK) · Riksbank kuruluşu: 1668 · Euroya karşı oy: 2003 · Ödeme uygulaması: Swish · Dijital kimlik: BankID.', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
-        'uk': `<h2>Шведська крона (SEK)</h2>
+        uk: `<h2>Шведська крона (SEK)</h2>
           <p>Швеція у 2003 проголосувала проти запровадження євро і використовує крону (kr). Riksbank — центральний банк Швеції, заснований у 1668 — визначає монетарну політику й друкує готівку, якою майже ніхто не користується.</p>
           <h2>Картки та застосунки</h2>
           <p>Готівка трапляється рідко. Більшість магазинів приймають лише картку. Платежі між особами йдуть через <em>Swish</em> — застосунок мобільних платежів, створений банками спільно. Ви вводите номер телефону, суму, примітку й торкаєтеся екрана.</p>
@@ -2401,12 +2657,64 @@
     },
 
     10: {
-      kicker: { en: 'Chapter 10 · EU & world', sv: 'Kapitel 10 · EU & världen', 'zh-Hans': '第10章 · 欧盟与世界', 'zh-Hant': '第10章 · 歐盟與世界', 'ar': 'الفصل 10 · الاتحاد الأوروبي والعالم', 'ckb': 'بەشی 10 · یەکێتیی ئەوروپا و جیهان', 'fa': 'فصل 10 · اتحادیه اروپا و جهان', 'pl': 'Rozdział 10 · UE i świat', 'so': 'Cutubka 10 · Midowga Yurub iyo adduunka', 'ti': 'ምዕራፍ 10 · ኤውሮጳዊ ሕብረትን ዓለምን', 'tr': 'Bölüm 10 · AB ve dünya', 'uk': 'Розділ 10 · ЄС і світ' },
-      title: { en: 'Sweden,', sv: 'Sverige,', 'zh-Hans': '瑞典、', 'zh-Hant': '瑞典、', 'ar': 'السويد،', 'ckb': 'سوید،', 'fa': 'سوئد،', 'pl': 'Szwecja,', 'so': 'Iswidhan,', 'ti': 'ሽወደን፡', 'tr': 'İsveç,', 'uk': 'Швеція,' },
-      title_em: { en: 'the EU, and the world.', sv: 'EU och världen.', 'zh-Hans': '欧盟与世界。', 'zh-Hant': '歐盟與世界。', 'ar': 'والاتحاد الأوروبي، والعالم.', 'ckb': 'یەکێتیی ئەوروپا، و جیهان.', 'fa': 'اتحادیه اروپا، و جهان.', 'pl': 'Unia Europejska i świat.', 'so': 'Midowga Yurub, iyo adduunka.', 'ti': 'ኤውሮጳዊ ሕብረትን ዓለምን።', 'tr': 'AB ve dünya.', 'uk': 'Європейський Союз і світ.' },
+      kicker: {
+        en: 'Chapter 10 · EU & world',
+        sv: 'Kapitel 10 · EU & världen',
+        'zh-Hans': '第10章 · 欧盟与世界',
+        'zh-Hant': '第10章 · 歐盟與世界',
+        ar: 'الفصل 10 · الاتحاد الأوروبي والعالم',
+        ckb: 'بەشی 10 · یەکێتیی ئەوروپا و جیهان',
+        fa: 'فصل 10 · اتحادیه اروپا و جهان',
+        pl: 'Rozdział 10 · UE i świat',
+        so: 'Cutubka 10 · Midowga Yurub iyo adduunka',
+        ti: 'ምዕራፍ 10 · ኤውሮጳዊ ሕብረትን ዓለምን',
+        tr: 'Bölüm 10 · AB ve dünya',
+        uk: 'Розділ 10 · ЄС і світ',
+      },
+      title: {
+        en: 'Sweden,',
+        sv: 'Sverige,',
+        'zh-Hans': '瑞典、',
+        'zh-Hant': '瑞典、',
+        ar: 'السويد،',
+        ckb: 'سوید،',
+        fa: 'سوئد،',
+        pl: 'Szwecja,',
+        so: 'Iswidhan,',
+        ti: 'ሽወደን፡',
+        tr: 'İsveç,',
+        uk: 'Швеція,',
+      },
+      title_em: {
+        en: 'the EU, and the world.',
+        sv: 'EU och världen.',
+        'zh-Hans': '欧盟与世界。',
+        'zh-Hant': '歐盟與世界。',
+        ar: 'والاتحاد الأوروبي، والعالم.',
+        ckb: 'یەکێتیی ئەوروپا، و جیهان.',
+        fa: 'اتحادیه اروپا، و جهان.',
+        pl: 'Unia Europejska i świat.',
+        so: 'Midowga Yurub, iyo adduunka.',
+        ti: 'ኤውሮጳዊ ሕብረትን ዓለምን።',
+        tr: 'AB ve dünya.',
+        uk: 'Європейський Союз і світ.',
+      },
       lede: {
         en: 'Sweden spent two centuries avoiding war and one decade rapidly joining alliances. The pattern is the same — be useful, stay out of trouble.',
-        sv: 'Sverige tillbringade två sekel med att undvika krig och ett årtionde med att snabbt gå med i allianser. Mönstret är detsamma — gör nytta, undvik bråk.', 'zh-Hans': '瑞典花了两个世纪避免战争，又用十年时间迅速加入各种联盟。模式始终一致——做个有用的人，远离麻烦。', 'zh-Hant': '瑞典花了兩個世紀避免戰爭，又用十年時間迅速加入各種聯盟。模式始終一致——做個有用的人，遠離麻煩。', 'ar': 'أمضت السويد قرنين من الزمن تتجنب الحرب وعقدًا واحدًا تنضم فيه بسرعة إلى التحالفات. النمط واحد — كن مفيدًا وابقَ بعيدًا عن المتاعب.', 'ckb': 'سوید دوو سەدە لە جەنگ دوور کەوتەوە و لە یەک دەیەدا بە خێرایی پەیوەست بوو بە هاوپەیمانییەکانەوە. هەمان شێوازە — بەسوود بە و لە کێشە دوور بمێنەوە.', 'fa': 'سوئد دو قرن از جنگ دوری کرد و در یک دهه به‌سرعت به پیمان‌ها پیوست. الگو همان است — مفید باش و از دردسر دور بمان.', 'pl': 'Szwecja przez dwa stulecia unikała wojny, a w ciągu jednej dekady szybko przystąpiła do sojuszy. Wzorzec jest ten sam — być użytecznym, trzymać się z dala od kłopotów.', 'so': 'Iswidhan laba qarni ayay dagaal ka fogaatay, hal toban sanona si dhakhso ah ayay ugu biirtay isbahaysiyo. Qaabku waa isku mid — wax tar, dhibaatadana ka fogow.', 'ti': 'ሽወደን ንኽልተ ዘመን ካብ ውግእ ርሒቓ፡ ኣብ ሓደ ዓሰርተ ዓመት ድማ ብቕልጡፍ ናብ ሕብረታት ተጸምቢራ። እቲ ኣገባብ ሓደ እዩ — ጠቓሚ ኩን፡ ካብ ጸገም ድማ ርሓቕ።', 'tr': 'İsveç iki yüzyıl boyunca savaştan kaçındı ve bir on yıl içinde hızla ittifaklara katıldı. Örüntü aynı — yararlı ol, beladan uzak dur.', 'uk': 'Швеція два століття уникала війни, а за одне десятиліття швидко приєдналася до союзів. Закономірність та сама — бути корисним, триматися подалі від неприємностей.' },
+        sv: 'Sverige tillbringade två sekel med att undvika krig och ett årtionde med att snabbt gå med i allianser. Mönstret är detsamma — gör nytta, undvik bråk.',
+        'zh-Hans':
+          '瑞典花了两个世纪避免战争，又用十年时间迅速加入各种联盟。模式始终一致——做个有用的人，远离麻烦。',
+        'zh-Hant':
+          '瑞典花了兩個世紀避免戰爭，又用十年時間迅速加入各種聯盟。模式始終一致——做個有用的人，遠離麻煩。',
+        ar: 'أمضت السويد قرنين من الزمن تتجنب الحرب وعقدًا واحدًا تنضم فيه بسرعة إلى التحالفات. النمط واحد — كن مفيدًا وابقَ بعيدًا عن المتاعب.',
+        ckb: 'سوید دوو سەدە لە جەنگ دوور کەوتەوە و لە یەک دەیەدا بە خێرایی پەیوەست بوو بە هاوپەیمانییەکانەوە. هەمان شێوازە — بەسوود بە و لە کێشە دوور بمێنەوە.',
+        fa: 'سوئد دو قرن از جنگ دوری کرد و در یک دهه به‌سرعت به پیمان‌ها پیوست. الگو همان است — مفید باش و از دردسر دور بمان.',
+        pl: 'Szwecja przez dwa stulecia unikała wojny, a w ciągu jednej dekady szybko przystąpiła do sojuszy. Wzorzec jest ten sam — być użytecznym, trzymać się z dala od kłopotów.',
+        so: 'Iswidhan laba qarni ayay dagaal ka fogaatay, hal toban sanona si dhakhso ah ayay ugu biirtay isbahaysiyo. Qaabku waa isku mid — wax tar, dhibaatadana ka fogow.',
+        ti: 'ሽወደን ንኽልተ ዘመን ካብ ውግእ ርሒቓ፡ ኣብ ሓደ ዓሰርተ ዓመት ድማ ብቕልጡፍ ናብ ሕብረታት ተጸምቢራ። እቲ ኣገባብ ሓደ እዩ — ጠቓሚ ኩን፡ ካብ ጸገም ድማ ርሓቕ።',
+        tr: 'İsveç iki yüzyıl boyunca savaştan kaçındı ve bir on yıl içinde hızla ittifaklara katıldı. Örüntü aynı — yararlı ol, beladan uzak dur.',
+        uk: 'Швеція два століття уникала війни, а за одне десятиліття швидко приєдналася до союзів. Закономірність та сама — бути корисним, триматися подалі від неприємностей.',
+      },
       body: {
         en: `
           <h2>The European Union</h2>
@@ -2455,7 +2763,7 @@
           <p>義務兵役（<em>värnplikt</em>，徵兵制）於2017年重新啟用，適用於1999年及以後出生的男性和女性。並非所有人都會被徵召——選拔依據測試與意願。服役期通常為9–12個月。</p>
           ${ebookFactBox('zh-Hant', null, '加入歐盟：1995 · 公投反對歐元：2003 · 加入北約：2024 · 聯合國成員起始年：1946 · 義務兵役重新啟用：2017。', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'ar': `<h2>الاتحاد الأوروبي (EU)</h2>
+        ar: `<h2>الاتحاد الأوروبي (EU)</h2>
           <p>انضمت السويد إلى EU في 1 يناير 1995 بعد استفتاء عام 1994 (52% نعم، 47% لا). تستخدم الكرونا (krona)، وليس اليورو (euro). لها 21 مقعدًا في البرلمان الأوروبي. لقانون الاتحاد الأوروبي الأسبقية على القانون السويدي في المجالات التي يملك الاتحاد صلاحيات فيها — التجارة، والزراعة، ومصايد الأسماك، والبيئة، وحرية التنقل.</p>
           <h2>Schengen (منطقة شنغن)</h2>
           <p>السويد جزء من منطقة Schengen — حدود داخلية مفتوحة مع معظم دول EU، إضافة إلى النرويج، وآيسلندا، وسويسرا، وليختنشتاين. يمكنك السفر دون فحوصات جواز السفر؛ لكن قد يُطلب منك إثبات الهوية.</p>
@@ -2467,7 +2775,7 @@
           <p>أُعيد تفعيل <em>التجنيد الإلزامي</em> (värnplikt) عام 2017 وينطبق على الرجال والنساء المولودين عام 1999 فصاعدًا. لا يُستدعى الجميع — يقوم الاختيار على الاختبارات والدافعية. تستمر الخدمة عادةً 9–12 شهرًا.</p>
           ${ebookFactBox('ar', null, 'الانضمام إلى EU: 1995 · التصويت ضد اليورو: 2003 · الانضمام إلى NATO: 2024 · عضو في UN منذ: 1946 · إعادة تفعيل التجنيد الإلزامي: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'ckb': `<h2>یەکێتیی ئەوروپا (EU)</h2>
+        ckb: `<h2>یەکێتیی ئەوروپا (EU)</h2>
           <p>سوید لە 1 ی ژانیوەری 1995 دوای ڕیفراندۆمی ساڵی 1994 (52% بەڵێ، 47% نا) پەیوەست بوو بە EU ـەوە. کرۆنا (krona) بەکاردێنێت، نەک یۆرۆ (euro). 21 کورسیی هەیە لە پەرلەمانی ئەوروپا. یاسای یەکێتیی ئەوروپا پێشینەی هەیە بەسەر یاسای سویدیدا لەو بوارانەی یەکێتییەکە دەسەڵاتی تێیاندا هەیە — بازرگانی، کشتوکاڵ، ماسیگرتن، ژینگە و ئازادیی جووڵە.</p>
           <h2>Schengen (ناوچەی شەنگن)</h2>
           <p>سوید بەشێکە لە ناوچەی Schengen — سنووری ناوخۆیی کراوە لەگەڵ زۆربەی ووڵاتانی EU، لەگەڵ نەرویج، ئایسلەند، سویسرا و لیختنشتاین. دەتوانیت بێ پشکنینی پاسپۆرت گەشت بکەیت؛ بەڵام لەوانەیە هێشتا داوای ناسنامەت لێ بکرێت.</p>
@@ -2479,7 +2787,7 @@
           <p><em>خزمەتی سەربازیی ناچاری</em> (värnplikt) لە ساڵی 2017 دووبارە چالاک کرایەوە و بۆ پیاو و ژنانی لەدایکبووی 1999 بەدواوە جێبەجێ دەبێت. هەموو کەس بانگ ناکرێت — هەڵبژاردن لەسەر بنەمای تاقیکردنەوە و ئارەزوومەندییە. خزمەتەکە بەزۆری 9–12 مانگ دەخایەنێت.</p>
           ${ebookFactBox('ckb', null, 'پەیوەستبوون بە EU: 1995 · دەنگدان دژی یۆرۆ: 2003 · پەیوەستبوون بە NATO: 2024 · ئەندامی UN لە: 1946 · دووبارە چالاککردنی خزمەتی سەربازیی ناچاری: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'fa': `<h2>اتحادیه اروپا (EU)</h2>
+        fa: `<h2>اتحادیه اروپا (EU)</h2>
           <p>سوئد در 1 ژانویه 1995 پس از همه‌پرسی سال 1994 (52% آری، 47% نه) به EU پیوست. از کرون (krona) استفاده می‌کند، نه یورو (euro). در پارلمان اروپا 21 کرسی دارد. در زمینه‌هایی که اتحادیه در آن‌ها صلاحیت دارد — تجارت، کشاورزی، شیلات، محیط‌زیست و آزادی تردد — قانون اتحادیه اروپا بر قانون سوئد اولویت دارد.</p>
           <h2>Schengen (حوزه شنگن)</h2>
           <p>سوئد بخشی از حوزه Schengen است — مرزهای داخلی باز با بیشتر کشورهای EU، به‌علاوه نروژ، ایسلند، سوئیس و لیختن‌اشتاین. می‌توانید بدون بازرسی گذرنامه سفر کنید؛ اما ممکن است همچنان از شما کارت شناسایی خواسته شود.</p>
@@ -2491,7 +2799,7 @@
           <p><em>خدمت سربازی اجباری</em> (värnplikt) در سال 2017 دوباره فعال شد و شامل زنان و مردان متولد 1999 به بعد می‌شود. همه فراخوانده نمی‌شوند — گزینش بر پایه آزمون‌ها و انگیزه است. خدمت معمولاً 9–12 ماه طول می‌کشد.</p>
           ${ebookFactBox('fa', null, 'پیوستن به EU: 1995 · رأی منفی به یورو: 2003 · پیوستن به NATO: 2024 · عضو UN از: 1946 · فعال‌سازی مجدد سربازی اجباری: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'pl': `<h2>Unia Europejska</h2>
+        pl: `<h2>Unia Europejska</h2>
           <p>Szwecja przystąpiła do UE 1 stycznia 1995 roku po referendum w 1994 roku (52% za, 47% przeciw). Używa <em>korony</em> (krona), a nie euro. Ma 21 mandatów w Parlamencie Europejskim. Prawo UE ma pierwszeństwo przed prawem szwedzkim w obszarach, w których UE ma kompetencje — handel, rolnictwo, rybołówstwo, środowisko, swobodny przepływ.</p>
           <h2>Schengen</h2>
           <p>Szwecja należy do strefy Schengen — otwarte granice wewnętrzne z większością UE oraz Norwegią, Islandią, Szwajcarią i Liechtensteinem. Możesz podróżować bez kontroli paszportowej; nadal możesz zostać poproszony o dokument tożsamości.</p>
@@ -2503,7 +2811,7 @@
           <p>Pobór do wojska (<em>obowiązek służby wojskowej</em> (värnplikt)) został przywrócony w 2017 roku i dotyczy zarówno mężczyzn, jak i kobiet urodzonych od 1999 roku. Nie wszyscy są powoływani — wybór opiera się na testach i motywacji. Służba trwa zazwyczaj 9–12 miesięcy.</p>
           ${ebookFactBox('pl', null, 'Przystąpienie do UE: 1995 · Głosowanie przeciw euro: 2003 · Przystąpienie do NATO: 2024 · Członek ONZ od: 1946 · Przywrócenie poboru: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'so': `<h2>Midowga Yurub</h2>
+        so: `<h2>Midowga Yurub</h2>
           <p>Iswidhan waxay ku biirtay Midowga Yurub (EU) 1 Janaayo 1995 ka dib aftida 1994 (52% haa, 47% maya). Waxay isticmaashaa <em>kuroon</em> (krona), maaha yuuroo. Waxay leedahay 21 kursi oo ku jira Baarlamaanka Yurub. Sharciga Midowga Yurub wuxuu ka horreeyaa sharciga Iswidhan meelaha Midowga uu awood u leeyahay — ganacsi, beeraha, kalluumaysiga, deegaanka, dhaqdhaqaaqa xorta ah.</p>
           <h2>Schengen</h2>
           <p>Iswidhan waa qayb ka mid ah Aagga Schengen — xuduud gudaha ah oo furan oo ay la wadaagto inta badan Midowga Yurub, iyo sidoo kale Noorweey, Islaand, Swiiserlaand iyo Lixteshtaayn. Waxaad u safri kartaa baasaboor hubin la'aan; weli waxaa lagaa weydiin karaa aqoonsi.</p>
@@ -2515,7 +2823,7 @@
           <p>Ciidan-qaadista (<em>waajibka adeegga milatari</em> (värnplikt)) waxaa dib loo soo nooleeyay 2017, waxayna khusaysaa rag iyo dumarba ee dhashay 1999 iyo wixii ka dambeeyay. Qof walba lama wacayo — xulashada waxay ku salaysan tahay imtixaanno iyo dhiirrigelin. Adeegga inta badan waa 9–12 bilood.</p>
           ${ebookFactBox('so', null, 'Ku biiritaanka EU: 1995 · Cod ka soo horjeeda yuuroo: 2003 · Ku biiritaanka NATO: 2024 · Xubin ka ah UN ilaa: 1946 · Dib u soo nooleynta ciidan-qaadista: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'ti': `<h2>ኤውሮጳዊ ሕብረት</h2>
+        ti: `<h2>ኤውሮጳዊ ሕብረት</h2>
           <p>ሽወደን ድሕሪ ናይ 1994 ህዝበ-ውሳነ (52% እወ፡ 47% ኣይፋል) ኣብ 1 ጥሪ 1995 ናብ ኤውሮጳዊ ሕብረት (EU) ተጸምቢራ። ኤውሮ ዘይኮነ <em>ክሮና</em> (krona) ትጥቀም። ኣብ ኤውሮጳዊ ባይቶ 21 መንበር ኣለዋ። ሕጊ ኤውሮጳዊ ሕብረት ኣብቲ ሕብረት ስልጣን ዘለዎ ጽላታት — ንግዲ፡ ሕርሻ፡ ምግፋፍ ዓሳ፡ ኣከባቢ፡ ናጻ ምንቅስቓስ — ካብ ሕጊ ሽወደን ቀዳምነት ኣለዎ።</p>
           <h2>ሸንገን</h2>
           <p>ሽወደን ኣካል ናይ ዞባ ሸንገን እያ — ምስ መብዛሕትኡ ኤውሮጳዊ ሕብረት፡ ከምኡ'ውን ምስ ኖርወይ፡ ኣይስላንድ፡ ስዊዘርላንድን ሊክተንስታይንን ክፉት ውሽጣዊ ዶብ። ብዘይ ምርመራ ፓስፖርት ክትጓዓዝ ትኽእል፣ ኮይኑ ግን ናይ መንነት ወረቐት ክሕተት ይከኣል እዩ።</p>
@@ -2527,7 +2835,7 @@
           <p>ግዴታ ወተሃደራዊ ኣገልግሎት (<em>ግዴታ ወተሃደራዊ ኣገልግሎት</em> (värnplikt)) ኣብ 2017 እንደገና ተበጊሱ፡ ንኽልቲኦም ካብ 1999 ንደሓር ዝተወልዱ ሰብኡትን ኣንስትን ይምልከት። ኩሉ ሰብ ኣይጽዋዕን — እቲ ምርጫ ኣብ ፈተናታትን ድሌትን ይምርኮስ። እቲ ኣገልግሎት መብዛሕትኡ ግዜ 9–12 ኣዋርሕ እዩ።</p>
           ${ebookFactBox('ti', null, 'ናብ ኤውሮጳዊ ሕብረት ምጽንባር: 1995 · ኣንጻር ኤውሮ ድምጺ: 2003 · ናብ NATO ምጽንባር: 2024 · ኣባል ውድብ ሕቡራት ሃገራት ካብ: 1946 · ግዴታ ወተሃደራዊ ኣገልግሎት እንደገና ምብጋስ: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'tr': `<h2>Avrupa Birliği</h2>
+        tr: `<h2>Avrupa Birliği</h2>
           <p>İsveç, 1994 yılındaki bir referandumun ardından (yüzde 52 evet, yüzde 47 hayır) 1 Ocak 1995'te AB'ye katıldı. Avro değil, <em>kron</em> (krona) kullanır. Avrupa Parlamentosu'nda 21 sandalyesi vardır. AB hukuku, AB'nin yetkili olduğu alanlarda — ticaret, tarım, balıkçılık, çevre, serbest dolaşım — İsveç hukukuna göre önceliklidir.</p>
           <h2>Schengen</h2>
           <p>İsveç, Schengen Bölgesi'nin bir parçasıdır — AB'nin çoğuyla ve ayrıca Norveç, İzlanda, İsviçre ve Lihtenştayn ile açık iç sınırlar. Pasaport kontrolü olmadan seyahat edebilirsiniz; yine de kimlik sorulabilir.</p>
@@ -2537,9 +2845,9 @@
           <p>İsveç, 1946'da BM'ye katıldı. Uzun bir uluslararası yardım ve barış diplomasisi geçmişine sahiptir. 1953–1961 yılları arasında BM Genel Sekreteri olan Dag Hammarskjöld İsveçliydi.</p>
           <h2>Savunma</h2>
           <p>Zorunlu askerlik (<em>askerlik yükümlülüğü</em> (värnplikt)) 2017'de yeniden yürürlüğe girdi ve 1999 ve sonrasında doğan hem erkekleri hem de kadınları kapsar. Herkes çağrılmaz — seçim testlere ve motivasyona dayanır. Hizmet genellikle 9–12 aydır.</p>
-          ${ebookFactBox('tr', null, 'AB\'ye katılım: 1995 · Avroya karşı oy: 2003 · NATO\'ya katılım: 2024 · BM üyeliği: 1946 · Zorunlu askerliğin yeniden yürürlüğe girmesi: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+          ${ebookFactBox('tr', null, "AB'ye katılım: 1995 · Avroya karşı oy: 2003 · NATO'ya katılım: 2024 · BM üyeliği: 1946 · Zorunlu askerliğin yeniden yürürlüğe girmesi: 2017.", ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'uk': `<h2>Європейський Союз</h2>
+        uk: `<h2>Європейський Союз</h2>
           <p>Швеція приєдналася до ЄС 1 січня 1995 року після референдуму 1994 року (52% за, 47% проти). Вона використовує <em>крону</em> (krona), а не євро. Має 21 місце в Європейському парламенті. Право ЄС має перевагу над шведським правом у сферах, де ЄС має компетенцію — торгівля, сільське господарство, рибальство, довкілля, вільне пересування.</p>
           <h2>Шенген</h2>
           <p>Швеція входить до Шенгенської зони — відкриті внутрішні кордони з більшістю країн ЄС, а також Норвегією, Ісландією, Швейцарією та Ліхтенштейном. Ви можете подорожувати без паспортного контролю; вас усе ж можуть попросити пред'явити документ, що посвідчує особу.</p>
@@ -2555,12 +2863,62 @@
     },
 
     11: {
-      kicker: { en: 'Chapter 11 · Migration', sv: 'Kapitel 11 · Migration', 'zh-Hans': '第11章 · 移民', 'zh-Hant': '第11章 · 移民', 'ar': 'الفصل 11 · الهجرة', 'ckb': 'بەشی 11 · کۆچ', 'fa': 'فصل 11 · مهاجرت', 'pl': 'Rozdział 11 · Migracja', 'so': 'Cutubka 11 · Socdaalka', 'ti': 'ምዕራፍ 11 · ስደት', 'tr': 'Bölüm 11 · Göç', 'uk': 'Розділ 11 · Міграція' },
-      title: { en: 'Migration, residence,', sv: 'Migration, uppehåll', 'zh-Hans': '移民、居留，', 'zh-Hant': '移民、居留，', 'ar': 'الهجرة، والإقامة،', 'ckb': 'کۆچ، نیشتەجێبوون،', 'fa': 'مهاجرت، اقامت،', 'pl': 'Migracja, pobyt', 'so': 'Socdaalka, deganaanshaha', 'ti': 'ስደት፡ መንበሪ፡', 'tr': 'Göç, ikamet', 'uk': 'Міграція, проживання' },
-      title_em: { en: 'and citizenship.', sv: 'och medborgarskap.', 'zh-Hans': '与公民身份。', 'zh-Hant': '與公民身分。', 'ar': 'والمواطنة.', 'ckb': 'و هاوڵاتیبوون.', 'fa': 'و شهروندی.', 'pl': 'i obywatelstwo.', 'so': 'iyo dhalashada.', 'ti': 'ዜግነትን።', 'tr': 've vatandaşlık.', 'uk': 'і громадянство.' },
+      kicker: {
+        en: 'Chapter 11 · Migration',
+        sv: 'Kapitel 11 · Migration',
+        'zh-Hans': '第11章 · 移民',
+        'zh-Hant': '第11章 · 移民',
+        ar: 'الفصل 11 · الهجرة',
+        ckb: 'بەشی 11 · کۆچ',
+        fa: 'فصل 11 · مهاجرت',
+        pl: 'Rozdział 11 · Migracja',
+        so: 'Cutubka 11 · Socdaalka',
+        ti: 'ምዕራፍ 11 · ስደት',
+        tr: 'Bölüm 11 · Göç',
+        uk: 'Розділ 11 · Міграція',
+      },
+      title: {
+        en: 'Migration, residence,',
+        sv: 'Migration, uppehåll',
+        'zh-Hans': '移民、居留，',
+        'zh-Hant': '移民、居留，',
+        ar: 'الهجرة، والإقامة،',
+        ckb: 'کۆچ، نیشتەجێبوون،',
+        fa: 'مهاجرت، اقامت،',
+        pl: 'Migracja, pobyt',
+        so: 'Socdaalka, deganaanshaha',
+        ti: 'ስደት፡ መንበሪ፡',
+        tr: 'Göç, ikamet',
+        uk: 'Міграція, проживання',
+      },
+      title_em: {
+        en: 'and citizenship.',
+        sv: 'och medborgarskap.',
+        'zh-Hans': '与公民身份。',
+        'zh-Hant': '與公民身分。',
+        ar: 'والمواطنة.',
+        ckb: 'و هاوڵاتیبوون.',
+        fa: 'و شهروندی.',
+        pl: 'i obywatelstwo.',
+        so: 'iyo dhalashada.',
+        ti: 'ዜግነትን።',
+        tr: 've vatandaşlık.',
+        uk: 'і громадянство.',
+      },
       lede: {
         en: 'Becoming a Swedish citizen is a process more than an event. The paperwork is long, but the rules are unusually clear.',
-        sv: 'Att bli svensk medborgare är mer en process än ett ögonblick. Pappersarbetet är långt, men reglerna är ovanligt tydliga.', 'zh-Hans': '成为瑞典公民更像是一个过程，而非一个瞬间。文书手续繁多，但规则却出奇地清晰。', 'zh-Hant': '成為瑞典公民更像是一個過程，而非一個瞬間。文書手續繁多，但規則卻出奇地清晰。', 'ar': 'أن تصبح مواطنًا سويديًا عمليةٌ أكثر منه حدثًا. الأوراق طويلة، لكن القواعد واضحة بشكل غير معتاد.', 'ckb': 'بوون بە هاوڵاتیی سویدی زیاتر پرۆسەیەکە تا ڕووداوێک. کاغەزبازییەکە درێژە، بەڵام یاساکان بە شێوەیەکی نائاسایی ڕوونن.', 'fa': 'شهروند سوئد شدن بیش از آنکه یک رویداد باشد، یک فرایند است. کاغذبازی طولانی است، اما قوانین به‌طور غیرعادی روشن‌اند.', 'pl': 'Zostanie obywatelem Szwecji to bardziej proces niż wydarzenie. Formalności są długie, ale zasady są wyjątkowo jasne.', 'so': 'In aad noqoto muwaadin Iswidhan waa hannaan ka badan dhacdo. Warqadaha way dheer yihiin, laakiin xeerarku waa kuwo si aan caadi ahayn u cad.', 'ti': 'ዜጋ ሽወደን ምዃን ካብ ፍጻመ ንላዕሊ መስርሕ እዩ። እቲ ወረቓቕቲ ነዊሕ እዩ፡ እቶም ሕግታት ግን ብዘይተለመደ መንገዲ ንጹራት እዮም።', 'tr': 'İsveç vatandaşı olmak bir olaydan çok bir süreçtir. Evrak işleri uzundur, ancak kurallar alışılmadık derecede açıktır.', 'uk': 'Стати громадянином Швеції — це радше процес, ніж подія. Паперова робота довга, але правила надзвичайно зрозумілі.' },
+        sv: 'Att bli svensk medborgare är mer en process än ett ögonblick. Pappersarbetet är långt, men reglerna är ovanligt tydliga.',
+        'zh-Hans': '成为瑞典公民更像是一个过程，而非一个瞬间。文书手续繁多，但规则却出奇地清晰。',
+        'zh-Hant': '成為瑞典公民更像是一個過程，而非一個瞬間。文書手續繁多，但規則卻出奇地清晰。',
+        ar: 'أن تصبح مواطنًا سويديًا عمليةٌ أكثر منه حدثًا. الأوراق طويلة، لكن القواعد واضحة بشكل غير معتاد.',
+        ckb: 'بوون بە هاوڵاتیی سویدی زیاتر پرۆسەیەکە تا ڕووداوێک. کاغەزبازییەکە درێژە، بەڵام یاساکان بە شێوەیەکی نائاسایی ڕوونن.',
+        fa: 'شهروند سوئد شدن بیش از آنکه یک رویداد باشد، یک فرایند است. کاغذبازی طولانی است، اما قوانین به‌طور غیرعادی روشن‌اند.',
+        pl: 'Zostanie obywatelem Szwecji to bardziej proces niż wydarzenie. Formalności są długie, ale zasady są wyjątkowo jasne.',
+        so: 'In aad noqoto muwaadin Iswidhan waa hannaan ka badan dhacdo. Warqadaha way dheer yihiin, laakiin xeerarku waa kuwo si aan caadi ahayn u cad.',
+        ti: 'ዜጋ ሽወደን ምዃን ካብ ፍጻመ ንላዕሊ መስርሕ እዩ። እቲ ወረቓቕቲ ነዊሕ እዩ፡ እቶም ሕግታት ግን ብዘይተለመደ መንገዲ ንጹራት እዮም።',
+        tr: 'İsveç vatandaşı olmak bir olaydan çok bir süreçtir. Evrak işleri uzundur, ancak kurallar alışılmadık derecede açıktır.',
+        uk: 'Стати громадянином Швеції — це радше процес, ніж подія. Паперова робота довга, але правила надзвичайно зрозумілі.',
+      },
       body: {
         en: `
           <h2>Who is who</h2>
@@ -2637,7 +2995,7 @@
           <p>瑞典自2001年起接受雙重國籍。成為瑞典公民並不會使你失去原有國籍（視你原籍國的規定而定）。</p>
           ${ebookFactBox('zh-Hant', null, '新的公民身分規則自2026年6月6日起適用。UHR（瑞典大學與高校理事會）表示，首場公民知識考試於2026年8月15日在斯德哥爾摩舉行。標準居留年限要求：5年 · 雙重國籍：允許（自2001年起） · 決定機關：Migrationsverket。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>من هو من</h2>
+        ar: `<h2>من هو من</h2>
           <ul>
             <li><b>Migrationsverket</b> (وكالة الهجرة) — وكالة الهجرة. تبتّ في تصاريح الإقامة، واللجوء، ولمّ شمل الأسرة، وتصاريح العمل، والمواطنة.</li>
             <li><b>Skatteverket</b> (مصلحة الضرائب) — يمنحك رقمك الشخصي (personnummer) بمجرد حصولك على تصريح إقامة وتسجيلك مقيمًا في السويد.</li>
@@ -2658,7 +3016,7 @@
           <p>تقبل السويد الجنسية المزدوجة منذ عام 2001. لا تفقد جنسيتك الأصلية بأن تصبح سويديًا (رهنًا بقواعد بلد المنشأ).</p>
           ${ebookFactBox('ar', null, 'تُطبَّق قواعد المواطنة الجديدة اعتبارًا من 6 يونيو 2026. يقول UHR (مجلس القبول الجامعي) إن أول جلسة لاختبار المعرفة المدنية ستكون في 15 أغسطس 2026 في ستوكهولم. متطلب الإقامة المعياري: 5 سنوات · الجنسية المزدوجة: مسموحة (منذ 2001) · جهة القرار: Migrationsverket.', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>کێ کێیە</h2>
+        ckb: `<h2>کێ کێیە</h2>
           <ul>
             <li><b>Migrationsverket</b> (ئاژانسی کۆچ) — ئاژانسی کۆچ. بڕیار دەدات لەسەر مۆڵەتی نیشتەجێبوون، پەنابەری، یەکخستنەوەی خێزان، مۆڵەتی کار، و هاوڵاتیبوون.</li>
             <li><b>Skatteverket</b> (ئاژانسی باج) — هەرکە مۆڵەتی نیشتەجێبوونت هەبوو و وەک نیشتەجێی سوید تۆمار کرایت، ژمارەی کەسیت (personnummer) پێدەدات.</li>
@@ -2679,7 +3037,7 @@
           <p>سوید لە ساڵی 2001 ـەوە هاوڵاتیی دووانەی پەسەند کردووە. بە سویدیبوون، هاوڵاتیی ڕەسەنی خۆت لەدەست نادەیت (بەپێی یاساکانی ووڵاتی ڕەسەنت).</p>
           ${ebookFactBox('ckb', null, 'یاسا نوێیەکانی هاوڵاتیبوون لە 6 ی حوزەیرانی 2026 ـەوە جێبەجێ دەبن. UHR (ئەنجوومەنی وەرگرتنی زانکۆیی) دەڵێت یەکەم دانیشتنی تاقیکردنەوەی زانیاریی شارستانی لە 15 ی ئابی 2026 لە ستۆکهۆڵم دەبێت. مەرجی نیشتەجێبوونی ستانداردی: 5 ساڵ · هاوڵاتیی دووانە: ڕێگەپێدراو (لە 2001 ـەوە) · دەسەڵاتی بڕیاردان: Migrationsverket.', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>چه کسی چه‌کاره است</h2>
+        fa: `<h2>چه کسی چه‌کاره است</h2>
           <ul>
             <li><b>Migrationsverket</b> (اداره مهاجرت) — اداره مهاجرت. درباره مجوزهای اقامت، پناهندگی، پیوند خانواده، مجوزهای کار و شهروندی تصمیم می‌گیرد.</li>
             <li><b>Skatteverket</b> (اداره مالیات) — به‌محض اینکه مجوز اقامت بگیرید و به‌عنوان ساکن سوئد ثبت شوید، شماره شخصی (personnummer) شما را صادر می‌کند.</li>
@@ -2700,7 +3058,7 @@
           <p>سوئد از سال 2001 شهروندی دوگانه را پذیرفته است. با سوئدی شدن، شهروندی اصلی خود را از دست نمی‌دهید (بسته به قوانین کشور مبدأ شما).</p>
           ${ebookFactBox('fa', null, 'قوانین جدید شهروندی از 6 ژوئن 2026 اعمال می‌شود. UHR (شورای پذیرش دانشگاهی) می‌گوید نخستین جلسه آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. الزام اقامت استاندارد: 5 سال · شهروندی دوگانه: مجاز (از 2001) · مرجع تصمیم‌گیری: Migrationsverket.', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Kto jest kim</h2>
+        pl: `<h2>Kto jest kim</h2>
           <ul>
             <li><b>Migrationsverket</b> — Urząd ds. Migracji (Migrationsverket). Decyduje o zezwoleniach na pobyt, azylu, łączeniu rodzin, pozwoleniach na pracę i obywatelstwie.</li>
             <li><b>Skatteverket</b> — Urząd Skarbowy (Skatteverket) nadaje numer personalny (personnummer), gdy masz zezwolenie na pobyt i jesteś zarejestrowany jako mieszkaniec Szwecji.</li>
@@ -2721,7 +3079,7 @@
           <p>Szwecja akceptuje podwójne obywatelstwo od 2001 roku. Nie tracisz swojego pierwotnego obywatelstwa, stając się Szwedem (z zastrzeżeniem przepisów twojego kraju pochodzenia).</p>
           ${ebookFactBox('pl', null, 'Nowe przepisy dotyczące obywatelstwa obowiązują od 6 czerwca 2026 roku. UHR podaje, że pierwszy egzamin z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Standardowy wymóg pobytu: 5 lat · Podwójne obywatelstwo: dozwolone (od 2001) · Organ decyzyjny: Migrationsverket.', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Yaa yahay yaa</h2>
+        so: `<h2>Yaa yahay yaa</h2>
           <ul>
             <li><b>Migrationsverket</b> — Hay'adda Socdaalka (Migrationsverket). Waxay go'aamisaa oggolaanshaha deganaanshaha, magangalyada, midaynta qoyska, oggolaanshaha shaqada, iyo dhalashada.</li>
             <li><b>Skatteverket</b> — Hay'adda Canshuuraha (Skatteverket) waxay ku siisaa lambarkaaga shakhsi ahaaneed (personnummer) marka aad haysato oggolaanshe deganaansho oo aad u diiwaangashan tahay inaad ku nooshahay Iswidhan.</li>
@@ -2740,9 +3098,9 @@
           </ul>
           <h2>Dhalashada labanlaabka ah</h2>
           <p>Iswidhan waxay aqbashay dhalashada labanlaabka ah ilaa 2001. Lumin maysid dhalashadaada asalka ah markaad noqoto Iswidhan (iyada oo ku xiran xeerarka dalkaaga aad ka soo jeedo).</p>
-          ${ebookFactBox('so', null, 'Xeerarka cusub ee dhalashada waxay dhaqaaqayaan 6 Juun 2026. UHR waxay sheegaysaa in fadhiga ugu horreeya ee aqoonta muwaadinnimada uu noqon doono 15 Ogosto 2026 magaalada Stockholm. Shuruudda deganaanshaha caadiga ah: 5 sano · Dhalashada labanlaabka ah: la oggol yahay (ilaa 2001) · Hay\'adda go\'aanka gaarta: Migrationsverket.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('so', null, "Xeerarka cusub ee dhalashada waxay dhaqaaqayaan 6 Juun 2026. UHR waxay sheegaysaa in fadhiga ugu horreeya ee aqoonta muwaadinnimada uu noqon doono 15 Ogosto 2026 magaalada Stockholm. Shuruudda deganaanshaha caadiga ah: 5 sano · Dhalashada labanlaabka ah: la oggol yahay (ilaa 2001) · Hay'adda go'aanka gaarta: Migrationsverket.", ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>መን እዩ መን</h2>
+        ti: `<h2>መን እዩ መን</h2>
           <ul>
             <li><b>Migrationsverket</b> — ኤጀንሲ ስደት (Migrationsverket)። ብዛዕባ ፍቓድ መንበሪ፡ ዑቕባ፡ ምትእኽኻብ ስድራቤት፡ ፍቓድ ስራሕን ዜግነትን ይውስን።</li>
             <li><b>Skatteverket</b> — ኤጀንሲ ግብሪ (Skatteverket) ፍቓድ መንበሪ ምስ ዝህልወካን ኣብ ሽወደን ትነብር ምስ እትምዝገብን መለለዪ ቁጽሪ (personnummer) ይህበካ።</li>
@@ -2763,7 +3121,7 @@
           <p>ሽወደን ካብ 2001 ጀሚራ ድርብ ዜግነት ተቐቢላ። ሽወደናዊ ብምዃንካ ናይ መበቆል ዜግነትካ ኣይተጥፍእን (ብመሰረት ሕግታት ናይ መበቆል ሃገርካ)።</p>
           ${ebookFactBox('ti', null, 'ሓደስቲ ሕግታት ዜግነት ካብ 6 ሰነ 2026 ጀሚሮም ይትግበሩ። UHR እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ከም ዝካየድ ይገልጽ። ስሩዕ መምዘኒ መንበሪ: 5 ዓመት · ድርብ ዜግነት: ይፍቀድ (ካብ 2001) · ውሳነ ዝህብ ኣካል: Migrationsverket.', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>Kim kimdir</h2>
+        tr: `<h2>Kim kimdir</h2>
           <ul>
             <li><b>Migrationsverket</b> — Göç Kurumu (Migrationsverket). İkamet izinleri, iltica, aile birleşimi, çalışma izinleri ve vatandaşlık konularında karar verir.</li>
             <li><b>Skatteverket</b> — Vergi Dairesi (Skatteverket), bir ikamet izniniz olduğunda ve İsveç'te yaşayan biri olarak kaydedildiğinizde size kimlik numaranızı (personnummer) verir.</li>
@@ -2782,9 +3140,9 @@
           </ul>
           <h2>Çifte vatandaşlık</h2>
           <p>İsveç 2001'den beri çifte vatandaşlığı kabul ediyor. İsveçli olarak orijinal vatandaşlığınızı kaybetmezsiniz (köken ülkenizin kurallarına tabi olarak).</p>
-          ${ebookFactBox('tr', null, 'Yeni vatandaşlık kuralları 6 Haziran 2026\'dan itibaren geçerlidir. UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026\'da Stockholm\'de yapılacağını söylüyor. Standart ikamet koşulu: 5 yıl · Çifte vatandaşlık: izinli (2001\'den beri) · Karar mercii: Migrationsverket.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('tr', null, "Yeni vatandaşlık kuralları 6 Haziran 2026'dan itibaren geçerlidir. UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026'da Stockholm'de yapılacağını söylüyor. Standart ikamet koşulu: 5 yıl · Çifte vatandaşlık: izinli (2001'den beri) · Karar mercii: Migrationsverket.", ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Хто є хто</h2>
+        uk: `<h2>Хто є хто</h2>
           <ul>
             <li><b>Migrationsverket</b> — Міграційне агентство (Migrationsverket). Вирішує питання дозволів на проживання, притулку, возз'єднання сімей, дозволів на роботу та громадянства.</li>
             <li><b>Skatteverket</b> — Податкове агентство (Skatteverket) видає вам особистий номер (personnummer), щойно ви отримаєте дозвіл на проживання та зареєструєтеся як мешканець Швеції.</li>
@@ -2809,12 +3167,62 @@
     },
 
     12: {
-      kicker: { en: 'Chapter 12 · Mock exam', sv: 'Kapitel 12 · Övningsprov', 'zh-Hans': '第12章 · 模拟考试', 'zh-Hant': '第12章 · 模擬考試', 'ar': 'الفصل 12 · الامتحان التجريبي', 'ckb': 'بەشی 12 · تاقیکردنەوەی هەڵسەنگاندن', 'fa': 'فصل 12 · آزمون آزمایشی', 'pl': 'Rozdział 12 · Egzamin próbny', 'so': 'Cutubka 12 · Imtixaan tijaabo ah', 'ti': 'ምዕራፍ 12 · ናይ ምክያድ ፈተና', 'tr': 'Bölüm 12 · Deneme sınavı', 'uk': 'Розділ 12 · Пробний іспит' },
-      title: { en: 'Mock exam', sv: 'Övningsprov', 'zh-Hans': '模拟考试', 'zh-Hant': '模擬考試', 'ar': 'الامتحان التجريبي', 'ckb': 'تاقیکردنەوەی هەڵسەنگاندن', 'fa': 'آزمون آزمایشی', 'pl': 'Egzamin próbny', 'so': 'Imtixaan tijaabo ah', 'ti': 'ናይ ምክያድ ፈተና', 'tr': 'Deneme sınavı', 'uk': 'Пробний іспит' },
-      title_em: { en: 'and current test status.', sv: 'och aktuell provstatus.', 'zh-Hans': '与当前考试状态。', 'zh-Hant': '與當前考試狀態。', 'ar': 'وحالة الاختبار الحالية.', 'ckb': 'و دۆخی ئێستای تاقیکردنەوە.', 'fa': 'و وضعیت کنونی آزمون.', 'pl': 'i aktualny status testu.', 'so': 'iyo xaaladda imtixaanka ee hadda jirta.', 'ti': 'ከምኡ\'ውን ህሉው ኩነታት ፈተና።', 'tr': 've mevcut sınav durumu.', 'uk': 'та поточний статус тесту.' },
+      kicker: {
+        en: 'Chapter 12 · Mock exam',
+        sv: 'Kapitel 12 · Övningsprov',
+        'zh-Hans': '第12章 · 模拟考试',
+        'zh-Hant': '第12章 · 模擬考試',
+        ar: 'الفصل 12 · الامتحان التجريبي',
+        ckb: 'بەشی 12 · تاقیکردنەوەی هەڵسەنگاندن',
+        fa: 'فصل 12 · آزمون آزمایشی',
+        pl: 'Rozdział 12 · Egzamin próbny',
+        so: 'Cutubka 12 · Imtixaan tijaabo ah',
+        ti: 'ምዕራፍ 12 · ናይ ምክያድ ፈተና',
+        tr: 'Bölüm 12 · Deneme sınavı',
+        uk: 'Розділ 12 · Пробний іспит',
+      },
+      title: {
+        en: 'Mock exam',
+        sv: 'Övningsprov',
+        'zh-Hans': '模拟考试',
+        'zh-Hant': '模擬考試',
+        ar: 'الامتحان التجريبي',
+        ckb: 'تاقیکردنەوەی هەڵسەنگاندن',
+        fa: 'آزمون آزمایشی',
+        pl: 'Egzamin próbny',
+        so: 'Imtixaan tijaabo ah',
+        ti: 'ናይ ምክያድ ፈተና',
+        tr: 'Deneme sınavı',
+        uk: 'Пробний іспит',
+      },
+      title_em: {
+        en: 'and current test status.',
+        sv: 'och aktuell provstatus.',
+        'zh-Hans': '与当前考试状态。',
+        'zh-Hant': '與當前考試狀態。',
+        ar: 'وحالة الاختبار الحالية.',
+        ckb: 'و دۆخی ئێستای تاقیکردنەوە.',
+        fa: 'و وضعیت کنونی آزمون.',
+        pl: 'i aktualny status testu.',
+        so: 'iyo xaaladda imtixaanka ee hadda jirta.',
+        ti: "ከምኡ'ውን ህሉው ኩነታት ፈተና።",
+        tr: 've mevcut sınav durumu.',
+        uk: 'та поточний статус тесту.',
+      },
       lede: {
         en: 'Use the mock exam for practice, but keep the practical test details tied to UHR and Migrationsverket.',
-        sv: 'Använd övningsprovet för övning, men håll praktiska provdetaljer knutna till UHR och Migrationsverket.', 'zh-Hans': '用模拟考试来练习，但要把实际考试的细节以UHR和Migrationsverket为准。', 'zh-Hant': '用模擬考試來練習，但要把實際考試的細節以UHR和Migrationsverket為準。', 'ar': 'استخدم الامتحان التجريبي للتدرّب، لكن أبقِ تفاصيل الاختبار العملية مرتبطة بـ UHR و Migrationsverket.', 'ckb': 'تاقیکردنەوەی هەڵسەنگاندن بۆ مەشق بەکاربهێنە، بەڵام وردەکارییە کردارییەکانی تاقیکردنەوە بە UHR و Migrationsverket ـەوە بەستراوە بهێڵەرەوە.', 'fa': 'از آزمون آزمایشی برای تمرین استفاده کنید، اما جزئیات عملی آزمون را به UHR و Migrationsverket وابسته نگه دارید.', 'pl': 'Korzystaj z egzaminu próbnego do ćwiczeń, ale szczegóły praktyczne testu trzymaj powiązane z UHR i Migrationsverket.', 'so': 'Imtixaanka tijaabada ah u isticmaal tababar, laakiin faahfaahinta wax-ku-oolka ah ee imtixaanka ku xidh UHR iyo Migrationsverket.', 'ti': 'ነቲ ናይ ምክያድ ፈተና ንልምምድ ተጠቐመሉ፡ ንተግባራዊ ዝርዝራት ፈተና ግን ምስ UHRን Migrationsverketን ኣታሓሒዝካ ሓዞ።', 'tr': 'Deneme sınavını alıştırma için kullanın, ancak pratik sınav ayrıntılarını UHR ve Migrationsverket\'e bağlı tutun.', 'uk': 'Використовуйте пробний іспит для практики, але практичні деталі тесту тримайте прив\'язаними до UHR і Migrationsverket.' },
+        sv: 'Använd övningsprovet för övning, men håll praktiska provdetaljer knutna till UHR och Migrationsverket.',
+        'zh-Hans': '用模拟考试来练习，但要把实际考试的细节以UHR和Migrationsverket为准。',
+        'zh-Hant': '用模擬考試來練習，但要把實際考試的細節以UHR和Migrationsverket為準。',
+        ar: 'استخدم الامتحان التجريبي للتدرّب، لكن أبقِ تفاصيل الاختبار العملية مرتبطة بـ UHR و Migrationsverket.',
+        ckb: 'تاقیکردنەوەی هەڵسەنگاندن بۆ مەشق بەکاربهێنە، بەڵام وردەکارییە کردارییەکانی تاقیکردنەوە بە UHR و Migrationsverket ـەوە بەستراوە بهێڵەرەوە.',
+        fa: 'از آزمون آزمایشی برای تمرین استفاده کنید، اما جزئیات عملی آزمون را به UHR و Migrationsverket وابسته نگه دارید.',
+        pl: 'Korzystaj z egzaminu próbnego do ćwiczeń, ale szczegóły praktyczne testu trzymaj powiązane z UHR i Migrationsverket.',
+        so: 'Imtixaanka tijaabada ah u isticmaal tababar, laakiin faahfaahinta wax-ku-oolka ah ee imtixaanka ku xidh UHR iyo Migrationsverket.',
+        ti: 'ነቲ ናይ ምክያድ ፈተና ንልምምድ ተጠቐመሉ፡ ንተግባራዊ ዝርዝራት ፈተና ግን ምስ UHRን Migrationsverketን ኣታሓሒዝካ ሓዞ።',
+        tr: "Deneme sınavını alıştırma için kullanın, ancak pratik sınav ayrıntılarını UHR ve Migrationsverket'e bağlı tutun.",
+        uk: "Використовуйте пробний іспит для практики, але практичні деталі тесту тримайте прив'язаними до UHR і Migrationsverket.",
+      },
       body: {
         en: `
           <h2>Current official status</h2>
@@ -2872,7 +3280,7 @@
             <li>把這裡的模擬考試當作混合主題回憶的演練，然後重新複習你失分的章節。</li>
           </ol>
           <div class="ebook__factbox"><h4>當前來源說明</h4><p>資料獲取於2026-05-19：${officialTestSourceLinks()}</p></div>`,
-        'ar': `<h2>الحالة الرسمية الحالية</h2>
+        ar: `<h2>الحالة الرسمية الحالية</h2>
           <p>يقول UHR (مجلس القبول الجامعي) إن أول جلسة لاختبار المعرفة المدنية ستُعقد في 15 أغسطس 2026 في ستوكهولم. يُشترط وجود خطاب من Migrationsverket (وكالة الهجرة): فقط من يتلقون خطابًا من Migrationsverket يمكنهم التسجيل.</p>
           <p>المقاعد محدودة. جلسة أغسطس مجانية، ويقول UHR إن المشاركين سيُمنحون وقتًا وافرًا.</p>
           <h2>تفاصيل عملية لم يصدرها UHR بعد</h2>
@@ -2885,7 +3293,7 @@
             <li>استخدم الامتحان التجريبي هنا كبروفة لاستدعاء مواضيع مختلطة، ثم عُد إلى الفصول التي فاتتك فيها نقاط.</li>
           </ol>
           <div class="ebook__factbox"><h4>ملاحظات المصادر الحالية</h4><p>تم الاطلاع على المصادر في 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
-        'ckb': `<h2>دۆخی فەرمیی ئێستا</h2>
+        ckb: `<h2>دۆخی فەرمیی ئێستا</h2>
           <p>UHR (ئەنجوومەنی وەرگرتنی زانکۆیی) دەڵێت یەکەم دانیشتنی تاقیکردنەوەی زانیاریی شارستانی لە 15 ی ئابی 2026 لە ستۆکهۆڵم بەڕێوەدەچێت. نامەیەک لە Migrationsverket (ئاژانسی کۆچ) پێویستە: تەنها ئەو کەسانەی نامەیەک لە Migrationsverket وەردەگرن دەتوانن خۆیان تۆمار بکەن.</p>
           <p>کورسییەکان سنووردارن. دانیشتنی ئاب بەخۆڕاییە، و UHR دەڵێت بەشداربووان کاتێکی بەرفراوانیان پێدەدرێت.</p>
           <h2>وردەکارییە کردارییەکان کە هێشتا UHR بڵاوی نەکردوونەتەوە</h2>
@@ -2898,7 +3306,7 @@
             <li>تاقیکردنەوەی هەڵسەنگاندنی ئێرە وەک ڕاهێنانێک بۆ بیرهێنانەوەی بابەتی تێکەڵ بەکاربهێنە، پاشان بگەڕێرەوە بۆ ئەو بەشانەی خاڵت تێیاندا لەدەست داوە.</li>
           </ol>
           <div class="ebook__factbox"><h4>تێبینییەکانی سەرچاوەی ئێستا</h4><p>سەرچاوەکان لە 2026-05-19 سەردان کران: ${officialTestSourceLinks()}</p></div>`,
-        'fa': `<h2>وضعیت رسمی کنونی</h2>
+        fa: `<h2>وضعیت رسمی کنونی</h2>
           <p>UHR (شورای پذیرش دانشگاهی) می‌گوید نخستین جلسه آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار خواهد شد. نامه‌ای از Migrationsverket (اداره مهاجرت) لازم است: تنها کسانی که از Migrationsverket نامه دریافت می‌کنند می‌توانند ثبت‌نام کنند.</p>
           <p>صندلی‌ها محدودند. جلسه اوت رایگان است، و UHR می‌گوید شرکت‌کنندگان وقت کافی خواهند داشت.</p>
           <h2>جزئیات عملی که هنوز از سوی UHR منتشر نشده</h2>
@@ -2911,7 +3319,7 @@
             <li>از آزمون آزمایشی این‌جا به‌عنوان تمرینی برای یادآوری موضوعات ترکیبی استفاده کنید، سپس به فصل‌هایی که در آن‌ها امتیاز از دست داده‌اید برگردید.</li>
           </ol>
           <div class="ebook__factbox"><h4>ملاحظات منابع کنونی</h4><p>منابع در 2026-05-19 بازدید شدند: ${officialTestSourceLinks()}</p></div>`,
-        'pl': `<h2>Aktualny status oficjalny</h2>
+        pl: `<h2>Aktualny status oficjalny</h2>
           <p>UHR podaje, że pierwszy egzamin z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Wymagane jest pismo z Migrationsverket: zapisać się mogą tylko osoby, które otrzymają pismo od Migrationsverket.</p>
           <p>Liczba miejsc jest ograniczona. Sierpniowy egzamin jest bezpłatny, a UHR podaje, że uczestnicy będą mieli dużo czasu.</p>
           <h2>Szczegóły praktyczne oczekiwane od UHR</h2>
@@ -2924,7 +3332,7 @@
             <li>Wykorzystaj tutejszy egzamin próbny jako próbę przypominania sobie zagadnień z różnych tematów, a następnie wróć do rozdziałów, w których straciłeś punkty.</li>
           </ol>
           <div class="ebook__factbox"><h4>Aktualne uwagi o źródłach</h4><p>Źródła dostępne 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
-        'so': `<h2>Xaaladda rasmiga ah ee hadda</h2>
+        so: `<h2>Xaaladda rasmiga ah ee hadda</h2>
           <p>UHR waxay sheegaysaa in fadhiga ugu horreeya ee aqoonta muwaadinnimada uu noqon doono 15 Ogosto 2026 magaalada Stockholm. Waxaa loo baahan yahay warqad ka socota Migrationsverket: kaliya dadka hela warqad ka timid Migrationsverket ayaa is-diiwaangelin kara.</p>
           <p>Kuraasta way xaddidan yihiin. Fadhiga Ogosto waa lacag la'aan, UHR waxay sheegaysaa in ka qaybgalayaashu heli doonaan waqti badan.</p>
           <h2>Faahfaahinta wax-ku-oolka ah ee laga sugayo UHR</h2>
@@ -2937,7 +3345,7 @@
             <li>Isticmaal imtixaanka tijaabada ah ee halkan sidii layli xusuus mawduucyo isku qasan, ka dibna dib u eeg cutubyada aad dhibcaha ka lumisay.</li>
           </ol>
           <div class="ebook__factbox"><h4>Xusuusyada ilaha hadda jira</h4><p>Ilaha la helay 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
-        'ti': `<h2>ህሉው ወግዓዊ ኩነታት</h2>
+        ti: `<h2>ህሉው ወግዓዊ ኩነታት</h2>
           <p>UHR እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ከም ዝካየድ ይገልጽ። ካብ Migrationsverket ዝመጽእ ደብዳበ የድሊ፦ ካብ Migrationsverket ደብዳበ ዝተቐበሉ ሰባት ጥራይ እዮም ክምዝገቡ ዝኽእሉ።</p>
           <p>ቦታታት ውሱን እዩ። እቲ ናይ ነሓሰ ፈተና ብናጻ እዩ፡ UHR ድማ ተሳተፍቲ ብዙሕ ግዜ ከም ዝህልዎም ይገልጽ።</p>
           <h2>ካብ UHR ዝጽበዩ ተግባራዊ ዝርዝራት</h2>
@@ -2950,7 +3358,7 @@
             <li>ነዚ ኣብዚ ዘሎ ናይ ምክያድ ፈተና ከም ናይ ዝተሓዋወሰ ኣርእስቲ ምዝካር ልምምድ ተጠቐመሉ፡ ብድሕሪኡ ነቶም ነጥቢ ዝሰኣንካሎም ምዕራፋት ተመለሰሎም።</li>
           </ol>
           <div class="ebook__factbox"><h4>ህሉዋት ናይ ምንጪ መዘኻኸሪታት</h4><p>ምንጭታት ዝተረኽቡ 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
-        'tr': `<h2>Mevcut resmi durum</h2>
+        tr: `<h2>Mevcut resmi durum</h2>
           <p>UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026'da Stockholm'de yapılacağını söylüyor. Bir Migrationsverket mektubu gereklidir: yalnızca Migrationsverket'ten mektup alan kişiler kaydolabilir.</p>
           <p>Yerler sınırlıdır. Ağustos oturumu ücretsizdir ve UHR, katılımcıların bol zamana sahip olacağını söylüyor.</p>
           <h2>UHR'den beklenen pratik ayrıntılar</h2>
@@ -2963,7 +3371,7 @@
             <li>Buradaki deneme sınavını karışık konulu hatırlama provası olarak kullanın, ardından puan kaybettiğiniz bölümlere geri dönün.</li>
           </ol>
           <div class="ebook__factbox"><h4>Mevcut kaynak notları</h4><p>Kaynaklara erişim tarihi 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
-        'uk': `<h2>Поточний офіційний статус</h2>
+        uk: `<h2>Поточний офіційний статус</h2>
           <p>UHR повідомляє, що перше складання іспиту з громадянознавства відбудеться 15 серпня 2026 року в Стокгольмі. Потрібен лист від Migrationsverket: зареєструватися можуть лише особи, які отримають лист від Migrationsverket.</p>
           <p>Кількість місць обмежена. Серпневе складання безкоштовне, і UHR повідомляє, що учасники матимуть достатньо часу.</p>
           <h2>Практичні деталі, які очікуються від UHR</h2>
@@ -2980,12 +3388,64 @@
     },
 
     13: {
-      kicker: { en: 'Chapter 13 · Traditions', sv: 'Kapitel 13 · Traditioner', 'zh-Hans': '第13章 · 传统', 'zh-Hant': '第13章 · 傳統', 'ar': 'الفصل 13 · التقاليد', 'ckb': 'بەشی 13 · نەریتەکان', 'fa': 'فصل 13 · سنت‌ها', 'pl': 'Rozdział 13 · Tradycje', 'so': 'Cutubka 13 · Caadooyinka', 'ti': 'ምዕራፍ 13 · ልምድታት', 'tr': 'Bölüm 13 · Gelenekler', 'uk': 'Розділ 13 · Традиції' },
-      title: { en: 'Traditions,', sv: 'Traditioner,', 'zh-Hans': '传统、', 'zh-Hant': '傳統、', 'ar': 'التقاليد،', 'ckb': 'نەریتەکان،', 'fa': 'سنت‌ها،', 'pl': 'Tradycje,', 'so': 'Caadooyinka,', 'ti': 'ልምድታት፡', 'tr': 'Gelenekler,', 'uk': 'Традиції,' },
-      title_em: { en: 'holidays, and change.', sv: 'högtider och förändring.', 'zh-Hans': '节日与变迁。', 'zh-Hant': '節日與變遷。', 'ar': 'والأعياد، والتغيير.', 'ckb': 'جەژنەکان، و گۆڕان.', 'fa': 'تعطیلات، و تغییر.', 'pl': 'święta i zmiana.', 'so': 'fasaxyada, iyo isbeddelka.', 'ti': 'በዓላትን ለውጥን።', 'tr': 'tatiller ve değişim.', 'uk': 'свята та зміни.' },
+      kicker: {
+        en: 'Chapter 13 · Traditions',
+        sv: 'Kapitel 13 · Traditioner',
+        'zh-Hans': '第13章 · 传统',
+        'zh-Hant': '第13章 · 傳統',
+        ar: 'الفصل 13 · التقاليد',
+        ckb: 'بەشی 13 · نەریتەکان',
+        fa: 'فصل 13 · سنت‌ها',
+        pl: 'Rozdział 13 · Tradycje',
+        so: 'Cutubka 13 · Caadooyinka',
+        ti: 'ምዕራፍ 13 · ልምድታት',
+        tr: 'Bölüm 13 · Gelenekler',
+        uk: 'Розділ 13 · Традиції',
+      },
+      title: {
+        en: 'Traditions,',
+        sv: 'Traditioner,',
+        'zh-Hans': '传统、',
+        'zh-Hant': '傳統、',
+        ar: 'التقاليد،',
+        ckb: 'نەریتەکان،',
+        fa: 'سنت‌ها،',
+        pl: 'Tradycje,',
+        so: 'Caadooyinka,',
+        ti: 'ልምድታት፡',
+        tr: 'Gelenekler,',
+        uk: 'Традиції,',
+      },
+      title_em: {
+        en: 'holidays, and change.',
+        sv: 'högtider och förändring.',
+        'zh-Hans': '节日与变迁。',
+        'zh-Hant': '節日與變遷。',
+        ar: 'والأعياد، والتغيير.',
+        ckb: 'جەژنەکان، و گۆڕان.',
+        fa: 'تعطیلات، و تغییر.',
+        pl: 'święta i zmiana.',
+        so: 'fasaxyada, iyo isbeddelka.',
+        ti: 'በዓላትን ለውጥን።',
+        tr: 'tatiller ve değişim.',
+        uk: 'свята та зміни.',
+      },
       lede: {
         en: 'Swedish traditions are not museum pieces. Some are old, some are borrowed, and most are just ways people mark the year together.',
-        sv: 'Svenska traditioner är inte museiföremål. Vissa är gamla, vissa har kommit hit senare, och de flesta hjälper människor att känna igen året tillsammans.', 'zh-Hans': '瑞典的传统并非陈列于博物馆中的展品。有些古老，有些是外来的，而大多数只是人们一起标记岁时的方式。', 'zh-Hant': '瑞典的傳統並非陳列於博物館中的展品。有些古老，有些是外來的，而大多數只是人們一起標記歲時的方式。', 'ar': 'التقاليد السويدية ليست قطعًا متحفية. بعضها قديم، وبعضها مستعار، ومعظمها مجرد طرق يحتفي بها الناس بالعام معًا.', 'ckb': 'نەریتە سویدییەکان پارچەی مۆزەخانە نین. هەندێکیان کۆنن، هەندێکیان وەرگیراون، و زۆربەیان تەنها ڕێگان بۆ ئەوەی خەڵک پێکەوە ساڵ نیشانە بکەن.', 'fa': 'سنت‌های سوئدی اشیای موزه‌ای نیستند. برخی کهن‌اند، برخی وام‌گرفته‌شده، و بیشترشان فقط راه‌هایی‌اند که مردم با هم سال را جشن می‌گیرند.', 'pl': 'Szwedzkie tradycje nie są muzealnymi eksponatami. Niektóre są stare, niektóre zapożyczone, a większość to po prostu sposoby, w jakie ludzie wspólnie świętują rok.', 'so': 'Caadooyinka Iswidhan maaha walxo matxaf. Qaar way duug yihiin, qaar waa la amaahday, badidooduna waa kaliya siyaabo dadku ay si wadajir ah u xuseeyaan sannadka.', 'ti': 'ሽወደናዊ ልምድታት ናይ ቤተ-መዘክር ኣቕሑ ኣይኮኑን። ገሊኦም ኣረጊት እዮም፡ ገሊኦም ዝተለቅሑ እዮም፡ መብዛሕትኦም ድማ ሰባት ነታ ዓመት ብሓባር ዘኽብሩላ መንገድታት እዮም።', 'tr': 'İsveç gelenekleri müze eşyaları değildir. Bazıları eski, bazıları ödünç alınmış, çoğu ise sadece insanların yılı birlikte kutlama yollarıdır.', 'uk': 'Шведські традиції — не музейні експонати. Деякі давні, деякі запозичені, а більшість — це просто способи, якими люди разом відзначають рік.' },
+        sv: 'Svenska traditioner är inte museiföremål. Vissa är gamla, vissa har kommit hit senare, och de flesta hjälper människor att känna igen året tillsammans.',
+        'zh-Hans':
+          '瑞典的传统并非陈列于博物馆中的展品。有些古老，有些是外来的，而大多数只是人们一起标记岁时的方式。',
+        'zh-Hant':
+          '瑞典的傳統並非陳列於博物館中的展品。有些古老，有些是外來的，而大多數只是人們一起標記歲時的方式。',
+        ar: 'التقاليد السويدية ليست قطعًا متحفية. بعضها قديم، وبعضها مستعار، ومعظمها مجرد طرق يحتفي بها الناس بالعام معًا.',
+        ckb: 'نەریتە سویدییەکان پارچەی مۆزەخانە نین. هەندێکیان کۆنن، هەندێکیان وەرگیراون، و زۆربەیان تەنها ڕێگان بۆ ئەوەی خەڵک پێکەوە ساڵ نیشانە بکەن.',
+        fa: 'سنت‌های سوئدی اشیای موزه‌ای نیستند. برخی کهن‌اند، برخی وام‌گرفته‌شده، و بیشترشان فقط راه‌هایی‌اند که مردم با هم سال را جشن می‌گیرند.',
+        pl: 'Szwedzkie tradycje nie są muzealnymi eksponatami. Niektóre są stare, niektóre zapożyczone, a większość to po prostu sposoby, w jakie ludzie wspólnie świętują rok.',
+        so: 'Caadooyinka Iswidhan maaha walxo matxaf. Qaar way duug yihiin, qaar waa la amaahday, badidooduna waa kaliya siyaabo dadku ay si wadajir ah u xuseeyaan sannadka.',
+        ti: 'ሽወደናዊ ልምድታት ናይ ቤተ-መዘክር ኣቕሑ ኣይኮኑን። ገሊኦም ኣረጊት እዮም፡ ገሊኦም ዝተለቅሑ እዮም፡ መብዛሕትኦም ድማ ሰባት ነታ ዓመት ብሓባር ዘኽብሩላ መንገድታት እዮም።',
+        tr: 'İsveç gelenekleri müze eşyaları değildir. Bazıları eski, bazıları ödünç alınmış, çoğu ise sadece insanların yılı birlikte kutlama yollarıdır.',
+        uk: 'Шведські традиції — не музейні експонати. Деякі давні, деякі запозичені, а більшість — це просто способи, якими люди разом відзначають рік.',
+      },
       body: {
         en: `
           <h2>Traditions change</h2>
@@ -3072,7 +3532,7 @@
           <p>移民為瑞典公共生活增添了更多可見的傳統。開齋節（Eid al-Fitr）、諾魯孜節（Nouruz）、庫爾德新年（Newroz）、排燈節（Diwali）以及其他慶典，可能出現在學校、職場、社區和城市活動中。其中重要的模式很簡單：傳統可以遷移並適應。</p>
           ${ebookFactBox('zh-Hant', null, '國慶日：6月6日 · 瓦爾普吉斯之夜：4月30日 · 仲夏前夜：6月19日至25日之間的星期五 · 露西亞節：12月13日 · 平安夜：12月24日。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>التقاليد تتغير</h2>
+        ar: `<h2>التقاليد تتغير</h2>
           <p>التقليد عادة يتشاركها جماعة: عيد، أو أغنية، أو طعام، أو ملابس، أو طقس، أو طريقة للتجمّع. يمكن للتقاليد أن تكون قديمة دون أن تكون متجمدة. ينتقل الناس، وتختلط العائلات، وتصبح عادات جديدة جزءًا من السويد اليومية.</p>
           <p>لهذا السبب ليس هذا الفصل قائمة بما هو "حقيقي" و"غير حقيقي" من السويدية. إنه تقويم لنقاط مرجعية شائعة: الأعياد والطقوس التي تظهر في المدرسة، والعمل، والحياة العامة، ومواد الدراسة المدنية.</p>
           <h2>اليوم الوطني والمراسم المدنية</h2>
@@ -3096,7 +3556,7 @@
           <p>أضافت الهجرة تقاليد أكثر ظهورًا إلى الحياة العامة السويدية. قد تظهر عيد الفطر، ونوروز، ونوروز الكردي (Newroz)، وديوالي، واحتفالات أخرى في المدارس، وأماكن العمل، والأحياء، وفعاليات المدن. النمط المهم بسيط: التقاليد يمكنها أن تنتقل وتتكيف.</p>
           ${ebookFactBox('ar', null, 'اليوم الوطني: 6 يونيو · ليلة Walpurgis: 30 أبريل · عشية Midsummer: الجمعة بين 19 و25 يونيو · Lucia: 13 ديسمبر · عشية عيد الميلاد: 24 ديسمبر.', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>نەریتەکان دەگۆڕێن</h2>
+        ckb: `<h2>نەریتەکان دەگۆڕێن</h2>
           <p>نەریت ئەو خووەیە کە کۆمەڵێک تێیدا هاوبەشن: جەژنێک، گۆرانییەک، خواردن، جل، ئاینێک، یان ڕێگایەک بۆ کۆبوونەوە. نەریتەکان دەتوانن کۆن بن بەبێ ئەوەی بەستوو بن. خەڵک دەجووڵێن، خێزانەکان تێکەڵ دەبن، و خووە نوێیەکان دەبنە بەشێک لە سویدی ڕۆژانە.</p>
           <p>لەبەر ئەوەیە ئەم بەشە لیستێک نییە لە "ڕاستەقینە" و "نا ڕاستەقینە"ی سویدیبوون. ساڵنامەیەکە لە خاڵە سەرچاوە باوەکان: ئەو جەژن و ئاینانەی لە قوتابخانە، کار، ژیانی گشتی، و ماددەی خوێندنی شارستانیدا دەردەکەون.</p>
           <h2>ڕۆژی نیشتمانی و مەراسیمە شارستانییەکان</h2>
@@ -3120,7 +3580,7 @@
           <p>کۆچ نەریتی بەرچاوتری زیادکردووە بۆ ژیانی گشتیی سوید. جەژنی ڕەمەزان (Eid al-Fitr)، نەورۆز، نەورۆزی کوردی (Newroz)، دیوالی، و ئاهەنگەکانی تر لەوانەیە لە قوتابخانە، شوێنی کار، گەڕەک، و چالاکییەکانی شار دەربکەون. شێوازە گرنگەکە سادەیە: نەریتەکان دەتوانن گەشت بکەن و خۆ بگونجێنن.</p>
           ${ebookFactBox('ckb', null, 'ڕۆژی نیشتمانی: 6 ی حوزەیران · شەوی Walpurgis: 30 ی ئاپریل · شەوی Midsummer: هەینی لە نێوان 19 و 25 ی حوزەیران · Lucia: 13 ی دیسەمبەر · شەوی کریسمس: 24 ی دیسەمبەر.', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>سنت‌ها تغییر می‌کنند</h2>
+        fa: `<h2>سنت‌ها تغییر می‌کنند</h2>
           <p>سنت عادتی است که گروهی در آن سهیم‌اند: یک تعطیلی، یک ترانه، غذا، لباس، یک آیین، یا راهی برای گرد هم آمدن. سنت‌ها می‌توانند کهن باشند بی‌آنکه منجمد بمانند. مردم جابه‌جا می‌شوند، خانواده‌ها درمی‌آمیزند، و آداب تازه بخشی از سوئد روزمره می‌شوند.</p>
           <p>به همین دلیل این فصل فهرستی از "اصیل" و "غیراصیل" بودنِ سوئدی نیست. تقویمی است از نقاط مرجع رایج: تعطیلات و آیین‌هایی که در مدرسه، کار، زندگی عمومی و مواد مطالعه مدنی پدیدار می‌شوند.</p>
           <h2>روز ملی و مراسم مدنی</h2>
@@ -3144,7 +3604,7 @@
           <p>مهاجرت سنت‌های آشکارتری به زندگی عمومی سوئد افزوده است. عید فطر، نوروز، نوروز کردی (Newroz)، دیوالی و جشن‌های دیگر ممکن است در مدارس، محل‌های کار، محله‌ها و رویدادهای شهری پدیدار شوند. الگوی مهم ساده است: سنت‌ها می‌توانند سفر کنند و سازگار شوند.</p>
           ${ebookFactBox('fa', null, 'روز ملی: 6 ژوئن · شب Walpurgis: 30 آوریل · شب Midsummer: جمعه میان 19 و 25 ژوئن · Lucia: 13 دسامبر · شب کریسمس: 24 دسامبر.', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Tradycje się zmieniają</h2>
+        pl: `<h2>Tradycje się zmieniają</h2>
           <p>Tradycja to zwyczaj dzielony przez grupę: święto, pieśń, jedzenie, ubiór, ceremonia lub sposób gromadzenia się. Tradycje mogą być stare, nie będąc zamrożone. Ludzie się przeprowadzają, rodziny się mieszają, a nowe zwyczaje stają się częścią codziennej Szwecji.</p>
           <p>Dlatego ten rozdział nie jest listą "prawdziwej" i "nieprawdziwej" szwedzkości. To kalendarz wspólnych punktów odniesienia: świąt i rytuałów, które pojawiają się w szkole, pracy, życiu publicznym i materiałach do nauki obywatelskiej.</p>
           <h2>Święto Narodowe i ceremonie obywatelskie</h2>
@@ -3168,7 +3628,7 @@
           <p>Migracja dodała więcej widocznych tradycji do szwedzkiego życia publicznego. Eid al-Fitr, Nouruz, Newroz, Diwali i inne uroczystości mogą pojawiać się w szkołach, miejscach pracy, dzielnicach i wydarzeniach miejskich. Ważny wzorzec jest prosty: tradycje mogą podróżować i się dostosowywać.</p>
           ${ebookFactBox('pl', null, 'Święto Narodowe: 6 czerwca · Noc Walpurgii: 30 kwietnia · Wigilia Nocy Świętojańskiej: piątek między 19 a 25 czerwca · Lucia: 13 grudnia · Wigilia Bożego Narodzenia: 24 grudnia.', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Caadooyinku way isbeddelaan</h2>
+        so: `<h2>Caadooyinku way isbeddelaan</h2>
           <p>Caado waa dhaqan ay koox wadaagaan: fasax, hees, cunto, dhar, xaflad, ama hab lagu kulmo. Caadooyinku way duug noqon karaan iyaga oo aan barafoobin. Dadku way guuraan, qoysasku way isku dhex galaan, caadooyin cusubna waxay noqdaan qayb ka mid ah Iswidhan maalinlaha ah.</p>
           <p>Taasi waa sababta cutubkani aanu u ahayn liis Iswidhan-nimo "run ah" iyo "run ahayn". Waa jadwal dhibcaha tixraaca guud ah: fasaxyada iyo cibaadooyinka ka muuqda dugsiga, shaqada, nolosha dadweynaha, iyo waxyaabaha lagu barto muwaadinnimada.</p>
           <h2>Maalinta Qaranka iyo xafladaha muwaadinnimada</h2>
@@ -3192,7 +3652,7 @@
           <p>Socdaalku wuxuu ku daray caadooyin badan oo muuqda nolosha dadweynaha Iswidhan. Eid al-Fitr, Nouruz, Newroz, Diwali, iyo dabaaldegyo kale waxay ka soo muuqan karaan dugsiyada, goobaha shaqada, xaafadaha, iyo dhacdooyinka magaalada. Qaabka muhiimka ah waa fudud yahay: caadooyinku way safri karaan oo la qabsan karaan.</p>
           ${ebookFactBox('so', null, 'Maalinta Qaranka: 6 Juun · Habeenka Walpurgis: 30 Abriil · Habeenka Bartamaha Xagaaga: Jimce u dhexeeya 19 iyo 25 Juun · Lucia: 13 Disembar · Habeenka Kirismaska: 24 Disembar.', ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>ልምድታት ይቕየሩ</h2>
+        ti: `<h2>ልምድታት ይቕየሩ</h2>
           <p>ልምዲ ብጉጅለ ዝካፈል ልምዲ እዩ፦ በዓል፡ ደርፊ፡ መግቢ፡ ክዳን፡ ስነ-ስርዓት፡ ወይ ናይ ምትእኽኻብ መንገዲ። ልምድታት ከይተረረ ኣረጊት ክኾኑ ይኽእሉ። ሰባት ይግዕዙ፡ ስድራቤታት ይተሓናፈጻ፡ ሓደስቲ ልምድታት ድማ ኣካል መዓልታዊ ሽወደን ይኾኑ።</p>
           <p>ስለዚ እዩ እዚ ምዕራፍ "ሓቀኛ"ን "ዘይሓቀኛ"ን ሽወደናውነት ዝርዝር ዘይኮነ። ናይ ሓባር መወከሲ ነጥብታት ዓውደ-ኣዋርሕ እዩ፦ ኣብ ቤት ትምህርቲ፡ ስራሕ፡ ህዝባዊ ህይወትን ናይ ሲቪካዊ መጽናዕቲ ጽሑፋትን ዝረኣዩ በዓላትን ስርዓታትን።</p>
           <h2>ሃገራዊ መዓልትን ሲቪካዊ ስነ-ስርዓታትን</h2>
@@ -3216,7 +3676,7 @@
           <p>ስደት ናብ ህዝባዊ ህይወት ሽወደን ዝያዳ ዝረኣዩ ልምድታት ወሲኹ። ኢድ ኣል-ፊጥር (Eid al-Fitr)፡ ኖውሩዝ (Nouruz)፡ ኔውሮዝ (Newroz)፡ ዲዋሊ (Diwali)ን ካልኦት ኣኽብሮታትን ኣብ ቤት ትምህርትታት፡ ቦታታት ስራሕ፡ ከባቢታትን ናይ ከተማ ፍጻመታትን ክረኣዩ ይኽእሉ። እቲ ኣገዳሲ ኣገባብ ቀሊል እዩ፦ ልምድታት ክጓዓዙን ክላመዱን ይኽእሉ።</p>
           ${ebookFactBox('ti', null, 'ሃገራዊ መዓልቲ: 6 ሰነ · ለይቲ ቫልፑርግስ: 30 ሚያዝያ · ድሮ ማእከል ክረምቲ: ኣብ መንጎ 19ን 25ን ሰነ ዘሎ ዓርቢ · ሉቸ: 13 ታሕሳስ · ድሮ ልደት: 24 ታሕሳስ.', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>Gelenekler değişir</h2>
+        tr: `<h2>Gelenekler değişir</h2>
           <p>Gelenek, bir grup tarafından paylaşılan bir alışkanlıktır: bir tatil, bir şarkı, yiyecek, giysi, bir tören veya bir araya gelme biçimi. Gelenekler donmuş olmadan eski olabilir. İnsanlar taşınır, aileler karışır ve yeni gelenekler günlük İsveç'in bir parçası olur.</p>
           <p>Bu yüzden bu bölüm "gerçek" ve "gerçek olmayan" İsveçliliğin bir listesi değildir. Ortak referans noktalarının bir takvimidir: okulda, işte, kamusal yaşamda ve yurttaşlık çalışma materyalinde görünen tatiller ve ritüeller.</p>
           <h2>Ulusal Gün ve yurttaşlık törenleri</h2>
@@ -3240,7 +3700,7 @@
           <p>Göç, İsveç kamusal yaşamına daha fazla görünür gelenek ekledi. Eid al-Fitr, Nouruz, Newroz, Diwali ve diğer kutlamalar okullarda, işyerlerinde, mahallelerde ve şehir etkinliklerinde görülebilir. Önemli örüntü basittir: gelenekler yolculuk edebilir ve uyum sağlayabilir.</p>
           ${ebookFactBox('tr', null, 'Ulusal Gün: 6 Haziran · Walpurgis Gecesi: 30 Nisan · Yaz Ortası Arifesi: 19 ile 25 Haziran arası bir Cuma · Lucia: 13 Aralık · Noel Arifesi: 24 Aralık.', ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Традиції змінюються</h2>
+        uk: `<h2>Традиції змінюються</h2>
           <p>Традиція — це звичай, який поділяє група: свято, пісня, їжа, одяг, церемонія чи спосіб зібратися разом. Традиції можуть бути давніми, не будучи застиглими. Люди переїжджають, родини змішуються, а нові звичаї стають частиною повсякденної Швеції.</p>
           <p>Саме тому цей розділ не є переліком «справжньої» та «несправжньої» шведськості. Це календар спільних орієнтирів: свят і ритуалів, які з'являються у школі, на роботі, у суспільному житті та в матеріалах для вивчення громадянознавства.</p>
           <h2>Національний день і громадянські церемонії</h2>
@@ -3262,7 +3722,7 @@
           </ul>
           <h2>Нові традиції</h2>
           <p>Міграція додала більше помітних традицій до суспільного життя Швеції. Eid al-Fitr, Nouruz, Newroz, Diwali та інші святкування можуть з'являтися у школах, на робочих місцях, у районах і на міських заходах. Важлива закономірність проста: традиції можуть подорожувати й адаптуватися.</p>
-          ${ebookFactBox('uk', null, 'Національний день: 6 червня · Вальпургієва ніч: 30 квітня · Переддень літнього сонцестояння: п\'ятниця між 19 та 25 червня · Lucia: 13 грудня · Святвечір: 24 грудня.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('uk', null, "Національний день: 6 червня · Вальпургієва ніч: 30 квітня · Переддень літнього сонцестояння: п'ятниця між 19 та 25 червня · Lucia: 13 грудня · Святвечір: 24 грудня.", ['uhrStudyMaterial'])}
         `,
       },
     },

@@ -3,16 +3,16 @@
 */
 
 (function () {
-  "use strict";
+  'use strict';
 
   // ---------- CONFETTI ----------
   // tiny coloured rectangles that fall + spin from (x,y). Self-cleaning.
 
   const PALETTES = {
-    flag:   ["#006aa7", "#fecc00", "#ffffff"],
-    win:    ["#1e874b", "#fecc00", "#006aa7", "#ffffff"],
-    streak: ["#fecc00", "#ffb700", "#ffffff", "#006aa7"],
-    big:    ["#006aa7", "#fecc00", "#bc1f2a", "#1e874b", "#ffffff", "#0b1f33"],
+    flag: ['#006aa7', '#fecc00', '#ffffff'],
+    win: ['#1e874b', '#fecc00', '#006aa7', '#ffffff'],
+    streak: ['#fecc00', '#ffb700', '#ffffff', '#006aa7'],
+    big: ['#006aa7', '#fecc00', '#bc1f2a', '#1e874b', '#ffffff', '#0b1f33'],
   };
 
   function burst(x, y, opts = {}) {
@@ -21,8 +21,8 @@
     const spread = opts.spread || 140;
     const layer = ensureLayer();
     for (let i = 0; i < count; i++) {
-      const piece = document.createElement("i");
-      piece.className = "smt-confetti";
+      const piece = document.createElement('i');
+      piece.className = 'smt-confetti';
       const size = 4 + Math.random() * 7;
       piece.style.cssText = `
         position: absolute;
@@ -36,7 +36,7 @@
       `;
       layer.appendChild(piece);
 
-      const angle = (Math.random() * Math.PI * 2);
+      const angle = Math.random() * Math.PI * 2;
       const speed = spread * (0.4 + Math.random() * 0.6);
       const dx = Math.cos(angle) * speed;
       const dy = Math.sin(angle) * speed - spread * 0.3;
@@ -46,10 +46,17 @@
       piece.animate(
         [
           { transform: `translate(-50%, -50%) rotate(0deg)`, opacity: 1 },
-          { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot}deg)`, opacity: 1, offset: 0.5 },
-          { transform: `translate(calc(-50% + ${dx * 1.2}px), calc(-50% + ${dy + 240}px)) rotate(${rot * 1.4}deg)`, opacity: 0 },
+          {
+            transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot}deg)`,
+            opacity: 1,
+            offset: 0.5,
+          },
+          {
+            transform: `translate(calc(-50% + ${dx * 1.2}px), calc(-50% + ${dy + 240}px)) rotate(${rot * 1.4}deg)`,
+            opacity: 0,
+          },
         ],
-        { duration: dur, easing: "cubic-bezier(.2,.7,.3,1)" }
+        { duration: dur, easing: 'cubic-bezier(.2,.7,.3,1)' },
       ).onfinish = () => piece.remove();
     }
   }
@@ -62,8 +69,8 @@
     const w = window.innerWidth;
     const h = window.innerHeight;
     for (let i = 0; i < count; i++) {
-      const piece = document.createElement("i");
-      piece.className = "smt-confetti";
+      const piece = document.createElement('i');
+      piece.className = 'smt-confetti';
       const size = 6 + Math.random() * 8;
       const startX = Math.random() * w;
       piece.style.cssText = `
@@ -80,20 +87,24 @@
       piece.animate(
         [
           { transform: `translate(0,0) rotate(0)`, opacity: 1 },
-          { transform: `translate(${driftX}px, ${h + 80}px) rotate(${rot}deg)`, opacity: 1, offset: 0.85 },
+          {
+            transform: `translate(${driftX}px, ${h + 80}px) rotate(${rot}deg)`,
+            opacity: 1,
+            offset: 0.85,
+          },
           { transform: `translate(${driftX}px, ${h + 80}px) rotate(${rot}deg)`, opacity: 0 },
         ],
-        { duration: dur, delay, easing: "cubic-bezier(.3,.6,.4,1)" }
+        { duration: dur, delay, easing: 'cubic-bezier(.3,.6,.4,1)' },
       ).onfinish = () => piece.remove();
     }
   }
 
   function ensureLayer() {
-    let l = document.getElementById("smt-fx-layer");
+    let l = document.getElementById('smt-fx-layer');
     if (!l) {
-      l = document.createElement("div");
-      l.id = "smt-fx-layer";
-      l.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden";
+      l = document.createElement('div');
+      l.id = 'smt-fx-layer';
+      l.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden';
       document.body.appendChild(l);
     }
     return l;
@@ -103,17 +114,17 @@
 
   function shakeEl(el) {
     if (!el) return;
-    el.classList.remove("smt-shake");
+    el.classList.remove('smt-shake');
     void el.offsetWidth; // restart anim
-    el.classList.add("smt-shake");
-    setTimeout(() => el.classList.remove("smt-shake"), 500);
+    el.classList.add('smt-shake');
+    setTimeout(() => el.classList.remove('smt-shake'), 500);
   }
 
   // ---------- FLOATING "+1" ----------
 
-  function floatPlus(x, y, text = "+1", color = "#1e874b") {
+  function floatPlus(x, y, text = '+1', color = '#1e874b') {
     const layer = ensureLayer();
-    const el = document.createElement("span");
+    const el = document.createElement('span');
     el.textContent = text;
     el.style.cssText = `
       position: absolute; left: ${x}px; top: ${y}px;
@@ -127,32 +138,33 @@
     layer.appendChild(el);
     el.animate(
       [
-        { transform: "translate(-50%, -50%) scale(.6)", opacity: 0 },
-        { transform: "translate(-50%, -70%) scale(1.2)", opacity: 1, offset: 0.25 },
-        { transform: "translate(-50%, -160%) scale(1)", opacity: 0 },
+        { transform: 'translate(-50%, -50%) scale(.6)', opacity: 0 },
+        { transform: 'translate(-50%, -70%) scale(1.2)', opacity: 1, offset: 0.25 },
+        { transform: 'translate(-50%, -160%) scale(1)', opacity: 0 },
       ],
-      { duration: 1100, easing: "cubic-bezier(.2,.8,.3,1)" }
+      { duration: 1100, easing: 'cubic-bezier(.2,.8,.3,1)' },
     ).onfinish = () => el.remove();
   }
 
   // ---------- TOAST (top, transient) ----------
 
   function toast(msg, opts = {}) {
-    let host = document.getElementById("smt-toast-host");
+    let host = document.getElementById('smt-toast-host');
     if (!host) {
-      host = document.createElement("div");
-      host.id = "smt-toast-host";
-      host.style.cssText = "position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:96;pointer-events:none;display:flex;flex-direction:column;gap:8px;align-items:center";
+      host = document.createElement('div');
+      host.id = 'smt-toast-host';
+      host.style.cssText =
+        'position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:96;pointer-events:none;display:flex;flex-direction:column;gap:8px;align-items:center';
       document.body.appendChild(host);
     }
-    const t = document.createElement("div");
-    t.className = "smt-toast" + (opts.flavor ? " smt-toast--" + opts.flavor : "");
+    const t = document.createElement('div');
+    t.className = 'smt-toast' + (opts.flavor ? ' smt-toast--' + opts.flavor : '');
     t.innerHTML = msg;
     host.appendChild(t);
     const dur = opts.duration ?? 2400;
     setTimeout(() => {
-      t.style.opacity = "0";
-      t.style.transform = "translateY(-6px)";
+      t.style.opacity = '0';
+      t.style.transform = 'translateY(-6px)';
       setTimeout(() => t.remove(), 250);
     }, dur);
   }

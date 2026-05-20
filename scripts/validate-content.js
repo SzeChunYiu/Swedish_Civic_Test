@@ -3422,9 +3422,15 @@ const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'correctStreak',
   'lastAnsweredAt',
   'nextReviewAt',
+  'confidenceRating',
   'bookmarked',
 ];
-const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set(['lastAnsweredAt', 'nextReviewAt', 'bookmarked']);
+const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set([
+  'lastAnsweredAt',
+  'nextReviewAt',
+  'confidenceRating',
+  'bookmarked',
+]);
 const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   questionId: 'string',
   seenCount: 'number',
@@ -3433,11 +3439,12 @@ const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   correctStreak: 'number',
   lastAnsweredAt: 'string',
   nextReviewAt: 'string',
+  confidenceRating: 'ConfidenceRating',
   bookmarked: 'boolean',
 };
 const EXPECTED_PROGRESS_TYPE_UNIONS = [
   { typeName: 'QuizMode', values: ['study', 'exam', 'mistakes', 'challenge'] },
-  { typeName: 'Confidence', values: ['low', 'medium', 'high'] },
+  { typeName: 'ConfidenceRating', values: [1, 2, 3, 4, 5] },
 ];
 const EXPECTED_PROGRESS_INTERFACES = [
   {
@@ -3450,7 +3457,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'correctStreak', type: 'number', optional: false },
       { name: 'lastAnsweredAt', type: 'string', optional: true },
       { name: 'nextReviewAt', type: 'string', optional: true },
-      { name: 'confidence', type: 'Confidence', optional: true },
+      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
       { name: 'bookmarked', type: 'boolean', optional: true },
     ],
   },
@@ -3462,6 +3469,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'isCorrect', type: 'boolean', optional: false },
       { name: 'answeredAt', type: 'string', optional: false },
       { name: 'timeSpentSeconds', type: 'number', optional: false },
+      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
     ],
   },
   {
@@ -3485,6 +3493,11 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'dailyGoalAnswers', type: 'number', optional: false },
       { name: 'questionProgress', type: 'Record<string, UserQuestionProgress>', optional: false },
       { name: 'sessions', type: 'QuizSession[]', optional: false },
+      {
+        name: 'dailyChallengeCompletions',
+        type: 'Record<string, DailyChallengeCompletion>',
+        optional: false,
+      },
     ],
   },
 ];
@@ -3493,12 +3506,28 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'questionProgress', type: 'Record<string, QuestionProgress>', optional: false },
   { name: 'totalXp', type: 'number', optional: false },
   { name: 'answerDates', type: 'string[]', optional: false },
+  { name: 'answerHistory', type: 'AnswerHistoryEntry[]', optional: false },
+  {
+    name: 'dailyChallengeCompletions',
+    type: 'Record<string, DailyChallengeProgress>',
+    optional: false,
+  },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
   { name: 'streakFreezeState', type: 'StreakFreezeState', optional: false },
+  {
+    name: 'persistenceWarning',
+    type: 'RecoverablePersistenceWarning | null',
+    optional: false,
+  },
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
-    type: '(questionId: string, isCorrect: boolean) => void',
+    type: '(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating) => void',
+    optional: false,
+  },
+  {
+    name: 'recordDailyChallengeCompletion',
+    type: '(completion: DailyChallengeProgressInput) => void',
     optional: false,
   },
   {
@@ -3513,6 +3542,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   },
   { name: 'toggleBookmark', type: '(questionId: string) => void', optional: false },
   { name: 'resetProgress', type: '() => void', optional: false },
+  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
 const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'activeQuestionId', type: 'string | null', optional: false },
@@ -6876,6 +6906,9 @@ function extractStringUnionTypeFromTs(source, typeName) {
         ) {
           return typeNode.literal.text;
         }
+        if (ts.isLiteralTypeNode(typeNode) && ts.isNumericLiteral(typeNode.literal)) {
+          return Number(typeNode.literal.text);
+        }
         return undefined;
       });
       return;
@@ -8084,6 +8117,23 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-progress-schema-parity')) {
+  validateProgressQuestionSchemaParity();
+  validateProgressTypeSchemaParity();
+  validateProgressStoreSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    progressQuestionFieldsValidated,
+    progressQuestionSchemaParityValidated,
+    progressTypeUnionsValidated,
+    progressTypeInterfacesValidated,
+    progressTypeSchemaParityValidated,
+    progressStoreFieldsValidated,
+    progressStoreSchemaParityValidated,
   });
   process.exit(0);
 }
@@ -12740,12 +12790,19 @@ function validateProgressStoreSchemaParity() {
   if (progressStateKey !== 'progressState') {
     reject(`progressStateKey is ${JSON.stringify(progressStateKey)}, expected "progressState"`);
   }
+  const progressStorageId = extractStringConstantFromTs(progressStoreSource, 'progressStorageId');
+  if (progressStorageId !== 'progress') {
+    reject(`progressStorageId is ${JSON.stringify(progressStorageId)}, expected "progress"`);
+  }
 
   const normalizedProgressStore = progressStoreSource.replace(/\s+/g, ' ');
   const requiredSnippets = [
-    ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
     [
-      'const rawProgress = progressStorage?.getString(progressStateKey);',
+      'createMMKV({ id: progressStorageId })',
+      'progress storage must use the stable progress MMKV id',
+    ],
+    [
+      'rawProgress = progressStorage?.getString(progressStateKey);',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
@@ -12753,8 +12810,12 @@ function validateProgressStoreSchemaParity() {
       'readProgress must normalize parsed persisted JSON',
     ],
     [
-      'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
-      'writeProgress must persist JSON through progressStateKey',
+      'const serializedProgress = JSON.stringify(progress);',
+      'writeProgress must serialize progress before persistence',
+    ],
+    [
+      'writeRecoverably( progressStorage, progressStorageId, progressStateKey, serializedProgress, )',
+      'writeProgress must persist JSON recoverably through the stable progress storage key',
     ],
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
     ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
@@ -12774,6 +12835,36 @@ function validateProgressStoreSchemaParity() {
       reject(message);
     }
   });
+
+  const forbiddenSnippets = [
+    [
+      'seenCount: Math.max(0, item.seenCount ?? 0),',
+      'progress hydration must not use raw numeric expression Math.max(0, item.seenCount ?? 0)',
+    ],
+    [
+      'normalizedQuestionProgress.lastAnsweredAt = item.lastAnsweredAt;',
+      'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
+    ],
+    [
+      'normalizedQuestionProgress.confidenceRating = item.confidenceRating;',
+      'question progress hydration must preserve only valid 1..5 confidence ratings',
+    ],
+  ];
+
+  forbiddenSnippets.forEach(([snippet, message]) => {
+    if (normalizedProgressStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  if (
+    normalizedProgressStore.includes('normalizedQuestionProgress.bookmarked = item.bookmarked;') &&
+    !normalizedProgressStore.includes(
+      "if (typeof item.bookmarked === 'boolean') { normalizedQuestionProgress.bookmarked = item.bookmarked; }",
+    )
+  ) {
+    reject('question progress hydration must preserve only boolean bookmark values');
+  }
 
   if (valid && progressStoreFieldsValidated === EXPECTED_PROGRESS_STORE_FIELDS.length) {
     progressStoreSchemaParityValidated = true;
