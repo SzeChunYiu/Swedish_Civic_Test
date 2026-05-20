@@ -83,6 +83,21 @@ test('about-the-test marks the first-run guide as seen after mount', () => {
   assert.doesNotMatch(source.replace(seenEffectPattern, ''), /markAboutTheTestSeen\(\);/);
 });
 
+test('first-run about modal guide link keeps natural Swedish accessibility copy', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+    'utf8',
+  );
+  const staleGuideLabel = ['Öppna om-', 'provet-', 'guiden'].join('');
+
+  assert.match(source, /open: 'Läs guiden'/);
+  assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
+  assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
+  assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
+  assert.doesNotMatch(source, new RegExp(staleGuideLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.doesNotMatch(source, /Öppna\s+om-[\s\S]*provet-[\s\S]*guiden/);
+});
+
 test('about-the-test seen-effect parity rejects removing the mount effect', () => {
   const result = spawnSync(
     process.execPath,
