@@ -184,7 +184,7 @@ test('ebook highlights and notes stay local without account prompts', () => {
   const ebookTools = read('site/ebook-tools.js');
 
   assert.match(index, /Highlights and notes stay in this browser\. No account is needed\./);
-  assert.match(ebookTools, /localStorage\.setItem\("smt_hl_"/);
+  assert.match(ebookTools, /localStorage\.setItem\(\s*['"]smt_hl_['"]\s*\+/);
   assert.match(ebookTools, /function showPopForSelection\(\)/);
   assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
 });
@@ -192,14 +192,14 @@ test('ebook highlights and notes stay local without account prompts', () => {
 test('ebook highlight and note controls expose localized accessible names', () => {
   const ebookTools = read('site/ebook-tools.js');
 
-  assert.doesNotMatch(ebookTools, /title="Highlight"|title="Add note"|aria-label="Close"/);
-  assert.doesNotMatch(ebookTools, /<button class="eb-note__del">Delete<\/button>/);
-  assert.doesNotMatch(ebookTools, /<button class="eb-note__save[^>]*>Save<\/button>/);
-  assert.match(ebookTools, /addNote: "Lägg till anteckning"/);
-  assert.match(ebookTools, /remove: "Ta bort markering"/);
+  assert.doesNotMatch(ebookTools, /(?:title|aria-label)=['"](?:Highlight|Add note|Close)['"]/);
+  assert.doesNotMatch(ebookTools, /<button class=['"]eb-note__del['"]>Delete<\/button>/);
+  assert.doesNotMatch(ebookTools, /<button class=['"]eb-note__save[^'"]*['"][^>]*>Save<\/button>/);
+  assert.match(ebookTools, /addNote:\s*['"]Lägg till anteckning['"]/);
+  assert.match(ebookTools, /remove:\s*['"]Ta bort markering['"]/);
   assert.match(
     ebookTools,
-    /localizeButton\(panel\.querySelector\("\.eb-note__close"\), c\.close\)/,
+    /localizeButton\(panel\.querySelector\((['"])\.eb-note__close\1\), c\.close\)/,
   );
 
   const harness = createEbookToolsHarness();
