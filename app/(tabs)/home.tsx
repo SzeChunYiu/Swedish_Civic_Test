@@ -8,6 +8,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { SocialProofRow } from '../../components/ui/SocialProofRow';
 import { StatCallout } from '../../components/ui/StatCallout';
@@ -122,7 +123,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
-    feedbackBadge: '10 000 elevers återkoppling',
+    feedbackBadge: 'Fokuserad repetition',
     feedbackLink: 'Repetera sparade frågor',
     feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
     feedbackText:
@@ -260,7 +261,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
-    feedbackBadge: '10,000-learner feedback pass',
+    feedbackBadge: 'Focused review',
     feedbackLink: 'Review saved questions',
     feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
     feedbackText:
@@ -520,23 +521,39 @@ export default function Screen() {
           language={language}
         />
       ) : null}
-      <View style={styles.actions}>
-        <Link
+      <View style={styles.quickActions}>
+        <RouteLink
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
+          style={styles.quickActionLink}
+          variant="primary"
         >
           {copy.startPractice}
-        </Link>
-        <Link
+        </RouteLink>
+        <RouteLink
           accessibilityLabel={copy.browseChaptersAccessibilityLabel}
-          accessibilityRole="link"
           href="/learn"
-          style={styles.secondaryLink}
+          style={styles.quickActionLink}
+          variant="secondary"
         >
           {copy.browseChapters}
-        </Link>
+        </RouteLink>
+        <RouteLink
+          accessibilityLabel={copy.readinessCtaAccessibilityLabel}
+          href="/exam"
+          style={styles.quickActionLink}
+          variant="secondary"
+        >
+          {copy.readinessCta}
+        </RouteLink>
+        <RouteLink
+          accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
+          href="/mistakes"
+          style={styles.quickActionLink}
+          variant="secondary"
+        >
+          {copy.feedbackLink}
+        </RouteLink>
       </View>
 
       <View style={styles.statsRow}>
@@ -739,30 +756,14 @@ const styles = StyleSheet.create({
     paddingVertical: space[1],
     textDecorationLine: 'none',
   },
-  actions: {
+  quickActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
   },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
+  quickActionLink: {
+    flexBasis: 180,
+    flexGrow: 1,
   },
   statsRow: {
     flexDirection: 'row',
