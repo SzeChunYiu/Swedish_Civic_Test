@@ -128,6 +128,62 @@ test('every ad placement has a configured unit and real-unit env slot', () => {
   }
 });
 
+test('operator real-ad unit override file stays local and feeds real-unit config', () => {
+  const ignoredRealUnitsPath = path.join(repoRoot, 'lib/monetization/ad-units.real.ts');
+  const gitignoreSource = fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8');
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+
+  assert.match(gitignoreSource, /^lib\/monetization\/ad-units\.real\.ts$/m);
+  assert.match(adsSource, /readOptionalRealAdUnitOverrides/);
+  assert.match(adsSource, /\.\/ad-units\.real/);
+
+  fs.writeFileSync(
+    ignoredRealUnitsPath,
+    `exports.REAL_AD_UNIT_OVERRIDES = {
+  home_banner: {
+    android: 'ca-app-pub-1234567890123456/7777777777',
+    ios: 'ca-app-pub-1234567890123456/8888888888',
+  },
+  results_native: {
+    android: 'ca-app-pub-1234567890123456/9999999999',
+  },
+};\n`,
+  );
+
+  try {
+    withEnv(
+      {
+        EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID: undefined,
+        EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: undefined,
+        EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID: undefined,
+        EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID: undefined,
+        EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+        EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+      },
+      () => {
+        const { adsConfig, getPlatformAdUnitId } = loadTs('lib/monetization/ads.ts');
+
+        assert.equal(adsConfig.realAdsEnabled, true);
+        assert.equal(
+          getPlatformAdUnitId('home_banner', 'android'),
+          'ca-app-pub-1234567890123456/7777777777',
+        );
+        assert.equal(
+          getPlatformAdUnitId('home_banner', 'ios'),
+          'ca-app-pub-1234567890123456/8888888888',
+        );
+        assert.equal(
+          getPlatformAdUnitId('results_native', 'android'),
+          'ca-app-pub-1234567890123456/9999999999',
+        );
+        assert.equal(getPlatformAdUnitId('results_native', 'ios'), undefined);
+      },
+    );
+  } finally {
+    fs.rmSync(ignoredRealUnitsPath, { force: true });
+  }
+});
+
 test('real ad units are selected from env when the real ads flag is enabled', () => {
   withEnv(
     {

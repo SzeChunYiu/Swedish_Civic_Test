@@ -3,8 +3,15 @@ import type { AdConsentDecision } from './consent';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
-type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
-type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
+type AdUnitEnvKeyMap = Record<AdPlacement, { android: string; ios: string }>;
+type RealAdUnitOverrideValues = Partial<
+  Record<AdPlacement, { android?: string | undefined; ios?: string | undefined }>
+>;
+type RealAdUnitOverrideModule = {
+  REAL_AD_UNIT_OVERRIDES?: RealAdUnitOverrideValues;
+  default?: RealAdUnitOverrideValues;
+};
+type AdServingConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
@@ -30,11 +37,31 @@ function readEnvString(key: string): string | undefined {
   return value ? value : undefined;
 }
 
+function readConfigString(value: string | undefined): string | undefined {
+  const normalizedValue = value?.trim();
+  return normalizedValue ? normalizedValue : undefined;
+}
+
+function readOptionalRealAdUnitOverrides(): RealAdUnitOverrideValues {
+  try {
+    const optionalRequire = eval('typeof require === "function" ? require : undefined') as
+      | ((specifier: string) => RealAdUnitOverrideModule)
+      | undefined;
+    const realAdUnitsModule = optionalRequire?.('./ad-units.real');
+
+    return realAdUnitsModule?.REAL_AD_UNIT_OVERRIDES ?? realAdUnitsModule?.default ?? {};
+  } catch {
+    return {};
+  }
+}
+
+const REAL_AD_UNIT_FILE_VALUES = readOptionalRealAdUnitOverrides();
+
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
 
 const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
 
-const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
+const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeyMap = {
   app_open_launch: {
     android: 'EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID',
     ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID',
@@ -108,8 +135,9 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
   const envKeys = REAL_AD_UNIT_ENV_KEYS[unit.placement];
-  const androidUnitId = readEnvString(envKeys.android);
-  const iosUnitId = readEnvString(envKeys.ios);
+  const fileValues = REAL_AD_UNIT_FILE_VALUES[unit.placement];
+  const androidUnitId = readEnvString(envKeys.android) ?? readConfigString(fileValues?.android);
+  const iosUnitId = readEnvString(envKeys.ios) ?? readConfigString(fileValues?.ios);
 
   return {
     ...unit,
@@ -131,7 +159,7 @@ export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
 export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
-  consentDecision?: AdConsentGate,
+  consentDecision?: AdServingConsentGate,
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
@@ -147,7 +175,7 @@ export function shouldShowLaunchPopupAd({
   entitlements,
 }: {
   alreadyShownThisLaunch: boolean;
-  consentDecision?: AdConsentGate;
+  consentDecision?: AdServingConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
 }): boolean {
   return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
