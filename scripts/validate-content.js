@@ -7308,10 +7308,6 @@ const expectedGeneratedPublishedQuestions =
     ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
     : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
-const applyQuestionLocalizationPilot = loadTs(
-  'data/questionLocalizations.ts',
-  'applyQuestionLocalizationPilot',
-);
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');

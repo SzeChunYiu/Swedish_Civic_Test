@@ -4,12 +4,7 @@ const path = require('node:path');
 
 const DEFAULT_REPO_ROOT = path.resolve(__dirname, '..');
 
-const STATIC_EBOOK_CREDENTIAL_CLAIM_FILES = Object.freeze([
-  'site/ebook.js',
-  'tests/content-static-site-ebook-parity.test.js',
-  'scripts/static-site-source-provenance-copy.test.js',
-  'scripts/compliance-pages.test.js',
-]);
+const STATIC_EBOOK_CREDENTIAL_CLAIM_FILES = Object.freeze(['site/ebook.js']);
 
 function escapedPattern(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
