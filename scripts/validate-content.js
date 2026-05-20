@@ -3,6 +3,7 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+const vm = require('node:vm');
 const {
   buildSiteQuestionBank,
   generateStaticSiteQuestionBankJs,
@@ -30,6 +31,10 @@ const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
 const EXPECTED_SOURCE_QUESTIONS = 159;
+const EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES = Object.freeze([
+  'scripts/static-outcome-copy-guard.js',
+  'scripts/compliance-pages.test.js',
+]);
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -3586,6 +3591,18 @@ function fail(message) {
   failures.push(message);
 }
 
+function validateValidationScriptSyntax() {
+  for (const relativePath of EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES) {
+    const filePath = path.join(repoRoot, relativePath);
+    try {
+      new vm.Script(fs.readFileSync(filePath, 'utf8'), { filename: filePath });
+      validationScriptSyntaxChecksValidated += 1;
+    } catch (error) {
+      fail(`${relativePath} must parse before validation runs: ${error.message}`);
+    }
+  }
+}
+
 function dateIsoDay(value) {
   return value instanceof Date && !Number.isNaN(value.getTime())
     ? value.toISOString().slice(0, 10)
@@ -6207,6 +6224,7 @@ const getQuestionProvenance = provenanceModule.getQuestionProvenance;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
+let validationScriptSyntaxChecksValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
@@ -14267,6 +14285,7 @@ validateMockExamConfig(
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0,
 );
+validateValidationScriptSyntax();
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
@@ -14375,6 +14394,7 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       chapterExactSchemaKeysValidated,
+      validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
