@@ -6694,6 +6694,703 @@
   },
   {
     "id": "q150",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "How can commercial radio and TV channels earn income?",
+      "sv": "Hur kan kommersiella radio- och tv-kanaler få inkomster?"
+    },
+    "opts": [
+      {
+        "en": "They sell advertising space or charge for a specific channel",
+        "sv": "De säljer reklamplats eller tar betalt för en särskild kanal"
+      },
+      {
+        "en": "Through court fees from trials",
+        "sv": "Genom domstolsavgifter från rättegångar"
+      },
+      {
+        "en": "Through membership fees to trade unions",
+        "sv": "Genom medlemsavgifter till fackförbund"
+      },
+      {
+        "en": "By municipalities deciding their programmes",
+        "sv": "Genom att kommunerna bestämmer deras program"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Olika slags medier",
+      "page": 21
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "commercial-media",
+      "advertising",
+      "radio-tv"
+    ]
+  },
+  {
+    "id": "q151",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "What characterizes media financed by advertising?",
+      "sv": "Vad kännetecknar medier som finansieras med reklam?"
+    },
+    "opts": [
+      {
+        "en": "They are often run by private companies and earn income from advertising",
+        "sv": "De drivs ofta av privata företag och får inkomster genom reklam"
+      },
+      {
+        "en": "They may never sell advertising space",
+        "sv": "De får aldrig sälja reklamplats"
+      },
+      {
+        "en": "They replace the mission of public-service companies",
+        "sv": "De ersätter public service-företagens uppdrag"
+      },
+      {
+        "en": "They consist only of government agencies",
+        "sv": "De består bara av statliga myndigheter"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
+      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "private-media",
+      "advertising-funded",
+      "newspapers"
+    ]
+  },
+  {
+    "id": "q152",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "How are many newspapers published today?",
+      "sv": "Hur publiceras många tidningar i dag?"
+    },
+    "opts": [
+      {
+        "en": "They are also available online and updated with news several times per day",
+        "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag"
+      },
+      {
+        "en": "They may be sold only as one copy per year",
+        "sv": "De får bara säljas som ett exemplar per år"
+      },
+      {
+        "en": "They may be distributed only within one residential building",
+        "sv": "De får bara spridas inom ett enda bostadshus"
+      },
+      {
+        "en": "They may not write about local or national news",
+        "sv": "De får inte skriva om lokala eller nationella nyheter"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
+      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "newspapers",
+      "online-news",
+      "local-national-media"
+    ]
+  },
+  {
+    "id": "q153",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "What is important to remember about the web and social media?",
+      "sv": "Vad är viktigt att komma ihåg om webben och sociala medier?"
+    },
+    "opts": [
+      {
+        "en": "Anyone can create content there, and it is not always checked the same way as in other media",
+        "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier"
+      },
+      {
+        "en": "Only responsible publishers may write posts there",
+        "sv": "Bara ansvariga utgivare får skriva inlägg där"
+      },
+      {
+        "en": "All content is first approved by the state",
+        "sv": "Allt innehåll godkänns först av staten"
+      },
+      {
+        "en": "The content is always more reliable than news in newspapers",
+        "sv": "Innehållet är alltid mer pålitligt än nyheter i tidningar"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Webb och sociala medier",
+      "page": 21
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "web",
+      "social-media",
+      "content-control"
+    ]
+  },
+  {
+    "id": "q154",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "Why is source criticism needed when using media?",
+      "sv": "Varför behövs källkritik när man använder medier?"
+    },
+    "opts": [
+      {
+        "en": "False information can spread quickly and affect people's opinions",
+        "sv": "Falska uppgifter kan spridas snabbt och påverka människors åsikter"
+      },
+      {
+        "en": "Everything that is published is always correct",
+        "sv": "Allt som publiceras är alltid korrekt"
+      },
+      {
+        "en": "Source criticism means never reading news",
+        "sv": "Källkritik betyder att man aldrig ska läsa nyheter"
+      },
+      {
+        "en": "Only printed books need to be checked",
+        "sv": "Bara tryckta böcker behöver kontrolleras"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
+      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Källkritik",
+      "page": 21
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "source-criticism",
+      "false-information",
+      "media-literacy"
+    ]
+  },
+  {
+    "id": "q155",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue?",
+      "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
+    },
+    "opts": [
+      {
+        "en": "A private company can provide the service while tax revenue funds it",
+        "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
+      },
+      {
+        "en": "The service must always be paid for entirely with private loans",
+        "sv": "Tjänsten måste alltid betalas helt med privata lån"
+      },
+      {
+        "en": "Private providers take over the responsibilities of the state, regions, and municipalities",
+        "sv": "Privata utförare tar över statens, regionernas och kommunernas ansvar"
+      },
+      {
+        "en": "Tax revenue may be used only if the service is run by the state",
+        "sv": "Skattepengar får bara användas om tjänsten drivs av staten"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Stat, regioner och kommuner har olika ansvar",
+      "page": 30
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "welfare",
+      "tax-funding",
+      "private-providers",
+      "responsibility-split"
+    ]
+  },
+  {
+    "id": "q156",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
+      "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
+    },
+    "opts": [
+      {
+        "en": "Sickness insurance, parental insurance, and unemployment insurance",
+        "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring"
+      },
+      {
+        "en": "Health centres, hospitals, and regional public transport",
+        "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik"
+      },
+      {
+        "en": "Preschools, after-school centres, and municipal adult education",
+        "sv": "Förskolor, fritidshem och kommunal vuxenutbildning"
+      },
+      {
+        "en": "Private credit cards, car loans, and mortgages",
+        "sv": "Privata kreditkort, billån och bostadslån"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
+      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Statligt finansierad välfärd",
+      "page": 30
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "state-welfare",
+      "social-insurance",
+      "sickness-insurance",
+      "parental-insurance"
+    ]
+  },
+  {
+    "id": "q157",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "What is included in primary care?",
+      "sv": "Vad ingår i primärvården?"
+    },
+    "opts": [
+      {
+        "en": "Health centres, child health centres, and maternity clinics",
+        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
+      },
+      {
+        "en": "Courts, prosecutors, and prison and probation services",
+        "sv": "Domstolar, åklagare och kriminalvård"
+      },
+      {
+        "en": "Pensions, child allowance, and study support",
+        "sv": "Pensioner, barnbidrag och studiestöd"
+      },
+      {
+        "en": "Daily newspapers, public service broadcasting, and social media",
+        "sv": "Dagstidningar, public service och sociala medier"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
+      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Olika slags sjukvård",
+      "page": 31
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "health-care",
+      "primary-care",
+      "health-centres",
+      "maternity-care"
+    ]
+  },
+  {
+    "id": "q158",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "What responsibility does the municipality have for children’s everyday life and education?",
+      "sv": "Vilket ansvar har kommunen för barns vardag och utbildning?"
+    },
+    "opts": [
+      {
+        "en": "To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools",
+        "sv": "Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor"
+      },
+      {
+        "en": "To pay sickness insurance and state pensions",
+        "sv": "Att betala sjukförsäkring och statliga pensioner"
+      },
+      {
+        "en": "To run regional hospitals and health centres",
+        "sv": "Att driva regionernas sjukhus och vårdcentraler"
+      },
+      {
+        "en": "To decide court sentences in criminal cases",
+        "sv": "Att bestämma domstolarnas straff i brottmål"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
+      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "municipal-welfare",
+      "childcare",
+      "education",
+      "schools"
+    ]
+  },
+  {
+    "id": "q159",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "What help can older people receive from the municipality to manage everyday life?",
+      "sv": "Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?"
+    },
+    "opts": [
+      {
+        "en": "Care and services at home or housing adapted for older people",
+        "sv": "Vård och service hemma eller boende som är anpassat för äldre personer"
+      },
+      {
+        "en": "Automatic study support and a university place",
+        "sv": "Automatiskt studiestöd och plats på universitet"
+      },
+      {
+        "en": "Decisions about which news media may publish",
+        "sv": "Beslut om vilka nyheter medier får publicera"
+      },
+      {
+        "en": "Private loans that replace all municipal help",
+        "sv": "Privata lån som ersätter all kommunal hjälp"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
+      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "elderly-care",
+      "municipal-welfare",
+      "home-care",
+      "adapted-housing"
+    ]
+  },
+  {
+    "id": "q160",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What does the Freedom of the Press Act protect?",
+      "sv": "Vad skyddar tryckfrihetsförordningen?"
+    },
+    "opts": [
+      {
+        "en": "The right to spread thoughts and opinions in printed texts",
+        "sv": "Rätten att sprida tankar och åsikter i tryckta texter"
+      },
+      {
+        "en": "The right to decide succession to the throne",
+        "sv": "Rätten att bestämma tronföljden"
+      },
+      {
+        "en": "The right to judge criminal cases",
+        "sv": "Rätten att döma i brottmål"
+      },
+      {
+        "en": "The right to collect municipal tax",
+        "sv": "Rätten att ta ut kommunalskatt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
+      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Tryckfrihetsförordningen",
+      "page": 16
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-press",
+      "constitutional-laws",
+      "printed-texts"
+    ]
+  },
+  {
+    "id": "q161",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What does the Fundamental Law on Freedom of Expression protect?",
+      "sv": "Vad skyddar yttrandefrihetsgrundlagen?"
+    },
+    "opts": [
+      {
+        "en": "The right to express thoughts and opinions in media such as radio and television",
+        "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv"
+      },
+      {
+        "en": "The right to inherit the throne",
+        "sv": "Rätten att ärva tronen"
+      },
+      {
+        "en": "The right to appoint all lay judges",
+        "sv": "Rätten att utse alla nämndemän"
+      },
+      {
+        "en": "The right to decide school curricula",
+        "sv": "Rätten att besluta skolans kursplaner"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
+      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Yttrandefrihetsgrundlagen",
+      "page": 16
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-expression",
+      "constitutional-laws",
+      "media"
+    ]
+  },
+  {
+    "id": "q162",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Which statement describes the preliminary investigation in a criminal investigation?",
+      "sv": "Vilket påstående beskriver förundersökningen i en brottsutredning?"
+    },
+    "opts": [
+      {
+        "en": "The police collect evidence and speak with witnesses",
+        "sv": "Polisen samlar in bevis och pratar med vittnen"
+      },
+      {
+        "en": "The court decides a penalty before anyone is suspected",
+        "sv": "Domstolen bestämmer straff innan någon är misstänkt"
+      },
+      {
+        "en": "The Riksdag decides whether the suspect is guilty",
+        "sv": "Riksdagen avgör om den misstänkte är skyldig"
+      },
+      {
+        "en": "The lawyer writes new laws for the police",
+        "sv": "Advokaten skriver nya lagar åt polisen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
+      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Brottsutredning",
+      "page": 18
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "criminal-investigation",
+      "preliminary-investigation",
+      "police"
+    ]
+  },
+  {
+    "id": "q163",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What happens during a trial in a criminal case?",
+      "sv": "Vad händer under en rättegång i ett brottmål?"
+    },
+    "opts": [
+      {
+        "en": "The prosecutor tries to show that the defendant committed the crime",
+        "sv": "Åklagaren försöker visa att den åtalade har begått brottet"
+      },
+      {
+        "en": "The police alone decide the defendant’s penalty",
+        "sv": "Polisen bestämmer ensam vilket straff den åtalade får"
+      },
+      {
+        "en": "The government decides whether the evidence is enough",
+        "sv": "Regeringen avgör om bevisningen räcker"
+      },
+      {
+        "en": "Witnesses vote on the judgment",
+        "sv": "Vittnen röstar om domen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
+      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Rättegång",
+      "page": 19
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "trial",
+      "criminal-case",
+      "prosecutor",
+      "court"
+    ]
+  },
+  {
+    "id": "q164",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Which are the general courts in Sweden?",
+      "sv": "Vilka är de allmänna domstolarna i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "District court, court of appeal, and Supreme Court",
+        "sv": "Tingsrätt, hovrätt och Högsta domstolen"
+      },
+      {
+        "en": "Municipality, region, and government",
+        "sv": "Kommun, region och regering"
+      },
+      {
+        "en": "The Police, Tax Agency, and Social Insurance Agency",
+        "sv": "Polisen, Skatteverket och Försäkringskassan"
+      },
+      {
+        "en": "Riksdag, committee, and ministry",
+        "sv": "Riksdag, utskott och departement"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
+      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Domstolar",
+      "page": 18
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "courts",
+      "district-court",
+      "court-of-appeal",
+      "supreme-court"
+    ]
+  },
+  {
+    "id": "q165",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6740,7 +7437,7 @@
     ]
   },
   {
-    "id": "q151",
+    "id": "q166",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6779,7 +7476,7 @@
     ]
   },
   {
-    "id": "q152",
+    "id": "q167",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6818,7 +7515,7 @@
     ]
   },
   {
-    "id": "q153",
+    "id": "q168",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6865,7 +7562,7 @@
     ]
   },
   {
-    "id": "q154",
+    "id": "q169",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6912,7 +7609,7 @@
     ]
   },
   {
-    "id": "q155",
+    "id": "q170",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6950,7 +7647,7 @@
     ]
   },
   {
-    "id": "q156",
+    "id": "q171",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -6989,7 +7686,7 @@
     ]
   },
   {
-    "id": "q157",
+    "id": "q172",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7036,7 +7733,7 @@
     ]
   },
   {
-    "id": "q158",
+    "id": "q173",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7084,7 +7781,7 @@
     ]
   },
   {
-    "id": "q159",
+    "id": "q174",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7124,7 +7821,7 @@
     ]
   },
   {
-    "id": "q160",
+    "id": "q175",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7164,7 +7861,7 @@
     ]
   },
   {
-    "id": "q161",
+    "id": "q176",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7212,7 +7909,7 @@
     ]
   },
   {
-    "id": "q162",
+    "id": "q177",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7259,7 +7956,7 @@
     ]
   },
   {
-    "id": "q163",
+    "id": "q178",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7298,7 +7995,7 @@
     ]
   },
   {
-    "id": "q164",
+    "id": "q179",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7337,7 +8034,7 @@
     ]
   },
   {
-    "id": "q165",
+    "id": "q180",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7384,7 +8081,7 @@
     ]
   },
   {
-    "id": "q166",
+    "id": "q181",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7432,7 +8129,7 @@
     ]
   },
   {
-    "id": "q167",
+    "id": "q182",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7472,7 +8169,7 @@
     ]
   },
   {
-    "id": "q168",
+    "id": "q183",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7512,7 +8209,7 @@
     ]
   },
   {
-    "id": "q169",
+    "id": "q184",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7560,7 +8257,7 @@
     ]
   },
   {
-    "id": "q170",
+    "id": "q185",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7607,7 +8304,7 @@
     ]
   },
   {
-    "id": "q171",
+    "id": "q186",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7645,7 +8342,7 @@
     ]
   },
   {
-    "id": "q172",
+    "id": "q187",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7684,7 +8381,7 @@
     ]
   },
   {
-    "id": "q173",
+    "id": "q188",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7731,7 +8428,7 @@
     ]
   },
   {
-    "id": "q174",
+    "id": "q189",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7778,7 +8475,7 @@
     ]
   },
   {
-    "id": "q175",
+    "id": "q190",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7817,7 +8514,7 @@
     ]
   },
   {
-    "id": "q176",
+    "id": "q191",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7856,7 +8553,7 @@
     ]
   },
   {
-    "id": "q177",
+    "id": "q192",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7903,7 +8600,7 @@
     ]
   },
   {
-    "id": "q178",
+    "id": "q193",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7952,7 +8649,7 @@
     ]
   },
   {
-    "id": "q179",
+    "id": "q194",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7993,7 +8690,7 @@
     ]
   },
   {
-    "id": "q180",
+    "id": "q195",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8034,7 +8731,7 @@
     ]
   },
   {
-    "id": "q181",
+    "id": "q196",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8083,7 +8780,7 @@
     ]
   },
   {
-    "id": "q182",
+    "id": "q197",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8130,7 +8827,7 @@
     ]
   },
   {
-    "id": "q183",
+    "id": "q198",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8169,7 +8866,7 @@
     ]
   },
   {
-    "id": "q184",
+    "id": "q199",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8208,7 +8905,7 @@
     ]
   },
   {
-    "id": "q185",
+    "id": "q200",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8255,7 +8952,7 @@
     ]
   },
   {
-    "id": "q186",
+    "id": "q201",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8303,7 +9000,7 @@
     ]
   },
   {
-    "id": "q187",
+    "id": "q202",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8343,7 +9040,7 @@
     ]
   },
   {
-    "id": "q188",
+    "id": "q203",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8383,7 +9080,7 @@
     ]
   },
   {
-    "id": "q189",
+    "id": "q204",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8431,7 +9128,7 @@
     ]
   },
   {
-    "id": "q190",
+    "id": "q205",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8478,7 +9175,7 @@
     ]
   },
   {
-    "id": "q191",
+    "id": "q206",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8517,7 +9214,7 @@
     ]
   },
   {
-    "id": "q192",
+    "id": "q207",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8556,7 +9253,7 @@
     ]
   },
   {
-    "id": "q193",
+    "id": "q208",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8603,7 +9300,7 @@
     ]
   },
   {
-    "id": "q194",
+    "id": "q209",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8650,7 +9347,7 @@
     ]
   },
   {
-    "id": "q195",
+    "id": "q210",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8689,7 +9386,7 @@
     ]
   },
   {
-    "id": "q196",
+    "id": "q211",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8728,7 +9425,7 @@
     ]
   },
   {
-    "id": "q197",
+    "id": "q212",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8775,7 +9472,7 @@
     ]
   },
   {
-    "id": "q198",
+    "id": "q213",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8822,7 +9519,7 @@
     ]
   },
   {
-    "id": "q199",
+    "id": "q214",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8861,7 +9558,7 @@
     ]
   },
   {
-    "id": "q200",
+    "id": "q215",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8900,7 +9597,7 @@
     ]
   },
   {
-    "id": "q201",
+    "id": "q216",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8947,7 +9644,7 @@
     ]
   },
   {
-    "id": "q202",
+    "id": "q217",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8994,7 +9691,7 @@
     ]
   },
   {
-    "id": "q203",
+    "id": "q218",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9033,7 +9730,7 @@
     ]
   },
   {
-    "id": "q204",
+    "id": "q219",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9072,7 +9769,7 @@
     ]
   },
   {
-    "id": "q205",
+    "id": "q220",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9119,7 +9816,7 @@
     ]
   },
   {
-    "id": "q206",
+    "id": "q221",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9166,7 +9863,7 @@
     ]
   },
   {
-    "id": "q207",
+    "id": "q222",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9205,7 +9902,7 @@
     ]
   },
   {
-    "id": "q208",
+    "id": "q223",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9244,7 +9941,7 @@
     ]
   },
   {
-    "id": "q209",
+    "id": "q224",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9291,7 +9988,7 @@
     ]
   },
   {
-    "id": "q210",
+    "id": "q225",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9338,7 +10035,7 @@
     ]
   },
   {
-    "id": "q211",
+    "id": "q226",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9377,7 +10074,7 @@
     ]
   },
   {
-    "id": "q212",
+    "id": "q227",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9416,7 +10113,7 @@
     ]
   },
   {
-    "id": "q213",
+    "id": "q228",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9463,7 +10160,7 @@
     ]
   },
   {
-    "id": "q214",
+    "id": "q229",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9510,7 +10207,7 @@
     ]
   },
   {
-    "id": "q215",
+    "id": "q230",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9549,7 +10246,7 @@
     ]
   },
   {
-    "id": "q216",
+    "id": "q231",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9588,7 +10285,7 @@
     ]
   },
   {
-    "id": "q217",
+    "id": "q232",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9635,7 +10332,7 @@
     ]
   },
   {
-    "id": "q218",
+    "id": "q233",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9682,7 +10379,7 @@
     ]
   },
   {
-    "id": "q219",
+    "id": "q234",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9721,7 +10418,7 @@
     ]
   },
   {
-    "id": "q220",
+    "id": "q235",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9760,7 +10457,7 @@
     ]
   },
   {
-    "id": "q221",
+    "id": "q236",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9807,7 +10504,7 @@
     ]
   },
   {
-    "id": "q222",
+    "id": "q237",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -9854,7 +10551,7 @@
     ]
   },
   {
-    "id": "q223",
+    "id": "q238",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -9893,7 +10590,7 @@
     ]
   },
   {
-    "id": "q224",
+    "id": "q239",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -9932,7 +10629,7 @@
     ]
   },
   {
-    "id": "q225",
+    "id": "q240",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -9979,7 +10676,7 @@
     ]
   },
   {
-    "id": "q226",
+    "id": "q241",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10026,7 +10723,7 @@
     ]
   },
   {
-    "id": "q227",
+    "id": "q242",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10065,7 +10762,7 @@
     ]
   },
   {
-    "id": "q228",
+    "id": "q243",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10104,7 +10801,7 @@
     ]
   },
   {
-    "id": "q229",
+    "id": "q244",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10151,7 +10848,7 @@
     ]
   },
   {
-    "id": "q230",
+    "id": "q245",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10198,7 +10895,7 @@
     ]
   },
   {
-    "id": "q231",
+    "id": "q246",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10237,7 +10934,7 @@
     ]
   },
   {
-    "id": "q232",
+    "id": "q247",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10276,7 +10973,7 @@
     ]
   },
   {
-    "id": "q233",
+    "id": "q248",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10323,7 +11020,7 @@
     ]
   },
   {
-    "id": "q234",
+    "id": "q249",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10370,7 +11067,7 @@
     ]
   },
   {
-    "id": "q235",
+    "id": "q250",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10409,7 +11106,7 @@
     ]
   },
   {
-    "id": "q236",
+    "id": "q251",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10448,7 +11145,7 @@
     ]
   },
   {
-    "id": "q237",
+    "id": "q252",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10495,7 +11192,7 @@
     ]
   },
   {
-    "id": "q238",
+    "id": "q253",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10542,7 +11239,7 @@
     ]
   },
   {
-    "id": "q239",
+    "id": "q254",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10581,7 +11278,7 @@
     ]
   },
   {
-    "id": "q240",
+    "id": "q255",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10620,7 +11317,7 @@
     ]
   },
   {
-    "id": "q241",
+    "id": "q256",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10667,7 +11364,7 @@
     ]
   },
   {
-    "id": "q242",
+    "id": "q257",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10714,7 +11411,7 @@
     ]
   },
   {
-    "id": "q243",
+    "id": "q258",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10753,7 +11450,7 @@
     ]
   },
   {
-    "id": "q244",
+    "id": "q259",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10792,7 +11489,7 @@
     ]
   },
   {
-    "id": "q245",
+    "id": "q260",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10839,7 +11536,7 @@
     ]
   },
   {
-    "id": "q246",
+    "id": "q261",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10886,7 +11583,7 @@
     ]
   },
   {
-    "id": "q247",
+    "id": "q262",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10925,7 +11622,7 @@
     ]
   },
   {
-    "id": "q248",
+    "id": "q263",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10964,7 +11661,7 @@
     ]
   },
   {
-    "id": "q249",
+    "id": "q264",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11011,7 +11708,7 @@
     ]
   },
   {
-    "id": "q250",
+    "id": "q265",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11058,7 +11755,7 @@
     ]
   },
   {
-    "id": "q251",
+    "id": "q266",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11097,7 +11794,7 @@
     ]
   },
   {
-    "id": "q252",
+    "id": "q267",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11136,7 +11833,7 @@
     ]
   },
   {
-    "id": "q253",
+    "id": "q268",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11183,7 +11880,7 @@
     ]
   },
   {
-    "id": "q254",
+    "id": "q269",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11230,7 +11927,7 @@
     ]
   },
   {
-    "id": "q255",
+    "id": "q270",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11269,7 +11966,7 @@
     ]
   },
   {
-    "id": "q256",
+    "id": "q271",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11308,7 +12005,7 @@
     ]
   },
   {
-    "id": "q257",
+    "id": "q272",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11355,7 +12052,7 @@
     ]
   },
   {
-    "id": "q258",
+    "id": "q273",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11402,7 +12099,7 @@
     ]
   },
   {
-    "id": "q259",
+    "id": "q274",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11441,7 +12138,7 @@
     ]
   },
   {
-    "id": "q260",
+    "id": "q275",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11480,7 +12177,7 @@
     ]
   },
   {
-    "id": "q261",
+    "id": "q276",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11527,7 +12224,7 @@
     ]
   },
   {
-    "id": "q262",
+    "id": "q277",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11574,7 +12271,7 @@
     ]
   },
   {
-    "id": "q263",
+    "id": "q278",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11613,7 +12310,7 @@
     ]
   },
   {
-    "id": "q264",
+    "id": "q279",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11652,7 +12349,7 @@
     ]
   },
   {
-    "id": "q265",
+    "id": "q280",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11699,7 +12396,7 @@
     ]
   },
   {
-    "id": "q266",
+    "id": "q281",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11746,7 +12443,7 @@
     ]
   },
   {
-    "id": "q267",
+    "id": "q282",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11785,7 +12482,7 @@
     ]
   },
   {
-    "id": "q268",
+    "id": "q283",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11824,7 +12521,7 @@
     ]
   },
   {
-    "id": "q269",
+    "id": "q284",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11871,7 +12568,7 @@
     ]
   },
   {
-    "id": "q270",
+    "id": "q285",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11918,7 +12615,7 @@
     ]
   },
   {
-    "id": "q271",
+    "id": "q286",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11957,7 +12654,7 @@
     ]
   },
   {
-    "id": "q272",
+    "id": "q287",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11996,7 +12693,7 @@
     ]
   },
   {
-    "id": "q273",
+    "id": "q288",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12043,7 +12740,7 @@
     ]
   },
   {
-    "id": "q274",
+    "id": "q289",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12090,7 +12787,7 @@
     ]
   },
   {
-    "id": "q275",
+    "id": "q290",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12129,7 +12826,7 @@
     ]
   },
   {
-    "id": "q276",
+    "id": "q291",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12168,7 +12865,7 @@
     ]
   },
   {
-    "id": "q277",
+    "id": "q292",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12215,7 +12912,7 @@
     ]
   },
   {
-    "id": "q278",
+    "id": "q293",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12262,7 +12959,7 @@
     ]
   },
   {
-    "id": "q279",
+    "id": "q294",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12301,7 +12998,7 @@
     ]
   },
   {
-    "id": "q280",
+    "id": "q295",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12340,7 +13037,7 @@
     ]
   },
   {
-    "id": "q281",
+    "id": "q296",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12387,7 +13084,7 @@
     ]
   },
   {
-    "id": "q282",
+    "id": "q297",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12434,7 +13131,7 @@
     ]
   },
   {
-    "id": "q283",
+    "id": "q298",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12473,7 +13170,7 @@
     ]
   },
   {
-    "id": "q284",
+    "id": "q299",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12512,7 +13209,7 @@
     ]
   },
   {
-    "id": "q285",
+    "id": "q300",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12559,7 +13256,7 @@
     ]
   },
   {
-    "id": "q286",
+    "id": "q301",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12606,7 +13303,7 @@
     ]
   },
   {
-    "id": "q287",
+    "id": "q302",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12645,7 +13342,7 @@
     ]
   },
   {
-    "id": "q288",
+    "id": "q303",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12684,7 +13381,7 @@
     ]
   },
   {
-    "id": "q289",
+    "id": "q304",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12731,7 +13428,7 @@
     ]
   },
   {
-    "id": "q290",
+    "id": "q305",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12778,7 +13475,7 @@
     ]
   },
   {
-    "id": "q291",
+    "id": "q306",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12817,7 +13514,7 @@
     ]
   },
   {
-    "id": "q292",
+    "id": "q307",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12856,7 +13553,7 @@
     ]
   },
   {
-    "id": "q293",
+    "id": "q308",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12903,7 +13600,7 @@
     ]
   },
   {
-    "id": "q294",
+    "id": "q309",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -12950,7 +13647,7 @@
     ]
   },
   {
-    "id": "q295",
+    "id": "q310",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -12989,7 +13686,7 @@
     ]
   },
   {
-    "id": "q296",
+    "id": "q311",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13028,7 +13725,7 @@
     ]
   },
   {
-    "id": "q297",
+    "id": "q312",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13075,7 +13772,7 @@
     ]
   },
   {
-    "id": "q298",
+    "id": "q313",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13122,7 +13819,7 @@
     ]
   },
   {
-    "id": "q299",
+    "id": "q314",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13161,7 +13858,7 @@
     ]
   },
   {
-    "id": "q300",
+    "id": "q315",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13200,7 +13897,7 @@
     ]
   },
   {
-    "id": "q301",
+    "id": "q316",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13247,7 +13944,7 @@
     ]
   },
   {
-    "id": "q302",
+    "id": "q317",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13294,7 +13991,7 @@
     ]
   },
   {
-    "id": "q303",
+    "id": "q318",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13333,7 +14030,7 @@
     ]
   },
   {
-    "id": "q304",
+    "id": "q319",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13372,7 +14069,7 @@
     ]
   },
   {
-    "id": "q305",
+    "id": "q320",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13419,7 +14116,7 @@
     ]
   },
   {
-    "id": "q306",
+    "id": "q321",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13466,7 +14163,7 @@
     ]
   },
   {
-    "id": "q307",
+    "id": "q322",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13505,7 +14202,7 @@
     ]
   },
   {
-    "id": "q308",
+    "id": "q323",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13544,7 +14241,7 @@
     ]
   },
   {
-    "id": "q309",
+    "id": "q324",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13591,7 +14288,7 @@
     ]
   },
   {
-    "id": "q310",
+    "id": "q325",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13638,7 +14335,7 @@
     ]
   },
   {
-    "id": "q311",
+    "id": "q326",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13677,7 +14374,7 @@
     ]
   },
   {
-    "id": "q312",
+    "id": "q327",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13716,7 +14413,7 @@
     ]
   },
   {
-    "id": "q313",
+    "id": "q328",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13763,7 +14460,7 @@
     ]
   },
   {
-    "id": "q314",
+    "id": "q329",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13810,7 +14507,7 @@
     ]
   },
   {
-    "id": "q315",
+    "id": "q330",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13849,7 +14546,7 @@
     ]
   },
   {
-    "id": "q316",
+    "id": "q331",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13888,7 +14585,7 @@
     ]
   },
   {
-    "id": "q317",
+    "id": "q332",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13935,7 +14632,7 @@
     ]
   },
   {
-    "id": "q318",
+    "id": "q333",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13982,7 +14679,7 @@
     ]
   },
   {
-    "id": "q319",
+    "id": "q334",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14021,7 +14718,7 @@
     ]
   },
   {
-    "id": "q320",
+    "id": "q335",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14060,7 +14757,7 @@
     ]
   },
   {
-    "id": "q321",
+    "id": "q336",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14107,7 +14804,7 @@
     ]
   },
   {
-    "id": "q322",
+    "id": "q337",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14154,7 +14851,7 @@
     ]
   },
   {
-    "id": "q323",
+    "id": "q338",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14193,7 +14890,7 @@
     ]
   },
   {
-    "id": "q324",
+    "id": "q339",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14232,7 +14929,7 @@
     ]
   },
   {
-    "id": "q325",
+    "id": "q340",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14279,7 +14976,7 @@
     ]
   },
   {
-    "id": "q326",
+    "id": "q341",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14326,7 +15023,7 @@
     ]
   },
   {
-    "id": "q327",
+    "id": "q342",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14365,7 +15062,7 @@
     ]
   },
   {
-    "id": "q328",
+    "id": "q343",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14404,7 +15101,7 @@
     ]
   },
   {
-    "id": "q329",
+    "id": "q344",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14451,7 +15148,7 @@
     ]
   },
   {
-    "id": "q330",
+    "id": "q345",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14498,7 +15195,7 @@
     ]
   },
   {
-    "id": "q331",
+    "id": "q346",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14537,7 +15234,7 @@
     ]
   },
   {
-    "id": "q332",
+    "id": "q347",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14576,7 +15273,7 @@
     ]
   },
   {
-    "id": "q333",
+    "id": "q348",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14623,7 +15320,7 @@
     ]
   },
   {
-    "id": "q334",
+    "id": "q349",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14670,7 +15367,7 @@
     ]
   },
   {
-    "id": "q335",
+    "id": "q350",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14709,7 +15406,7 @@
     ]
   },
   {
-    "id": "q336",
+    "id": "q351",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14748,7 +15445,7 @@
     ]
   },
   {
-    "id": "q337",
+    "id": "q352",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14795,7 +15492,7 @@
     ]
   },
   {
-    "id": "q338",
+    "id": "q353",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14843,7 +15540,7 @@
     ]
   },
   {
-    "id": "q339",
+    "id": "q354",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14883,7 +15580,7 @@
     ]
   },
   {
-    "id": "q340",
+    "id": "q355",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14923,7 +15620,7 @@
     ]
   },
   {
-    "id": "q341",
+    "id": "q356",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14971,7 +15668,7 @@
     ]
   },
   {
-    "id": "q342",
+    "id": "q357",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15018,7 +15715,7 @@
     ]
   },
   {
-    "id": "q343",
+    "id": "q358",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15057,7 +15754,7 @@
     ]
   },
   {
-    "id": "q344",
+    "id": "q359",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15096,7 +15793,7 @@
     ]
   },
   {
-    "id": "q345",
+    "id": "q360",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15143,7 +15840,7 @@
     ]
   },
   {
-    "id": "q346",
+    "id": "q361",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15190,7 +15887,7 @@
     ]
   },
   {
-    "id": "q347",
+    "id": "q362",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15229,7 +15926,7 @@
     ]
   },
   {
-    "id": "q348",
+    "id": "q363",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15268,7 +15965,7 @@
     ]
   },
   {
-    "id": "q349",
+    "id": "q364",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15315,7 +16012,7 @@
     ]
   },
   {
-    "id": "q350",
+    "id": "q365",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15362,7 +16059,7 @@
     ]
   },
   {
-    "id": "q351",
+    "id": "q366",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15401,7 +16098,7 @@
     ]
   },
   {
-    "id": "q352",
+    "id": "q367",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15440,7 +16137,7 @@
     ]
   },
   {
-    "id": "q353",
+    "id": "q368",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15487,7 +16184,7 @@
     ]
   },
   {
-    "id": "q354",
+    "id": "q369",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15534,7 +16231,7 @@
     ]
   },
   {
-    "id": "q355",
+    "id": "q370",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15573,7 +16270,7 @@
     ]
   },
   {
-    "id": "q356",
+    "id": "q371",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15612,7 +16309,7 @@
     ]
   },
   {
-    "id": "q357",
+    "id": "q372",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15659,7 +16356,7 @@
     ]
   },
   {
-    "id": "q358",
+    "id": "q373",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15706,7 +16403,7 @@
     ]
   },
   {
-    "id": "q359",
+    "id": "q374",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15745,7 +16442,7 @@
     ]
   },
   {
-    "id": "q360",
+    "id": "q375",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15784,7 +16481,7 @@
     ]
   },
   {
-    "id": "q361",
+    "id": "q376",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15831,7 +16528,7 @@
     ]
   },
   {
-    "id": "q362",
+    "id": "q377",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15879,7 +16576,7 @@
     ]
   },
   {
-    "id": "q363",
+    "id": "q378",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15919,7 +16616,7 @@
     ]
   },
   {
-    "id": "q364",
+    "id": "q379",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15959,7 +16656,7 @@
     ]
   },
   {
-    "id": "q365",
+    "id": "q380",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16007,7 +16704,7 @@
     ]
   },
   {
-    "id": "q366",
+    "id": "q381",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16054,7 +16751,7 @@
     ]
   },
   {
-    "id": "q367",
+    "id": "q382",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16093,7 +16790,7 @@
     ]
   },
   {
-    "id": "q368",
+    "id": "q383",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16132,7 +16829,7 @@
     ]
   },
   {
-    "id": "q369",
+    "id": "q384",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16179,7 +16876,7 @@
     ]
   },
   {
-    "id": "q370",
+    "id": "q385",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16226,7 +16923,7 @@
     ]
   },
   {
-    "id": "q371",
+    "id": "q386",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16265,7 +16962,7 @@
     ]
   },
   {
-    "id": "q372",
+    "id": "q387",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16304,7 +17001,7 @@
     ]
   },
   {
-    "id": "q373",
+    "id": "q388",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16351,7 +17048,7 @@
     ]
   },
   {
-    "id": "q374",
+    "id": "q389",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16398,7 +17095,7 @@
     ]
   },
   {
-    "id": "q375",
+    "id": "q390",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16437,7 +17134,7 @@
     ]
   },
   {
-    "id": "q376",
+    "id": "q391",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16476,7 +17173,7 @@
     ]
   },
   {
-    "id": "q377",
+    "id": "q392",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16523,7 +17220,7 @@
     ]
   },
   {
-    "id": "q378",
+    "id": "q393",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16570,7 +17267,7 @@
     ]
   },
   {
-    "id": "q379",
+    "id": "q394",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16609,7 +17306,7 @@
     ]
   },
   {
-    "id": "q380",
+    "id": "q395",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16648,7 +17345,7 @@
     ]
   },
   {
-    "id": "q381",
+    "id": "q396",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16695,7 +17392,7 @@
     ]
   },
   {
-    "id": "q382",
+    "id": "q397",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16742,7 +17439,7 @@
     ]
   },
   {
-    "id": "q383",
+    "id": "q398",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16781,7 +17478,7 @@
     ]
   },
   {
-    "id": "q384",
+    "id": "q399",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16820,7 +17517,7 @@
     ]
   },
   {
-    "id": "q385",
+    "id": "q400",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16867,7 +17564,7 @@
     ]
   },
   {
-    "id": "q386",
+    "id": "q401",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16914,7 +17611,7 @@
     ]
   },
   {
-    "id": "q387",
+    "id": "q402",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16953,7 +17650,7 @@
     ]
   },
   {
-    "id": "q388",
+    "id": "q403",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16992,7 +17689,7 @@
     ]
   },
   {
-    "id": "q389",
+    "id": "q404",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17039,7 +17736,7 @@
     ]
   },
   {
-    "id": "q390",
+    "id": "q405",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17086,7 +17783,7 @@
     ]
   },
   {
-    "id": "q391",
+    "id": "q406",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17125,7 +17822,7 @@
     ]
   },
   {
-    "id": "q392",
+    "id": "q407",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17164,7 +17861,7 @@
     ]
   },
   {
-    "id": "q393",
+    "id": "q408",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17211,7 +17908,7 @@
     ]
   },
   {
-    "id": "q394",
+    "id": "q409",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17258,7 +17955,7 @@
     ]
   },
   {
-    "id": "q395",
+    "id": "q410",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17297,7 +17994,7 @@
     ]
   },
   {
-    "id": "q396",
+    "id": "q411",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17336,7 +18033,7 @@
     ]
   },
   {
-    "id": "q397",
+    "id": "q412",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17383,7 +18080,7 @@
     ]
   },
   {
-    "id": "q398",
+    "id": "q413",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17430,7 +18127,7 @@
     ]
   },
   {
-    "id": "q399",
+    "id": "q414",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17469,7 +18166,7 @@
     ]
   },
   {
-    "id": "q400",
+    "id": "q415",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17508,7 +18205,7 @@
     ]
   },
   {
-    "id": "q401",
+    "id": "q416",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17555,7 +18252,7 @@
     ]
   },
   {
-    "id": "q402",
+    "id": "q417",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17602,7 +18299,7 @@
     ]
   },
   {
-    "id": "q403",
+    "id": "q418",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17641,7 +18338,7 @@
     ]
   },
   {
-    "id": "q404",
+    "id": "q419",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17680,7 +18377,7 @@
     ]
   },
   {
-    "id": "q405",
+    "id": "q420",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17727,7 +18424,7 @@
     ]
   },
   {
-    "id": "q406",
+    "id": "q421",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17774,7 +18471,7 @@
     ]
   },
   {
-    "id": "q407",
+    "id": "q422",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17813,7 +18510,7 @@
     ]
   },
   {
-    "id": "q408",
+    "id": "q423",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17852,7 +18549,7 @@
     ]
   },
   {
-    "id": "q409",
+    "id": "q424",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17899,7 +18596,7 @@
     ]
   },
   {
-    "id": "q410",
+    "id": "q425",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17946,7 +18643,7 @@
     ]
   },
   {
-    "id": "q411",
+    "id": "q426",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17985,7 +18682,7 @@
     ]
   },
   {
-    "id": "q412",
+    "id": "q427",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18024,7 +18721,7 @@
     ]
   },
   {
-    "id": "q413",
+    "id": "q428",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18071,7 +18768,7 @@
     ]
   },
   {
-    "id": "q414",
+    "id": "q429",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18118,7 +18815,7 @@
     ]
   },
   {
-    "id": "q415",
+    "id": "q430",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18157,7 +18854,7 @@
     ]
   },
   {
-    "id": "q416",
+    "id": "q431",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18196,7 +18893,7 @@
     ]
   },
   {
-    "id": "q417",
+    "id": "q432",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18243,7 +18940,7 @@
     ]
   },
   {
-    "id": "q418",
+    "id": "q433",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18291,7 +18988,7 @@
     ]
   },
   {
-    "id": "q419",
+    "id": "q434",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18331,7 +19028,7 @@
     ]
   },
   {
-    "id": "q420",
+    "id": "q435",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18371,7 +19068,7 @@
     ]
   },
   {
-    "id": "q421",
+    "id": "q436",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18419,7 +19116,7 @@
     ]
   },
   {
-    "id": "q422",
+    "id": "q437",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18466,7 +19163,7 @@
     ]
   },
   {
-    "id": "q423",
+    "id": "q438",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18505,7 +19202,7 @@
     ]
   },
   {
-    "id": "q424",
+    "id": "q439",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18544,7 +19241,7 @@
     ]
   },
   {
-    "id": "q425",
+    "id": "q440",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18591,7 +19288,7 @@
     ]
   },
   {
-    "id": "q426",
+    "id": "q441",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18638,7 +19335,7 @@
     ]
   },
   {
-    "id": "q427",
+    "id": "q442",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18677,7 +19374,7 @@
     ]
   },
   {
-    "id": "q428",
+    "id": "q443",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18716,7 +19413,7 @@
     ]
   },
   {
-    "id": "q429",
+    "id": "q444",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18763,7 +19460,7 @@
     ]
   },
   {
-    "id": "q430",
+    "id": "q445",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18811,7 +19508,7 @@
     ]
   },
   {
-    "id": "q431",
+    "id": "q446",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18851,7 +19548,7 @@
     ]
   },
   {
-    "id": "q432",
+    "id": "q447",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18891,7 +19588,7 @@
     ]
   },
   {
-    "id": "q433",
+    "id": "q448",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18939,7 +19636,7 @@
     ]
   },
   {
-    "id": "q434",
+    "id": "q449",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18986,7 +19683,7 @@
     ]
   },
   {
-    "id": "q435",
+    "id": "q450",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19025,7 +19722,7 @@
     ]
   },
   {
-    "id": "q436",
+    "id": "q451",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19064,7 +19761,7 @@
     ]
   },
   {
-    "id": "q437",
+    "id": "q452",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19111,7 +19808,7 @@
     ]
   },
   {
-    "id": "q438",
+    "id": "q453",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19158,7 +19855,7 @@
     ]
   },
   {
-    "id": "q439",
+    "id": "q454",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19197,7 +19894,7 @@
     ]
   },
   {
-    "id": "q440",
+    "id": "q455",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19236,7 +19933,7 @@
     ]
   },
   {
-    "id": "q441",
+    "id": "q456",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19283,7 +19980,7 @@
     ]
   },
   {
-    "id": "q442",
+    "id": "q457",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19330,7 +20027,7 @@
     ]
   },
   {
-    "id": "q443",
+    "id": "q458",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19369,7 +20066,7 @@
     ]
   },
   {
-    "id": "q444",
+    "id": "q459",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19408,7 +20105,7 @@
     ]
   },
   {
-    "id": "q445",
+    "id": "q460",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19455,7 +20152,7 @@
     ]
   },
   {
-    "id": "q446",
+    "id": "q461",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19502,7 +20199,7 @@
     ]
   },
   {
-    "id": "q447",
+    "id": "q462",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19541,7 +20238,7 @@
     ]
   },
   {
-    "id": "q448",
+    "id": "q463",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19580,7 +20277,7 @@
     ]
   },
   {
-    "id": "q449",
+    "id": "q464",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19627,7 +20324,7 @@
     ]
   },
   {
-    "id": "q450",
+    "id": "q465",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19675,7 +20372,7 @@
     ]
   },
   {
-    "id": "q451",
+    "id": "q466",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19715,7 +20412,7 @@
     ]
   },
   {
-    "id": "q452",
+    "id": "q467",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19755,7 +20452,7 @@
     ]
   },
   {
-    "id": "q453",
+    "id": "q468",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19803,7 +20500,7 @@
     ]
   },
   {
-    "id": "q454",
+    "id": "q469",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19850,7 +20547,7 @@
     ]
   },
   {
-    "id": "q455",
+    "id": "q470",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19889,7 +20586,7 @@
     ]
   },
   {
-    "id": "q456",
+    "id": "q471",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19928,7 +20625,7 @@
     ]
   },
   {
-    "id": "q457",
+    "id": "q472",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19975,7 +20672,7 @@
     ]
   },
   {
-    "id": "q458",
+    "id": "q473",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20022,7 +20719,7 @@
     ]
   },
   {
-    "id": "q459",
+    "id": "q474",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20061,7 +20758,7 @@
     ]
   },
   {
-    "id": "q460",
+    "id": "q475",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20100,7 +20797,7 @@
     ]
   },
   {
-    "id": "q461",
+    "id": "q476",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20147,7 +20844,7 @@
     ]
   },
   {
-    "id": "q462",
+    "id": "q477",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20194,7 +20891,7 @@
     ]
   },
   {
-    "id": "q463",
+    "id": "q478",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20233,7 +20930,7 @@
     ]
   },
   {
-    "id": "q464",
+    "id": "q479",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20272,7 +20969,7 @@
     ]
   },
   {
-    "id": "q465",
+    "id": "q480",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20319,7 +21016,7 @@
     ]
   },
   {
-    "id": "q466",
+    "id": "q481",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20366,7 +21063,7 @@
     ]
   },
   {
-    "id": "q467",
+    "id": "q482",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20405,7 +21102,7 @@
     ]
   },
   {
-    "id": "q468",
+    "id": "q483",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20444,7 +21141,7 @@
     ]
   },
   {
-    "id": "q469",
+    "id": "q484",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20491,7 +21188,7 @@
     ]
   },
   {
-    "id": "q470",
+    "id": "q485",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20538,7 +21235,7 @@
     ]
   },
   {
-    "id": "q471",
+    "id": "q486",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20577,7 +21274,7 @@
     ]
   },
   {
-    "id": "q472",
+    "id": "q487",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20616,7 +21313,7 @@
     ]
   },
   {
-    "id": "q473",
+    "id": "q488",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20663,7 +21360,7 @@
     ]
   },
   {
-    "id": "q474",
+    "id": "q489",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20710,7 +21407,7 @@
     ]
   },
   {
-    "id": "q475",
+    "id": "q490",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20749,7 +21446,7 @@
     ]
   },
   {
-    "id": "q476",
+    "id": "q491",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20788,7 +21485,7 @@
     ]
   },
   {
-    "id": "q477",
+    "id": "q492",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20835,7 +21532,7 @@
     ]
   },
   {
-    "id": "q478",
+    "id": "q493",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20882,7 +21579,7 @@
     ]
   },
   {
-    "id": "q479",
+    "id": "q494",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20921,7 +21618,7 @@
     ]
   },
   {
-    "id": "q480",
+    "id": "q495",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20960,7 +21657,7 @@
     ]
   },
   {
-    "id": "q481",
+    "id": "q496",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21007,7 +21704,7 @@
     ]
   },
   {
-    "id": "q482",
+    "id": "q497",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21054,7 +21751,7 @@
     ]
   },
   {
-    "id": "q483",
+    "id": "q498",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21093,7 +21790,7 @@
     ]
   },
   {
-    "id": "q484",
+    "id": "q499",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21132,7 +21829,7 @@
     ]
   },
   {
-    "id": "q485",
+    "id": "q500",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21179,7 +21876,7 @@
     ]
   },
   {
-    "id": "q486",
+    "id": "q501",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21226,7 +21923,7 @@
     ]
   },
   {
-    "id": "q487",
+    "id": "q502",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21265,7 +21962,7 @@
     ]
   },
   {
-    "id": "q488",
+    "id": "q503",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21304,7 +22001,7 @@
     ]
   },
   {
-    "id": "q489",
+    "id": "q504",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21351,7 +22048,7 @@
     ]
   },
   {
-    "id": "q490",
+    "id": "q505",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21398,7 +22095,7 @@
     ]
   },
   {
-    "id": "q491",
+    "id": "q506",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21437,7 +22134,7 @@
     ]
   },
   {
-    "id": "q492",
+    "id": "q507",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21476,7 +22173,7 @@
     ]
   },
   {
-    "id": "q493",
+    "id": "q508",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21523,7 +22220,7 @@
     ]
   },
   {
-    "id": "q494",
+    "id": "q509",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21570,7 +22267,7 @@
     ]
   },
   {
-    "id": "q495",
+    "id": "q510",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21609,7 +22306,7 @@
     ]
   },
   {
-    "id": "q496",
+    "id": "q511",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21648,7 +22345,7 @@
     ]
   },
   {
-    "id": "q497",
+    "id": "q512",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21695,7 +22392,7 @@
     ]
   },
   {
-    "id": "q498",
+    "id": "q513",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21742,7 +22439,7 @@
     ]
   },
   {
-    "id": "q499",
+    "id": "q514",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21781,7 +22478,7 @@
     ]
   },
   {
-    "id": "q500",
+    "id": "q515",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21820,7 +22517,7 @@
     ]
   },
   {
-    "id": "q501",
+    "id": "q516",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21867,7 +22564,7 @@
     ]
   },
   {
-    "id": "q502",
+    "id": "q517",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21914,7 +22611,7 @@
     ]
   },
   {
-    "id": "q503",
+    "id": "q518",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21953,7 +22650,7 @@
     ]
   },
   {
-    "id": "q504",
+    "id": "q519",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21992,7 +22689,7 @@
     ]
   },
   {
-    "id": "q505",
+    "id": "q520",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22039,7 +22736,7 @@
     ]
   },
   {
-    "id": "q506",
+    "id": "q521",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22086,7 +22783,7 @@
     ]
   },
   {
-    "id": "q507",
+    "id": "q522",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22125,7 +22822,7 @@
     ]
   },
   {
-    "id": "q508",
+    "id": "q523",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22164,7 +22861,7 @@
     ]
   },
   {
-    "id": "q509",
+    "id": "q524",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22211,7 +22908,7 @@
     ]
   },
   {
-    "id": "q510",
+    "id": "q525",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22258,7 +22955,7 @@
     ]
   },
   {
-    "id": "q511",
+    "id": "q526",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22297,7 +22994,7 @@
     ]
   },
   {
-    "id": "q512",
+    "id": "q527",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22336,7 +23033,7 @@
     ]
   },
   {
-    "id": "q513",
+    "id": "q528",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22383,7 +23080,7 @@
     ]
   },
   {
-    "id": "q514",
+    "id": "q529",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22430,7 +23127,7 @@
     ]
   },
   {
-    "id": "q515",
+    "id": "q530",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22469,7 +23166,7 @@
     ]
   },
   {
-    "id": "q516",
+    "id": "q531",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22508,7 +23205,7 @@
     ]
   },
   {
-    "id": "q517",
+    "id": "q532",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22555,7 +23252,7 @@
     ]
   },
   {
-    "id": "q518",
+    "id": "q533",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22602,7 +23299,7 @@
     ]
   },
   {
-    "id": "q519",
+    "id": "q534",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22641,7 +23338,7 @@
     ]
   },
   {
-    "id": "q520",
+    "id": "q535",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22680,7 +23377,7 @@
     ]
   },
   {
-    "id": "q521",
+    "id": "q536",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22727,7 +23424,7 @@
     ]
   },
   {
-    "id": "q522",
+    "id": "q537",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22774,7 +23471,7 @@
     ]
   },
   {
-    "id": "q523",
+    "id": "q538",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22813,7 +23510,7 @@
     ]
   },
   {
-    "id": "q524",
+    "id": "q539",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22852,7 +23549,7 @@
     ]
   },
   {
-    "id": "q525",
+    "id": "q540",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22899,7 +23596,7 @@
     ]
   },
   {
-    "id": "q526",
+    "id": "q541",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22946,7 +23643,7 @@
     ]
   },
   {
-    "id": "q527",
+    "id": "q542",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22985,7 +23682,7 @@
     ]
   },
   {
-    "id": "q528",
+    "id": "q543",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23024,7 +23721,7 @@
     ]
   },
   {
-    "id": "q529",
+    "id": "q544",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23071,7 +23768,7 @@
     ]
   },
   {
-    "id": "q530",
+    "id": "q545",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23118,7 +23815,7 @@
     ]
   },
   {
-    "id": "q531",
+    "id": "q546",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23157,7 +23854,7 @@
     ]
   },
   {
-    "id": "q532",
+    "id": "q547",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23196,7 +23893,7 @@
     ]
   },
   {
-    "id": "q533",
+    "id": "q548",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23243,7 +23940,7 @@
     ]
   },
   {
-    "id": "q534",
+    "id": "q549",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23290,7 +23987,7 @@
     ]
   },
   {
-    "id": "q535",
+    "id": "q550",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23329,7 +24026,7 @@
     ]
   },
   {
-    "id": "q536",
+    "id": "q551",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23368,7 +24065,7 @@
     ]
   },
   {
-    "id": "q537",
+    "id": "q552",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23415,7 +24112,7 @@
     ]
   },
   {
-    "id": "q538",
+    "id": "q553",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23463,7 +24160,7 @@
     ]
   },
   {
-    "id": "q539",
+    "id": "q554",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23503,7 +24200,7 @@
     ]
   },
   {
-    "id": "q540",
+    "id": "q555",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23543,7 +24240,7 @@
     ]
   },
   {
-    "id": "q541",
+    "id": "q556",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23591,7 +24288,7 @@
     ]
   },
   {
-    "id": "q542",
+    "id": "q557",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23639,7 +24336,7 @@
     ]
   },
   {
-    "id": "q543",
+    "id": "q558",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23679,7 +24376,7 @@
     ]
   },
   {
-    "id": "q544",
+    "id": "q559",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23719,7 +24416,7 @@
     ]
   },
   {
-    "id": "q545",
+    "id": "q560",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23767,7 +24464,7 @@
     ]
   },
   {
-    "id": "q546",
+    "id": "q561",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23815,7 +24512,7 @@
     ]
   },
   {
-    "id": "q547",
+    "id": "q562",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23855,7 +24552,7 @@
     ]
   },
   {
-    "id": "q548",
+    "id": "q563",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23895,7 +24592,7 @@
     ]
   },
   {
-    "id": "q549",
+    "id": "q564",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23943,7 +24640,7 @@
     ]
   },
   {
-    "id": "q550",
+    "id": "q565",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23990,7 +24687,7 @@
     ]
   },
   {
-    "id": "q551",
+    "id": "q566",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24029,7 +24726,7 @@
     ]
   },
   {
-    "id": "q552",
+    "id": "q567",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24068,7 +24765,7 @@
     ]
   },
   {
-    "id": "q553",
+    "id": "q568",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24115,7 +24812,7 @@
     ]
   },
   {
-    "id": "q554",
+    "id": "q569",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24163,7 +24860,7 @@
     ]
   },
   {
-    "id": "q555",
+    "id": "q570",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24203,7 +24900,7 @@
     ]
   },
   {
-    "id": "q556",
+    "id": "q571",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24243,7 +24940,7 @@
     ]
   },
   {
-    "id": "q557",
+    "id": "q572",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24291,7 +24988,7 @@
     ]
   },
   {
-    "id": "q558",
+    "id": "q573",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24339,7 +25036,7 @@
     ]
   },
   {
-    "id": "q559",
+    "id": "q574",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24379,7 +25076,7 @@
     ]
   },
   {
-    "id": "q560",
+    "id": "q575",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24419,7 +25116,7 @@
     ]
   },
   {
-    "id": "q561",
+    "id": "q576",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24467,7 +25164,7 @@
     ]
   },
   {
-    "id": "q562",
+    "id": "q577",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24515,7 +25212,7 @@
     ]
   },
   {
-    "id": "q563",
+    "id": "q578",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24555,7 +25252,7 @@
     ]
   },
   {
-    "id": "q564",
+    "id": "q579",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24595,7 +25292,7 @@
     ]
   },
   {
-    "id": "q565",
+    "id": "q580",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24643,7 +25340,7 @@
     ]
   },
   {
-    "id": "q566",
+    "id": "q581",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24691,7 +25388,7 @@
     ]
   },
   {
-    "id": "q567",
+    "id": "q582",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24731,7 +25428,7 @@
     ]
   },
   {
-    "id": "q568",
+    "id": "q583",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24771,7 +25468,7 @@
     ]
   },
   {
-    "id": "q569",
+    "id": "q584",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24819,7 +25516,7 @@
     ]
   },
   {
-    "id": "q570",
+    "id": "q585",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24867,7 +25564,7 @@
     ]
   },
   {
-    "id": "q571",
+    "id": "q586",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24907,7 +25604,7 @@
     ]
   },
   {
-    "id": "q572",
+    "id": "q587",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24947,7 +25644,7 @@
     ]
   },
   {
-    "id": "q573",
+    "id": "q588",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24995,7 +25692,7 @@
     ]
   },
   {
-    "id": "q574",
+    "id": "q589",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25043,7 +25740,7 @@
     ]
   },
   {
-    "id": "q575",
+    "id": "q590",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25083,7 +25780,7 @@
     ]
   },
   {
-    "id": "q576",
+    "id": "q591",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25123,7 +25820,7 @@
     ]
   },
   {
-    "id": "q577",
+    "id": "q592",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25171,7 +25868,7 @@
     ]
   },
   {
-    "id": "q578",
+    "id": "q593",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25219,7 +25916,7 @@
     ]
   },
   {
-    "id": "q579",
+    "id": "q594",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25259,7 +25956,7 @@
     ]
   },
   {
-    "id": "q580",
+    "id": "q595",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25299,7 +25996,7 @@
     ]
   },
   {
-    "id": "q581",
+    "id": "q596",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25347,7 +26044,7 @@
     ]
   },
   {
-    "id": "q582",
+    "id": "q597",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25395,7 +26092,7 @@
     ]
   },
   {
-    "id": "q583",
+    "id": "q598",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25435,7 +26132,7 @@
     ]
   },
   {
-    "id": "q584",
+    "id": "q599",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25475,7 +26172,7 @@
     ]
   },
   {
-    "id": "q585",
+    "id": "q600",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25523,7 +26220,7 @@
     ]
   },
   {
-    "id": "q586",
+    "id": "q601",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25571,7 +26268,7 @@
     ]
   },
   {
-    "id": "q587",
+    "id": "q602",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25611,7 +26308,7 @@
     ]
   },
   {
-    "id": "q588",
+    "id": "q603",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25651,7 +26348,7 @@
     ]
   },
   {
-    "id": "q589",
+    "id": "q604",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25699,7 +26396,7 @@
     ]
   },
   {
-    "id": "q590",
+    "id": "q605",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25747,7 +26444,7 @@
     ]
   },
   {
-    "id": "q591",
+    "id": "q606",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25787,7 +26484,7 @@
     ]
   },
   {
-    "id": "q592",
+    "id": "q607",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25827,7 +26524,7 @@
     ]
   },
   {
-    "id": "q593",
+    "id": "q608",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25875,7 +26572,7 @@
     ]
   },
   {
-    "id": "q594",
+    "id": "q609",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25923,7 +26620,7 @@
     ]
   },
   {
-    "id": "q595",
+    "id": "q610",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25963,7 +26660,7 @@
     ]
   },
   {
-    "id": "q596",
+    "id": "q611",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26003,7 +26700,7 @@
     ]
   },
   {
-    "id": "q597",
+    "id": "q612",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26051,7 +26748,7 @@
     ]
   },
   {
-    "id": "q598",
+    "id": "q613",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26099,7 +26796,7 @@
     ]
   },
   {
-    "id": "q599",
+    "id": "q614",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26139,7 +26836,7 @@
     ]
   },
   {
-    "id": "q600",
+    "id": "q615",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26179,7 +26876,7 @@
     ]
   },
   {
-    "id": "q601",
+    "id": "q616",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26227,7 +26924,7 @@
     ]
   },
   {
-    "id": "q602",
+    "id": "q617",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26276,7 +26973,7 @@
     ]
   },
   {
-    "id": "q603",
+    "id": "q618",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26317,7 +27014,7 @@
     ]
   },
   {
-    "id": "q604",
+    "id": "q619",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26358,7 +27055,7 @@
     ]
   },
   {
-    "id": "q605",
+    "id": "q620",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26407,7 +27104,7 @@
     ]
   },
   {
-    "id": "q606",
+    "id": "q621",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26455,7 +27152,7 @@
     ]
   },
   {
-    "id": "q607",
+    "id": "q622",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26495,7 +27192,7 @@
     ]
   },
   {
-    "id": "q608",
+    "id": "q623",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26535,7 +27232,7 @@
     ]
   },
   {
-    "id": "q609",
+    "id": "q624",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26583,7 +27280,7 @@
     ]
   },
   {
-    "id": "q610",
+    "id": "q625",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26631,7 +27328,7 @@
     ]
   },
   {
-    "id": "q611",
+    "id": "q626",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26671,7 +27368,7 @@
     ]
   },
   {
-    "id": "q612",
+    "id": "q627",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26711,7 +27408,7 @@
     ]
   },
   {
-    "id": "q613",
+    "id": "q628",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26759,7 +27456,7 @@
     ]
   },
   {
-    "id": "q614",
+    "id": "q629",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26808,7 +27505,7 @@
     ]
   },
   {
-    "id": "q615",
+    "id": "q630",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26849,7 +27546,7 @@
     ]
   },
   {
-    "id": "q616",
+    "id": "q631",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26890,7 +27587,7 @@
     ]
   },
   {
-    "id": "q617",
+    "id": "q632",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26939,7 +27636,7 @@
     ]
   },
   {
-    "id": "q618",
+    "id": "q633",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26989,7 +27686,7 @@
     ]
   },
   {
-    "id": "q619",
+    "id": "q634",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27031,7 +27728,7 @@
     ]
   },
   {
-    "id": "q620",
+    "id": "q635",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27073,7 +27770,7 @@
     ]
   },
   {
-    "id": "q621",
+    "id": "q636",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27123,7 +27820,7 @@
     ]
   },
   {
-    "id": "q622",
+    "id": "q637",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27171,7 +27868,7 @@
     ]
   },
   {
-    "id": "q623",
+    "id": "q638",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27211,7 +27908,7 @@
     ]
   },
   {
-    "id": "q624",
+    "id": "q639",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27251,7 +27948,7 @@
     ]
   },
   {
-    "id": "q625",
+    "id": "q640",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27299,7 +27996,7 @@
     ]
   },
   {
-    "id": "q626",
+    "id": "q641",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27347,7 +28044,7 @@
     ]
   },
   {
-    "id": "q627",
+    "id": "q642",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27387,7 +28084,7 @@
     ]
   },
   {
-    "id": "q628",
+    "id": "q643",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27427,7 +28124,7 @@
     ]
   },
   {
-    "id": "q629",
+    "id": "q644",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27475,7 +28172,7 @@
     ]
   },
   {
-    "id": "q630",
+    "id": "q645",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27523,7 +28220,7 @@
     ]
   },
   {
-    "id": "q631",
+    "id": "q646",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27563,7 +28260,7 @@
     ]
   },
   {
-    "id": "q632",
+    "id": "q647",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27603,7 +28300,7 @@
     ]
   },
   {
-    "id": "q633",
+    "id": "q648",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27651,7 +28348,7 @@
     ]
   },
   {
-    "id": "q634",
+    "id": "q649",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27700,7 +28397,7 @@
     ]
   },
   {
-    "id": "q635",
+    "id": "q650",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27741,7 +28438,7 @@
     ]
   },
   {
-    "id": "q636",
+    "id": "q651",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27782,7 +28479,7 @@
     ]
   },
   {
-    "id": "q637",
+    "id": "q652",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27831,7 +28528,7 @@
     ]
   },
   {
-    "id": "q638",
+    "id": "q653",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27879,7 +28576,7 @@
     ]
   },
   {
-    "id": "q639",
+    "id": "q654",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27919,7 +28616,7 @@
     ]
   },
   {
-    "id": "q640",
+    "id": "q655",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27959,7 +28656,7 @@
     ]
   },
   {
-    "id": "q641",
+    "id": "q656",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28007,7 +28704,7 @@
     ]
   },
   {
-    "id": "q642",
+    "id": "q657",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28055,7 +28752,7 @@
     ]
   },
   {
-    "id": "q643",
+    "id": "q658",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28095,7 +28792,7 @@
     ]
   },
   {
-    "id": "q644",
+    "id": "q659",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28135,7 +28832,7 @@
     ]
   },
   {
-    "id": "q645",
+    "id": "q660",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28183,7 +28880,7 @@
     ]
   },
   {
-    "id": "q646",
+    "id": "q661",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28232,7 +28929,7 @@
     ]
   },
   {
-    "id": "q647",
+    "id": "q662",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28273,7 +28970,7 @@
     ]
   },
   {
-    "id": "q648",
+    "id": "q663",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28314,7 +29011,7 @@
     ]
   },
   {
-    "id": "q649",
+    "id": "q664",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28363,7 +29060,7 @@
     ]
   },
   {
-    "id": "q650",
+    "id": "q665",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28411,7 +29108,7 @@
     ]
   },
   {
-    "id": "q651",
+    "id": "q666",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28451,7 +29148,7 @@
     ]
   },
   {
-    "id": "q652",
+    "id": "q667",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28491,7 +29188,7 @@
     ]
   },
   {
-    "id": "q653",
+    "id": "q668",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28539,7 +29236,7 @@
     ]
   },
   {
-    "id": "q654",
+    "id": "q669",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28587,7 +29284,7 @@
     ]
   },
   {
-    "id": "q655",
+    "id": "q670",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28627,7 +29324,7 @@
     ]
   },
   {
-    "id": "q656",
+    "id": "q671",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28667,7 +29364,7 @@
     ]
   },
   {
-    "id": "q657",
+    "id": "q672",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28715,7 +29412,7 @@
     ]
   },
   {
-    "id": "q658",
+    "id": "q673",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28763,7 +29460,7 @@
     ]
   },
   {
-    "id": "q659",
+    "id": "q674",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28803,7 +29500,7 @@
     ]
   },
   {
-    "id": "q660",
+    "id": "q675",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28843,7 +29540,7 @@
     ]
   },
   {
-    "id": "q661",
+    "id": "q676",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28891,7 +29588,7 @@
     ]
   },
   {
-    "id": "q662",
+    "id": "q677",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28939,7 +29636,7 @@
     ]
   },
   {
-    "id": "q663",
+    "id": "q678",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28979,7 +29676,7 @@
     ]
   },
   {
-    "id": "q664",
+    "id": "q679",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29019,7 +29716,7 @@
     ]
   },
   {
-    "id": "q665",
+    "id": "q680",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29067,7 +29764,7 @@
     ]
   },
   {
-    "id": "q666",
+    "id": "q681",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29115,7 +29812,7 @@
     ]
   },
   {
-    "id": "q667",
+    "id": "q682",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29155,7 +29852,7 @@
     ]
   },
   {
-    "id": "q668",
+    "id": "q683",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29195,7 +29892,7 @@
     ]
   },
   {
-    "id": "q669",
+    "id": "q684",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29243,7 +29940,7 @@
     ]
   },
   {
-    "id": "q670",
+    "id": "q685",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29292,7 +29989,7 @@
     ]
   },
   {
-    "id": "q671",
+    "id": "q686",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29333,7 +30030,7 @@
     ]
   },
   {
-    "id": "q672",
+    "id": "q687",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29374,7 +30071,7 @@
     ]
   },
   {
-    "id": "q673",
+    "id": "q688",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29423,7 +30120,7 @@
     ]
   },
   {
-    "id": "q674",
+    "id": "q689",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29471,7 +30168,7 @@
     ]
   },
   {
-    "id": "q675",
+    "id": "q690",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29511,7 +30208,7 @@
     ]
   },
   {
-    "id": "q676",
+    "id": "q691",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29551,7 +30248,7 @@
     ]
   },
   {
-    "id": "q677",
+    "id": "q692",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29599,7 +30296,7 @@
     ]
   },
   {
-    "id": "q678",
+    "id": "q693",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29648,7 +30345,7 @@
     ]
   },
   {
-    "id": "q679",
+    "id": "q694",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29689,7 +30386,7 @@
     ]
   },
   {
-    "id": "q680",
+    "id": "q695",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29730,7 +30427,7 @@
     ]
   },
   {
-    "id": "q681",
+    "id": "q696",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29779,7 +30476,7 @@
     ]
   },
   {
-    "id": "q682",
+    "id": "q697",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29827,7 +30524,7 @@
     ]
   },
   {
-    "id": "q683",
+    "id": "q698",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29867,7 +30564,7 @@
     ]
   },
   {
-    "id": "q684",
+    "id": "q699",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29907,7 +30604,7 @@
     ]
   },
   {
-    "id": "q685",
+    "id": "q700",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29955,7 +30652,7 @@
     ]
   },
   {
-    "id": "q686",
+    "id": "q701",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30003,7 +30700,7 @@
     ]
   },
   {
-    "id": "q687",
+    "id": "q702",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30043,7 +30740,7 @@
     ]
   },
   {
-    "id": "q688",
+    "id": "q703",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30083,7 +30780,7 @@
     ]
   },
   {
-    "id": "q689",
+    "id": "q704",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30131,7 +30828,7 @@
     ]
   },
   {
-    "id": "q690",
+    "id": "q705",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30180,7 +30877,7 @@
     ]
   },
   {
-    "id": "q691",
+    "id": "q706",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30221,7 +30918,7 @@
     ]
   },
   {
-    "id": "q692",
+    "id": "q707",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30262,7 +30959,7 @@
     ]
   },
   {
-    "id": "q693",
+    "id": "q708",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30311,7 +31008,7 @@
     ]
   },
   {
-    "id": "q694",
+    "id": "q709",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30359,7 +31056,7 @@
     ]
   },
   {
-    "id": "q695",
+    "id": "q710",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30399,7 +31096,7 @@
     ]
   },
   {
-    "id": "q696",
+    "id": "q711",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30439,7 +31136,7 @@
     ]
   },
   {
-    "id": "q697",
+    "id": "q712",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30487,7 +31184,7 @@
     ]
   },
   {
-    "id": "q698",
+    "id": "q713",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30535,7 +31232,7 @@
     ]
   },
   {
-    "id": "q699",
+    "id": "q714",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30575,7 +31272,7 @@
     ]
   },
   {
-    "id": "q700",
+    "id": "q715",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30615,7 +31312,7 @@
     ]
   },
   {
-    "id": "q701",
+    "id": "q716",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30663,7 +31360,7 @@
     ]
   },
   {
-    "id": "q702",
+    "id": "q717",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30711,7 +31408,7 @@
     ]
   },
   {
-    "id": "q703",
+    "id": "q718",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30751,7 +31448,7 @@
     ]
   },
   {
-    "id": "q704",
+    "id": "q719",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30791,7 +31488,7 @@
     ]
   },
   {
-    "id": "q705",
+    "id": "q720",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30839,7 +31536,7 @@
     ]
   },
   {
-    "id": "q706",
+    "id": "q721",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30887,7 +31584,7 @@
     ]
   },
   {
-    "id": "q707",
+    "id": "q722",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30927,7 +31624,7 @@
     ]
   },
   {
-    "id": "q708",
+    "id": "q723",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30967,7 +31664,7 @@
     ]
   },
   {
-    "id": "q709",
+    "id": "q724",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31015,7 +31712,7 @@
     ]
   },
   {
-    "id": "q710",
+    "id": "q725",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31063,7 +31760,7 @@
     ]
   },
   {
-    "id": "q711",
+    "id": "q726",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31103,7 +31800,7 @@
     ]
   },
   {
-    "id": "q712",
+    "id": "q727",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31143,7 +31840,7 @@
     ]
   },
   {
-    "id": "q713",
+    "id": "q728",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31191,7 +31888,7 @@
     ]
   },
   {
-    "id": "q714",
+    "id": "q729",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31239,7 +31936,7 @@
     ]
   },
   {
-    "id": "q715",
+    "id": "q730",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31279,7 +31976,7 @@
     ]
   },
   {
-    "id": "q716",
+    "id": "q731",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31319,7 +32016,7 @@
     ]
   },
   {
-    "id": "q717",
+    "id": "q732",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31367,7 +32064,7 @@
     ]
   },
   {
-    "id": "q718",
+    "id": "q733",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31416,7 +32113,7 @@
     ]
   },
   {
-    "id": "q719",
+    "id": "q734",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31457,7 +32154,7 @@
     ]
   },
   {
-    "id": "q720",
+    "id": "q735",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31498,7 +32195,7 @@
     ]
   },
   {
-    "id": "q721",
+    "id": "q736",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31547,7 +32244,7 @@
     ]
   },
   {
-    "id": "q722",
+    "id": "q737",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31595,7 +32292,7 @@
     ]
   },
   {
-    "id": "q723",
+    "id": "q738",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31635,7 +32332,7 @@
     ]
   },
   {
-    "id": "q724",
+    "id": "q739",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31675,7 +32372,7 @@
     ]
   },
   {
-    "id": "q725",
+    "id": "q740",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31723,7 +32420,7 @@
     ]
   },
   {
-    "id": "q726",
+    "id": "q741",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -31770,7 +32467,7 @@
     ]
   },
   {
-    "id": "q727",
+    "id": "q742",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -31809,7 +32506,7 @@
     ]
   },
   {
-    "id": "q728",
+    "id": "q743",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -31848,7 +32545,7 @@
     ]
   },
   {
-    "id": "q729",
+    "id": "q744",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -31895,7 +32592,7 @@
     ]
   },
   {
-    "id": "q730",
+    "id": "q745",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -31942,7 +32639,7 @@
     ]
   },
   {
-    "id": "q731",
+    "id": "q746",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -31981,7 +32678,7 @@
     ]
   },
   {
-    "id": "q732",
+    "id": "q747",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32020,7 +32717,7 @@
     ]
   },
   {
-    "id": "q733",
+    "id": "q748",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32067,7 +32764,7 @@
     ]
   },
   {
-    "id": "q734",
+    "id": "q749",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32114,7 +32811,7 @@
     ]
   },
   {
-    "id": "q735",
+    "id": "q750",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32153,7 +32850,7 @@
     ]
   },
   {
-    "id": "q736",
+    "id": "q751",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32192,7 +32889,7 @@
     ]
   },
   {
-    "id": "q737",
+    "id": "q752",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32239,7 +32936,7 @@
     ]
   },
   {
-    "id": "q738",
+    "id": "q753",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32287,7 +32984,7 @@
     ]
   },
   {
-    "id": "q739",
+    "id": "q754",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32327,7 +33024,7 @@
     ]
   },
   {
-    "id": "q740",
+    "id": "q755",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32367,7 +33064,7 @@
     ]
   },
   {
-    "id": "q741",
+    "id": "q756",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32415,7 +33112,7 @@
     ]
   },
   {
-    "id": "q742",
+    "id": "q757",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32463,7 +33160,7 @@
     ]
   },
   {
-    "id": "q743",
+    "id": "q758",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32503,7 +33200,7 @@
     ]
   },
   {
-    "id": "q744",
+    "id": "q759",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32543,7 +33240,7 @@
     ]
   },
   {
-    "id": "q745",
+    "id": "q760",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32586,6 +33283,2674 @@
       "segregation",
       "democracy",
       "inclusion",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q761",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "How can commercial radio and TV channels earn income ...?",
+      "sv": "Hur kan kommersiella radio- och tv-kanaler få inkomster ...?"
+    },
+    "opts": [
+      {
+        "en": "They sell advertising space or charge for a specific channel",
+        "sv": "De säljer reklamplats eller tar betalt för en särskild kanal"
+      },
+      {
+        "en": "Through court fees from trials",
+        "sv": "Genom domstolsavgifter från rättegångar"
+      },
+      {
+        "en": "Through membership fees to trade unions",
+        "sv": "Genom medlemsavgifter till fackförbund"
+      },
+      {
+        "en": "By municipalities deciding their programmes",
+        "sv": "Genom att kommunerna bestämmer deras program"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Olika slags medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "commercial-media",
+      "advertising",
+      "radio-tv",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q762",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "They sell advertising space or charge for a specific channel.",
+      "sv": "De säljer reklamplats eller tar betalt för en särskild kanal."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Olika slags medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "commercial-media",
+      "advertising",
+      "radio-tv",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q763",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "Through court fees from trials.",
+      "sv": "Genom domstolsavgifter från rättegångar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Olika slags medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "commercial-media",
+      "advertising",
+      "radio-tv",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q764",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: How can commercial radio and TV channels earn income?",
+      "sv": "Välj rätt alternativ: Hur kan kommersiella radio- och tv-kanaler få inkomster?"
+    },
+    "opts": [
+      {
+        "en": "They sell advertising space or charge for a specific channel",
+        "sv": "De säljer reklamplats eller tar betalt för en särskild kanal"
+      },
+      {
+        "en": "Through court fees from trials",
+        "sv": "Genom domstolsavgifter från rättegångar"
+      },
+      {
+        "en": "Through membership fees to trade unions",
+        "sv": "Genom medlemsavgifter till fackförbund"
+      },
+      {
+        "en": "By municipalities deciding their programmes",
+        "sv": "Genom att kommunerna bestämmer deras program"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Olika slags medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "commercial-media",
+      "advertising",
+      "radio-tv",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q765",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "What characterizes media financed by advertising ...?",
+      "sv": "Vad kännetecknar medier som finansieras med reklam ...?"
+    },
+    "opts": [
+      {
+        "en": "They are often run by private companies and earn income from advertising",
+        "sv": "De drivs ofta av privata företag och får inkomster genom reklam"
+      },
+      {
+        "en": "They may never sell advertising space",
+        "sv": "De får aldrig sälja reklamplats"
+      },
+      {
+        "en": "They replace the mission of public-service companies",
+        "sv": "De ersätter public service-företagens uppdrag"
+      },
+      {
+        "en": "They consist only of government agencies",
+        "sv": "De består bara av statliga myndigheter"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
+      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "private-media",
+      "advertising-funded",
+      "newspapers",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q766",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "They are often run by private companies and earn income from advertising.",
+      "sv": "De drivs ofta av privata företag och får inkomster genom reklam."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
+      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "private-media",
+      "advertising-funded",
+      "newspapers",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q767",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "They may never sell advertising space.",
+      "sv": "De får aldrig sälja reklamplats."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
+      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "private-media",
+      "advertising-funded",
+      "newspapers",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q768",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What characterizes media financed by advertising?",
+      "sv": "Välj rätt alternativ: Vad kännetecknar medier som finansieras med reklam?"
+    },
+    "opts": [
+      {
+        "en": "They are often run by private companies and earn income from advertising",
+        "sv": "De drivs ofta av privata företag och får inkomster genom reklam"
+      },
+      {
+        "en": "They may never sell advertising space",
+        "sv": "De får aldrig sälja reklamplats"
+      },
+      {
+        "en": "They replace the mission of public-service companies",
+        "sv": "De ersätter public service-företagens uppdrag"
+      },
+      {
+        "en": "They consist only of government agencies",
+        "sv": "De består bara av statliga myndigheter"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
+      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "private-media",
+      "advertising-funded",
+      "newspapers",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q769",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "How are many newspapers published today ...?",
+      "sv": "Hur publiceras många tidningar i dag ...?"
+    },
+    "opts": [
+      {
+        "en": "They are also available online and updated with news several times per day",
+        "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag"
+      },
+      {
+        "en": "They may be sold only as one copy per year",
+        "sv": "De får bara säljas som ett exemplar per år"
+      },
+      {
+        "en": "They may be distributed only within one residential building",
+        "sv": "De får bara spridas inom ett enda bostadshus"
+      },
+      {
+        "en": "They may not write about local or national news",
+        "sv": "De får inte skriva om lokala eller nationella nyheter"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
+      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "newspapers",
+      "online-news",
+      "local-national-media",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q770",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "They are also available online and updated with news several times per day.",
+      "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
+      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "newspapers",
+      "online-news",
+      "local-national-media",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q771",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "They may be sold only as one copy per year.",
+      "sv": "De får bara säljas som ett exemplar per år."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
+      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "newspapers",
+      "online-news",
+      "local-national-media",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q772",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: How are many newspapers published today?",
+      "sv": "Välj rätt alternativ: Hur publiceras många tidningar i dag?"
+    },
+    "opts": [
+      {
+        "en": "They are also available online and updated with news several times per day",
+        "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag"
+      },
+      {
+        "en": "They may be sold only as one copy per year",
+        "sv": "De får bara säljas som ett exemplar per år"
+      },
+      {
+        "en": "They may be distributed only within one residential building",
+        "sv": "De får bara spridas inom ett enda bostadshus"
+      },
+      {
+        "en": "They may not write about local or national news",
+        "sv": "De får inte skriva om lokala eller nationella nyheter"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
+      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "newspapers",
+      "online-news",
+      "local-national-media",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q773",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "What is important to remember about the web and social media ...?",
+      "sv": "Vad är viktigt att komma ihåg om webben och sociala medier ...?"
+    },
+    "opts": [
+      {
+        "en": "Anyone can create content there, and it is not always checked the same way as in other media",
+        "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier"
+      },
+      {
+        "en": "Only responsible publishers may write posts there",
+        "sv": "Bara ansvariga utgivare får skriva inlägg där"
+      },
+      {
+        "en": "All content is first approved by the state",
+        "sv": "Allt innehåll godkänns först av staten"
+      },
+      {
+        "en": "The content is always more reliable than news in newspapers",
+        "sv": "Innehållet är alltid mer pålitligt än nyheter i tidningar"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Webb och sociala medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "web",
+      "social-media",
+      "content-control",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q774",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Webb och sociala medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "web",
+      "social-media",
+      "content-control",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q775",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "On the web and in social media, only responsible publishers may write posts.",
+      "sv": "På webben och i sociala medier får bara ansvariga utgivare skriva inlägg."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Webb och sociala medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "web",
+      "social-media",
+      "content-control",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q776",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is important to remember about the web and social media?",
+      "sv": "Välj rätt alternativ: Vad är viktigt att komma ihåg om webben och sociala medier?"
+    },
+    "opts": [
+      {
+        "en": "Anyone can create content there, and it is not always checked the same way as in other media",
+        "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier"
+      },
+      {
+        "en": "Only responsible publishers may write posts there",
+        "sv": "Bara ansvariga utgivare får skriva inlägg där"
+      },
+      {
+        "en": "All content is first approved by the state",
+        "sv": "Allt innehåll godkänns först av staten"
+      },
+      {
+        "en": "The content is always more reliable than news in newspapers",
+        "sv": "Innehållet är alltid mer pålitligt än nyheter i tidningar"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Webb och sociala medier",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "web",
+      "social-media",
+      "content-control",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q777",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "One reason source criticism is needed when using media is ...",
+      "sv": "En anledning till att källkritik behövs när man använder medier är ..."
+    },
+    "opts": [
+      {
+        "en": "False information can spread quickly and affect people's opinions",
+        "sv": "Falska uppgifter kan spridas snabbt och påverka människors åsikter"
+      },
+      {
+        "en": "Everything that is published is always correct",
+        "sv": "Allt som publiceras är alltid korrekt"
+      },
+      {
+        "en": "Source criticism means never reading news",
+        "sv": "Källkritik betyder att man aldrig ska läsa nyheter"
+      },
+      {
+        "en": "Only printed books need to be checked",
+        "sv": "Bara tryckta böcker behöver kontrolleras"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
+      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Källkritik",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "source-criticism",
+      "false-information",
+      "media-literacy",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q778",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "One reason source criticism is needed when using media is that false information can spread quickly and affect people's opinions.",
+      "sv": "En anledning till att källkritik behövs när man använder medier är att falska uppgifter kan spridas snabbt och påverka människors åsikter."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
+      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Källkritik",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "source-criticism",
+      "false-information",
+      "media-literacy",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q779",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "true_false",
+    "q": {
+      "en": "One reason source criticism is needed when using media is that everything that is published is always correct.",
+      "sv": "En anledning till att källkritik behövs när man använder medier är att allt som publiceras alltid är korrekt."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
+      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Källkritik",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "source-criticism",
+      "false-information",
+      "media-literacy",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q780",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Why is source criticism needed when using media?",
+      "sv": "Välj rätt alternativ: Varför behövs källkritik när man använder medier?"
+    },
+    "opts": [
+      {
+        "en": "False information can spread quickly and affect people's opinions",
+        "sv": "Falska uppgifter kan spridas snabbt och påverka människors åsikter"
+      },
+      {
+        "en": "Everything that is published is always correct",
+        "sv": "Allt som publiceras är alltid korrekt"
+      },
+      {
+        "en": "Source criticism means never reading news",
+        "sv": "Källkritik betyder att man aldrig ska läsa nyheter"
+      },
+      {
+        "en": "Only printed books need to be checked",
+        "sv": "Bara tryckta böcker behöver kontrolleras"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
+      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Mediernas roll",
+      "section": "Källkritik",
+      "page": 21
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "source-criticism",
+      "false-information",
+      "media-literacy",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q781",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue ...?",
+      "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad ...?"
+    },
+    "opts": [
+      {
+        "en": "A private company can provide the service while tax revenue funds it",
+        "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
+      },
+      {
+        "en": "The service must always be paid for entirely with private loans",
+        "sv": "Tjänsten måste alltid betalas helt med privata lån"
+      },
+      {
+        "en": "Private providers take over the responsibilities of the state, regions, and municipalities",
+        "sv": "Privata utförare tar över statens, regionernas och kommunernas ansvar"
+      },
+      {
+        "en": "Tax revenue may be used only if the service is run by the state",
+        "sv": "Skattepengar får bara användas om tjänsten drivs av staten"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Stat, regioner och kommuner har olika ansvar",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "welfare",
+      "tax-funding",
+      "private-providers",
+      "responsibility-split",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q782",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "A private company can provide the service while tax revenue funds it.",
+      "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Stat, regioner och kommuner har olika ansvar",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "welfare",
+      "tax-funding",
+      "private-providers",
+      "responsibility-split",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q783",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "The service must always be paid for entirely with private loans.",
+      "sv": "Tjänsten måste alltid betalas helt med privata lån."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Stat, regioner och kommuner har olika ansvar",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "welfare",
+      "tax-funding",
+      "private-providers",
+      "responsibility-split",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q784",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: How can a welfare service be provided by a private company but still be funded by tax revenue?",
+      "sv": "Välj rätt alternativ: Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
+    },
+    "opts": [
+      {
+        "en": "A private company can provide the service while tax revenue funds it",
+        "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
+      },
+      {
+        "en": "The service must always be paid for entirely with private loans",
+        "sv": "Tjänsten måste alltid betalas helt med privata lån"
+      },
+      {
+        "en": "Private providers take over the responsibilities of the state, regions, and municipalities",
+        "sv": "Privata utförare tar över statens, regionernas och kommunernas ansvar"
+      },
+      {
+        "en": "Tax revenue may be used only if the service is run by the state",
+        "sv": "Skattepengar får bara användas om tjänsten drivs av staten"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Stat, regioner och kommuner har olika ansvar",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "welfare",
+      "tax-funding",
+      "private-providers",
+      "responsibility-split",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q785",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment ...?",
+      "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet ...?"
+    },
+    "opts": [
+      {
+        "en": "Sickness insurance, parental insurance, and unemployment insurance",
+        "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring"
+      },
+      {
+        "en": "Health centres, hospitals, and regional public transport",
+        "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik"
+      },
+      {
+        "en": "Preschools, after-school centres, and municipal adult education",
+        "sv": "Förskolor, fritidshem och kommunal vuxenutbildning"
+      },
+      {
+        "en": "Private credit cards, car loans, and mortgages",
+        "sv": "Privata kreditkort, billån och bostadslån"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
+      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Statligt finansierad välfärd",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "state-welfare",
+      "social-insurance",
+      "sickness-insurance",
+      "parental-insurance",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q786",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "Sickness insurance, parental insurance, and unemployment insurance.",
+      "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
+      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Statligt finansierad välfärd",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "state-welfare",
+      "social-insurance",
+      "sickness-insurance",
+      "parental-insurance",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q787",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "Health centres, hospitals, and regional public transport.",
+      "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
+      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Statligt finansierad välfärd",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "state-welfare",
+      "social-insurance",
+      "sickness-insurance",
+      "parental-insurance",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q788",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
+      "sv": "Välj rätt alternativ: Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
+    },
+    "opts": [
+      {
+        "en": "Sickness insurance, parental insurance, and unemployment insurance",
+        "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring"
+      },
+      {
+        "en": "Health centres, hospitals, and regional public transport",
+        "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik"
+      },
+      {
+        "en": "Preschools, after-school centres, and municipal adult education",
+        "sv": "Förskolor, fritidshem och kommunal vuxenutbildning"
+      },
+      {
+        "en": "Private credit cards, car loans, and mortgages",
+        "sv": "Privata kreditkort, billån och bostadslån"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
+      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Statligt finansierad välfärd",
+      "page": 30
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "state-welfare",
+      "social-insurance",
+      "sickness-insurance",
+      "parental-insurance",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q789",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Primary care includes ...",
+      "sv": "Primärvården omfattar ..."
+    },
+    "opts": [
+      {
+        "en": "Health centres, child health centres, and maternity clinics",
+        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
+      },
+      {
+        "en": "Courts, prosecutors, and prison and probation services",
+        "sv": "Domstolar, åklagare och kriminalvård"
+      },
+      {
+        "en": "Pensions, child allowance, and study support",
+        "sv": "Pensioner, barnbidrag och studiestöd"
+      },
+      {
+        "en": "Daily newspapers, public service broadcasting, and social media",
+        "sv": "Dagstidningar, public service och sociala medier"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
+      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Olika slags sjukvård",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "health-care",
+      "primary-care",
+      "health-centres",
+      "maternity-care",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q790",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "Primary care includes health centres, child health centres, and maternity clinics.",
+      "sv": "Primärvården omfattar vårdcentraler, barnavårdscentraler och mödravårdscentraler."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
+      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Olika slags sjukvård",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "health-care",
+      "primary-care",
+      "health-centres",
+      "maternity-care",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q791",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "Primary care includes courts, prosecutors, and prison and probation services.",
+      "sv": "Primärvården omfattar domstolar, åklagare och kriminalvård."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
+      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Olika slags sjukvård",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "health-care",
+      "primary-care",
+      "health-centres",
+      "maternity-care",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q792",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is included in primary care?",
+      "sv": "Välj rätt alternativ: Vad ingår i primärvården?"
+    },
+    "opts": [
+      {
+        "en": "Health centres, child health centres, and maternity clinics",
+        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
+      },
+      {
+        "en": "Courts, prosecutors, and prison and probation services",
+        "sv": "Domstolar, åklagare och kriminalvård"
+      },
+      {
+        "en": "Pensions, child allowance, and study support",
+        "sv": "Pensioner, barnbidrag och studiestöd"
+      },
+      {
+        "en": "Daily newspapers, public service broadcasting, and social media",
+        "sv": "Dagstidningar, public service och sociala medier"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
+      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Olika slags sjukvård",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "health-care",
+      "primary-care",
+      "health-centres",
+      "maternity-care",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q793",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "The municipality is responsible for ...",
+      "sv": "Kommunen ansvarar för ..."
+    },
+    "opts": [
+      {
+        "en": "To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools",
+        "sv": "Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor"
+      },
+      {
+        "en": "To pay sickness insurance and state pensions",
+        "sv": "Att betala sjukförsäkring och statliga pensioner"
+      },
+      {
+        "en": "To run regional hospitals and health centres",
+        "sv": "Att driva regionernas sjukhus och vårdcentraler"
+      },
+      {
+        "en": "To decide court sentences in criminal cases",
+        "sv": "Att bestämma domstolarnas straff i brottmål"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
+      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "municipal-welfare",
+      "childcare",
+      "education",
+      "schools",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q794",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "The municipality is responsible for arranging preschools, after-school centres, compulsory schools, and upper-secondary schools.",
+      "sv": "Kommunen ansvarar för att ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
+      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "municipal-welfare",
+      "childcare",
+      "education",
+      "schools",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q795",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "The municipality is responsible for paying sickness insurance and state pensions.",
+      "sv": "Kommunen ansvarar för att betala sjukförsäkring och statliga pensioner."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
+      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "municipal-welfare",
+      "childcare",
+      "education",
+      "schools",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q796",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What responsibility does the municipality have for children’s everyday life and education?",
+      "sv": "Välj rätt alternativ: Vilket ansvar har kommunen för barns vardag och utbildning?"
+    },
+    "opts": [
+      {
+        "en": "To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools",
+        "sv": "Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor"
+      },
+      {
+        "en": "To pay sickness insurance and state pensions",
+        "sv": "Att betala sjukförsäkring och statliga pensioner"
+      },
+      {
+        "en": "To run regional hospitals and health centres",
+        "sv": "Att driva regionernas sjukhus och vårdcentraler"
+      },
+      {
+        "en": "To decide court sentences in criminal cases",
+        "sv": "Att bestämma domstolarnas straff i brottmål"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
+      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "municipal-welfare",
+      "childcare",
+      "education",
+      "schools",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q797",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "The municipality can offer older people ... to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer ... för att klara vardagen."
+    },
+    "opts": [
+      {
+        "en": "Care and services at home or housing adapted for older people",
+        "sv": "Vård och service hemma eller boende som är anpassat för äldre personer"
+      },
+      {
+        "en": "Automatic study support and a university place",
+        "sv": "Automatiskt studiestöd och plats på universitet"
+      },
+      {
+        "en": "Decisions about which news media may publish",
+        "sv": "Beslut om vilka nyheter medier får publicera"
+      },
+      {
+        "en": "Private loans that replace all municipal help",
+        "sv": "Privata lån som ersätter all kommunal hjälp"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
+      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "elderly-care",
+      "municipal-welfare",
+      "home-care",
+      "adapted-housing",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q798",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "The municipality can offer older people care and services at home or housing adapted for older people to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer vård och service hemma eller boende som är anpassat för äldre personer för att klara vardagen."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
+      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "elderly-care",
+      "municipal-welfare",
+      "home-care",
+      "adapted-housing",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q799",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "true_false",
+    "q": {
+      "en": "The municipality can offer older people automatic study support and a university place to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer automatiskt studiestöd och plats på universitet för att klara vardagen."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
+      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "elderly-care",
+      "municipal-welfare",
+      "home-care",
+      "adapted-housing",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q800",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What help can older people receive from the municipality to manage everyday life?",
+      "sv": "Välj rätt alternativ: Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?"
+    },
+    "opts": [
+      {
+        "en": "Care and services at home or housing adapted for older people",
+        "sv": "Vård och service hemma eller boende som är anpassat för äldre personer"
+      },
+      {
+        "en": "Automatic study support and a university place",
+        "sv": "Automatiskt studiestöd och plats på universitet"
+      },
+      {
+        "en": "Decisions about which news media may publish",
+        "sv": "Beslut om vilka nyheter medier får publicera"
+      },
+      {
+        "en": "Private loans that replace all municipal help",
+        "sv": "Privata lån som ersätter all kommunal hjälp"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
+      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "elderly-care",
+      "municipal-welfare",
+      "home-care",
+      "adapted-housing",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q801",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What does the Freedom of the Press Act protect ...?",
+      "sv": "Vad skyddar tryckfrihetsförordningen ...?"
+    },
+    "opts": [
+      {
+        "en": "The right to spread thoughts and opinions in printed texts",
+        "sv": "Rätten att sprida tankar och åsikter i tryckta texter"
+      },
+      {
+        "en": "The right to decide succession to the throne",
+        "sv": "Rätten att bestämma tronföljden"
+      },
+      {
+        "en": "The right to judge criminal cases",
+        "sv": "Rätten att döma i brottmål"
+      },
+      {
+        "en": "The right to collect municipal tax",
+        "sv": "Rätten att ta ut kommunalskatt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
+      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Tryckfrihetsförordningen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-press",
+      "constitutional-laws",
+      "printed-texts",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q802",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The right to spread thoughts and opinions in printed texts.",
+      "sv": "Rätten att sprida tankar och åsikter i tryckta texter."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
+      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Tryckfrihetsförordningen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-press",
+      "constitutional-laws",
+      "printed-texts",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q803",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The right to decide succession to the throne.",
+      "sv": "Rätten att bestämma tronföljden."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
+      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Tryckfrihetsförordningen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-press",
+      "constitutional-laws",
+      "printed-texts",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q804",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What does the Freedom of the Press Act protect?",
+      "sv": "Välj rätt alternativ: Vad skyddar tryckfrihetsförordningen?"
+    },
+    "opts": [
+      {
+        "en": "The right to spread thoughts and opinions in printed texts",
+        "sv": "Rätten att sprida tankar och åsikter i tryckta texter"
+      },
+      {
+        "en": "The right to decide succession to the throne",
+        "sv": "Rätten att bestämma tronföljden"
+      },
+      {
+        "en": "The right to judge criminal cases",
+        "sv": "Rätten att döma i brottmål"
+      },
+      {
+        "en": "The right to collect municipal tax",
+        "sv": "Rätten att ta ut kommunalskatt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
+      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Tryckfrihetsförordningen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-press",
+      "constitutional-laws",
+      "printed-texts",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q805",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What does the Fundamental Law on Freedom of Expression protect ...?",
+      "sv": "Vad skyddar yttrandefrihetsgrundlagen ...?"
+    },
+    "opts": [
+      {
+        "en": "The right to express thoughts and opinions in media such as radio and television",
+        "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv"
+      },
+      {
+        "en": "The right to inherit the throne",
+        "sv": "Rätten att ärva tronen"
+      },
+      {
+        "en": "The right to appoint all lay judges",
+        "sv": "Rätten att utse alla nämndemän"
+      },
+      {
+        "en": "The right to decide school curricula",
+        "sv": "Rätten att besluta skolans kursplaner"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
+      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Yttrandefrihetsgrundlagen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-expression",
+      "constitutional-laws",
+      "media",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q806",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The right to express thoughts and opinions in media such as radio and television.",
+      "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
+      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Yttrandefrihetsgrundlagen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-expression",
+      "constitutional-laws",
+      "media",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q807",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The right to inherit the throne.",
+      "sv": "Rätten att ärva tronen."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
+      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Yttrandefrihetsgrundlagen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-expression",
+      "constitutional-laws",
+      "media",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q808",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What does the Fundamental Law on Freedom of Expression protect?",
+      "sv": "Välj rätt alternativ: Vad skyddar yttrandefrihetsgrundlagen?"
+    },
+    "opts": [
+      {
+        "en": "The right to express thoughts and opinions in media such as radio and television",
+        "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv"
+      },
+      {
+        "en": "The right to inherit the throne",
+        "sv": "Rätten att ärva tronen"
+      },
+      {
+        "en": "The right to appoint all lay judges",
+        "sv": "Rätten att utse alla nämndemän"
+      },
+      {
+        "en": "The right to decide school curricula",
+        "sv": "Rätten att besluta skolans kursplaner"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
+      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Yttrandefrihetsgrundlagen",
+      "page": 16
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-expression",
+      "constitutional-laws",
+      "media",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q809",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Which statement describes the preliminary investigation in a criminal investigation ...?",
+      "sv": "Vilket påstående beskriver förundersökningen i en brottsutredning ...?"
+    },
+    "opts": [
+      {
+        "en": "The police collect evidence and speak with witnesses",
+        "sv": "Polisen samlar in bevis och pratar med vittnen"
+      },
+      {
+        "en": "The court decides a penalty before anyone is suspected",
+        "sv": "Domstolen bestämmer straff innan någon är misstänkt"
+      },
+      {
+        "en": "The Riksdag decides whether the suspect is guilty",
+        "sv": "Riksdagen avgör om den misstänkte är skyldig"
+      },
+      {
+        "en": "The lawyer writes new laws for the police",
+        "sv": "Advokaten skriver nya lagar åt polisen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
+      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Brottsutredning",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "criminal-investigation",
+      "preliminary-investigation",
+      "police",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q810",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The police collect evidence and speak with witnesses.",
+      "sv": "Polisen samlar in bevis och pratar med vittnen."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
+      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Brottsutredning",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "criminal-investigation",
+      "preliminary-investigation",
+      "police",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q811",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The court decides a penalty before anyone is suspected.",
+      "sv": "Domstolen bestämmer straff innan någon är misstänkt."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
+      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Brottsutredning",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "criminal-investigation",
+      "preliminary-investigation",
+      "police",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q812",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which statement describes the preliminary investigation in a criminal investigation?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver förundersökningen i en brottsutredning?"
+    },
+    "opts": [
+      {
+        "en": "The police collect evidence and speak with witnesses",
+        "sv": "Polisen samlar in bevis och pratar med vittnen"
+      },
+      {
+        "en": "The court decides a penalty before anyone is suspected",
+        "sv": "Domstolen bestämmer straff innan någon är misstänkt"
+      },
+      {
+        "en": "The Riksdag decides whether the suspect is guilty",
+        "sv": "Riksdagen avgör om den misstänkte är skyldig"
+      },
+      {
+        "en": "The lawyer writes new laws for the police",
+        "sv": "Advokaten skriver nya lagar åt polisen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
+      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Brottsutredning",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "criminal-investigation",
+      "preliminary-investigation",
+      "police",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q813",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What happens during a trial in a criminal case ...?",
+      "sv": "Vad händer under en rättegång i ett brottmål ...?"
+    },
+    "opts": [
+      {
+        "en": "The prosecutor tries to show that the defendant committed the crime",
+        "sv": "Åklagaren försöker visa att den åtalade har begått brottet"
+      },
+      {
+        "en": "The police alone decide the defendant’s penalty",
+        "sv": "Polisen bestämmer ensam vilket straff den åtalade får"
+      },
+      {
+        "en": "The government decides whether the evidence is enough",
+        "sv": "Regeringen avgör om bevisningen räcker"
+      },
+      {
+        "en": "Witnesses vote on the judgment",
+        "sv": "Vittnen röstar om domen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
+      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Rättegång",
+      "page": 19
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "trial",
+      "criminal-case",
+      "prosecutor",
+      "court",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q814",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The prosecutor tries to show that the defendant committed the crime.",
+      "sv": "Åklagaren försöker visa att den åtalade har begått brottet."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
+      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Rättegång",
+      "page": 19
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "trial",
+      "criminal-case",
+      "prosecutor",
+      "court",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q815",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The police alone decide the defendant’s penalty.",
+      "sv": "Polisen bestämmer ensam vilket straff den åtalade får."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
+      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Rättegång",
+      "page": 19
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "trial",
+      "criminal-case",
+      "prosecutor",
+      "court",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q816",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What happens during a trial in a criminal case?",
+      "sv": "Välj rätt alternativ: Vad händer under en rättegång i ett brottmål?"
+    },
+    "opts": [
+      {
+        "en": "The prosecutor tries to show that the defendant committed the crime",
+        "sv": "Åklagaren försöker visa att den åtalade har begått brottet"
+      },
+      {
+        "en": "The police alone decide the defendant’s penalty",
+        "sv": "Polisen bestämmer ensam vilket straff den åtalade får"
+      },
+      {
+        "en": "The government decides whether the evidence is enough",
+        "sv": "Regeringen avgör om bevisningen räcker"
+      },
+      {
+        "en": "Witnesses vote on the judgment",
+        "sv": "Vittnen röstar om domen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
+      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Rättegång",
+      "page": 19
+    },
+    "questionProvenance": "derived",
+    "difficulty": "medium",
+    "tags": [
+      "trial",
+      "criminal-case",
+      "prosecutor",
+      "court",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q817",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "The general courts in Sweden are ...",
+      "sv": "De allmänna domstolarna i Sverige är ..."
+    },
+    "opts": [
+      {
+        "en": "District court, court of appeal, and Supreme Court",
+        "sv": "Tingsrätt, hovrätt och Högsta domstolen"
+      },
+      {
+        "en": "Municipality, region, and government",
+        "sv": "Kommun, region och regering"
+      },
+      {
+        "en": "The Police, Tax Agency, and Social Insurance Agency",
+        "sv": "Polisen, Skatteverket och Försäkringskassan"
+      },
+      {
+        "en": "Riksdag, committee, and ministry",
+        "sv": "Riksdag, utskott och departement"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
+      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Domstolar",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "courts",
+      "district-court",
+      "court-of-appeal",
+      "supreme-court",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q818",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The general courts in Sweden are District court, court of appeal, and Supreme Court.",
+      "sv": "De allmänna domstolarna i Sverige är Tingsrätt, hovrätt och Högsta domstolen."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
+      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Domstolar",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "courts",
+      "district-court",
+      "court-of-appeal",
+      "supreme-court",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q819",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "true_false",
+    "q": {
+      "en": "The general courts in Sweden are Municipality, region, and government.",
+      "sv": "De allmänna domstolarna i Sverige är Kommun, region och regering."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
+      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Domstolar",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "courts",
+      "district-court",
+      "court-of-appeal",
+      "supreme-court",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q820",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which are the general courts in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka är de allmänna domstolarna i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "District court, court of appeal, and Supreme Court",
+        "sv": "Tingsrätt, hovrätt och Högsta domstolen"
+      },
+      {
+        "en": "Municipality, region, and government",
+        "sv": "Kommun, region och regering"
+      },
+      {
+        "en": "The Police, Tax Agency, and Social Insurance Agency",
+        "sv": "Polisen, Skatteverket och Försäkringskassan"
+      },
+      {
+        "en": "Riksdag, committee, and ministry",
+        "sv": "Riksdag, utskott och departement"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
+      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Domstolar",
+      "page": 18
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "courts",
+      "district-court",
+      "court-of-appeal",
+      "supreme-court",
       "published-variant",
       "judgement"
     ]
@@ -32656,7 +36021,7 @@
       "en": "The fundamental laws, the justice system, rule of law, and the right of public access.",
       "sv": "Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten."
     },
-    "questionCount": 45
+    "questionCount": 70
   },
   {
     "id": 6,
