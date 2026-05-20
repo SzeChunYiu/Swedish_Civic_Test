@@ -168,6 +168,14 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
+const QUESTION_GENERATED_SINGLE_CHOICE_PROMPT_SHELL_PATTERNS = [
+  /\bVilket svar stämmer bäst\?\s*Vilket påstående beskriver\b/i,
+  /\bVälj rätt alternativ:\s*Vilket påstående beskriver\b/i,
+  /\bWhich answer best matches\?\s*Which statement describes\b/i,
+  /\bChoose the correct option:\s*Which statement describes\b/i,
+  /^Vilket påstående beskriver\b/i,
+  /^Which statement describes\b/i,
+];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
   /\bIt is true that\s+(?:The|In|Approximately)\b/i,
@@ -3737,6 +3745,16 @@ function findQuestionJudgementMetaStem(question) {
   return QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionGeneratedSingleChoicePromptShell(question) {
+  if (question.type !== 'single_choice' || !question.tags?.includes('published-variant')) {
+    return null;
+  }
+
+  return QUESTION_GENERATED_SINGLE_CHOICE_PROMPT_SHELL_PATTERNS.find(
+    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  );
+}
+
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   if (question.type !== 'true_false') return null;
 
@@ -4534,6 +4552,44 @@ function trueFalseStatementOptions(source) {
   ];
 }
 
+function describesSourcePromptTopicSv(questionSv) {
+  const match = stripFinalPunctuation(questionSv).match(/^Vilket påstående beskriver (.+)$/i);
+  return match?.[1].trim() ?? null;
+}
+function describesSourcePromptTopicEn(questionEn) {
+  const match = stripFinalPunctuation(questionEn).match(/^Which statement describes (.+)$/i);
+  return match?.[1].trim() ?? null;
+}
+function directDescribesSourcePromptSv(questionSv, variant) {
+  const subject = describesSourcePromptTopicSv(questionSv);
+  if (!subject) return null;
+  if (variant === 'judgement') return `Vad stämmer om ${subject}?`;
+  if (/^rättssäkerhet\b/i.test(subject)) return `Vad innebär ${subject}?`;
+  if (/^polisens uppgift\b/i.test(subject)) return `Vad är ${subject}?`;
+  if (/^Sverige för tvåhundra år sedan\b/i.test(subject)) {
+    return 'Hur var Sverige för tvåhundra år sedan?';
+  }
+  if (/^integration\b/i.test(subject)) return `Vad innebär ${subject}?`;
+  return `Vad gäller för ${subject}?`;
+}
+function directDescribesSourcePromptEn(questionEn, variant) {
+  const subject = describesSourcePromptTopicEn(questionEn);
+  if (!subject) return null;
+  if (variant === 'judgement') {
+    if (/^Sweden two hundred years ago\b/i.test(subject)) {
+      return 'What was true about Sweden two hundred years ago?';
+    }
+    return `What is true about ${subject}?`;
+  }
+  if (/^legal certainty\b/i.test(subject)) return `What does ${subject} mean?`;
+  if (/^the role of the police\b/i.test(subject)) return `What is ${subject}?`;
+  if (/^Sweden two hundred years ago\b/i.test(subject)) {
+    return 'What was Sweden like two hundred years ago?';
+  }
+  if (/^integration\b/i.test(subject)) return `What does ${subject} mean?`;
+  return `What applies to ${subject}?`;
+}
+
 function generatedTrueFalseStatementSv(source, option, variantIsTrue) {
   if (isTrueFalseSource(source)) return trueFalseSourceStatementSv(source, variantIsTrue);
   return truthStatementSv(civicStatementSv(source, option));
@@ -4546,24 +4602,32 @@ function judgementPromptSv(source) {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
+  const directPrompt = directDescribesSourcePromptSv(source.questionSv, 'judgement');
+  if (directPrompt) return directPrompt;
   return `Välj rätt alternativ: ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
     return `Which statement best matches ${statementTopicEn(source)}?`;
   }
+  const directPrompt = directDescribesSourcePromptEn(source.questionEn, 'judgement');
+  if (directPrompt) return directPrompt;
   return `Choose the correct option: ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
+  const directPrompt = directDescribesSourcePromptSv(source.questionSv, 'section-practice');
+  if (directPrompt) return directPrompt;
   return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
     return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
+  const directPrompt = directDescribesSourcePromptEn(source.questionEn, 'section-practice');
+  if (directPrompt) return directPrompt;
   return `Which answer best matches? ${source.questionEn}`;
 }
 function civicStatementSv(source, option) {
@@ -13585,6 +13649,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
+      const generatedSingleChoicePromptShell =
+        findQuestionGeneratedSingleChoicePromptShell(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
@@ -13607,6 +13673,9 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated judgement meta-stem instead of a civic-study prompt`);
       } else {
         questionJudgementMetaStemsValidated += 1;
+      }
+      if (generatedSingleChoicePromptShell) {
+        fail(`${label} contains a generated single-choice statement-describes prompt shell`);
       }
       if (generatedTrueFalseNaturalnessIssue) {
         fail(`${label} contains a generated true/false grammar-splice stem`);

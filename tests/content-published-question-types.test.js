@@ -135,6 +135,34 @@ test('generated single-choice banks omit true-false and filler option shells', (
   assert.deepEqual(absentTrueFalseExplanationRows(actualSiteBank), []);
 });
 
+test('generated single-choice banks omit nested statement-describes source prompts', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const csvLines = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/);
+  const promptShellPattern =
+    /(?:Vilket svar stämmer bäst\?\s*Vilket påstående beskriver|Välj rätt alternativ:\s*Vilket påstående beskriver|Which answer best matches\?\s*Which statement describes|Choose the correct option:\s*Which statement describes|^Vilket påstående beskriver|^Which statement describes)/i;
+
+  function generatedPromptShellRows(questions) {
+    return Array.from(questions)
+      .filter((question) => question.type === 'single_choice')
+      .filter((question) => question.tags?.includes('published-variant'))
+      .filter((question) => promptShellPattern.test(`${question.q.sv} ${question.q.en}`))
+      .map((question) => question.id);
+  }
+
+  const csvOffenders = csvLines
+    .filter((line) => line.includes('"single_choice"'))
+    .filter((line) => line.includes('"derived"'))
+    .filter((line) => promptShellPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+
+  assert.deepEqual(generatedPromptShellRows(generatedSiteBank), []);
+  assert.deepEqual(generatedPromptShellRows(actualSiteBank), []);
+  assert.deepEqual(csvOffenders, []);
+});
+
 test('published question type schema rejects non-answerable flashcards', () => {
   const result = spawnSync(
     process.execPath,
@@ -336,6 +364,49 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q001 contains a generated judgement meta-stem instead of a civic-study prompt/,
+  );
+});
+
+test('published question schema rejects generated single-choice statement-describes prompt shells', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.type === 'single_choice' && question.tags.includes('published-variant')",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vilket svar stämmer bäst? Vilket påstående beskriver statliga myndigheter?',",
+        "        questionEn: 'Which answer best matches? Which statement describes government agencies?',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /contains a generated single-choice statement-describes prompt shell/,
   );
 });
 
