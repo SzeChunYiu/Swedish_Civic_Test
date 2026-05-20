@@ -6,9 +6,11 @@ const test = require('node:test');
 const {
   UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
   UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
+  assertNoUnsupportedStaticTeamCredentialClaims,
   assertNoUnsupportedStaticOutcomeSlogans,
   assertStaticHeadMetadataDescriptionSource,
   assertStaticHeadMetadataTitleSource,
+  findUnsupportedStaticTeamCredentialClaimsInSource,
 } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -205,6 +207,24 @@ test('static learner-facing slogans avoid pass and passport outcome promises', (
       assert.match(siteAppSource, new RegExp(escapeRegExp(homepageSlogan(locale, key))));
     }
   }
+});
+
+test('static footer copy avoids unsupported team credential claims', () => {
+  assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
+  assert.deepEqual(
+    findUnsupportedStaticTeamCredentialClaimsInSource(
+      "An app built by people who've taken the test themselves.",
+      'fixture.js',
+    ).map((issue) => issue.label),
+    ['English team test-taker claim'],
+  );
+  assert.deepEqual(
+    findUnsupportedStaticTeamCredentialClaimsInSource(
+      'Ett verktyg från personer som själva har gjort provet.',
+      'fixture.js',
+    ).map((issue) => issue.label),
+    ['Swedish self-completed test claim'],
+  );
 });
 
 test('static head metadata description is neutral and non-empty', () => {

@@ -7,6 +7,8 @@ const crypto = require('node:crypto');
 const {
   findStaticHeadMetadataDescriptionIssues,
   findStaticHeadMetadataTitleIssues,
+  findUnsupportedStaticTeamCredentialClaimsInSource,
+  formatUnsupportedStaticTeamCredentialClaims,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
 
@@ -257,6 +259,13 @@ function findStaticNoTrackingClaimIssues(indexSource, appSource) {
     .map((pattern) => `unqualified static no-tracking claim: ${pattern.source}`);
 }
 
+function findStaticTeamCredentialClaimIssues(indexSource, appSource) {
+  return [
+    ...findUnsupportedStaticTeamCredentialClaimsInSource(indexSource, 'index.html'),
+    ...findUnsupportedStaticTeamCredentialClaimsInSource(appSource, 'app.js'),
+  ];
+}
+
 function normalizeHeaderValue(value) {
   return String(value ?? '')
     .trim()
@@ -383,6 +392,16 @@ async function checkLiveSite(inputUrl, options = {}) {
     staticNoTrackingIssues.length === 0
       ? pass('static privacy no-tracking copy')
       : fail('static privacy no-tracking copy', staticNoTrackingIssues.join('; ')),
+  );
+
+  const staticTeamCredentialIssues = findStaticTeamCredentialClaimIssues(index, app);
+  checks.push(
+    staticTeamCredentialIssues.length === 0
+      ? pass('static team credential copy')
+      : fail(
+          'static team credential copy',
+          formatUnsupportedStaticTeamCredentialClaims(staticTeamCredentialIssues),
+        ),
   );
 
   checks.push(

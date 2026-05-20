@@ -4,7 +4,9 @@ const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
 const {
+  assertNoUnsupportedStaticTeamCredentialClaims,
   assertNoUnsupportedStaticOutcomeSlogans,
+  findUnsupportedStaticTeamCredentialClaimsInSource,
   findStaticHeadMetadataTitleIssues,
 } = require('./static-outcome-copy-guard');
 
@@ -267,6 +269,7 @@ const homeHeroFooterFallbackKeys = [
   'hero.cta2',
   'footer.t1',
   'footer.t2',
+  'footer.about.p',
   'footer.honest.p',
 ];
 
@@ -472,6 +475,25 @@ test('shared static copy guard rejects unsupported pass and passport outcome slo
       .map((issue) => issue.match)
       .join('\\n'),
     /Study,\s*fika,\s*pass/,
+  );
+});
+
+test('shared static copy guard rejects unsupported team credential claims', () => {
+  assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
+
+  assert.deepEqual(
+    findUnsupportedStaticTeamCredentialClaimsInSource(
+      "built by people who've taken the test themselves",
+      'fixture.js',
+    ).map(({ label, match }) => [label, match]),
+    [['English team test-taker claim', 'taken the test themselves']],
+  );
+  assert.deepEqual(
+    findUnsupportedStaticTeamCredentialClaimsInSource(
+      'byggt av personer som själva har gjort provet',
+      'fixture.js',
+    ).map(({ label, match }) => [label, match]),
+    [['Swedish self-completed test claim', 'själva har gjort provet']],
   );
 });
 
