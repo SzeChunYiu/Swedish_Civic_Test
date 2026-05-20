@@ -6,6 +6,12 @@ const ts = require('typescript');
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
 const checkMode = process.argv.includes('--check');
+const STATIC_SITE_APP_NAME_FALLBACK = 'Almost Swedish';
+
+function staticSiteAppName() {
+  const appConfig = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
+  return appConfig?.expo?.name || STATIC_SITE_APP_NAME_FALLBACK;
+}
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -117,7 +123,7 @@ function buildSiteQuestionBank() {
 
 function generateStaticSiteQuestionBankJs() {
   const bank = buildSiteQuestionBank();
-  return `/* Sveriges Medborgartest - generated static question bank.
+  return `/* ${staticSiteAppName()} - generated static question bank.
    Source: data/questions.ts and data/chapters.ts.
    Run: node scripts/export-site-question-bank.js
 */
