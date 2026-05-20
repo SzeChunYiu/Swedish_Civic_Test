@@ -64,3 +64,28 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
 
   assert.deepEqual(offenders, []);
 });
+
+test('launch popup close button keeps a token-sized dismiss target', () => {
+  const source = read('components/monetization/LaunchPopupAd.tsx');
+
+  assert.match(
+    source,
+    /<Pressable[\s\S]*accessibilityLabel=\{copy\.closeAccessibilityLabel\}[\s\S]*accessibilityRole=["']button["'][\s\S]*hitSlop=\{space\[1\]\}/,
+    'launch popup close button should keep explicit label, button role, and token hit slop',
+  );
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[[\s\S]*styles\.closeButton,[\s\S]*pressed \? styles\.closeButtonPressed : null,[\s\S]*\]\}/,
+    'launch popup close button should keep token pressed feedback wired through Pressable state',
+  );
+  assert.match(
+    source,
+    /closeButton:\s*\{[\s\S]*alignItems:\s*['"]center['"],[\s\S]*backgroundColor:\s*colors\.accent,[\s\S]*borderRadius:\s*radius\.card,[\s\S]*justifyContent:\s*['"]center['"],[\s\S]*minHeight:\s*space\[6\],[\s\S]*paddingHorizontal:\s*space\[2\],[\s\S]*paddingVertical:\s*space\[1\],[\s\S]*\}/,
+    'launch popup close button should render with a stable 48px token minimum target',
+  );
+  assert.match(
+    source,
+    /closeButtonPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.accentActive,[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\],[\s\S]*\}/,
+    'launch popup close button pressed state should use theme interaction tokens',
+  );
+});
