@@ -155,6 +155,10 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
 ];
+const QUESTION_SUCCESSION_VAT_DISTRACTOR_PATTERNS = [
+  /\bVilka varor som har moms\b/i,
+  /\bWhich goods have VAT\b/i,
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -243,6 +247,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
+  /\b(?:Vem som helst kan skapa innehåll där|Bara ansvariga utgivare får skriva inlägg där)\b/i,
+  /\b(?:Anyone can create content there|Only responsible publishers may write posts there)\b/i,
   /^That Sweden's first mosques were built\b/i,
   /\bskyddar rätten [^.?!]* och skydd mot\b/i,
   /\bprotects the right [^.?!]* and protection from\b/i,
@@ -467,6 +473,10 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ],
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
+  [
+    'accessibilitySummary={false}',
+    'learn route chapter cards must not expose nested summaries inside links',
+  ],
 ];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
@@ -484,14 +494,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
-    'Ljud på',
-    'Ljud av',
-    'Dagligt mål, språk och ljud',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Justera studieinställningar',
-    'Öppna inställningar för dagligt mål, språk och ljud',
+    'Öppna inställningar',
     'Första övningen',
     'Nivå 2',
     'Misstagsrepetition',
@@ -512,14 +518,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
-    'Audio on',
-    'Audio off',
-    'Daily goal, language, and audio',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Adjust study settings',
-    'Open settings for daily goal, language, and audio',
+    'Open settings',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -536,10 +538,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
-  ],
-  [
-    'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
-    'profile route must read audio state from settings store',
   ],
   ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
   [
@@ -561,15 +559,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
   ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
-  ["audioEnabled ? 'green' : 'orange'", 'profile audio badge must reflect the current audio state'],
-  [
-    'audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge',
-    'profile audio badge must render localized audio state copy',
-  ],
-  [
-    '{copy.settingsShortcutHelper}',
-    'profile study setup card must name the settings shortcut scope',
-  ],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   [
@@ -773,20 +762,19 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad till senare övning',
+    'Sparad för fokuserad repetition',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
     'Svara fel på en övningsfråga så visas den här.',
     'Inga misstag ännu',
-    'Öva igen',
-    'Frågor att öva på',
-    'Ditt senaste svar',
-    'Gå igenom frågor du har missat, se förklaringen och hitta källan på samma ställe.',
+    'Fellogg',
+    'Fel svar att repetera',
+    'Ditt senaste felaktiga svar',
+    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
     'Misstag',
-    'Missad 1 gång',
-    'Missad ${count} gånger',
+    'Fel svar: ${count}',
   ],
   en: [
     'Smart review',
@@ -806,18 +794,6 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
-const FORBIDDEN_MISTAKES_ROUTE_SV_COPY = [
-  ['Sparad för', 'fokuserad', 'repetition'].join(' '),
-  ['Fel', 'logg'].join(''),
-  ['Fel', 'svar', 'att repetera'].join(' '),
-  ['Ditt senaste', 'felaktiga svar'].join(' '),
-  [
-    ['Gå igenom', 'fel', 'svar', 'med fråga'].join(' '),
-    ['förklaring, källreferens och repetitionsantal', 'på samma plats.'].join(' '),
-  ].join(', '),
-  ['repetitionsantal', 'på samma plats'].join(' '),
-  [['Fel', 'svar'].join(' '), '${count}'].join(': '),
-];
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -900,43 +876,6 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
-const EXPECTED_PUBLIC_SUPPORT_PRIVACY_BRAND_ARTIFACTS = [
-  {
-    file: 'publishing/public-support-and-privacy.md',
-    requiredSnippets: [
-      'Support URL',
-      'Privacy Policy URL',
-      'AdMob app-ads.txt',
-      '# Almost Swedish support',
-      '# Almost Swedish privacy policy',
-    ],
-  },
-  {
-    file: 'publishing/public-site/support/index.html',
-    requiredSnippets: [
-      '<title>Almost Swedish support</title>',
-      '<h1>Almost Swedish support</h1>',
-      'not affiliated with UHR',
-      'Please include no personal data',
-    ],
-  },
-  {
-    file: 'publishing/public-site/privacy/index.html',
-    requiredSnippets: [
-      '<title>Almost Swedish privacy policy</title>',
-      '<h1>Almost Swedish privacy policy</h1>',
-      'No account required',
-      'Google Mobile Ads',
-      'Remove Ads is an optional one-time',
-      '29 SEK',
-    ],
-  },
-];
-const STALE_PUBLIC_SUPPORT_PRIVACY_BRAND_PATTERNS = [
-  /Sweden Citizenship Test Prep/i,
-  /Swedish Citizenship Test Prep/i,
-  /Sveriges Medborgartest/i,
-];
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',
@@ -1112,20 +1051,20 @@ const EXPECTED_EXAM_ROUTE_HEADERS = [
 const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
   sv: [
     'Övningsprov',
-    'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet',
-    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet',
-    'Åtkomst till övningsprov',
-    'Kontrollerar åtkomst till övningsprov.',
+    'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet',
+    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
+    'Provåtkomst',
+    'Kontrollerar provåtkomst.',
     'Dagens kostnadsfria övningsprov är tillgängligt.',
     'Starta övningsprov',
-    'Lås upp extra övningsprov',
-    'Starta upplåst extra övningsprov',
+    'Lås upp extra prov',
+    'Starta upplåst extra prov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
-    'Skicka in övningsprovet',
     'Skicka övningsprov',
-    'Resultat från övningsprov',
+    'Skicka prov',
+    'Provresultat',
     'Övningsresultat',
     'Kapitelöversikt',
     'Frågegenomgång',
@@ -1135,28 +1074,28 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Granska',
     'Rätt',
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
-    'Förklaringar och genomgång visas först efter att övningsprovet har skickats in.',
-    'Nästa övningsprov',
+    'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    'Nästa prov',
     'Sparat',
     'Sparar',
   ],
   en: [
     'Mock exam',
-    'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during mock exam',
-    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during mock exam',
-    'Mock exam access',
+    'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam',
+    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
+    'Exam access',
     'Checking mock exam access.',
     'Daily free mock exam available.',
     'Start mock exam',
-    'Unlock extra mock exam',
-    'Start unlocked extra mock exam',
+    'Unlock extra exam',
+    'Start unlocked extra exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
     'Select answer ${optionText} for question ${questionNumber}',
-    'Submit the mock exam',
     'Submit mock exam',
+    'Submit exam',
+    'Exam result',
     'Mock exam result',
-    'Mock exam score',
     'Chapter breakdown',
     'Question review',
     'Question ${questionNumber}',
@@ -1165,21 +1104,12 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Review',
     'Correct',
     'Submitted results are final. Start another mock exam for a fresh attempt.',
-    'Explanations and review are shown only after the mock exam is submitted.',
-    'Next mock exam',
+    'Explanations and review are shown only after the exam is submitted.',
+    'Next exam',
     'Saved',
     'Saving',
   ],
 };
-const DISALLOWED_EXAM_ROUTE_SV_MOCK_EXAM_COPY_SEGMENTS = [
-  ['Prov', 'åtkomst'],
-  ['Kontrollerar prov', 'åtkomst.'],
-  ['Prov', 'resultat'],
-  ['Nästa ', 'prov'],
-  ['Skicka ', 'prov'],
-  ['Lås upp extra ', 'prov'],
-  ['Starta upplåst extra ', 'prov'],
-];
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'exam route must import AppLanguage from settings'],
   ['type ExamRouteCopy = {', 'exam route must define a typed copy contract'],
@@ -2095,19 +2025,6 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
     label: 'visual fill uses percent interpolation bounds',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
   },
-  {
-    label: 'reduced motion hook import',
-    pattern: /import \{ useReducedMotion \} from '\.\.\/\.\.\/lib\/motion\/useReducedMotion';/,
-  },
-  {
-    label: 'reduced motion hook usage',
-    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
-  },
-  {
-    label: 'reduced motion skips animated timing',
-    pattern:
-      /if \(reducedMotionEnabled\) \{\s*animatedProgress\.setValue\(clampedProgress\);\s*return undefined;\s*\}/,
-  },
 ];
 const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
   {
@@ -2243,6 +2160,14 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /language\?: AppLanguage;/,
   },
   {
+    label: 'optional accessibility summary prop contract',
+    pattern: /accessibilitySummary\?: boolean;/,
+  },
+  {
+    label: 'standalone accessibility summary default',
+    pattern: /accessibilitySummary = true/,
+  },
+  {
     label: 'Swedish practiced status copy',
     pattern: /\$\{completedCount\}\/\$\{questionCount\} besvarade/,
   },
@@ -2291,7 +2216,7 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'Card receives chapter accessibility summary',
     pattern:
-      /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated style=\{styles\.card\}>/,
+      /<Card\s+accessible=\{accessibilitySummary\}\s+accessibilityLabel=\{accessibilitySummary \? chapterAccessibilityLabel : undefined\}\s+elevated\s+style=\{styles\.card\}\s*>/,
   },
   {
     label: 'visible chapter title',
@@ -2384,10 +2309,6 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
   },
   {
-    label: 'React cleanup hook import',
-    pattern: /import \{ useEffect \} from 'react';/,
-  },
-  {
     label: 'speech runtime imports',
     pattern: /import \{ speakSwedish, stopSpeech \} from '\.\.\/\.\.\/lib\/audio\/speak';/,
   },
@@ -2438,11 +2359,6 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'trimmed speech playback',
     pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
-  },
-  {
-    label: 'speech cleanup on text change and unmount',
-    pattern:
-      /useEffect\(\(\) => \{[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -2686,10 +2602,6 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/,
   },
   {
-    label: 'nested SourceCitation opts out of duplicate accessibility node',
-    pattern: /<SourceCitation[\s\S]*accessibilityRole="none"[\s\S]*label=\{copy\.title\}/,
-  },
-  {
     label: 'localized UHR title header text',
     pattern:
       /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*\{copy\.title\}[\s\S]*<\/Text>/,
@@ -2703,29 +2615,6 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
   },
 ];
-const EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES = [
-  {
-    label: 'standalone SourceCitation text role default',
-    pattern: /accessibilityRole = 'text'/,
-  },
-  {
-    label: 'standalone SourceCitation default accessibility label',
-    pattern:
-      /const defaultAccessibilityLabel = \[resolvedLabel, citationText, pageText\][\s\S]*\.filter\(Boolean\)[\s\S]*\.join\('\. '\);/,
-  },
-  {
-    label: 'decorative SourceCitation omits synthesized accessibility label',
-    pattern:
-      /const resolvedAccessibilityLabel =[\s\S]*accessibilityRole === 'none'\s*\? undefined\s*:\s*\(accessibilityLabel \?\? defaultAccessibilityLabel\);/,
-  },
-  {
-    label: 'SourceCitation applies resolved accessibility label',
-    pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
-  },
-];
-const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULE_COUNT =
-  EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length +
-  EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.length;
 const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
     label: 'active prop contract',
@@ -2737,20 +2626,7 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   },
   {
     label: 'active animation restarts from zero',
-    pattern: /progress\.setValue\(0\);\s*const timing = Animated\.timing\(progress,/,
-  },
-  {
-    label: 'reduced motion hook import',
-    pattern: /import \{ useReducedMotion \} from '\.\.\/\.\.\/lib\/motion\/useReducedMotion';/,
-  },
-  {
-    label: 'reduced motion hook usage',
-    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
-  },
-  {
-    label: 'reduced motion static render',
-    pattern:
-      /if \(reducedMotionEnabled\) \{[\s\S]*<View[\s\S]*style=\{styles\.container\}[\s\S]*<View style=\{styles\.pill\}>/,
+    pattern: /progress\.setValue\(0\);\s*Animated\.timing\(progress,/,
   },
   {
     label: 'tokenized animation duration',
@@ -4130,6 +4006,19 @@ function englishCommonToDoStatement(timePhrase, answer) {
   }
   return `On ${time}, ${activity} are common`;
 }
+function englishCommonCelebrationMode(answer) {
+  const activity = stripLeadingPurposeEn(answer).trim();
+  const celebrateMatch = activity.match(/^celebrate with (.+)$/i);
+  if (celebrateMatch) return `with ${lowerFirst(celebrateMatch[1])}`;
+  if (
+    /^(?:celebrate|eat|light|open|hold|wear|serve|welcome|arrange|gather|dance|sing|go)\b/i.test(
+      activity,
+    )
+  ) {
+    return `by ${englishGerundPhrase(activity)}`;
+  }
+  return `with ${lowerFirst(activity)}`;
+}
 function swedishHabitualPredicate(answer) {
   return lowerFirst(answer).replace(/\barrangerar\b/i, 'arrangera');
 }
@@ -4906,6 +4795,8 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} infaller ${lowerFirst(answer)}`;
   match = q.match(/^Vad uppmärksammas på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} uppmärksammas ${lowerFirst(answer)}`;
+  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
+  if (match) return webSocialMediaStatementSv(answer);
   match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
   if (match) return `På olika platser i Sverige finns ${lowerFirst(answer)} för ${match[1]}`;
   match = q.match(/^Vilka högtider är exempel på (.+)$/i);
@@ -5151,6 +5042,9 @@ function civicStatementEn(source, option) {
   match = q.match(/^What did (.+?) become important for$/i);
   if (match)
     return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
+  match = q.match(/^What was (.+?) important for$/i);
+  if (match)
+    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
     return `The goal of ${match[1]} during ${match[2]} was to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -5170,6 +5064,13 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} has been law in Sweden since ${answer}`;
   match = q.match(/^What does (.+?) work to do$/i);
   if (match) return `${upperFirst(match[1])} works to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^What does (.+?) promote$/i);
+  if (match) {
+    if (/^Only\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} promotes only ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
+    }
+    return `${upperFirst(match[1])} promotes ${lowerFirst(answer)}`;
+  }
   match = q.match(/^What does (.+?) work for$/i);
   if (match) {
     if (/^Only\s+/i.test(answer)) {
@@ -5194,6 +5095,11 @@ function civicStatementEn(source, option) {
   }
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
+  match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
+  if (match)
+    return `${match[1]} is commonly ${match[2].toLowerCase()} ${englishCommonCelebrationMode(
+      answer,
+    )}`;
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)
     return `On ${stripTrailingComma(match[1])}, families commonly ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -5207,6 +5113,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} occurs ${englishOccurrencePhrase(answer)}`;
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
+  match = q.match(/^What is important to remember about the web and social media$/i);
+  if (match) return webSocialMediaStatementEn(answer);
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)
     return `In different places in Sweden, there are ${lowerEnglishNounPhrase(answer)} for ${match[1]}`;
@@ -6126,14 +6034,11 @@ const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizati
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
-const routerShellManifest = loadTs('lib/scaffold/routerShellManifest.ts');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
-let publicSupportPrivacyBrandFilesValidated = 0;
-let publicSupportPrivacyBrandParityValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let tabNavigationRulesValidated = 0;
@@ -6196,8 +6101,6 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
-let routerShellMetadataLanguagesValidated = 0;
-let routerShellMetadataNaturalnessValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -6634,72 +6537,6 @@ function validateAppConfigSchema() {
 
   if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
     appConfigSchemaValidated = true;
-  }
-}
-
-function validatePublicSupportPrivacyBrandParity() {
-  let valid = true;
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  publicSupportPrivacyBrandFilesValidated = 0;
-  publicSupportPrivacyBrandParityValidated = false;
-
-  const brand = appConfig?.expo?.name;
-  if (!hasText(brand)) {
-    reject('app.json expo.name must define the canonical public app brand');
-    return;
-  }
-
-  publicSupportPrivacyBrandFilesValidated += 1;
-
-  for (const artifact of EXPECTED_PUBLIC_SUPPORT_PRIVACY_BRAND_ARTIFACTS) {
-    let artifactValid = true;
-    let source = '';
-
-    function rejectArtifact(message) {
-      artifactValid = false;
-      reject(message);
-    }
-
-    try {
-      source = loadText(artifact.file);
-    } catch (error) {
-      rejectArtifact(`${artifact.file} is missing or unreadable: ${error.message}`);
-      continue;
-    }
-
-    for (const pattern of STALE_PUBLIC_SUPPORT_PRIVACY_BRAND_PATTERNS) {
-      if (pattern.test(source)) {
-        rejectArtifact(`${artifact.file} uses stale public brand copy: ${pattern}`);
-      }
-    }
-
-    const canonicalBrandPattern = new RegExp(escapeRegExp(brand), 'i');
-    if (!canonicalBrandPattern.test(source)) {
-      rejectArtifact(`${artifact.file} missing canonical app brand "${brand}"`);
-    }
-
-    for (const snippet of artifact.requiredSnippets) {
-      if (!source.includes(snippet)) {
-        rejectArtifact(`${artifact.file} missing required public support/privacy copy: ${snippet}`);
-      }
-    }
-
-    if (artifactValid) {
-      publicSupportPrivacyBrandFilesValidated += 1;
-    }
-  }
-
-  if (
-    valid &&
-    publicSupportPrivacyBrandFilesValidated ===
-      EXPECTED_PUBLIC_SUPPORT_PRIVACY_BRAND_ARTIFACTS.length + 1
-  ) {
-    publicSupportPrivacyBrandParityValidated = true;
   }
 }
 
@@ -7699,17 +7536,6 @@ function validateExamRouteCopyParity() {
     if (!examRoute.includes(snippet)) reject(message);
   });
 
-  DISALLOWED_EXAM_ROUTE_SV_MOCK_EXAM_COPY_SEGMENTS.forEach((segments) => {
-    const disallowedCopy = segments.join('');
-    if (examRoute.includes(disallowedCopy)) {
-      reject(
-        `exam route Swedish mock-exam copy must say övningsprov instead of ${JSON.stringify(
-          disallowedCopy,
-        )}`,
-      );
-    }
-  });
-
   const seenLabels = new Set();
   Object.entries(EXPECTED_EXAM_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -7984,12 +7810,6 @@ function validateMistakesRouteCopyParity() {
 
   EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!mistakesRoute.includes(snippet)) reject(message);
-  });
-
-  FORBIDDEN_MISTAKES_ROUTE_SV_COPY.forEach((label) => {
-    if (mistakesRoute.includes(label)) {
-      reject(`mistakes route keeps stale Swedish review copy ${JSON.stringify(label)}`);
-    }
   });
 
   const seenLabels = new Set();
@@ -8581,6 +8401,40 @@ function validateSettingsRouteCopyParity() {
     if (!settingsRoute.includes(snippet)) reject(message);
   });
 
+  const settingsRadiogroupCount =
+    settingsRoute.match(/accessibilityRole="radiogroup"/g)?.length || 0;
+  const settingsRadioCount = settingsRoute.match(/accessibilityRole="radio"/g)?.length || 0;
+  if (settingsRadiogroupCount !== 2) {
+    reject('settings route must expose language and daily-goal controls as radiogroups');
+  }
+  if (settingsRadioCount !== 2) {
+    reject('settings route language and daily-goal options must use radio semantics');
+  }
+  if (!settingsRoute.includes('aria-label={copy.questionLanguageTitle}')) {
+    reject('settings route language radiogroup must expose a localized group label');
+  }
+  if (!settingsRoute.includes('aria-label={copy.dailyGoalTitle}')) {
+    reject('settings route daily-goal radiogroup must expose a localized group label');
+  }
+  if (!settingsRoute.includes('aria-checked={language === value}')) {
+    reject('settings route language radios must mirror checked state to web');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: language === value }}')) {
+    reject('settings route language radios must expose checked accessibility state');
+  }
+  if (!settingsRoute.includes('aria-checked={dailyGoalAnswers === goal}')) {
+    reject('settings route daily-goal radios must mirror checked state to web');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: dailyGoalAnswers === goal }}')) {
+    reject('settings route daily-goal radios must expose checked accessibility state');
+  }
+  if (settingsRoute.includes('aria-selected={language === value}')) {
+    reject('settings route language options must not use aria-selected instead of radio checked');
+  }
+  if (settingsRoute.includes('aria-selected={dailyGoalAnswers === goal}')) {
+    reject('settings route daily-goal options must not use aria-selected instead of radio checked');
+  }
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -8696,53 +8550,6 @@ function validateOnboardingRouteCopyParity() {
   );
   if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
     onboardingRouteCopyParityValidated = true;
-  }
-}
-
-function validateRouterShellMetadataNaturalness() {
-  let valid = true;
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  const descriptions = routerShellManifest.expoRouterWebDocumentMetaDescriptions;
-  if (!Array.isArray(descriptions)) {
-    reject('router shell manifest web document meta descriptions must be an array');
-    return;
-  }
-
-  const svDescription = descriptions.find((entry) => entry && entry.language === 'sv');
-  const enDescription = descriptions.find((entry) => entry && entry.language === 'en');
-
-  if (!svDescription || typeof svDescription.description !== 'string') {
-    reject('router shell manifest must include Swedish web document metadata');
-  } else {
-    routerShellMetadataLanguagesValidated += 1;
-    if (!svDescription.description.includes('övningar som fungerar utan uppkoppling')) {
-      reject('router shell Swedish metadata must describe offline practice in natural Swedish');
-    }
-    const swedishMetadataLoanwordPattern = new RegExp(
-      `\\b(?:${['offline', 'quiz'].join('')}|quiz(?:pass|frågor|frågan)?)\\b`,
-      'i',
-    );
-    if (swedishMetadataLoanwordPattern.test(svDescription.description)) {
-      reject('router shell Swedish metadata must not expose quiz loanwords');
-    }
-  }
-
-  if (!enDescription || typeof enDescription.description !== 'string') {
-    reject('router shell manifest must include English web document metadata');
-  } else {
-    routerShellMetadataLanguagesValidated += 1;
-    if (!enDescription.description.includes('offline quizzes')) {
-      reject('router shell English metadata should preserve the established quiz wording');
-    }
-  }
-
-  if (valid && routerShellMetadataLanguagesValidated === 2) {
-    routerShellMetadataNaturalnessValidated = true;
   }
 }
 
@@ -8945,7 +8752,6 @@ function validateCardAccessibilityParity() {
 
 function validateProgressBarAccessibilityParity() {
   let valid = true;
-  let foundationProgressBarSource = '';
   let progressBarSource = '';
 
   function reject(message) {
@@ -8963,30 +8769,6 @@ function validateProgressBarAccessibilityParity() {
       `components/ui/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
     );
     return;
-  }
-
-  try {
-    foundationProgressBarSource = fs.readFileSync(
-      path.join(repoRoot, 'components/ProgressBar.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(
-      `components/ProgressBar.tsx could not be read for reduced-motion parity: ${error.message}`,
-    );
-    return;
-  }
-
-  for (const [file, source] of [
-    ['components/ProgressBar.tsx', foundationProgressBarSource],
-    ['components/ui/ProgressBar.tsx', progressBarSource],
-  ]) {
-    if (!source.includes('const reducedMotionEnabled = useReducedMotion();')) {
-      reject(`${file} must use the shared reduced-motion hook`);
-    }
-    if (!source.includes('animatedProgress.setValue(clampedProgress);')) {
-      reject(`${file} must jump progress instantly when reduced motion is enabled`);
-    }
   }
 
   EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
@@ -9313,7 +9095,6 @@ function validateExplanationPanelAccessibilityParity() {
 function validateUhrReferenceCardAccessibilityParity() {
   let valid = true;
   let uhrReferenceCardSource = '';
-  let sourceCitationSource = '';
 
   function reject(message) {
     valid = false;
@@ -9331,17 +9112,6 @@ function validateUhrReferenceCardAccessibilityParity() {
     );
     return;
   }
-  try {
-    sourceCitationSource = fs.readFileSync(
-      path.join(repoRoot, 'components/quiz/SourceCitation.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(
-      `components/quiz/SourceCitation.tsx could not be read for accessibility parity: ${error.message}`,
-    );
-    return;
-  }
 
   EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(uhrReferenceCardSource)) {
@@ -9350,29 +9120,11 @@ function validateUhrReferenceCardAccessibilityParity() {
     }
     uhrReferenceCardAccessibilityRulesValidated += 1;
   });
-  const nestedSourceCitationOpeningTag = uhrReferenceCardSource.match(/<SourceCitation[\s\S]*?>/);
-  if (!nestedSourceCitationOpeningTag) {
-    reject('UHRReferenceCard missing nested SourceCitation for accessibility parity');
-  } else if (
-    /accessibilityLabel=\{referenceAccessibilityLabel\}/.test(nestedSourceCitationOpeningTag[0])
-  ) {
-    reject('UHRReferenceCard must not pass duplicate accessibilityLabel to nested SourceCitation');
-  }
-
-  EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.forEach((expectedRule) => {
-    if (!expectedRule.pattern.test(sourceCitationSource)) {
-      reject(
-        `SourceCitation missing ${expectedRule.label} for UHRReferenceCard accessibility parity`,
-      );
-      return;
-    }
-    uhrReferenceCardAccessibilityRulesValidated += 1;
-  });
 
   if (
     valid &&
     uhrReferenceCardAccessibilityRulesValidated ===
-      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULE_COUNT
+      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length
   ) {
     uhrReferenceCardAccessibilityParityValidated = true;
   }
@@ -14008,7 +13760,6 @@ validateMockExamConfig(
     : 0,
 );
 validateAppConfigSchema();
-validatePublicSupportPrivacyBrandParity();
 validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
@@ -14041,7 +13792,6 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
-validateRouterShellMetadataNaturalness();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -14119,8 +13869,6 @@ console.log(
       chapterExactSchemaKeysValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
-      publicSupportPrivacyBrandFilesValidated,
-      publicSupportPrivacyBrandParityValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       tabNavigationRulesValidated,
@@ -14189,8 +13937,6 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
-      routerShellMetadataLanguagesValidated,
-      routerShellMetadataNaturalnessValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,

@@ -87,8 +87,6 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
 }
 
 function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const webInteractionHandlers =
     Platform.OS === 'web'
@@ -102,17 +100,12 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
 
   return (
     <Link
-      {...webInteractionHandlers}
+      {...linkInteractionHandlers}
+      {...webClassName}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       href={href}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
-      style={[
-        styles.iconLink,
-        isFocused || isHovered ? styles.iconLinkHover : null,
-        isPressed ? styles.iconLinkPressed : null,
-      ]}
+      style={[styles.iconLink, isPressed ? styles.iconLinkPressed : null]}
     >
       {children}
     </Link>
@@ -140,6 +133,7 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
+    display: 'flex',
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],

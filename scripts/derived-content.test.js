@@ -792,11 +792,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'One reason voters vote behind a screen at the polling station is that votes are counted faster.',
     ],
     q318: [
-      'Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
+      'Från 15 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.',
     ],
     q319: [
-      'Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
+      'Från 13 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.',
     ],
     q326: [
