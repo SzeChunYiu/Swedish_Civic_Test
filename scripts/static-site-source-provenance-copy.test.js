@@ -481,13 +481,13 @@ test('shared static copy guard rejects unsupported pass and passport outcome slo
 test('shared static copy guard rejects unsupported team credential claims', () => {
   assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
 
-  assert.deepEqual(
-    findUnsupportedStaticTeamCredentialClaimsInSource(
-      "built by people who've taken the " + 'test themselves',
-      'fixture.js',
-    ).map(({ label, match }) => [label, match]),
-    [['English team test-taker claim', 'taken the ' + 'test themselves']],
+  const englishCredentialIssues = findUnsupportedStaticTeamCredentialClaimsInSource(
+    "built by people who've taken the " + 'test themselves',
+    'fixture.js',
   );
+  assert.equal(englishCredentialIssues.length, 1);
+  assert.equal(englishCredentialIssues[0].label, 'English team test-taker claim');
+  assert.equal(englishCredentialIssues[0].match, 'taken the ' + 'test themselves');
   assert.deepEqual(
     findUnsupportedStaticTeamCredentialClaimsInSource(
       'byggt av personer som själva har gjort provet',
