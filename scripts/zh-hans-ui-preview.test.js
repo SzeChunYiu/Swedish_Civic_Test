@@ -24,11 +24,15 @@ test('Simplified Chinese settings and picker preview uses native study-app wordi
     '模拟考试记录',
     '语言选择器',
     '此语言版本正在准备中。',
+    '安心学习，一次掌握一个瑞典社会知识点',
+    '不注册账号也能查看进度',
+    '第 {questionNumber} 题',
+    'UHR 参考材料',
   ]) {
     assert.match(source, new RegExp(phrase.replace(/[{}]/g, '\\$&')));
   }
 
-  for (const mechanicalPhrase of ['问题语言', '快来了', '源材料', '开始一个练习会话']) {
+  for (const mechanicalPhrase of ['问题语言', '快来了', '源材料', '开始一个练习会话', '下一个问题']) {
     assert.doesNotMatch(source, new RegExp(mechanicalPhrase));
   }
 });
@@ -40,6 +44,19 @@ test('Simplified Chinese preview avoids outcome promises and Traditional-only fo
   }
   for (const traditionalOnly of ['資訊', '網路', '軟體', '準備中']) {
     assert.doesNotMatch(source, new RegExp(traditionalOnly));
+  }
+});
+
+test('Simplified Chinese entry point preview covers headers and accessibility labels', () => {
+  const source = read(previewPath);
+  for (const phrase of [
+    'startPracticeAccessibilityLabel',
+    'browseChaptersAccessibilityLabel',
+    'dashboardAccessibilityLabel',
+    'nextQuestionAccessibilityLabel',
+    'bookmarkAccessibilityLabels',
+  ]) {
+    assert.match(source, new RegExp(phrase));
   }
 });
 
