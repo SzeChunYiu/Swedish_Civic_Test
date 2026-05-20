@@ -971,12 +971,12 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdBanner',
+    component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern: /<PracticeInterstitialAd\s+showKey=\{practiceInterstitialShowKey\}\s+\/>/,
     removeAdsComponent: 'RemoveAdsPlacementCta',
     removeAdsPattern:
-      /<RemoveAdsPlacementCta\s+placement="quiz_completed_interstitial"\s+\/>\s*<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+      /<PracticeInterstitialAd\s+showKey=\{practiceInterstitialShowKey\}\s+\/>\s*<RemoveAdsPlacementCta\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -7074,6 +7074,14 @@ function validateAdPlacementRouteParity() {
 
     if (!spec.pattern.test(source)) {
       reject(`${spec.file} must render ${spec.component} placement ${spec.placement}`);
+      routeIsValid = false;
+    }
+
+    if (
+      spec.component === 'PracticeInterstitialAd' &&
+      /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/.test(source)
+    ) {
+      reject('Practice completion interstitial must not flow through AdBanner');
       routeIsValid = false;
     }
 

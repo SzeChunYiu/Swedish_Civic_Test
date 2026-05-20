@@ -61,7 +61,19 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(
+    practiceSource,
+    /const practiceInterstitialShowKey = getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\);/,
+  );
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
+  );
+  assert.doesNotMatch(
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
+  );
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
   assert.match(
@@ -163,7 +175,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('ad placement route parity rejects drifted practice quiz completion placement', () => {
+test('ad placement route parity rejects practice interstitials routed through BannerAd', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -177,8 +189,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
+        '<PracticeInterstitialAd showKey={practiceInterstitialShowKey} />',
         '<AdBanner placement="quiz_completed_interstitial" />',
-        '<AdBanner placement="home_banner" />',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -192,7 +204,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /app\/\(tabs\)\/practice\.tsx must render AdBanner placement quiz_completed_interstitial/,
+    /app\/\(tabs\)\/practice\.tsx must render PracticeInterstitialAd placement quiz_completed_interstitial|Practice completion interstitial must not flow through AdBanner/,
   );
 });
 

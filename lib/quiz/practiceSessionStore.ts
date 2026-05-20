@@ -17,6 +17,13 @@ function nextPracticeShuffleSessionId(currentSessionId: string): string {
   return `${PRACTICE_SHUFFLE_SESSION_PREFIX}-${currentIndex + 1}`;
 }
 
+export function getPracticeInterstitialShowKey(
+  activeQuestionId: string | null | undefined,
+  shuffleSessionId: string,
+): string {
+  return activeQuestionId ? `${activeQuestionId}:${shuffleSessionId}` : '';
+}
+
 export const usePracticeSessionStore = create<PracticeSessionState>((set) => ({
   activeQuestionId: null,
   selectedOptionId: null,

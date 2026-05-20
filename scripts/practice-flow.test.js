@@ -57,7 +57,9 @@ test('practice flow scopes completed progress to the visible question bank', () 
 });
 
 test('practice session separates retry from next-question advancement', () => {
-  const { usePracticeSessionStore } = loadTs('lib/quiz/practiceSessionStore.ts');
+  const { getPracticeInterstitialShowKey, usePracticeSessionStore } = loadTs(
+    'lib/quiz/practiceSessionStore.ts',
+  );
 
   usePracticeSessionStore.setState({
     activeQuestionId: null,
@@ -66,6 +68,10 @@ test('practice session separates retry from next-question advancement', () => {
   });
 
   usePracticeSessionStore.getState().selectOption('q1', 'q1-a');
+  const firstFeedbackShowKey = getPracticeInterstitialShowKey(
+    usePracticeSessionStore.getState().activeQuestionId,
+    usePracticeSessionStore.getState().shuffleSessionId,
+  );
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, 'q1-a');
@@ -77,11 +83,25 @@ test('practice session separates retry from next-question advancement', () => {
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
 
+  usePracticeSessionStore.getState().selectOption('q1', 'q1-b');
+  const retryFeedbackShowKey = getPracticeInterstitialShowKey(
+    usePracticeSessionStore.getState().activeQuestionId,
+    usePracticeSessionStore.getState().shuffleSessionId,
+  );
+
+  assert.equal(retryFeedbackShowKey, firstFeedbackShowKey);
+  assert.equal(retryFeedbackShowKey, 'q1:practice-session-0');
+  assert.doesNotMatch(retryFeedbackShowKey, /q1-a|q1-b/);
+
   usePracticeSessionStore.getState().advanceQuestion();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
+  assert.equal(
+    getPracticeInterstitialShowKey('q2', usePracticeSessionStore.getState().shuffleSessionId),
+    'q2:practice-session-1',
+  );
 });
 
 test('chapter quiz session id resolves to the first question in that chapter', () => {
