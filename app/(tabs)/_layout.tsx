@@ -21,7 +21,7 @@ const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = {
     home: 'Hem',
     learn: 'Lär dig',
     practice: 'Öva',
-    exam: 'Prov',
+    exam: 'Övningsprov',
     mistakes: 'Misstag',
     profile: 'Profil',
   },
