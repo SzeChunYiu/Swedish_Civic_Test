@@ -22,7 +22,8 @@ export const REMOVE_ADS_ENTITLEMENTS: PremiumEntitlements = {
   fullMistakeReview: false,
 };
 
-// v1.1 Pro Lifetime (59 SEK) — superset of PREMIUM with the new Pro-only flags.
+// v1.1 Pro Lifetime (59 SEK) — Pro is the superset of the v1.0
+// Remove Ads purchase plus the additive study features below.
 // Distinct constant so v1.0 schema validators stay green.
 export const PRO_LIFETIME_ENTITLEMENTS: ProTierEntitlements = {
   adsDisabled: true,
