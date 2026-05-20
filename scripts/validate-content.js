@@ -319,6 +319,10 @@ const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
   /\bWhich answer describes\b/i,
   /\bVilket är ett sätt att\b/i,
   /\bWhich is a way to\b/i,
+  /\bVilken lista innehåller\b/i,
+  /\bWhich list contains\b/i,
+  /^Listan med\b[^.?!]*\binnehåller\b/i,
+  /^The list with\b[^.?!]*\bcontains\b/i,
   /\bVilket exempel beskriver kommunernas ansvar\??/i,
   /\bWhich example describes municipal responsibilities\??/i,
   /\bVilket påstående stämmer om julfirande i Sverige\??/i,
@@ -5863,6 +5867,8 @@ function civicStatementSv(source, option) {
   if (match) return `Sveriges två största öar är ${answer}`;
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
+  match = q.match(/^Vilka är Sveriges fyra grundlagar$/i);
+  if (match) return `Sveriges fyra grundlagar är ${lowerFirst(answer)}`;
   match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
   if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
   match = q.match(/^Vilka är (.+)$/i);
@@ -6170,6 +6176,8 @@ function civicStatementEn(source, option) {
   match = q.match(/^Which islands are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
   match = q.match(/^Which are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
+  match = q.match(/^What are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
