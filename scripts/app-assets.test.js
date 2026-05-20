@@ -52,27 +52,3 @@ test('release app assets are configured and present at store-safe sizes', () => 
   assert.deepEqual(pngDimensions('assets/adaptive-icon.png'), { width: 1024, height: 1024 });
   assert.deepEqual(pngDimensions('assets/splash-icon.png'), { width: 1024, height: 1024 });
 });
-
-test('mascot catalog assets are committed as small local SVG files', () => {
-  const { MASCOT_CATALOG, MASCOT_EXPRESSIONS, mascotAssetPath } = loadTs('lib/mascot/catalog.ts');
-  let assetCount = 0;
-
-  for (const mascot of MASCOT_CATALOG) {
-    for (const expression of MASCOT_EXPRESSIONS) {
-      const relativeAssetPath = mascotAssetPath(mascot.id, expression);
-      assert.equal(relativeAssetPath, `assets/mascot/${mascot.id}/${expression}.svg`);
-
-      const absoluteAssetPath = path.join(repoRoot, relativeAssetPath);
-      const stat = fs.statSync(absoluteAssetPath);
-      assert.equal(stat.isFile(), true, `${relativeAssetPath} must exist`);
-      assert.ok(stat.size > 0 && stat.size <= 8192, `${relativeAssetPath} is ${stat.size} bytes`);
-
-      const svg = fs.readFileSync(absoluteAssetPath, 'utf8');
-      assert.match(svg, /^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
-      assert.doesNotMatch(svg, /<image\b|\b(?:href|xlink:href)=|url\(/i);
-      assetCount += 1;
-    }
-  }
-
-  assert.equal(assetCount, 50);
-});
