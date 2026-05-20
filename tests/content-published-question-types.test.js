@@ -18,6 +18,8 @@ const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
+const councilOfEuropeWorkForEnglishPattern =
+  /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const taxVatTwoConceptPattern =
@@ -107,6 +109,10 @@ test('published question types stay answerable by quiz runtime', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -325,6 +331,89 @@ require('./scripts/validate-content.js');
   assert.match(output, /q097 uses literal common-to-do English wording/);
   assert.match(output, /q104 uses literal common-to-do English wording/);
   assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 6, output);
+});
+
+test('Council of Europe source and exports use natural promote English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q088GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q088', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q088', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q088', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q088', 'judgement'),
+  ];
+  const q088Ids = ['q088', ...q088GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q088Ids.includes(question.id))
+    .filter((question) => councilOfEuropeWorkForEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q088Ids.includes(question.id))
+    .filter((question) => councilOfEuropeWorkForEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split('\n')
+    .filter((line) => /^"q0?88"|"q50[89]"|"q51[01]"/.test(line))
+    .filter((line) => councilOfEuropeWorkForEnglishPattern.test(line));
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.equal(
+    generatedSiteBank.find((question) => question.id === 'q088')?.q.en,
+    'What does the Council of Europe promote?',
+  );
+  assert.equal(
+    generatedSiteBank.find((question) => question.id === q088GeneratedIds[2])?.q.en,
+    'The Council of Europe promotes only agricultural policy.',
+  );
+});
+
+test('Council of Europe English naturalness guard rejects literal work-for prompts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'What does the Council of Europe promote?',
+        'What does the Council of Europe work for?',
+      )
+      .replace(
+        'The Council of Europe promotes human rights, democracy, and rule-of-law principles.',
+        'The Council of Europe works for human rights, democracy, and rule-of-law principles.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q088 uses literal Council of Europe work-for English wording/);
+  assert.ok(
+    (output.match(/uses literal Council of Europe work-for English wording/g) || []).length >= 5,
+    output,
+  );
 });
 
 test('Saltsjöbaden Agreement source and exports use natural English', () => {
