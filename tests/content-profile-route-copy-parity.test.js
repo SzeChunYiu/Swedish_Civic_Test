@@ -49,6 +49,8 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Ändra mål, språk och ljud/);
   assert.match(source, /Edit goal, language, and audio/);
+  assert.match(source, /Missade frågor/);
+  assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
 });
 
 test('profile route keeps Pro comparison separate from the Remove Ads purchase flow', () => {

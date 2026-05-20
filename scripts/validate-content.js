@@ -689,7 +689,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Ändra mål, språk och ljud',
     'Första övningen',
     'Nivå 2',
-    'Misstagsrepetition',
+    'Missade frågor',
     'Tre dagars svit',
   ],
   en: [
@@ -776,6 +776,11 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile Pro tier comparison must distinguish existing Remove Ads owners',
   ],
 ];
+const FORBIDDEN_PROFILE_PRO_SV_MISTAKE_REVIEW_COPY = [
+  ['Misstags', 'repetition'],
+  ['Repetera ', 'misstag'],
+  ['Fel', 'granskning'],
+].map((parts) => parts.join(''));
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
@@ -9764,6 +9769,7 @@ function validateProfileRouteHeaderParity() {
 function validateProfileRouteCopyParity() {
   let valid = true;
   let profileRoute = '';
+  let tierComparison = '';
 
   function reject(message) {
     valid = false;
@@ -9772,10 +9778,22 @@ function validateProfileRouteCopyParity() {
 
   try {
     profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+    tierComparison = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/tierComparison.ts'),
+      'utf8',
+    );
   } catch (error) {
     reject(`profile route copy source could not be read: ${error.message}`);
     return;
   }
+
+  FORBIDDEN_PROFILE_PRO_SV_MISTAKE_REVIEW_COPY.forEach((phrase) => {
+    if (profileRoute.includes(phrase) || tierComparison.includes(phrase)) {
+      reject(
+        `profile/pro Swedish missed-question review copy must not use ${JSON.stringify(phrase)}`,
+      );
+    }
+  });
 
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
