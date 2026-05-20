@@ -93,6 +93,16 @@ function readRouterShellManifest() {
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
     appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
+    webDescriptionLanguages: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterWebDocumentMetaDescriptions',
+      'language',
+    ),
+    webDescriptions: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterWebDocumentMetaDescriptions',
+      'description',
+    ),
     nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
     nativeIntentRuntimeSampleInputs: valuesForFieldInConstArray(
       manifest,
@@ -105,6 +115,10 @@ function readRouterShellManifest() {
       'expectedPath',
     ),
   };
+}
+
+function readWebDocumentMetadata() {
+  return require('../lib/scaffold/webDocumentMetadata.js');
 }
 
 function loadNativeIntentRuntime() {
@@ -136,7 +150,7 @@ test('router shell fallback is registered in the root Expo stack', () => {
   assertMatches(rootLayout, /<Stack\b/, 'root layout should render the Expo Router stack');
   assertMatches(
     rootLayout,
-    /<Stack\s+screenOptions=\{\{[\s\S]*headerShown:\s*true,[\s\S]*headerTitle:\s*'',[\s\S]*headerBackVisible:\s*false,[\s\S]*headerShadowVisible:\s*false,[\s\S]*headerStyle:\s*\{\s*backgroundColor:\s*colors\.canvas\s*\},[\s\S]*headerRight:\s*\(\)\s*=>\s*<LanguagePicker\s*\/>,[\s\S]*\}\}/,
+    /<Stack\s+screenOptions=\{\{[\s\S]*headerShown:\s*true,[\s\S]*headerTitle:\s*'',[\s\S]*headerBackVisible:\s*false,[\s\S]*headerShadowVisible:\s*false,[\s\S]*headerStyle:\s*\{\s*backgroundColor:\s*themeColors\.canvas\s*\},[\s\S]*headerRight:\s*\(\)\s*=>\s*<LanguagePicker\s*\/>,[\s\S]*\}\}/,
     'root stack should expose the empty-title language picker header contract',
   );
   assertMatches(
@@ -146,7 +160,7 @@ test('router shell fallback is registered in the root Expo stack', () => {
   );
   assertMatches(
     rootLayout,
-    /SystemUI\.setBackgroundColorAsync\(colors\.canvas\)/,
+    /useSystemCanvasColor\(themeColors\.canvas\)/,
     'native shell background should follow the theme canvas color',
   );
   assertMatches(
@@ -156,8 +170,8 @@ test('router shell fallback is registered in the root Expo stack', () => {
   );
   assertMatches(
     rootLayout,
-    /<StatusBar[\s\S]*style=["']auto["']/,
-    'status bar should stay on the Expo shell auto style',
+    /<StatusBar\s+style=\{resolvedColorScheme === ['"]dark['"] \? ['"]light['"] : ['"]dark['"]\}\s*\/>/,
+    'status bar should follow the resolved theme color scheme',
   );
 });
 
@@ -194,7 +208,14 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
 
-  assertContains(htmlShell, '<html data-app-shell="expo-router" lang="sv">');
+  assertContains(
+    htmlShell,
+    "import { webDocumentMetadata } from '../lib/scaffold/webDocumentMetadata';",
+  );
+  assertContains(
+    htmlShell,
+    '<html data-app-shell="expo-router" lang={webDocumentMetadata.language}>',
+  );
   assertContains(htmlShell, '<meta charSet="utf-8" />');
   assertMatches(
     htmlShell,
@@ -214,8 +235,38 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
   );
   assertContains(
     htmlShell,
-    'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
+    '<meta content={webDocumentMetadata.description} name="description" />',
   );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.openGraphDescription} property="og:description" />',
+  );
+});
+
+test('web document metadata descriptions stay aligned with the router shell manifest', () => {
+  const manifest = readRouterShellManifest();
+  const { webDocumentDescriptionForLanguage, webDocumentMetadata, webDocumentMetaDescriptions } =
+    readWebDocumentMetadata();
+  const descriptionsByLanguage = Object.fromEntries(
+    manifest.webDescriptionLanguages.map((language, index) => [
+      language,
+      manifest.webDescriptions[index],
+    ]),
+  );
+
+  assert.deepEqual(manifest.webDescriptionLanguages, ['sv', 'en']);
+  assert.deepEqual(
+    webDocumentMetaDescriptions.map((entry) => entry.language),
+    manifest.webDescriptionLanguages,
+  );
+  assert.equal(
+    webDocumentMetadata.description,
+    descriptionsByLanguage[webDocumentMetadata.language],
+  );
+  assert.equal(descriptionsByLanguage.sv, webDocumentDescriptionForLanguage('sv'));
+  assert.equal(descriptionsByLanguage.en, webDocumentDescriptionForLanguage('en'));
+  assert.equal(typeof descriptionsByLanguage.en, 'string');
+  assert.notEqual(descriptionsByLanguage.en, '');
 });
 
 test('router shell manifest stays aligned with special Expo Router files', () => {
@@ -239,11 +290,18 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'web-document',
     'native-intent',
   ]);
-  assert.deepEqual(manifest.rootStackScreenNames, ['index', '(tabs)', 'search', '+not-found']);
+  assert.deepEqual(manifest.rootStackScreenNames, [
+    'index',
+    '(tabs)',
+    'search',
+    'dashboard',
+    '+not-found',
+  ]);
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
     'app/search.tsx',
+    'app/dashboard.tsx',
     'app/+not-found.tsx',
   ]);
   assert.deepEqual(manifest.recoveryHrefs, ['/home']);
@@ -265,7 +323,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.webLanguages, ['sv']);
   assert.deepEqual(manifest.webAppShellMarkers, ['expo-router']);
   assert.deepEqual(manifest.themeColorTokens, ['colors.canvas']);
-  assert.deepEqual(manifest.statusBarStyles, ['auto']);
+  assert.deepEqual(manifest.statusBarStyles, ['resolved-theme']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
   assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
   assert.equal(
@@ -277,6 +335,11 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     manifest.nativeIntentStaticRoutes.includes('/search'),
     true,
     'native intent static route allowlist should include the registered search route',
+  );
+  assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/dashboard'),
+    true,
+    'native intent static route allowlist should include the registered dashboard route',
   );
   assert.deepEqual(manifest.nativeIntentRuntimeSampleInputs.slice(0, 5), [
     '   ',
@@ -324,8 +387,8 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     ),
     'root stack should register the fallback route under the language picker header contract',
   );
-  assertContains(rootLayout, `SystemUI.setBackgroundColorAsync(${manifest.themeColorTokens[0]})`);
-  assertContains(rootLayout, `<StatusBar style="${manifest.statusBarStyles[0]}" />`);
+  assertContains(rootLayout, 'useSystemCanvasColor(themeColors.canvas);');
+  assertContains(rootLayout, "resolvedColorScheme === 'dark' ? 'light' : 'dark'");
   for (const href of manifest.recoveryHrefs) {
     assertMatches(
       notFoundRoute,
@@ -340,7 +403,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
   assertContains(
     htmlShell,
-    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${manifest.webLanguages[0]}">`,
+    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
   );
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
   assertContains(nativeIntent, `const APP_LINK_BASE = '${manifest.appSchemes[0]}://app';`);
@@ -399,8 +462,8 @@ test('router shell tooling guard is wired into package scripts', () => {
 
   assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
   assertMatches(
-    pkg.scripts['test:all'],
+    pkg.scripts.test,
     /npm run test:router-shell/,
-    'aggregate test:all should include the router shell scaffold guard',
+    'aggregate test script should include the router shell scaffold guard',
   );
 });

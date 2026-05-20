@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "scheme": "swedish-civic-test",
+    "scheme": "almost-swedish",
     "plugins": [
       "expo-router",
       [

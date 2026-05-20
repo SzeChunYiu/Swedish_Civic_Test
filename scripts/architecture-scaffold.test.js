@@ -24,6 +24,8 @@ const architectureTargetFiles = [
   'app/_layout.tsx',
   'app/index.tsx',
   'app/onboarding.tsx',
+  'app/search.tsx',
+  'app/dashboard.tsx',
   'app/(tabs)/_layout.tsx',
   ...architectureTabRouteFiles,
   'app/chapter/[chapterId].tsx',
@@ -107,6 +109,7 @@ const routerShellRuntimeFiles = [
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
+  'app/dashboard.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -212,6 +215,7 @@ const monetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
+  'components/monetization/RemoveAdsPlacementCta.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
@@ -561,6 +565,7 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
     '(tabs)',
     '+not-found',
+    'dashboard',
     'index',
     'search',
   ]);
@@ -577,6 +582,7 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
     /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
   );
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']search["']\s*\/>/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']dashboard["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/);
   assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
   assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);

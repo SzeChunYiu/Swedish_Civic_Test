@@ -110,6 +110,11 @@ export const expoRouterRootStackScreens = [
     purpose: 'Search route registered in the root stack',
   },
   {
+    name: 'dashboard',
+    file: 'app/dashboard.tsx',
+    purpose: 'Dashboard route registered in the root stack',
+  },
+  {
     name: '+not-found',
     file: 'app/+not-found.tsx',
     purpose: 'Unknown-route recovery screen registered in the root stack',
@@ -175,8 +180,8 @@ export const expoRouterRootLayoutGlobalPlacements = [
     name: 'native-canvas-color',
     file: 'app/_layout.tsx',
     importFrom: 'expo-system-ui',
-    contractSnippet: 'SystemUI.setBackgroundColorAsync(colors.canvas)',
-    purpose: 'Native root shell background follows the tokenized canvas color',
+    contractSnippet: 'SystemUI.setBackgroundColorAsync(themeColors.canvas)',
+    purpose: 'Native root shell background follows the resolved theme canvas color',
   },
   {
     name: 'launch-popup-ad',
@@ -197,6 +202,7 @@ export const expoRouterRootLayoutGlobalPlacements = [
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
   '/about-the-test',
+  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -272,7 +278,8 @@ export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-inten
 export const expoRouterWebDocumentMetaDescriptions = [
   {
     language: 'sv',
-    description: 'Öva svensk samhällskunskap med offlinequiz, lokala framsteg och källreferenser.',
+    description:
+      'Öva svensk samhällskunskap med övningar utan uppkoppling, lokalt sparade framsteg och tydliga källhänvisningar.',
   },
   {
     language: 'en',
@@ -352,7 +359,7 @@ export const expoRouterShellContract = {
   webLanguage: 'sv',
   webAppShellMarker: 'expo-router',
   themeColorToken: 'colors.canvas',
-  statusBarStyle: 'auto',
+  statusBarStyle: 'resolved-theme',
   nativeFallbackHref: '/home',
   appScheme: 'almost-swedish',
 } as const;
