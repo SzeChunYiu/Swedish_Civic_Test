@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -107,6 +107,7 @@ export function PremiumBanner({
   const [currentEntitlements, setCurrentEntitlements] = useState(entitlements);
   const [activeAction, setActiveAction] = useState<PurchaseAction | null>(null);
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
+  const purchaseActionInFlightRef = useRef(false);
   const adsDisabled = currentEntitlements.adsDisabled;
   const updateEntitlements = useCallback(
     (nextEntitlements: PremiumEntitlements) => {
@@ -123,6 +124,9 @@ export function PremiumBanner({
   const statusMessage = getStatusMessage(adsDisabled ? 'purchased' : status, copy);
 
   async function runPurchaseAction(action: PurchaseAction) {
+    if (purchaseActionInFlightRef.current) return;
+
+    purchaseActionInFlightRef.current = true;
     setActiveAction(action);
 
     try {
@@ -136,6 +140,7 @@ export function PremiumBanner({
     } catch {
       setStatus('error');
     } finally {
+      purchaseActionInFlightRef.current = false;
       setActiveAction(null);
     }
   }

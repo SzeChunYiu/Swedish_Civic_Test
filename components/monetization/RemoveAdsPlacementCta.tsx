@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
@@ -85,6 +85,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
     useRemoveAdsEntitlements();
   const [activeAction, setActiveAction] = useState<ActivePurchaseAction | null>(null);
   const [status, setStatus] = useState<RemoveAdsPurchaseStatus | 'error' | null>(null);
+  const purchaseActionInFlightRef = useRef(false);
 
   if (!entitlementsReady || entitlements.adsDisabled) return null;
 
@@ -92,6 +93,9 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
     action: ActivePurchaseAction,
     purchaseAction: typeof buyRemoveAds,
   ) {
+    if (purchaseActionInFlightRef.current) return;
+
+    purchaseActionInFlightRef.current = true;
     setActiveAction(action);
     setStatus(null);
 
@@ -102,6 +106,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
     } catch {
       setStatus('error');
     } finally {
+      purchaseActionInFlightRef.current = false;
       setActiveAction(null);
     }
   }
