@@ -1295,13 +1295,13 @@ test('exam route exposes page and review section headings as headers', () => {
   assert.match(source, /\{copy\.nextExamTitle\}/);
   assert.match(source, /\{copy\.chapterBreakdownTitle\}/);
   assert.match(source, /\{copy\.questionReviewTitle\}/);
-  assert.match(source, /\{copy\.rewardPreviewTitle\}/);
   assert.match(source, /\{copy\.progressTitle\}/);
+  assert.doesNotMatch(source, /rewardPreview|Sponsored preview|Sponsrad förhandsvisning/);
   assert.match(source, /mockExamTitle: 'Övningsprov'/);
   assert.match(source, /mockExamTitle: 'Mock exam'/);
   assert.match(source, /chapterBreakdownTitle: 'Kapitelöversikt'/);
   assert.match(source, /chapterBreakdownTitle: 'Chapter breakdown'/);
-  assert.equal(headerMatches?.length, 9);
+  assert.equal(headerMatches?.length, 8);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

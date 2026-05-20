@@ -40,7 +40,7 @@ async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryCo
 async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
   await expect(
     page.locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`),
-  ).toHaveCount(0);
+  ).toBeVisible();
   await expect(page.getByRole('heading', { name: contract.title })).toBeVisible();
   await expect(page.getByText(contract.medianLabel, { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: contract.firstCellPattern }).first()).toBeVisible();
@@ -53,6 +53,13 @@ async function expectNoPassVerdictCopy(page: Page) {
 async function openExamWithLanguage(page: Page, language: AppLanguage) {
   await seedSettingsLanguage(page, language);
   await markAboutTheTestSeen(page);
+  await page.addInitScript(
+    ({ language: seededLanguage }: { language: AppLanguage }) => {
+      window.localStorage.setItem('settings\\language', seededLanguage);
+      window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
+    },
+    { language },
+  );
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 }
@@ -71,20 +78,11 @@ test('mock exam requires all answers before showing Swedish score and source-bac
 
   await expect(page.getByRole('heading', { name: 'Övningsprov' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-baserade frågor`))).toBeVisible();
-  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toHaveCount(0);
-  await expect(page.getByText(/^Tid kvar/)).toHaveCount(0);
-
-  const start = page.getByLabel('Starta övningsprov');
-  await expect(start).toBeEnabled();
-  await page.waitForTimeout(2000);
-  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toHaveCount(0);
-  await start.click();
-
   await expect(page.getByText(`0/${totalQuestions} besvarade`)).toBeVisible();
   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
 
-  const submit = page.getByLabel('Skicka in övningsprovet');
+  const submit = page.getByLabel('Skicka övningsprov');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
@@ -137,21 +135,12 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();
-  await expect(page.getByText(`0/${totalQuestions} answered`)).toHaveCount(0);
-  await expect(page.getByText(/^Time left/)).toHaveCount(0);
-
-  const start = page.getByLabel('Start mock exam');
-  await expect(start).toBeEnabled();
-  await page.waitForTimeout(2000);
-  await expect(page.getByText(`0/${totalQuestions} answered`)).toHaveCount(0);
-  await start.click();
-
   await expect(page.getByText(`0/${totalQuestions} answered`)).toBeVisible();
   await expect(page.getByText(/^Time left/)).toBeVisible();
   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
   await expect(page.getByText('Övningsprov')).toHaveCount(0);
 
-  const submit = page.getByLabel('Submit the mock exam');
+  const submit = page.getByLabel('Submit mock exam');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
@@ -173,8 +162,8 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expectNeutralResultSummary(page, {
     correctCountPattern: new RegExp(`\\d+/${totalQuestions} correct`),
     progressPattern: /\d+ percent correct/,
-    summaryAriaPrefix: 'Mock exam score.',
-    visibleLabel: 'Mock exam score',
+    summaryAriaPrefix: 'Practice result.',
+    visibleLabel: 'Practice result',
   });
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
   await expectTimeHeatmap(page, {

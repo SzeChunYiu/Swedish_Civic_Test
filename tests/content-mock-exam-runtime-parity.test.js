@@ -45,10 +45,14 @@ function loadTs(relativePath, exportName) {
 }
 
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-runtime-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -76,22 +80,14 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
     rewardedAdSource,
     /if \(!rewardConfirmed\) \{[\s\S]*status: 'closed_without_reward'/,
   );
-  assert.match(examRouteSource, /Platform,/);
-  assert.match(
+  assert.doesNotMatch(examRouteSource, /Platform,/);
+  assert.doesNotMatch(
     examRouteSource,
-    /const usesWebRewardPreview = Platform\.OS === 'web' && shouldAttemptRewardedAd;/,
+    /showRewardedExtraExamAd|rewardPreview|RewardedAd|Sponsored preview|Sponsrad förhandsvisning|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
   );
-  assert.match(
-    examRouteSource,
-    /confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,/,
-  );
-  assert.match(examRouteSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
-  assert.match(
-    examRouteSource,
-    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
-  );
-  assert.match(examRouteSource, /\{copy\.rewardPreviewTitle\}/);
-  assert.match(examRouteSource, /\{copy\.rewardPreviewBody\}/);
+  assert.doesNotMatch(examRouteSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(examRouteSource, /consumeRewardedExamCredit/);
+  assert.match(examRouteSource, /accessDecision\.reason === 'rewarded_exam_credit'/);
   assert.equal(exam.length, config.questionCount);
   assert.equal(new Set(exam.map((question) => question.id)).size, exam.length);
   assert.equal(
@@ -108,7 +104,7 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   );
 });
 
-test('web rewarded unlocks require explicit completion before credit grant path', async () => {
+test('web rewarded extra exam helper requires completion while exam route stays ad-free', async () => {
   const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
   const rewardedAdSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/rewardedAd.ts'),
@@ -127,16 +123,14 @@ test('web rewarded unlocks require explicit completion before credit grant path'
     /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};[\s\S]*\}/,
   );
   assert.match(rewardedAdSource, /webConsentDecision = WEB_AD_FALLBACK_CONSENT_DECISION/);
-  assert.match(
+  assert.doesNotMatch(
     examSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*if \(rewardedAdResult\.status !== 'earned_reward'\) \{[\s\S]*return;[\s\S]*\}[\s\S]*await grantRewardedExamCredit\(\);/,
+    /showRewardedExtraExamAd|RewardedAd|rewardPreview|Sponsored preview|Sponsrad förhandsvisning|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
   );
-  assert.match(
-    examSource,
-    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
-  );
-  assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
-  assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);
+  assert.doesNotMatch(examSource, /WEB_AD_FALLBACK_CONSENT_DECISION|grantRewardedExamCredit/);
+  assert.doesNotMatch(examSource, /Complete sponsor preview|Slutför förhandsvisning/);
+  assert.match(examSource, /Start unlocked extra exam/);
+  assert.match(examSource, /Starta upplåst extra prov/);
 });
 
 test('native mock exam copy parity rejects provexamen wording in library and tier labels', () => {
