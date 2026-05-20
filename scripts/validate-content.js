@@ -291,6 +291,8 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
 const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
   /\bVilket svar beskriver\b/i,
   /\bWhich answer describes\b/i,
+  /\bVilket påstående stämmer om julfirande i Sverige\??/i,
+  /\bWhich statement is correct about Christmas celebrations in Sweden\??/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
