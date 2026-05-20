@@ -599,6 +599,9 @@ test('first-run about modal manages web focus and real actions', () => {
   assert.match(source, /accessible=\{false\}/);
   assert.match(source, /accessibilityElementsHidden/);
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(source, /openAccessibilityLabel: 'Läs guiden om medborgarskapsprovet'/);
+  assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
+  assert.doesNotMatch(source, /om-provet-guiden|om-[^']*-guiden/);
   assert.doesNotMatch(source, /<Pressable[\s\S]*accessibilityRole="button"[\s\S]*styles\.backdrop/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
