@@ -74,12 +74,18 @@ function englishTranslationMap(appSource) {
 }
 
 function normalizeInlineHtml(value) {
-  return value.replace(/\s+/g, ' ').trim();
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function staticFallbackI18nValues(indexHtml, keyPrefix) {
   const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
 
   let match;
   while ((match = elementPattern.exec(indexHtml))) {
@@ -93,6 +99,51 @@ function staticFaqSection(indexHtml) {
   const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
   assert.ok(faqMatch, 'static FAQ fallback section should be present');
   return faqMatch[0];
+}
+
+function staticHomeRoute(indexHtml) {
+  const homeMatch = indexHtml.match(
+    /<main data-screen-label="01 Home" data-page="\/"[\s\S]*?<\/main>/,
+  );
+  assert.ok(homeMatch, 'static Home route should be present');
+  return homeMatch[0];
+}
+
+function isGuardedHomeBodyKey(key) {
+  if (/^chap\.\d+\.m1$/.test(key)) return false;
+  return (
+    key.startsWith('demo.') ||
+    key.startsWith('qcard.') ||
+    key.startsWith('chap.') ||
+    key === 'ad.label' ||
+    key === 'ad.placeholder'
+  );
+}
+
+function assertStaticHomeBodyFallbackParitySource(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const homeFallback = staticFallbackI18nValues(staticHomeRoute(indexHtml), '');
+  const guardedEntries = Array.from(homeFallback.entries()).filter(([key]) =>
+    isGuardedHomeBodyKey(key),
+  );
+
+  assert.ok(guardedEntries.length > 0, 'static Home body should expose guarded fallback copy');
+
+  for (const [key, fallbackValue] of guardedEntries) {
+    const expectedValue = englishTranslations.get(key);
+    assert.equal(
+      fallbackValue,
+      normalizeInlineHtml(expectedValue ?? ''),
+      `${key} Home no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
+
+  assert.ok(
+    !guardedEntries.some(([key]) => /^chap\.\d+\.m1$/.test(key)),
+    'runtime chapter count placeholders should not be treated as required literal fallback copy',
+  );
+
+  return guardedEntries.length;
 }
 
 const unsupportedPracticalTestClaimPatterns = [
@@ -220,6 +271,21 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
       `${key} no-JS fallback should match the English site/app.js dictionary`,
     );
   }
+});
+
+test('static Home body no-JS fallback mirrors the English dictionary', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+
+  assert.equal(assertStaticHomeBodyFallbackParitySource(indexHtml, appSource), 33);
+  assert.throws(
+    () =>
+      assertStaticHomeBodyFallbackParitySource(
+        indexHtml.replace('No textbooks.', 'No stale textbooks.'),
+        appSource,
+      ),
+    /demo\.h1 Home no-JS fallback should match the English site\/app\.js dictionary/,
+  );
 });
 
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
