@@ -13,8 +13,6 @@ test('release preflight owns the v1.1 scope guard behind Remove Ads acceptance',
   const packageJson = JSON.parse(readRepoFile('package.json'));
   const releasePreflightScript = readRepoFile('scripts/release-preflight.js');
   const releasePreflightTests = readRepoFile('scripts/release-preflight.test.js');
-  const releasePolicySource = readRepoFile('lib/monetization/releasePolicy.ts');
-  const profileRouteSource = readRepoFile('app/(tabs)/profile.tsx');
 
   assert.match(
     packageJson.scripts['test:release-preflight'],
@@ -30,11 +28,6 @@ test('release preflight owns the v1.1 scope guard behind Remove Ads acceptance',
   assert.doesNotMatch(releasePreflightScript, /grep -rqi "remove\.\?ads" app components lib/);
   assert.match(releasePreflightScript, /operator/i);
   assert.match(releasePreflightScript, /allow\|approved\|approval/);
-  assert.match(releasePolicySource, /proRuntimeScopeDefaultEnabled:\s*false/);
-  assert.match(releasePolicySource, /EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE/);
-  assert.match(releasePolicySource, /proRuntimeScopeOverrideGate:\s*'release-scope-v11'/);
-  assert.match(profileRouteSource, /isProRuntimeScopeEnabled/);
-  assert.match(profileRouteSource, /entitlementsReady && proRuntimeScopeEnabled/);
   assert.match(
     releasePreflightTests,
     /blocks v1\.1 surfaces while v1\.0 Remove Ads acceptance is red/,

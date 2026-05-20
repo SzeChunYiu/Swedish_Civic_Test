@@ -1,14 +1,9 @@
-import type {
-  AnswerAttemptProgress,
-  MockExamProgress,
-  QuestionProgress,
-} from '../storage/progressStore';
+import type { MockExamProgress, QuestionProgress } from '../storage/progressStore';
 import type { QuizAnswer, QuizSession, UserProgress } from '../../types/progress';
 import { calculateLevel } from './xp';
 
 type DashboardProgressSnapshotInput = {
   answerDates: string[];
-  answerAttempts?: AnswerAttemptProgress[];
   dailyGoalAnswers: number;
   mockExamSessions: MockExamProgress[];
   questionProgress: Record<string, QuestionProgress>;
@@ -55,37 +50,20 @@ function answerAttemptsForMockExam(session: MockExamProgress): QuizAnswer[] {
   }));
 }
 
-function answerAttemptToQuizAnswer(attempt: AnswerAttemptProgress): QuizAnswer {
-  return {
-    answeredAt: attempt.answeredAt,
-    isCorrect: attempt.isCorrect,
-    questionId: attempt.questionId,
-    selectedOptionIds: [],
-    timeSpentSeconds: 0,
-  };
-}
-
 /**
  * Build the dashboard selector shape from the local progress store without
- * adding a full persisted session log. Older question rows fall back to
- * aggregate progress when they do not yet retain per-answer timestamps.
+ * adding a new persisted session log. Repeated historical attempts are placed
+ * on the latest known answer date because the current store does not retain
+ * per-attempt timestamps.
  */
 export function buildDashboardProgressSnapshot({
   answerDates,
-  answerAttempts = [],
   dailyGoalAnswers,
   mockExamSessions,
   questionProgress,
   totalXp,
 }: DashboardProgressSnapshotInput): UserProgress {
-  const persistedPracticeAnswers = answerAttempts.map(answerAttemptToQuizAnswer);
-  const persistedQuestionIds = new Set(persistedPracticeAnswers.map((answer) => answer.questionId));
-  const aggregateFallbackAnswers = Object.values(questionProgress)
-    .filter((progress) => !persistedQuestionIds.has(progress.questionId))
-    .flatMap(answerAttemptsForProgress);
-  const practiceAnswers = [...persistedPracticeAnswers, ...aggregateFallbackAnswers].sort((a, b) =>
-    a.answeredAt.localeCompare(b.answeredAt),
-  );
+  const practiceAnswers = Object.values(questionProgress).flatMap(answerAttemptsForProgress);
   const practiceQuestionIds = [...new Set(practiceAnswers.map((answer) => answer.questionId))];
   const practiceSession: QuizSession | null =
     practiceAnswers.length > 0

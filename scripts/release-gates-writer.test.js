@@ -161,8 +161,8 @@ test('release evidence stub command creates gate-specific non-secret evidence fi
   assert.match(result.stdout, /store-records/i);
   assert.equal(stub.gate, 'store-records');
   assert.equal(stub.status, 'blocked');
-  assert.equal(stub.bundleIdentifier, 'com.billyyiu.swedishcivictest');
-  assert.equal(stub.packageName, 'com.billyyiu.swedishcivictest');
+  assert.equal(stub.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(stub.packageName, 'com.billyyiu.almostswedish');
   assert.match(stub.supportUrl, /szechunyiu.github.io/);
   assert.match(stub.privacyPolicyUrl, /szechunyiu.github.io/);
 

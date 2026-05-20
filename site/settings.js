@@ -1,4 +1,4 @@
-/* Sveriges Medborgartest — Settings modal
+/* Almost Swedish — Settings modal
    - Theme (light/dark/auto)
    - Color palette (5 Swedish-named presets)
    - Buddy picker (10 buddies)
@@ -38,6 +38,28 @@
     try { const v = localStorage.getItem(key); return v == null ? fallback : v; } catch { return fallback; }
   }
   function lsSet(key, v) { try { localStorage.setItem(key, v); } catch {} }
+  function lsHas(key) { try { return localStorage.getItem(key) != null; } catch { return false; } }
+  function systemPrefersReducedMotion() {
+    try {
+      return (
+        typeof matchMedia === "function" &&
+        matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    } catch {
+      return false;
+    }
+  }
+  function effectiveMotionReduction() {
+    const saved = ls("smt_motion", null);
+    if (saved === "reduce") return true;
+    if (saved === "") return false;
+    return systemPrefersReducedMotion();
+  }
+  function emitMotionChange(on) {
+    try {
+      window.dispatchEvent(new CustomEvent("smt:motionchange", { detail: { reduced: !!on } }));
+    } catch {}
+  }
 
   // -------- APPLY HELPERS --------
 
@@ -59,9 +81,10 @@
     document.documentElement.style.fontSize = (16 * (parseInt(s, 10) / 100)) + "px";
     lsSet("smt_textsize", s);
   }
-  function applyMotion(on) {
+  function applyMotion(on, opts = {}) {
     document.documentElement.setAttribute("data-motion", on ? "reduce" : "");
-    lsSet("smt_motion", on ? "reduce" : "");
+    if (opts.persist !== false) lsSet("smt_motion", on ? "reduce" : "");
+    emitMotionChange(on);
   }
   function applyAurora(on) {
     document.documentElement.setAttribute("data-aurora", on ? "on" : "off");
@@ -79,19 +102,87 @@
 
   // -------- MODAL OPEN/CLOSE --------
 
-  function open() {
+  const settingsFocusableSelector = [
+    "a[href]",
+    "button:not([disabled])",
+    "input:not([disabled])",
+    "select:not([disabled])",
+    "textarea:not([disabled])",
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(",");
+  let settingsModalInvoker = null;
+
+  function focusElement(el) {
+    if (!el || typeof el.focus !== "function") return;
+    try { el.focus({ preventScroll: true }); }
+    catch { el.focus(); }
+  }
+
+  function getSettingsFocusableControls(modal) {
+    return Array.from(modal.querySelectorAll(settingsFocusableSelector)).filter((el) => {
+      if (el.hidden || el.getAttribute("aria-hidden") === "true") return false;
+      return typeof el.focus === "function";
+    });
+  }
+
+  function restoreSettingsInvoker() {
+    const invoker = settingsModalInvoker;
+    settingsModalInvoker = null;
+    if (invoker && document.contains(invoker)) focusElement(invoker);
+  }
+
+  function focusConsentPrompt() {
+    const consentAction = document.querySelector("#consent button");
+    if (consentAction) focusElement(consentAction);
+  }
+
+  function trapSettingsModalTab(e, modal) {
+    const focusable = getSettingsFocusableControls(modal);
+    if (focusable.length === 0) {
+      e.preventDefault();
+      focusElement(modal);
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+
+    if (!modal.contains(active) || active === modal) {
+      e.preventDefault();
+      focusElement(e.shiftKey ? last : first);
+      return;
+    }
+
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
+      focusElement(last);
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      focusElement(first);
+    }
+  }
+
+  function open(invoker) {
     const m = document.getElementById("settings-modal");
     if (!m) return;
+    settingsModalInvoker = invoker || document.activeElement || null;
+    m.setAttribute("tabindex", "-1");
     m.hidden = false;
     document.body.style.overflow = "hidden";
     syncControls();
     renderBuddyPicker();
+    window.requestAnimationFrame(() => {
+      if (!m.hidden) focusElement(m);
+    });
   }
-  function close() {
+  function close(opts = {}) {
     const m = document.getElementById("settings-modal");
     if (!m) return;
     m.hidden = true;
     document.body.style.overflow = "";
+    if (opts.restoreFocus !== false) restoreSettingsInvoker();
+    else settingsModalInvoker = null;
   }
 
   // -------- SYNC CONTROL STATE --------
@@ -115,7 +206,7 @@
     setPalette(ls("smt_palette", "flag"));
     setSegment("language",  ls("smt_lang", "en"));
     setSegment("textsize",  ls("smt_textsize", "100"));
-    setCheckbox("motion",   ls("smt_motion", "") === "reduce");
+    setCheckbox("motion",   effectiveMotionReduction());
     setCheckbox("aurora",   ls("smt_aurora", "on") !== "off");
     setCheckbox("flagcross", ls("smt_flagcross", "1") === "1");
     setCheckbox("buddyshow", ls("smt_buddy_hidden", "") !== "1");
@@ -141,7 +232,8 @@
   // -------- WIRE EVENTS --------
 
   document.addEventListener("click", (e) => {
-    if (e.target.closest("#settings-open")) { open(); return; }
+    const settingsOpen = e.target.closest("#settings-open");
+    if (settingsOpen) { open(settingsOpen); return; }
     if (e.target.closest('#settings-modal [data-close="settings"]')) { close(); return; }
 
     const seg = e.target.closest('[data-set] button[data-val]:not(.set-palette)');
@@ -180,9 +272,10 @@
         localStorage.removeItem("smt_consent");
         sessionStorage.removeItem("smt_anchor_closed");
       } catch {}
-      close();
+      close({ restoreFocus: false });
       const c = document.getElementById("consent");
       if (c) c.hidden = false;
+      focusConsentPrompt();
       if (window.smtRefreshAds) window.smtRefreshAds();
       return;
     }
@@ -200,9 +293,13 @@
   });
 
   document.addEventListener("keydown", (e) => {
+    const m = document.getElementById("settings-modal");
+    if (!m || m.hidden) return;
     if (e.key === "Escape") {
-      const m = document.getElementById("settings-modal");
-      if (m && !m.hidden) close();
+      e.preventDefault();
+      close();
+    } else if (e.key === "Tab") {
+      trapSettingsModalTab(e, m);
     }
   });
 
@@ -212,13 +309,16 @@
     applyTheme(ls("smt_theme", "auto"));
     applyPalette(ls("smt_palette", "flag"));
     applyTextSize(ls("smt_textsize", "100"));
-    applyMotion(ls("smt_motion", "") === "reduce");
+    applyMotion(effectiveMotionReduction(), { persist: lsHas("smt_motion") });
     applyAurora(ls("smt_aurora", "on") !== "off");
     applyFlagcross(ls("smt_flagcross", "1") === "1");
 
     // listen for system theme change when on auto
     matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => {
       if (ls("smt_theme", "auto") === "auto") applyTheme("auto");
+    });
+    matchMedia("(prefers-reduced-motion: reduce)").addEventListener?.("change", () => {
+      if (!lsHas("smt_motion")) applyMotion(systemPrefersReducedMotion(), { persist: false });
     });
   });
 

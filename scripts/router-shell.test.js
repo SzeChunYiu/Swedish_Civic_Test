@@ -2,6 +2,12 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
+const ts = require('typescript');
+const {
+  webDocumentMetaDescriptions,
+  webDocumentMetadata,
+} = require('../lib/scaffold/webDocumentMetadata');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -11,6 +17,13 @@ function read(relativePath) {
 
 function readJson(relativePath) {
   return JSON.parse(read(relativePath));
+}
+
+function readThemeCanvasColor() {
+  const themeSource = read('lib/theme/colors.ts');
+  const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
+  assert.notEqual(match, null, 'colors.canvas should stay parseable for web manifest checks');
+  return match[1];
 }
 
 function assertContains(source, literal, message) {
@@ -75,7 +88,21 @@ function readRouterShellManifest() {
       'expoRouterRootStackScreens',
       'file',
     ),
+    tabScreenNames: valuesForFieldInConstArray(manifest, 'expoRouterTabScreens', 'name'),
+    tabScreenFiles: valuesForFieldInConstArray(manifest, 'expoRouterTabScreens', 'file'),
+    dynamicRouteNames: valuesForFieldInConstArray(manifest, 'expoRouterDynamicRoutes', 'name'),
+    dynamicRouteFiles: valuesForFieldInConstArray(manifest, 'expoRouterDynamicRoutes', 'file'),
+    dynamicRouteHrefSamples: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterDynamicRoutes',
+      'hrefSample',
+    ),
     recoveryHrefs: valuesInConstArray(manifest, 'expoRouterShellRecoveryHrefs'),
+    standaloneRouteHrefs: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterStandaloneRoutes',
+      'href',
+    ),
     standaloneHeaderHiddenRoutes: valuesInConstArray(
       manifest,
       'expoRouterStandaloneHeaderHiddenRoutes',
@@ -87,11 +114,76 @@ function readRouterShellManifest() {
     notFoundFileProtocolFallbacks: valuesForFieldInSource(manifest, 'notFoundFileProtocolFallback'),
     webLanguages: valuesForFieldInSource(manifest, 'webLanguage'),
     webAppShellMarkers: valuesForFieldInSource(manifest, 'webAppShellMarker'),
+    webMetaDescriptionLanguages: webDocumentMetaDescriptions.map((entry) => entry.language),
+    webMetaDescriptions: webDocumentMetaDescriptions.map((entry) => entry.description),
+    webDocumentMetadata,
     themeColorTokens: valuesForFieldInSource(manifest, 'themeColorToken'),
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
     appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
+    nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
+    nativeIntentDynamicRouteRoutes: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'route',
+    ),
+    nativeIntentDynamicRouteFiles: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'routeFile',
+    ),
+    nativeIntentDynamicRoutePatternNames: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'patternName',
+    ),
+    nativeIntentDynamicRouteSamplePaths: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentDynamicRoutes',
+      'samplePath',
+    ),
+    nativeIntentRuntimeSampleInputs: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentRuntimeSamples',
+      'input',
+    ),
+    nativeIntentRuntimeSampleExpectedPaths: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterNativeIntentRuntimeSamples',
+      'expectedPath',
+    ),
   };
+}
+
+function loadNativeIntentRuntime() {
+  const source = read('app/+native-intent.ts');
+  const module = { exports: {} };
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+
+  vm.runInNewContext(
+    transpiled,
+    {
+      module,
+      exports: module.exports,
+      URL,
+    },
+    { filename: 'app/+native-intent.ts' },
+  );
+
+  return module.exports;
+}
+
+function metaDescriptionForLanguage(manifest, language) {
+  const index = manifest.webMetaDescriptionLanguages.indexOf(language);
+
+  assert.notEqual(index, -1, `web manifest should define a ${language} meta description`);
+
+  return manifest.webMetaDescriptions[index];
 }
 
 test('router shell fallback is registered in the root Expo stack', () => {
@@ -157,8 +249,18 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
+  const manifest = readRouterShellManifest();
+  const pwaManifest = readJson('public/manifest.webmanifest');
+  const appConfig = readJson('app.json').expo;
+  const canvasColor = readThemeCanvasColor();
+  const webLanguage = manifest.webLanguages[0];
+  const localizedDescription = metaDescriptionForLanguage(manifest, webLanguage);
+  const englishDescription = metaDescriptionForLanguage(manifest, 'en');
 
-  assertContains(htmlShell, '<html data-app-shell="expo-router" lang="sv">');
+  assertContains(
+    htmlShell,
+    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
+  );
   assertContains(htmlShell, '<meta charSet="utf-8" />');
   assertMatches(
     htmlShell,
@@ -170,16 +272,91 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /name=["']theme-color["'][\s\S]*content=\{colors\.canvas\}|content=\{colors\.canvas\}[\s\S]*name=["']theme-color["']/,
     'web shell theme color should follow theme canvas',
   );
+  assertContains(htmlShell, '<link href="manifest.webmanifest" rel="manifest" />');
   assertContains(htmlShell, '<ScrollViewStyleReset />');
   assertMatches(
     htmlShell,
     /<body[\s\S]*backgroundColor:\s*colors\.canvas/,
     'web body background should use the theme canvas color',
   );
+  assert.deepEqual([...manifest.webMetaDescriptionLanguages].sort(), ['en', 'sv']);
+  assert.notEqual(
+    localizedDescription,
+    englishDescription,
+    'localized web descriptions should not collapse to one English-only string',
+  );
+  assert.doesNotMatch(
+    localizedDescription,
+    /\b(?:offline)?quiz(?:zes)?\b/i,
+    'Swedish web metadata should avoid English quiz loanwords',
+  );
+  assert.equal(manifest.webDocumentMetadata.language, webLanguage);
+  assert.equal(manifest.webDocumentMetadata.title, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.applicationName, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.appleMobileWebAppTitle, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.description, localizedDescription);
+  assert.equal(manifest.webDocumentMetadata.openGraphSiteName, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.openGraphTitle, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.openGraphDescription, localizedDescription);
   assertContains(
     htmlShell,
-    'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
+    "import { webDocumentMetadata } from '../lib/scaffold/webDocumentMetadata';",
   );
+  assertContains(htmlShell, '<title>{webDocumentMetadata.title}</title>');
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.applicationName} name="application-name" />',
+  );
+  assertMatches(
+    htmlShell,
+    /<meta[\s\S]*content=\{webDocumentMetadata\.appleMobileWebAppTitle\}[\s\S]*name="apple-mobile-web-app-title"[\s\S]*\/>/,
+    'web shell should source the Apple web app title from shared metadata',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.description} name="description" />',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.openGraphSiteName} property="og:site_name" />',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.openGraphTitle} property="og:title" />',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.openGraphDescription} property="og:description" />',
+  );
+  if (webLanguage === 'sv') {
+    assert.equal(
+      manifest.webDocumentMetadata.description === englishDescription,
+      false,
+      'the Swedish web shell should not pair lang="sv" with the English meta description',
+    );
+  }
+  assert.equal(pwaManifest.name, appConfig.name);
+  assert.equal(pwaManifest.short_name, appConfig.name);
+  assert.equal(pwaManifest.lang, webLanguage);
+  assert.equal(pwaManifest.start_url, '.');
+  assert.equal(pwaManifest.scope, '.');
+  assert.equal(pwaManifest.display, 'standalone');
+  assert.equal(pwaManifest.theme_color, canvasColor);
+  assert.equal(pwaManifest.background_color, canvasColor);
+  assert.equal(pwaManifest.description, localizedDescription);
+  assert.deepEqual(
+    pwaManifest.icons.map((icon) => [icon.src, icon.sizes, icon.purpose]),
+    [
+      ['icons/pwa-icon-192.png', '192x192', 'any'],
+      ['icons/pwa-icon-512.png', '512x512', 'any'],
+      ['icons/pwa-maskable-512.png', '512x512', 'maskable'],
+    ],
+  );
+  for (const icon of pwaManifest.icons) {
+    assert.equal(path.isAbsolute(icon.src), false, `${icon.src} should be host-agnostic`);
+    assert.equal(icon.src.includes('..'), false, `${icon.src} should stay inside public/`);
+    assert.equal(fs.existsSync(path.join(repoRoot, 'public', icon.src)), true);
+  }
 });
 
 test('router shell manifest stays aligned with special Expo Router files', () => {
@@ -203,13 +380,29 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'web-document',
     'native-intent',
   ]);
-  assert.deepEqual(manifest.rootStackScreenNames, ['index', '(tabs)', 'search', '+not-found']);
+  assert.deepEqual(manifest.rootStackScreenNames, [
+    'index',
+    '(tabs)',
+    'search',
+    'dashboard',
+    '+not-found',
+  ]);
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
     'app/search.tsx',
+    'app/dashboard.tsx',
     'app/+not-found.tsx',
   ]);
+  assert.deepEqual(manifest.tabScreenNames, [
+    'home',
+    'learn',
+    'practice',
+    'exam',
+    'mistakes',
+    'profile',
+  ]);
+  assert.deepEqual(manifest.dynamicRouteNames, ['chapter/[chapterId]', 'quiz/[sessionId]']);
   assert.deepEqual(manifest.recoveryHrefs, ['/home']);
   assert.deepEqual(manifest.standaloneHeaderHiddenRoutes, [
     'disclaimer',
@@ -231,7 +424,25 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.themeColorTokens, ['colors.canvas']);
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
-  assert.deepEqual(manifest.appSchemes, ['swedish-civic-test']);
+  assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
+  assert.deepEqual(
+    [...manifest.nativeIntentStaticRoutes].sort(),
+    [
+      '/',
+      ...manifest.tabScreenNames.map((name) => `/${name}`),
+      ...manifest.rootStackScreenNames
+        .filter((name) => !['index', '(tabs)', '+not-found'].includes(name))
+        .map((name) => `/${name}`),
+      ...manifest.standaloneRouteHrefs,
+    ].sort(),
+    'native intent static route allowlist should mirror manifest route declarations',
+  );
+  assert.deepEqual(
+    manifest.nativeIntentDynamicRouteRoutes,
+    manifest.dynamicRouteNames.map((name) => `/${name}`),
+  );
+  assert.deepEqual(manifest.nativeIntentDynamicRouteFiles, manifest.dynamicRouteFiles);
+  assert.deepEqual(manifest.nativeIntentDynamicRouteSamplePaths, manifest.dynamicRouteHrefSamples);
 
   for (const file of manifest.files) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
@@ -257,6 +468,20 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
       `${routeName} should stay covered by the hidden standalone header contract`,
     );
   }
+  for (const route of manifest.nativeIntentStaticRoutes) {
+    assertContains(
+      nativeIntent,
+      `'${route}'`,
+      `native intent runtime should include static route ${route}`,
+    );
+  }
+  for (const patternName of manifest.nativeIntentDynamicRoutePatternNames) {
+    assertMatches(
+      nativeIntent,
+      new RegExp(`const\\s+${escapeRegExp(patternName)}\\s*=`),
+      `native intent runtime should declare dynamic pattern ${patternName}`,
+    );
+  }
   assertMatches(
     rootLayout,
     new RegExp(
@@ -280,7 +505,16 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
   assertContains(
     htmlShell,
-    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${manifest.webLanguages[0]}">`,
+    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
+  );
+  assertContains(
+    htmlShell,
+    "import { webDocumentMetadata } from '../lib/scaffold/webDocumentMetadata';",
+  );
+  assertContains(htmlShell, '<title>{webDocumentMetadata.title}</title>');
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.applicationName} name="application-name" />',
   );
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
   assertContains(nativeIntent, `const APP_LINK_BASE = '${manifest.appSchemes[0]}://app';`);
@@ -291,50 +525,52 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
 });
 
+test('native intent resolves every manifest runtime sample before the Home fallback', () => {
+  const manifest = readRouterShellManifest();
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(typeof redirectSystemPath, 'function');
+  assert.equal(
+    manifest.nativeIntentRuntimeSampleInputs.length,
+    manifest.nativeIntentRuntimeSampleExpectedPaths.length,
+    'native intent runtime sample inputs and expectations should stay paired',
+  );
+
+  for (const [index, input] of manifest.nativeIntentRuntimeSampleInputs.entries()) {
+    assert.equal(
+      redirectSystemPath({ initial: true, path: input }),
+      manifest.nativeIntentRuntimeSampleExpectedPaths[index],
+      `native intent sample ${input} should resolve to its manifest expectation`,
+    );
+  }
+});
+
+test('top-bar language picker keeps a token-sized target and feedback', () => {
+  const languagePicker = read('components/ui/LanguagePicker.tsx');
+  const topBarActions = read('components/ui/TopBarActions.tsx');
+
+  assertContains(topBarActions, '<LanguagePicker />');
+  assertMatches(
+    languagePicker,
+    /style=\{\(\{ pressed \}\) => \[styles\.trigger, pressed \? styles\.triggerPressed : null\]\}/,
+    'language picker trigger should keep tokenized pressed feedback',
+  );
+  assertMatches(
+    languagePicker,
+    /trigger:\s*\{[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*\}/,
+    'language picker trigger should preserve the shared 48px top-bar target',
+  );
+  assertContains(languagePicker, 'backgroundColor: colors.focusSoft');
+  assertContains(languagePicker, 'transform: [{ scale: motion.pressedScale }]');
+});
+
 test('router shell tooling guard is wired into package scripts', () => {
   const pkg = readJson('package.json');
 
   assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
   assertMatches(
-    pkg.scripts.test,
+    pkg.scripts['test:all'],
     /npm run test:router-shell/,
     'aggregate npm test should include the router shell scaffold guard',
-  );
-});
-
-test('top bar route links keep token-sized web anchors with feedback states', () => {
-  const topBarActions = read('components/ui/TopBarActions.tsx');
-
-  for (const href of ['/search', '/mistakes', '/settings']) {
-    assertContains(
-      topBarActions,
-      `href="${href}"`,
-      `${href} should remain a real route link in the top bar`,
-    );
-  }
-  assert.equal(
-    /<Link[\s\S]{0,360}asChild/.test(topBarActions),
-    false,
-    'top-bar route links should not use asChild on web because it can shrink exported anchors',
-  );
-  assertMatches(
-    topBarActions,
-    /<Link[\s\S]*accessibilityRole="link"[\s\S]*onPressIn=\{\(\) => setIsPressed\(true\)\}[\s\S]*onPressOut=\{\(\) => setIsPressed\(false\)\}[\s\S]*style=\{\[[\s\S]*styles\.iconLink,[\s\S]*isFocused \|\| isHovered \? styles\.iconLinkHover : null,[\s\S]*isPressed \? styles\.iconLinkPressed : null,[\s\S]*\]\}/,
-    'route links should expose link semantics and pressed/focused/hover feedback',
-  );
-  assertMatches(
-    topBarActions,
-    /iconLink:\s*\{[\s\S]*display:\s*'flex',[\s\S]*height:\s*space\[6\],[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*width:\s*space\[6\],[\s\S]*\}/,
-    'web anchors should keep a token-sized 48px layout box, not only the 24px icon glyph',
-  );
-  assertMatches(
-    topBarActions,
-    /iconLinkHover:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.hoverScale \}\],[\s\S]*\}/,
-    'hover feedback should stay token-driven',
-  );
-  assertMatches(
-    topBarActions,
-    /iconLinkPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\],[\s\S]*\}/,
-    'pressed feedback should stay token-driven',
   );
 });

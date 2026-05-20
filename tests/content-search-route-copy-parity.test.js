@@ -1,55 +1,126 @@
 const assert = require('node:assert/strict');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
 
-function read(relativePath) {
-  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+function parseValidationSummary() {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
 }
 
-test('search route exposes localized starter chips and result copy', () => {
-  const source = read('app/search.tsx');
+function runValidationWithSearchRouteMutation(searchValue, replacementValue) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const searchValue = ${JSON.stringify(searchValue)};
+const replacementValue = ${JSON.stringify(replacementValue)};
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/search.tsx')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace(searchValue, replacementValue);
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
 
-  assert.match(source, /type SearchCopy = \{/);
-  assert.match(source, /const starterQueryChips: Record<AppLanguage, StarterQuery\[]> = \{/);
-  assert.match(source, /const searchCopy: Record<AppLanguage, SearchCopy> = \{/);
-  assert.match(source, /Sök frågor/);
-  assert.match(source, /Search questions/);
-  assert.match(source, /Snabba sökningar/);
-  assert.match(source, /Quick searches/);
-  assert.match(source, /Riksdagen/);
-  assert.match(source, /Right of public access/);
-  assert.match(source, /Midsommar/);
-  assert.match(source, /Midsummer/);
-  assert.match(source, /Folkomröstning/);
-  assert.match(source, /Referendum/);
-  assert.match(source, /const copy = searchCopy\[language\];/);
-  assert.match(source, /const chips = starterQueryChips\[language\];/);
-  assert.match(source, /\{hasQuery \? copy\.noResults\(trimmedQuery\) : copy\.emptyHelper\}/);
-  assert.match(source, /\{copy\.resultCount\(results\.length\)\}/);
+test('search route copy parity is part of content validation', () => {
+  const summary = parseValidationSummary();
+  const source = fs.readFileSync(searchRoutePath, 'utf8');
+  const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  assert.equal(summary.searchRouteCopyParityValidated, true);
+  assert.ok(summary.searchRouteCopyParityCasesValidated >= 60);
   assert.match(
-    source,
-    /copy\.sourceLabel\(question\.uhrReference\.chapter, question\.uhrReference\.section\)/,
+    packageJson.scripts['test:content'],
+    /tests\/content-search-route-copy-parity\.test\.js/,
+  );
+  assert.match(source, /type SearchRouteCopy = \{/);
+  assert.match(source, /const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = \{/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(source, /const copy = searchRouteCopy\[language\];/);
+  assert.match(source, /Rensa sökning/);
+  assert.match(source, /Clear search/);
+  assert.match(source, /accessibilityLabel=\{copy\.searchInputAccessibilityLabel\}/);
+  assert.match(source, /placeholder=\{copy\.searchPlaceholder\}/);
+  assert.match(source, /copy\.filteredSummary\(filteredTerms\.length, termsWithChapters\.length\)/);
+  assert.match(source, /copy\.allTermsSummary\(termsWithChapters\.length\)/);
+  assert.match(source, /accessibilityLabel=\{copy\.openChapterAccessibilityLabel\(chapterName\)\}/);
+  assert.match(source, /href=\{`\/chapter\/\$\{term\.chapterId\}`\}/);
+  assert.match(source, /glossaryTermMatchesQuery\(term, chapter, normalizedQuery\)/);
+});
+
+test('search route copy parity rejects bypassing the settings language', () => {
+  const result = runValidationWithSearchRouteMutation(
+    'const copy = searchRouteCopy[language];',
+    'const copy = searchRouteCopy.en;',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /search route must select copy from settings language/,
   );
 });
 
-test('search route chips are tappable 48px controls with token feedback', () => {
-  const source = read('app/search.tsx');
+test('search route copy parity rejects missing Swedish clear copy', () => {
+  const result = runValidationWithSearchRouteMutation("'Rensa sökning'", "'Clear search'");
 
-  assert.match(source, /<TextInput/);
-  assert.match(source, /onChangeText=\{setQuery\}/);
-  assert.match(source, /placeholder=\{copy\.placeholder\}/);
-  assert.match(source, /chips\.map\(\(chip\) => \(/);
-  assert.match(source, /<Pressable[\s\S]*onPress=\{\(\) => setQuery\(chip\.query\)\}/);
-  assert.match(source, /accessibilityRole="button"/);
-  assert.match(source, /styles\.queryChip/);
-  assert.match(source, /pressed \? styles\.queryChipPressed : null/);
-  assert.match(source, /minHeight: space\[6\]/);
-  assert.match(source, /backgroundColor: colors\.focusSoft/);
-  assert.match(source, /borderColor: colors\.focus/);
-  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
-  assert.match(source, /href=\{`\/quiz\/\$\{question\.id\}`\}/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /search route is missing sv copy/);
+});
+
+test('search route copy parity rejects dropped input accessibility copy', () => {
+  const result = runValidationWithSearchRouteMutation(
+    'accessibilityLabel={copy.searchInputAccessibilityLabel}',
+    'accessibilityLabel={copy.searchLabel}',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /search input must expose localized accessibility copy/,
+  );
+});
+
+test('search route copy parity rejects unlocalized chapter link copy', () => {
+  const result = runValidationWithSearchRouteMutation(
+    'accessibilityLabel={copy.openChapterAccessibilityLabel(chapterName)}',
+    'accessibilityLabel={chapterName}',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /chapter links must expose localized accessibility copy/,
+  );
+});
+
+test('search route copy parity rejects bypassing the glossary result contract', () => {
+  const result = runValidationWithSearchRouteMutation(
+    'glossaryTermMatchesQuery(term, chapter, normalizedQuery)',
+    'normalizeSearchText(term.termSv).includes(normalizedQuery)',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /search route must use the glossary result matching contract/,
+  );
 });
