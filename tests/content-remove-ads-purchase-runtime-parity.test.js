@@ -117,6 +117,43 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('Remove Ads purchase runtime parity rejects finishing before entitlement persistence', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const persistenceResult = await persistValidatedRemoveAdsEntitlement({',
+        'await provider.finishPurchase?.(purchase);\\n    const persistenceResult = await persistValidatedRemoveAdsEntitlement({',
+      )
+      .replace(
+        '\\n    await provider.finishPurchase?.(purchase);\\n    return createResult(\\'purchased\\', persistenceResult.entitlements, purchase);',
+        '\\n    return createResult(\\'purchased\\', persistenceResult.entitlements, purchase);',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Remove Ads buy flow must persist the entitlement before finishing the native transaction/,
+  );
+});
+
 test('Remove Ads purchase runtime parity rejects placement CTA restore drift', () => {
   const result = spawnSync(
     process.execPath,

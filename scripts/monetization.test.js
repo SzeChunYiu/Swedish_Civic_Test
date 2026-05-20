@@ -1051,6 +1051,107 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   }
 });
 
+test('remove-ads buy persists before native finish and leaves failed persistence unfinished', async () => {
+  const { REMOVE_ADS_PRODUCT_ID, REMOVE_ADS_STORAGE_KEY, buyRemoveAds } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
+  const purchase = {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'mock-token-ordering-remove-ads',
+    transactionId: 'ordering-remove-ads',
+  };
+
+  function createProvider(events) {
+    return {
+      async connect() {
+        events.push('connect');
+      },
+      async disconnect() {
+        events.push('disconnect');
+      },
+      async finishPurchase() {
+        events.push('finish');
+      },
+      async requestRemoveAdsPurchase() {
+        events.push('request');
+        return purchase;
+      },
+      async restorePurchases() {
+        return [];
+      },
+      async validateRemoveAdsReceipt() {
+        events.push('validate');
+        return {
+          productId: REMOVE_ADS_PRODUCT_ID,
+          purchaseToken: purchase.purchaseToken,
+          status: 'valid',
+          transactionId: purchase.transactionId,
+          validatedAt: '2026-05-20T12:00:00.000Z',
+        };
+      },
+    };
+  }
+
+  const successfulEvents = [];
+  const successfulValues = new Map();
+  const successfulResult = await buyRemoveAds({
+    provider: createProvider(successfulEvents),
+    storage: {
+      async getItemAsync(key) {
+        return successfulValues.get(key) ?? null;
+      },
+      async setItemAsync(key, value) {
+        successfulEvents.push('persist');
+        successfulValues.set(key, value);
+      },
+    },
+  });
+
+  assert.equal(successfulResult.status, 'purchased');
+  assert.equal(successfulResult.entitlements.adsDisabled, true);
+  assert.deepEqual(successfulEvents, [
+    'connect',
+    'request',
+    'validate',
+    'persist',
+    'finish',
+    'disconnect',
+  ]);
+  assert.equal(
+    JSON.parse(successfulValues.get(REMOVE_ADS_STORAGE_KEY)).transactionId,
+    'ordering-remove-ads',
+  );
+
+  const failingEvents = [];
+  const failingResult = await buyRemoveAds({
+    provider: createProvider(failingEvents),
+    storage: {
+      async deleteItemAsync() {
+        failingEvents.push('cleanup');
+      },
+      async getItemAsync() {
+        return null;
+      },
+      async setItemAsync() {
+        failingEvents.push('persist-fail');
+        throw new Error('storage unavailable');
+      },
+    },
+  });
+
+  assert.equal(failingResult.status, 'persistence_failed');
+  assert.equal(failingResult.entitlements.adsDisabled, false);
+  assert.deepEqual(failingEvents, [
+    'connect',
+    'request',
+    'validate',
+    'persist-fail',
+    'cleanup',
+    'disconnect',
+  ]);
+  assert.equal(failingEvents.includes('finish'), false);
+});
+
 test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {
   const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
     'lib/monetization/purchases.ts',

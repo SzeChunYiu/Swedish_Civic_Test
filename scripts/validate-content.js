@@ -1076,7 +1076,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 6;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -11316,6 +11316,22 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const buyRemoveAdsBody =
+    purchaseSource.match(
+      /export async function buyRemoveAds[\s\S]*?export async function restoreRemoveAdsPurchase/,
+    )?.[0] ?? '';
+  const normalizedBuyRemoveAdsBody = buyRemoveAdsBody.replace(/\s+/g, ' ');
+  const buyPersistenceIndex = normalizedBuyRemoveAdsBody.indexOf(
+    'const persistenceResult = await persistValidatedRemoveAdsEntitlement({',
+  );
+  const buyFinishIndex = normalizedBuyRemoveAdsBody.indexOf(
+    'await provider.finishPurchase?.(purchase);',
+  );
+  const persistValidatedBody =
+    purchaseSource.match(
+      /async function persistValidatedRemoveAdsEntitlement[\s\S]*?async function revalidateStoredRemoveAdsEntitlementRecord/,
+    )?.[0] ?? '';
+  const normalizedPersistValidatedBody = persistValidatedBody.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -11402,6 +11418,28 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
         normalizedPurchaseSource.includes('receiptValidation,'),
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
+    ],
+    [
+      buyPersistenceIndex >= 0 && buyFinishIndex > buyPersistenceIndex,
+      'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
+    ],
+    [
+      normalizedBuyRemoveAdsBody.includes(
+        "if (!persistenceResult.persisted) { return createResult('persistence_failed', persistenceResult.entitlements, purchase); } await provider.finishPurchase?.(purchase); return createResult('purchased', persistenceResult.entitlements, purchase);",
+      ),
+      'Remove Ads buy persistence failures must return before finishing the native transaction',
+    ],
+    [
+      normalizedPersistValidatedBody.includes(
+        'catch { try { await clearStoredRemoveAdsEntitlement(storage); } catch {',
+      ),
+      'Remove Ads persistence cleanup failures must not mask the recoverable failed result',
+    ],
+    [
+      normalizedPersistValidatedBody.includes(
+        'return { entitlements: removeAdsEntitlements(false), persisted: false, };',
+      ),
+      'Remove Ads persistence failures must return a recoverable failed result without throwing during cleanup',
     ],
   ];
 

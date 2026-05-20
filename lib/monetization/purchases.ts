@@ -385,7 +385,11 @@ async function persistValidatedRemoveAdsEntitlement({
       persisted: entitlements.adsDisabled,
     };
   } catch {
-    await clearStoredRemoveAdsEntitlement(storage);
+    try {
+      await clearStoredRemoveAdsEntitlement(storage);
+    } catch {
+      // The caller gets a recoverable persistence_failed result even if cleanup fails.
+    }
     return {
       entitlements: removeAdsEntitlements(false),
       persisted: false,
@@ -828,18 +832,18 @@ export async function buyRemoveAds({
       return createResult('pending', await getPurchaseEntitlements({ storage }), purchase);
     }
 
-    await provider.finishPurchase?.(purchase);
     const persistenceResult = await persistValidatedRemoveAdsEntitlement({
       purchase,
       receiptValidation,
       source: 'purchase',
       storage,
     });
-    return createResult(
-      persistenceResult.persisted ? 'purchased' : 'persistence_failed',
-      persistenceResult.entitlements,
-      purchase,
-    );
+    if (!persistenceResult.persisted) {
+      return createResult('persistence_failed', persistenceResult.entitlements, purchase);
+    }
+
+    await provider.finishPurchase?.(purchase);
+    return createResult('purchased', persistenceResult.entitlements, purchase);
   } finally {
     await provider.disconnect?.();
   }
