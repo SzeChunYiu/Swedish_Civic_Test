@@ -113,6 +113,47 @@ test('accessibilityStore: successful writes persist values and clear warning', (
   assert.equal(storage.values.get('a11y.themeMode.v1'), 'dark');
 });
 
+test('accessibilityStore: runtime writes and font scale reads normalize invalid values', () => {
+  const storage = createMemoryMMKV();
+  const { fontScaleFor, useAccessibilityStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/accessibilityStore.ts',
+    {
+      accessibility: storage,
+    },
+  );
+
+  useAccessibilityStore.getState().setEasyReadFont('yes');
+  assert.equal(useAccessibilityStore.getState().easyReadFont, false);
+  assert.equal(storage.values.get('a11y.easyReadFont.v1'), false);
+
+  useAccessibilityStore.getState().setEasyReadFont(true);
+  assert.equal(useAccessibilityStore.getState().easyReadFont, true);
+  assert.equal(storage.values.get('a11y.easyReadFont.v1'), true);
+
+  useAccessibilityStore.getState().setFontSizeStep(Number.NaN);
+  assert.equal(useAccessibilityStore.getState().fontSizeStep, 1);
+  assert.equal(storage.values.get('a11y.fontSizeStep.v1'), 1);
+
+  useAccessibilityStore.getState().setFontSizeStep('2');
+  assert.equal(useAccessibilityStore.getState().fontSizeStep, 1);
+  assert.equal(storage.values.get('a11y.fontSizeStep.v1'), 1);
+
+  useAccessibilityStore.getState().setAudioPlaybackRate(1.5);
+  assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 1);
+  assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 1);
+
+  useAccessibilityStore.getState().setAudioPlaybackRate(0.75);
+  assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 0.75);
+  assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 0.75);
+
+  assert.equal(fontScaleFor(0), 0.9);
+  assert.equal(fontScaleFor(2), 1.15);
+  assert.equal(fontScaleFor(Number.NaN), 1);
+  assert.equal(fontScaleFor('2'), 1);
+  assert.equal(fontScaleFor(9), 1);
+});
+
 test('accessibilityStore: persisted theme mode hydrates and invalid values fall back to system', () => {
   const darkStorage = createMemoryMMKV({ 'a11y.themeMode.v1': 'dark' });
   const darkModule = loadTsWithStorage(repoRoot, 'lib/storage/accessibilityStore.ts', {
