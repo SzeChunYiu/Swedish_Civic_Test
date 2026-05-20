@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------
    Almost Swedish — site behaviour
    - hash routing (/, /privacy, /support, /terms, /sources)
-   - language toggle with localStorage persistence
+   - language toggle (EN/SV) with localStorage persistence
    - try-a-question demo card
 ------------------------------------------------------------------ */
 
@@ -146,7 +146,7 @@ const i18n = (window.i18n = {
     'numbers.1': 'questions sourced from public records',
     'numbers.2': 'chapters covering history, society & rights',
     'numbers.3': 'daily — a fika-sized study habit',
-    'numbers.4': 'to start. No login. Study progress stays local.',
+    'numbers.4': 'to start. No login. No tracking.',
 
     'chap.eyebrow': "What's inside",
     'chap.h1': 'From kanelbullar to',
@@ -238,7 +238,7 @@ const i18n = (window.i18n = {
       "Yes. Toggle the EN / SV switch in the nav, or change it inside the app. Many learners use both at once — read the question in Swedish, peek at the English when you're stuck.",
     'faq.6.q': 'Is my data shared with anyone?',
     'faq.6.a':
-      "Your study progress, answers, mistakes, and settings stay local. Google Mobile Ads (AdMob) in the app can process ad and consent signals. The website's Google AdSense slots stay disabled until reviewed web slot IDs are configured, and ads never receive your study answers or progress.",
+      'Your study progress, answers, mistakes, and settings stay local. Google AdSense on the website and Google Mobile Ads (AdMob) in the app can process ad and consent signals, but ads never receive your study answers or progress.',
 
     'doc.back': '← Back to home',
 
@@ -246,7 +246,7 @@ const i18n = (window.i18n = {
     'privacy.h1a': 'Your data',
     'privacy.h1b': 'stays on your phone.',
     'privacy.lede':
-      "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains the Google AdSense-ready web ad slots, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
+      "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
     'privacy.meta1.b': 'Effective',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -271,7 +271,7 @@ const i18n = (window.i18n = {
       'We do not run account profiles or send study answers, mistakes, progress, settings, XP, streaks, badges, bookmarks, or audio preferences to ad providers. Google ad systems may process ad and consent signals as described below.',
     'privacy.s5.t': 'Ads and purchases',
     'privacy.s5.p':
-      "This website has Google AdSense-ready ad slots, but they stay disabled until reviewed slot IDs are configured. The mobile app uses Google Mobile Ads (AdMob) behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads. Ads help fund the free study experience, and ads never collect study answers or progress.",
+      "This website uses Google AdSense. The mobile app uses Google Mobile Ads (AdMob) behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads. Ads help fund the free study experience, and ads never collect study answers or progress.",
     'privacy.s6.t': 'Changes & contact',
     'privacy.s6.p':
       'If this policy changes, the effective date at the top of this page will change with it. Questions, concerns, or "wait, what does this actually mean?" — head over to the <a href="#/support">support page</a>.',
@@ -410,52 +410,49 @@ const i18n = (window.i18n = {
     'footer.fika': 'Lagom built. Fika tested.',
 
     'ad.label': 'Sponsored',
-    'ad.placeholder': 'Ad space reserved while reviewed AdSense slots are configured.',
-    'ad.anchor.placeholder': 'Ad space reserved.',
+    'ad.placeholder': 'Your AdSense slot will render here.',
+    'ad.anchor.placeholder': 'Anchor ad slot',
     'ad.native.placeholder': 'Native sponsored row',
-    'a11y.settings.open': 'Settings',
-    'a11y.close': 'Close',
-    'a11y.ad.close': 'Close ad',
-    'a11y.studyBuddy': 'Study buddy',
     'practice.kicker': 'Practice round',
     'practice.title': 'Ten questions.',
     'practice.subtitle': 'No pressure.',
     'consent.title': 'Cookies, lagom-style.',
     'consent.body':
-      'When web ad slots are enabled, Google AdSense can set cookies and may use them for ad personalisation. Accept all, accept only what\'s needed, or read the <a href="#/privacy">privacy page</a>.',
+      'We use Google AdSense to show a couple of ads. AdSense sets cookies and may use them for ad personalisation. Accept all, accept only what\'s needed, or read the <a href="#/privacy">privacy page</a>.',
     'consent.min': 'Necessary only',
     'consent.all': 'Accept all',
 
     'privacy.s5.web.t': 'Ads on this website',
     'privacy.s5.web.p':
-      'This website is prepared for <b>Google AdSense</b>, but the static build does not load AdSense until reviewed web slot IDs are configured. When enabled, AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
+      'This website uses <b>Google AdSense</b>. AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
     'privacy.s5.app.t': 'Ads in the mobile app',
     'privacy.s5.app.p':
       "The mobile app uses <b>Google Mobile Ads (AdMob)</b>. On first launch the app shows Google's official consent screen (via the <em>User Messaging Platform</em> SDK), where you can pick personalised, non-personalised, or — in regions where the choice is available — opt out. Ads keep the app free. We never use ads to collect your study answers or progress.",
   },
 
   sv: {
-    "brand": "Almost Swedish",
-    "nav.home": "Hem",
-    "nav.practice": "Öva",
-    "nav.mock": "Övningsprov",
-    "nav.ebook": "E-bok",
-    "nav.support": "Support",
-    "nav.privacy": "Integritet",
-    "nav.terms": "Villkor",
-    "nav.sources": "Källor",
-    "nav.cta": "Hämta appen ↗",
+    brand: 'Almost Swedish',
+    'nav.home': 'Hem',
+    'nav.practice': 'Öva',
+    'nav.mock': 'Provexempel',
+    'nav.ebook': 'E-bok',
+    'nav.support': 'Support',
+    'nav.privacy': 'Integritet',
+    'nav.terms': 'Villkor',
+    'nav.sources': 'Källor',
+    'nav.cta': 'Hämta appen ↗',
 
-    "hero.eyebrow": "Inofficiell · Gratis MVP · Källstödda frågor",
-    "hero.h1a": "Klara provet.",
-    "hero.h1b": "Få passet.",
-    "hero.h1c": "Skryt på midsommar.",
-    "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett tidsatt övningsprov som känns mindre läskigt än småprat med grannen.",
-    "hero.cta1": "Börja plugga — det är gratis",
-    "hero.cta2": "Testa en fråga",
-    "hero.stat1": "samhällsfrågor",
-    "hero.stat2": "kapitel, i lagom format",
-    "hero.stat3": "att börja, inget konto",
+    'hero.eyebrow': 'Inofficiell · Gratis MVP · Källstödda frågor',
+    'hero.h1a': 'Plugga materialet.',
+    'hero.h1b': 'Öva med källor.',
+    'hero.h1c': 'Känn dig lugnare på provdagen.',
+    'hero.lede':
+      'En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett provexempel som känns mindre läskigt än småprat med grannen.',
+    'hero.cta1': 'Börja plugga — det är gratis',
+    'hero.cta2': 'Testa en fråga',
+    'hero.stat1': 'samhällsfrågor',
+    'hero.stat2': 'kapitel, i lagom format',
+    'hero.stat3': 'att börja, inget konto',
 
     'phone.crumb': 'Kapitel 3 · Samhälle & Rättigheter',
     'phone.q': 'Vilken svensk princip ger alla rätt att vistas fritt i naturen?',
@@ -495,7 +492,7 @@ const i18n = (window.i18n = {
     'numbers.1': 'frågor från offentliga källor',
     'numbers.2': 'kapitel om historia, samhälle & rättigheter',
     'numbers.3': 'om dagen — en fika-stor studievana',
-    'numbers.4': 'att börja. Ingen inloggning. Studieframsteg stannar lokalt.',
+    'numbers.4': 'att börja. Ingen inloggning. Ingen spårning.',
 
     'chap.eyebrow': 'Vad ingår',
     'chap.h1': 'Från kanelbullar till',
@@ -503,55 +500,54 @@ const i18n = (window.i18n = {
     'chap.deck':
       'Korta kapitel, lagom stora så du hinner ett mellan spårvagnarna. Varje kapitel blandar det officiella materialet med den sortens sammanhang du faktiskt skulle få av en svensk vän över kaffe.',
 
-    "chap.1.t": "Sveriges historia, mycket kortfattat",
-    "chap.1.d": "Vikingar → kungar → 1809 → folkhemmet → EU. Hela berg-och-dalbanan, utan släktträdsplugget.",
-    "chap.1.m1": "38 frågor",
-    "chap.1.m2": "~9 min",
-    "chap.2.t": "Så styrs Sverige",
-    "chap.2.d": "Riksdag, regering, kommun, region. Vem bestämmer vad, vem du röstar på, och varför ingen är rädd för kungen.",
-    "chap.2.m1": "52 frågor",
-    "chap.2.m2": "~12 min",
-    "chap.3.t": "Rättigheter, friheter & de fyra grundlagarna",
-    "chap.3.d": "Grundlagarna på enkel svenska. Tryckfrihet, yttrandefrihet, och varför chefen inte får fråga om din religion.",
-    "chap.3.m1": "47 frågor",
-    "chap.3.m2": "~11 min",
-    "chap.4.t": "Arbete, skatt & välfärden",
-    "chap.4.d": "Skatteverket, kollektivavtal, föräldraledighet, sjukpenning. Avtalet du gick med på.",
-    "chap.4.m1": "44 frågor",
-    "chap.4.m2": "~10 min",
-    "chap.5.t": "Jämställdhet & det moderna hushållet",
-    "chap.5.d": "Jämställdhet, HBTQ+-rättigheter, hur föräldraledigheten delas. Anledningen till att Sverige dyker upp i alla rankinglistor.",
-    "chap.5.m1": "39 frågor",
-    "chap.5.m2": "~9 min",
-    "chap.6.t": "Samhälle, skola & sjukvård",
-    "chap.6.d": "Förskola till universitet, BVC till 1177. Hur vardagen är monterad.",
-    "chap.6.m1": "41 frågor",
-    "chap.6.m2": "~10 min",
-    "chap.7.t": "Natur, klimat & allemansrätten",
-    "chap.7.d": "Rätten att vistas fritt, miljöregler, varför man trots allt inte får plocka grannens äpplen (tyvärr).",
-    "chap.7.m1": "36 frågor",
-    "chap.7.m2": "~8 min",
-    "chap.8.t": "Kultur, traditioner & kalendern",
-    "chap.8.d": "Midsommar, lucia, kräftskiva, semladagen. Bra för provet. Avgörande för småpratet.",
-    "chap.8.m1": "40 frågor",
-    "chap.8.m2": "~9 min",
-    "chap.9.t": "Pengar, banker & BankID",
-    "chap.9.d": "Personnummer, BankID, Swish, kronor. Sverige drivs av plast och identifierare — lär känna dem.",
-    "chap.9.m1": "28 frågor",
-    "chap.9.m2": "~7 min",
-    "chap.10.t": "Sverige, EU & världen",
-    "chap.10.d": "Med i EU sedan 1995, lite-neutralt i sekler, nu i NATO. Den internationella berättelsen.",
-    "chap.10.m1": "33 frågor",
-    "chap.10.m2": "~8 min",
-    "chap.11.t": "Migration, uppehållstillstånd & medborgarskap",
-    "chap.11.d": "Den faktiska vägen till passet. Vägar, krav, skillnaden mellan PUT, medborgarskap och \"bara på besök\".",
-    "chap.11.m1": "35 frågor",
-    "chap.11.m2": "~9 min",
-    "chap.12.t": "Övningsprov & överlevnadsguide",
-    "chap.12.d": "Tidsatta övningsprov i full längd som hjälper dig träna provsituationen. Plus en \"så här packar du väskan\"-lista.",
-    "chap.12.m1": "3 hela prov",
-    "chap.12.m2": "60 min styck",
-    "chap.13.t": "Traditioner, helgdagar & vardagskultur",
+    'chap.1.t': 'Sveriges historia, mycket kortfattat',
+    'chap.1.d':
+      'Vikingar → kungar → 1809 → folkhemmet → EU. Hela berg-och-dalbanan, utan släktträdsplugget.',
+    'chap.1.m2': '~9 min',
+    'chap.2.t': 'Så styrs Sverige',
+    'chap.2.d':
+      'Riksdag, regering, kommun, region. Vem bestämmer vad, vem du röstar på, och varför ingen är rädd för kungen.',
+    'chap.2.m2': '~12 min',
+    'chap.3.t': 'Rättigheter, friheter & de fyra grundlagarna',
+    'chap.3.d':
+      'Grundlagarna på enkel svenska. Tryckfrihet, yttrandefrihet, och varför chefen inte får fråga om din religion.',
+    'chap.3.m2': '~11 min',
+    'chap.4.t': 'Arbete, skatt & välfärden',
+    'chap.4.d':
+      'Skatteverket, kollektivavtal, föräldraledighet, sjukpenning. Avtalet du gick med på.',
+    'chap.4.m2': '~10 min',
+    'chap.5.t': 'Jämställdhet & det moderna hushållet',
+    'chap.5.d':
+      'Jämställdhet, HBTQ+-rättigheter, hur föräldraledigheten delas. Anledningen till att Sverige dyker upp i alla rankinglistor.',
+    'chap.5.m2': '~9 min',
+    'chap.6.t': 'Samhälle, skola & sjukvård',
+    'chap.6.d': 'Förskola till universitet, BVC till 1177. Hur vardagen är monterad.',
+    'chap.6.m2': '~10 min',
+    'chap.7.t': 'Natur, klimat & allemansrätten',
+    'chap.7.d':
+      'Rätten att vistas fritt, miljöregler, varför man trots allt inte får plocka grannens äpplen (tyvärr).',
+    'chap.7.m2': '~8 min',
+    'chap.8.t': 'Kultur, traditioner & kalendern',
+    'chap.8.d':
+      'Midsommar, lucia, kräftskiva, semladagen. Bra för provet. Avgörande för småpratet.',
+    'chap.8.m2': '~9 min',
+    'chap.9.t': 'Pengar, banker & BankID',
+    'chap.9.d':
+      'Personnummer, BankID, Swish, kronor. Sverige drivs av plast och identifierare — lär känna dem.',
+    'chap.9.m2': '~7 min',
+    'chap.10.t': 'Sverige, EU & världen',
+    'chap.10.d':
+      'Med i EU sedan 1995, lite-neutralt i sekler, nu i NATO. Den internationella berättelsen.',
+    'chap.10.m2': '~8 min',
+    'chap.11.t': 'Migration, uppehållstillstånd & medborgarskap',
+    'chap.11.d':
+      'Den faktiska vägen till passet. Vägar, krav, skillnaden mellan PUT, medborgarskap och "bara på besök".',
+    'chap.11.m2': '~9 min',
+    'chap.12.t': 'Provexempel & överlevnadsguide',
+    'chap.12.d':
+      'Tidsatta fullängdsprov som ser ut och känns som det riktiga. Plus en "så här packar du väskan"-lista.',
+    'chap.12.m2': '60 min styck',
+    'chap.13.t': 'Traditioner, helgdagar & vardagskultur',
 
     'how.eyebrow': 'Så funkar det',
     'how.h1': 'Plugga lagom.',
@@ -567,21 +563,27 @@ const i18n = (window.i18n = {
     'how.s3.t': 'Provläge — riktig timing',
     'how.s3.p': 'Kör riktigt format med riktig tid. Provdagen blir en tisdag med sämre stol.',
 
-    "faq.eyebrow": "Ofta och uppriktigt ställda",
-    "faq.h1": "Frågor du skulle ställa",
-    "faq.h2": "över kaffe.",
-    "faq.1.q": "Är det här det officiella medborgarskapsprovet?",
-    "faq.1.a": "Nej, och vi säger det på varje sida. Vi är fristående — inte kopplade till UHR, Skolverket, Migrationsverket eller någon som faktiskt avgör vem som blir medborgare. Vi gör ett studiematerial. De håller i provet.",
-    "faq.2.q": "Hjälper det mig verkligen att klara provet?",
-    "faq.2.a": "Det hjälper dig att <em>plugga</em>. Resten beror på dig, det officiella materialet och hur många fikapauser du tar. Vi hämtar frågor från den offentliga banken och förklarar varje en på enkel svenska.",
-    "faq.3.q": "Behöver jag ett konto?",
-    "faq.3.a": "Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.",
-    "faq.4.q": "Är den gratis?",
-    "faq.4.a": "Gratis att börja, plugga och göra övningsprov. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.",
-    "faq.5.q": "Fungerar den på svenska också?",
-    "faq.5.a": "Ja. Växla med EN / SV-knappen i menyn, eller byt inne i appen. Många använder båda samtidigt — läs frågan på svenska, kika på engelska när det kör ihop sig.",
-    "faq.6.q": "Delas mina data med någon?",
-    "faq.6.a": "Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Google AdSense på webbplatsen och Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler, men annonser får aldrig dina studiesvar eller framsteg.",
+    'faq.eyebrow': 'Ofta och uppriktigt ställda',
+    'faq.h1': 'Frågor du skulle ställa',
+    'faq.h2': 'över kaffe.',
+    'faq.1.q': 'Är det här det officiella medborgarskapsprovet?',
+    'faq.1.a':
+      'Nej, och vi säger det på varje sida. Vi är fristående — inte kopplade till UHR, Skolverket, Migrationsverket eller någon som faktiskt avgör vem som blir medborgare. Vi gör ett studiematerial. De håller i provet.',
+    'faq.2.q': 'Hjälper det mig verkligen att klara provet?',
+    'faq.2.a':
+      'Det hjälper dig att <em>plugga</em>. Resten beror på dig, det officiella materialet och hur många fikapauser du tar. Vi hämtar frågor från den offentliga banken och förklarar varje en på enkel svenska.',
+    'faq.3.q': 'Behöver jag ett konto?',
+    'faq.3.a':
+      'Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.',
+    'faq.4.q': 'Är den gratis?',
+    'faq.4.a':
+      'Gratis att börja, plugga och göra provexempel. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.',
+    'faq.5.q': 'Fungerar den på svenska också?',
+    'faq.5.a':
+      'Ja. Växla med EN / SV-knappen i menyn, eller byt inne i appen. Många använder båda samtidigt — läs frågan på svenska, kika på engelska när det kör ihop sig.',
+    'faq.6.q': 'Delas mina data med någon?',
+    'faq.6.a':
+      'Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Google AdSense på webbplatsen och Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler, men annonser får aldrig dina studiesvar eller framsteg.',
 
     'doc.back': '← Tillbaka till hem',
 
@@ -589,7 +591,7 @@ const i18n = (window.i18n = {
     'privacy.h1a': 'Dina data',
     'privacy.h1b': 'stannar i telefonen.',
     'privacy.lede':
-      'Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar webbens Google AdSense-förberedda annonsytor, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.',
+      'Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.',
     'privacy.meta1.b': 'Gäller från',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -613,47 +615,53 @@ const i18n = (window.i18n = {
       'Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, studiesviter, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.',
     'privacy.s5.t': 'Annonser och köp',
     'privacy.s5.p':
-      'Den här webbplatsen har Google AdSense-förberedda annonsytor, men de är avstängda tills granskade plats-ID:n är konfigurerade. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.',
+      'Den här webbplatsen använder Google AdSense. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.',
     'privacy.s6.t': 'Ändringar & kontakt',
     'privacy.s6.p':
       'Om policyn ändras uppdateras datumet längst upp. Frågor, oro, eller "vad betyder det här egentligen?" — gå till <a href="#/support">supportsidan</a>.',
 
-    "support.kicker": "Support",
-    "support.h1a": "Är något trasigt?",
-    "support.h1b": "Vi fixar det.",
-    "support.lede": "Vi kan hjälpa med buggar, faktafel, trasigt ljud och otydlig svenska. Vi kan inte ge svar på det riktiga provet, ge migrationsråd eller skynda på Migrationsverket. Tyvärr.",
-    "support.meta1.b": "Svarstid",
-    "support.meta1.v": "~2 arbetsdagar",
-    "support.meta2.b": "Språk",
-    "support.meta2.v": "Engelska eller svenska",
-    "support.meta3.b": "Pris",
-    "support.meta3.v": "Gratis",
-    "support.toc": "På den här sidan",
-    "support.s1.t": "Vad vi kan hjälpa med",
-    "support.s1.p": "Mejla oss om du hittar:",
-    "support.s1.li1": "Ett innehållsfel — fel svar, utdaterad referens, ett stavfel med attityd.",
-    "support.s1.li2": "Otydlig svenska i en fråga eller förklaring.",
-    "support.s1.li3": "En trasig källänk eller saknad referens.",
-    "support.s1.li4": "Ett ljudproblem — klipp som hackar, fel uttal, tystnad där det borde vara tal.",
-    "support.s1.li5": "Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett övningsprov som inte går att avsluta.",
-    "support.s1.li6": "Ett butik- eller bygge-problem — krasch vid start, betalningskrångel, en nedladdning som vägrar.",
-    "support.s2.t": "Vad du bör inkludera",
-    "support.s2.p": "Hjälp oss hjälpa dig snabbare:",
-    "support.s2.li1": "Enhet + OS-version (Pixel 7, Android 14 / iPhone 13, iOS 17).",
-    "support.s2.li2": "App-version (Inställningar → Om).",
-    "support.s2.li3": "Vad du gjorde, vad du förväntade dig, vad som hände.",
-    "support.s2.li4": "En skärmdump om det är ett visuellt fel.",
-    "support.s3.t": "Skicka inte känslig information",
-    "support.s3.callout.b": "Inga personuppgifter, tack.",
-    "support.s3.callout.p": "Skicka inte personnummer, samordningsnummer, ärendeinformation, passkopior, ekonomisk info eller något du inte skulle skriva på ett vykort.",
-    "support.s4.t": "Vad vi inte kan göra",
-    "support.s4.p": "Vi kan fixa app-funktioner och rätta innehåll. Vi kan inte:",
-    "support.s4.li1": "Ge officiella provsvar eller läckt material.",
-    "support.s4.li2": "Ge migrations- eller juridisk rådgivning.",
-    "support.s4.li3": "Tala för någon myndighet.",
-    "support.s4.li4": "Förutsäga när ditt ärende avgörs. (Det kan ingen.)",
-    "support.s5.t": "Kontakt",
-    "support.s5.p": "Mejla <a href=\"mailto:support@medborgartest.app\">support@medborgartest.app</a>. Vi läser allt. Vi svarar nästan på allt. Integritetsdetaljer finns på <a href=\"#/privacy\">integritetssidan</a>.",
+    'support.kicker': 'Support',
+    'support.h1a': 'Är något trasigt?',
+    'support.h1b': 'Vi fixar det.',
+    'support.lede':
+      'Vi kan hjälpa med buggar, faktafel, trasigt ljud och otydlig svenska. Vi kan inte ge svar på det riktiga provet, ge migrationsråd eller skynda på Migrationsverket. Tyvärr.',
+    'support.meta1.b': 'Svarstid',
+    'support.meta1.v': '~2 arbetsdagar',
+    'support.meta2.b': 'Språk',
+    'support.meta2.v': 'Engelska eller svenska',
+    'support.meta3.b': 'Pris',
+    'support.meta3.v': 'Gratis',
+    'support.toc': 'På den här sidan',
+    'support.s1.t': 'Vad vi kan hjälpa med',
+    'support.s1.p': 'Mejla oss om du hittar:',
+    'support.s1.li1': 'Ett innehållsfel — fel svar, utdaterad referens, ett stavfel med attityd.',
+    'support.s1.li2': 'Otydlig svenska i en fråga eller förklaring.',
+    'support.s1.li3': 'En trasig källänk eller saknad referens.',
+    'support.s1.li4':
+      'Ett ljudproblem — klipp som hackar, fel uttal, tystnad där det borde vara tal.',
+    'support.s1.li5':
+      'Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett provexempel som inte går att avsluta.',
+    'support.s1.li6':
+      'Ett butik- eller bygge-problem — krasch vid start, betalningskrångel, en nedladdning som vägrar.',
+    'support.s2.t': 'Vad du bör inkludera',
+    'support.s2.p': 'Hjälp oss hjälpa dig snabbare:',
+    'support.s2.li1': 'Enhet + OS-version (Pixel 7, Android 14 / iPhone 13, iOS 17).',
+    'support.s2.li2': 'App-version (Inställningar → Om).',
+    'support.s2.li3': 'Vad du gjorde, vad du förväntade dig, vad som hände.',
+    'support.s2.li4': 'En skärmdump om det är ett visuellt fel.',
+    'support.s3.t': 'Skicka inte känslig information',
+    'support.s3.callout.b': 'Inga personuppgifter, tack.',
+    'support.s3.callout.p':
+      'Skicka inte personnummer, samordningsnummer, ärendeinformation, passkopior, ekonomisk info eller något du inte skulle skriva på ett vykort.',
+    'support.s4.t': 'Vad vi inte kan göra',
+    'support.s4.p': 'Vi kan fixa app-funktioner och rätta innehåll. Vi kan inte:',
+    'support.s4.li1': 'Ge officiella provsvar eller läckt material.',
+    'support.s4.li2': 'Ge migrations- eller juridisk rådgivning.',
+    'support.s4.li3': 'Tala för någon myndighet.',
+    'support.s4.li4': 'Förutsäga när ditt ärende avgörs. (Det kan ingen.)',
+    'support.s5.t': 'Kontakt',
+    'support.s5.p':
+      'Mejla <a href="mailto:support@medborgartest.app">support@medborgartest.app</a>. Vi läser allt. Vi svarar nästan på allt. Integritetsdetaljer finns på <a href="#/privacy">integritetssidan</a>.',
 
     'terms.kicker': 'Användarvillkor',
     'terms.h1a': 'Enkla regler,',
@@ -725,41 +733,39 @@ const i18n = (window.i18n = {
     'sources.s5.p2':
       'Ser du en fråga som inte stämmer med sin källa? <a href="#/support">Berätta för oss</a> — rättelser är oftast live inom en vecka.',
 
-    "footer.brag1": "Plugga lagom.",
-    "footer.brag2": "Klara stort.",
-    "footer.h.app": "Appen",
-    "footer.app.1": "Varför den finns",
-    "footer.app.2": "Testa en fråga",
-    "footer.app.3": "Kapitel",
-    "footer.app.4": "Övningsprov",
-    "footer.app.5": "Roadmap",
-    "footer.h.legal": "Finstilta",
-    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra övningsprov.",
-    "footer.h.honest": "Ärlig friskrivning",
-    "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
-    "footer.copyright": "© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.",
-    "footer.fika": "Lagom byggt. Fika-testat.",
+    'footer.brag1': 'Plugga lagom.',
+    'footer.brag2': 'Plugga smart.',
+    'footer.h.app': 'Appen',
+    'footer.app.1': 'Varför den finns',
+    'footer.app.2': 'Testa en fråga',
+    'footer.app.3': 'Kapitel',
+    'footer.app.4': 'Provexempel',
+    'footer.app.5': 'Roadmap',
+    'footer.h.legal': 'Finstilta',
+    'footer.about.p':
+      'Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.',
+    'footer.h.honest': 'Ärlig friskrivning',
+    'footer.honest.p':
+      'Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.',
+    'footer.copyright': '© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.',
+    'footer.fika': 'Lagom byggt. Fika-testat.',
 
     'ad.label': 'Annons',
-    'ad.placeholder': 'Annonsyta reserverad medan granskade AdSense-platser konfigureras.',
-    'ad.anchor.placeholder': 'Annonsyta reserverad.',
+    'ad.placeholder': 'AdSense-yta visas här.',
+    'ad.anchor.placeholder': 'Ankarannons',
     'ad.native.placeholder': 'Sponsrad rad',
-    'a11y.settings.open': 'Inställningar',
-    'a11y.close': 'Stäng',
-    'a11y.ad.close': 'Stäng annons',
-    'a11y.studyBuddy': 'Studiekompis',
     'practice.kicker': 'Övningsrunda',
     'practice.title': 'Tio frågor.',
     'practice.subtitle': 'Ingen press.',
     'consent.title': 'Cookies, på lagom-vis.',
     'consent.body':
-      'När webbannonser är aktiverade kan Google AdSense sätta cookies och använda dem för personalisering. Godkänn allt, bara det nödvändiga, eller läs <a href="#/privacy">integritetssidan</a>.',
+      'Vi använder Google AdSense för att visa ett par annonser. AdSense sätter cookies och kan använda dem för personalisering. Godkänn allt, bara det nödvändiga, eller läs <a href="#/privacy">integritetssidan</a>.',
     'consent.min': 'Bara nödvändiga',
     'consent.all': 'Godkänn allt',
 
     'privacy.s5.web.t': 'Annonser på webbplatsen',
     'privacy.s5.web.p':
-      'Den här webbplatsen är förberedd för <b>Google AdSense</b>, men den statiska versionen laddar inte AdSense förrän granskade webbplats-ID:n är konfigurerade. När funktionen är aktiverad kan AdSense och dess partner sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
+      'Den här webbplatsen använder <b>Google AdSense</b>. AdSense och dess partner kan sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
     'privacy.s5.app.t': 'Annonser i mobilappen',
     'privacy.s5.app.p':
       'Mobilappen använder <b>Google Mobile Ads (AdMob)</b>. Vid första start visar appen Googles officiella samtyckesskärm (via <em>User Messaging Platform</em>-SDK:n) där du kan välja personaliserat, icke-personaliserat eller — där det går — avstå. Annonser håller appen gratis. Vi använder aldrig annonser för att samla in dina studiesvar eller framsteg.',
@@ -784,41 +790,12 @@ function smtDynamicI18nValue(key, lang) {
   return undefined;
 }
 
-function smtI18nValue(key, lang) {
-  const dynamicValue = smtDynamicI18nValue(key, lang);
-  if (dynamicValue !== undefined) return dynamicValue;
-  const dict = i18n[lang] || i18n.en;
-  if (dict && dict[key] !== undefined) return dict[key];
-  return i18n.en && i18n.en[key];
-}
-window.smtI18nValue = smtI18nValue;
-
-function smtStaticControlLabel(key, lang) {
-  return smtI18nValue(key, lang || document.documentElement.lang || 'en') || '';
-}
-window.smtStaticControlLabel = smtStaticControlLabel;
-
-function smtUpdateStaticControlLabels(lang) {
-  const activeLang = lang || document.documentElement.lang || 'en';
-  document.querySelectorAll('[data-a11y-label]').forEach((el) => {
-    const key = el.dataset && el.dataset.a11yLabel;
-    const value = key ? smtStaticControlLabel(key, activeLang) : '';
-    if (!value || typeof el.setAttribute !== 'function') return;
-    el.setAttribute('aria-label', value);
-  });
-}
-window.smtUpdateStaticControlLabels = smtUpdateStaticControlLabels;
-
 function applyLang(lang) {
-  const direction = lang === "ar" ? "rtl" : "ltr";
   document.documentElement.lang = lang;
-  document.documentElement.dir = direction;
-  if (typeof document.documentElement.setAttribute === "function") {
-    document.documentElement.setAttribute("dir", direction);
-  }
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.dataset.i18n;
-    const value = smtI18nValue(key, lang);
+    const dynamicValue = smtDynamicI18nValue(key, lang);
+    const value = dynamicValue === undefined ? i18n[lang] && i18n[lang][key] : dynamicValue;
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
@@ -826,7 +803,6 @@ function applyLang(lang) {
   document.querySelectorAll('.lang button[data-lang]').forEach((b) => {
     b.classList.toggle('is-on', b.dataset.lang === lang);
   });
-  smtUpdateStaticControlLabels(lang);
   try {
     localStorage.setItem('smt_lang', lang);
   } catch {}
@@ -898,39 +874,8 @@ document.addEventListener('click', (e) => {
 
 const SMT_ADS = {
   publisherId: 'ca-pub-2451892671779738',
-  slots: {
-    inline: '',
-    anchor: '',
-  },
   scriptLoaded: false,
 };
-
-function smtIsRealAdSenseSlotId(slotId) {
-  const value = String(slotId || '').trim();
-  return /^[0-9]{8,}$/.test(value) && !/^0+$/.test(value);
-}
-
-function smtGetConfiguredAdSenseSlots() {
-  const publisherReady = /^ca-pub-[0-9]{16}$/.test(SMT_ADS.publisherId);
-  const requiredPlacements = ['inline', 'anchor'];
-  if (!publisherReady) return null;
-  const configured = requiredPlacements.map((placement) => [placement, SMT_ADS.slots?.[placement]]);
-  if (configured.some(([, slotId]) => !smtIsRealAdSenseSlotId(slotId))) return null;
-  return Object.fromEntries(configured);
-}
-
-function smtStaticAdsAreConfigured() {
-  return !!smtGetConfiguredAdSenseSlots();
-}
-
-function smtSyncAdSenseSlots(configuredSlots) {
-  document.querySelectorAll('ins.adsbygoogle[data-smt-ad-placement]').forEach((el) => {
-    const slotId = configuredSlots[el.getAttribute('data-smt-ad-placement')];
-    if (!slotId) return;
-    el.setAttribute('data-ad-client', SMT_ADS.publisherId);
-    el.setAttribute('data-ad-slot', slotId);
-  });
-}
 
 function smtGetConsent() {
   try {
@@ -947,12 +892,10 @@ function smtSetConsent(v) {
 
 function smtLoadAdSense() {
   if (SMT_ADS.scriptLoaded) return;
-  const configuredSlots = smtGetConfiguredAdSenseSlots();
-  if (!configuredSlots) {
-    // Keep static web ads disabled until reviewed web slot IDs are configured.
+  if (!SMT_ADS.publisherId || SMT_ADS.publisherId.includes('XXXX')) {
+    // No real publisher ID yet — leave the styled placeholders visible.
     return;
   }
-  smtSyncAdSenseSlots(configuredSlots);
   SMT_ADS.scriptLoaded = true;
   const s = document.createElement('script');
   s.async = true;
@@ -970,8 +913,6 @@ function smtLoadAdSense() {
 function smtApplyConsent(choice) {
   // 'all' = personalised, 'min' = non-personalised (NPA=1)
   if (choice === 'all' || choice === 'min') {
-    window.adsbygoogle = window.adsbygoogle || [];
-    window.adsbygoogle.requestNonPersonalizedAds = choice === 'min' ? 1 : 0;
     document.querySelectorAll('ins.adsbygoogle').forEach((el) => {
       if (choice === 'min') el.setAttribute('data-npa', '1');
       else el.removeAttribute('data-npa');
@@ -1000,11 +941,9 @@ function smtShowAds(mode) {
   const inline = document.querySelector('[data-ad-slot="inline"]');
   const anchor = document.querySelector('[data-ad-slot="anchor"]');
   const native = document.querySelectorAll('.list-quiet__ad');
-  const adsConfigured = smtStaticAdsAreConfigured();
-  const showInline = adsConfigured && !!consent && (mode === 'inline' || mode === 'both');
-  const showAnchor =
-    adsConfigured && !!consent && !anchorDismissed && (mode === 'anchor' || mode === 'both');
-  const showNative = adsConfigured && !!consent && (mode === 'inline' || mode === 'both');
+  const showInline = !!consent && (mode === 'inline' || mode === 'both');
+  const showAnchor = !!consent && !anchorDismissed && (mode === 'anchor' || mode === 'both');
+  const showNative = !!consent && (mode === 'inline' || mode === 'both');
   if (inline) inline.hidden = !showInline;
   if (anchor) anchor.hidden = !showAnchor;
   native.forEach((el) => {
@@ -1045,11 +984,6 @@ document.addEventListener('click', (e) => {
 });
 
 window.addEventListener('DOMContentLoaded', () => {
-  if (!smtStaticAdsAreConfigured()) {
-    smtHideConsent();
-    smtShowAds('none');
-    return;
-  }
   const c = smtGetConsent();
   if (!c) smtShowConsent();
   else smtApplyConsent(c);
@@ -1281,10 +1215,6 @@ function smtQuizCurrentLang() {
   } catch {
     return 'en';
   }
-}
-
-function smtQuizFxPrefersReducedMotion(fx) {
-  return !!(fx && typeof fx.prefersReducedMotion === 'function' && fx.prefersReducedMotion());
 }
 
 function smtQuizEscapeHtml(value) {
@@ -1542,18 +1472,14 @@ function smtQuizRender() {
     if (fx) {
       fx.countUp(document.getElementById('score-num'), 0, correct, 1100);
       if (pct === 100) {
-        if (!smtQuizFxPrefersReducedMotion(fx)) {
-          setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
-        }
+        setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
         if (window.smtBuddyCelebrate)
           window.smtBuddyCelebrate(
             'Lysande! 10/10. Tell people I helped.',
             'Lysande! 10/10. Berätta att jag hjälpte.',
           );
       } else if (pct >= 70) {
-        if (!smtQuizFxPrefersReducedMotion(fx)) {
-          setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
-        }
+        setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
       }
     }
     return;
@@ -1574,7 +1500,6 @@ function smtQuizRender() {
   const opts = smtQuizDisplayOptions(q, sessionId)
     .map(({ option: o, originalIndex, displayIndex }) => {
       const letter = String.fromCharCode(65 + displayIndex);
-      const optionText = smtQuizEscapeHtml(o[lang] || o.en);
       let cls = '';
       if (answered) {
         if (originalIndex === q.answer) cls = 'is-correct';
@@ -1583,7 +1508,7 @@ function smtQuizRender() {
       return `
       <button class="quiz__opt ${cls}" data-i="${originalIndex}" ${answered ? 'disabled' : ''}>
         <span class="key">${letter}</span>
-        <span>${optionText}</span>
+        <span>${o[lang] || o.en}</span>
       </button>`;
     })
     .join('');
@@ -1592,10 +1517,9 @@ function smtQuizRender() {
   if (answered) {
     const right = ans === q.answer;
     const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
-    const explanation = smtQuizEscapeHtml(q.why[lang] || q.why.en);
     feedback = `
       <div class="quiz__feedback ${right ? '' : 'is-wrong'}">
-        <b>${right ? copy.correct : copy.wrong}</b> ${explanation}
+        <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
         ${smtQuizSourceRow(q, lang, 'quiz__feedback-source')}
         <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
@@ -1611,8 +1535,8 @@ function smtQuizRender() {
   stage.innerHTML = `
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
-      <div class="quiz__crumb">${smtQuizEscapeHtml(q.chapter)}</div>
-      <h2 class="quiz__q">${smtQuizEscapeHtml(q.q[lang] || q.q.en)}</h2>
+      <div class="quiz__crumb">${q.chapter}</div>
+      <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
       ${sourceRow}
       <div class="quiz__opts">${opts}</div>
       ${feedback}
@@ -1688,7 +1612,7 @@ document.addEventListener('click', (e) => {
     smtQuizRender();
 
     // pulse correct option subtly after re-render
-    if (!correct && !smtQuizFxPrefersReducedMotion(fx)) {
+    if (!correct) {
       requestAnimationFrame(() => {
         const right = document.querySelector('#quiz-stage .quiz__opt.is-correct');
         if (right) right.classList.add('is-pulse');

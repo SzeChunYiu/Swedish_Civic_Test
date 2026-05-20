@@ -22,12 +22,76 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeTypographyTokensValidated, 22);
   assert.equal(summary.themeShadowTokensValidated, 2);
   assert.equal(summary.themeMotionTokensValidated, 7);
+  assert.equal(summary.themeDesignColorTokensValidated, 18);
+  assert.equal(summary.themeDesignColorTokenParityValidated, true);
   assert.equal(summary.themeContrastPairsValidated, 20);
   assert.equal(summary.themeContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(themeIndex, /export \{ colors \} from '\.\/colors';/);
   assert.match(themeIndex, /export \{ space \} from '\.\/spacing';/);
   assert.match(themeIndex, /export \{ typography \} from '\.\/typography';/);
+});
+
+test('theme token schema rejects DESIGN color table drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/DESIGN.md')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace(
+      '| accent | #006aa7 | PRIMARY',
+      '| accent | #006aa8 | PRIMARY',
+    );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme colors\.accent is #006aa7, expected DESIGN\.md section 2 #006aa8/,
+  );
+});
+
+test('theme token schema rejects grouped DESIGN alias drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/colors.ts')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace(
+      'const correctBg = successSoft;',
+      'const correctBg = success;',
+    );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme colors\.correctBg is #1e874b, expected DESIGN\.md section 2 #e6f4ec/,
+  );
 });
 
 test('theme token schema rejects spacing token drift', () => {
