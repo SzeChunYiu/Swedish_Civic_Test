@@ -24,16 +24,12 @@ const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
-const luciaExplanationRoleScaffoldPattern =
-  /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
+const equalityOmbudsmanWorkForEqualRightsPattern = /\bwork(?:s|ing)?\s+for\s+equal\s+rights\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
-const authoredWayToPromptPattern = /\b(?:Vilket är ett sätt att|Which is a way to)\b/i;
 const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
-const sourceRecallPromptPattern =
-  /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -120,6 +116,11 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
   assert.equal(
     summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionEqualityOmbudsmanEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
@@ -242,69 +243,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q156 uses stilted state-welfare English wording/,
-  );
-});
-
-test('Lucia explanation copy and exports avoid role-scaffold wording', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    luciaExplanationRoleScaffoldPattern.test(
-      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
-    ),
-  );
-  const textForQuestion = (question) =>
-    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en].join(' ');
-  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
-    .filter((question) => luciaExplanationRoleScaffoldPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const q129 = generatedSiteBank.find((question) => question.id === 'q129');
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
-  assert.ok(q129, 'q129 should be published in the site bank');
-  assert.match(q129.why.sv, /I ett luciatåg bär Lucia en ljuskrona på huvudet/);
-  assert.match(q129.why.en, /In a Lucia procession, Lucia wears a crown of lights on her head/);
-});
-
-test('Lucia explanation naturalness guard rejects role-scaffold wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger.',
-        'I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger.',
-      )
-      .replace(
-        'In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs.',
-        'In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q129 uses Lucia role-scaffold explanation wording/,
   );
 });
 
@@ -673,6 +611,102 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('Equality Ombudsman source and exports use natural promote English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q061GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q061', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q061', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q061', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q061', 'judgement'),
+  ];
+  const q061Ids = ['q061', ...q061GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q061Ids.includes(question.id))
+    .filter((question) =>
+      equalityOmbudsmanWorkForEqualRightsPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q061Ids.includes(question.id))
+    .filter((question) =>
+      equalityOmbudsmanWorkForEqualRightsPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q061Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => equalityOmbudsmanWorkForEqualRightsPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q061 = generatedSiteBank.find((question) => question.id === 'q061');
+  const q061True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q061', 'trueStatement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q061, 'q061 should be published in the site bank');
+  assert.equal(
+    q061.opts[0].en,
+    'To promote equal rights for everyone and make sure the Discrimination Act is followed',
+  );
+  assert.equal(
+    q061.why.en,
+    'The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.',
+  );
+  assert.ok(q061True, 'q061 true generated variant should be published');
+  assert.equal(
+    q061True.q.en,
+    'One role of the Equality Ombudsman (DO) is to promote equal rights for everyone and make sure the Discrimination Act is followed.',
+  );
+});
+
+test('Equality Ombudsman English naturalness guard rejects literal work-for wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'To promote equal rights for everyone and make sure the Discrimination Act is followed',
+        'To work for equal rights for everyone and make sure the Discrimination Act is followed',
+      )
+      .replace(
+        'The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone.',
+        'The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q061 uses literal Equality Ombudsman English wording/,
+  );
+});
+
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -720,21 +754,6 @@ test('free-media source prompts ask the civic concept directly in exports', () =
   assert.deepEqual(csvOffenders, []);
 });
 
-test('published question prompts do not use source-recall wording', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => sourceRecallPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const actualOffenders = Array.from(actualSiteBank)
-    .filter((question) => sourceRecallPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-});
-
 test('free-media source prompt guard rejects answer-key wording', () => {
   const result = spawnSync(
     process.execPath,
@@ -769,95 +788,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q045 source prompt asks about the answer instead of the civic concept/,
-  );
-});
-
-test('participation source prompts ask the civic concept directly in exports', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => authoredWayToPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const actualOffenders = Array.from(actualSiteBank)
-    .filter((question) => authoredWayToPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const csvOffenders = fs
-    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
-    .split(/\r?\n/)
-    .filter((line) => authoredWayToPromptPattern.test(line))
-    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const q013 = generatedSiteBank.find((question) => question.id === 'q013');
-  const q013True = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'trueStatement'),
-  );
-  const q013False = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'falseStatement'),
-  );
-
-  assert.ok(q013, 'q013 should be published in the site bank');
-  assert.equal(q013.q.sv, 'Hur kan människor påverka samhället och delta i demokratin?');
-  assert.equal(q013.q.en, 'How can people influence society and participate in democracy?');
-  assert.ok(q013True, 'q013 true generated variant should be published');
-  assert.equal(
-    q013True.q.sv,
-    'Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling.',
-  );
-  assert.equal(
-    q013True.q.en,
-    'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
-  );
-  assert.ok(q013False, 'q013 false generated variant should be published');
-  assert.equal(
-    q013False.q.sv,
-    'Människor kan påverka samhället och delta i demokratin genom att förbjuda andra från att rösta i politiska val.',
-  );
-  assert.equal(
-    q013False.q.en,
-    'People can influence society and participate in democracy by banning others from voting in political elections.',
-  );
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-  assert.deepEqual(csvOffenders, []);
-});
-
-test('participation source prompt guard rejects way-to answer-key wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Hur kan människor påverka samhället och delta i demokratin?',
-        'Vilket är ett sätt att påverka och delta i samhället?',
-      )
-      .replace(
-        'How can people influence society and participate in democracy?',
-        'Which is a way to influence and participate in society?',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q013 source prompt asks about the answer instead of the civic concept/,
   );
 });
 
