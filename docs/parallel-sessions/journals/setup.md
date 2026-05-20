@@ -1201,3 +1201,12 @@ Verification: clean worktree from current `origin/main` `5ccf15d`; `NODE_OPTIONS
 PR: pending from current SETUP audit branch at handoff commit time.
 Blocked? yes - no fresh unblocked local SETUP source atom was found; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held unless fresh P0 site/release source evidence appears; keep production freshness separate until production serves current main and passes the hash-aware live smoke.
+
+## Iteration 253 - 2026-05-19
+
+Task completed: ONBOARDING-SV-MISTAKE-REVIEW-COPY-NATURALNESS-1 - rewrote the Swedish onboarding subtitle so mistake review is described as reviewing questions the learner answered incorrectly, not repeating mistakes.
+Artifacts changed: `app/onboarding.tsx`, `scripts/validate-content.js`, `tests/content-onboarding-route-header-parity.test.js`, `scripts/ui-effects.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `eb8aaeaa`; linked shared `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' timeout 300s npm run validate:content` exit 0 with `onboardingRouteCopyLabelsValidated:17` and `onboardingRouteCopyParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s node --test tests/content-onboarding-route-header-parity.test.js tests/content-onboarding-route-scroll-parity.test.js scripts/ui-effects.test.js` exit 0 with 60/60 passing; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 240s npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run format:check` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; direct `app/onboarding.tsx` scan finds no `repetition av misstag`.
+PR: pending from `task/onboarding-sv-mistake-review-copy-1779200070-pane2` at handoff commit time.
+Blocked? no for this P0 Swedish copy/naturalness atom.
+Next suggested validator action: inspect the onboarding subtitle and rerun `npm run validate:content` plus the onboarding/UI-effects focused tests before accepting `ONBOARDING-SV-MISTAKE-REVIEW-COPY-NATURALNESS-1`.

@@ -1652,7 +1652,7 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
     'Öva med UHR-refererade frågor och förklaringar.',
     'Följ framsteg lokalt på din enhet utan konto.',
-    'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
+    'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du svarat fel på.',
     'Förbered dig lugnt för samhällskunskapsprovet',
   ],
   en: [
@@ -1695,6 +1695,13 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding settings link must expose localized accessibility copy',
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
+];
+const FORBIDDEN_ONBOARDING_ROUTE_COPY_PATTERNS = [
+  {
+    pattern: /repetition av misstag/i,
+    message:
+      'onboarding route Swedish copy must describe reviewing missed questions, not repeating mistakes',
+  },
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -8738,6 +8745,10 @@ function validateOnboardingRouteCopyParity() {
 
   EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!onboardingRoute.includes(snippet)) reject(message);
+  });
+
+  FORBIDDEN_ONBOARDING_ROUTE_COPY_PATTERNS.forEach(({ pattern, message }) => {
+    if (pattern.test(onboardingRoute)) reject(message);
   });
 
   const seenLabels = new Set();
