@@ -6,7 +6,7 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
-const { createThrowingReadMMKV } = require('./helpers/storageStoreHarness.cjs');
+const { createMemoryMMKV, createThrowingReadMMKV } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -26,6 +26,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -49,6 +50,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -65,17 +67,26 @@ function createDailyGoalStorage(storedValue) {
   };
 }
 
-function loadSettingsFromStorage(storage) {
+function loadSettingsStoreFromStorage(storage) {
   const settingsStorePath = path.join(repoRoot, 'lib/storage/settingsStore.ts');
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
   const originalTsExtension = require.extensions['.ts'];
 
   Module._resolveFilename = function patchedResolve(request, parent, ...args) {
-    if (request === 'react-native-mmkv' || request === 'zustand') return `__stub__:${request}`;
+    if (request === 'expo-speech' || request === 'react-native-mmkv' || request === 'zustand') {
+      return `__stub__:${request}`;
+    }
     return originalResolve.call(this, request, parent, ...args);
   };
   Module._load = function patchedLoad(request, parent, isMain) {
+    if (request === 'expo-speech') {
+      return {
+        speak() {},
+        stop() {},
+      };
+    }
+
     if (request === 'react-native-mmkv') {
       return {
         createMMKV: () => storage,
@@ -113,7 +124,7 @@ function loadSettingsFromStorage(storage) {
   try {
     delete require.cache[settingsStorePath];
     const { useSettingsStore } = require(settingsStorePath);
-    return useSettingsStore.getState();
+    return useSettingsStore;
   } finally {
     delete require.cache[settingsStorePath];
     Module._resolveFilename = originalResolve;
@@ -126,14 +137,22 @@ function loadSettingsFromStorage(storage) {
   }
 }
 
+function loadSettingsFromStorage(storage) {
+  return loadSettingsStoreFromStorage(storage).getState();
+}
+
 function loadDailyGoalFromStorage(storedValue) {
   return loadSettingsFromStorage(createDailyGoalStorage(storedValue)).dailyGoalAnswers;
 }
 
 test('daily goal settings stay in parity between storage and settings controls', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-store'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -194,6 +213,26 @@ test('settings hydration falls back when MMKV reads throw', () => {
   assert.equal(state.dailyGoalAnswers, 10);
   assert.equal(state.includeSupplementaryQuestions, false);
   assert.equal(state.hasSeenAboutTheTest, false);
+});
+
+test('settings runtime setters normalize invalid values before writing state', () => {
+  const storage = createMemoryMMKV();
+  const useSettingsStore = loadSettingsStoreFromStorage(storage);
+
+  useSettingsStore.getState().setLanguage('fr');
+  useSettingsStore.getState().setAudioEnabled('no');
+  useSettingsStore.getState().setIncludeSupplementaryQuestions('yes');
+  useSettingsStore.getState().setDailyGoalAnswers(Infinity);
+
+  const state = useSettingsStore.getState();
+  assert.equal(state.language, 'sv');
+  assert.equal(state.audioEnabled, true);
+  assert.equal(state.includeSupplementaryQuestions, false);
+  assert.equal(state.dailyGoalAnswers, 50);
+  assert.equal(storage.values.get('language'), 'sv');
+  assert.equal(storage.values.get('audioEnabled'), true);
+  assert.equal(storage.values.get('includeSupplementaryQuestions'), false);
+  assert.equal(storage.values.get('dailyGoalAnswers'), 50);
 });
 
 test('daily goal settings parity rejects option-set drift', () => {

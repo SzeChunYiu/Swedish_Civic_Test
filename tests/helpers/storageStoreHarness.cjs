@@ -95,6 +95,10 @@ function loadTsWithStorage(repoRoot, relativePath, storageById) {
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
   const stubs = {
+    'expo-speech': () => ({
+      speak() {},
+      stop() {},
+    }),
     'react-native-mmkv': () => ({
       createMMKV: ({ id }) => storageById[id] ?? null,
     }),

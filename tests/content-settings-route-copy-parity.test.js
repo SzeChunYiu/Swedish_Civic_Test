@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-store'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -19,7 +23,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 92);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 96);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -62,6 +66,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -92,6 +97,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -119,6 +125,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -151,6 +158,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],

@@ -1107,11 +1107,17 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
+  {
+    name: 'persistenceWarning',
+    type: 'RecoverablePersistenceWarning | null',
+    optional: false,
+  },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
   { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
   { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
+  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
 const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-router',
@@ -7539,6 +7545,25 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-settings-store')) {
+  validateSettingsRouteCopyParity();
+  validateSettingsStoreSchemaParity();
+  validateSettingsDailyGoalParity();
+  validateSettingsAudioParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+    settingsStoreFieldsValidated,
+    settingsStoreSchemaParityValidated,
+    settingsDailyGoalOptionsValidated,
+    settingsDailyGoalParityValidated,
+    settingsAudioLabelsValidated,
+    settingsAudioParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -11452,7 +11477,10 @@ function validateSettingsStoreSchemaParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   const requiredSnippets = [
-    ["createMMKV({ id: 'settings' })", 'settings storage must use the stable settings MMKV id'],
+    [
+      'createMMKV({ id: settingsStorageId })',
+      'settings storage must use the stable settings MMKV id',
+    ],
     ['language: readLanguage()', 'SettingsState must initialize language from persisted storage'],
     [
       'audioEnabled: readAudioEnabled()',
@@ -11463,15 +11491,15 @@ function validateSettingsStoreSchemaParity() {
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
     [
-      'settingsStorage?.set(languageKey, language);',
+      'writeRecoverably( settingsStorage, settingsStorageId, languageKey, language, );',
       'setLanguage must persist through languageKey',
     ],
     [
-      'settingsStorage?.set(audioEnabledKey, audioEnabled);',
+      'writeRecoverably( settingsStorage, settingsStorageId, audioEnabledKey, audioEnabled, );',
       'setAudioEnabled must persist through audioEnabledKey',
     ],
     [
-      'settingsStorage?.set(dailyGoalKey, safeGoal);',
+      'writeRecoverably( settingsStorage, settingsStorageId, dailyGoalKey, normalizedGoal, );',
       'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
     ],
   ];
@@ -11510,7 +11538,7 @@ function validateSettingsDailyGoalParity() {
     reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
   }
 
-  if (!settingsStore.includes(`: ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
+  if (!settingsStore.includes(`const defaultDailyGoalAnswers = ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
     reject(`readDailyGoalAnswers must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
   }
 
@@ -11520,6 +11548,15 @@ function validateSettingsDailyGoalParity() {
     reject(
       `setDailyGoalAnswers must clamp between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
     );
+  }
+  if (!normalizedSettingsStore.includes('const storedValue = readStorageNumber(dailyGoalKey);')) {
+    reject('readDailyGoalAnswers must read the persisted value through readStorageNumber');
+  }
+  if (!normalizedSettingsStore.includes('return normalizeDailyGoalAnswers(storedValue);')) {
+    reject('readDailyGoalAnswers must normalize the raw persisted value');
+  }
+  if (settingsStore.includes('storedValue && storedValue > 0 ? storedValue : 10')) {
+    reject('readDailyGoalAnswers must not hydrate raw positive persisted values');
   }
 
   const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
@@ -11620,9 +11657,7 @@ function validateSettingsAudioParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (
-    !normalizedSettingsStore.includes(
-      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
-    )
+    !normalizedSettingsStore.includes('const storedValue = readStorageBoolean(audioEnabledKey);')
   ) {
     reject('readAudioEnabled must read the persisted audioEnabled boolean');
   }
@@ -11632,8 +11667,18 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('audioEnabled: readAudioEnabled()')) {
     reject('SettingsState must initialize audioEnabled from persisted storage');
   }
-  if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
+  if (
+    !normalizedSettingsStore.includes(
+      'writeRecoverably( settingsStorage, settingsStorageId, audioEnabledKey, audioEnabled, );',
+    )
+  ) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
+  }
+  if (!settingsStore.includes("import { stopSpeech } from '../audio/speak';")) {
+    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
+  }
+  if (!normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')) {
+    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
   }
 
   if (
