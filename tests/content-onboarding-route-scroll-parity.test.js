@@ -21,7 +21,7 @@ test('onboarding route keeps mobile content inside a scrollable root', () => {
 
   assert.equal(summary.onboardingRouteScrollRulesValidated, 5);
   assert.equal(summary.onboardingRouteScrollParityValidated, true);
-  assert.match(source, /import \{ ScrollView, StyleSheet, Text, View \}/);
+  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,

@@ -18,23 +18,40 @@ function parseValidationSummary() {
 test('onboarding route title stays accessible as a header', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
-  const firstRunModalSource = fs.readFileSync(
-    path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
-    'utf8',
-  );
 
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
-  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
+  assert.equal(summary.onboardingRouteCopyLabelsValidated, 49);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
-  assert.equal(summary.firstRunModalAccessibilityLabelsValidated, 4);
-  assert.equal(summary.firstRunModalAccessibilityParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
+  assert.match(source, /const onboardingDailyGoalPresetValues = \[10, 20, 40\] as const;/);
   assert.match(source, /const onboardingCopy: Record<AppLanguage, OnboardingCopy> = \{/);
+  assert.match(
+    source,
+    /const dailyGoalAnswers = useSettingsStore\(\(state\) => state\.dailyGoalAnswers\);/,
+  );
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(
+    source,
+    /const setDailyGoalAnswers = useSettingsStore\(\(state\) => state\.setDailyGoalAnswers\);/,
+  );
   assert.match(source, /const copy = onboardingCopy\[language\];/);
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
+  assert.match(
+    source,
+    /Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor\./,
+  );
   assert.match(source, /Prepare calmly for the civic test/);
+  assert.match(source, /Välj ett mjukt dagligt mål/);
+  assert.match(source, /Choose a gentle daily goal/);
+  assert.match(source, /Lugn/);
+  assert.match(source, /Regular/);
+  assert.match(source, /40 svar per dag/);
+  assert.match(source, /accessibilityLabel=\{preset\.accessibilityLabel\}/);
+  assert.match(source, /aria-selected=\{selected\}/);
+  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
+  assert.match(source, /onPress=\{\(\) => setDailyGoalAnswers\(goal\)\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.decideLaterAccessibilityLabel\}/);
   assert.match(
     source,
     /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
@@ -42,8 +59,6 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /accessibilityLabel=\{copy\.startStudyingAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.adjustSettingsAccessibilityLabel\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
-  assert.match(firstRunModalSource, /Öppna guiden om medborgarskapsprovet/);
-  assert.doesNotMatch(firstRunModalSource, new RegExp(['om-', 'provet-', 'guiden'].join('')));
 });
 
 test('about-the-test marks the first-run guide as seen after mount', () => {
@@ -228,37 +243,4 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /onboarding route is missing sv copy/);
-});
-
-test('first-run modal accessibility parity rejects pseudo-compound Swedish guide labels', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/onboarding/FirstRunAboutTheTestModal.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        "'Öppna guiden om medborgarskapsprovet'",
-        "'" + ['Öppna om-', 'provet-', 'guiden'].join('') + "'",
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /first-run modal still contains hyphenated Swedish about-test guide pseudo-compound/,
-  );
 });

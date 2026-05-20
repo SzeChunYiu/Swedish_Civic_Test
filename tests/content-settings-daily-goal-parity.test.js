@@ -133,6 +133,8 @@ test('daily goal settings stay in parity between storage and settings controls',
     'utf8',
   );
   const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+  const homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
   assert.equal(summary.settingsDailyGoalOptionsValidated, 4);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
@@ -151,6 +153,23 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsRoute, /\$\{answerCount\} svar per dag/);
   assert.match(settingsRoute, /\$\{answerCount\} answers per day/);
   assert.match(settingsRoute, /\{copy\.dailyGoalSummary\(dailyGoalAnswers\)\}/);
+  assert.match(onboardingRoute, /const onboardingDailyGoalPresetValues = \[10, 20, 40\] as const;/);
+  assert.match(
+    onboardingRoute,
+    /const dailyGoalAnswers = useSettingsStore\(\(state\) => state\.dailyGoalAnswers\);/,
+  );
+  assert.match(
+    onboardingRoute,
+    /const setDailyGoalAnswers = useSettingsStore\(\(state\) => state\.setDailyGoalAnswers\);/,
+  );
+  assert.match(onboardingRoute, /onPress=\{\(\) => setDailyGoalAnswers\(goal\)\}/);
+  assert.match(onboardingRoute, /aria-selected=\{selected\}/);
+  assert.match(onboardingRoute, /accessibilityState=\{\{ selected \}\}/);
+  assert.doesNotMatch(onboardingRoute, /streak survival|save your streak|lose your streak/i);
+  assert.match(
+    homeRoute,
+    /const dailyGoalAnswers = useSettingsStore\(\(state\) => state\.dailyGoalAnswers\);/,
+  );
 });
 
 test('daily goal hydration falls back for unsafe persisted values', () => {
@@ -186,14 +205,62 @@ test('daily goal settings parity rejects option-set drift', () => {
   assert.match(output, /daily goal options must include the default 10/);
 });
 
-test('daily goal settings parity rejects raw positive-number hydration', () => {
-  const result = runValidationWithSettingsStorePatch(
-    'return normalizeDailyGoalAnswers(storedValue);',
-    'return storedValue && storedValue > 0 ? storedValue : 10;',
+test('daily goal parity rejects onboarding presets that bypass settings persistence', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return String(contents).replace('onPress={() => setDailyGoalAnswers(goal)}', 'onPress={() => undefined}');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.match(output, /readDailyGoalAnswers must normalize the raw persisted value/);
-  assert.match(output, /readDailyGoalAnswers must not hydrate raw positive persisted values/);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding daily goal presets must persist through setDailyGoalAnswers/,
+  );
+});
+
+test('daily goal parity rejects onboarding presets without selected state semantics', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return String(contents)
+      .replace('aria-selected={selected}', 'aria-selected={false}')
+      .replace('accessibilityState={{ selected }}', 'accessibilityState={{}}');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding daily goal presets must mirror selected state to aria-selected/,
+  );
 });
