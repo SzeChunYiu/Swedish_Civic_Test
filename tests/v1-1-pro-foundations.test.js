@@ -337,6 +337,15 @@ test('tierComparison: every row has all three cells present', () => {
   }
 });
 
+test('tierComparison: Swedish mock exam row uses övningsprov wording', () => {
+  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const mockExamsRow = TIER_ROWS.find((row) => row.id === 'mockExams');
+
+  assert.equal(mockExamsRow.labelSv, 'Övningsprov');
+  assert.equal(mockExamsRow.labelEn, 'Mock exams');
+  assert.doesNotMatch(mockExamsRow.labelSv, /\bprovexamen\b|\bprovexamina\b/i);
+});
+
 test('tierComparison: native table lists ebook storage benefits already backed by local primitives', () => {
   const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
   const rowIds = TIER_ROWS.map((row) => row.id);

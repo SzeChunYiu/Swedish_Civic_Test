@@ -275,6 +275,22 @@ test('mockExamLibrary: library contains the canonical 7 mocks', () => {
   assert.ok(MOCK_EXAM_LIBRARY.find((m) => m.id === 'mock-random'));
 });
 
+test('mockExamLibrary: Swedish labels use övningsprov copy, not provexamen', () => {
+  const { MOCK_EXAM_LIBRARY } = loadTs('lib/learning/mockExamLibrary.ts');
+  const labelsSv = MOCK_EXAM_LIBRARY.map((mock) => mock.labelSv);
+
+  assert.deepEqual(labelsSv, [
+    'Övningsprov 1 – Mjuk start',
+    'Övningsprov 2 – Standard',
+    'Övningsprov 3 – Standard',
+    'Övningsprov 4 – Standard plus',
+    'Övningsprov 5 – Utmaning',
+    'Övningsprov 6 – Slutspurt',
+    'Slumpmässigt övningsprov',
+  ]);
+  assert.doesNotMatch(labelsSv.join('\n'), /\bprovexamen\b|\bprovexamina\b/i);
+});
+
 test('mockExamLibrary: format constants avoid unsourced pass threshold claims', () => {
   const lib = loadTs('lib/learning/mockExamLibrary.ts');
   assert.equal(lib.MOCK_EXAM_QUESTION_COUNT, 25);
