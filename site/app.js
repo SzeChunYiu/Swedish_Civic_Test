@@ -37,12 +37,43 @@ window.addEventListener('DOMContentLoaded', route);
 
 function smtTr(map) {
   let l = 'en';
-  try { l = localStorage.getItem('smt_lang') || 'en'; } catch { /* keep default */ }
+  try {
+    l = localStorage.getItem('smt_lang') || 'en';
+  } catch {
+    /* keep default */
+  }
   return (map && (map[l] || map.en)) || '';
 }
 function smtMobileNavLabel(open) {
-  if (open) return smtTr({ sv: 'Stäng navigering', en: 'Close navigation', 'zh-Hans': '关闭导航', 'zh-Hant': '關閉導覽', ar: 'إغلاق التنقّل', ckb: 'داخستنی گەشتکردن', fa: 'بستن پیمایش', pl: 'Zamknij nawigację', so: 'Xir hagista', ti: 'ምልጋብ ዕጸው', tr: 'Gezinmeyi kapat', uk: 'Закрити навігацію' });
-  return smtTr({ sv: 'Öppna navigering', en: 'Open navigation', 'zh-Hans': '打开导航', 'zh-Hant': '開啟導覽', ar: 'فتح التنقّل', ckb: 'کردنەوەی گەشتکردن', fa: 'باز کردن پیمایش', pl: 'Otwórz nawigację', so: 'Fur hagista', ti: 'ምልጋብ ክፈት', tr: 'Gezinmeyi aç', uk: 'Відкрити навігацію' });
+  if (open)
+    return smtTr({
+      sv: 'Stäng navigering',
+      en: 'Close navigation',
+      'zh-Hans': '关闭导航',
+      'zh-Hant': '關閉導覽',
+      ar: 'إغلاق التنقّل',
+      ckb: 'داخستنی گەشتکردن',
+      fa: 'بستن پیمایش',
+      pl: 'Zamknij nawigację',
+      so: 'Xir hagista',
+      ti: 'ምልጋብ ዕጸው',
+      tr: 'Gezinmeyi kapat',
+      uk: 'Закрити навігацію',
+    });
+  return smtTr({
+    sv: 'Öppna navigering',
+    en: 'Open navigation',
+    'zh-Hans': '打开导航',
+    'zh-Hant': '開啟導覽',
+    ar: 'فتح التنقّل',
+    ckb: 'کردنەوەی گەشتکردن',
+    fa: 'باز کردن پیمایش',
+    pl: 'Otwórz nawigację',
+    so: 'Fur hagista',
+    ti: 'ምልጋብ ክፈት',
+    tr: 'Gezinmeyi aç',
+    uk: 'Відкрити навігацію',
+  });
 }
 
 function smtSetMobileNav(open) {
@@ -343,7 +374,7 @@ const i18n = (window.i18n = {
       "Use the app to study. Don't scrape it, reverse-engineer it, or rebrand it as your own product. Don't use it to harass anyone. Treat the app the way you'd treat a borrowed bicycle: well.",
     'terms.s3.t': 'Content & accuracy',
     'terms.s3.p':
-      'The current question bank is written from UHR\'s public study material <em>Sverige i fokus</em>, and every question shows its section and page citation. Humans miss things. If you find an error, the <a href="#/support">support page</a> is the fastest fix.',
+      'The current question bank has ~169 questions cited directly to UHR\'s public study material <em>Sverige i fokus</em> and ~676 editorially derived from those same UHR themes. Every question carries a <strong>UHR</strong> or <strong>Derived</strong> provenance badge so you always know which is which, and Settings → Question sources lets you restrict practice + mock to UHR only. Humans miss things — if you find an error, the <a href="#/support">support page</a> is the fastest fix.',
     'terms.s4.t': 'No guarantees',
     'terms.s4.p':
       "We don't guarantee you'll pass the official test. We don't guarantee the app works perfectly on every device on every day. We do guarantee we'll keep trying.",
@@ -357,7 +388,7 @@ const i18n = (window.i18n = {
     'sources.h1a': 'Where the answers',
     'sources.h1b': 'actually come from.',
     'sources.lede':
-      "The current question bank cites UHR's public study material <em>Sverige i fokus</em>. We don't list other source families until questions backed by them actually ship.",
+      'The current question bank has two provenance families and every question is badged: <strong>UHR</strong> (~169 questions cited directly to <em>Sverige i fokus</em>) and <strong>Derived</strong> (~676 questions written editorially from those same UHR themes for additional practice volume). You can restrict practice + mock to UHR only in Settings → Question sources.',
     'sources.meta1.b': 'Primary source',
     'sources.meta1.v': '1',
     'sources.meta2.b': 'Last review',
@@ -383,7 +414,8 @@ const i18n = (window.i18n = {
     'sources.s3.li2':
       'This page is checked against <code>site/questions.js</code> so source copy cannot outrun the current bank.',
     'sources.s4.t': 'Current-source scope',
-    'sources.s4.li1': 'The bank is UHR-only today, based on <em>Sverige i fokus</em>.',
+    'sources.s4.li1':
+      'The bank has UHR-cited (~169) and editorially-derived (~676) questions; the per-question badge tells you which family each one belongs to, and Settings → Question sources lets you opt out of derived content.',
     'sources.s4.li2': 'The app is independent and is not an official UHR product.',
     'sources.s5.t': 'Editorial method',
     'sources.s5.callout.b': 'House rule:',
@@ -410,8 +442,8 @@ const i18n = (window.i18n = {
     'footer.copyright': '© 2026 Almost Swedish. Made with kanelbullar in Stockholm.',
     'footer.fika': 'Lagom built. Fika tested.',
     'ad.label': 'Sponsored',
-    'ad.placeholder': 'Your AdSense slot will render here.',
-    'ad.anchor.placeholder': 'Anchor ad slot',
+    'ad.placeholder': 'Ad space reserved while reviewed ad slots are configured.',
+    'ad.anchor.placeholder': 'Reserved ad area',
     'ad.native.placeholder': 'Native sponsored row',
     'practice.kicker': 'Practice round',
     'practice.title': 'Ten questions.',
@@ -730,7 +762,7 @@ const i18n = (window.i18n = {
       'Använd appen för att plugga. Skrapa den inte, reverse-engineera den inte, bygg inte om den och kalla den din. Använd den inte för att trakassera någon. Behandla appen som du behandlar en lånad cykel: väl.',
     'terms.s3.t': 'Innehåll & korrekthet',
     'terms.s3.p':
-      'Den nuvarande frågebanken bygger på UHR:s offentliga studiematerial <em>Sverige i fokus</em>, och varje fråga visar avsnitt och sidangivelse. Människor missar saker. Hittar du fel är <a href="#/support">supportsidan</a> snabbaste vägen.',
+      'Den nuvarande frågebanken har ~169 frågor med direkt citat till UHR:s offentliga studiematerial <em>Sverige i fokus</em> och ~676 redaktionellt härledda frågor som bygger på samma UHR-teman. Varje fråga är märkt med <strong>UHR</strong> eller <strong>Härledd</strong> så du alltid vet vilken familj den tillhör, och i Inställningar → Frågekällor kan du begränsa övning + provsim till enbart UHR. Människor missar saker — hittar du fel är <a href="#/support">supportsidan</a> snabbaste vägen.',
     'terms.s4.t': 'Inga garantier',
     'terms.s4.p':
       'Vi garanterar inte att du klarar det officiella provet. Vi garanterar inte att appen funkar perfekt på varje enhet varje dag. Vi garanterar att vi fortsätter försöka.',
@@ -744,7 +776,7 @@ const i18n = (window.i18n = {
     'sources.h1a': 'Var svaren',
     'sources.h1b': 'faktiskt kommer ifrån.',
     'sources.lede':
-      'Den nuvarande frågebanken hänvisar till UHR:s offentliga studiematerial <em>Sverige i fokus</em>. Vi listar inte andra källfamiljer förrän frågor med den källan faktiskt finns i banken.',
+      'Den nuvarande frågebanken har två källfamiljer och varje fråga är märkt: <strong>UHR</strong> (~169 frågor med direkt citat till <em>Sverige i fokus</em>) och <strong>Härledd</strong> (~676 frågor skrivna redaktionellt från samma UHR-teman för extra övningsmängd). Du kan begränsa övning + provsim till enbart UHR i Inställningar → Frågekällor.',
     'sources.meta1.b': 'Primär källa',
     'sources.meta1.v': '1',
     'sources.meta2.b': 'Senaste översyn',
@@ -768,7 +800,8 @@ const i18n = (window.i18n = {
     'sources.s3.li2':
       'Den här sidan kontrolleras mot <code>site/questions.js</code> så källcopy inte kan springa före den aktuella banken.',
     'sources.s4.t': 'Nuvarande källomfång',
-    'sources.s4.li1': 'Frågebanken är UHR-only i dag och bygger på <em>Sverige i fokus</em>.',
+    'sources.s4.li1':
+      'Frågebanken har UHR-citerade (~169) och redaktionellt härledda (~676) frågor; märkningen per fråga visar vilken familj varje fråga tillhör, och i Inställningar → Frågekällor kan du välja bort härlett innehåll.',
     'sources.s4.li2': 'Appen är fristående och är inte en officiell UHR-produkt.',
     'sources.s5.t': 'Redaktionell metod',
     'sources.s5.callout.b': 'Husregel:',
@@ -795,8 +828,8 @@ const i18n = (window.i18n = {
     'footer.copyright': '© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.',
     'footer.fika': 'Lagom byggt. Fika-testat.',
     'ad.label': 'Annons',
-    'ad.placeholder': 'AdSense-yta visas här.',
-    'ad.anchor.placeholder': 'Ankarannons',
+    'ad.placeholder': 'Annonsyta reserverad tills granskade annonsplatser är konfigurerade.',
+    'ad.anchor.placeholder': 'Reserverad annonsyta',
     'ad.native.placeholder': 'Sponsrad rad',
     'practice.kicker': 'Övningsrunda',
     'practice.title': 'Tio frågor.',
@@ -964,28 +997,77 @@ document.addEventListener('click', (e) => {
 
 const SMT_ADS = {
   publisherId: 'ca-pub-2451892671779738',
+  slots: {
+    inline: '',
+    anchor: '',
+  },
   scriptLoaded: false,
 };
 
+function smtNormalizeConsent(value) {
+  return value === 'all' || value === 'min' ? value : null;
+}
+
+function smtClearConsent() {
+  try {
+    localStorage.removeItem('smt_consent');
+  } catch {}
+}
+
 function smtGetConsent() {
   try {
-    return localStorage.getItem('smt_consent');
+    const stored = localStorage.getItem('smt_consent');
+    const normalized = smtNormalizeConsent(stored);
+    if (stored && !normalized) smtClearConsent();
+    return normalized;
   } catch {
     return null;
   }
 }
+
 function smtSetConsent(v) {
+  const normalized = smtNormalizeConsent(v);
+  if (!normalized) {
+    smtClearConsent();
+    return;
+  }
   try {
-    localStorage.setItem('smt_consent', v);
+    localStorage.setItem('smt_consent', normalized);
   } catch {}
+}
+
+function smtIsRealAdSenseSlotId(slotId) {
+  return typeof slotId === 'string' && /^[0-9]{10,}$/.test(slotId) && !/^0+$/.test(slotId);
+}
+
+function smtStaticAdsAreConfigured() {
+  return (
+    /^ca-pub-[0-9]{16}$/.test(SMT_ADS.publisherId || '') &&
+    smtIsRealAdSenseSlotId(SMT_ADS.slots.inline) &&
+    smtIsRealAdSenseSlotId(SMT_ADS.slots.anchor)
+  );
+}
+
+function smtConfigureAdSenseSlots() {
+  document.querySelectorAll('ins.adsbygoogle[data-smt-ad-placement]').forEach((el) => {
+    const placement = el.getAttribute('data-smt-ad-placement');
+    const slotId = SMT_ADS.slots[placement];
+    if (!smtIsRealAdSenseSlotId(slotId)) {
+      el.removeAttribute('data-ad-client');
+      el.removeAttribute('data-ad-slot');
+      return;
+    }
+    el.setAttribute('data-ad-client', SMT_ADS.publisherId);
+    el.setAttribute('data-ad-slot', slotId);
+  });
 }
 
 function smtLoadAdSense() {
   if (SMT_ADS.scriptLoaded) return;
-  if (!SMT_ADS.publisherId || SMT_ADS.publisherId.includes('XXXX')) {
-    // No real publisher ID yet — leave the styled placeholders visible.
+  if (!smtStaticAdsAreConfigured()) {
     return;
   }
+  smtConfigureAdSenseSlots();
   SMT_ADS.scriptLoaded = true;
   const s = document.createElement('script');
   s.async = true;
@@ -1002,11 +1084,25 @@ function smtLoadAdSense() {
 
 function smtApplyConsent(choice) {
   // 'all' = personalised, 'min' = non-personalised (NPA=1)
-  if (choice === 'all' || choice === 'min') {
+  const normalized = smtNormalizeConsent(choice);
+  if (!normalized) {
+    smtClearConsent();
+    smtShowConsent();
+    if (window.smtRefreshAds) window.smtRefreshAds();
+    return;
+  }
+  if (!smtStaticAdsAreConfigured()) {
+    smtHideConsent();
+    if (window.smtRefreshAds) window.smtRefreshAds();
+    return;
+  }
+  if (normalized === 'all' || normalized === 'min') {
     document.querySelectorAll('ins.adsbygoogle').forEach((el) => {
-      if (choice === 'min') el.setAttribute('data-npa', '1');
+      if (normalized === 'min') el.setAttribute('data-npa', '1');
       else el.removeAttribute('data-npa');
     });
+    window.adsbygoogle = window.adsbygoogle || [];
+    window.adsbygoogle.requestNonPersonalizedAds = normalized === 'min' ? 1 : 0;
     smtLoadAdSense();
   }
   if (window.smtRefreshAds) window.smtRefreshAds();
@@ -1024,6 +1120,7 @@ function smtHideConsent() {
 function smtShowAds(mode) {
   // 'none' | 'inline' | 'anchor' | 'both'
   const consent = smtGetConsent();
+  const canShowAds = !!consent && smtStaticAdsAreConfigured();
   let anchorDismissed = false;
   try {
     anchorDismissed = sessionStorage.getItem('smt_anchor_closed') === '1';
@@ -1031,9 +1128,9 @@ function smtShowAds(mode) {
   const inline = document.querySelector('[data-ad-slot="inline"]');
   const anchor = document.querySelector('[data-ad-slot="anchor"]');
   const native = document.querySelectorAll('.list-quiet__ad');
-  const showInline = !!consent && (mode === 'inline' || mode === 'both');
-  const showAnchor = !!consent && !anchorDismissed && (mode === 'anchor' || mode === 'both');
-  const showNative = !!consent && (mode === 'inline' || mode === 'both');
+  const showInline = canShowAds && (mode === 'inline' || mode === 'both');
+  const showAnchor = canShowAds && !anchorDismissed && (mode === 'anchor' || mode === 'both');
+  const showNative = canShowAds && (mode === 'inline' || mode === 'both');
   if (inline) inline.hidden = !showInline;
   if (anchor) anchor.hidden = !showAnchor;
   native.forEach((el) => {
@@ -1322,10 +1419,37 @@ function smtQuizEscapeHtml(value) {
 
 function smtQuizSourceCitation(question, lang) {
   const source = question && question.source;
-  if (!source) return smtTr({ sv: 'Källhänvisning saknas', en: 'Source citation unavailable', 'zh-Hans': '缺少资料来源标注', 'zh-Hant': '缺少資料來源標註', ar: 'لا تتوفر إشارة إلى المصدر', ckb: 'ئاماژە بە سەرچاوە بەردەست نییە', fa: 'ارجاع به منبع در دسترس نیست', pl: 'Brak źródła', so: 'Tixraac lama hayo', ti: 'ምንጪ የለን', tr: 'Kaynak gösterimi yok', uk: 'Джерело недоступне' });
+  if (!source)
+    return smtTr({
+      sv: 'Källhänvisning saknas',
+      en: 'Source citation unavailable',
+      'zh-Hans': '缺少资料来源标注',
+      'zh-Hant': '缺少資料來源標註',
+      ar: 'لا تتوفر إشارة إلى المصدر',
+      ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
+      fa: 'ارجاع به منبع در دسترس نیست',
+      pl: 'Brak źródła',
+      so: 'Tixraac lama hayo',
+      ti: 'ምንጪ የለን',
+      tr: 'Kaynak gösterimi yok',
+      uk: 'Джерело недоступне',
+    });
   const title = source.title || 'Sverige i fokus';
   if (!source.chapter || !source.section || source.page === undefined || source.page === null) {
-    return smtTr({ sv: 'Källhänvisning saknas', en: 'Source citation unavailable', 'zh-Hans': '缺少资料来源标注', 'zh-Hant': '缺少資料來源標註', ar: 'لا تتوفر إشارة إلى المصدر', ckb: 'ئاماژە بە سەرچاوە بەردەست نییە', fa: 'ارجاع به منبع در دسترس نیست', pl: 'Brak źródła', so: 'Tixraac lama hayo', ti: 'ምንጪ የለን', tr: 'Kaynak gösterimi yok', uk: 'Джерело недоступне' });
+    return smtTr({
+      sv: 'Källhänvisning saknas',
+      en: 'Source citation unavailable',
+      'zh-Hans': '缺少资料来源标注',
+      'zh-Hant': '缺少資料來源標註',
+      ar: 'لا تتوفر إشارة إلى المصدر',
+      ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
+      fa: 'ارجاع به منبع در دسترس نیست',
+      pl: 'Brak źródła',
+      so: 'Tixraac lama hayo',
+      ti: 'ምንጪ የለን',
+      tr: 'Kaynak gösterimi yok',
+      uk: 'Джерело недоступне',
+    });
   }
   return lang === 'sv'
     ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
@@ -1333,7 +1457,20 @@ function smtQuizSourceCitation(question, lang) {
 }
 
 function smtQuizQuestionDisclaimer(lang) {
-  return smtTr({ sv: 'Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga.', en: 'Independent study practice, not a real exam or an official UHR question.', 'zh-Hans': '独立练习，并非真正的考试，也不是官方 UHR 试题。', 'zh-Hant': '獨立練習，並非真正的考試，也不是官方 UHR 試題。', ar: 'تدريب مستقل، وليس اختبارًا حقيقيًا ولا سؤالًا رسميًا من UHR.', ckb: 'مەشقی سەربەخۆیە، نەک تاقیکردنەوەیەکی ڕاستەقینە یان پرسیارێکی فەرمیی UHR.', fa: 'تمرین مستقل است، نه یک آزمون واقعی و نه یک سؤال رسمی UHR.', pl: 'Niezależne ćwiczenie, nie prawdziwy egzamin ani oficjalne pytanie UHR.', so: 'Tababar madaxbannaan, ma aha imtixaan dhab ah ama su\'aal rasmi ah oo UHR.', ti: 'ናጻ ልምምድ፣ ናይ ሓቂ ፈተና ወይ ወግዓዊ ሕቶ UHR ኣይኮነን።', tr: 'Bağımsız alıştırma; gerçek bir sınav veya resmî bir UHR sorusu değildir.', uk: 'Незалежне тренування, не справжній іспит і не офіційне питання UHR.' });
+  return smtTr({
+    sv: 'Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga.',
+    en: 'Independent study practice, not a real exam or an official UHR question.',
+    'zh-Hans': '独立练习，并非真正的考试，也不是官方 UHR 试题。',
+    'zh-Hant': '獨立練習，並非真正的考試，也不是官方 UHR 試題。',
+    ar: 'تدريب مستقل، وليس اختبارًا حقيقيًا ولا سؤالًا رسميًا من UHR.',
+    ckb: 'مەشقی سەربەخۆیە، نەک تاقیکردنەوەیەکی ڕاستەقینە یان پرسیارێکی فەرمیی UHR.',
+    fa: 'تمرین مستقل است، نه یک آزمون واقعی و نه یک سؤال رسمی UHR.',
+    pl: 'Niezależne ćwiczenie, nie prawdziwy egzamin ani oficjalne pytanie UHR.',
+    so: "Tababar madaxbannaan, ma aha imtixaan dhab ah ama su'aal rasmi ah oo UHR.",
+    ti: 'ናጻ ልምምድ፣ ናይ ሓቂ ፈተና ወይ ወግዓዊ ሕቶ UHR ኣይኮነን።',
+    tr: 'Bağımsız alıştırma; gerçek bir sınav veya resmî bir UHR sorusu değildir.',
+    uk: 'Незалежне тренування, не справжній іспит і не офіційне питання UHR.',
+  });
 }
 
 const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE = 0.35;
@@ -1481,7 +1618,7 @@ function smtQuizRender() {
     stage.innerHTML = `
       <div class="quiz__card">
         <div class="quiz__crumb">Practice</div>
-        <h2 class="quiz__q">${smtTr({ sv: 'Inga frågor hittades.', en: 'No questions found.', 'zh-Hans': '未找到任何题目。', 'zh-Hant': '找不到任何題目。', ar: 'لم يُعثر على أسئلة.', ckb: 'هیچ پرسیارێک نەدۆزرایەوە.', fa: 'هیچ سؤالی یافت نشد.', pl: 'Nie znaleziono pytań.', so: 'Su\'aalo lama helin.', ti: 'ሕቶታት ኣይተረኽቡን።', tr: 'Soru bulunamadı.', uk: 'Питань не знайдено.' })}</h2>
+        <h2 class="quiz__q">${smtTr({ sv: 'Inga frågor hittades.', en: 'No questions found.', 'zh-Hans': '未找到任何题目。', 'zh-Hant': '找不到任何題目。', ar: 'لم يُعثر على أسئلة.', ckb: 'هیچ پرسیارێک نەدۆزرایەوە.', fa: 'هیچ سؤالی یافت نشد.', pl: 'Nie znaleziono pytań.', so: "Su'aalo lama helin.", ti: 'ሕቶታት ኣይተረኽቡን።', tr: 'Soru bulunamadı.', uk: 'Питань не знайдено.' })}</h2>
         <p class="quiz__counter">${smtTr({ sv: 'Välj ett annat kapitel.', en: 'Pick another chapter.', 'zh-Hans': '请选择其他章节。', 'zh-Hant': '請選擇其他章節。', ar: 'اختر فصلًا آخر.', ckb: 'بەشێکی تر هەڵبژێرە.', fa: 'فصل دیگری را انتخاب کنید.', pl: 'Wybierz inny rozdział.', so: 'Dooro cutub kale.', ti: 'ካልእ ምዕራፍ ምረጽ።', tr: 'Başka bir bölüm seçin.', uk: 'Виберіть інший розділ.' })}</p>
       </div>
     `;

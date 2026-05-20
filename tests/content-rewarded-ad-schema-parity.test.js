@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('rewarded ad TypeScript schema stays in parity with validator expectations', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -29,6 +30,11 @@ test('rewarded ad TypeScript schema stays in parity with validator expectations'
     /export type RewardedExtraExamRewardConfirmation = \(\) => boolean \| Promise<boolean>;/,
   );
   assert.match(rewardedAdSource, /confirmReward\?: RewardedExtraExamRewardConfirmation;/);
+  assert.match(
+    rewardedAdSource,
+    /export type RewardedExtraExamWebConsentDecision = Pick<AdConsentDecision, 'adServingAllowed'>;/,
+  );
+  assert.match(rewardedAdSource, /webConsentDecision\?: RewardedExtraExamWebConsentDecision;/);
   assert.match(rewardedAdSource, /reward\?: RewardedExtraExamReward;/);
   assert.match(rewardedAdSource, /status: RewardedExtraExamAdStatus;/);
   assert.match(rewardedAdSource, /timeoutMs\?: number;/);

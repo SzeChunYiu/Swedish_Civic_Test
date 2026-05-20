@@ -41,6 +41,7 @@ function loadTs(relativePath, exportName, moduleCache = new Map()) {
 
 test('ad consent TypeScript schema stays in parity with validator expectations', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

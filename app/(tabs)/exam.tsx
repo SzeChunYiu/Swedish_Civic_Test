@@ -26,6 +26,7 @@ import {
   showRewardedExtraExamAd,
   type RewardedExtraExamAdStatus,
 } from '../../lib/monetization/rewardedAd';
+import { WEB_AD_FALLBACK_CONSENT_DECISION } from '../../lib/monetization/ads';
 import {
   buildExamChapterBreakdownItems,
   buildExamReviewItems,
@@ -124,7 +125,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     rewardPreviewBody:
       'Slutför den korta förhandsvisningen innan du låser upp ett extra övningsprov. Det här är inte ett riktigt prov och ger ingen officiell fördel.',
     rewardPreviewButton: 'Slutför förhandsvisning',
-    rewardPreviewTitle: 'Belöningsförhandsvisning',
+    rewardPreviewTitle: 'Sponsrad förhandsvisning',
     resultBadge: 'Övningsresultat',
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
@@ -188,7 +189,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     rewardPreviewBody:
       'Complete the short preview before unlocking an extra mock exam. This is not a real exam and does not provide any official advantage.',
     rewardPreviewButton: 'Complete sponsor preview',
-    rewardPreviewTitle: 'Reward preview',
+    rewardPreviewTitle: 'Sponsored preview',
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
@@ -456,6 +457,7 @@ export default function Screen() {
         const rewardedAdResult = await showRewardedExtraExamAd({
           confirmReward: Platform.OS === 'web' ? () => rewardPreviewCompleted : undefined,
           entitlements,
+          webConsentDecision: Platform.OS === 'web' ? WEB_AD_FALLBACK_CONSENT_DECISION : undefined,
         });
 
         if (rewardedAdResult.status !== 'earned_reward') {

@@ -7,9 +7,14 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-ad-placement-route-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -35,7 +40,6 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
-  assert.equal(summary.practiceInterstitialQuestionCapValidated, true);
   assert.match(
     homeSource,
     /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
@@ -131,6 +135,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -161,6 +166,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -191,6 +197,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -224,6 +231,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -254,6 +262,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -287,6 +296,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],

@@ -630,7 +630,7 @@ export const baseQuestions: PracticeQuestion[] = rawBaseQuestions.map(
   applyQuestionLocalizationPilot,
 );
 
-const localizedAdditionalQuestions: PracticeQuestion[] = additionalQuestions.map(
+export const localizedAdditionalQuestions: PracticeQuestion[] = additionalQuestions.map(
   applyQuestionLocalizationPilot,
 );
 

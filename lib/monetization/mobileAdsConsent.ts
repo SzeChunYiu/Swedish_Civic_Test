@@ -101,18 +101,23 @@ export function createInitialAdConsentState({
   };
 }
 
-async function resolveTrackingTransparencyStatus(
+async function getCurrentTrackingTransparencyStatus(
   runtime: MobileAdsConsentRuntime,
   platform: AdConsentPlatform,
   realAdsEnabled: boolean,
 ): Promise<AppTrackingTransparencyStatus> {
   if (platform !== 'ios' || !realAdsEnabled) return 'unavailable';
 
-  const currentStatus = mapTrackingTransparencyStatus(
-    await runtime.getTrackingPermissionsAsync?.(),
-    platform,
-  );
+  return mapTrackingTransparencyStatus(await runtime.getTrackingPermissionsAsync?.(), platform);
+}
 
+async function requestTrackingTransparencyStatusIfNeeded(
+  runtime: MobileAdsConsentRuntime,
+  platform: AdConsentPlatform,
+  realAdsEnabled: boolean,
+  currentStatus: AppTrackingTransparencyStatus,
+): Promise<AppTrackingTransparencyStatus> {
+  if (platform !== 'ios' || !realAdsEnabled) return 'unavailable';
   if (currentStatus !== 'not_determined') return currentStatus;
 
   return mapTrackingTransparencyStatus(await runtime.requestTrackingPermissionsAsync?.(), platform);
@@ -140,10 +145,16 @@ export async function collectMobileAdsConsentState({
   const platform = normalizeAdConsentPlatform(runtime.platform);
   const shouldCollectConsent =
     googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;
-  const trackingTransparencyStatus = await resolveTrackingTransparencyStatus(
+  const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(
     runtime,
     platform,
     shouldCollectConsent,
+  );
+  const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded(
+    runtime,
+    platform,
+    shouldCollectConsent,
+    currentTrackingTransparencyStatus,
   );
   const umpConsentStatus = await resolveUmpConsentStatus(runtime, shouldCollectConsent);
 

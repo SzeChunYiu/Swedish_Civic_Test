@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('app config schema stays aligned with release app metadata and ad/IAP plugins', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

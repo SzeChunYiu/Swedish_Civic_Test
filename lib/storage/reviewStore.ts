@@ -15,6 +15,7 @@ import { create } from 'zustand';
 import type { ReviewCard, ReviewGrade } from '../learning/spacedRepetition';
 import { createNewCard, gradeCard, isDue, sortByDueAscending } from '../learning/spacedRepetition';
 import { getLocalDateKey } from '../learning/streaks';
+import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { writeRecoverably } from './persistenceWarning';
 
@@ -58,12 +59,14 @@ function normalize(value: unknown): PersistedReviews {
   const byId: Record<string, ReviewCard> = {};
   if (candidate.byId && typeof candidate.byId === 'object') {
     for (const [id, card] of Object.entries(candidate.byId)) {
+      if (!isSafeImportedMapKey(id)) continue;
       if (isReviewCard(card)) byId[id] = card;
     }
   }
   const gradedPerDay: Record<string, number> = {};
   if (candidate.gradedPerDay && typeof candidate.gradedPerDay === 'object') {
     for (const [day, count] of Object.entries(candidate.gradedPerDay)) {
+      if (!isSafeImportedMapKey(day)) continue;
       if (typeof count === 'number' && Number.isFinite(count) && count >= 0) {
         gradedPerDay[day] = count;
       }

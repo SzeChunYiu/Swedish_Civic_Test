@@ -7,10 +7,14 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 test('authored source questions stay reviewed and publish without field drift', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-authored-source-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -19,21 +23,27 @@ test('authored source questions stay reviewed and publish without field drift', 
   assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
 });
 
-test('derived q160 explanation expectation stays anchored to authored q002 source', () => {
+test('derived q002 false variant expectation stays anchored to authored q002 source', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
 
-  assert.match(source, /generatedQuestionId\(sourceQuestions, 'q002', 'trueStatement'\)/);
-  assert.match(source, /const \{ questions, sourceQuestions \} = loadTs\('data\/questions\.ts'\);/);
-  assert.match(source, /question\.id === 'q002'/);
-  assert.match(source, /byId\.get\('q160'\)\?\.explanationSv, sourceQ002\.explanationSv/);
-  assert.match(source, /byId\.get\('q160'\)\?\.explanationEn, sourceQ002\.explanationEn/);
-  assert.doesNotMatch(
+  assert.match(source, /const \{ questions \} = loadTs\('data\/questions\.ts'\);/);
+  assert.match(source, /const sourceQ002 = byId\.get\('q002'\);/);
+  assert.match(source, /const sourceQ002FalseVariant = assertQuestionTextPresent\(/);
+  assert.match(
     source,
-    /Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området\./,
+    /sourceQ002FalseVariant\.explanationSv,[\s\S]*'Sveriges nordligaste del ligger norr om polcirkeln\.'/,
   );
-  assert.doesNotMatch(
+  assert.match(
     source,
-    /Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area\./,
+    /sourceQ002FalseVariant\.explanationEn,[\s\S]*"Sweden's northernmost part lies north of the Arctic Circle\."/,
+  );
+  assert.match(
+    source,
+    /sourceQ002\.explanationSv,[\s\S]*'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området\./,
+  );
+  assert.match(
+    source,
+    /sourceQ002\.explanationEn,[\s\S]*"Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area\./,
   );
 });
 
@@ -56,6 +66,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-authored-source-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -82,11 +93,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     const marker = \`export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]);\`;
     const replacement = \`export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]).map((question) =>
   question.id === 'q001'
     ? {
@@ -100,6 +111,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-authored-source-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -137,6 +149,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-authored-source-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -174,6 +187,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-authored-source-parity');
 require('./scripts/validate-content.js');
 `,
     ],
