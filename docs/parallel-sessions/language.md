@@ -57,6 +57,18 @@ target languages at **native, publication quality**.
    conservatively and note the ambiguity in the handoff — never invent
    civic facts to make a sentence flow.
 
+## Shared localization research shelf
+
+Before any language atom, check `docs/localization/README.md` and the relevant
+`docs/localization/sample-corpus/<lang>/` notes. Add source cards there when you
+find official documents, public-service pages, articles, or tone samples worth
+reusing. Keep long copied passages out of the repo; record links, metadata,
+short micro-samples, style observations, and terminology decisions.
+
+The research shelf is where future sessions learn how real people write in each
+language and how jokes, encouragement, civic terms, and official register should
+be localized rather than mechanically translated.
+
 ## Target languages (priority order)
 
 Largest Sweden citizenship-prep audiences first. Manager assigns one
