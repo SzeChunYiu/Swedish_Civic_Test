@@ -207,6 +207,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /const existingSession = state\.mockExamSessions\.find/);
   assert.match(progressStore, /const completionXp = existingSession/);
   assert.match(progressStore, /totalXp: state\.totalXp \+ completionXp,/);
+  assert.match(progressStore, /if \(typeof isCorrect !== 'boolean'\) return state;/);
   assert.match(
     progressStore,
     /setStreakFreezeState: \(streakFreezeState: StreakFreezeState\) => void;/,
@@ -375,6 +376,11 @@ test('progress mutations return the same shape as persisted JSON readback', () =
     Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'nextReviewAt'),
     false,
   );
+
+  const beforeInvalidAnswer = progressSnapshot(useProgressStore.getState());
+  useProgressStore.getState().recordAnswer('q001', 'true');
+  assert.deepEqual(progressSnapshot(useProgressStore.getState()), beforeInvalidAnswer);
+  assertReturnedStateMatchesReadback();
 
   useProgressStore.getState().toggleBookmark('q001');
   assertReturnedStateMatchesReadback();
