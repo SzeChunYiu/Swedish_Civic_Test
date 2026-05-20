@@ -1174,8 +1174,13 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vilket är ett sätt att (.+)$/i);
-  if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Hur kan (.+?) påverka (.+?) och delta i (.+)$/i);
+  if (match) {
+    const method = answer.replace(/^Genom att\s+/i, '');
+    return `${upperFirst(match[1])} kan påverka ${match[2]} och delta i ${
+      match[3]
+    } genom att ${lowerFirst(method)}`;
+  }
 
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
@@ -1629,8 +1634,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which of the following is part of (.+)$/i);
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
 
-  match = q.match(/^Which is a way to (.+)$/i);
-  if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^How can (.+?) influence (.+?) and participate in (.+)$/i);
+  if (match) {
+    return `${upperFirst(match[1])} can influence ${match[2]} and participate in ${
+      match[3]
+    } by ${lowerFirst(stripLeadingByEn(answer))}`;
+  }
 
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
