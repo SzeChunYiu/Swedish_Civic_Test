@@ -3,7 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
-const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
+const {
+  assertNoUnsupportedStaticOutcomeSlogans,
+  assertNoUnsupportedStaticTeamCredentialClaims,
+} = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -319,6 +322,17 @@ test('static Home body no-JS fallback mirrors the English dictionary', () => {
 
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+});
+
+test('static footer about copy avoids unsupported team test-taking credential claims', () => {
+  assert.equal(assertNoUnsupportedStaticTeamCredentialClaims(repoRoot), 5);
+
+  const appSource = read('site/app.js');
+  const indexHtml = read('site/index.html');
+
+  assert.match(appSource, /public source material/);
+  assert.match(appSource, /offentligt källmaterial/);
+  assert.match(indexHtml, /public source material/);
 });
 
 test('static ebook practical test copy is backed by current UHR source metadata', () => {
