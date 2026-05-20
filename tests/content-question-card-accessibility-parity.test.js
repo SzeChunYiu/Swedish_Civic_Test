@@ -15,12 +15,70 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function readProvenanceBadgeSource() {
+  return fs.readFileSync(path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'), 'utf8');
+}
+
+function assertProvenanceBadgeSourceNoteDisclosure(source) {
+  const provenanceHelperSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/provenance.ts'),
+    'utf8',
+  );
+  const requiredRules = [
+    [/import \{ useState \} from 'react';/, 'source-note state'],
+    [/Pressable, StyleSheet, Text, View/, 'pressable badge imports'],
+    [/getProvenanceDescription,/, 'localized provenance description import'],
+    [/export interface ProvenanceBadgeProps \{/, 'explicit props interface'],
+    [/const \[sourceNoteVisible, setSourceNoteVisible\] = useState\(false\);/, 'collapsed default'],
+    [/const showSourceNote = \(\) => setSourceNoteVisible\(true\);/, 'focus reveal handler'],
+    [
+      /const toggleSourceNote = \(\) => setSourceNoteVisible\(\(visible\) => !visible\);/,
+      'press toggle handler',
+    ],
+    [
+      /const sourceNoteText = getProvenanceDescription\(provenance, language\);/,
+      'localized source note lookup',
+    ],
+    [/sourceNotePrefix: 'Källanteckning'/, 'Swedish source-note prefix'],
+    [/sourceNotePrefix: 'Source note'/, 'English source-note prefix'],
+    [/sourceNoteHint: 'Visar eller döljer en kort källanteckning\.'/, 'Swedish toggle hint'],
+    [/sourceNoteHint: 'Shows or hides a short source note\.'/, 'English toggle hint'],
+    [/accessibilityRole="button"/, 'button role'],
+    [/accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/, 'expanded state'],
+    [/hitSlop=\{space\[1\]\}/, 'token hit slop'],
+    [/onFocus=\{showSourceNote\}/, 'focus disclosure'],
+    [/onPress=\{toggleSourceNote\}/, 'press toggle disclosure'],
+    [/sourceNoteVisible \? \(/, 'conditional source-note render'],
+    [/\{noteLabel\}/, 'visible source-note label'],
+  ];
+
+  for (const [pattern, label] of requiredRules) {
+    assert.match(source, pattern, `ProvenanceBadge missing ${label}`);
+  }
+
+  assert.match(
+    provenanceHelperSource,
+    /descriptionSv: 'Direkt från UHR:s utbildningsmaterial Sverige i fokus\.'/,
+    'provenance helper missing Swedish UHR source note',
+  );
+  assert.match(
+    provenanceHelperSource,
+    /descriptionEn: "Directly from UHR's study material Sverige i fokus\."/,
+    'provenance helper missing English UHR source note',
+  );
+  assert.doesNotMatch(
+    source,
+    /accessibilityRole="text"[\s\S]*style=\{\[styles\.badge, tone\]\}/,
+    'ProvenanceBadge should not regress to a static text-only badge',
+  );
+}
+
 test('quiz QuestionCard keeps question text and accessibility summary in parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionCard.tsx'), 'utf8');
   const helperSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
 
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 19);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 20);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.match(source, /const questionAccessibilityLabel =/);
   assert.match(source, /language\?: AppLanguage/);
@@ -54,7 +112,12 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   );
   assert.match(source, /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/);
   assert.match(source, /Swedish original/);
-  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.doesNotMatch(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.match(
+    source,
+    /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
+  );
+  assert.match(source, /accessibilitySummary: \{/);
   assert.match(source, /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /\{questionText\}/);
@@ -64,6 +127,40 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);
   assert.match(helperSource, /fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/);
+});
+
+test('QuestionCard provenance badge toggles localized source notes on press or focus', () => {
+  assertProvenanceBadgeSourceNoteDisclosure(readProvenanceBadgeSource());
+});
+
+test('QuestionCard provenance badge parity rejects static source-note drift', () => {
+  const mutatedSource = readProvenanceBadgeSource().replace(
+    '        onFocus={showSourceNote}\n',
+    '',
+  );
+
+  assert.throws(() => assertProvenanceBadgeSourceNoteDisclosure(mutatedSource), /focus disclosure/);
+});
+
+test('QuestionCard provenance badge parity rejects one-way source-note press behavior', () => {
+  const mutatedSource = readProvenanceBadgeSource().replace(
+    '        onPress={toggleSourceNote}\n',
+    '        onPress={showSourceNote}\n',
+  );
+
+  assert.throws(
+    () => assertProvenanceBadgeSourceNoteDisclosure(mutatedSource),
+    /press toggle disclosure/,
+  );
+});
+
+test('QuestionCard provenance badge parity rejects expanded state drift', () => {
+  const mutatedSource = readProvenanceBadgeSource().replace(
+    '        accessibilityState={{ expanded: sourceNoteVisible }}\n',
+    '        accessibilityState={{ expanded: true }}\n',
+  );
+
+  assert.throws(() => assertProvenanceBadgeSourceNoteDisclosure(mutatedSource), /expanded state/);
 });
 
 test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {
@@ -152,6 +249,36 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionCard missing question header text for accessibility parity/,
+  );
+});
+
+test('QuestionCard accessibility parity rejects parent card grouping of source controls', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/QuestionCard.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('<Card>', '<Card accessibilityLabel={questionAccessibilityLabel}>');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionCard parent Card must not group nested source controls/,
   );
 });
 
