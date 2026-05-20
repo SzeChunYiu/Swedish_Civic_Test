@@ -60,6 +60,12 @@ function assertSearchRouteQueryHydration(source) {
     ],
     [/const routeQuery = getRouteSearchQuery\(searchParams\);/, 'route query resolution'],
     [/const \[query, setQuery\] = useState\(\(\) => routeQuery\);/, 'route query initial state'],
+    [/const previousRouteQueryRef = useRef\(routeQuery\);/, 'route query sync ref'],
+    [/useEffect\(\(\) => \{/, 'route query sync effect'],
+    [/if \(previousRouteQueryRef\.current === routeQuery\) return;/, 'unchanged route query guard'],
+    [/previousRouteQueryRef\.current = routeQuery;/, 'route query sync ref update'],
+    [/setQuery\(routeQuery\);/, 'route query state resync'],
+    [/\}, \[routeQuery\]\);/, 'route query sync dependency'],
     [/function getFirstSearchParamValue/, 'single-value route param helper'],
     [/Array\.isArray\(value\) \? value\[0\] : value/, 'array route param support'],
     [/function getRouteSearchQuery\(params: SearchRouteParams\)/, 'route query helper'],
@@ -84,7 +90,7 @@ function assertSearchRouteQueryHydration(source) {
   );
 }
 
-test('Search route hydrates q or query URL params before typing', () => {
+test('Search route hydrates and resyncs q or query URL params around typing', () => {
   assertSearchRouteQueryHydration(readSearchRouteSource());
   assertSearchRouteQuestionResults(readSearchRouteSource());
 });
@@ -96,6 +102,27 @@ test('Search route hydration rejects blank initial query drift', () => {
   );
 
   assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /route query initial state/);
+});
+
+test('Search route hydration rejects mounted route-param sync drift', () => {
+  const mutatedSource = readSearchRouteSource().replace(
+    /  const previousRouteQueryRef = useRef\(routeQuery\);\n[\s\S]*?  \}, \[routeQuery\]\);\n/,
+    '',
+  );
+
+  assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /route query sync ref/);
+});
+
+test('Search route hydration rejects overwriting local typing without a route-param change', () => {
+  const mutatedSource = readSearchRouteSource().replace(
+    'if (previousRouteQueryRef.current === routeQuery) return;',
+    '',
+  );
+
+  assert.throws(
+    () => assertSearchRouteQueryHydration(mutatedSource),
+    /unchanged route query guard/,
+  );
 });
 
 test('Search route hydration rejects dropping the query fallback param', () => {

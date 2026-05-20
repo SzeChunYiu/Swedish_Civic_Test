@@ -13,6 +13,8 @@ type SearchNavigationScenario = {
   initialSummary: RegExp;
   inputName: string;
   language: AppLanguage;
+  mountedQuery: string;
+  mountedUrl: string;
   questionLinkName: RegExp;
   questionTitlePrefix: RegExp;
   query: string;
@@ -28,6 +30,8 @@ const searchNavigationScenarios: SearchNavigationScenario[] = [
     initialSummary: /\d+ samhällsbegrepp i referensen/,
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     language: 'sv',
+    mountedQuery: 'kommun',
+    mountedUrl: '/search?query=kommun',
     questionLinkName: /Öppna övningsfrågan:/,
     questionTitlePrefix: /^Öppna övningsfrågan:\s*/,
     query: 'riksdag',
@@ -41,6 +45,8 @@ const searchNavigationScenarios: SearchNavigationScenario[] = [
     initialSummary: /\d+ civic reference terms/,
     inputName: 'Search civic terms and practice questions',
     language: 'en',
+    mountedQuery: 'riksdag',
+    mountedUrl: '/search?q=riksdag',
     questionLinkName: /Open practice question:/,
     questionTitlePrefix: /^Open practice question:\s*/,
     query: 'kommun',
@@ -58,9 +64,17 @@ async function expectHydratedSearch(page: Page, scenario: SearchNavigationScenar
   await page.goto(scenario.url, { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
+  return expectVisibleSearchResults(page, scenario, scenario.query);
+}
+
+async function expectVisibleSearchResults(
+  page: Page,
+  scenario: SearchNavigationScenario,
+  expectedQuery: string,
+) {
   const input = page.getByRole('textbox', { name: scenario.inputName });
   await expect(input).toBeVisible();
-  await expect(input).toHaveValue(scenario.query);
+  await expect(input).toHaveValue(expectedQuery);
   await expect(page.getByText(scenario.filteredSummary)).toBeVisible();
   await expect(
     page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
@@ -68,6 +82,13 @@ async function expectHydratedSearch(page: Page, scenario: SearchNavigationScenar
   await expect(page.getByRole('link', { name: scenario.questionLinkName }).first()).toBeVisible();
 
   return input;
+}
+
+async function changeMountedSearchParams(page: Page, url: string) {
+  await page.evaluate((nextUrl) => {
+    window.history.pushState({}, '', nextUrl);
+    window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
+  }, url);
 }
 
 async function expectFirstQuestionResultNavigates(page: Page, scenario: SearchNavigationScenario) {
@@ -117,6 +138,9 @@ for (const scenario of searchNavigationScenarios) {
     await page.getByRole('button', { name: scenario.clearName }).click();
     await expect(input).toHaveValue('');
     await expect(page.getByText(scenario.initialSummary)).toBeVisible();
+
+    await changeMountedSearchParams(page, scenario.mountedUrl);
+    await expectVisibleSearchResults(page, scenario, scenario.mountedQuery);
 
     expect(consoleErrors).toEqual([]);
   });
