@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
@@ -44,11 +45,35 @@ function readPreflightReport(args) {
 
   const preflightArgs = ['scripts/release-preflight.js', '--json'];
   if (args.runValidate) preflightArgs.push('--run-validate');
-  const result = spawnSync(process.execPath, preflightArgs, { encoding: 'utf8' });
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-blockers-'));
+  const stdoutPath = path.join(tmpDir, 'release-preflight.json');
+  let result;
+  let stdout = '';
   try {
-    return JSON.parse(result.stdout);
+    const stdoutFd = fs.openSync(stdoutPath, 'w');
+    try {
+      result = spawnSync(process.execPath, preflightArgs, {
+        encoding: 'utf8',
+        // --run-validate embeds the full local validation transcript in JSON
+        // evidence. Write stdout to a file instead of a captured pipe so the
+        // snapshot writer cannot truncate the report and then fail with
+        // "Unterminated string" while preflight itself produced usable JSON.
+        stdio: ['ignore', stdoutFd, 'pipe'],
+      });
+    } finally {
+      fs.closeSync(stdoutFd);
+    }
+    stdout = fs.readFileSync(stdoutPath, 'utf8');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+  try {
+    return JSON.parse(stdout);
   } catch (error) {
-    fail(`Could not parse release preflight JSON: ${error.message}\n${result.stderr}`);
+    const spawnError = result?.error ? `\nspawn error: ${result.error.message}` : '';
+    fail(
+      `Could not parse release preflight JSON: ${error.message}${spawnError}\n${result?.stderr || ''}`,
+    );
   }
 }
 
