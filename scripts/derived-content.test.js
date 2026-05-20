@@ -47,6 +47,59 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function extractFunctionSlice(source, functionName, nextFunctionName) {
+  const start = source.indexOf(`function ${functionName}`);
+  assert.notEqual(start, -1, `${functionName} should exist`);
+  const end = source.indexOf(`function ${nextFunctionName}`, start + 1);
+  assert.notEqual(end, -1, `${nextFunctionName} should follow ${functionName}`);
+  return source.slice(start, end);
+}
+
+function civicStatementPromptPatterns(source, functionName, nextFunctionName) {
+  return [
+    ...extractFunctionSlice(source, functionName, nextFunctionName).matchAll(
+      /\bq\.match\((\/(?:\\.|[^/])+\/[dgimsuy]*)\)/g,
+    ),
+  ].map((match) => match[1]);
+}
+
+test('validate-content mirrors production civic statement prompt patterns', () => {
+  const productionSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
+    'utf8',
+  );
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  const svProductionPatterns = civicStatementPromptPatterns(
+    productionSource,
+    'civicStatementSv',
+    'civicStatementEn',
+  );
+  const svValidatorPatterns = civicStatementPromptPatterns(
+    validatorSource,
+    'civicStatementSv',
+    'civicStatementEn',
+  );
+  const enProductionPatterns = civicStatementPromptPatterns(
+    productionSource,
+    'civicStatementEn',
+    'buildSingleChoiceVariant',
+  );
+  const enValidatorPatterns = civicStatementPromptPatterns(
+    validatorSource,
+    'civicStatementEn',
+    'correctOption',
+  );
+
+  assert.ok(svProductionPatterns.length > 100, 'Swedish mirror should cover source shapes');
+  assert.ok(enProductionPatterns.length > 100, 'English mirror should cover source shapes');
+  assert.deepEqual(svValidatorPatterns, svProductionPatterns);
+  assert.deepEqual(enValidatorPatterns, enProductionPatterns);
+});
+
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
