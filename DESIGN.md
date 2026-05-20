@@ -18,15 +18,15 @@ depth — feels like a well-made Nordic civic product, not a flag.
 | surfaceWarm | #eaf0f7 | panels / secondary surface |
 | text | #0b1f33 | primary text (deep navy near-black) |
 | textSecondary | #44586b | secondary text |
-| textDisclaimer | #667789 | disclaimer/caption |
-| textPlaceholder | #667789 | placeholder |
+| textDisclaimer | #6b7c8c | disclaimer/caption |
+| textPlaceholder | #9aa9b6 | placeholder |
 | accent | #006aa7 | PRIMARY (Swedish blue) — CTAs, correct, progress, links |
 | accentActive | #00537f | pressed primary |
 | focus | #2f80ed | focus ring |
 | badgeBlueBg / badgeBlueText | #fff3cf / #8a6a00 | GOLD accent — XP/streak/badges |
 | border | #dbe3ec | standard border |
-| success/correctBg | #16703c / #e6f4ec | correct answer |
-| warning/incorrectBg | #8a5700 / #fdf0dd | incorrect (amber, distinct from gold) |
+| success/correctBg | #1e874b / #e6f4ec | correct answer |
+| warning/incorrectBg | #c77700 / #fdf0dd | incorrect (amber, distinct from gold) |
 | navy | #003a5c | deep blue, secondary brand / headers |
 
 Rules: blue is the ONLY primary; gold ONLY for reward/highlight (never body

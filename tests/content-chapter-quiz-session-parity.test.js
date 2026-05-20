@@ -46,7 +46,6 @@ function loadTs(relativePath, exportName) {
 
 test('chapter quiz sessions resolve to the first published question per chapter', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
