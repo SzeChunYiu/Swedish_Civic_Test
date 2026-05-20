@@ -551,6 +551,41 @@ test('onboarding route remains scrollable on narrow mobile viewports', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('first-run about modal manages web focus and real actions', () => {
+  const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
+
+  assert.match(source, /import \{ useCallback, useEffect, useRef \} from 'react';/);
+  assert.match(source, /Modal, Platform, Pressable/);
+  assert.match(source, /type FocusableView =/);
+  assert.match(source, /type RestorableElement =/);
+  assert.match(source, /type WebKeyboardEvent =/);
+  assert.match(source, /findFirstRunFocusFallback/);
+  assert.match(source, /getFirstRunFocusRestoreTarget/);
+  assert.match(source, /const visible =/);
+  assert.match(source, /const guideLinkRef = useRef<View \| null>\(null\);/);
+  assert.match(source, /const skipButtonRef = useRef<View \| null>\(null\);/);
+  assert.match(source, /const restoreFocusRef = useRef<RestorableElement \| null>\(null\);/);
+  assert.match(source, /focusFirstRunAction/);
+  assert.match(source, /getFocusedFirstRunActionIndex/);
+  assert.match(source, /restoreFirstRunFocus/);
+  assert.match(source, /dismissFirstRunModal/);
+  assert.match(source, /handleDialogKeyDown/);
+  assert.match(source, /case 'Escape':/);
+  assert.match(source, /case 'Tab':/);
+  assert.match(source, /document\.addEventListener\('keydown', handleDialogKeyDown, true\)/);
+  assert.match(source, /document\.removeEventListener\('keydown', handleDialogKeyDown, true\)/);
+  assert.match(source, /onRequestClose=\{dismissFirstRunModal\}/);
+  assert.match(source, /onPress=\{dismissFirstRunModal\}/);
+  assert.match(source, /ref=\{guideLinkRef\}/);
+  assert.match(source, /ref=\{skipButtonRef\}/);
+  assert.match(source, /router\.push\('\/about-the-test'\)/);
+  assert.match(source, /accessible=\{false\}/);
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.doesNotMatch(source, /<Pressable[\s\S]*accessibilityRole="button"[\s\S]*styles\.backdrop/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('about-the-test marks the first-run guide as seen after mount', () => {
   const source = read('app/about-the-test.tsx');
   const seenEffectPattern =
