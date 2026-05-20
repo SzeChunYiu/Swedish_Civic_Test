@@ -2630,6 +2630,10 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/,
   },
   {
+    label: 'nested SourceCitation opts out of duplicate accessibility node',
+    pattern: /<SourceCitation[\s\S]*accessibilityRole="none"[\s\S]*label=\{copy\.title\}/,
+  },
+  {
     label: 'localized UHR title header text',
     pattern:
       /<Text accessibilityRole="header" style=\{styles\.title\}>[\s\S]*\{copy\.title\}[\s\S]*<\/Text>/,
@@ -2643,6 +2647,29 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
   },
 ];
+const EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES = [
+  {
+    label: 'standalone SourceCitation text role default',
+    pattern: /accessibilityRole = 'text'/,
+  },
+  {
+    label: 'standalone SourceCitation default accessibility label',
+    pattern:
+      /const defaultAccessibilityLabel = \[resolvedLabel, citationText, pageText\][\s\S]*\.filter\(Boolean\)[\s\S]*\.join\('\. '\);/,
+  },
+  {
+    label: 'decorative SourceCitation omits synthesized accessibility label',
+    pattern:
+      /const resolvedAccessibilityLabel =[\s\S]*accessibilityRole === 'none'\s*\? undefined\s*:\s*\(accessibilityLabel \?\? defaultAccessibilityLabel\);/,
+  },
+  {
+    label: 'SourceCitation applies resolved accessibility label',
+    pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
+  },
+];
+const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULE_COUNT =
+  EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length +
+  EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.length;
 const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
     label: 'active prop contract',
@@ -9136,6 +9163,7 @@ function validateExplanationPanelAccessibilityParity() {
 function validateUhrReferenceCardAccessibilityParity() {
   let valid = true;
   let uhrReferenceCardSource = '';
+  let sourceCitationSource = '';
 
   function reject(message) {
     valid = false;
@@ -9153,6 +9181,17 @@ function validateUhrReferenceCardAccessibilityParity() {
     );
     return;
   }
+  try {
+    sourceCitationSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/SourceCitation.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/SourceCitation.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
 
   EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(uhrReferenceCardSource)) {
@@ -9161,11 +9200,29 @@ function validateUhrReferenceCardAccessibilityParity() {
     }
     uhrReferenceCardAccessibilityRulesValidated += 1;
   });
+  const nestedSourceCitationOpeningTag = uhrReferenceCardSource.match(/<SourceCitation[\s\S]*?>/);
+  if (!nestedSourceCitationOpeningTag) {
+    reject('UHRReferenceCard missing nested SourceCitation for accessibility parity');
+  } else if (
+    /accessibilityLabel=\{referenceAccessibilityLabel\}/.test(nestedSourceCitationOpeningTag[0])
+  ) {
+    reject('UHRReferenceCard must not pass duplicate accessibilityLabel to nested SourceCitation');
+  }
+
+  EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(sourceCitationSource)) {
+      reject(
+        `SourceCitation missing ${expectedRule.label} for UHRReferenceCard accessibility parity`,
+      );
+      return;
+    }
+    uhrReferenceCardAccessibilityRulesValidated += 1;
+  });
 
   if (
     valid &&
     uhrReferenceCardAccessibilityRulesValidated ===
-      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length
+      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULE_COUNT
   ) {
     uhrReferenceCardAccessibilityParityValidated = true;
   }

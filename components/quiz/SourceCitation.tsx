@@ -88,8 +88,11 @@ export function SourceCitation({
   const citationText = getCitationText({ copy, reference, sourceTitle, unavailableLabel });
   const hasCustomBody = children !== undefined && children !== null;
   const pageText = getPageText(copy, reference);
+  const defaultAccessibilityLabel = [resolvedLabel, citationText, pageText]
+    .filter(Boolean)
+    .join('. ');
   const resolvedAccessibilityLabel =
-    accessibilityLabel ?? [resolvedLabel, citationText, pageText].filter(Boolean).join('. ');
+    accessibilityRole === 'none' ? undefined : (accessibilityLabel ?? defaultAccessibilityLabel);
 
   return (
     <View

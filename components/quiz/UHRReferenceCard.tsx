@@ -46,7 +46,7 @@ export function UHRReferenceCard({
   return (
     <Card accessibilityLabel={referenceAccessibilityLabel}>
       <SourceCitation
-        accessibilityLabel={referenceAccessibilityLabel}
+        accessibilityRole="none"
         label={copy.title}
         language={language}
         reference={reference}
