@@ -7,6 +7,8 @@ const APP_LINK_BASE = 'swedish-civic-test://app';
 
 const staticRoutes = new Set([
   '/',
+  '/about-the-test',
+  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',

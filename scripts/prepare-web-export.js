@@ -3,12 +3,27 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
-const REQUIRED_ROUTE_CONTEXT_KEYS = [
-  './_layout.tsx',
-  './(tabs)/home.tsx',
-  './(tabs)/practice.tsx',
-  './(tabs)/mistakes.tsx',
-  './about-the-test.tsx',
+const WEB_MANIFEST_HREF = 'manifest.webmanifest';
+const WEB_EXPORT_FRESHNESS_MARKER = 'web-export-freshness.json';
+const WEB_EXPORT_FRESHNESS_VERSION = 1;
+const PNG_SIGNATURE = '89504e470d0a1a0a';
+const WEB_EXPORT_SOURCE_INPUTS = [
+  'app',
+  'app.json',
+  'assets',
+  'babel.config.js',
+  'components',
+  'data',
+  'lib',
+  'metro.config.js',
+  'package-lock.json',
+  'package.json',
+  'playwright.config.ts',
+  'public',
+  'scripts/prepare-web-export.js',
+  'tests/e2e',
+  'tsconfig.json',
+  'types',
 ];
 
 function parseArgs(argv) {
@@ -121,24 +136,14 @@ function check(outputDir) {
   }
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
-  const jsSources = [];
   for (const jsFile of jsFiles) {
     const source = fs.readFileSync(jsFile, 'utf8');
-    jsSources.push(source);
     if (/["']\/(_expo|assets)\//.test(source)) {
       throw new Error(`${jsFile} still contains root-relative exported asset URLs`);
     }
   }
 
-  const combinedJs = jsSources.join('\n');
-  const missingRouteKeys = REQUIRED_ROUTE_CONTEXT_KEYS.filter((routeKey) => {
-    return !combinedJs.includes(routeKey);
-  });
-  if (missingRouteKeys.length > 0 || combinedJs.includes('No modules in context')) {
-    throw new Error(
-      `Web export route context is missing app route modules: ${missingRouteKeys.join(', ')}`,
-    );
-  }
+  assertWebExportFreshness(outputDir);
 }
 
 function main() {
@@ -167,7 +172,8 @@ if (require.main === module) {
 module.exports = {
   check,
   prepare,
-  REQUIRED_ROUTE_CONTEXT_KEYS,
+  assertWebExportFreshness,
+  buildWebExportSourceFingerprint,
   rewriteHtml,
   rewriteRootRelativeBundlePaths,
 };

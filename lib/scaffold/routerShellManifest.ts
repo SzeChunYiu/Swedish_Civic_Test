@@ -110,6 +110,11 @@ export const expoRouterRootStackScreens = [
     purpose: 'Search route registered in the root stack',
   },
   {
+    name: 'dashboard',
+    file: 'app/dashboard.tsx',
+    purpose: 'Progress dashboard route registered in the root stack',
+  },
+  {
     name: '+not-found',
     file: 'app/+not-found.tsx',
     purpose: 'Unknown-route recovery screen registered in the root stack',
@@ -196,6 +201,8 @@ export const expoRouterRootLayoutGlobalPlacements = [
 
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
+  '/about-the-test',
+  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -236,11 +243,35 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/practice?mode=review#question',
   },
   {
-    input: 'swedish-civic-test://app/chapter/ch01?from=learn',
+    input: '/about-the-test',
+    expectedPath: '/about-the-test',
+  },
+  {
+    input: '/dashboard',
+    expectedPath: '/dashboard',
+  },
+  {
+    input: '/dashboard?from=home',
+    expectedPath: '/dashboard?from=home',
+  },
+  {
+    input: 'almost-swedish://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
   },
   {
-    input: 'swedish-civic-test://quiz/q001',
+    input: 'almost-swedish://app/dashboard',
+    expectedPath: '/dashboard',
+  },
+  {
+    input: 'almost-swedish://app/about-the-test',
+    expectedPath: '/about-the-test',
+  },
+  {
+    input: 'almost-swedish://app/search?q=riksdag',
+    expectedPath: '/search?q=riksdag',
+  },
+  {
+    input: 'almost-swedish://quiz/q001',
     expectedPath: '/quiz/q001',
   },
   {

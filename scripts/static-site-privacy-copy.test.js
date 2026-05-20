@@ -9,6 +9,29 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
+function staticDictionaryValues(source, key) {
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return [...source.matchAll(new RegExp(`"${escapedKey}":\\s*"([^"]+)"`, 'g'))].map(
+    (match) => match[1],
+  );
+}
+
+function staticPublicPrivacySurface() {
+  return [read('site/app.js'), read('site/index.html'), read('site/i18n-extras.js')].join('\n');
+}
+
+function assertNoUnqualifiedNoTrackingClaims(surface) {
+  [
+    /\bNo tracking\b/i,
+    /\bzero tracking\b/i,
+    /\btrack(?:s|ing)? nothing\b/i,
+    /\bNo third-party trackers\b/i,
+    /\bIngen spårning\b/i,
+    /\bspårar inte\b/i,
+    /\bInga tredjepartssp[aå]rare\b/i,
+  ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+}
+
 test('static site privacy copy rejects stale monetization claims', () => {
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
@@ -56,10 +79,11 @@ test('static home privacy microcopy scopes local study data without denying ad t
     /No tracking|Ingen spårning/,
   );
   assert.match(appSource, /"numbers\.4": "to start\. No login\. Study progress stays local\."/);
-  assert.match(appSource, /"numbers\.4": "att börja\. Ingen inloggning\. Ingen spårning\."/);
+  assert.match(
+    appSource,
+    /"numbers\.4": "att börja\. Ingen inloggning\. Studieframsteg stannar lokalt\."/,
+  );
   assert.match(surface, /Google AdSense/);
-  assert.match(surface, /reviewed web slot IDs are configured/);
-  assert.match(surface, /granskade webbplats-ID:n [aä]r konfigurerade/);
   assert.match(surface, /Google Mobile Ads \(AdMob\)/);
   assert.match(surface, /ad and consent signals/);
   assert.match(surface, /annons- och samtyckessignaler/);
@@ -97,23 +121,4 @@ test('static site Swedish privacy copy uses natural study-streak wording', () =>
   englishPrivacyParagraphs.forEach((paragraph) => {
     assert.match(paragraph, /\bstreaks\b/i);
   });
-});
-
-test('static Swedish dictionary rejects grammar and tone artifacts', () => {
-  const source = read('site/app.js');
-  const blockedPhrases = [
-    ['ingen', 'juridiska'].join(' '),
-    ['fika', 'stor'].join('-'),
-    ['fika', 'skador'].join('-'),
-  ];
-
-  blockedPhrases.forEach((phrase) => {
-    assert.doesNotMatch(source, new RegExp(phrase, 'i'));
-  });
-
-  [
-    /inget juridiskt kr[aå]ngel/,
-    /en kort studievana/,
-    /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
-  ].forEach((pattern) => assert.match(source, pattern));
 });

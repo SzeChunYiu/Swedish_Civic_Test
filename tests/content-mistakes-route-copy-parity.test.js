@@ -156,3 +156,117 @@ require('./scripts/validate-content.js');
     /mistakes route must read stored wrong-answer review text/,
   );
 });
+
+test('mistakes route copy parity rejects bookmarked cards without answer review', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
+        'null',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /bookmarked review cards must show the localized correct answer/,
+  );
+});
+
+test('mistake review store drops corrupt persisted selected-answer reviews', () => {
+  const answeredAt = '2026-05-19T10:00:00.000Z';
+  const longAnswer = 'x'.repeat(501);
+  const storage = createMemoryMMKV({
+    mistakeReviewState: JSON.stringify({
+      wrongAnswerReviews: {
+        q001: {
+          answeredAt,
+          questionId: 'q001',
+          selectedOptionTextEn: '  Wrong answer  ',
+          selectedOptionTextSv: '  Fel svar  ',
+        },
+        qBadDate: {
+          answeredAt: 'not-a-date',
+          questionId: 'qBadDate',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qMismatched: {
+          answeredAt,
+          questionId: 'other-id',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        '': {
+          answeredAt,
+          questionId: '',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qBlankEn: {
+          answeredAt,
+          questionId: 'qBlankEn',
+          selectedOptionTextEn: '   ',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qBlankSv: {
+          answeredAt,
+          questionId: 'qBlankSv',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: '   ',
+        },
+        qTooLong: {
+          answeredAt,
+          questionId: 'qTooLong',
+          selectedOptionTextEn: longAnswer,
+          selectedOptionTextSv: 'Fel svar',
+        },
+      },
+    }),
+  });
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': storage,
+    },
+  );
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {
+    q001: {
+      answeredAt,
+      questionId: 'q001',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+  });
+});
+
+test('mistake review store falls back when MMKV reads throw', () => {
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': createThrowingGetMMKV('mistake review read failed'),
+    },
+  );
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {});
+});

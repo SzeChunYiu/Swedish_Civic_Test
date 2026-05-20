@@ -943,6 +943,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
 
+  match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
+  if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
+
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
 
