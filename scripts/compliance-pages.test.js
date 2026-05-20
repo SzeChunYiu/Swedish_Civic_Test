@@ -156,6 +156,23 @@ test('static site brand copy matches app identity', () => {
     read('site/questions.js'),
     new RegExp(`^/\\* ${appName} - generated static question bank\\.`),
   );
+});
+
+test('static learner-facing privacy shorthand avoids unqualified no-tracking claims', () => {
+  const surface = [
+    read('site/index.html'),
+    read('site/app.js'),
+    read('site/i18n-extras.js'),
+    read('site/buddies.js'),
+    read('site/tweaks.jsx'),
+  ].join('\n');
+
+  assert.match(surface, /Study progress stays local/);
+  assert.match(surface, /Studieframsteg sparas lokalt/);
+  assert.doesNotMatch(surface, /\bNo tracking\b/i);
+  assert.doesNotMatch(surface, /\bIngen spårning\b/i);
+});
+
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);

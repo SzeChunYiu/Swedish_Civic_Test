@@ -59,6 +59,7 @@
     "test:static-site-question-count-copy": "node --test scripts/static-site-question-count-copy.test.js",
     "test:static-site-chapter-count-copy": "node --test scripts/static-site-chapter-count-copy.test.js",
     "test:static-site-source-provenance-copy": "node --test scripts/static-site-source-provenance-copy.test.js",
+    "update:site-asset-manifest": "node scripts/update-site-asset-manifest.js",
     "test:site-live": "node scripts/check-live-site.js",
     "test:ui-effects": "node --test scripts/ui-effects.test.js",
     "simulate:ux-users": "node scripts/simulate-ux-users.js",

@@ -51,11 +51,22 @@ function currentAssets() {
       headMarkup(),
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
+      '<script src="app.js"></script>',
       '<script src="questions.js"></script>',
       '<script src="practice.js"></script>',
       '<script src="ebook-tools.js"></script>',
       '<script src="ebook.js"></script>',
     ].join('\n'),
+    '/app.js': [
+      '"numbers.4": "to start. No login. Study progress stays local.";',
+      '"numbers.4": "att börja. Ingen inloggning. Studieframsteg sparas lokalt.";',
+      '"privacy.s5.p": "Google AdSense and Google Mobile Ads can process ad and consent signals, but ads never collect study answers or progress.";',
+    ].join('\n'),
+    '/i18n-extras.js': 'window.smtExtraI18n = {};',
+    '/buddies.js': 'window.smtBuddies = [];',
+    '/extras.js': 'window.smtExtrasReady = true;',
+    '/settings.js': 'window.smtSettingsReady = true;',
+    '/fx.js': 'window.smtFxReady = true;',
     '/styles.css': [
       '.practice__inner--wide { max-width: 1080px; }',
       '.hub__grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }',
@@ -94,11 +105,18 @@ function staleHeadAssets(replacement) {
   return assets;
 }
 
-async function withStaticServer(assets, callback) {
+async function withStaticServer(assets, callback, options = {}) {
   const server = http.createServer((request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
     const body = assets[pathname] ?? assets['/index.html'];
-    response.writeHead(body == null ? 404 : 200, { 'content-type': 'text/plain; charset=utf-8' });
+    const headers = { 'content-type': 'text/plain; charset=utf-8' };
+    if (options.includeSecurityHeaders !== false) {
+      headers['x-content-type-options'] = 'nosniff';
+      headers['referrer-policy'] = 'strict-origin-when-cross-origin';
+      headers['x-frame-options'] = 'DENY';
+      headers['permissions-policy'] = 'camera=(), microphone=(), geolocation=()';
+    }
+    response.writeHead(body == null ? 404 : 200, headers);
     response.end(body ?? 'not found');
   });
 

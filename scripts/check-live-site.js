@@ -4,9 +4,28 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const {
+  findStaticHeadMetadataDescriptionIssues,
+  formatUnsupportedStaticOutcomeSlogans,
+} = require('./static-outcome-copy-guard');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
+const LOCAL_SITE_INDEX_PATH = path.join(__dirname, '..', 'site', 'index.html');
 const LOCAL_SITE_QUESTIONS_PATH = path.join(__dirname, '..', 'site', 'questions.js');
+const REQUIRED_SECURITY_HEADERS = Object.freeze([
+  { key: 'x-content-type-options', name: 'X-Content-Type-Options', value: 'nosniff' },
+  {
+    key: 'referrer-policy',
+    name: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  { key: 'x-frame-options', name: 'X-Frame-Options', value: 'DENY' },
+  {
+    key: 'permissions-policy',
+    name: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=()',
+  },
+]);
 
 function normalizeBaseUrl(input) {
   const raw = String(input || process.env.SITE_LIVE_URL || '').trim();
@@ -19,7 +38,7 @@ function normalizeBaseUrl(input) {
   return url.toString().replace(/\/$/, '');
 }
 
-async function fetchText(baseUrl, assetPath) {
+async function fetchAsset(baseUrl, assetPath) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
   const url = `${baseUrl}/${assetPath.replace(/^\//, '')}`;
@@ -29,10 +48,14 @@ async function fetchText(baseUrl, assetPath) {
     if (!response.ok) {
       throw new Error(`${url} returned HTTP ${response.status}`);
     }
-    return await response.text();
+    return { headers: response.headers, text: await response.text() };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchText(baseUrl, assetPath) {
+  return (await fetchAsset(baseUrl, assetPath)).text;
 }
 
 function readStaticQuestionCount(source) {
@@ -46,6 +69,46 @@ function readStaticQuestionCount(source) {
 
 function hashStaticQuestionBank(source) {
   return crypto.createHash('sha256').update(String(source).replace(/\r\n/g, '\n')).digest('hex');
+}
+
+function readHtmlAttribute(tagSource, name) {
+  const pattern = new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, 'i');
+  const match = pattern.exec(tagSource);
+  return match ? (match[1] ?? match[2] ?? '') : '';
+}
+
+function normalizeHeadText(value) {
+  return String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractStaticHeadMetadata(source) {
+  const titleMatch = /<title\b[^>]*>([\s\S]*?)<\/title>/i.exec(source);
+  const descriptionMatch = Array.from(source.matchAll(/<meta\b[^>]*>/gi)).find(
+    (match) => readHtmlAttribute(match[0], 'name').toLowerCase() === 'description',
+  );
+
+  return {
+    title: normalizeHeadText(titleMatch?.[1]),
+    description: normalizeHeadText(
+      descriptionMatch ? readHtmlAttribute(descriptionMatch[0], 'content') : '',
+    ),
+  };
+}
+
+function resolveRequiredHeadMetadata(options = {}) {
+  if (options.requiredHeadMetadata) return options.requiredHeadMetadata;
+
+  if (!fs.existsSync(LOCAL_SITE_INDEX_PATH)) {
+    throw new Error('Cannot derive expected live head metadata from site/index.html');
+  }
+
+  const metadata = extractStaticHeadMetadata(fs.readFileSync(LOCAL_SITE_INDEX_PATH, 'utf8'));
+  if (!metadata.title || !metadata.description) {
+    throw new Error('Cannot derive expected live head title and description from site/index.html');
+  }
+  return metadata;
 }
 
 function resolveRequiredQuestionCount(options = {}) {
@@ -139,8 +202,8 @@ function findStaticAdSenseSlotConfigIssues(indexSource, appSource) {
   return issues;
 }
 
-function findStaticNoTrackingClaimIssues(indexSource, appSource) {
-  const surface = `${indexSource}\n${appSource}`;
+function findStaticNoTrackingClaimIssues(...sources) {
+  const surface = sources.join('\n');
   const patterns = [
     /\bNo tracking\b/i,
     /\bzero tracking\b/i,
@@ -184,15 +247,35 @@ function findRequiredSecurityHeaderIssues(headers) {
 
 async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
+  const requiredHeadMetadata = resolveRequiredHeadMetadata(options);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [index, styles, practice, ebook, questions] = await Promise.all([
-    fetchText(baseUrl, 'index.html'),
+  const [
+    indexAsset,
+    app,
+    i18nExtras,
+    buddies,
+    extras,
+    settings,
+    fx,
+    styles,
+    practice,
+    ebook,
+    questions,
+  ] = await Promise.all([
+    fetchAsset(baseUrl, 'index.html'),
+    fetchText(baseUrl, 'app.js'),
+    fetchText(baseUrl, 'i18n-extras.js'),
+    fetchText(baseUrl, 'buddies.js'),
+    fetchText(baseUrl, 'extras.js'),
+    fetchText(baseUrl, 'settings.js'),
+    fetchText(baseUrl, 'fx.js'),
     fetchText(baseUrl, 'styles.css'),
     fetchText(baseUrl, 'practice.js'),
     fetchText(baseUrl, 'ebook.js'),
     fetchText(baseUrl, 'questions.js'),
   ]);
+  const index = indexAsset.text;
 
   const questionCount = readStaticQuestionCount(questions);
   const questionBankHash = hashStaticQuestionBank(questions);
@@ -216,6 +299,30 @@ async function checkLiveSite(inputUrl, options = {}) {
         ),
   );
 
+  const liveHeadMetadata = extractStaticHeadMetadata(index);
+  const headMetadataMatches =
+    liveHeadMetadata.title === requiredHeadMetadata.title &&
+    liveHeadMetadata.description === requiredHeadMetadata.description;
+  checks.push(
+    headMetadataMatches
+      ? pass('static head metadata')
+      : fail(
+          'static head metadata',
+          `expected title ${JSON.stringify(requiredHeadMetadata.title)} and description ${JSON.stringify(
+            requiredHeadMetadata.description,
+          )}, found title ${JSON.stringify(liveHeadMetadata.title)} and description ${JSON.stringify(
+            liveHeadMetadata.description,
+          )}`,
+        ),
+  );
+
+  const securityHeaderIssues = findRequiredSecurityHeaderIssues(indexAsset.headers);
+  checks.push(
+    securityHeaderIssues.length === 0
+      ? pass('static security headers')
+      : fail('static security headers', securityHeaderIssues.join('; ')),
+  );
+
   checks.push(
     containsAll(index, [
       'data-page="/practice"',
@@ -228,18 +335,20 @@ async function checkLiveSite(inputUrl, options = {}) {
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
   );
 
-  const staticHeadMetadataDescriptionIssues = findStaticHeadMetadataDescriptionIssues(
-    index,
-    'index.html',
-  );
-  checks.push(
-    staticHeadMetadataDescriptionIssues.length === 0
-      ? pass('static head metadata description')
-      : fail(
-          'static head metadata description',
-          formatUnsupportedStaticOutcomeSlogans(staticHeadMetadataDescriptionIssues),
-        ),
-  );
+  if (headMetadataMatches) {
+    const staticHeadMetadataDescriptionIssues = findStaticHeadMetadataDescriptionIssues(
+      index,
+      'index.html',
+    );
+    checks.push(
+      staticHeadMetadataDescriptionIssues.length === 0
+        ? pass('static head metadata description')
+        : fail(
+            'static head metadata description',
+            formatUnsupportedStaticOutcomeSlogans(staticHeadMetadataDescriptionIssues),
+          ),
+    );
+  }
 
   const staticAdSenseIssues = findStaticAdSenseSlotConfigIssues(index, app);
   checks.push(
@@ -248,7 +357,15 @@ async function checkLiveSite(inputUrl, options = {}) {
       : fail('static AdSense slot config', staticAdSenseIssues.join('; ')),
   );
 
-  const staticNoTrackingIssues = findStaticNoTrackingClaimIssues(index, app);
+  const staticNoTrackingIssues = findStaticNoTrackingClaimIssues(
+    index,
+    app,
+    i18nExtras,
+    buddies,
+    extras,
+    settings,
+    fx,
+  );
   checks.push(
     staticNoTrackingIssues.length === 0
       ? pass('static privacy no-tracking copy')
@@ -310,6 +427,8 @@ if (require.main === module) {
 
 module.exports = {
   checkLiveSite,
+  extractStaticHeadMetadata,
+  fetchAsset,
   fetchText,
   findRequiredSecurityHeaderIssues,
   findStaticAdSenseSlotConfigIssues,
@@ -317,6 +436,7 @@ module.exports = {
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  resolveRequiredHeadMetadata,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 };

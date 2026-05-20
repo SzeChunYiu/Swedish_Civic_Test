@@ -4,9 +4,20 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const staticPrivacyCopyFiles = Object.freeze([
+  'site/app.js',
+  'site/index.html',
+  'site/i18n-extras.js',
+  'site/buddies.js',
+  'site/tweaks.jsx',
+]);
 
 function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
+}
+
+function staticPrivacySurface() {
+  return staticPrivacyCopyFiles.map(read).join('\n');
 }
 
 function staticSiteSwedishDictionary() {
@@ -17,7 +28,7 @@ function staticSiteSwedishDictionary() {
 }
 
 test('static site privacy copy rejects stale monetization claims', () => {
-  const surface = [read('site/app.js'), read('site/index.html')].join('\n');
+  const surface = staticPrivacySurface();
 
   [
     /real ad rendering is disabled/i,
@@ -30,13 +41,18 @@ test('static site privacy copy rejects stale monetization claims', () => {
     /samlar inget och delar inget/i,
     /collects no user data and shares no user data/i,
     /samlar inga anv[aä]ndardata och delar inga anv[aä]ndardata/i,
+    /\bNo tracking\b/i,
+    /\bzero tracking\b/i,
+    /\btrack(?:s|ing)? nothing\b/i,
+    /\bIngen spårning\b/i,
+    /\bspårar inte\b/i,
     /No third-party trackers/i,
     /Inga tredjepartssp[aå]rare/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
 
 test('static site privacy copy names current ads, consent, and Remove Ads behavior', () => {
-  const surface = [read('site/app.js'), read('site/index.html')].join('\n');
+  const surface = staticPrivacySurface();
 
   [
     /Google AdSense/,
@@ -48,6 +64,17 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
     /ads never collect study answers or progress/,
     /annonser samlar aldrig in dina studiesvar eller framsteg/,
   ].forEach((pattern) => assert.match(surface, pattern));
+});
+
+test('static site home privacy shorthand is scoped to local study progress', () => {
+  const surface = staticPrivacySurface();
+
+  assert.match(surface, /Study progress stays local/);
+  assert.match(surface, /Studieframsteg sparas lokalt/);
+  assert.match(surface, /No login/);
+  assert.match(surface, /Ingen inloggning/);
+  assert.doesNotMatch(surface, /\bNo tracking\b/i);
+  assert.doesNotMatch(surface, /\bIngen spårning\b/i);
 });
 
 test('static site Swedish study copy uses natural Swedish study terms', () => {
