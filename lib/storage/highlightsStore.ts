@@ -352,5 +352,7 @@ export function getHighlightsForBlock(
 }
 
 export function isColorAllowed(color: HighlightColor, isPro: boolean): boolean {
-  return isPro ? PRO_HIGHLIGHT_COLORS.includes(color) : FREE_HIGHLIGHT_COLORS.includes(color);
+  return isPro === true
+    ? PRO_HIGHLIGHT_COLORS.includes(color)
+    : FREE_HIGHLIGHT_COLORS.includes(color);
 }

@@ -307,6 +307,15 @@ test('isColorAllowed: keeps yellow free and multi-color Pro contract intact', ()
   assert.equal(isColorAllowed('pink', true), true);
 });
 
+test('isColorAllowed: requires strict Pro boolean for paid highlight colors', () => {
+  const { isColorAllowed } = loadTs('lib/storage/highlightsStore.ts');
+
+  for (const malformedProFlag of ['yes', 1, {}, [], null]) {
+    assert.equal(isColorAllowed('green', malformedProFlag), false);
+    assert.equal(isColorAllowed('yellow', malformedProFlag), true);
+  }
+});
+
 function getHighlightCount(store) {
   return Object.values(store.byChapter).reduce((sum, list) => sum + list.length, 0);
 }

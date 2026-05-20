@@ -243,6 +243,15 @@ export function dueCount(state: Pick<PersistedReviews, 'byId'>, now?: string): n
   return dueCards(state, { now }).length;
 }
 
+function normalizeDailyReviewCount(value: unknown, fallback: number): number {
+  return typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value) &&
+    value >= 0
+    ? value
+    : fallback;
+}
+
 /**
  * Remaining reviews the Free tier can grade today. Returns
  * Number.POSITIVE_INFINITY for Pro callers (or any unlimited config).
@@ -251,10 +260,10 @@ export function remainingDailyReviews(
   state: Pick<PersistedReviews, 'gradedPerDay'>,
   options: { now?: Date; isPro?: boolean; freeCap?: number } = {},
 ): number {
-  if (options.isPro) return Number.POSITIVE_INFINITY;
-  const cap = options.freeCap ?? FREE_DAILY_REVIEW_CAP;
+  if (options.isPro === true) return Number.POSITIVE_INFINITY;
+  const cap = normalizeDailyReviewCount(options.freeCap, FREE_DAILY_REVIEW_CAP);
   const dayKey = getLocalDateKey(options.now ?? new Date());
-  const used = state.gradedPerDay[dayKey] ?? 0;
+  const used = normalizeDailyReviewCount(state.gradedPerDay[dayKey], 0);
   return Math.max(0, cap - used);
 }
 
