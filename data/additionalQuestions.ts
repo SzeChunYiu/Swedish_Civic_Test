@@ -936,7 +936,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     [
       [
         'Att arbeta för allas lika rättigheter och se till att diskrimineringslagen följs',
-        'To work for equal rights for everyone and make sure the Discrimination Act is followed',
+        'To promote equal rights for everyone and make sure the Discrimination Act is followed',
       ],
       [
         'Att se till att skulder blir betalda och besluta om skuldsanering',
@@ -950,7 +950,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Diskrimineringsombudsmannen (DO) är en statlig myndighet som arbetar för allas lika rättigheter och möjligheter. DO ska se till att diskrimineringslagen följs; skulder, militärt försvar och nordiskt regeringssamarbete hör till andra aktörer.',
-    'The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.',
+    'The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.',
     ['equality-ombudsman', 'discrimination-act', 'rights'],
   ),
   single(
