@@ -154,12 +154,16 @@ const gateSpecificBlockedEvidencePatterns = {
 };
 
 const v11ScopeSurfacePaths = [
-  'lib/storage/reviewStore.ts',
+  'app/dashboard.tsx',
+  'components/quiz/ConfidenceRatingPicker.tsx',
   'lib/learning/adaptivePractice.ts',
   'lib/learning/dailyChallenge.ts',
-  'lib/storage/companionStore.ts',
   'lib/mascot/catalog.ts',
   'lib/monetization/proLifetimePurchase.ts',
+  'lib/notifications/studyReminder.ts',
+  'lib/storage/accessibilityStore.ts',
+  'lib/storage/companionStore.ts',
+  'lib/storage/reviewStore.ts',
 ];
 
 const removeAdsDeviceQaPath =

@@ -11,6 +11,18 @@ const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 const appAdsSellerLine = 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0';
+const currentV11RuntimeSurfaces = [
+  'app/dashboard.tsx',
+  'components/quiz/ConfidenceRatingPicker.tsx',
+  'lib/storage/accessibilityStore.ts',
+  'lib/notifications/studyReminder.ts',
+  'lib/storage/reviewStore.ts',
+  'lib/learning/adaptivePractice.ts',
+  'lib/learning/dailyChallenge.ts',
+  'lib/storage/companionStore.ts',
+  'lib/mascot/catalog.ts',
+  'lib/monetization/proLifetimePurchase.ts',
+];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -1306,6 +1318,12 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
   assert.equal(scopeGate.status, 'BLOCKED');
   assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
+  for (const surfacePath of currentV11RuntimeSurfaces) {
+    assert.ok(
+      scopeGate.evidence.includes(surfacePath),
+      `${surfacePath} should be reported as a v1.1 surface`,
+    );
+  }
   assert.match(scopeGate.evidence, /tests\/v1-1-/i);
   assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
   assert.match(scopeGate.evidence, /reports\/release-device-qa\/ios\.json/i);
