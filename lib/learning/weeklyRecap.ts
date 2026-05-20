@@ -76,7 +76,11 @@ function isAnsweredInWindow(answer: { answeredAt: string }, start: Date, end: Da
   return isWithin(answer.answeredAt, start, end);
 }
 
-function answersFromSessions(sessions: QuizSession[], start: Date, end: Date): {
+function answersFromSessions(
+  sessions: QuizSession[],
+  start: Date,
+  end: Date,
+): {
   total: number;
   correct: number;
   chapterIdsTouched: Set<string>;
@@ -131,7 +135,11 @@ function mistakesResolvedInWindow(
   return count;
 }
 
-function countMocks(sessions: QuizSession[], start: Date, end: Date): {
+function countMocks(
+  sessions: QuizSession[],
+  start: Date,
+  end: Date,
+): {
   count: number;
   bestScore: number | null;
 } {

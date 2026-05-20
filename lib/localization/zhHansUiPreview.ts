@@ -406,8 +406,7 @@ export const zhHansUiPreview = {
       removeAdsBodyTemplate:
         '免费学习页面会显示 AdMob 广告。一次性支付 {price}，即可移除学习页面广告；模拟考试页面本来就不显示广告。',
       pricingProofTemplate: '{questionCount} 道练习题，覆盖 {chapterCount} 个章节',
-      pricingPitchTemplate:
-        '一次性支付 {price} 移除广告。没有订阅，计时模拟考试始终不显示广告。',
+      pricingPitchTemplate: '一次性支付 {price} 移除广告。没有订阅，计时模拟考试始终不显示广告。',
       buyLabelTemplate: '购买 {price}',
       buyAccessibilityLabelTemplate: '以 {price} 购买“移除广告”',
       buyAccessibilityHint: '应用商店确认后，学习页面广告会被移除。考试模式本来就不显示广告。',
