@@ -1,9 +1,9 @@
-import { Link } from 'expo-router';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { ComponentProps, PropsWithChildren } from 'react';
-import { useState } from 'react';
+import type { Href } from 'expo-router';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
+import { ComplianceActionLink } from './ComplianceActionLink';
 
 type LegalBackHref = ComponentProps<typeof Link>['href'];
 type LegalExternalHref = ComponentProps<typeof Link>['href'];
@@ -38,28 +38,17 @@ export interface LegalPageProps extends PropsWithChildren {
 }
 
 /**
- * Defaults: renders a warm tokenized legal section with the provided `title`
- * and body copy.
+ * Defaults: renders a warm tokenized legal section with the provided `title`,
+ * paragraph body copy, and no trailing action.
  */
 export interface LegalSectionProps extends PropsWithChildren {
+  body?: string;
   title: string;
 }
 
-/**
- * Defaults: renders body copy with the shared legal paragraph style.
- */
-export interface LegalSectionParagraphProps {
-  children: PropsWithChildren['children'];
-}
-
-/**
- * Defaults: renders an external legal/source destination as a 48px token-sized
- * link row with visible destination context and tokenized focus/press feedback.
- */
 export interface LegalExternalLinkProps {
-  accessibilityHint: string;
   accessibilityLabel: string;
-  displayUrl: string;
+  destination: string;
   href: LegalExternalHref;
   label: string;
 }
@@ -81,14 +70,11 @@ export function LegalPage({
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Link
+      <ComplianceActionLink
         accessibilityLabel={resolvedBackAccessibilityLabel}
-        accessibilityRole="link"
         href={backHref}
-        style={styles.backLink}
-      >
-        {resolvedBackLabel}
-      </Link>
+        label={resolvedBackLabel}
+      />
       <Text accessibilityRole="header" style={styles.title}>
         {title}
       </Text>
@@ -97,70 +83,54 @@ export function LegalPage({
   );
 }
 
-export function LegalSection({ title, children }: LegalSectionProps) {
+export function LegalSection({ title, body, children }: LegalSectionProps) {
   return (
     <View style={styles.section}>
       <Text accessibilityRole="header" style={styles.sectionTitle}>
         {title}
       </Text>
-      {isPlainText(children) ? <Text style={styles.paragraph}>{children}</Text> : children}
+      {body ? <Text style={styles.paragraph}>{body}</Text> : null}
+      {renderSectionChildren(children)}
     </View>
   );
 }
 
-export function LegalSectionParagraph({ children }: LegalSectionParagraphProps) {
-  return <Text style={styles.paragraph}>{children}</Text>;
-}
-
 export function LegalExternalLink({
-  accessibilityHint,
   accessibilityLabel,
-  displayUrl,
+  destination,
   href,
   label,
 }: LegalExternalLinkProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
-  const webInteractionHandlers =
-    Platform.OS === 'web'
-      ? {
-          onBlur: () => setIsFocused(false),
-          onFocus: () => setIsFocused(true),
-          onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => setIsHovered(false),
-        }
-      : {};
-
   return (
     <Link
-      {...webInteractionHandlers}
-      accessibilityHint={accessibilityHint}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       href={href}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
-      style={[
-        styles.externalLink,
-        isFocused || isHovered ? styles.externalLinkFocused : null,
-        isPressed ? styles.externalLinkPressed : null,
-      ]}
+      rel="noreferrer"
+      style={styles.externalLink}
+      target="_blank"
     >
-      <Text style={styles.externalLinkLabel}>{label}</Text>
-      <Text numberOfLines={2} style={styles.externalLinkUrl}>
-        {displayUrl}
-      </Text>
+      {label}
+      {'\n'}
+      {destination}
     </Link>
   );
 }
 
-function isPlainText(children: LegalSectionProps['children']) {
-  return typeof children === 'string' || typeof children === 'number';
-}
-
 function getBackAccessibilityLabel(label: string) {
   return label.replace(/^[←\s]+/, '').trim();
+}
+
+function renderSectionChildren(children: ReactNode) {
+  if (children == null) return null;
+  if (isTextOnly(children)) return <Text style={styles.paragraph}>{children}</Text>;
+  return children;
+}
+
+function isTextOnly(children: ReactNode): boolean {
+  if (typeof children === 'string' || typeof children === 'number') return true;
+  if (Array.isArray(children)) return children.every(isTextOnly);
+  return false;
 }
 
 const styles = StyleSheet.create({
@@ -171,12 +141,6 @@ const styles = StyleSheet.create({
   content: {
     gap: space[2.25],
     padding: space[3],
-  },
-  backLink: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'none',
   },
   title: {
     color: colors.text,
@@ -204,31 +168,19 @@ const styles = StyleSheet.create({
     lineHeight: typography.bodyTight.lineHeight,
   },
   externalLink: {
+    backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.card,
     borderWidth: space.hairline,
-    gap: space[0.5],
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  externalLinkFocused: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-  },
-  externalLinkPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  externalLinkLabel: {
     color: colors.accent,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-  },
-  externalLinkUrl: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
+    lineHeight: typography.bodyTight.lineHeight,
+    minHeight: space[6],
+    minWidth: space[6],
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+    width: '100%',
   },
 });
