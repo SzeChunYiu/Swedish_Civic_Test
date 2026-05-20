@@ -231,3 +231,26 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /onboarding route is missing sv copy/);
 });
+
+test('first-run about modal hides backdrop from assistive technology', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /accessibilityViewIsModal/);
+  assert.match(
+    source,
+    /<Pressable\s+accessible=\{false\}\s+accessibilityElementsHidden\s+importantForAccessibility="no"[\s\S]*styles\.backdropDismissTarget/,
+  );
+  assert.match(source, /onPress=\{markSeen\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
+  assert.equal(
+    (source.match(/accessibilityLabel=\{copy\.skipAccessibilityLabel\}/g) || []).length,
+    1,
+  );
+  assert.doesNotMatch(
+    source,
+    /<Pressable\s+accessibilityLabel=\{copy\.skipAccessibilityLabel\}\s+accessibilityRole="button"[\s\S]*styles\.backdrop/,
+  );
+});
