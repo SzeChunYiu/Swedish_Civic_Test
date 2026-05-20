@@ -1,7 +1,7 @@
 import { Circle, Ellipse, G, Path, Svg } from 'react-native-svg';
 import type { SvgProps } from 'react-native-svg';
 
-import { colors } from '../../lib/theme';
+import { colors, flagColors } from '../../lib/theme';
 
 export type MascotExpression = 'idle' | 'happy' | 'oops' | 'thinking' | 'celebrate';
 
@@ -48,7 +48,7 @@ export function DalaMascot({
       >
         <Path
           d="M29 91V59c0-9 7-16 16-16h19c8 0 15 4 20 10l6 8 5-20c2-8 8-14 16-16l6-1-2 18c-1 10-5 19-12 27l-6 7v15h7c3 0 5 2 5 5v9H82V87H48v18H28V96c0-3 2-5 5-5h-4Z"
-          fill={colors.swedishBlue}
+          fill={flagColors.blue}
         />
         <Path d="M40 43c4-8 12-14 22-16l7 17H45l-5-1Z" fill={colors.navy} />
         <Path d="M95 44c4-7 10-12 18-14l-2 12c-1 5-3 10-7 14l-9-12Z" fill={colors.surfaceWarm} />
@@ -61,7 +61,7 @@ export function DalaMascot({
         strokeWidth={3}
       >
         <Path d="M55 58h28l4 22H50l5-22Z" fill={colors.badgeBlueBg} />
-        <Path d="M60 64h18l2 10H57l3-10Z" fill={colors.swedishGold} />
+        <Path d="M60 64h18l2 10H57l3-10Z" fill={flagColors.gold} />
         <Path d="M45 51c-3 5-4 10-2 15M39 58h8M66 58v22M75 58v22" fill="none" />
         <Circle
           cx={37}
@@ -71,7 +71,7 @@ export function DalaMascot({
               ? colors.warning
               : expression === 'thinking'
                 ? colors.teal
-                : colors.swedishGold
+                : flagColors.gold
           }
           r={3}
         />
@@ -134,7 +134,7 @@ function renderFace(expression: MascotExpression) {
 function renderHappyAccent() {
   return (
     <G id="expression" strokeLinecap="round" strokeLinejoin="round">
-      <Circle cx={108} cy={58} fill={colors.swedishGold} opacity={0.55} r={3} />
+      <Circle cx={108} cy={58} fill={flagColors.gold} opacity={0.55} r={3} />
       <Path d="M20 51l4 7 8-13 5 8 7-12 4 7" fill="none" stroke={colors.success} strokeWidth={3} />
     </G>
   );
@@ -169,7 +169,7 @@ function renderCelebrateAccent() {
     <G id="expression" strokeLinecap="round" strokeLinejoin="round">
       <Path
         d="M20 40l7 3-6 4 3 7-7-3-6 4 2-8-6-4 8-1 3-7 2 5Z"
-        fill={colors.swedishGold}
+        fill={flagColors.gold}
         stroke={colors.text}
         strokeWidth={3}
       />
@@ -180,7 +180,7 @@ function renderCelebrateAccent() {
         strokeWidth={4}
       />
       <Circle cx={27} cy={72} fill={colors.pink} r={3} />
-      <Circle cx={116} cy={61} fill={colors.swedishGold} r={3} />
+      <Circle cx={116} cy={61} fill={flagColors.gold} r={3} />
       <Path d="M79 25l5 5M84 25l-5 5" stroke={colors.success} strokeWidth={4} />
     </G>
   );
