@@ -399,7 +399,7 @@ const i18n = (window.i18n = {
     'footer.app.5': 'Roadmap',
     'footer.h.legal': 'Fine print',
     'footer.about.p':
-      "An independent study tool, built by people who've taken the test themselves. Free to start, study, and take mock exams.",
+      'An independent study tool built around public study material and visible source lines. Free to start, study, and take mock exams.',
     'footer.h.honest': 'Honest disclaimer',
     'footer.honest.p':
       'Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. We just really like helping people study.',
@@ -784,7 +784,7 @@ const i18n = (window.i18n = {
     'footer.app.5': 'Roadmap',
     'footer.h.legal': 'Finstilta',
     'footer.about.p':
-      'Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra övningsprov.',
+      'Ett fristående studieverktyg byggt kring offentligt studiematerial och tydliga källrader. Gratis att börja, plugga och göra övningsprov.',
     'footer.h.honest': 'Ärlig friskrivning',
     'footer.honest.p':
       'Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.',
