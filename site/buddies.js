@@ -57,16 +57,17 @@
       tips: {
         en: [
           "Pace yourself. I've been carved from one piece of wood since the 1700s — and even *I* take breaks.",
-          "Study a little, check the source, and tell people the horse kept you company.",
-          "When two answers sound right, the shorter one usually isn't.",
+          "Study the material. Practice with sources. Tell people I helped.",
+          "When two answers sound plausible, slow down and read the source line.",
           "My hometown is Mora. Lots of horses, not many beaches.",
           "Tap an option, even if you're guessing. Wrong answers come back later.",
         ],
         sv: [
           "Ta det lugnt. Jag har varit en träklump sedan 1700-talet — *jag* tar paus.",
-          "Plugga lite, kolla källan och säg att hästen höll dig sällskap.",
-          "När två svar verkar rätt — det kortare är oftast fel.",
+          "Plugga materialet. Öva med källor. Säg att jag höll dig sällskap.",
+          "När två svar verkar rimliga, sakta ner och läs källraden.",
           "Min hemstad är Mora. Mycket hästar, få sandstränder.",
+          "Tryck på ett alternativ även om du gissar. Fel svar kommer tillbaka senare.",
         ],
       },
       pet: {
@@ -183,13 +184,15 @@
           "The hint is in the question. Read it twice. I'll wait.",
           "Leave gröt out for me and I'll deliver the right answer in your sleep. Probably.",
           "Sweden has FOUR basic laws. Not three. Even I had to memorise that.",
-          "I only rearrange porridge bowls. Read twice, pick calmly, and trust the shuffled options.",
+          "I once nudged someone to read the whole option before choosing. Cozy work.",
           "If something feels too easy, it usually is.",
         ],
         sv: [
           "Ledtråden finns i frågan. Läs två gånger. Jag väntar.",
           "Sätt fram gröt så levererar jag rätt svar i sömnen. Förmodligen.",
           "Fyra grundlagar. INTE tre. Jag fick också plugga in det.",
+          "En gång fick jag någon att läsa hela alternativet före valet. Mysigt jobb.",
+          "Om något känns för enkelt är det oftast det.",
         ],
       },
       pet: {

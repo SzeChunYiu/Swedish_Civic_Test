@@ -36,6 +36,25 @@ test('static mock exam copy avoids unsupported official pass-line claims', () =>
   assert.doesNotMatch(practiceSource, new RegExp('godk' + '[aä]nt', 'i'));
 });
 
+function assertNoUnsupportedStaticBuddyTrustCopy() {
+  const scannedFiles = ['site/buddies.js', 'site/extras.js'];
+  const forbiddenPatterns = [
+    new RegExp(['shorter', 'one', 'usually'].join('\\s+'), 'i'),
+    new RegExp(['det', 'kortare'].join('\\s+'), 'i'),
+    new RegExp(['switched', 'two', 'answer'].join('\\s+'), 'i'),
+    new RegExp(['answer', 'letter', 'trick'].join('[\\s-]+'), 'i'),
+    new RegExp(['tam', 'per'].join(''), 'i'),
+    new RegExp(`${['man', 'ipuler'].join('')}(?:a|ade|at)`, 'i'),
+  ];
+
+  for (const file of scannedFiles) {
+    const source = read(file);
+    for (const pattern of forbiddenPatterns) {
+      assert.doesNotMatch(source, pattern, `${file} should avoid unsupported answer-pattern humor`);
+    }
+  }
+}
+
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
@@ -227,4 +246,14 @@ test('static Swedish legal and study copy keeps adult grammar and tone', () => {
     staticApp,
     /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
   );
+});
+
+test('static buddy tips avoid answer-pattern and answer-manipulation humor', () => {
+  const buddySource = read('site/buddies.js');
+
+  assertNoUnsupportedStaticBuddyTrustCopy();
+  assert.match(buddySource, /read the source line/);
+  assert.match(buddySource, /läs källraden/);
+  assert.match(buddySource, /read the whole option before choosing/);
+  assert.match(buddySource, /läsa hela alternativet före valet/);
 });
