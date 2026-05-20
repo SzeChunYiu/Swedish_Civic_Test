@@ -355,6 +355,85 @@ export const zhHansUiPreview = {
       },
     },
   },
+
+  complianceAndMonetization: {
+    complianceLinks: {
+      title: '法律信息和资料来源',
+      openLabelTemplate: '打开：{label}',
+      links: {
+        aboutTheTest: '关于考试',
+        disclaimer: '说明',
+        privacy: '隐私',
+        terms: '条款',
+        sources: '资料来源',
+        support: '支持',
+      },
+    },
+    legalPage: {
+      defaultBackLabel: '← 返回个人页',
+      defaultBackAccessibilityLabel: '返回个人页',
+      externalLinkAccessibilityTemplate: '打开外部网站：{label}',
+    },
+    privacy: {
+      title: '隐私政策',
+      noAccountRequired: {
+        title: '无需账号',
+        body: '本应用不要求注册账号、电子邮箱、电话号码或个人资料。你可以匿名使用完整学习功能。',
+      },
+      localProgressStorage: {
+        title: '学习进度保存在本设备上',
+        body: '学习进度、设置、收藏题目、错题、XP、连续学习天数和语音偏好会保存在本设备上，用来记住你的练习状态。',
+      },
+      gdprRights: {
+        title: '你在 GDPR 下的权利',
+        body: '你可以要求导出或删除通过“支持”页面发送的支持消息。本设备上的进度、设置和购买状态，可以通过卸载应用或清除应用数据删除。',
+      },
+      adsAndPurchases: {
+        title: '广告和购买',
+        body: '免费版本会在学习页面显示 Google Mobile Ads 广告。计时模拟考试页面不显示广告。移除广告是一次性非消耗型购买，价格为 29 瑞典克朗，可通过应用商店恢复。',
+      },
+      adConsent: {
+        title: '广告同意',
+        body: '在 iOS 上，基于跟踪的广告会先请求 App Tracking Transparency 授权。需要时，会先显示 Google UMP 同意表单，再显示真实 AdMob 广告。',
+      },
+      providerProcessing: {
+        title: '服务提供方的数据处理',
+        body: 'Google Mobile Ads 和应用商店可能处理设备、广告、同意和购买状态信息，用于展示广告、应用移除广告权益和恢复购买。本应用不收集公民身份状态、移民案件细节、政府证件号或注册个人资料。',
+      },
+    },
+    monetization: {
+      removeAdsEyebrow: '移除广告',
+      removeAdsActiveEyebrow: '已启用无广告学习',
+      removeAdsTitle: '移除广告',
+      removeAdsActiveTitle: '无广告学习已启用',
+      removeAdsBodyTemplate:
+        '免费学习页面会显示 AdMob 广告。一次性支付 {price}，即可移除学习页面广告；模拟考试页面本来就不显示广告。',
+      pricingProofTemplate: '{questionCount} 道练习题，覆盖 {chapterCount} 个章节',
+      pricingPitchTemplate:
+        '一次性支付 {price} 移除广告。没有订阅，计时模拟考试始终不显示广告。',
+      buyLabelTemplate: '购买 {price}',
+      buyAccessibilityLabelTemplate: '以 {price} 购买“移除广告”',
+      buyAccessibilityHint: '应用商店确认后，学习页面广告会被移除。考试模式本来就不显示广告。',
+      restoreLabel: '恢复购买',
+      restoreAccessibilityLabel: '恢复“移除广告”购买',
+      restoreAccessibilityHint: '检查同一个应用商店账号是否已经购买过“移除广告”。',
+      buying: '正在购买…',
+      restoring: '正在恢复…',
+      placementTitleTemplate: '移除 {placementLabel} 附近的广告',
+      placementBody:
+        '应用商店确认后，这个广告位和其他学习页面广告都会隐藏。计时模拟考试已经不显示广告。',
+      statusAccessibilityTemplate: '移除广告状态：{message}',
+      statusMessages: {
+        idle: '一次性购买。如果你已经买过，可以恢复购买。',
+        error: '当前无法购买。请稍后再试。',
+        notFound: '没有找到之前的“移除广告”购买记录。',
+        pending: '正在等待应用商店确认，然后再移除广告。',
+        persistenceFailed: '购买已确认，但本设备未能保存无广告状态。请尝试恢复购买。',
+        purchased: '本设备上的广告已关闭。',
+        restored: '购买已恢复，本设备上的广告已关闭。',
+      },
+    },
+  },
   languagePicker: {
     triggerLabelTemplate: '当前语言为 {currentLabel}。打开语言选择器。',
     closeLabel: '关闭语言选择器',
