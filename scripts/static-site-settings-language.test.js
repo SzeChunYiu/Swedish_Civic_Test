@@ -260,6 +260,31 @@ function loadScripts(context, practiceInjection = '') {
   vm.runInContext(read('site/settings.js'), context.sandbox, { timeout: 3000 });
 }
 
+test('Settings modal source keeps keyboard focus inside the dialog', () => {
+  const html = read('site/index.html');
+  const source = read('site/settings.js');
+
+  assert.match(
+    html,
+    /id="settings-modal"[\s\S]*?role="dialog"[\s\S]*?aria-modal="true"[\s\S]*?aria-labelledby="settings-title"[\s\S]*?tabindex="-1"/,
+  );
+  assert.match(source, /let settingsModalInvoker = null/);
+  assert.match(source, /function getSettingsFocusableControls\(modal\)/);
+  assert.match(source, /function trapSettingsModalTab\(e, modal\)/);
+  assert.match(source, /if \(!modal\.contains\(active\) \|\| active === modal\)/);
+  assert.match(source, /focusElement\(e\.shiftKey \? last : first\)/);
+  assert.match(source, /if \(e\.shiftKey && active === first\)/);
+  assert.match(source, /else if \(!e\.shiftKey && active === last\)/);
+  assert.match(source, /function restoreSettingsInvoker\(\)/);
+  assert.match(source, /if \(invoker && document\.contains\(invoker\)\) focusElement\(invoker\)/);
+  assert.match(source, /const settingsOpen = e\.target\.closest\("#settings-open"\)/);
+  assert.match(source, /if \(settingsOpen\) \{ open\(settingsOpen\); return; \}/);
+  assert.match(source, /e\.key === "Tab"/);
+  assert.match(source, /trapSettingsModalTab\(e, m\)/);
+  assert.match(source, /close\(\{ restoreFocus: false \}\)/);
+  assert.match(source, /focusConsentPrompt\(\)/);
+});
+
 test('Static icon-control accessible names follow smtSetLanguage without reload', () => {
   const context = createRenderContext({ hash: '#/', language: 'en' });
   loadScripts(context);
