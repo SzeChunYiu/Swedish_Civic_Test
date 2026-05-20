@@ -22,6 +22,7 @@ import { useRemoveAdsEntitlements } from './useRemoveAdsEntitlements';
 
 const EMPTY_ACCESS_SNAPSHOT: StoredMockExamAccessSnapshot = {
   completedMockExamsByDate: {},
+  completedMockExamSessionIdsByDate: {},
   completedMockExamsToday: 0,
   dateKey: '',
   rewardedExtraExamCredits: 0,
@@ -49,6 +50,7 @@ function buildAccessDecision({
     consentDecision,
     entitlements,
     freeMockExamLimit,
+    platform: Platform.OS,
     rewardedExtraExamCredits: snapshot.rewardedExtraExamCredits,
   });
 }
@@ -121,12 +123,15 @@ export function useMockExamAccess({
     ],
   );
 
-  const recordExamCompletion = useCallback(async () => {
-    const nextSnapshot = await recordStoredMockExamCompletion({ storage });
-    setSnapshot(nextSnapshot);
-    setAccessReady(true);
-    return nextSnapshot;
-  }, [storage]);
+  const recordExamCompletion = useCallback(
+    async (sessionId: string) => {
+      const nextSnapshot = await recordStoredMockExamCompletion({ sessionId, storage });
+      setSnapshot(nextSnapshot);
+      setAccessReady(true);
+      return nextSnapshot;
+    },
+    [storage],
+  );
 
   const grantRewardedExamCredit = useCallback(async () => {
     const nextSnapshot = await grantStoredRewardedExtraExamCredit({ storage });

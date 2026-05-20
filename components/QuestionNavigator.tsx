@@ -37,8 +37,8 @@ const questionNavigatorCopy: Record<AppLanguage, QuestionNavigatorCopy> = {
 /**
  * Defaults: `currentIndex=0`, `answeredIndexes=[]`, `disabled=false`,
  * `accessibilityRole="tablist"`, localized spoken labels from settings, and
- * 48px token-sized press targets. Pass localized label props from the screen
- * for screen-specific copy.
+ * token-sized press targets. Pass localized label props from the screen for
+ * screen-specific copy.
  */
 export interface QuestionNavigatorProps extends Omit<
   ComponentProps<typeof View>,
@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.small,
     borderWidth: space.hairline,
     justifyContent: 'center',
-    minHeight: space[4],
-    minWidth: space[4],
+    minHeight: space[6],
+    minWidth: space[6],
     paddingHorizontal: space[0.5],
   },
   unanswered: {
