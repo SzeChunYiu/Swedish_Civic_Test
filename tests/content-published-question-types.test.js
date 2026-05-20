@@ -20,6 +20,7 @@ const q071SocialInsuranceOverlapPattern =
   /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring|sickness insurance|parental insurance|unemployment insurance)\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
+const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
@@ -124,6 +125,7 @@ test('published question types stay answerable by quiz runtime', () => {
     summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
+  assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
@@ -497,6 +499,62 @@ require('./scripts/validate-content.js');
   assert.match(output, /q097 uses literal common-to-do English wording/);
   assert.match(output, /q104 uses literal common-to-do English wording/);
   assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 6, output);
+});
+
+test('May Day source and exports use natural English holiday name', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    mayDayEnglishCalquePattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const bankFindings = [...generatedSiteBank, ...actualSiteBank]
+    .filter((question) => mayDayEnglishCalquePattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const q103 = generatedSiteBank.find((question) => question.id === 'q103');
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q103, 'q103 should be published in the site bank');
+  assert.equal(q103.q.en, 'What is marked on May Day in Sweden?');
+  assert.match(q103.why.en, /^May Day is International Workers’ Day and a public holiday/);
+});
+
+test('May Day English naturalness guard rejects literal First of May wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'What is marked on May Day in Sweden?',
+      'What is marked on First of May in Sweden?',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q103 uses literal First of May English wording/);
 });
 
 test('Council of Europe source and exports use natural promote English', () => {
