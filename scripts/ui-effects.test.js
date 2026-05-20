@@ -310,6 +310,30 @@ test('top bar route links keep web anchors large enough with token hover and pre
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('home source-trust row is a token-sized sources link with focus and press feedback', () => {
+  const source = read('components/ui/SocialProofRow.tsx');
+
+  assert.match(source, /import \{ Link \} from 'expo-router';/);
+  assert.match(source, /useState/);
+  assert.match(source, /Platform\.OS === 'web'/);
+  assert.match(source, /href="\/sources"/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /aria-label=\{rowAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{rowAccessibilityLabel\}/);
+  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
+  assert.match(source, /isFocused \|\| isHovered \? styles\.linkFocused : null/);
+  assert.match(source, /isPressed \? styles\.linkPressed : null/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /backgroundColor: colors\.surfaceMuted/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /borderRadius: radius\.card/);
+  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(source, /Excellent|Utmärkt|5 of 5|5 av 5|★★★★★/);
+});
+
 test('screen scaffold exposes page and section titles as headers', () => {
   const source = read('components/ui/ScreenShell.tsx');
 
