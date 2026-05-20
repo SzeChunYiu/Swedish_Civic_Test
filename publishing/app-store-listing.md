@@ -1,8 +1,8 @@
-# App Store listing — Sweden Citizenship Test Prep
+# App Store listing — Almost Swedish
 
 ## App name
 
-Sweden Citizenship Test Prep
+Almost Swedish
 
 ## Subtitle
 
@@ -14,7 +14,7 @@ Prepare calmly with Swedish civic practice questions, English support, explanati
 
 ## Description
 
-Sweden Citizenship Test Prep is an independent study companion for people preparing for the Swedish civic knowledge part of the citizenship test.
+Almost Swedish is an independent study companion for people preparing for the Swedish civic knowledge part of the citizenship test.
 
 Study in short daily sessions with:
 

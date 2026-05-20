@@ -6,6 +6,7 @@
   "evidenceBasis": [
     "publishing/app-store-listing.md",
     "publishing/google-play-listing.md",
+    "publishing/admob-progress.md",
     "publishing/privacy-labels.md",
     "publishing/google-play-data-safety.md",
     "reports/store-records/store-records.json"
@@ -24,7 +25,7 @@
     "adsDeclarationReviewed": true,
     "noGovernmentAffiliationClaims": true,
     "containsRealMoneyGambling": false,
-    "notes": "Education app for adults/learners; Google Mobile Ads ads declaration reviewed for the ad-supported v1.0 release; ATT/UMP consent disclosures and Remove Ads IAP questionnaire posture reviewed against the privacy/data-safety copy; no government affiliation is claimed; no real-money gambling."
+    "notes": "Education app for adults/learners; ad-supported Google Mobile Ads declaration reviewed for the v1.0 release; ATT/UMP consent disclosures and 29 SEK Remove Ads IAP questionnaire posture reviewed against the privacy/data-safety copy; no government affiliation is claimed; no real-money gambling."
   },
   "remainingCaveat": "This records the local questionnaire review. Final console submission still depends on store records, credentials, generated builds, privacy review, owner approval, screenshots, and submission gates."
 }

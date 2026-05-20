@@ -150,7 +150,8 @@ Record evidence for:
 - App Store Connect app record for `com.billyyiu.almostswedish`.
 - Google Play Console app record for `com.billyyiu.almostswedish`.
 - Google Mobile Ads/AdMob app records for the ad-supported v1.0 release,
-  including iOS and Android app IDs.
+  including iOS and Android app IDs, `adMob.realAdsEnabled: true`, and
+  `adMob.appAdsTxtReviewed: true`.
 - app-ads.txt review for the hosted seller line.
 - Public Support URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/.
 - Public Privacy Policy URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/.

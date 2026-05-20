@@ -68,7 +68,7 @@ function makeMemoryStorage() {
 
 test('proLifetime: product id + price label + storage key exported', () => {
   const m = loadTs('lib/monetization/proLifetimePurchase.ts');
-  assert.equal(m.PRO_LIFETIME_PRODUCT_ID, 'com.billyyiu.swedishcivictest.prolifetime');
+  assert.equal(m.PRO_LIFETIME_PRODUCT_ID, 'com.billyyiu.almostswedish.prolifetime');
   assert.equal(m.PRO_LIFETIME_PRICE_LABEL, '59 SEK');
   assert.match(m.PRO_LIFETIME_STORAGE_KEY, /proLifetime/);
 });

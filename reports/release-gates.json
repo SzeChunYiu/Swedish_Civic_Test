@@ -16,7 +16,7 @@
     },
     "store-records": {
       "status": "BLOCKED",
-      "evidence": "No App Store Connect or Google Play Console app record evidence is recorded. Store records must confirm the com.billyyiu.almostswedish App Store/Google Play records, hosted support/privacy URLs, Google Mobile Ads AdMob app IDs, and app-ads.txt review for the ad-supported v1.0 release."
+      "evidence": "No App Store Connect or Google Play Console app record evidence is recorded. Store records must confirm the com.billyyiu.almostswedish App Store/Google Play records, hosted support/privacy URLs, Google Mobile Ads AdMob app IDs, adMob.realAdsEnabled: true, app-ads.txt review, and 29 SEK Remove Ads IAP for the ad-supported v1.0 release."
     },
     "store-credentials": {
       "status": "BLOCKED",
@@ -28,7 +28,7 @@
     },
     "privacy-review": {
       "status": "BLOCKED",
-      "evidence": "No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded. The review must include the Google Mobile Ads real-ad path, EXPO_PUBLIC_REAL_ADS_ENABLED=true, ATT/UMP consent disclosures, and Remove Ads non-consumable IAP review."
+      "evidence": "No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded. The review must include the Google Mobile Ads real-ad path, real AdMob app/unit IDs, EXPO_PUBLIC_REAL_ADS_ENABLED=true, ATT/UMP consent disclosures, and 29 SEK Remove Ads non-consumable IAP review."
     },
     "release-owner-approval": {
       "status": "BLOCKED",
