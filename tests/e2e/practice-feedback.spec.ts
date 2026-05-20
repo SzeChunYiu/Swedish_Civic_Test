@@ -433,12 +433,12 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   await dismissBlockingModals(page);
 
   await expect(page).toHaveURL(/\/mistakes$/);
-  await expect(page.getByText('Fel svar att repetera')).toBeVisible();
+  await expect(page.getByText('Frågor att öva igen')).toBeVisible();
   const swedishMistakeCard = page.getByLabel(
-    'Svar att repetera. Ditt senaste felaktiga svar: I södra Europa. Rätt svar: I Norden i norra Europa.',
+    'Fråga att öva igen. Ditt senaste svar: I södra Europa. Rätt svar: I Norden i norra Europa.',
   );
   await expect(swedishMistakeCard).toBeVisible();
-  await expect(swedishMistakeCard.getByText('Ditt senaste felaktiga svar')).toBeVisible();
+  await expect(swedishMistakeCard.getByText('Ditt senaste svar')).toBeVisible();
   await expect(swedishMistakeCard.getByText('I södra Europa', { exact: true })).toBeVisible();
   await expect(swedishMistakeCard.getByText('Rätt svar', { exact: true })).toBeVisible();
   await expect(
@@ -487,7 +487,7 @@ test('wrong practice answer appears in Mistakes with English answer review conte
   await expect(
     englishMistakeCard.getByText('In the Nordic region in northern Europe', { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText('Ditt senaste felaktiga svar')).toHaveCount(0);
+  await expect(page.getByText('Ditt senaste svar')).toHaveCount(0);
   await expect(page.getByText('Rätt svar', { exact: true })).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
