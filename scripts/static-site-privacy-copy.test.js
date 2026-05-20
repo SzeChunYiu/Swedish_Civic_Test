@@ -78,3 +78,23 @@ test('static site Swedish study copy uses natural Swedish study terms', () => {
     assert.match(swedishDictionary, pattern),
   );
 });
+
+test('static site Swedish grammar and legal tone stay natural', () => {
+  const swedishDictionary = staticSiteSwedishDictionary();
+  const staleFragments = [
+    ['ingen', 'juridiska'].join(' '),
+    ['fika', 'stor'].join('-'),
+    ['fika', 'skador'].join('-'),
+  ];
+
+  staleFragments.forEach((fragment) => {
+    assert.doesNotMatch(swedishDictionary, new RegExp(fragment, 'i'));
+  });
+
+  assert.match(swedishDictionary, /inget juridiskt kr[aå]ngel/);
+  assert.match(swedishDictionary, /en kort studievana/);
+  assert.match(
+    swedishDictionary,
+    /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
+  );
+});
