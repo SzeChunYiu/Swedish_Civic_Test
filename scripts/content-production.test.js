@@ -233,6 +233,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
+  assert.equal(summary.sourceQuestionPrimaryAnswerConceptsValidated, summary.sourceQuestions);
   assert.equal(summary.generationParityValidated, true);
   assert.equal(summary.chapterGenerationParityValidated, 13);
   assert.equal(summary.generatedSourceMetadataParityValidated, summary.generatedPublishedQuestions);
