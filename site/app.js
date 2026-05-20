@@ -513,7 +513,7 @@ const i18n = (window.i18n = {
     'demo.deck':
       'Svara på en fråga, läs förklaringen och fortsätt. Svåra frågor kommer tillbaka senare, så repetitionen blir hanterbar.',
     'demo.li1': '<b>Repetition med intervall</b> tar fram svåra frågor på rätt dag.',
-    'demo.li2': '<b>Begripliga förklaringar</b> — ingen juridiska, ingen byråkratdjungel.',
+    'demo.li2': '<b>Begripliga förklaringar</b> — inget juridiskt krångel, ingen byråkratdjungel.',
     'demo.li3': '<b>Provläge</b> med tidsatt övning, så längre pass känns lugnare.',
     'qcard.chip': 'Kapitel 3 · F47',
     'qcard.q':
@@ -529,7 +529,7 @@ const i18n = (window.i18n = {
     'qcard.again': 'Försök igen →',
     'numbers.1': 'frågor från offentliga källor',
     'numbers.2': 'kapitel om historia, samhälle & rättigheter',
-    'numbers.3': 'om dagen — en fika-stor studievana',
+    'numbers.3': 'om dagen — en kort studievana',
     'numbers.4': 'att börja. Ingen inloggning. Dina framsteg sparas lokalt.',
     'chap.eyebrow': 'Vad ingår',
     'chap.h1': 'Korta kapitel.',
@@ -732,7 +732,7 @@ const i18n = (window.i18n = {
       'Vi garanterar inte att du klarar det officiella provet. Vi garanterar inte att appen funkar perfekt på varje enhet varje dag. Vi garanterar att vi fortsätter försöka.',
     'terms.s5.t': 'Ansvar',
     'terms.s5.callout':
-      '<b>Kort version:</b> appen tillhandahålls "i befintligt skick" enligt vad som tillåts av svensk lag. Vi är inte ansvariga för missade deadlines, avslagna ansökningar, fika-skador eller beslut som en myndighet tar i ditt ärende.',
+      '<b>Kort version:</b> appen tillhandahålls "i befintligt skick" enligt vad som tillåts av svensk lag. Vi är inte ansvariga för missade deadlines, avslagna ansökningar eller beslut som en myndighet tar i ditt ärende.',
     'terms.s6.t': 'Ändringar',
     'terms.s6.p':
       'Om villkoren ändras väsentligt uppdateras datumet ovan och appen visar en notis vid nästa start. Fortsatt användning innebär att du godkänner de nya villkoren.',

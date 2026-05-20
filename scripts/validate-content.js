@@ -4038,6 +4038,16 @@ const STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED = [
   'kort övning',
   'tidsatt övning',
 ];
+const STATIC_SITE_SWEDISH_GRAMMAR_TONE_FORBIDDEN = [
+  /ingen juridiska/i,
+  /fika-stor/i,
+  /fika-skador/i,
+];
+const STATIC_SITE_SWEDISH_GRAMMAR_TONE_REQUIRED = [
+  /inget juridiskt kr[aå]ngel/i,
+  /en kort studievana/i,
+  /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/i,
+];
 const STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN = [
   /gör ett\s+quiz/i,
   new RegExp(['quiz', 'frågor'].join(''), 'i'),
@@ -4084,6 +4094,42 @@ function validateStaticSiteSwedishStudyTerms() {
   return {
     forbiddenTermsValidated,
     requiredTermsValidated,
+  };
+}
+
+function validateStaticSiteSwedishGrammarTone() {
+  const source = loadText('site/app.js');
+  const swedishDictionary = source.match(/\n  sv: \{([\s\S]*?)\n  \}\n\};/)?.[1];
+  let forbiddenPhrasesValidated = 0;
+  let requiredPhrasesValidated = 0;
+
+  if (!swedishDictionary) {
+    fail('static site Swedish dictionary block must stay parseable');
+    return {
+      forbiddenPhrasesValidated,
+      requiredPhrasesValidated,
+    };
+  }
+
+  STATIC_SITE_SWEDISH_GRAMMAR_TONE_FORBIDDEN.forEach((pattern) => {
+    if (pattern.test(swedishDictionary)) {
+      fail(`static site Swedish grammar/tone copy contains stale phrase: ${pattern}`);
+      return;
+    }
+    forbiddenPhrasesValidated += 1;
+  });
+
+  STATIC_SITE_SWEDISH_GRAMMAR_TONE_REQUIRED.forEach((pattern) => {
+    if (!pattern.test(swedishDictionary)) {
+      fail(`static site Swedish grammar/tone copy missing natural phrase: ${pattern}`);
+      return;
+    }
+    requiredPhrasesValidated += 1;
+  });
+
+  return {
+    forbiddenPhrasesValidated,
+    requiredPhrasesValidated,
   };
 }
 
@@ -6859,6 +6905,8 @@ let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
+let staticSiteSwedishGrammarToneValidated = 0;
+let staticSiteSwedishGrammarToneNaturalnessValidated = false;
 let staticEbookSwedishStudyTermsValidated = 0;
 let staticEbookSwedishStudyTermNaturalnessValidated = false;
 let settingsRouteHeadersValidated = 0;
@@ -7153,6 +7201,17 @@ staticEbookOutcomeClaimParityValidated =
     studyTermValidation.forbiddenTermsValidated ===
       STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN.length &&
     studyTermValidation.requiredTermsValidated === STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED.length;
+}
+{
+  const grammarToneValidation = validateStaticSiteSwedishGrammarTone();
+  staticSiteSwedishGrammarToneValidated =
+    grammarToneValidation.forbiddenPhrasesValidated +
+    grammarToneValidation.requiredPhrasesValidated;
+  staticSiteSwedishGrammarToneNaturalnessValidated =
+    grammarToneValidation.forbiddenPhrasesValidated ===
+      STATIC_SITE_SWEDISH_GRAMMAR_TONE_FORBIDDEN.length &&
+    grammarToneValidation.requiredPhrasesValidated ===
+      STATIC_SITE_SWEDISH_GRAMMAR_TONE_REQUIRED.length;
 }
 {
   const ebookStudyTermValidation = validateStaticEbookSwedishStudyTerms();
@@ -15355,6 +15414,8 @@ console.log(
       swedishPrivacyStreakCopyNaturalnessValidated,
       staticSiteSwedishStudyTermsValidated,
       staticSiteSwedishStudyTermNaturalnessValidated,
+      staticSiteSwedishGrammarToneValidated,
+      staticSiteSwedishGrammarToneNaturalnessValidated,
       staticEbookSwedishStudyTermsValidated,
       staticEbookSwedishStudyTermNaturalnessValidated,
       settingsRouteHeadersValidated,
