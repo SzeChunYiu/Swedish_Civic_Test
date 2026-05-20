@@ -156,6 +156,8 @@ test('static site brand copy matches app identity', () => {
     read('site/questions.js'),
     new RegExp(`^/\\* ${appName} - generated static question bank\\.`),
   );
+});
+
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
