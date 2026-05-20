@@ -1,16 +1,8 @@
-import { useState } from 'react';
 import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
-import {
-  createExpoStudyReminderRuntime,
-  disableStudyReminder,
-  enableStudyReminder,
-  formatStudyReminderTime,
-  STUDY_REMINDER_TIME_OPTIONS,
-} from '../lib/notifications/studyReminder';
-import type { AppLanguage, StudyReminderPersistedState } from '../lib/storage/settingsStore';
+import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
 import { colors, radius, shadows, space, typography } from '../lib/theme';
 
@@ -26,20 +18,8 @@ type SettingsCopy = {
   disableAudioAccessibilityLabel: string;
   enableAudioAccessibilityLabel: string;
   languageAccessibilityLabel: (label: string) => string;
-  questionLanguageTitle: string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
-  setStudyReminderTimeAccessibilityLabel: (time: string) => string;
-  studyReminderDeniedSummary: string;
-  studyReminderDisabledLabel: string;
-  studyReminderEnabledLabel: string;
-  studyReminderEnabledSummary: (time: string) => string;
-  studyReminderOffSummary: string;
-  studyReminderPrivacyLabel: string;
-  studyReminderTimeTitle: string;
-  studyReminderTitle: string;
-  studyReminderUnavailableLabel: string;
-  disableStudyReminderAccessibilityLabel: string;
-  enableStudyReminderAccessibilityLabel: string;
+  studyLanguageTitle: string;
   subtitle: string;
   title: string;
 };
@@ -62,23 +42,10 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
     enableAudioAccessibilityLabel: 'Slå på ljud',
-    languageAccessibilityLabel: (label) => `Byt frågespråk till ${label}`,
-    questionLanguageTitle: 'Frågespråk',
+    languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
-    setStudyReminderTimeAccessibilityLabel: (time) => `Ställ in påminnelsetid till ${time}`,
-    studyReminderDeniedSummary:
-      'Aviseringar är nekade. Aktivera dem i enhetens inställningar för att använda påminnelser.',
-    studyReminderDisabledLabel: 'Påminnelse av',
-    studyReminderEnabledLabel: 'Påminnelse på',
-    studyReminderEnabledSummary: (time) => `Påminner dig varje dag kl. ${time}`,
-    studyReminderOffSummary: 'Välj en tid och slå på den när du vill få en daglig påminnelse.',
-    studyReminderPrivacyLabel: 'Schemaläggs lokalt. Inga studiedata skickas.',
-    studyReminderTimeTitle: 'Tid',
-    studyReminderTitle: 'Studiepåminnelse',
-    studyReminderUnavailableLabel: 'Påminnelser stöds inte i webbläsaren. Öppna appen på mobilen.',
-    disableStudyReminderAccessibilityLabel: 'Stäng av daglig studiepåminnelse',
-    enableStudyReminderAccessibilityLabel: 'Slå på daglig studiepåminnelse',
-    subtitle: 'Styr studiespråk, ljud, mål och påminnelser.',
+    studyLanguageTitle: 'Studiespråk',
+    subtitle: 'Styr studiespråk, ljud och ditt dagliga mål.',
     title: 'Inställningar',
   },
   en: {
@@ -98,132 +65,22 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
     enableAudioAccessibilityLabel: 'Enable audio',
-    languageAccessibilityLabel: (label) => `Set question language to ${label}`,
-    questionLanguageTitle: 'Question language',
+    languageAccessibilityLabel: (label) => `Set study language to ${label}`,
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
-    setStudyReminderTimeAccessibilityLabel: (time) => `Set reminder time to ${time}`,
-    studyReminderDeniedSummary:
-      'Notifications are denied. Enable them in your device settings to use reminders.',
-    studyReminderDisabledLabel: 'Reminder off',
-    studyReminderEnabledLabel: 'Reminder on',
-    studyReminderEnabledSummary: (time) => `Reminds you every day at ${time}`,
-    studyReminderOffSummary: 'Pick a time and turn it on when you want a daily reminder.',
-    studyReminderPrivacyLabel: 'Scheduled locally. No study data is sent.',
-    studyReminderTimeTitle: 'Time',
-    studyReminderTitle: 'Study reminder',
-    studyReminderUnavailableLabel:
-      'Reminders are not supported in the browser. Open the mobile app.',
-    disableStudyReminderAccessibilityLabel: 'Disable daily study reminder',
-    enableStudyReminderAccessibilityLabel: 'Enable daily study reminder',
-    subtitle: 'Control study language, audio, goals, and reminders.',
+    studyLanguageTitle: 'Study language',
+    subtitle: 'Control study language, audio, and your daily goal.',
     title: 'Settings',
   },
 };
 
 export default function Screen() {
-  const [studyReminderBusy, setStudyReminderBusy] = useState(false);
-  const [studyReminderActionMessage, setStudyReminderActionMessage] = useState<string | null>(null);
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
-  const studyReminderEnabled = useSettingsStore((state) => state.studyReminderEnabled);
-  const studyReminderHour = useSettingsStore((state) => state.studyReminderHour);
-  const studyReminderMinute = useSettingsStore((state) => state.studyReminderMinute);
-  const studyReminderPermissionStatus = useSettingsStore(
-    (state) => state.studyReminderPermissionStatus,
-  );
-  const studyReminderNotificationId = useSettingsStore(
-    (state) => state.studyReminderNotificationId,
-  );
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
-  const setStudyReminderState = useSettingsStore((state) => state.setStudyReminderState);
   const copy = settingsCopy[language];
-  const studyReminderTimeLabel = formatStudyReminderTime(studyReminderHour, studyReminderMinute);
-  const studyReminderStatusMessage =
-    studyReminderActionMessage ??
-    (!studyReminderEnabled && studyReminderPermissionStatus === 'denied'
-      ? copy.studyReminderDeniedSummary
-      : null);
-  const currentStudyReminderState: StudyReminderPersistedState = {
-    studyReminderEnabled,
-    studyReminderHour,
-    studyReminderMinute,
-    studyReminderPermissionStatus,
-    studyReminderNotificationId,
-  };
-
-  const runStudyReminderAction = async (
-    action: (
-      runtime: NonNullable<Awaited<ReturnType<typeof createExpoStudyReminderRuntime>>>,
-    ) => Promise<StudyReminderPersistedState>,
-  ) => {
-    if (studyReminderBusy) return;
-    setStudyReminderBusy(true);
-    try {
-      const runtime = await createExpoStudyReminderRuntime();
-      if (!runtime) {
-        setStudyReminderActionMessage(copy.studyReminderUnavailableLabel);
-        return;
-      }
-
-      const nextState = await action(runtime);
-      setStudyReminderState(nextState);
-      setStudyReminderActionMessage(
-        nextState.studyReminderPermissionStatus === 'denied'
-          ? copy.studyReminderDeniedSummary
-          : null,
-      );
-    } catch {
-      setStudyReminderActionMessage(copy.studyReminderUnavailableLabel);
-    } finally {
-      setStudyReminderBusy(false);
-    }
-  };
-
-  const handleStudyReminderToggle = async () => {
-    if (studyReminderEnabled) {
-      await runStudyReminderAction((runtime) =>
-        disableStudyReminder({ current: currentStudyReminderState, runtime }),
-      );
-      return;
-    }
-
-    await runStudyReminderAction((runtime) =>
-      enableStudyReminder({
-        current: currentStudyReminderState,
-        hour: studyReminderHour,
-        minute: studyReminderMinute,
-        language,
-        runtime,
-      }),
-    );
-  };
-
-  const handleStudyReminderTimeSelection = async (hour: number, minute: number) => {
-    const nextReminderState = {
-      ...currentStudyReminderState,
-      studyReminderHour: hour,
-      studyReminderMinute: minute,
-    };
-
-    if (!studyReminderEnabled) {
-      setStudyReminderState(nextReminderState);
-      setStudyReminderActionMessage(null);
-      return;
-    }
-
-    await runStudyReminderAction((runtime) =>
-      enableStudyReminder({
-        current: nextReminderState,
-        hour,
-        minute,
-        language,
-        runtime,
-      }),
-    );
-  };
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
@@ -263,7 +120,7 @@ export default function Screen() {
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.questionLanguageTitle}
+          {copy.studyLanguageTitle}
         </Text>
         <View style={styles.row}>
           {[
@@ -324,75 +181,6 @@ export default function Screen() {
             );
           })}
         </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.studyReminderTitle}
-        </Text>
-        <Text style={styles.subtitle}>
-          {studyReminderEnabled
-            ? copy.studyReminderEnabledSummary(studyReminderTimeLabel)
-            : copy.studyReminderOffSummary}
-        </Text>
-        <Pressable
-          aria-checked={studyReminderEnabled}
-          accessibilityLabel={
-            studyReminderEnabled
-              ? copy.disableStudyReminderAccessibilityLabel
-              : copy.enableStudyReminderAccessibilityLabel
-          }
-          accessibilityRole="switch"
-          accessibilityState={{ checked: studyReminderEnabled, disabled: studyReminderBusy }}
-          disabled={studyReminderBusy}
-          hitSlop={space[1]}
-          onPress={() => void handleStudyReminderToggle()}
-          style={[
-            styles.secondaryButton,
-            studyReminderEnabled ? styles.secondaryButtonMuted : null,
-            studyReminderBusy ? styles.disabledButton : null,
-          ]}
-        >
-          <Text
-            style={[
-              styles.secondaryButtonText,
-              studyReminderEnabled ? styles.secondaryButtonMutedText : null,
-            ]}
-          >
-            {studyReminderEnabled
-              ? copy.studyReminderEnabledLabel
-              : copy.studyReminderDisabledLabel}
-          </Text>
-        </Pressable>
-        <Text style={styles.caption}>{copy.studyReminderPrivacyLabel}</Text>
-        <Text style={styles.fieldLabel}>{copy.studyReminderTimeTitle}</Text>
-        <View style={styles.row}>
-          {STUDY_REMINDER_TIME_OPTIONS.map(({ hour, minute }) => {
-            const timeLabel = formatStudyReminderTime(hour, minute);
-            const selected = studyReminderHour === hour && studyReminderMinute === minute;
-
-            return (
-              <Pressable
-                key={timeLabel}
-                aria-selected={selected}
-                accessibilityLabel={copy.setStudyReminderTimeAccessibilityLabel(timeLabel)}
-                accessibilityRole="button"
-                accessibilityState={{ selected, disabled: studyReminderBusy }}
-                disabled={studyReminderBusy}
-                hitSlop={space[1]}
-                onPress={() => void handleStudyReminderTimeSelection(hour, minute)}
-                style={[styles.pill, selected ? styles.pillActive : null]}
-              >
-                <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>
-                  {timeLabel}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-        {studyReminderStatusMessage ? (
-          <Text style={styles.noticeText}>{studyReminderStatusMessage}</Text>
-        ) : null}
       </View>
 
       <ComplianceLinks />
@@ -491,42 +279,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
-    borderColor: colors.accent,
-    borderWidth: StyleSheet.hairlineWidth,
     borderRadius: radius.card,
     justifyContent: 'center',
     minHeight: space[5] + space[0.5],
     paddingHorizontal: space[2],
     paddingVertical: space[1.25],
   },
-  secondaryButtonMuted: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-  },
   secondaryButtonText: {
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-  },
-  secondaryButtonMutedText: {
-    color: colors.text,
-  },
-  disabledButton: {
-    opacity: 0.7,
-  },
-  caption: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  fieldLabel: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  noticeText: {
-    color: colors.warning,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
   },
 });

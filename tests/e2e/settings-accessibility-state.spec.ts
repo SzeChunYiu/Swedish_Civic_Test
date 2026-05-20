@@ -13,9 +13,9 @@ test('settings controls expose selected and checked state on web', async ({ page
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  await page.getByLabel('Byt frågespråk till Engelskt stöd').click();
-  const swedishLanguage = page.getByLabel('Set question language to Swedish');
-  const englishLanguage = page.getByLabel('Set question language to English support');
+  await page.getByLabel('Byt studiespråk till Engelskt stöd').click();
+  const swedishLanguage = page.getByLabel('Set study language to Swedish');
+  const englishLanguage = page.getByLabel('Set study language to English support');
 
   await expect(englishLanguage).toHaveAttribute('aria-selected', 'true');
   await expect(swedishLanguage).toHaveAttribute('aria-selected', 'false');
@@ -36,7 +36,7 @@ test('settings controls expose selected and checked state on web', async ({ page
 
   await page.reload({ waitUntil: 'networkidle' });
 
-  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
+  await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
     'aria-selected',
     'true',
   );

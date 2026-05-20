@@ -38,12 +38,35 @@ test('language settings stay in parity with supported localization languages', (
   assert.match(settingsStore, /export type AppLanguage = 'sv' \| 'en';/);
   assert.match(settingsRoute, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(settingsRoute, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
-  assert.match(settingsRoute, /Byt frågespråk till \$\{label\}/);
-  assert.match(settingsRoute, /Set question language to \$\{label\}/);
+  assert.match(settingsRoute, /Byt studiespråk till \$\{label\}/);
+  assert.match(settingsRoute, /Set study language to \$\{label\}/);
   assert.equal(summary.supportedLanguagesValidated, expectedLanguages.length);
   assert.equal(summary.localizationStrings, Object.keys(strings).length);
   assert.equal(summary.localizationStringsValidated, Object.keys(strings).length);
   assert.equal(summary.languageSettingsParityValidated, true);
+});
+
+test('settings study-language copy does not keep narrow question-language labels', () => {
+  const staleLabels = [
+    ['Fråge', 'språk'].join(''),
+    ['Byt fråge', 'språk till ${label}'].join(''),
+    ['Question ', 'language'].join(''),
+    ['Set question ', 'language to ${label}'].join(''),
+  ];
+  const scannedFiles = [
+    'app/settings.tsx',
+    'scripts/validate-content.js',
+    'tests/content-settings-route-copy-parity.test.js',
+    'tests/content-settings-route-header-parity.test.js',
+    'scripts/ui-effects.test.js',
+  ];
+
+  scannedFiles.forEach((relativePath) => {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    staleLabels.forEach((label) => {
+      assert.doesNotMatch(source, new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    });
+  });
 });
 
 test('language settings parity rejects supported-language drift', () => {
