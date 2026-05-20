@@ -115,3 +115,21 @@ export async function dismissBlockingModals(page: Page): Promise<BlockingModalDi
     launchOverlayDismissed,
   };
 }
+
+export async function selectQuestionLanguageInSettings(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const targetLanguageLabel =
+    language === 'en'
+      ? /Byt frågespråk till Engelskt stöd|Set question language to English support/
+      : /Byt frågespråk till Svenska|Set question language to Swedish/;
+  const selectedLanguageLabel =
+    language === 'en' ? 'Set question language to English support' : 'Byt frågespråk till Svenska';
+
+  await page.getByLabel(targetLanguageLabel).click();
+  await expect(page.getByLabel(selectedLanguageLabel)).toHaveAttribute('aria-selected', 'true');
+}
