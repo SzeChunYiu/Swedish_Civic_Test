@@ -16,7 +16,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.',
     descriptionEn:
       'Democracy, rule by the people, ways to influence society, and threats to democracy.',
-    questionCount: 25,
+    questionCount: 50,
   },
   {
     id: 'ch03',
@@ -52,7 +52,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Fria medier, olika slags medier, public service och källkritik.',
     descriptionEn:
       'Free media, different types of media, public service broadcasting, and source criticism.',
-    questionCount: 30,
+    questionCount: 55,
   },
   {
     id: 'ch07',
@@ -80,7 +80,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.',
     descriptionEn:
       'Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.',
-    questionCount: 30,
+    questionCount: 55,
   },
   {
     id: 'ch10',
