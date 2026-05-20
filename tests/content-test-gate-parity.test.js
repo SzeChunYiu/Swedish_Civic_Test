@@ -116,6 +116,16 @@ function collectValidateContentExecFileSyncCalls(sourceText) {
   return calls;
 }
 
+function readValidationSummary() {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 test('test:content script includes every content test file exactly once', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
   const testContentScript = packageJson.scripts?.['test:content'];
@@ -147,5 +157,50 @@ test('test:content script includes every content test file exactly once', () => 
     duplicateTests,
     [],
     `test:content duplicates tests: ${duplicateTests.join(', ')}`,
+  );
+});
+
+test('validate:content reports node eval spawns pinned to repoRoot cwd', () => {
+  const summary = readValidationSummary();
+
+  assert.ok(summary.contentTestNodeEvalSpawnCallsValidated > 0);
+  assert.equal(
+    summary.contentTestNodeEvalSpawnCwdCallsValidated,
+    summary.contentTestNodeEvalSpawnCallsValidated,
+  );
+  assert.equal(summary.contentTestNodeEvalSpawnCwdParityValidated, true);
+});
+
+test('validate:content rejects content node eval spawns without repoRoot cwd', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/tests/content-question-exact-schema-keys.test.js')) {
+    const source = String(contents);
+    const needle = "{ cwd: repoRoot, encoding: 'utf8' }";
+    const index = source.lastIndexOf(needle);
+    return index === -1
+      ? source
+      : source.slice(0, index) + "{ encoding: 'utf8' }" + source.slice(index + needle.length);
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /tests\/content-question-exact-schema-keys\.test\.js node eval spawnSync at line \d+ must set cwd: repoRoot/,
   );
 });

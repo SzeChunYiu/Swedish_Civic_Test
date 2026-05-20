@@ -6347,6 +6347,9 @@ let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
 let celebrationBurstAccessibilityRulesValidated = 0;
 let celebrationBurstAccessibilityParityValidated = false;
+let contentTestNodeEvalSpawnCallsValidated = 0;
+let contentTestNodeEvalSpawnCwdCallsValidated = 0;
+let contentTestNodeEvalSpawnCwdParityValidated = false;
 let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
@@ -9301,6 +9304,116 @@ function validateCelebrationBurstAccessibilityParity() {
       EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES.length
   ) {
     celebrationBurstAccessibilityParityValidated = true;
+  }
+}
+
+function validateContentTestNodeEvalSpawnCwdParity() {
+  let valid = true;
+  const testsDir = path.join(repoRoot, 'tests');
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function isProcessExecPath(node) {
+    return (
+      ts.isPropertyAccessExpression(node) &&
+      node.name.text === 'execPath' &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'process'
+    );
+  }
+
+  function isNodeEvalArg(node) {
+    return ts.isStringLiteral(node) && node.text === '-e';
+  }
+
+  function hasRepoRootCwd(optionsNode) {
+    if (!optionsNode || !ts.isObjectLiteralExpression(optionsNode)) return false;
+
+    return optionsNode.properties.some((property) => {
+      if (!ts.isPropertyAssignment(property)) return false;
+      const name = property.name;
+      const isCwdName =
+        (ts.isIdentifier(name) && name.text === 'cwd') ||
+        (ts.isStringLiteral(name) && name.text === 'cwd');
+      return (
+        isCwdName &&
+        ts.isIdentifier(property.initializer) &&
+        property.initializer.text === 'repoRoot'
+      );
+    });
+  }
+
+  let contentTestFiles = [];
+  try {
+    contentTestFiles = fs
+      .readdirSync(testsDir)
+      .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
+      .sort();
+  } catch (error) {
+    reject(`tests directory could not be read for content cwd parity: ${error.message}`);
+    return;
+  }
+
+  contentTestFiles.forEach((fileName) => {
+    const relativePath = path.join('tests', fileName);
+    const absolutePath = path.join(repoRoot, relativePath);
+    let source = '';
+
+    try {
+      source = fs.readFileSync(absolutePath, 'utf8');
+    } catch (error) {
+      reject(`${relativePath} could not be read for content cwd parity: ${error.message}`);
+      return;
+    }
+
+    const sourceFile = ts.createSourceFile(
+      relativePath,
+      source,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.JS,
+    );
+
+    function visit(node) {
+      if (
+        ts.isCallExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        node.expression.text === 'spawnSync' &&
+        node.arguments.length >= 2 &&
+        isProcessExecPath(node.arguments[0]) &&
+        ts.isArrayLiteralExpression(node.arguments[1]) &&
+        node.arguments[1].elements.some(isNodeEvalArg)
+      ) {
+        contentTestNodeEvalSpawnCallsValidated += 1;
+        if (hasRepoRootCwd(node.arguments[2])) {
+          contentTestNodeEvalSpawnCwdCallsValidated += 1;
+        } else {
+          const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+          reject(
+            `${relativePath} node eval spawnSync at line ${position.line + 1} must set cwd: repoRoot`,
+          );
+        }
+      }
+
+      ts.forEachChild(node, visit);
+    }
+
+    visit(sourceFile);
+  });
+
+  if (contentTestNodeEvalSpawnCallsValidated === 0) {
+    reject('content tests must include node eval spawnSync guards for validate-content parity');
+  }
+
+  if (
+    valid &&
+    contentTestNodeEvalSpawnCallsValidated > 0 &&
+    contentTestNodeEvalSpawnCwdCallsValidated === contentTestNodeEvalSpawnCallsValidated
+  ) {
+    contentTestNodeEvalSpawnCwdParityValidated = true;
   }
 }
 
@@ -14149,6 +14262,7 @@ validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
 validateCelebrationBurstAccessibilityParity();
+validateContentTestNodeEvalSpawnCwdParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
@@ -14310,6 +14424,9 @@ console.log(
       uhrReferenceCardAccessibilityParityValidated,
       celebrationBurstAccessibilityRulesValidated,
       celebrationBurstAccessibilityParityValidated,
+      contentTestNodeEvalSpawnCallsValidated,
+      contentTestNodeEvalSpawnCwdCallsValidated,
+      contentTestNodeEvalSpawnCwdParityValidated,
       examReviewItemsValidated,
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
