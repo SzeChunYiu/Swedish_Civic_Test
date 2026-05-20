@@ -27,7 +27,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
-  assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 10);
+  assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 13);
   assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
   assert.equal(summary.removeAdsEntitlementHookCasesValidated, 5);
   assert.equal(summary.removeAdsEntitlementHookParityValidated, true);
