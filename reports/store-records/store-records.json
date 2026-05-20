@@ -1,17 +1,35 @@
 {
   "gate": "store-records",
   "status": "blocked",
-  "bundleIdentifier": "com.billyyiu.swedishcivictest",
-  "packageName": "com.billyyiu.swedishcivictest",
+  "bundleIdentifier": "com.billyyiu.almostswedish",
+  "packageName": "com.billyyiu.almostswedish",
   "supportUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/",
-  "privacyPolicyUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/",
+  "privacyUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/",
   "appStoreConnectUrl": "TBD",
   "googlePlayConsoleUrl": "TBD",
-  "supportUrlEnteredInApple": false,
-  "privacyPolicyUrlEnteredInApple": false,
-  "supportUrlEnteredInGooglePlay": false,
-  "privacyPolicyUrlEnteredInGooglePlay": false,
-  "listingMetadataReviewed": false,
-  "accountOwnershipReviewed": false,
-  "notes": "Do not include account secrets or private credentials."
+  "accountOwnership": {
+    "appleDeveloperTeamId": "TBD",
+    "appleBundleIdReviewed": false,
+    "googlePlayDeveloperId": "TBD",
+    "googlePackageNameReviewed": false
+  },
+  "adMob": {
+    "status": "created",
+    "appId": "ca-app-pub-2451892671779738~8452000382",
+    "iosAppId": "ca-app-pub-2451892671779738~8452000382",
+    "androidAppId": "ca-app-pub-2451892671779738~5027760693",
+    "realAdsEnabled": true,
+    "appAdsTxtUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt",
+    "appAdsTxtPublisherLine": "google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0",
+    "appAdsTxtReviewed": false,
+    "note": "AdMob app IDs exist for the ad-supported v1.0 release; review app-ads.txt and store records before marking READY."
+  },
+  "listingMetadata": {
+    "appStoreListingReviewed": false,
+    "appStoreListingPath": "publishing/app-store-listing.md",
+    "googlePlayListingReviewed": false,
+    "googlePlayListingPath": "publishing/google-play-listing.md",
+    "matchesStoreRecords": false
+  },
+  "notes": "Blocked until Apple/Google store records, account ownership, listing metadata, and app-ads.txt review are completed. Do not include account secrets or private credentials."
 }
