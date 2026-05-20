@@ -43,7 +43,7 @@ Product model: **non-consumable**, one-time unlock, sets `adsDisabled=true`.
 
 1. App Store Connect → your app → **In-App Purchases** → Create →
    **Non-Consumable**.
-2. Reference Name: `Remove Ads`; Product ID: `com.billyyiu.swedishcivictest.removeads`.
+2. Reference Name: `Remove Ads`; Product ID: `com.billyyiu.almostswedish.removeads`.
 3. Price: pick the tier closest to **29 SEK** (Sweden) — Apple sets the matrix
    for other countries automatically.
 4. Add localized display name/description (EN + SV), review screenshot.
@@ -102,7 +102,7 @@ Hand the factory: confirm the Pro Lifetime product ID
 [ ] AdMob Android App ID:    ca-app-pub-____~____
 [ ] 12 ad unit IDs (6 iOS + 6 Android) — pasted to factory
 [ ] app-ads.txt publisher line
-[ ] iOS IAP product id:      com.billyyiu.swedishcivictest.removeads (price live: Y/N)
+[ ] iOS IAP product id:      com.billyyiu.almostswedish.removeads (price live: Y/N)
 [ ] Android IAP product id:  removeads (price live: Y/N)
 [ ] iOS Pro Lifetime id:     com.billyyiu.almostswedish.prolifetime (59 SEK live: Y/N)
 [ ] Android Pro Lifetime id: com.billyyiu.almostswedish.prolifetime (59 SEK live: Y/N)
