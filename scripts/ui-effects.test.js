@@ -1055,6 +1055,8 @@ test('chapter detail route exposes page and question section headings as headers
 
   assert.match(source, /Kapitlet hittades inte/);
   assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
+  assert.match(source, /Starta frågepass för \$\{chapterTitle\}/);
+  assert.doesNotMatch(source, new RegExp(['Starta', 'kapitelövning'].join(' ')));
   assert.match(source, /Chapter not found/);
   assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.equal(headerMatches?.length, 3);
