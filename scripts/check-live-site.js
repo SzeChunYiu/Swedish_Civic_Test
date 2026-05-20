@@ -155,6 +155,43 @@ function containsAll(source, needles) {
   return needles.every((needle) => source.includes(needle));
 }
 
+function findStaticAdSenseSlotConfigIssues(indexSource, appSource) {
+  const surface = `${indexSource}\n${appSource}`;
+  const issues = [];
+  const staleSetupPatterns = [
+    /Replace ca-pub-XXX/i,
+    /data-ad-slot value with your AdSense IDs/i,
+    /data-ad-slot=["'](?:0{8,}|000000000[0-9])["']/i,
+    /Your AdSense slot will render here/i,
+    /AdSense-yta visas här/i,
+    /Anchor ad slot/i,
+    /AdSense 广告将显示在此处/,
+    /AdSense 廣告將顯示在此處/,
+    /ستظهر إعلانات AdSense هنا/,
+    /AdSense halkan ayey ka soo bixi doontaa/i,
+  ];
+
+  for (const pattern of staleSetupPatterns) {
+    if (pattern.test(surface)) {
+      issues.push(`stale static AdSense setup or render copy: ${pattern.source}`);
+    }
+  }
+
+  if (/ca-pub-[0-9]{16}/.test(surface)) {
+    if (!/slots:\s*{[\s\S]*inline:[\s\S]*anchor:/m.test(appSource)) {
+      issues.push('static AdSense publisher is present without an explicit slot config');
+    }
+    if (!/function\s+smtStaticAdsAreConfigured\s*\(/.test(appSource)) {
+      issues.push('static AdSense publisher is present without a fail-closed config gate');
+    }
+    if (!/function\s+smtIsRealAdSenseSlotId\s*\(/.test(appSource)) {
+      issues.push('static AdSense publisher is present without reviewed slot-id validation');
+    }
+  }
+
+  return issues;
+}
+
 function normalizeHeaderValue(value) {
   return String(value ?? '')
     .trim()
@@ -185,15 +222,18 @@ async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [indexAsset, stylesAsset, practiceAsset, ebookAsset, questionsAsset] = await Promise.all([
-    fetchAsset(baseUrl, 'index.html'),
-    fetchAsset(baseUrl, 'styles.css'),
-    fetchAsset(baseUrl, 'practice.js'),
-    fetchAsset(baseUrl, 'ebook.js'),
-    fetchAsset(baseUrl, 'questions.js'),
-  ]);
+  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, questionsAsset] =
+    await Promise.all([
+      fetchAsset(baseUrl, 'index.html'),
+      fetchAsset(baseUrl, 'styles.css'),
+      fetchAsset(baseUrl, 'app.js'),
+      fetchAsset(baseUrl, 'practice.js'),
+      fetchAsset(baseUrl, 'ebook.js'),
+      fetchAsset(baseUrl, 'questions.js'),
+    ]);
   const index = indexAsset.text;
   const styles = stylesAsset.text;
+  const app = appAsset.text;
   const practice = practiceAsset.text;
   const ebook = ebookAsset.text;
   const questions = questionsAsset.text;
@@ -250,6 +290,13 @@ async function checkLiveSite(inputUrl, options = {}) {
           'static head metadata description',
           formatUnsupportedStaticOutcomeSlogans(staticHeadMetadataDescriptionIssues),
         ),
+  );
+
+  const staticAdSenseIssues = findStaticAdSenseSlotConfigIssues(index, app);
+  checks.push(
+    staticAdSenseIssues.length === 0
+      ? pass('static AdSense slot config')
+      : fail('static AdSense slot config', staticAdSenseIssues.join('; ')),
   );
 
   checks.push(
@@ -309,6 +356,7 @@ module.exports = {
   checkLiveSite,
   fetchText,
   findRequiredSecurityHeaderIssues,
+  findStaticAdSenseSlotConfigIssues,
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
