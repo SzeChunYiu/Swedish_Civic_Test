@@ -2729,7 +2729,7 @@
     },
     "opts": [
       {
-        "en": "To work for equal rights for everyone and make sure the Discrimination Act is followed",
+        "en": "To promote equal rights for everyone and make sure the Discrimination Act is followed",
         "sv": "Att arbeta för allas lika rättigheter och se till att diskrimineringslagen följs"
       },
       {
@@ -2747,7 +2747,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
+      "en": "The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
       "sv": "Diskrimineringsombudsmannen (DO) är en statlig myndighet som arbetar för allas lika rättigheter och möjligheter. DO ska se till att diskrimineringslagen följs; skulder, militärt försvar och nordiskt regeringssamarbete hör till andra aktörer."
     },
     "source": {
@@ -17902,7 +17902,7 @@
     },
     "opts": [
       {
-        "en": "To work for equal rights for everyone and make sure the Discrimination Act is followed",
+        "en": "To promote equal rights for everyone and make sure the Discrimination Act is followed",
         "sv": "Att arbeta för allas lika rättigheter och se till att diskrimineringslagen följs"
       },
       {
@@ -17920,7 +17920,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
+      "en": "The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
       "sv": "Diskrimineringsombudsmannen (DO) är en statlig myndighet som arbetar för allas lika rättigheter och möjligheter. DO ska se till att diskrimineringslagen följs; skulder, militärt försvar och nordiskt regeringssamarbete hör till andra aktörer."
     },
     "source": {
@@ -17945,7 +17945,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "One role of the Equality Ombudsman (DO) is to work for equal rights for everyone and make sure the Discrimination Act is followed.",
+      "en": "One role of the Equality Ombudsman (DO) is to promote equal rights for everyone and make sure the Discrimination Act is followed.",
       "sv": "En uppgift för Diskrimineringsombudsmannen (DO) är att arbeta för allas lika rättigheter och se till att diskrimineringslagen följs."
     },
     "opts": [
@@ -17960,7 +17960,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
+      "en": "The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
       "sv": "Diskrimineringsombudsmannen (DO) är en statlig myndighet som arbetar för allas lika rättigheter och möjligheter. DO ska se till att diskrimineringslagen följs; skulder, militärt försvar och nordiskt regeringssamarbete hör till andra aktörer."
     },
     "source": {
@@ -18000,7 +18000,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
+      "en": "The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
       "sv": "Diskrimineringsombudsmannen (DO) är en statlig myndighet som arbetar för allas lika rättigheter och möjligheter. DO ska se till att diskrimineringslagen följs; skulder, militärt försvar och nordiskt regeringssamarbete hör till andra aktörer."
     },
     "source": {
@@ -18030,7 +18030,7 @@
     },
     "opts": [
       {
-        "en": "To work for equal rights for everyone and make sure the Discrimination Act is followed",
+        "en": "To promote equal rights for everyone and make sure the Discrimination Act is followed",
         "sv": "Att arbeta för allas lika rättigheter och se till att diskrimineringslagen följs"
       },
       {
@@ -18048,7 +18048,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
+      "en": "The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.",
       "sv": "Diskrimineringsombudsmannen (DO) är en statlig myndighet som arbetar för allas lika rättigheter och möjligheter. DO ska se till att diskrimineringslagen följs; skulder, militärt försvar och nordiskt regeringssamarbete hör till andra aktörer."
     },
     "source": {
