@@ -13,6 +13,7 @@ import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
+import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -140,6 +141,7 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
   const removeAdsFocused = focus === 'remove-ads';
+  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
   const level = calculateLevel(totalXp);
   const streakWithFreeze = useMemo(
     () =>
@@ -252,7 +254,7 @@ export default function Screen() {
       </Card>
 
       {!removeAdsFocused ? removeAdsPaywall : null}
-      {entitlementsReady ? (
+      {entitlementsReady && proRuntimeScopeEnabled ? (
         <ProPaywall
           alreadyAdFree={monetizationEntitlements.adsDisabled}
           language={language}
