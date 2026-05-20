@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -36,6 +36,7 @@ type ProfileCopy = {
   openSettings: string;
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
+  removeAdsFocusCue: string;
   streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
@@ -63,6 +64,7 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettings: 'Ändra mål, språk och ljud',
     openSettingsAccessibilityLabel: 'Ändra mål, språk och ljud',
     questionsHelper: 'frågor',
+    removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     streakFreezeBadge: 'Svitskydd',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
@@ -89,6 +91,7 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettings: 'Edit goal, language, and audio',
     openSettingsAccessibilityLabel: 'Edit goal, language, and audio',
     questionsHelper: 'questions',
+    removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
     streakFreezeBadge: 'Streak freeze',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
@@ -103,7 +106,7 @@ const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
   sv: {
     first_practice: 'Första övningen',
     level_2: 'Nivå 2',
-    mistake_reviewer: 'Misstagsrepetition',
+    mistake_reviewer: 'Missade frågor',
     streak_3: 'Tre dagars svit',
   },
   en: {},
@@ -120,6 +123,7 @@ function formatBadges(
 }
 
 export default function Screen() {
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
   const {
     entitlements: monetizationEntitlements,
     entitlementsReady,
@@ -135,6 +139,7 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
+  const removeAdsFocused = focus === 'remove-ads';
   const level = calculateLevel(totalXp);
   const streakWithFreeze = useMemo(
     () =>
@@ -165,6 +170,24 @@ export default function Screen() {
     setStreakFreezeState(streakWithFreeze.freezeState);
   }, [setStreakFreezeState, streakWithFreeze.freezeState]);
 
+  const removeAdsPaywall = entitlementsReady ? (
+    <View
+      nativeID="remove-ads-paywall"
+      testID="remove-ads-paywall"
+      style={[styles.removeAdsPaywall, removeAdsFocused ? styles.removeAdsPaywallFocused : null]}
+    >
+      {removeAdsFocused ? (
+        <Text style={styles.removeAdsFocusCue}>{copy.removeAdsFocusCue}</Text>
+      ) : null}
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
+    </View>
+  ) : null;
+
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
       <View style={styles.statsRow}>
@@ -185,6 +208,7 @@ export default function Screen() {
           <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
         </Card>
       ) : null}
+      {removeAdsFocused ? removeAdsPaywall : null}
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
@@ -227,14 +251,7 @@ export default function Screen() {
         <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
-      {entitlementsReady ? (
-        <PremiumBanner
-          entitlements={monetizationEntitlements}
-          language={language}
-          onEntitlementsChange={setMonetizationEntitlements}
-          runtimeOptions={purchaseRuntime}
-        />
-      ) : null}
+      {!removeAdsFocused ? removeAdsPaywall : null}
       {entitlementsReady ? (
         <ProPaywall
           alreadyAdFree={monetizationEntitlements.adsDisabled}
@@ -273,6 +290,21 @@ const styles = StyleSheet.create({
     fontSize: typography.sectionTitle.fontSize,
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
+  },
+  removeAdsPaywall: {
+    gap: space[1],
+  },
+  removeAdsPaywallFocused: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space[1],
+  },
+  removeAdsFocusCue: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   dashboardLink: {
     alignSelf: 'flex-start',

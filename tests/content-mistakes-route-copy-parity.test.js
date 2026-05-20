@@ -40,10 +40,23 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Gå igenom fel svar med fråga, förklaring, källreferens/);
+  assert.match(source, /Här finns frågor du har missat, med förklaring, källhänvisning/);
   assert.match(source, /Review wrong answers with the question, explanation, source reference/);
+  [
+    ['Fell', 'ogg'],
+    ['Fel svar att', ' repetera'],
+    ['Gå igenom fel svar', ' med fråga'],
+    ['repetitionsantal på', ' samma plats'],
+    ['Sparad för fokuserad', ' repetition'],
+  ].forEach((parts) => assert.doesNotMatch(source, new RegExp(parts.join(''))));
   assert.match(source, /accessibilityLabel=\{copy\.emptyPracticeAccessibilityLabel\}/);
   assert.match(source, /useMistakeReviewStore/);
+  assert.match(source, /type AnswerReviewBlockProps = \{/);
+  assert.match(source, /function AnswerReviewBlock\(\{/);
+  assert.match(source, /const bookmarkedReviewQuestions = questions\.filter\(/);
+  assert.match(source, /\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\) === 0/);
+  assert.match(source, /\{bookmarkedReviewQuestions\.map\(\(question\) => \{/);
+  assert.match(source, /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} \/>/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.answerReviewAccessibilityLabel\(/);
@@ -96,7 +109,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'Svara fel på en övningsfråga så visas den här.'", "'No mistakes yet'");
+      .replace("'När du missar en övningsfråga visas den här.'", "'No mistakes yet'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -170,6 +183,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /mistakes route must read stored wrong-answer review text/,
+  );
+});
+
+test('mistakes route copy parity rejects bookmarked cards without answer review', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
+        'null',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /bookmarked review cards must show the localized correct answer/,
   );
 });
 

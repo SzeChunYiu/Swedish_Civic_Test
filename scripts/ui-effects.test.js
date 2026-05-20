@@ -423,15 +423,19 @@ test('settings route exposes page and section titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('settings controls mirror selected and checked state to web aria attributes', () => {
+test('settings controls expose exclusive radio groups and checked state', () => {
   const source = read('app/settings.tsx');
 
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy>/);
   assert.match(source, /const copy = settingsCopy\[language\]/);
-  assert.match(source, /aria-selected=\{language === value\}/);
+  assert.equal(source.match(/accessibilityRole="radiogroup"/g)?.length, 2);
+  assert.equal(source.match(/accessibilityRole="radio"/g)?.length, 2);
+  assert.match(source, /aria-label=\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /aria-checked=\{language === value\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: language === value \}\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
   assert.match(source, /aria-checked=\{audioEnabled\}/);
   assert.match(
     source,
@@ -439,9 +443,18 @@ test('settings controls mirror selected and checked state to web aria attributes
   );
   assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
-  assert.match(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /aria-label=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /aria-checked=\{dailyGoalAnswers === goal\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
+  assert.doesNotMatch(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
+  assert.doesNotMatch(source, /accessibilityRole="button"[\s\S]{0,140}languageAccessibilityLabel/);
+  assert.doesNotMatch(
+    source,
+    /accessibilityRole="button"[\s\S]{0,140}setDailyGoalAccessibilityLabel/,
+  );
   assert.match(source, /Svenska/);
   assert.match(source, /Engelskt stöd/);
   assert.match(source, /Byt frågespråk till \$\{label\}/);
@@ -488,6 +501,18 @@ test('mock exam config controls are not nested inside labelled summary container
     /<View\s+accessible\s+accessibilityLabel=\{resolvedPanelAccessibilityLabel\}\s+accessibilityRole=\{accessibilityRole\}\s+style=\{styles\.header\}/,
   );
   assert.match(source, /accessibilityRole="adjustable"/);
+  assert.match(source, /accessibilityActions=\{stepperAccessibilityActions\}/);
+  assert.match(source, /\{ name: 'decrement', label: decrementAccessibilityLabel \}/);
+  assert.match(source, /\{ name: 'increment', label: incrementAccessibilityLabel \}/);
+  assert.match(source, /onAccessibilityAction=\{handleAccessibilityAction\}/);
+  assert.match(
+    source,
+    /case 'decrement':[\s\S]*canDecrement[\s\S]*getNextValue\(value, step, -1, min, max\)/,
+  );
+  assert.match(
+    source,
+    /case 'increment':[\s\S]*canIncrement[\s\S]*getNextValue\(value, step, 1, min, max\)/,
+  );
   assert.match(source, /accessibilityRole="checkbox"/);
   assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
   assert.doesNotMatch(
@@ -764,8 +789,8 @@ test('routed quiz answer state resets when the shuffle session seed changes', ()
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /countAnswerAttemptsForLocalDate/);
-  assert.match(source, /countAnswerAttemptsForLocalDate\(\{ answerAttempts, questionProgress \}\)/);
+  assert.match(source, /countAnswersForLocalDate/);
+  assert.match(source, /countAnswersForLocalDate\(questionProgress\)/);
   assert.doesNotMatch(source, /completedQuestionIds\.length,\s*dailyGoalAnswers/);
 });
 
@@ -907,7 +932,13 @@ test('chapter card groups title, translation, status, and description into an ac
   assert.match(source, /copy\.accessibilityLabel\.secondaryName\(secondaryName\)/);
   assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
   assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
-  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
+  assert.match(source, /accessibilitySummary\?: boolean/);
+  assert.match(source, /accessibilitySummary = true/);
+  assert.match(source, /accessible=\{accessibilitySummary\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{accessibilitySummary \? chapterAccessibilityLabel : undefined\}/,
+  );
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -963,6 +994,7 @@ test('learn route chapter links announce chapter progress', () => {
     /copy\.accessibilityLabel\(\{ primaryName, secondaryName, progressLabel \}\)/,
   );
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
+  assert.match(source, /accessibilitySummary=\{false\}/);
   assert.match(source, /language=\{language\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -1046,13 +1078,16 @@ test('mistakes screen has a bookmarked-question review section', () => {
 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /bookmarkedQuestions/);
+  assert.match(source, /bookmarkedReviewQuestions/);
+  assert.match(source, /\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\) === 0/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad för fokuserad repetition/);
+  assert.match(source, /Sparad för att öva igen/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
+  assert.match(source, /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} \/>/);
+  assert.match(source, /accessibilityLabel=\{copy\.answerReviewAccessibilityLabel/);
 });
 
 test('mistakes screen exposes page and review section headings as headers', () => {
@@ -1114,7 +1149,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.match(source, /question\.correctOptionId/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
-  assert.match(source, /Ditt senaste felaktiga svar/);
+  assert.match(source, /Ditt senaste svar/);
   assert.match(source, /Your latest wrong answer/);
   assert.match(source, /Rätt svar/);
   assert.match(source, /Correct answer/);
@@ -1297,6 +1332,9 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
+  assert.match(placementCtaSource, /Open the Remove Ads panel in Profile/);
+  assert.match(placementCtaSource, /Öppna Ta bort annonser-panelen i profilen/);
   assert.match(placementCtaSource, /Restore Remove Ads purchase/);
   assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
   assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
@@ -1308,6 +1346,11 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(homeSource, /language=\{language\}/);
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(profileSource, /language=\{language\}/);
+  assert.match(profileSource, /useLocalSearchParams<\{ focus\?: string \}>/);
+  assert.match(profileSource, /const removeAdsFocused = focus === 'remove-ads';/);
+  assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
+  assert.match(profileSource, /nativeID="remove-ads-paywall"/);
+  assert.match(profileSource, /\{removeAdsFocused \? removeAdsPaywall : null\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(placementCtaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -1356,6 +1399,7 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Inga märken ännu/);
   assert.match(source, /Ändra mål, språk och ljud/);
   assert.match(source, /Första övningen/);
+  assert.match(source, /Missade frågor/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
   assert.match(source, /No badges yet/);
@@ -1468,6 +1512,24 @@ test('home screen surfaces focused review copy and review action', () => {
   assert.match(source, /href="\/mistakes"/);
 });
 
+test('home screen surfaces a localized resume card from persisted progress', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /resumeWhereLeftOff/);
+  assert.match(source, /resumeBannerCopy/);
+  assert.match(source, /buildResumeProgress\(questionProgress\)/);
+  assert.match(source, /Senaste övning/);
+  assert.match(source, /Recent practice/);
+  assert.match(source, /Fortsätt \${chapterTitle}/);
+  assert.match(source, /Resume \${chapterTitle}/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
+  assert.match(source, /\{resumeCopy\.title\}/);
+  assert.match(source, /accessibilityLabel=\{resumeAccessibilityLabel\}/);
+  assert.match(source, /href=\{`\/chapter\/\$\{resumeChapter\.id\}`\}/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('home screen surfaces a guided civic readiness path', () => {
   const source = read('app/(tabs)/home.tsx');
   const componentSource = read('components/learning/GuidedPracticePath.tsx');
@@ -1524,9 +1586,11 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
   assert.match(source, /Smarta studievanor/);
+  assert.match(source, /Fortsätt där du slutade i \${chapterTitle}\. \${subtitle}/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
   assert.match(source, /Smart study habits/);
+  assert.match(source, /Continue where you left off in \${chapterTitle}\. \${subtitle}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1536,11 +1600,13 @@ test('home screen exposes dashboard card titles as headers', () => {
 
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /\{copy\.readinessTitle\}/);
+  assert.match(source, /\{resumeCopy\.title\}/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
-  assert.equal(headerMatches?.length, 3);
+  assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1571,9 +1637,29 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   assert.match(dashboard, /<ActivityHeatmap bins=\{activityBins\} copy=\{copy\.activity\} \/>/);
   assert.match(dashboard, /<PerChapterProgressBars/);
   assert.match(dashboard, /<StreakXpSparkline/);
+  assert.match(dashboard, /const summaryAccessibilityLabel = copy\.summaryAccessibilityLabel\(/);
+  assert.match(
+    dashboard,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
+  );
+  assert.doesNotMatch(
+    dashboard,
+    /<Card[\s\S]{0,180}accessibilityLabel=\{summaryAccessibilityLabel\}[\s\S]{0,900}<Link/,
+  );
+  assert.match(
+    activity,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
+  );
   assert.match(activity, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(activity, /accessibilityRole="summary"/);
+  assert.doesNotMatch(activity, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(
+    chapters,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
+  );
   assert.match(activity, /copy\.emptyState/);
   assert.match(chapters, /accessibilityState=\{\{ selected \}\}/);
+  assert.doesNotMatch(chapters, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(chapters, /copy\.emptyState/);
   assert.match(sparkline, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(sparkline, /copy\.emptyState/);

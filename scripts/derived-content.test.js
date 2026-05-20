@@ -63,6 +63,35 @@ function civicStatementPromptPatterns(source, functionName, nextFunctionName) {
   ].map((match) => match[1]);
 }
 
+function sourceRecallHandlerFindings(source, svNextFunctionName, enNextFunctionName) {
+  const findings = [];
+  const svSlice = extractFunctionSlice(source, 'civicStatementSv', svNextFunctionName);
+  const enSlice = extractFunctionSlice(source, 'civicStatementEn', enNextFunctionName);
+  const activeCivicStatementSource = `${svSlice}\n${enSlice}`;
+  const bannedActivePatterns = [
+    /\bnämns som exempel\b/i,
+    /\bmentioned as (?:an example|examples)\b/i,
+    /\bVilken händelse från\b/i,
+    /\bWhich event from\b/i,
+    /\bVad nämns som exempel på\b/i,
+    /\bWhat is mentioned as an example of\b/i,
+  ];
+
+  if (/function swedishMentionedExample\b/.test(source)) {
+    findings.push('swedishMentionedExample helper still exists');
+  }
+  if (/function englishMentionedExample\b/.test(source)) {
+    findings.push('englishMentionedExample helper still exists');
+  }
+  for (const pattern of bannedActivePatterns) {
+    if (pattern.test(activeCivicStatementSource)) {
+      findings.push(`active civic statement handler still matches ${pattern}`);
+    }
+  }
+
+  return findings;
+}
+
 test('validate-content mirrors production civic statement prompt patterns', () => {
   const productionSource = fs.readFileSync(
     path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
@@ -98,6 +127,45 @@ test('validate-content mirrors production civic statement prompt patterns', () =
   assert.ok(enProductionPatterns.length > 100, 'English mirror should cover source shapes');
   assert.deepEqual(svValidatorPatterns, svProductionPatterns);
   assert.deepEqual(enValidatorPatterns, enProductionPatterns);
+});
+
+test('derived civic statement handlers reject source-recall and obsolete example-describes prompts', () => {
+  const productionSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
+    'utf8',
+  );
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.deepEqual(
+    sourceRecallHandlerFindings(productionSource, 'civicStatementEn', 'buildSingleChoiceVariant'),
+    [],
+  );
+  assert.deepEqual(
+    sourceRecallHandlerFindings(validatorSource, 'civicStatementEn', 'correctOption'),
+    [],
+  );
+  const obsoletePromptPatterns = ['Vilket exempel beskriver', 'Which example describes'];
+  const handlerPatterns = [
+    ...civicStatementPromptPatterns(productionSource, 'civicStatementSv', 'civicStatementEn'),
+    ...civicStatementPromptPatterns(
+      productionSource,
+      'civicStatementEn',
+      'buildSingleChoiceVariant',
+    ),
+    ...civicStatementPromptPatterns(validatorSource, 'civicStatementSv', 'civicStatementEn'),
+    ...civicStatementPromptPatterns(validatorSource, 'civicStatementEn', 'correctOption'),
+  ];
+
+  for (const pattern of obsoletePromptPatterns) {
+    assert.deepEqual(
+      handlerPatterns.filter((handlerPattern) => handlerPattern.includes(pattern)),
+      [],
+      `${pattern} should be limited to explicit source guards and mutation fixtures`,
+    );
+  }
 });
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
@@ -479,8 +547,8 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       id: 'q025',
       chapterId: 'ch03',
       type: 'single_choice',
-      questionSv: 'Vilket exempel beskriver kommunernas ansvar?',
-      questionEn: 'Which example describes municipal responsibilities?',
+      questionSv: 'Vilka vardagstjänster ansvarar kommuner för?',
+      questionEn: 'Which everyday services are municipalities responsible for?',
       options: [
         {
           id: 'a',
@@ -580,21 +648,21 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       id: 'q013',
       chapterId: 'ch02',
       type: 'single_choice',
-      questionSv: 'Vilket är ett sätt att påverka och delta i samhället?',
-      questionEn: 'Which is a way to influence and participate in society?',
+      questionSv: 'Hur kan människor påverka samhället och delta i demokratin?',
+      questionEn: 'How can people influence society and participate in democracy?',
       options: [
         {
           id: 'a',
-          textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
-          textEn: 'Contact politicians, demonstrate, or sign a petition',
+          textSv: 'Genom att kontakta politiker, demonstrera eller skriva på en namninsamling',
+          textEn: 'By contacting politicians, demonstrating, or signing a petition',
         },
         {
           id: 'b',
-          textSv: 'Förbjuda andra från att rösta i politiska val',
-          textEn: 'Ban others from voting in political elections',
+          textSv: 'Genom att förbjuda andra från att rösta i politiska val',
+          textEn: 'By banning others from voting in political elections',
         },
-        { id: 'c', textSv: 'Stoppa nyheter', textEn: 'Stop news' },
-        { id: 'd', textSv: 'Tysta föreningar', textEn: 'Silence associations' },
+        { id: 'c', textSv: 'Genom att stoppa nyheter', textEn: 'By stopping news' },
+        { id: 'd', textSv: 'Genom att tysta föreningar', textEn: 'By silencing associations' },
       ],
       correctOptionId: 'a',
       explanationSv: 'Det finns flera demokratiska sätt att delta.',
@@ -709,7 +777,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
+      'Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.',
     ),
   );
   assert.ok(
@@ -722,7 +790,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
+      'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
     ),
   );
   assert.ok(
@@ -1070,7 +1138,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q081', 'trueStatement')]: [
       'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',
-      'The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.',
+      'The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.',
     ],
     [generatedQuestionId(sourceQuestions, 'q082', 'trueStatement')]: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
@@ -1086,7 +1154,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q088', 'falseStatement')]: [
       'Europarådet arbetar endast för jordbrukspolitik.',
-      'The Council of Europe works only for agricultural policy.',
+      'The Council of Europe promotes only agricultural policy.',
     ],
     [generatedQuestionId(sourceQuestions, 'q079', 'trueStatement')]: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',

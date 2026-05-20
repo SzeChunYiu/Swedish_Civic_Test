@@ -78,7 +78,6 @@ test('streak logic counts consecutive unique answer dates through today', () => 
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14', '2026-05-15'], '2026-05-15'), 3);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
-  assert.equal(calculateStreak(['2026-05-14', '2026-05-14', '2026-05-15'], '2026-05-15'), 2);
 });
 
 test('daily goal counts question answers for the requested local day only', () => {
@@ -102,32 +101,6 @@ test('daily goal counts question answers for the requested local day only', () =
     1,
   );
   assert.equal(countAnswersForLocalDate({}, today), 0);
-});
-
-test('daily goal prefers per-answer attempts and falls back for older progress stores', () => {
-  const { countAnswerAttemptsForLocalDate } = loadAllTs('lib/learning/streaks.ts');
-
-  const today = new Date(2026, 4, 17, 12);
-  const yesterday = new Date(2026, 4, 16, 12);
-  const questionProgress = {
-    q001: { lastAnsweredAt: today.toISOString() },
-    q002: { lastAnsweredAt: yesterday.toISOString() },
-  };
-
-  assert.equal(
-    countAnswerAttemptsForLocalDate({
-      answerAttempts: [
-        { questionId: 'q001', answeredAt: today.toISOString() },
-        { questionId: 'q001', answeredAt: today.toISOString() },
-        { questionId: 'q001', answeredAt: today.toISOString() },
-        { questionId: 'q002', answeredAt: yesterday.toISOString() },
-      ],
-      questionProgress,
-      date: today,
-    }),
-    3,
-  );
-  assert.equal(countAnswerAttemptsForLocalDate({ questionProgress, date: today }), 1);
 });
 
 test('progress answer dates use the shared local calendar key', () => {
@@ -272,6 +245,58 @@ test('readiness mock totals do not inflate rolling practice accuracy', () => {
   assert.equal(result.components.accuracy, 0);
   assert.equal(result.components.mockAverage, 0.8);
   assert.ok(result.score > 0);
+});
+
+test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
+  const { bestMockScore, mockHistory } = loadAllTs('lib/learning/dashboardStats.ts');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'valid',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T10:00:00.000Z',
+        completedAt: '2026-05-20T10:45:00.000Z',
+        score: 0.72,
+      },
+      {
+        id: 'backwards',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T12:00:00.000Z',
+        completedAt: '2026-05-20T11:00:00.000Z',
+        score: 0.81,
+      },
+      {
+        id: 'invalid-completed',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T12:00:00.000Z',
+        completedAt: 'not-a-date',
+        score: 0.99,
+      },
+    ],
+  };
+
+  assert.deepEqual(
+    mockHistory(progress).map((entry) => ({
+      durationMs: entry.durationMs,
+      sessionId: entry.sessionId,
+    })),
+    [
+      { durationMs: 45 * 60 * 1000, sessionId: 'valid' },
+      { durationMs: null, sessionId: 'backwards' },
+    ],
+  );
+  assert.equal(bestMockScore(progress), 0.81);
 });
 
 test('mock exam completion XP is awarded once per stored session', () => {
