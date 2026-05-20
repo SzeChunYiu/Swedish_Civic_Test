@@ -344,8 +344,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q036',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Grundlagarna', pageApprox: 16 },
-    'Vilken lista innehåller bara Sveriges fyra grundlagar?',
-    "Which list contains only Sweden's four constitutional laws?",
+    'Vilka är Sveriges fyra grundlagar?',
+    "What are Sweden's four constitutional laws?",
     [
       [
         'Regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen',
@@ -365,8 +365,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Sverige har fyra grundlagar: regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen. Den listan innehåller bara grundlagar; de andra alternativen blandar vanliga lagar, balkar eller andra regelverk.',
-    'Sweden has four constitutional laws: the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession. That list contains only constitutional laws; the other options mix ordinary laws, codes, or other rule sets.',
+    'Sveriges fyra grundlagar är regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen. De andra alternativen blandar vanliga lagar, balkar eller andra regelverk.',
+    "Sweden's four constitutional laws are the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession. The other options mix ordinary laws, codes, or other rule sets.",
     ['constitutional-laws', 'fundamental-laws', 'law'],
     'hard',
   ),
