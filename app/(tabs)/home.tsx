@@ -7,7 +7,6 @@ import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
-import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
@@ -17,8 +16,6 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
-import { dashboardSummary } from '../../lib/learning/dashboardStats';
-import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
@@ -41,10 +38,6 @@ type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
   dailyGoalTitle: string;
-  dashboardAccessibilityLabel: (summary: string) => string;
-  dashboardCta: string;
-  dashboardSummary: (count: number) => string;
-  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -57,13 +50,7 @@ type HomeCopy = {
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
-  readinessAccessibilityLabel: (
-    score: number,
-    verdict: string,
-    details: string,
-    caveat: string,
-  ) => string;
-  readinessCaveat: string;
+  readinessAccessibilityLabel: (score: number, verdict: string, details: string) => string;
   readinessCta: string;
   readinessCtaAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
@@ -91,11 +78,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
     dailyGoalTitle: 'Dagens mål',
-    dashboardAccessibilityLabel: (summary) => `Öppna framstegsöversikten. ${summary}`,
-    dashboardCta: 'Visa översikt',
-    dashboardSummary: (count) => `${count} svar den här veckan`,
-    dashboardTitle: 'Framstegsöversikt',
-    dayStreakFreezeHelper: (count) => `${count} svitskydd tillgängliga`,
+    dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
@@ -108,22 +91,20 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
-    readinessAccessibilityLabel: (score, verdict, details, caveat) =>
-      `Förberedelsesignal: ${score} procent. ${verdict}. ${details}. ${caveat}`,
-    readinessCaveat:
-      'Lokal signal från dina övningssvar och tidsatta övningar, inte en officiell prognos.',
-    readinessCta: 'Starta tidsatt övning',
-    readinessCtaAccessibilityLabel: 'Starta en tidsatt övning för mer lokalt övningsunderlag',
+    readinessAccessibilityLabel: (score, verdict, details) =>
+      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
+    readinessCta: 'Gör ett mockprov',
+    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
       `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
-    readinessMetricLabel: 'framsteg',
+    readinessMetricLabel: 'redo',
     readinessSparseNote:
       'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
-    readinessTitle: 'Förberedelsesignal',
+    readinessTitle: 'Redoindikator',
     readinessVerdicts: {
-      not_ready_yet: 'Bygg grunden först',
+      not_ready_yet: 'Öva mer först',
       getting_there: 'På rätt väg',
-      almost_ready: 'Stadig övning',
+      almost_ready: 'Nästan redo',
       strong_preparation: 'Stark förberedelse',
     },
     reviewWeakChapters: 'Repetera svaga kapitel',
@@ -138,7 +119,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       },
       {
         label: 'Tydlig behärskning',
-        lesson: 'Se vilka områden som är starka, repeterade eller fortfarande svaga.',
+        lesson: 'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
       },
       {
         label: 'Vana i vardagen',
@@ -146,16 +127,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
       },
       {
-        label: 'Tidsatt övning',
+        label: 'Provredo',
         lesson:
-          'Växla mellan tidsatta övningar, flashcards, bokmärken, felspårning, ljud och förberedelsesignal.',
+          'Växla mellan tidsatta prov, flashcards, bokmärken, missade frågor, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
       'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, tidsatta övningar, repetition av misstag och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',
@@ -165,11 +146,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
     dailyGoalTitle: "Today's goal",
-    dashboardAccessibilityLabel: (summary) => `Open the progress dashboard. ${summary}`,
-    dashboardCta: 'View dashboard',
-    dashboardSummary: (count) => `${count} answers this week`,
-    dashboardTitle: 'Progress dashboard',
-    dayStreakFreezeHelper: (count) => `${count} streak freeze available`,
+    dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
@@ -182,22 +159,20 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
-    readinessAccessibilityLabel: (score, verdict, details, caveat) =>
-      `Preparation signal: ${score} percent. ${verdict}. ${details}. ${caveat}`,
-    readinessCaveat:
-      'Local signal from your practice answers and timed practice, not an official result forecast.',
-    readinessCta: 'Start timed practice',
-    readinessCtaAccessibilityLabel: 'Start timed practice to add another local practice signal',
+    readinessAccessibilityLabel: (score, verdict, details) =>
+      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
+    readinessCta: 'Take a mock exam',
+    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
       `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
-    readinessMetricLabel: 'progress',
+    readinessMetricLabel: 'ready',
     readinessSparseNote:
       'Based on your answers so far. Answer more questions for a steadier signal.',
-    readinessTitle: 'Preparation signal',
+    readinessTitle: 'Readiness indicator',
     readinessVerdicts: {
-      not_ready_yet: 'Build the basics first',
+      not_ready_yet: 'Keep practicing first',
       getting_there: 'Getting there',
-      almost_ready: 'Steady practice',
+      almost_ready: 'Almost ready',
       strong_preparation: 'Strong preparation',
     },
     reviewWeakChapters: 'Review weak chapters',
@@ -212,7 +187,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       },
       {
         label: 'Clear mastery',
-        lesson: 'See which areas are strong, reviewed, or still weak.',
+        lesson: 'See which areas are ready, reviewed, or still weak.',
       },
       {
         label: 'Study rhythm',
@@ -220,16 +195,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Get one simple next action and gentle habit feedback without blocking serious study.',
       },
       {
-        label: 'Timed practice',
+        label: 'Exam readiness',
         lesson:
-          'Switch between timed practice, flashcards, bookmarks, mistake tracking, audio, and preparation signals.',
+          'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
       'Choose one clear next step, get quick feedback, and follow progress without distractions in exam mode.',
     studyLoopTitle: 'Smart study habits',
     subtitle:
-      'A focused path for Swedish civic knowledge: daily answers, timed practice, mistake review, and source-backed explanations.',
+      'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     title: 'Prepare calmly, one civic concept at a time',
     weakChaptersHelper: 'needs review',
     weakChaptersMetric: 'weak chapters',
@@ -240,7 +215,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
-    entitlementsReady: monetizationEntitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -287,28 +261,7 @@ export default function Screen() {
     readiness.score,
     readinessVerdict,
     readinessDetails,
-    copy.readinessCaveat,
   );
-  const dashboardProgress = useMemo(
-    () =>
-      buildDashboardProgressSnapshot({
-        answerDates,
-        dailyGoalAnswers,
-        mockExamSessions,
-        questionProgress,
-        totalXp,
-      }),
-    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
-  );
-  const dashboardQuestionChapterIndex = useMemo(
-    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
-    [],
-  );
-  const dashboard = useMemo(
-    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
-    [dashboardProgress, dashboardQuestionChapterIndex],
-  );
-  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -333,7 +286,6 @@ export default function Screen() {
       }
     >
       <SwedishFlagBand />
-      <CountdownBanner language={language} />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -342,18 +294,6 @@ export default function Screen() {
           tone="accent"
         />
       </View>
-      <Link
-        accessibilityLabel={copy.dashboardAccessibilityLabel(dashboardSummaryLine)}
-        accessibilityRole="link"
-        href="/dashboard"
-        style={styles.dashboardLink}
-      >
-        <View style={styles.dashboardLinkContent}>
-          <Text style={styles.dashboardTitle}>{copy.dashboardTitle}</Text>
-          <Text style={styles.dashboardSummaryText}>{dashboardSummaryLine}</Text>
-          <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
-        </View>
-      </Link>
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -374,7 +314,6 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
-        <Text style={styles.readinessSparseNote}>{copy.readinessCaveat}</Text>
         {readiness.isSparse ? (
           <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
         ) : null}
@@ -388,7 +327,7 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
+      {!monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -473,15 +412,13 @@ export default function Screen() {
         })}
       </View>
 
-      {monetizationEntitlementsReady ? (
-        <PremiumBanner
-          entitlements={monetizationEntitlements}
-          language={language}
-          onEntitlementsChange={setMonetizationEntitlements}
-          runtimeOptions={purchaseRuntime}
-        />
-      ) : null}
-      <AdBanner placement="home_banner" />
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
+      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
     </ScreenShell>
   );
 }
@@ -491,35 +428,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
-  },
-  dashboardLink: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    minHeight: space[6],
-    padding: space[2],
-    textDecorationLine: 'none',
-  },
-  dashboardLinkContent: {
-    gap: space[0.5],
-  },
-  dashboardTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  dashboardSummaryText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  dashboardCta: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
   },
   readinessCard: {
     gap: space[1.5],

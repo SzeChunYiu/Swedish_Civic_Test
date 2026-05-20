@@ -22,10 +22,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 94);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
-  assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
@@ -38,31 +37,14 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
-  assert.match(source, /Förberedelsesignal/);
-  assert.match(source, /Preparation signal/);
-  assert.match(source, /inte en officiell prognos/);
-  assert.match(source, /not an official result forecast/);
-  [
-    ['Redo', 'indikator'],
-    ['Prov', 'redo'],
-    ['Nästan ', 'redo'],
-    ['Readiness ', 'indicator'],
-    ['Exam ', 'readiness'],
-    ['Almost ', 'ready'],
-  ]
-    .map((parts) => parts.join(''))
-    .forEach((phrase) => assert.doesNotMatch(source, new RegExp(phrase)));
+  assert.match(source, /Redoindikator/);
+  assert.match(source, /Readiness indicator/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
-  assert.match(
-    source,
-    /Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator\./,
-  );
-  assert.match(
-    source,
-    /Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals\./,
-  );
-  assert.doesNotMatch(source, /flashcards/);
+  assert.match(source, /genomgång av frågor du missat/);
+  assert.match(source, /missade frågor, ljud och redoindikator/);
+  assert.doesNotMatch(source, new RegExp(['fel', 'spårning'].join('')));
+  assert.doesNotMatch(source, new RegExp(['repetition av ', 'misstag'].join('')));
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
@@ -84,7 +66,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 });
 
-test('home route copy parity rejects unreachable flashcard promises', () => {
+test('home route copy parity rejects stale Swedish mistake-review wording', () => {
+  const staleSubtitle = ['repetition av ', 'misstag'].join('');
+  const staleLoopCopy = ['fel', 'spårning'].join('');
   const result = spawnSync(
     process.execPath,
     [
@@ -92,15 +76,15 @@ test('home route copy parity rejects unreachable flashcard promises', () => {
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
+const staleSubtitle = ${JSON.stringify(staleSubtitle)};
+const staleLoopCopy = ${JSON.stringify(staleLoopCopy)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
-        'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
-      );
+      .replace('genomgång av frågor du missat', staleSubtitle)
+      .replace('missade frågor, ljud och redoindikator', staleLoopCopy + ', ljud och redoindikator');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -113,7 +97,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /home route must not advertise flashcards until the feature is reachable/,
+    /home route Swedish copy must describe reviewing missed questions/,
   );
 });
 
@@ -146,38 +130,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route learner copy must not expose internal benchmark phrase/,
-  );
-});
-
-test('home route copy parity rejects unsupported readiness claim copy', () => {
-  const unsupportedTitle = ['Readiness ', 'indicator'].join('');
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-const unsupportedTitle = ${JSON.stringify(unsupportedTitle)};
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("'Preparation signal'", JSON.stringify(unsupportedTitle));
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route learner copy must not expose unsupported readiness claim/,
   );
 });
 

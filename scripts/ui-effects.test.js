@@ -1033,6 +1033,10 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
   assert.match(source, /Smarta studievanor/);
+  assert.match(source, /genomgång av frågor du missat/);
+  assert.match(source, /missade frågor, ljud och redoindikator/);
+  assert.doesNotMatch(source, new RegExp(['fel', 'spårning'].join('')));
+  assert.doesNotMatch(source, new RegExp(['repetition av ', 'misstag'].join('')));
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
   assert.match(source, /Smart study habits/);
