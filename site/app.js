@@ -97,9 +97,9 @@ const i18n = window.i18n = {
     "nav.cta": "Get the app ↗",
 
     "hero.eyebrow": "Unofficial · Free MVP · Source-backed questions",
-    "hero.h1a": "Study the material.",
-    "hero.h1b": "Practice with sources.",
-    "hero.h1c": "Feel calmer on exam day.",
+    "hero.h1a": "Pass the test.",
+    "hero.h1b": "Earn the passport.",
+    "hero.h1c": "Brag at midsommar.",
     "hero.lede": "A friendly, unofficial study app for Sweden's medborgarskapsprov. Bite-sized chapters, smart practice, and a mock exam that feels less scary than small talk with your neighbour.",
     "hero.cta1": "Start studying — it's free",
     "hero.cta2": "Try a question",
@@ -201,7 +201,7 @@ const i18n = window.i18n = {
 
     "how.eyebrow": "How it works",
     "how.h1": "Study lagom.",
-    "how.h2": "Study smart.",
+    "how.h2": "Pass big.",
     "how.deck": "Three modes, one app. Use them in any order — most people end up cycling through all three the week before the exam.",
     "how.s1.t": "Learn — short chapters",
     "how.s1.p": "Read a 5-minute explainer, then a tiny quiz. Like having a patient Swedish friend who actually finishes their sentences.",
@@ -347,6 +347,9 @@ const i18n = window.i18n = {
 
     "footer.brag1": "Study lagom.",
     "footer.brag2": "Study smart.",
+    "footer.t1": "Study lagom.",
+    "footer.t2": "Study smart.",
+    "footer.h.study": "Study",
     "footer.h.app": "The app",
     "footer.app.1": "Why it exists",
     "footer.app.2": "Try a question",
@@ -354,9 +357,12 @@ const i18n = window.i18n = {
     "footer.app.4": "Mock exam",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Fine print",
-    "footer.about.p": "An independent study tool built from public source material, clear explanations, and careful review. Free to start, study, and practice with mock exams.",
+    "footer.about.p": "An independent study tool, built by people who've taken the test themselves. Free to start, study, and take mock exams.",
+    "footer.h.about": "About",
     "footer.h.honest": "Honest disclaimer",
     "footer.honest.p": "Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. We just really like helping people study.",
+    "footer.h.fika": "Mood",
+    "footer.fika.p": "Type <kbd>fika</kbd> anywhere for a coffee break.",
     "footer.copyright": "© 2026 Almost Swedish. Made with kanelbullar in Stockholm.",
     "footer.fika": "Lagom built. Fika tested.",
 
@@ -391,9 +397,9 @@ const i18n = window.i18n = {
     "nav.cta": "Hämta appen ↗",
 
     "hero.eyebrow": "Inofficiell · Gratis MVP · Källstödda frågor",
-    "hero.h1a": "Plugga materialet.",
-    "hero.h1b": "Öva med källor.",
-    "hero.h1c": "Känn dig lugnare på provdagen.",
+    "hero.h1a": "Klara provet.",
+    "hero.h1b": "Få passet.",
+    "hero.h1c": "Skryt på midsommar.",
     "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett provexempel som känns mindre läskigt än småprat med grannen.",
     "hero.cta1": "Börja plugga — det är gratis",
     "hero.cta2": "Testa en fråga",
@@ -419,7 +425,7 @@ const i18n = window.i18n = {
     "demo.h2": "Bara klick.",
     "demo.deck": "Varje fråga har en förklaring på begriplig svenska och en länk till källan. Fel svar? Den dyker upp igen senare, i lugn och ro. Rätt svar? Gå vidare, häll upp ett kaffe till.",
     "demo.li1": "<b>Spaced repetition</b> tar fram svåra frågor på rätt dag.",
-    "demo.li2": "<b>Begripliga förklaringar</b> — ingen juridiska, ingen byråkratdjungel.",
+    "demo.li2": "<b>Begripliga förklaringar</b> — inget juridiskt krångel, ingen byråkratdjungel.",
     "demo.li3": "<b>Provläge</b> med riktig tidsbegränsning, så provdagen känns bekant.",
 
     "qcard.chip": "Kapitel 3 · F47",
@@ -435,7 +441,7 @@ const i18n = window.i18n = {
 
     "numbers.1": "frågor från offentliga källor",
     "numbers.2": "kapitel om historia, samhälle & rättigheter",
-    "numbers.3": "om dagen — en fika-stor studievana",
+    "numbers.3": "om dagen — en kort studievana",
     "numbers.4": "att börja. Ingen inloggning. Ingen spårning.",
 
     "chap.eyebrow": "Vad ingår",
@@ -495,7 +501,7 @@ const i18n = window.i18n = {
 
     "how.eyebrow": "Så funkar det",
     "how.h1": "Plugga lagom.",
-    "how.h2": "Plugga smart.",
+    "how.h2": "Klara stort.",
     "how.deck": "Tre lägen, en app. Använd i valfri ordning — de flesta cyklar genom alla tre veckan innan provet.",
     "how.s1.t": "Lär — korta kapitel",
     "how.s1.p": "Läs en 5-minuters förklaring, gör sedan ett litet quiz. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
@@ -605,7 +611,7 @@ const i18n = window.i18n = {
     "terms.s4.t": "Inga garantier",
     "terms.s4.p": "Vi garanterar inte att du klarar det officiella provet. Vi garanterar inte att appen funkar perfekt på varje enhet varje dag. Vi garanterar att vi fortsätter försöka.",
     "terms.s5.t": "Ansvar",
-    "terms.s5.callout": "<b>Kort version:</b> appen tillhandahålls \"i befintligt skick\" enligt vad som tillåts av svensk lag. Vi är inte ansvariga för missade deadlines, avslagna ansökningar, fika-skador eller beslut som en myndighet tar i ditt ärende.",
+    "terms.s5.callout": "<b>Kort version:</b> appen tillhandahålls \"i befintligt skick\" enligt vad som tillåts av svensk lag. Vi är inte ansvariga för missade deadlines, avslagna ansökningar eller beslut som en myndighet tar i ditt ärende.",
     "terms.s6.t": "Ändringar",
     "terms.s6.p": "Om villkoren ändras väsentligt uppdateras datumet ovan och appen visar en notis vid nästa start. Fortsatt användning innebär att du godkänner de nya villkoren.",
 
@@ -641,6 +647,9 @@ const i18n = window.i18n = {
 
     "footer.brag1": "Plugga lagom.",
     "footer.brag2": "Plugga smart.",
+    "footer.t1": "Plugga lagom.",
+    "footer.t2": "Plugga smart.",
+    "footer.h.study": "Studera",
     "footer.h.app": "Appen",
     "footer.app.1": "Varför den finns",
     "footer.app.2": "Testa en fråga",
@@ -648,9 +657,12 @@ const i18n = window.i18n = {
     "footer.app.4": "Provexempel",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Finstilta",
-    "footer.about.p": "Ett fristående studieverktyg byggt utifrån offentligt källmaterial, tydliga förklaringar och noggrann granskning. Gratis att börja, plugga och öva med övningsprov.",
+    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.",
+    "footer.h.about": "Om",
     "footer.h.honest": "Ärlig friskrivning",
     "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
+    "footer.h.fika": "Stämning",
+    "footer.fika.p": "Skriv <kbd>fika</kbd> var som helst för en kaffepaus.",
     "footer.copyright": "© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.",
     "footer.fika": "Lagom byggt. Fika-testat.",
 
