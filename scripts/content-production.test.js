@@ -267,6 +267,20 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
   assert.equal(summary.questionNestedMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionJudgementMetaStemsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.questionStateWelfareEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionTraditionCommonToDoEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
+    summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
+    summary.questionSaltsjobadenAgreementEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.questionPromptTextUniquenessValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionTextLabelsValidated, summary.publishedQuestions);
   assert.equal(summary.questionTypeOptionCountsValidated, summary.publishedQuestions);
