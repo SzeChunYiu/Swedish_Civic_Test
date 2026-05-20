@@ -25,9 +25,12 @@ test('static practice quiz renders localized source citations below each questio
   );
   assert.match(
     source,
-    /const sourceCitation = smtQuizEscapeHtml\(smtQuizSourceCitation\(q, lang\)\);/,
+    /function smtQuizSourceRow\(question, lang, citationClassName = "quiz__source"\)/,
   );
-  assert.match(source, /<p class="quiz__source">\$\{sourceCitation\}<\/p>/);
+  assert.match(source, /const sourceRow = smtQuizSourceRow\(q, lang\);/);
+  assert.match(source, /\$\{sourceRow\}/);
+  assert.match(source, /questionProvenance/);
+  assert.match(source, /quiz__provenance--\$\{provenance\}/);
 });
 
 test('static mock exam and review render per-question source citations', () => {
@@ -44,16 +47,21 @@ test('static mock exam and review render per-question source citations', () => {
     source,
     /`Source: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, p\. \$\{source\.page\}`/,
   );
-  assert.match(source, /<p class="quiz__source">\$\{escapeHtml\(sourceCitation\(q\)\)\}<\/p>/);
+  assert.match(source, /function questionSourceRow\(question, citationClassName = "quiz__source"\)/);
+  assert.match(source, /\$\{questionSourceRow\(q\)\}/);
   assert.match(
     source,
-    /<p class="mock-review__source">\$\{escapeHtml\(sourceCitation\(q\)\)\}<\/p>/,
+    /\$\{questionSourceRow\(q, "mock-review__source"\)\}/,
   );
+  assert.match(source, /questionProvenance/);
+  assert.match(source, /quiz__provenance--\$\{provenance\}/);
 });
 
 test('static source citation lines have dedicated styling', () => {
   const source = readSiteFile('site/styles.css');
 
   assert.match(source, /\.quiz__source\s*\{/);
+  assert.match(source, /\.quiz__source-row\s*\{/);
+  assert.match(source, /\.quiz__provenance\s*\{/);
   assert.match(source, /\.mock-review__source\s*\{/);
 });
