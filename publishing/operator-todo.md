@@ -13,7 +13,7 @@ Updated: 2026-05-17.
 - [ ] Apple Developer Program membership active
 - [ ] Register App ID com.billyyiu.almostswedish
 - [ ] App Store Connect: create app record
-- [ ] IAP > Non-Consumable: "Remove Ads", id com.billyyiu.swedishcivictest.removeads,
+- [ ] IAP > Non-Consumable: "Remove Ads", id com.billyyiu.almostswedish.removeads,
       ~29 SEK, EN+SV copy, screenshot; create Sandbox tester
 
 ### A2. Google Play "Remove Ads" IAP (needs Play Console, $25 one-time)

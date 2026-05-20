@@ -62,8 +62,8 @@ release posture.
   manifest for the exact SDK versions in the binary.
 - Confirm ATT prompt wording from `app.json` appears in the native build.
 - Confirm UMP consent appears in regions where consent is required.
-- Confirm Remove Ads purchase and restore use
-  `com.billyyiu.swedishcivictest.removeads` and the displayed price remains
-  **29 SEK**.
+- Confirm Remove Ads purchase and restore use iOS product id
+  `com.billyyiu.almostswedish.removeads` and Android product id `removeads`;
+  the displayed price remains **29 SEK**.
 - Update this file before submission if analytics, crash reporting, accounts,
   remote content, or support collection is enabled.
