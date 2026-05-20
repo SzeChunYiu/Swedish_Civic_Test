@@ -229,3 +229,18 @@ test('architecture scaffold files expose expected public exports', () => {
 
   assert.deepEqual(missingExports, []);
 });
+
+test('component barrel does not advertise the retired Screen wrapper', () => {
+  const componentBarrel = readText('components/index.ts');
+
+  assert.equal(
+    fs.existsSync(path.join(repoRoot, 'components/Screen.tsx')),
+    false,
+    'components/Screen.tsx should stay removed; components/ui/ScreenShell.tsx is the reachable screen wrapper',
+  );
+  assert.doesNotMatch(
+    componentBarrel,
+    /export\s+\*\s+from ['"]\.\/Screen['"]/,
+    'components/index.ts should not re-export the retired Screen wrapper',
+  );
+});
