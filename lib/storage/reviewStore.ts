@@ -90,6 +90,18 @@ function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
   return writeRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, JSON.stringify(state));
 }
 
+function mergeReviews(current: PersistedReviews, imported: PersistedReviews): PersistedReviews {
+  const gradedPerDay = { ...current.gradedPerDay };
+  for (const [day, count] of Object.entries(imported.gradedPerDay)) {
+    gradedPerDay[day] = Math.max(gradedPerDay[day] ?? 0, count);
+  }
+
+  return {
+    byId: { ...current.byId, ...imported.byId },
+    gradedPerDay,
+  };
+}
+
 type ReviewState = PersistedReviews & {
   persistenceWarning: RecoverablePersistenceWarning | null;
   /** Get-or-create a card for the question. */
@@ -139,12 +151,6 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   },
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
-
-export function importReviewSnapshot(reviews: PersistedReviews): void {
-  const normalizedReviews = normalizeImportedReviewState(reviews);
-  write(normalizedReviews);
-  useReviewStore.setState(normalizedReviews);
-}
 
 // ---- Pure selectors (usable outside React) ---------------------------------
 
@@ -208,4 +214,13 @@ export function reviewStats(state: PersistedReviews): ReviewStats {
   }
   const reviewDaysCount = Object.values(state.gradedPerDay).filter((n) => n > 0).length;
   return { totalCards, masteredCards, reviewDaysCount };
+}
+
+export function importReviewSnapshot(value: unknown): PersistedReviews {
+  const importedReviews = normalizeImportedReviewState(value);
+  const currentReviews = normalize(useReviewStore.getState());
+  const nextReviews = mergeReviews(currentReviews, importedReviews);
+  const persistenceWarning = write(nextReviews);
+  useReviewStore.setState({ ...nextReviews, persistenceWarning });
+  return nextReviews;
 }
