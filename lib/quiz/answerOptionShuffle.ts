@@ -14,7 +14,7 @@ export type AnswerShuffleDistribution = {
 
 type ShuffleQuestion = Pick<PracticeQuestion, 'id' | 'type' | 'options' | 'correctOptionId'>;
 
-function hashString(value: string): number {
+export function hashString(value: string): number {
   let hash = 2166136261;
 
   for (let index = 0; index < value.length; index += 1) {
