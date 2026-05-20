@@ -64,8 +64,10 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Smart study habits/);
   assert.match(
     source,
-    /Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator\./,
+    /Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator\./,
   );
+  assert.match(source, /genomgång av frågor du missat/);
+  assert.doesNotMatch(source, /felspårning|repetition av misstag/);
   assert.match(
     source,
     /Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals\./,
@@ -106,8 +108,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
-        'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+        'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
+        'Växla mellan tidsatta prov, flashcards, bokmärken, missade frågor, ljud och redoindikator.',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -122,6 +124,43 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route must not advertise flashcards until the feature is reachable/,
+  );
+});
+
+test('home route copy parity rejects harsh Swedish mistake-review wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
+        'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+      )
+      .replace(
+        'genomgång av frågor du missat',
+        'repetition av misstag',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home route Swedish missed-question review copy must use natural learner wording/,
   );
 });
 
