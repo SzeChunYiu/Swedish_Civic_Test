@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
+import type { AccessibilityActionEvent, StyleProp, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
@@ -209,12 +209,30 @@ function Stepper({
 }: StepperProps) {
   const canDecrement = value > min && !disabled && Boolean(onChange);
   const canIncrement = value < max && !disabled && Boolean(onChange);
+  const stepperAccessibilityActions = [
+    { name: 'decrement', label: decrementAccessibilityLabel },
+    { name: 'increment', label: incrementAccessibilityLabel },
+  ];
+  const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
+    switch (event.nativeEvent.actionName) {
+      case 'decrement':
+        if (canDecrement) onChange?.(getNextValue(value, step, -1, min, max));
+        break;
+      case 'increment':
+        if (canIncrement) onChange?.(getNextValue(value, step, 1, min, max));
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <View
+      accessibilityActions={stepperAccessibilityActions}
       accessibilityLabel={label}
       accessibilityRole="adjustable"
       accessibilityValue={{ max, min, now: value, text: valueLabel }}
+      onAccessibilityAction={handleAccessibilityAction}
       style={styles.stepper}
     >
       <View style={styles.stepperCopy}>
