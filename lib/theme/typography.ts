@@ -91,3 +91,37 @@ export const typography = {
     letterSpacing: 0,
   } satisfies TextStyle,
 } as const;
+
+/** DESIGN.md lines 36-39: Inter/system-ui hierarchy for common text variants. */
+export const text = {
+  h1: {
+    fontFamily,
+    fontSize: 36,
+    fontWeight: '700',
+    lineHeight: 42,
+  } satisfies TextStyle,
+  h2: {
+    fontFamily,
+    fontSize: 26,
+    fontWeight: '700',
+    lineHeight: 32,
+  } satisfies TextStyle,
+  body: {
+    fontFamily,
+    fontSize: 16,
+    fontWeight: '400',
+    lineHeight: 25,
+  } satisfies TextStyle,
+  caption: {
+    fontFamily,
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 20,
+  } satisfies TextStyle,
+  label: {
+    fontFamily,
+    fontSize: 15,
+    fontWeight: '600',
+    lineHeight: 20,
+  } satisfies TextStyle,
+} as const;
