@@ -8330,6 +8330,18 @@ function validateAdPlacementRouteParity() {
   }
 }
 
+if (process.argv.includes('--focus-ad-placement-route-parity')) {
+  validateStaticValidationSyntaxGate();
+  validateAdPlacementRouteParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    adPlacementRoutesValidated,
+    noAdRoutesValidated,
+    adPlacementRouteParityValidated,
+  });
+  process.exit(0);
+}
+
 function validateReleaseMonetizationPolicyParity() {
   let valid = true;
 
