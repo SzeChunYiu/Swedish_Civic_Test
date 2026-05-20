@@ -4407,6 +4407,78 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function extractFunctionSlice(source, functionName, nextFunctionName, label) {
+  const start = source.indexOf(`function ${functionName}`);
+  if (start < 0) {
+    fail(`${label} is missing function ${functionName}`);
+    return '';
+  }
+
+  const end = source.indexOf(`function ${nextFunctionName}`, start + 1);
+  if (end < 0) {
+    fail(`${label} cannot find function ${nextFunctionName} after ${functionName}`);
+    return '';
+  }
+
+  return source.slice(start, end);
+}
+
+function extractCivicStatementPromptPatterns(source, functionName, nextFunctionName, label) {
+  const functionSlice = extractFunctionSlice(source, functionName, nextFunctionName, label);
+  return [...functionSlice.matchAll(/\bq\.match\((\/(?:\\.|[^/])+\/[dgimsuy]*)\)/g)].map(
+    (match) => match[1],
+  );
+}
+
+function validateDerivedCivicStatementPromptMirror() {
+  const productionSource = loadText('lib/content/derivedQuestions.ts');
+  const validatorSource = loadText('scripts/validate-content.js');
+  const mirrorPairs = [
+    {
+      functionName: 'civicStatementSv',
+      productionNextFunctionName: 'civicStatementEn',
+      validatorNextFunctionName: 'civicStatementEn',
+    },
+    {
+      functionName: 'civicStatementEn',
+      productionNextFunctionName: 'buildSingleChoiceVariant',
+      validatorNextFunctionName: 'correctOption',
+    },
+  ];
+
+  let mirrorsValidated = 0;
+  mirrorPairs.forEach(({ functionName, productionNextFunctionName, validatorNextFunctionName }) => {
+    const productionPatterns = extractCivicStatementPromptPatterns(
+      productionSource,
+      functionName,
+      productionNextFunctionName,
+      'lib/content/derivedQuestions.ts',
+    );
+    const validatorPatterns = extractCivicStatementPromptPatterns(
+      validatorSource,
+      functionName,
+      validatorNextFunctionName,
+      'scripts/validate-content.js',
+    );
+
+    if (productionPatterns.length < 1 || validatorPatterns.length < 1) {
+      fail(`${functionName} prompt-pattern mirror must include generated civic statement cases`);
+      return;
+    }
+
+    if (!jsonEqual(productionPatterns, validatorPatterns)) {
+      fail(
+        `${functionName} prompt patterns differ between lib/content/derivedQuestions.ts and scripts/validate-content.js`,
+      );
+      return;
+    }
+
+    mirrorsValidated += 1;
+  });
+
+  return mirrorsValidated;
+}
+
 function expectedGeneratedTags(sourceQuestion, convention) {
   return [
     ...new Set([...sourceQuestion.tags, 'published-variant', convention?.tag].filter(Boolean)),
@@ -6917,6 +6989,7 @@ let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+let derivedCivicStatementPromptMirrorValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
@@ -6936,6 +7009,7 @@ if (
 ) {
   fail('strings export is not an object');
 }
+derivedCivicStatementPromptMirrorValidated = validateDerivedCivicStatementPromptMirror();
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
@@ -16476,6 +16550,7 @@ console.log(
       generatedSingleChoiceExplanationLabelsValidated,
       generatedTrueFalseExplanationMetaValidated,
       generatedTagTemplateParityValidated,
+      derivedCivicStatementPromptMirrorValidated,
       questionSchemasValidated,
       publishedQuestionTypesValidated,
       questionIdSequencesValidated,
