@@ -323,6 +323,17 @@ test('onboarding route remains scrollable on narrow mobile viewports', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('first-run modal uses natural Swedish guide accessibility labels', () => {
+  const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
+
+  assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
+  assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
+  assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
+  assert.match(source, /<Text style=\{styles\.primaryButtonText\}>\{copy\.open\}<\/Text>/);
+  assert.doesNotMatch(source, new RegExp(['om-', 'provet-', 'guiden'].join('')));
+  assert.doesNotMatch(source, /om-[^-]+-guiden/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 
