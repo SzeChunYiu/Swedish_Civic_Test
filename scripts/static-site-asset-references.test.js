@@ -34,3 +34,12 @@ test('static site index references only shipped local assets', () => {
   assert.deepEqual(missingAssets, []);
   assert.doesNotMatch(indexHtml, /signin\.js/);
 });
+
+test('static site index does not depend on runtime CDN transpilation', () => {
+  const indexHtml = readSiteIndex();
+
+  assert.doesNotMatch(indexHtml, /https:\/\/unpkg\.com\//);
+  assert.doesNotMatch(indexHtml, /@babel\/standalone/);
+  assert.doesNotMatch(indexHtml, /type="text\/babel"/);
+  assert.doesNotMatch(indexHtml, /\btweaks(?:-panel)?\.jsx\b/);
+});
