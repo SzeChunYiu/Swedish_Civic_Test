@@ -399,8 +399,8 @@ test('router shell tooling guard is wired into package scripts', () => {
 
   assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
   assertMatches(
-    pkg.scripts.test,
+    pkg.scripts['test:all'],
     /npm run test:router-shell/,
-    'aggregate npm test should include the router shell scaffold guard',
+    'aggregate test:all should include the router shell scaffold guard',
   );
 });

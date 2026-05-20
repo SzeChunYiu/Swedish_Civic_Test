@@ -33,6 +33,15 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
+test('npm test dispatches focused selectors without bypassing the full suite', () => {
+  const pkg = readJson('package.json');
+  assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
+  assert.doesNotMatch(pkg.scripts.test, /&&/);
+  assert.match(pkg.scripts['test:all'], /npm run test:learning/);
+  assert.match(pkg.scripts['test:all'], /npm run test:monetization/);
+  assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
+});
+
 test('EAS access evidence command is wired for repeatable non-secret checks', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.scripts['release:eas-access-check'], 'node scripts/check-eas-access.js');
@@ -1340,6 +1349,7 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     encoding: 'utf8',
   });
 
+  const metadata = readWebDocumentMetadata();
   const wrongLanguage = metadata.language === 'sv' ? 'en' : 'sv';
   const wrongIndex = index.replace(`lang="${metadata.language}"`, `lang="${wrongLanguage}"`);
   fs.writeFileSync(path.join(outputDir, 'index.html'), wrongIndex);

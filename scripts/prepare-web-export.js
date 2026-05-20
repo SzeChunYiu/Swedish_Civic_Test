@@ -3,35 +3,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
-const WEB_MANIFEST_HREF = 'manifest.webmanifest';
-const WEB_EXPORT_FRESHNESS_MARKER = 'web-export-freshness.json';
-const WEB_EXPORT_FRESHNESS_VERSION = 1;
-const PNG_SIGNATURE = '89504e470d0a1a0a';
-const WEB_EXPORT_SOURCE_INPUTS = [
-  'app',
-  'app.json',
-  'assets',
-  'babel.config.js',
-  'components',
-  'data',
+const FAVICON_FILE_NAME = 'favicon.svg';
+const FAVICON_SOURCE = path.join(__dirname, '..', 'assets', FAVICON_FILE_NAME);
+const ROUTER_SHELL_MANIFEST_PATH = path.join(
+  __dirname,
+  '..',
   'lib',
-  'metro.config.js',
-  'package-lock.json',
-  'package.json',
-  'playwright.config.ts',
-  'public',
-  'scripts/prepare-web-export.js',
-  'tests/e2e',
-  'tsconfig.json',
-  'types',
-];
-const REQUIRED_ROUTE_CONTEXT_KEYS = [
-  './_layout.tsx',
-  './(tabs)/home.tsx',
-  './(tabs)/practice.tsx',
-  './(tabs)/mistakes.tsx',
-  './about-the-test.tsx',
-];
+  'scaffold',
+  'routerShellManifest.ts',
+);
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -129,21 +109,12 @@ function createRuntimeLoader(bundlePath) {
   ].join('\n');
 }
 
-function ensureFaviconLink(html) {
-  if (new RegExp(`<link[^>]+href=["']${FAVICON_FILE_NAME}["'][^>]+rel=["']icon["']`).test(html)) {
+function rewriteHtml(html) {
+  if (html.includes(HTML_LOADER_MARKER)) {
     return html;
   }
 
-  return html.replace('</head>', `    ${FAVICON_LINK}\n  </head>`);
-}
-
-function rewriteHtml(html) {
-  const htmlWithFavicon = ensureFaviconLink(html);
-  if (htmlWithFavicon.includes(HTML_LOADER_MARKER)) {
-    return htmlWithFavicon;
-  }
-
-  return htmlWithFavicon.replace(
+  return html.replace(
     /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
     (_match, bundlePath) => createRuntimeLoader(bundlePath),
   );
@@ -151,6 +122,35 @@ function rewriteHtml(html) {
 
 function rewriteRootRelativeBundlePaths(source) {
   return source.replace(/(["'])\/(_expo|assets)\//g, '$1$2/');
+}
+
+function ensureHtmlLanguage(html, language) {
+  const escapedLanguage = escapeHtmlAttribute(language);
+  return html.replace(/<html\b([^>]*)>/i, (match, attributes) => {
+    if (/\slang=/.test(attributes)) {
+      return match.replace(/\slang=(["'])[^"']*\1/i, ` lang="${escapedLanguage}"`);
+    }
+    return `<html${attributes} lang="${escapedLanguage}">`;
+  });
+}
+
+function ensureMetaDescription(html, description) {
+  const escapedDescription = escapeHtmlAttribute(description);
+  const descriptionMeta = `<meta name="description" content="${escapedDescription}">`;
+
+  if (/<meta\b[^>]*\bname=(["'])description\1[^>]*>/i.test(html)) {
+    return html.replace(/<meta\b[^>]*\bname=(["'])description\1[^>]*>/i, (match) =>
+      /\bcontent=/.test(match)
+        ? match.replace(/\scontent=(["'])[^"']*\1/i, ` content="${escapedDescription}"`)
+        : match.replace(/>$/, ` content="${escapedDescription}">`),
+    );
+  }
+
+  return html.replace(/<head>/i, `<head>\n  ${descriptionMeta}`);
+}
+
+function applyWebDocumentMetadata(html, metadata) {
+  return ensureMetaDescription(ensureHtmlLanguage(html, metadata.language), metadata.description);
 }
 
 function prepare(outputDir) {
@@ -161,7 +161,10 @@ function prepare(outputDir) {
   assertFile(FAVICON_SOURCE);
 
   const originalIndex = fs.readFileSync(indexPath, 'utf8');
-  const preparedIndex = rewriteHtml(originalIndex);
+  const preparedIndex = applyWebDocumentMetadata(
+    rewriteHtml(originalIndex),
+    readWebDocumentMetadata(),
+  );
   if (!preparedIndex.includes(HTML_LOADER_MARKER)) {
     throw new Error('Could not find Expo web bundle script in index.html');
   }
@@ -190,14 +193,18 @@ function check(outputDir) {
 
   const index = fs.readFileSync(indexPath, 'utf8');
   const fallback = fs.readFileSync(fallbackPath, 'utf8');
+  const metadata = readWebDocumentMetadata();
   if (index !== fallback) {
     throw new Error('404.html must match index.html for SPA fallback routing');
   }
+  if (!new RegExp(`<html\\b[^>]*\\blang="${escapeRegExp(metadata.language)}"`).test(index)) {
+    throw new Error(`index.html must declare lang="${metadata.language}"`);
+  }
+  if (!index.includes(`content="${escapeHtmlAttribute(metadata.description)}"`)) {
+    throw new Error('index.html must include the configured web meta description');
+  }
   if (!index.includes(HTML_LOADER_MARKER)) {
     throw new Error('index.html is missing the web export runtime loader');
-  }
-  if (!index.includes(FAVICON_LINK)) {
-    throw new Error('index.html is missing the local favicon link');
   }
   if (/src="\/_expo\//.test(index) || /href="\/_expo\//.test(index)) {
     throw new Error('index.html still contains root-relative Expo bundle URLs');
@@ -236,13 +243,10 @@ if (require.main === module) {
 }
 
 module.exports = {
-  WEB_EXPORT_FRESHNESS_MARKER,
-  WEB_EXPORT_FRESHNESS_VERSION,
-  assertWebDocumentMetadata,
-  assertWebExportFreshness,
   check,
+  applyWebDocumentMetadata,
   prepare,
-  ensureFaviconLink,
+  readWebDocumentMetadata,
   rewriteHtml,
   rewriteRootRelativeBundlePaths,
 };
