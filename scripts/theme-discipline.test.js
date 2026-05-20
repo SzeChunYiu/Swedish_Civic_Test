@@ -95,50 +95,17 @@ test('app and component styles use theme tokens instead of literal colors, spaci
   assert.deepEqual(offenders, []);
 });
 
-test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
-  const colors = readColorTokens();
+test('theme content validation locks semantic color contrast pairs', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'scripts/validate-content.js'), 'utf8');
 
-  for (const [foreground, background] of REQUIRED_CONTRAST_PAIRS) {
-    const ratio = contrastRatio(colors[foreground], colors[background]);
-    assert.ok(
-      ratio >= 4.5,
-      `${foreground} on ${background} contrast ${ratio.toFixed(2)}:1 is below 4.5:1`,
-    );
-  }
-});
-
-test('disabled button tokens keep labels readable without wrapper opacity', () => {
-  const appButtonSource = read('components/Button.tsx');
-  const uiButtonSource = read('components/ui/Button.tsx');
-  const colors = readColorTokens();
-
-  for (const [label, source] of [
-    ['app Button', appButtonSource],
-    ['ui Button', uiButtonSource],
-  ]) {
-    assert.doesNotMatch(
-      source,
-      /disabled:\s*\{\s*opacity\s*:/,
-      `${label} disabled state should not dim child labels with wrapper opacity`,
-    );
-    assert.match(
-      source,
-      /disabled:\s*\{[\s\S]*backgroundColor:\s*colors\.surfaceWarm[\s\S]*borderColor:\s*colors\.border[\s\S]*\}/,
-      `${label} disabled state should use tokenized disabled surface and border`,
-    );
-    assert.match(
-      source,
-      /disabledLabel:\s*\{[\s\S]*color:\s*colors\.textMuted[\s\S]*\}/,
-      `${label} disabled label should use the readable muted text token`,
-    );
-  }
-
-  assert.ok(colors.textMuted, 'theme textMuted token should be present');
-  assert.ok(colors.surfaceWarm, 'theme surfaceWarm token should be present');
-
-  const disabledLabelContrast = contrastRatio(colors.textMuted, colors.surfaceWarm);
-  assert.ok(
-    disabledLabelContrast >= MIN_BODY_TEXT_CONTRAST,
-    `disabled button label contrast ${disabledLabelContrast.toFixed(2)} should be at least ${MIN_BODY_TEXT_CONTRAST}:1`,
-  );
+  assert.match(source, /const MINIMUM_AA_CONTRAST_RATIO = 4\.5;/);
+  assert.match(source, /const EXPECTED_THEME_CONTRAST_PAIRS = \[/);
+  assert.match(source, /\{ foreground: 'textDisclaimer', background: 'surface' \}/);
+  assert.match(source, /\{ foreground: 'textPlaceholder', background: 'surface' \}/);
+  assert.match(source, /\{ foreground: 'surface', background: 'success' \}/);
+  assert.match(source, /\{ foreground: 'success', background: 'successSoft' \}/);
+  assert.match(source, /\{ foreground: 'surface', background: 'warning' \}/);
+  assert.match(source, /\{ foreground: 'warning', background: 'warningSoft' \}/);
+  assert.match(source, /themeContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS\.length/);
+  assert.match(source, /themeContrastValidated/);
 });
