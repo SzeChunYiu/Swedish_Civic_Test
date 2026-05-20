@@ -102,8 +102,6 @@ test('default mock exam config stays UHR-based and ad-free during exams', () => 
   assert.equal(summary.mockExamConfigTypeSchemaParityValidated, true);
   assert.equal(summary.mockExamConfigExactSchemaKeysValidated, true);
   assert.equal(summary.mockExamConfigValidated, true);
-  assert.equal(summary.nativeMockExamComponentCopyLabelsValidated, 4);
-  assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);
   assert.match(configSource, /export interface MockExamConfig/);
   assert.match(configSource, /sourceScope: 'uhr_based';/);
   assert.equal(config.sourceScope, 'uhr_based');
@@ -114,13 +112,6 @@ test('default mock exam config stays UHR-based and ad-free during exams', () => 
   assert.ok(config.questionCount <= summary.publishedQuestions);
   assert.ok(Number.isInteger(config.durationMinutes));
   assert.ok(config.durationMinutes > 0);
-
-  const configPanelSource = fs.readFileSync(
-    path.join(repoRoot, 'components/MockExamConfigPanel.tsx'),
-    'utf8',
-  );
-  assert.match(configPanelSource, /startLabel: 'Starta övningsprov'/);
-  assert.match(configPanelSource, /startLabel: 'Start mock exam'/);
 });
 
 test('mock exam config panel uses unofficial practice-result copy', () => {

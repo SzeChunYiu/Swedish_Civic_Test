@@ -670,14 +670,14 @@ function importantRolesStatementEn(subject: string, context: string, answer: str
 }
 
 function commonStatementSv(subject: string, answer: string): string {
-  if (/^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i.test(answer)) {
+  if (/^Gemensamma\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
   }
   return replaceLeadingSwedishSubject(subject, answer);
 }
 
 function commonStatementEn(subject: string, answer: string): string {
-  if (/^(?:Shared|The power|Responsibility|Direct)\s+/i.test(answer)) {
+  if (/^Shared\s+/i.test(answer)) {
     return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
@@ -1088,90 +1088,6 @@ function generatedTrueFalseStatementEn(
   return truthStatementEn(civicStatementEn(source, option));
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function usableClozeCandidate(value: string): boolean {
-  const trimmed = value.trim();
-  return trimmed.length >= 3 || /^[A-ZÅÄÖ]{2,}$/.test(trimmed);
-}
-
-function uniqueClozeCandidates(candidates: string[]): string[] {
-  return [
-    ...new Set(
-      candidates
-        .map((candidate) => candidate.trim())
-        .filter((candidate) => candidate && usableClozeCandidate(candidate)),
-    ),
-  ].sort((a, b) => b.length - a.length);
-}
-
-function replaceClozeCandidate(statement: string, candidates: string[]): string | null {
-  for (const candidate of uniqueClozeCandidates(candidates)) {
-    const pattern = new RegExp(escapeRegExp(candidate), 'i');
-    if (pattern.test(statement)) {
-      const replaced = statement.replace(pattern, '...');
-      if (/[A-Za-zÅÄÖåäö0-9]/.test(replaced.replace(/\.\.\./g, ''))) return replaced;
-    }
-  }
-  return null;
-}
-
-function singleChoiceClozePromptSv(source: PracticeQuestion): string {
-  const option = correctOption(source);
-  const answer = stripFinalPunctuation(answerLabel(option));
-  const strippedPurpose = stripLeadingPurposeSv(answer);
-  const strippedMust = stripLeadingMustSv(answer);
-  const statement = stripFinalPunctuation(civicStatementSv(source, option));
-  const cloze = replaceClozeCandidate(statement, [
-    answer,
-    lowerFirst(answer),
-    upperFirst(answer),
-    strippedPurpose,
-    lowerFirst(strippedPurpose),
-    upperFirst(strippedPurpose),
-    strippedMust,
-    lowerFirst(strippedMust),
-    swedishCalledAnswer(answer),
-    swedishPurposeClause(answer),
-    frontedManyActionSv(answer),
-    reasonAnswerClauseSv(answer),
-    swedishTraditionalCelebrationAnswer(answer),
-  ]);
-
-  if (cloze) return ensureSentence(cloze);
-  return `${stripFinalPunctuation(source.questionSv)} ...?`;
-}
-
-function singleChoiceClozePromptEn(source: PracticeQuestion): string {
-  const option = correctOption(source);
-  const answer = stripFinalPunctuation(answerTextEn(option));
-  const strippedPurpose = stripLeadingPurposeEn(answer);
-  const strippedBy = stripLeadingByEn(answer);
-  const statement = stripFinalPunctuation(civicStatementEn(source, option));
-  const cloze = replaceClozeCandidate(statement, [
-    answer,
-    lowerFirst(answer),
-    upperFirst(answer),
-    strippedPurpose,
-    lowerFirst(strippedPurpose),
-    upperFirst(strippedPurpose),
-    strippedBy,
-    lowerFirst(strippedBy),
-    englishCalledAnswer(answer),
-    englishGerundPhrase(answer),
-    englishCivicActionClause(answer),
-    englishInfinitive(answer),
-    manyPeopleActionEn(answer),
-    reasonAnswerClauseEn(answer),
-    englishTraditionalCelebrationAnswer(answer),
-  ]);
-
-  if (cloze) return ensureSentence(cloze);
-  return `${stripFinalPunctuation(source.questionEn)} ...?`;
-}
-
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
@@ -1190,14 +1106,14 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  return singleChoiceClozePromptSv(source);
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  return singleChoiceClozePromptEn(source);
+  return `Which answer best matches? ${source.questionEn}`;
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
@@ -1221,9 +1137,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
-
-  match = q.match(/^Vilka är Sveriges fyra grundlagar$/i);
-  if (match) return `Sveriges fyra grundlagar är ${lowerFirst(answer)}`;
 
   match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
   if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
@@ -1673,9 +1586,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
 
-  match = q.match(/^What are (.+)$/i);
-  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
-
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
 
@@ -2118,9 +2028,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
 
-  match = q.match(/^At (.+?) in Sweden, what do many people do with (.+)$/i);
-  if (match) return `At ${match[1]}, ${manyPeopleActionEn(answer)}`;
-
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
 
@@ -2214,26 +2121,20 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
   );
 }
 
-export function derivePublishedQuestionVariants(
-  source: PracticeQuestion,
-  startId: number,
-): PracticeQuestion[] {
-  const published = publishedCopy(source);
-  return [
-    buildSingleChoiceVariant(published, nextId(startId, 0)),
-    buildTrueStatementVariant(published, nextId(startId, 1)),
-    buildFalseStatementVariant(published, nextId(startId, 2)),
-    buildAnswerJudgementVariant(published, nextId(startId, 3)),
-  ];
-}
-
 export function derivePublishedQuestions(
   sourceQuestions: PracticeQuestion[],
   startId = 101,
 ): PracticeQuestion[] {
-  return sourceQuestions.flatMap((source, index) =>
-    derivePublishedQuestionVariants(source, startId + index * 4),
-  );
+  return sourceQuestions.flatMap((source, index) => {
+    const published = publishedCopy(source);
+    const offset = index * 4;
+    return [
+      buildSingleChoiceVariant(published, nextId(startId, offset)),
+      buildTrueStatementVariant(published, nextId(startId, offset + 1)),
+      buildFalseStatementVariant(published, nextId(startId, offset + 2)),
+      buildAnswerJudgementVariant(published, nextId(startId, offset + 3)),
+    ];
+  });
 }
 
 export function publishQuestions(sourceQuestions: PracticeQuestion[]): PracticeQuestion[] {

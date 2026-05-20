@@ -1,22 +1,35 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import {
-  dismissBlockingModals,
-  markAboutTheTestSeen,
-  seedSettingsLanguage,
-  type AppLanguage,
-} from './browserLaunch';
+import { dismissBlockingModals } from './browserLaunch';
 
 const mobileViewport = { width: 390, height: 844 };
 const feedbackAudioControlNames =
   /Lyssna på återkopplingen|Listen to feedback|Stoppa återkoppling|Stop feedback/;
 
-async function openRouteWithLanguage(page: Page, route: string, language: AppLanguage) {
-  await seedSettingsLanguage(page, language);
-  await markAboutTheTestSeen(page);
-  await page.goto(route, { waitUntil: 'networkidle' });
+async function enableEnglishSupport(page: Page) {
+  await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
+  await page
+    .getByRole('radio', {
+      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
+    })
+    .click();
+  await expect(
+    page.getByRole('radio', { name: 'Set question language to English support' }),
+  ).toHaveAttribute('aria-checked', 'true');
+}
+
+async function enableSwedish(page: Page) {
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await page
+    .getByRole('radio', { name: /Byt frågespråk till Svenska|Set question language to Swedish/ })
+    .click();
+  await expect(page.getByRole('radio', { name: 'Byt frågespråk till Svenska' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 }
 
 async function expectPrimaryPrompt(page: Page, primaryText: string, secondaryText: string) {
@@ -131,20 +144,6 @@ async function expectTapTargetAtLeast44(locator: Locator, label: string) {
   expect(box!.height, `${label} height`).toBeGreaterThanOrEqual(44);
 }
 
-async function openPracticeQuestion(page: Page, language: AppLanguage) {
-  await openRouteWithLanguage(page, '/practice', language);
-
-  const startPractice = page
-    .getByRole('button', {
-      name: /Starta övning med alla synliga frågor|Start practice with all visible questions/,
-    })
-    .first();
-
-  if (await startPractice.isVisible().catch(() => false)) {
-    await startPractice.click();
-  }
-}
-
 test('practice audio control follows the selected question language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -153,7 +152,9 @@ test('practice audio control follows the selected question language', async ({ p
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'sv');
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByText('Lätt', { exact: true })).toBeVisible();
   await expect(page.getByLabel(/Svårighetsgrad: Lätt/)).toBeVisible();
@@ -165,7 +166,9 @@ test('practice audio control follows the selected question language', async ({ p
     page.getByRole('button', { name: 'Listen to the Swedish question and answers' }),
   ).toHaveCount(0);
 
-  await openPracticeQuestion(page, 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(
     page.getByRole('button', { name: 'Listen to the Swedish question and answers' }),
@@ -190,7 +193,9 @@ test('feedback audio controls appear after answers, localize, and stay out of ac
   await installPersistentSpeechSynthesis(page);
   await page.setViewportSize(mobileViewport);
 
-  await openPracticeQuestion(page, 'sv');
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByRole('button', { name: 'Lyssna på återkopplingen' })).toHaveCount(0);
   await page.getByLabel('Välj svaret I södra Europa').click();
@@ -206,7 +211,9 @@ test('feedback audio controls appear after answers, localize, and stay out of ac
   await swedishStop.click();
   await expect(swedishPlay).toBeVisible();
 
-  await openRouteWithLanguage(page, '/quiz/q001', 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByRole('button', { name: 'Listen to feedback' })).toHaveCount(0);
   await page.getByLabel('Select answer In southern Europe').click();
@@ -222,7 +229,8 @@ test('feedback audio controls appear after answers, localize, and stay out of ac
   await englishStop.click();
   await expect(englishPlay).toBeVisible();
 
-  await openRouteWithLanguage(page, '/exam', 'en');
+  await page.goto('/exam', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   const startExam = page.getByLabel('Start mock exam');
   await expect(startExam).toBeEnabled();
@@ -250,22 +258,28 @@ test('practice and routed quiz answer option labels follow the selected language
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'sv');
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByLabel('Välj svaret I södra Europa')).toBeVisible();
   await expect(page.getByLabel('Select answer I södra Europa')).toHaveCount(0);
 
-  await openRouteWithLanguage(page, '/quiz/q001', 'sv');
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByLabel('Välj svaret I södra Europa')).toBeVisible();
   await expect(page.getByLabel('Select answer I södra Europa')).toHaveCount(0);
 
-  await openPracticeQuestion(page, 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByLabel('Select answer In southern Europe')).toBeVisible();
   await expect(page.getByLabel('Välj svaret In southern Europe')).toHaveCount(0);
 
-  await openRouteWithLanguage(page, '/quiz/q001', 'en');
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByLabel('Select answer In southern Europe')).toBeVisible();
   await expect(page.getByLabel('Välj svaret In southern Europe')).toHaveCount(0);
@@ -281,7 +295,9 @@ test('practice question source citation prefix follows the selected language', a
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'sv');
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(
     page.getByText('Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5', {
@@ -296,7 +312,9 @@ test('practice question source citation prefix follows the selected language', a
   ).toBeVisible();
   await expect(page.getByText(/Källa\/Source:/)).toHaveCount(0);
 
-  await openPracticeQuestion(page, 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(
     page.getByText('Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5', {
@@ -322,7 +340,9 @@ test('practice flow answers a question, shows source feedback, and advances', as
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expect(page.getByText('Question 1')).toBeVisible();
   await expect(page.getByText('Easy', { exact: true })).toBeVisible();
@@ -366,7 +386,9 @@ test('practice feedback reveals the correct option after a wrong answer', async 
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
   await page.getByLabel('Select answer In southern Europe').click();
@@ -395,7 +417,9 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'sv');
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expectPrimaryPrompt(page, 'Var ligger Sverige?', 'Where is Sweden located?');
   await page.getByLabel('Välj svaret I södra Europa').click();
@@ -434,7 +458,9 @@ test('bookmarked practice question appears in Mistakes with correct answer conte
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'sv');
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expectPrimaryPrompt(page, 'Var ligger Sverige?', 'Where is Sweden located?');
   await page.getByLabel('Bokmärk den här frågan').click();
@@ -447,9 +473,8 @@ test('bookmarked practice question appears in Mistakes with correct answer conte
 
   await expect(page).toHaveURL(/\/mistakes$/);
   await expect(page.getByText('Bokmärkta frågor')).toBeVisible();
-  await expect(page.getByText('Sparad för att öva igen')).toBeVisible();
   const bookmarkedAnswerCard = page.getByLabel(
-    'Fråga att öva igen. Rätt svar: I Norden i norra Europa.',
+    'Svar att repetera. Rätt svar: I Norden i norra Europa.',
   );
   await expect(bookmarkedAnswerCard).toBeVisible();
   await expect(bookmarkedAnswerCard.getByText('Rätt svar', { exact: true })).toBeVisible();
@@ -472,7 +497,9 @@ test('wrong practice answer appears in Mistakes with English answer review conte
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openPracticeQuestion(page, 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
   await page.getByLabel('Select answer In southern Europe').click();
@@ -515,7 +542,9 @@ test('routed quiz uses English question headings and answer feedback in English 
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await openRouteWithLanguage(page, '/quiz/q001', 'en');
+  await enableEnglishSupport(page);
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
   await page.getByLabel('Select answer In southern Europe').click();

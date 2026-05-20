@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------
    Almost Swedish — site behaviour
    - hash routing (/, /privacy, /support, /terms, /sources)
-   - language toggle with localStorage persistence
+   - language toggle (EN/SV) with localStorage persistence
    - try-a-question demo card
 ------------------------------------------------------------------ */
 
@@ -701,12 +701,7 @@ function smtUpdateStaticControlLabels(lang) {
 window.smtUpdateStaticControlLabels = smtUpdateStaticControlLabels;
 
 function applyLang(lang) {
-  const direction = lang === "ar" ? "rtl" : "ltr";
   document.documentElement.lang = lang;
-  document.documentElement.dir = direction;
-  if (typeof document.documentElement.setAttribute === "function") {
-    document.documentElement.setAttribute("dir", direction);
-  }
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
     const value = smtI18nValue(key, lang);

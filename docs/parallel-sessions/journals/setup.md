@@ -1282,14 +1282,6 @@ Verification: clean SETUP worktree rebased onto current `origin/main` `25549d24`
 Blocked? no for this release-health parser guard.
 Next suggested validator action: inspect the release-preflight output trimming change and rerun `npm run test:release-preflight`, the focused dirty/allowed test slice, typecheck, validate-content, ownership, and diff checks before accepting.
 
-## Iteration 263 - 2026-05-20
-
-Task completed: HOME-PREPARATION-SIGNAL-BROWSER-GUARD-1 - reframed the Home readiness surface as a local preparation signal, made the non-official caveat always visible, and added source plus exported-web browser guards for the Swedish and English copy.
-Artifacts changed: `app/(tabs)/home.tsx`, `lib/learning/readiness.ts`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `tests/content-home-route-header-parity.test.js`, `tests/e2e/home-sv-mistake-review-copy.spec.ts`, `tests/e2e/home-preparation-signal-copy.spec.ts`, `docs/parallel-sessions/journals/setup.md`.
-Verification: clean SETUP worktree rebased onto current `origin/main` `ea53976a`; linked shared ignored `node_modules`; targeted Prettier write exit 0; `npm run validate:content` exit 0 with `homeRouteCopyLabelsValidated:150`, `homeRouteCopyParityValidated:true`, and `swedishFlashcardCopyNaturalnessValidated:true`; `node --test tests/content-home-route-header-parity.test.js scripts/learning.test.js tests/v1-1-pro-foundations.test.js scripts/ui-effects.test.js` exit 0 with 123/123 passing; `npm run typecheck -- --pretty false` exit 0; `npm run test:ownership` exit 0; `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` exit 0; `CI=1 npm run test:e2e -- tests/e2e/home-preparation-signal-copy.spec.ts --workers=1` exit 0 with 2/2 passing.
-Blocked? no for this Home preparation-signal browser guard; no Vercel CLI was run.
-Next suggested validator action: inspect the Home copy/caveat and rerun `npm run validate:content`, the source parity/UI tests, and the focused Home Playwright guard before accepting `HOME-PREPARATION-SIGNAL-BROWSER-GUARD-1`.
-
 ## Iteration 264 - 2026-05-20
 
 Task completed: AUDIO-FEEDBACK-E2E-GUARD-1 - added exported-web Playwright coverage for localized post-answer feedback audio controls on Practice and routed Quiz, including 390x844 mobile rendering, pre-answer absence, >=44px touch targets, deterministic play-to-stop label toggles, and active mock-exam absence.
@@ -1307,12 +1299,3 @@ Verification: clean SETUP worktree from current `origin/main`; linked shared ign
 PR: pending from `task/setup/search-result-summary-live-region-1779254600` at handoff commit time.
 Blocked? no for this Search accessibility atom; the earlier unclaimed example-describes P0 cleanup remains blocked until the claimed q026 direct-prompt branch reaches current main.
 Next suggested validator action: inspect Search result summary live-region props and rerun the focused source/browser checks plus content validation before accepting `SEARCH-RESULT-SUMMARY-LIVE-REGION-1`.
-
-## Iteration 266 - 2026-05-20
-
-Task completed: SETTINGS-IMPORT-LOCAL-STUDY-DATA-1 - added a localized Settings import flow for pasted local study-data JSON with version/schema validation, purchase/IAP/receipt field rejection, dry-run summary, and explicit confirmation before writing progress, bookmarks, wrong-answer reviews, mock-exam history, streak/freeze state, FSRS cards, and basic settings.
-Artifacts changed: `app/settings.tsx`, `app/privacy.tsx`, `lib/storage/localStudyDataImport.ts`, `lib/storage/progressStore.ts`, `lib/storage/mistakeReviewStore.ts`, `lib/storage/reviewStore.ts`, `lib/storage/settingsStore.ts`, `scripts/validate-content.js`, `scripts/ui-effects.test.js`, `tests/content-settings-route-copy-parity.test.js`, `tests/content-settings-route-scroll-parity.test.js`, `tests/content-progress-schema-parity.test.js`, `tests/content-mistakes-route-copy-parity.test.js`, `tests/v1-1-review-store.test.js`, `tests/helpers/storageStoreHarness.cjs`, `docs/parallel-sessions/journals/setup.md`.
-Verification: clean SETUP worktree rebased onto current `origin/main` `5a7bf2af`; linked shared ignored `node_modules`; initial required gate exposed missing local dependencies before linking, then the full required command passed after import-guard cleanup and final rebase: `npm run validate:content && node --test tests/content-settings-route-copy-parity.test.js tests/content-progress-schema-parity.test.js tests/content-mistakes-route-copy-parity.test.js tests/v1-1-review-store.test.js scripts/ui-effects.test.js && npm run typecheck -- --pretty false` exit 0 with content validation OK, `settingsRouteCopyLabelsValidated:84`, 107/107 focused Node tests passing, and TypeScript clean. Additional checks: `npm run lint` exit 0, `npm run test:ownership` exit 0, and `git diff --check origin/main...HEAD` exit 0.
-PR: pending from `task/settings-import-local-study-data-1779258123-pane2` at handoff commit time.
-Blocked? no for this local study-data import surface; no Vercel CLI was run.
-Next suggested validator action: inspect the import parser rejection rules and Settings dry-run/confirm UI, then rerun the full required gate plus ownership and diff checks before accepting `SETTINGS-IMPORT-LOCAL-STUDY-DATA-1`.

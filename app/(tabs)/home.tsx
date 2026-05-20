@@ -29,13 +29,15 @@ import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
+import { resumeBannerCopy, resumeWhereLeftOff } from '../../lib/learning/resumeWhereLeftOff';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswerAttemptsForLocalDate } from '../../lib/learning/streaks';
+import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { UserProgress } from '../../types/progress';
 
 type StudyLoopItemCopy = {
   label: string;
@@ -97,9 +99,12 @@ type HomeCopy = {
   readinessCtaAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
   readinessMetricLabel: string;
-  readinessCaveat: string;
+  readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
+  resumeAccessibilityLabel: (chapterTitle: string, subtitle: string) => string;
+  resumeCta: (chapterTitle: string) => string;
+  resumeKicker: string;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
@@ -120,6 +125,46 @@ const guidedPathChapterGroups = [
   { id: 'builder', chapterIds: ['ch05', 'ch06', 'ch07', 'ch08', 'ch09'] },
   { id: 'advanced', chapterIds: ['ch10', 'ch11', 'ch12', 'ch13'] },
 ] as const;
+
+const questionChapterIndex: Record<string, string> = Object.fromEntries(
+  questions.map((question) => [question.id, question.chapterId]),
+);
+
+function buildResumeProgress(questionProgress: Record<string, QuestionProgress>): UserProgress {
+  const answers = Object.values(questionProgress)
+    .filter((progress) => progress.lastAnsweredAt)
+    .map((progress) => ({
+      questionId: progress.questionId,
+      selectedOptionIds: [],
+      isCorrect: progress.correctCount > 0,
+      answeredAt: progress.lastAnsweredAt ?? '',
+      timeSpentSeconds: 0,
+    }))
+    .sort((a, b) => a.answeredAt.localeCompare(b.answeredAt));
+
+  const startedAt = answers[0]?.answeredAt ?? new Date(0).toISOString();
+  const completedAt = answers[answers.length - 1]?.answeredAt;
+
+  return {
+    currentStreak: 0,
+    dailyGoalAnswers: 0,
+    level: 1,
+    questionProgress,
+    sessions: answers.length
+      ? [
+          {
+            id: 'persisted-question-progress',
+            mode: 'study',
+            questionIds: answers.map((answer) => answer.questionId),
+            answers,
+            startedAt,
+            completedAt,
+          },
+        ]
+      : [],
+    totalXp: 0,
+  };
+}
 
 function getAnsweredChapterIds(questionProgress: Record<string, QuestionProgress>) {
   const answeredChapterIds = new Set<string>();
@@ -284,22 +329,25 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Förberedelsesignal: ${score} procent. ${verdict}. ${details}`,
-    readinessCta: 'Gör ett tidsatt övningsprov',
-    readinessCtaAccessibilityLabel:
-      'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
+    readinessCta: 'Gör ett mockprov',
+    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade`,
-    readinessMetricLabel: 'lokalt',
-    readinessCaveat:
-      'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
-    readinessTitle: 'Förberedelsesignal',
+      `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
+    readinessMetricLabel: 'redo',
+    readinessSparseNote:
+      'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    readinessTitle: 'Redoindikator',
     readinessVerdicts: {
-      not_ready_yet: 'Mer underlag behövs',
-      getting_there: 'Framsteg syns',
-      almost_ready: 'Bra övningstakt',
-      strong_preparation: 'Stark lokal övning',
+      not_ready_yet: 'Öva mer först',
+      getting_there: 'På rätt väg',
+      almost_ready: 'Nästan redo',
+      strong_preparation: 'Stark förberedelse',
     },
+    resumeAccessibilityLabel: (chapterTitle, subtitle) =>
+      `Fortsätt där du slutade i ${chapterTitle}. ${subtitle}`,
+    resumeCta: (chapterTitle) => `Fortsätt ${chapterTitle}`,
+    resumeKicker: 'Senaste övning',
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
@@ -320,9 +368,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
       },
       {
-        label: 'Övningsläge',
-        lesson:
-          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+        label: 'Provredo',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
@@ -421,22 +468,25 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Preparation signal: ${score} percent. ${verdict}. ${details}`,
-    readinessCta: 'Take a timed practice exam',
-    readinessCtaAccessibilityLabel:
-      'Start a timed practice exam to compare with your local preparation signal',
+      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
+    readinessCta: 'Take a mock exam',
+    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried`,
-    readinessMetricLabel: 'local',
-    readinessCaveat:
-      'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
-    readinessTitle: 'Preparation signal',
+      `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
+    readinessMetricLabel: 'ready',
+    readinessSparseNote:
+      'Based on your answers so far. Answer more questions for a steadier signal.',
+    readinessTitle: 'Readiness indicator',
     readinessVerdicts: {
-      not_ready_yet: 'More evidence needed',
-      getting_there: 'Progress is visible',
-      almost_ready: 'Solid practice pace',
-      strong_preparation: 'Strong local practice',
+      not_ready_yet: 'Keep practicing first',
+      getting_there: 'Getting there',
+      almost_ready: 'Almost ready',
+      strong_preparation: 'Strong preparation',
     },
+    resumeAccessibilityLabel: (chapterTitle, subtitle) =>
+      `Continue where you left off in ${chapterTitle}. ${subtitle}`,
+    resumeCta: (chapterTitle) => `Resume ${chapterTitle}`,
+    resumeKicker: 'Recent practice',
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
@@ -457,9 +507,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Get one simple next action and gentle habit feedback without blocking serious study.',
       },
       {
-        label: 'Timed practice',
+        label: 'Exam readiness',
         lesson:
-          'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
@@ -482,7 +532,6 @@ export default function Screen() {
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const answerAttempts = useProgressStore((state) => state.answerAttempts);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
@@ -491,10 +540,7 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
-  const completedToday = Math.min(
-    countAnswerAttemptsForLocalDate({ answerAttempts, questionProgress }),
-    dailyGoalAnswers,
-  );
+  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const streakWithFreeze = useMemo(
     () =>
@@ -533,13 +579,12 @@ export default function Screen() {
     () =>
       buildDashboardProgressSnapshot({
         answerDates,
-        answerAttempts,
         dailyGoalAnswers,
         mockExamSessions,
         questionProgress,
         totalXp,
       }),
-    [answerAttempts, answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
   );
   const dashboardQuestionChapterIndex = useMemo(
     () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
@@ -550,6 +595,23 @@ export default function Screen() {
     [dashboardProgress, dashboardQuestionChapterIndex],
   );
   const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
+  const resumeCandidate = useMemo(
+    () =>
+      resumeWhereLeftOff({
+        progress: buildResumeProgress(questionProgress),
+        questionChapterIndex,
+      }),
+    [questionProgress],
+  );
+  const resumeChapter = chapters.find((chapter) => chapter.id === resumeCandidate.chapterId);
+  const resumeChapterTitle =
+    resumeChapter && (language === 'sv' ? resumeChapter.nameSv : resumeChapter.nameEn);
+  const resumeCopy = resumeBannerCopy(resumeCandidate, language);
+  const resumeSubtitle = resumeCopy.subtitle;
+  const resumeAccessibilityLabel =
+    resumeChapterTitle && resumeSubtitle
+      ? copy.resumeAccessibilityLabel(resumeChapterTitle, resumeSubtitle)
+      : null;
   const guidedPathStages = useMemo(
     () => buildGuidedPracticePathStages(copy, questionProgress),
     [copy, questionProgress],
@@ -615,6 +677,24 @@ export default function Screen() {
           <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
         </View>
       </Link>
+      {resumeChapter && resumeChapterTitle && resumeSubtitle && resumeAccessibilityLabel ? (
+        <Card style={styles.resumeCard}>
+          <Badge tone="warm">{copy.resumeKicker}</Badge>
+          <Text accessibilityRole="header" style={styles.resumeTitle}>
+            {resumeCopy.title}
+          </Text>
+          <Text style={styles.resumeChapter}>{resumeChapterTitle}</Text>
+          <Text style={styles.resumeText}>{resumeSubtitle}</Text>
+          <Link
+            accessibilityLabel={resumeAccessibilityLabel}
+            accessibilityRole="link"
+            href={`/chapter/${resumeChapter.id}`}
+            style={styles.resumeLink}
+          >
+            {copy.resumeCta(resumeChapterTitle)}
+          </Link>
+        </Card>
+      ) : null}
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -635,7 +715,9 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
-        <Text style={styles.readinessCaveat}>{copy.readinessCaveat}</Text>
+        {readiness.isSparse ? (
+          <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
+        ) : null}
         <Link
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
           accessibilityRole="link"
@@ -788,6 +870,40 @@ const styles = StyleSheet.create({
     fontWeight: typography.navButton.fontWeight,
     lineHeight: typography.navButton.lineHeight,
   },
+  resumeCard: {
+    gap: space[1],
+  },
+  resumeTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  resumeChapter: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  resumeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  resumeLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.5],
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
   readinessCard: {
     gap: space[1.5],
   },
@@ -839,7 +955,7 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  readinessCaveat: {
+  readinessSparseNote: {
     color: colors.textDisclaimer,
     fontSize: typography.micro.fontSize,
     lineHeight: typography.micro.lineHeight,

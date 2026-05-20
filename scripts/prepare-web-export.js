@@ -27,14 +27,6 @@ const WEB_EXPORT_SOURCE_INPUTS = [
   'tsconfig.json',
   'types',
 ];
-const EMPTY_ROUTER_CONTEXT_MARKER = 'No modules in context';
-const REQUIRED_ROUTE_CONTEXT_MARKERS = [
-  './_layout.tsx',
-  './(tabs)/home.tsx',
-  './about-the-test.tsx',
-  './chapter/[chapterId].tsx',
-  './quiz/[sessionId].tsx',
-];
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -539,21 +531,6 @@ function check(outputDir) {
   assertWebInstallShell(outputDir, index);
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
-  const bundledSource = jsFiles.map((jsFile) => fs.readFileSync(jsFile, 'utf8')).join('\n');
-
-  if (bundledSource.includes(EMPTY_ROUTER_CONTEXT_MARKER)) {
-    throw new Error('Web export bundle contains an empty Expo Router route context');
-  }
-
-  const missingRouteMarkers = REQUIRED_ROUTE_CONTEXT_MARKERS.filter(
-    (marker) => !bundledSource.includes(marker),
-  );
-  if (missingRouteMarkers.length > 0) {
-    throw new Error(
-      `Web export bundle is missing Expo Router route modules: ${missingRouteMarkers.join(', ')}`,
-    );
-  }
-
   for (const jsFile of jsFiles) {
     const source = fs.readFileSync(jsFile, 'utf8');
     if (/["']\/(_expo|assets)\//.test(source)) {
@@ -596,7 +573,6 @@ module.exports = {
   prepare,
   assertWebExportFreshness,
   buildWebExportSourceFingerprint,
-  REQUIRED_ROUTE_CONTEXT_MARKERS,
   rewriteHtml,
   rewriteRootRelativeHtmlAssetPaths,
   rewriteRootRelativeBundlePaths,

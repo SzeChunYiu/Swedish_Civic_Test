@@ -2,7 +2,6 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { ComplianceActionLink } from '../../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { ProPaywall } from '../../components/monetization/ProPaywall';
@@ -14,7 +13,6 @@ import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
-import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -142,7 +140,6 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
   const removeAdsFocused = focus === 'remove-ads';
-  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
   const level = calculateLevel(totalXp);
   const streakWithFreeze = useMemo(
     () =>
@@ -239,11 +236,14 @@ export default function Screen() {
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.dashboardTitle} subtitle={copy.dashboardSubtitle} />
-        <ComplianceActionLink
+        <Link
           accessibilityLabel={copy.dashboardAccessibilityLabel}
+          accessibilityRole="link"
           href="/dashboard"
-          label={copy.dashboardCta}
-        />
+          style={styles.dashboardLink}
+        >
+          {copy.dashboardCta}
+        </Link>
       </Card>
 
       <Card style={styles.cardWide}>
@@ -252,7 +252,7 @@ export default function Screen() {
       </Card>
 
       {!removeAdsFocused ? removeAdsPaywall : null}
-      {entitlementsReady && proRuntimeScopeEnabled ? (
+      {entitlementsReady ? (
         <ProPaywall
           alreadyAdFree={monetizationEntitlements.adsDisabled}
           language={language}
@@ -305,6 +305,18 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
+  },
+  dashboardLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   settingsLink: {
     alignSelf: 'flex-start',
