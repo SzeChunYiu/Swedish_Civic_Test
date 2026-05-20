@@ -147,6 +147,36 @@ test('remainingDailyReviews: Free starts at FREE_DAILY_REVIEW_CAP, drops as revi
   assert.equal(remainingDailyReviews(makeState([], { [dayKey]: 99 }), { now }), 0);
 });
 
+test('remainingDailyReviews: strict Pro boolean and finite free caps', () => {
+  const { remainingDailyReviews, FREE_DAILY_REVIEW_CAP } = loadTs('lib/storage/reviewStore.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const { getLocalDateKey } = loadTs('lib/learning/streaks.ts');
+  const dayKey = getLocalDateKey(now);
+  const state = makeState([], { [dayKey]: 1 });
+
+  for (const malformedProFlag of ['yes', 1, {}, [], null]) {
+    assert.equal(
+      remainingDailyReviews(state, { now, isPro: malformedProFlag }),
+      FREE_DAILY_REVIEW_CAP - 1,
+    );
+  }
+
+  assert.equal(remainingDailyReviews(state, { now, isPro: true }), Number.POSITIVE_INFINITY);
+  assert.equal(remainingDailyReviews(state, { now, freeCap: 2 }), 1);
+
+  for (const invalidCap of [Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '4', null]) {
+    assert.equal(
+      remainingDailyReviews(state, { now, freeCap: invalidCap }),
+      FREE_DAILY_REVIEW_CAP - 1,
+    );
+  }
+
+  assert.equal(
+    remainingDailyReviews(makeState([], { [dayKey]: Number.NaN }), { now }),
+    FREE_DAILY_REVIEW_CAP,
+  );
+});
+
 test('reviewStats: counts mastered (stability >= 21) and review days', () => {
   const { reviewStats } = loadTs('lib/storage/reviewStore.ts');
   const cards = [
