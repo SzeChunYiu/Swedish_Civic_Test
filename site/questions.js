@@ -9613,30 +9613,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes one purpose of the United Nations (UN)?",
-      "sv": "Vilket påstående beskriver ett syfte med Förenta nationerna (FN)?"
+      "sv": "Vilket påstående beskriver ett syfte med Förenta nationerna (FN)?",
+      "zh-Hant": "哪項說法描述了 FN（聯合國）的一個宗旨？",
+      "zh-Hans": "哪项说法描述了 FN（联合国）的一个宗旨？",
+      "ar": "أيُّ عبارةٍ تصف أحد أهداف الأمم المتحدة (FN)؟",
+      "ckb": "کام لێدوان یەکێک لە ئامانجەکانی نەتەوە یەکگرتووەکان (FN) دەخاتە ڕوو؟",
+      "fa": "کدام گزاره یکی از اهداف سازمان ملل متحد (FN) را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje jeden z celów Organizacji Narodów Zjednoczonych (FN)?",
+      "so": "Hadalkee qeexaya mid ka mid ah ujeeddooyinka Qaramada Midoobay (FN)?",
+      "ti": "ኣየናይ ኣበሃህላ ሓደ ካብ ዕላማታት ሕቡራት ሃገራት (FN) ይገልጽ?",
+      "tr": "Hangi ifade Birleşmiş Milletler'in (FN) bir amacını tanımlar?",
+      "uk": "Яке твердження описує одну з цілей Організації Об'єднаних Націй (FN)?"
     },
     "opts": [
       {
         "en": "The UN works for peace and security in the world",
-        "sv": "FN arbetar för fred och säkerhet i världen"
+        "sv": "FN arbetar för fred och säkerhet i världen",
+        "zh-Hant": "FN 致力於維護世界的和平與安全",
+        "zh-Hans": "FN 致力于维护世界的和平与安全",
+        "ar": "تعمل الأمم المتحدة (FN) من أجل السلام والأمن في العالم",
+        "ckb": "FN بۆ ئاشتی و ئاسایش لە جیهاندا کار دەکات",
+        "fa": "FN برای صلح و امنیت در جهان تلاش می‌کند",
+        "pl": "FN działa na rzecz pokoju i bezpieczeństwa na świecie",
+        "so": "FN waxay u shaqaysaa nabad iyo amni adduunka",
+        "ti": "FN ኣብ ዓለም ንሰላምን ጸጥታን ይሰርሕ",
+        "tr": "FN, dünyada barış ve güvenlik için çalışır",
+        "uk": "FN працює заради миру та безпеки у світі"
       },
       {
         "en": "The UN decides the budgets of Swedish municipalities",
-        "sv": "FN bestämmer svenska kommuners budgetar"
+        "sv": "FN bestämmer svenska kommuners budgetar",
+        "zh-Hant": "FN 決定瑞典各 kommun（市鎮）的預算",
+        "zh-Hans": "FN 决定瑞典各 kommun（市镇）的预算",
+        "ar": "تحدّد الأمم المتحدة (FN) ميزانيات البلديات السويدية (kommun)",
+        "ckb": "FN بودجەی شارەوانییەکانی (kommun) سوید دیاری دەکات",
+        "fa": "FN بودجهٔ کمون‌های (kommun) سوئد را تعیین می‌کند",
+        "pl": "FN ustala budżety szwedzkich kommun",
+        "so": "FN waxay go'aamisaa miisaaniyadaha kommun-yada Iswiidhan",
+        "ti": "FN ባጀት ናይ ሽወደን kommun ይውስን",
+        "tr": "FN, İsveç kommun'larının bütçelerine karar verir",
+        "uk": "FN визначає бюджети шведських kommun"
       },
       {
         "en": "The UN replaces Sweden’s courts",
-        "sv": "FN ersätter Sveriges domstolar"
+        "sv": "FN ersätter Sveriges domstolar",
+        "zh-Hant": "FN 取代瑞典的各級法院",
+        "zh-Hans": "FN 取代瑞典的各级法院",
+        "ar": "تحلّ الأمم المتحدة (FN) محلّ محاكم السويد",
+        "ckb": "FN جێگەی دادگاکانی سوید دەگرێتەوە",
+        "fa": "FN جایگزین دادگاه‌های سوئد می‌شود",
+        "pl": "FN zastępuje szwedzkie sądy",
+        "so": "FN waxay beddeshaa maxkamadaha Iswiidhan",
+        "ti": "FN ንኣብያተ ፍርዲ ሽወደን ይትክእ",
+        "tr": "FN, İsveç'in mahkemelerinin yerine geçer",
+        "uk": "FN замінює суди Швеції"
       },
       {
         "en": "The UN elects Sweden’s Riksdag every four years",
-        "sv": "FN väljer Sveriges riksdag vart fjärde år"
+        "sv": "FN väljer Sveriges riksdag vart fjärde år",
+        "zh-Hant": "FN 每四年選出瑞典的 Riksdag（議會）",
+        "zh-Hans": "FN 每四年选出瑞典的 Riksdag（议会）",
+        "ar": "تنتخب الأمم المتحدة (FN) برلمان السويد (Riksdag) كل أربع سنوات",
+        "ckb": "FN هەر چوار ساڵ جارێک Riksdag (پارلەمانی سوید) هەڵدەبژێرێت",
+        "fa": "FN هر چهار سال یک‌بار Riksdag (پارلمان سوئد) را انتخاب می‌کند",
+        "pl": "FN co cztery lata wybiera szwedzki Riksdag",
+        "so": "FN waxay afartii sanoba mar doorataa Riksdag-ga Iswiidhan",
+        "ti": "FN ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት ንRiksdag (ሃገራዊ ባይቶ) ሽወደን ይመርጽ",
+        "tr": "FN, dört yılda bir İsveç'in Riksdag'ını seçer",
+        "uk": "FN кожні чотири роки обирає шведський Riksdag (парламент)"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden is a member of the UN. The UN works, among other things, for peace and security, to resolve conflicts and stop wars, and for human rights and freedoms.",
-      "sv": "Sverige är medlem i FN. FN arbetar bland annat för fred och säkerhet, för att lösa konflikter och stoppa krig samt för mänskliga rättigheter och friheter."
+      "sv": "Sverige är medlem i FN. FN arbetar bland annat för fred och säkerhet, för att lösa konflikter och stoppa krig samt för mänskliga rättigheter och friheter.",
+      "zh-Hant": "瑞典是 FN（聯合國）的成員國。FN 的工作包括維護和平與安全、化解衝突並制止戰爭，以及促進人權與自由。",
+      "zh-Hans": "瑞典是 FN（联合国）的成员国。FN 的工作包括维护和平与安全、化解冲突并制止战争，以及促进人权与自由。",
+      "ar": "السويد عضو في الأمم المتحدة (FN). تعمل الأمم المتحدة من بين أمورٍ أخرى من أجل السلام والأمن، ولحلّ النزاعات ووقف الحروب، ومن أجل حقوق الإنسان وحرياته.",
+      "ckb": "سوید ئەندامی نەتەوە یەکگرتووەکانە (FN). نەتەوە یەکگرتووەکان لەنێو شتی تردا بۆ ئاشتی و ئاسایش، بۆ چارەسەرکردنی ناکۆکییەکان و وەستاندنی جەنگ، و بۆ مافەکان و ئازادییەکانی مرۆڤ کار دەکات.",
+      "fa": "سوئد عضو سازمان ملل متحد (FN) است. سازمان ملل از جمله برای صلح و امنیت، برای حل مناقشه‌ها و توقف جنگ‌ها، و برای حقوق و آزادی‌های بشر تلاش می‌کند.",
+      "pl": "Szwecja jest członkiem FN. FN działa między innymi na rzecz pokoju i bezpieczeństwa, rozwiązywania konfliktów i powstrzymywania wojen oraz na rzecz praw i wolności człowieka.",
+      "so": "Iswiidhan waa xubin ka mid ah FN. FN waxay u shaqaysaa, waxyaabaha kale dhexdooda, nabad iyo amni, xallinta khilaafaadka iyo joojinta dagaallada, iyo xuquuqda iyo xorriyadaha bani'aadamka.",
+      "ti": "ሽወደን ኣባል FN እያ። FN ብዘይካ ካልእ ንሰላምን ጸጥታን፣ ግርጭታት ንምፍታሕን ኲናት ንምቑራጽን፣ ከምኡ’ውን ንሰብኣዊ መሰላትን ናጽነታትን ይሰርሕ።",
+      "tr": "İsveç, FN üyesidir. FN; başka şeylerin yanı sıra barış ve güvenlik için, çatışmaları çözmek ve savaşları durdurmak için ve insan hakları ve özgürlükleri için çalışır.",
+      "uk": "Швеція є членом FN. FN працює, зокрема, заради миру та безпеки, для розв'язання конфліктів і припинення воєн, а також заради прав і свобод людини."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9660,30 +9720,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes EU cooperation?",
-      "sv": "Vilket påstående beskriver EU-samarbetet?"
+      "sv": "Vilket påstående beskriver EU-samarbetet?",
+      "zh-Hant": "哪項說法描述了 EU（歐盟）合作？",
+      "zh-Hans": "哪项说法描述了 EU（欧盟）合作？",
+      "ar": "أيُّ عبارةٍ تصف التعاون داخل الاتحاد الأوروبي (EU)؟",
+      "ckb": "کام لێدوان هاوکاری ناو یەکێتیی ئەورووپا (EU) دەخاتە ڕوو؟",
+      "fa": "کدام گزاره همکاری در اتحادیهٔ اروپا (EU) را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje współpracę w ramach EU?",
+      "so": "Hadalkee qeexaya iskaashiga EU?",
+      "ti": "ኣየናይ ኣበሃህላ ምትሕብባር EU ይገልጽ?",
+      "tr": "Hangi ifade EU iş birliğini tanımlar?",
+      "uk": "Яке твердження описує співпрацю в межах EU?"
     },
     "opts": [
       {
         "en": "EU countries make joint decisions and create laws that apply in member countries",
-        "sv": "EU-länder fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna"
+        "sv": "EU-länder fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna",
+        "zh-Hant": "EU 各成員國共同作出決定，並制定適用於各成員國的法律",
+        "zh-Hans": "EU 各成员国共同作出决定，并制定适用于各成员国的法律",
+        "ar": "تتخذ دول الاتحاد الأوروبي (EU) قرارات مشتركة وتضع قوانين تسري في الدول الأعضاء",
+        "ckb": "وڵاتانی EU بڕیاری هاوبەش دەدەن و یاسا دادەنێن کە لە وڵاتە ئەندامەکاندا جێبەجێ دەکرێن",
+        "fa": "کشورهای EU تصمیم‌های مشترک می‌گیرند و قوانینی وضع می‌کنند که در کشورهای عضو اجرا می‌شود",
+        "pl": "Kraje EU podejmują wspólne decyzje i tworzą prawa obowiązujące w państwach członkowskich",
+        "so": "Dalalka EU waxay gaaraan go'aanno wadajir ah waxayna sameeyaan sharciyo ku shaqeeya dalalka xubnaha ah",
+        "ti": "ሃገራት EU ሓባራዊ ውሳነታት ይወስዳ ኣብ ኣባላት ሃገራት ዝሰርሑ ሕግታት የውጽኣ",
+        "tr": "EU ülkeleri ortak kararlar alır ve üye ülkelerde geçerli olan yasalar oluşturur",
+        "uk": "Країни EU ухвалюють спільні рішення та створюють закони, що діють у державах-членах"
       },
       {
         "en": "Each EU country stops having its own municipalities",
-        "sv": "Varje EU-land slutar ha egna kommuner"
+        "sv": "Varje EU-land slutar ha egna kommuner",
+        "zh-Hant": "每個 EU 國家都不再設有自己的 kommun（市鎮）",
+        "zh-Hans": "每个 EU 国家都不再设有自己的 kommun（市镇）",
+        "ar": "تتوقّف كلّ دولة في الاتحاد الأوروبي (EU) عن أن تكون لها بلدياتها الخاصة (kommun)",
+        "ckb": "هەر وڵاتێکی EU واز لە هەبوونی شارەوانییە تایبەتەکانی خۆی (kommun) دەهێنێت",
+        "fa": "هر کشور EU داشتن کمون‌های (kommun) خود را متوقف می‌کند",
+        "pl": "Każdy kraj EU przestaje mieć własne kommun",
+        "so": "Dal kasta oo EU wuxuu joojiyaa inuu yeesho kommun-yadiisa gaarka ah",
+        "ti": "ነፍሲ ወከፍ ሃገር EU ናይ ገዛእ ርእሳ kommun ምውናን ተቋርጽ",
+        "tr": "Her EU ülkesi kendi kommun'larına sahip olmayı bırakır",
+        "uk": "Кожна країна EU перестає мати власні kommun"
       },
       {
         "en": "The Council of Europe decides every EU country’s election results",
-        "sv": "Europarådet bestämmer alla EU-länders valresultat"
+        "sv": "Europarådet bestämmer alla EU-länders valresultat",
+        "zh-Hant": "Europarådet（歐洲委員會）決定所有 EU 國家的選舉結果",
+        "zh-Hans": "Europarådet（欧洲委员会）决定所有 EU 国家的选举结果",
+        "ar": "يحدّد مجلس أوروبا (Europarådet) نتائج انتخابات كلّ دول الاتحاد الأوروبي (EU)",
+        "ckb": "Europarådet (ئەنجوومەنی ئەورووپا) ئەنجامی هەڵبژاردنی هەموو وڵاتانی EU دیاری دەکات",
+        "fa": "Europarådet (شورای اروپا) نتایج انتخابات همهٔ کشورهای EU را تعیین می‌کند",
+        "pl": "Rada Europy ustala wyniki wyborów we wszystkich krajach EU",
+        "so": "Golaha Yurub wuxuu go'aamiyaa natiijooyinka doorashada dhammaan dalalka EU",
+        "ti": "ቤት ምኽሪ ኤውሮጳ ናይ ኩለን ሃገራት EU ውጽኢት ምርጫ ይውስን",
+        "tr": "Avrupa Konseyi, tüm EU ülkelerinin seçim sonuçlarına karar verir",
+        "uk": "Рада Європи визначає результати виборів усіх країн EU"
       },
       {
         "en": "The UN replaces the governments of EU countries",
-        "sv": "FN ersätter EU-ländernas regeringar"
+        "sv": "FN ersätter EU-ländernas regeringar",
+        "zh-Hant": "FN（聯合國）取代各 EU 國家的政府",
+        "zh-Hans": "FN（联合国）取代各 EU 国家的政府",
+        "ar": "تحلّ الأمم المتحدة (FN) محلّ حكومات دول الاتحاد الأوروبي (EU)",
+        "ckb": "FN جێگەی حکومەتەکانی وڵاتانی EU دەگرێتەوە",
+        "fa": "FN جایگزین دولت‌های کشورهای EU می‌شود",
+        "pl": "FN zastępuje rządy krajów EU",
+        "so": "FN waxay beddeshaa dawladaha dalalka EU",
+        "ti": "FN ንመንግስታት ሃገራት EU ይትክእ",
+        "tr": "FN, EU ülkelerinin hükümetlerinin yerine geçer",
+        "uk": "FN замінює уряди країн EU"
       }
     ],
     "answer": 0,
     "why": {
       "en": "EU countries cooperate in several areas, such as agriculture, the economy, the environment, trade, and migration. They make joint decisions and create laws that apply in member countries.",
-      "sv": "EU-länderna samarbetar inom flera områden, till exempel jordbruk, ekonomi, miljö, handel och migration. De fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna."
+      "sv": "EU-länderna samarbetar inom flera områden, till exempel jordbruk, ekonomi, miljö, handel och migration. De fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna.",
+      "zh-Hant": "EU（歐盟）各成員國在多個領域展開合作，例如農業、經濟、環境、貿易和移民。它們共同作出決定，並制定適用於各成員國的法律。",
+      "zh-Hans": "EU（欧盟）各成员国在多个领域开展合作，例如农业、经济、环境、贸易和移民。它们共同作出决定，并制定适用于各成员国的法律。",
+      "ar": "تتعاون دول الاتحاد الأوروبي (EU) في عدة مجالات، مثل الزراعة والاقتصاد والبيئة والتجارة والهجرة. وهي تتخذ قرارات مشتركة وتضع قوانين تسري في الدول الأعضاء.",
+      "ckb": "وڵاتانی یەکێتیی ئەورووپا (EU) لە چەند بوارێکدا هاوکاری دەکەن، وەک کشتوکاڵ، ئابووری، ژینگە، بازرگانی و کۆچبەری. ئەوان بڕیاری هاوبەش دەدەن و یاسا دادەنێن کە لە وڵاتە ئەندامەکاندا جێبەجێ دەکرێن.",
+      "fa": "کشورهای اتحادیهٔ اروپا (EU) در چند زمینه با هم همکاری می‌کنند، مانند کشاورزی، اقتصاد، محیط زیست، تجارت و مهاجرت. آن‌ها تصمیم‌های مشترک می‌گیرند و قوانینی وضع می‌کنند که در کشورهای عضو اجرا می‌شود.",
+      "pl": "Kraje EU współpracują w wielu dziedzinach, na przykład w rolnictwie, gospodarce, ochronie środowiska, handlu i migracji. Podejmują wspólne decyzje i tworzą prawa obowiązujące w państwach członkowskich.",
+      "so": "Dalalka EU waxay iskaashadaan dhowr qaybood, sida beeraha, dhaqaalaha, deegaanka, ganacsiga iyo socdaalka. Waxay gaaraan go'aanno wadajir ah oo waxay sameeyaan sharciyo ku shaqeeya dalalka xubnaha ah.",
+      "ti": "ሃገራት EU ኣብ ብዙሕ ዓውድታት ይተሓባበራ፣ ንኣብነት ሕርሻ፣ ቍጠባ፣ ኣከባቢ፣ ንግድን ስደትን። ሓባራዊ ውሳነታት ይወስዳ ኣብ ኣባላት ሃገራት ዝሰርሑ ሕግታት የውጽኣ።",
+      "tr": "EU ülkeleri tarım, ekonomi, çevre, ticaret ve göç gibi birçok alanda iş birliği yapar. Ortak kararlar alır ve üye ülkelerde geçerli olan yasalar oluştururlar.",
+      "uk": "Країни EU співпрацюють у кількох сферах, наприклад у сільському господарстві, економіці, охороні довкілля, торгівлі та міграції. Вони ухвалюють спільні рішення та створюють закони, що діють у державах-членах."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9707,30 +9827,90 @@
     "type": "single_choice",
     "q": {
       "en": "How did Sweden act toward NATO during the Cold War?",
-      "sv": "Hur agerade Sverige under kalla kriget i förhållande till Nato?"
+      "sv": "Hur agerade Sverige under kalla kriget i förhållande till Nato?",
+      "zh-Hant": "在冷戰期間，瑞典對 Nato（北約）採取了怎樣的立場？",
+      "zh-Hans": "在冷战期间，瑞典对 Nato（北约）采取了怎样的立场？",
+      "ar": "كيف تصرّفت السويد تجاه حلف الناتو (NATO) خلال الحرب الباردة؟",
+      "ckb": "سوید لە ماوەی جەنگی سارددا بەرامبەر بە NATO چۆن هەڵسوکەوتی کرد؟",
+      "fa": "سوئد در دوران جنگ سرد در قبال ناتو (NATO) چگونه عمل کرد؟",
+      "pl": "Jak Szwecja zachowała się wobec Nato podczas zimnej wojny?",
+      "so": "Sidee Iswiidhan ula dhaqantay Nato xilligii Dagaalkii Qaboobaa?",
+      "ti": "ሽወደን ኣብ እዋን ዝሑል ኲናት ብዛዕባ Nato ብኸመይ ተንቀሳቐሰት?",
+      "tr": "İsveç, Soğuk Savaş sırasında Nato'ya karşı nasıl davrandı?",
+      "uk": "Як Швеція діяла щодо Nato під час холодної війни?"
     },
     "opts": [
       {
         "en": "Sweden continued to be neutral and stayed outside NATO",
-        "sv": "Sverige fortsatte att vara neutralt och stod utanför Nato"
+        "sv": "Sverige fortsatte att vara neutralt och stod utanför Nato",
+        "zh-Hant": "瑞典繼續保持中立，置身於 Nato 之外",
+        "zh-Hans": "瑞典继续保持中立，置身于 Nato 之外",
+        "ar": "ظلّت السويد محايدة وبقيت خارج الناتو (NATO)",
+        "ckb": "سوید بێلایەن مایەوە و لە دەرەوەی NATO مایەوە",
+        "fa": "سوئد بی‌طرف ماند و بیرون از NATO باقی ماند",
+        "pl": "Szwecja nadal pozostawała neutralna i stała poza Nato",
+        "so": "Iswiidhan waxay sii ahaatay dhexdhexaad waxayna ka baxsanaatay Nato",
+        "ti": "ሽወደን ገለልተኛ ኮይና ቀጸለት ካብ Nato ወጻኢ ኮነት",
+        "tr": "İsveç tarafsız kalmaya devam etti ve Nato'nun dışında kaldı",
+        "uk": "Швеція й далі залишалася нейтральною та була поза Nato"
       },
       {
         "en": "Sweden left the EU to join NATO",
-        "sv": "Sverige lämnade EU för att gå med i Nato"
+        "sv": "Sverige lämnade EU för att gå med i Nato",
+        "zh-Hant": "瑞典退出 EU（歐盟）以加入 Nato",
+        "zh-Hans": "瑞典退出 EU（欧盟）以加入 Nato",
+        "ar": "غادرت السويد الاتحاد الأوروبي (EU) لتنضمّ إلى الناتو (NATO)",
+        "ckb": "سوید EU بەجێهێشت بۆ ئەوەی بچێتە ناو NATO",
+        "fa": "سوئد EU را ترک کرد تا به NATO بپیوندد",
+        "pl": "Szwecja opuściła EU, aby przystąpić do Nato",
+        "so": "Iswiidhan waxay ka tagtay EU si ay ugu biirto Nato",
+        "ti": "ሽወደን ናብ Nato ንምእታው ካብ EU ወጸት",
+        "tr": "İsveç, Nato'ya katılmak için EU'dan ayrıldı",
+        "uk": "Швеція вийшла з EU, щоб вступити до Nato"
       },
       {
         "en": "Sweden governed both Denmark and Norway through NATO",
-        "sv": "Sverige styrde både Danmark och Norge genom Nato"
+        "sv": "Sverige styrde både Danmark och Norge genom Nato",
+        "zh-Hant": "瑞典透過 Nato 統治了丹麥和挪威",
+        "zh-Hans": "瑞典通过 Nato 统治了丹麦和挪威",
+        "ar": "حكمت السويد كلًّا من الدنمارك والنرويج عبر الناتو (NATO)",
+        "ckb": "سوید هەردوو دانمارک و نەرویجی لە ڕێگەی NATOوە بەڕێوە برد",
+        "fa": "سوئد هم دانمارک و هم نروژ را از طریق NATO اداره کرد",
+        "pl": "Szwecja rządziła zarówno Danmark, jak i Norge poprzez Nato",
+        "so": "Iswiidhan waxay Nato ku xukuntay Danmark iyo Norge labadaba",
+        "ti": "ሽወደን ብNato ኣቢላ ንDanmark ኮነ ንNorge ትመርሕ ነበረት",
+        "tr": "İsveç, Nato aracılığıyla hem Danmark'ı hem Norge'yi yönetti",
+        "uk": "Швеція керувала і Danmark, і Norge через Nato"
       },
       {
         "en": "Sweden abolished its military defence",
-        "sv": "Sverige avskaffade sitt militära försvar"
+        "sv": "Sverige avskaffade sitt militära försvar",
+        "zh-Hant": "瑞典廢除了自己的軍事防衛",
+        "zh-Hans": "瑞典废除了自己的军事防卫",
+        "ar": "ألغت السويد دفاعها العسكري",
+        "ckb": "سوید بەرگریی سەربازیی خۆی هەڵوەشاندەوە",
+        "fa": "سوئد دفاع نظامی خود را برچید",
+        "pl": "Szwecja zlikwidowała swoją obronę wojskową",
+        "so": "Iswiidhan waxay baabi'isay difaaceeda militari",
+        "ti": "ሽወደን ወተሃደራዊ ምክልኻላ ኣፍረሰት",
+        "tr": "İsveç, askeri savunmasını kaldırdı",
+        "uk": "Швеція скасувала свою військову оборону"
       }
     ],
     "answer": 0,
     "why": {
       "en": "After the Second World War, Europe was divided by the Cold War. Denmark and Norway joined NATO, while Sweden continued to be neutral and chose to stay outside NATO.",
-      "sv": "Efter andra världskriget delades Europa av kalla kriget. Danmark och Norge gick med i Nato, medan Sverige fortsatte att vara neutralt och valde att stå utanför Nato."
+      "sv": "Efter andra världskriget delades Europa av kalla kriget. Danmark och Norge gick med i Nato, medan Sverige fortsatte att vara neutralt och valde att stå utanför Nato.",
+      "zh-Hant": "第二次世界大戰後，歐洲因冷戰而分裂。丹麥和挪威加入了 Nato（北約），而瑞典繼續保持中立，選擇置身於 Nato 之外。",
+      "zh-Hans": "第二次世界大战后，欧洲因冷战而分裂。丹麦和挪威加入了 Nato（北约），而瑞典继续保持中立，选择置身于 Nato 之外。",
+      "ar": "بعد الحرب العالمية الثانية انقسمت أوروبا بفعل الحرب الباردة. انضمّت الدنمارك والنرويج إلى حلف الناتو (NATO)، بينما ظلّت السويد محايدة واختارت البقاء خارج الناتو.",
+      "ckb": "دوای جەنگی جیهانیی دووەم، ئەورووپا بەهۆی جەنگی ساردەوە دابەش بوو. دانمارک و نەرویج چوونە ناو NATO، لە کاتێکدا سوید لەسەر بێلایەنی مایەوە و هەڵیبژارد لە دەرەوەی NATO بمێنێتەوە.",
+      "fa": "پس از جنگ جهانی دوم، اروپا بر اثر جنگ سرد تقسیم شد. دانمارک و نروژ به ناتو (NATO) پیوستند، در حالی که سوئد بی‌طرف ماند و ترجیح داد بیرون از ناتو بماند.",
+      "pl": "Po drugiej wojnie światowej Europa została podzielona przez zimną wojnę. Danmark i Norge przystąpiły do Nato, podczas gdy Szwecja nadal pozostawała neutralna i postanowiła stać poza Nato.",
+      "so": "Dagaalkii Labaad ee Adduunka ka dib, Yurub waxaa kala qaybiyay Dagaalkii Qaboobaa. Danmark iyo Norge waxay ku biireen Nato, halka Iswiidhan ay sii ahaatay dhexdhexaad oo ay dooratay inay ka baxsato Nato.",
+      "ti": "ድሕሪ ካልኣይ ኲናት ዓለም፣ ኤውሮጳ ብዝሑል ኲናት ተኸፋፊላ። Danmark ከምኡ’ውን Norge ናብ Nato ኣተዋ፣ ሽወደን ግን ገለልተኛ ኮይና ቀጸለት ካብ Nato ወጻኢ ክትከውን መረጸት።",
+      "tr": "İkinci Dünya Savaşı'ndan sonra Avrupa, Soğuk Savaş tarafından bölündü. Danmark ve Norge Nato'ya katıldı; İsveç ise tarafsız kalmaya devam etti ve Nato'nun dışında kalmayı seçti.",
+      "uk": "Після Другої світової війни Європу розділила холодна війна. Danmark і Norge вступили до Nato, тоді як Швеція й далі залишалася нейтральною та обрала бути поза Nato."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9754,30 +9934,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes total-defence duty in Sweden?",
-      "sv": "Vilket påstående beskriver totalförsvarsplikt i Sverige?"
+      "sv": "Vilket påstående beskriver totalförsvarsplikt i Sverige?",
+      "zh-Hant": "哪項說法描述了瑞典的全民防衛義務（totalförsvarsplikt）？",
+      "zh-Hans": "哪项说法描述了瑞典的全民防卫义务（totalförsvarsplikt）？",
+      "ar": "أيُّ عبارةٍ تصف واجب الدفاع الشامل (totalförsvarsplikt) في السويد؟",
+      "ckb": "کام لێدوان ئەرکی بەرگریی گشتی (totalförsvarsplikt) لە سویددا دەخاتە ڕوو؟",
+      "fa": "کدام گزاره وظیفهٔ دفاع کل (totalförsvarsplikt) در سوئد را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje obowiązek obrony powszechnej (totalförsvarsplikt) w Szwecji?",
+      "so": "Hadalkee qeexaya waajibka difaaca guud (totalförsvarsplikt) ee Iswiidhan?",
+      "ti": "ኣየናይ ኣበሃህላ ግዴታ ሓፈሻዊ ምክልኻል (totalförsvarsplikt) ኣብ ሽወደን ይገልጽ?",
+      "tr": "Hangi ifade İsveç'teki topyekûn savunma yükümlülüğünü (totalförsvarsplikt) tanımlar?",
+      "uk": "Яке твердження описує обов'язок загальної оборони (totalförsvarsplikt) у Швеції?"
     },
     "opts": [
       {
         "en": "People who live in Sweden and are aged 16 to 70 may need to help defend the country",
-        "sv": "Personer som bor i Sverige och är 16 till 70 år kan behöva hjälpa till att försvara landet"
+        "sv": "Personer som bor i Sverige och är 16 till 70 år kan behöva hjälpa till att försvara landet",
+        "zh-Hant": "居住在瑞典、年齡為 16 至 70 歲的人，可能需要協助保衛國家",
+        "zh-Hans": "居住在瑞典、年龄为 16 至 70 岁的人，可能需要协助保卫国家",
+        "ar": "الأشخاص الذين يقيمون في السويد وتتراوح أعمارهم بين 16 و70 عامًا قد يحتاجون إلى المساعدة في الدفاع عن البلاد",
+        "ckb": "ئەو کەسانەی لە سوید دەژین و تەمەنیان ۱۶ بۆ ۷۰ ساڵە لەوانەیە پێویست بکات یارمەتیی بەرگریکردن لە وڵات بدەن",
+        "fa": "افرادی که در سوئد زندگی می‌کنند و بین ۱۶ تا ۷۰ سال دارند ممکن است لازم باشد در دفاع از کشور کمک کنند",
+        "pl": "Osoby mieszkające w Szwecji w wieku od 16 do 70 lat mogą musieć pomóc w obronie kraju",
+        "so": "Dadka ku nool Iswiidhan ee da'doodu tahay 16 ilaa 70 sano waxaa laga yaabaa inay u baahdaan inay ka caawiyaan difaaca dalka",
+        "ti": "ኣብ ሽወደን ዝነብሩ ካብ 16 ክሳብ 70 ዓመት ዝዕድሚኦም ሰባት ንሃገር ኣብ ምክልኻል ክሕግዙ ከድልዮም ይኽእል",
+        "tr": "İsveç'te yaşayan ve 16 ila 70 yaş arasındaki kişilerin ülkeyi savunmaya yardım etmesi gerekebilir",
+        "uk": "Особи, які живуть у Швеції та мають від 16 до 70 років, можуть бути змушені допомагати захищати країну"
       },
       {
         "en": "Only professional soldiers may help society during a crisis",
-        "sv": "Bara yrkessoldater får hjälpa samhället vid kris"
+        "sv": "Bara yrkessoldater får hjälpa samhället vid kris",
+        "zh-Hant": "危機時只有職業軍人才能協助社會",
+        "zh-Hans": "危机时只有职业军人才能协助社会",
+        "ar": "الجنود المحترفون وحدهم يُسمح لهم بمساعدة المجتمع وقت الأزمات",
+        "ckb": "تەنها سەربازە پیشەییەکان بۆیان هەیە لە کاتی قەیراندا یارمەتیی کۆمەڵگا بدەن",
+        "fa": "فقط سربازان حرفه‌ای اجازه دارند در زمان بحران به جامعه کمک کنند",
+        "pl": "Tylko zawodowi żołnierze mogą pomagać społeczeństwu w czasie kryzysu",
+        "so": "Kaliya askarta xirfadlayaasha ah ayaa caawin kara bulshada xilliga dhibaatada",
+        "ti": "ኣብ እዋን ቅልውላው ንሕብረተሰብ ክሕግዙ ዝኽእሉ ሞያውያን ወተሃደራት ጥራይ እዮም",
+        "tr": "Kriz sırasında topluma yalnızca profesyonel askerler yardım edebilir",
+        "uk": "Допомагати суспільству під час кризи можуть лише професійні солдати"
       },
       {
         "en": "All residents automatically complete basic military training",
-        "sv": "Alla invånare genomför automatiskt militär grundutbildning"
+        "sv": "Alla invånare genomför automatiskt militär grundutbildning",
+        "zh-Hant": "所有居民都自動完成基礎軍事訓練",
+        "zh-Hans": "所有居民都自动完成基础军事训练",
+        "ar": "جميع المقيمين يخضعون تلقائيًا للتدريب العسكري الأساسي",
+        "ckb": "هەموو دانیشتووان بە شێوەی خۆکار ڕاهێنانی سەرەتاییی سەربازی تەواو دەکەن",
+        "fa": "همهٔ ساکنان به‌طور خودکار آموزش پایهٔ نظامی را می‌گذرانند",
+        "pl": "Wszyscy mieszkańcy automatycznie odbywają podstawowe szkolenie wojskowe",
+        "so": "Dhammaan dadka deggan si toos ah ayay u dhameeyaan tababarka militari ee aasaasiga ah",
+        "ti": "ኩሎም ነበርቲ ብኣውቶማቲክ መሰረታዊ ወተሃደራዊ ስልጠና የጻፍዑ",
+        "tr": "Tüm ikamet edenler otomatik olarak temel askeri eğitimi tamamlar",
+        "uk": "Усі мешканці автоматично проходять базову військову підготовку"
       },
       {
         "en": "Municipalities alone are responsible for Sweden’s defence",
-        "sv": "Kommunerna ansvarar ensamma för Sveriges försvar"
+        "sv": "Kommunerna ansvarar ensamma för Sveriges försvar",
+        "zh-Hant": "各 kommun（市鎮）單獨負責瑞典的防衛",
+        "zh-Hans": "各 kommun（市镇）单独负责瑞典的防卫",
+        "ar": "البلديات (kommun) وحدها مسؤولة عن دفاع السويد",
+        "ckb": "شارەوانییەکان (kommun) بە تەنها بەرپرسی بەرگریی سوید",
+        "fa": "کمون‌ها (kommun) به‌تنهایی مسئول دفاع سوئد هستند",
+        "pl": "Za obronę Szwecji odpowiadają wyłącznie kommun",
+        "so": "Kaliya kommun-yada ayaa mas'uul ka ah difaaca Iswiidhan",
+        "ti": "ንምክልኻል ሽወደን ጥራይ kommun ሓላፍነት ይወስዳ",
+        "tr": "İsveç'in savunmasından yalnızca kommun'lar sorumludur",
+        "uk": "За оборону Швеції відповідають лише kommun"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Everyone who lives in Sweden and is between ages 16 and 70 may be required to help defend the country if needed. This is called total-defence duty and belongs to Sweden’s total defence.",
-      "sv": "Alla som bor i Sverige och är mellan 16 och 70 år kan bli tvungna att hjälpa till att försvara landet om det behövs. Det kallas totalförsvarsplikt och hör till Sveriges totalförsvar."
+      "sv": "Alla som bor i Sverige och är mellan 16 och 70 år kan bli tvungna att hjälpa till att försvara landet om det behövs. Det kallas totalförsvarsplikt och hör till Sveriges totalförsvar.",
+      "zh-Hant": "所有居住在瑞典、年齡在 16 至 70 歲之間的人，在必要時可能會被要求協助保衛國家。這被稱為全民防衛義務（totalförsvarsplikt），屬於瑞典全民防衛（totalförsvar）的一部分。",
+      "zh-Hans": "所有居住在瑞典、年龄在 16 至 70 岁之间的人，在必要时可能会被要求协助保卫国家。这被称为全民防卫义务（totalförsvarsplikt），属于瑞典全民防卫（totalförsvar）的一部分。",
+      "ar": "كلّ من يقيم في السويد وتتراوح أعمارهم بين 16 و70 عامًا قد يُلزَمون بالمساعدة في الدفاع عن البلاد عند الحاجة. ويُسمّى ذلك واجب الدفاع الشامل (totalförsvarsplikt)، وهو جزء من الدفاع الشامل للسويد.",
+      "ckb": "هەموو ئەو کەسانەی لە سوید دەژین و تەمەنیان لە نێوان ۱۶ بۆ ۷۰ ساڵە، لە کاتی پێویستدا لەوانەیە ناچار بکرێن یارمەتیی بەرگریکردن لە وڵات بدەن. ئەمە بە ئەرکی بەرگریی گشتی (totalförsvarsplikt) ناودەبردرێت و بەشێکە لە بەرگریی گشتیی سوید.",
+      "fa": "همهٔ کسانی که در سوئد زندگی می‌کنند و بین ۱۶ تا ۷۰ سال سن دارند ممکن است در صورت نیاز ملزم به کمک برای دفاع از کشور شوند. این وظیفهٔ دفاع کل (totalförsvarsplikt) نامیده می‌شود و بخشی از دفاع کل سوئد است.",
+      "pl": "Wszystkie osoby mieszkające w Szwecji w wieku od 16 do 70 lat mogą zostać zobowiązane do pomocy w obronie kraju, jeśli zajdzie taka potrzeba. Nazywa się to totalförsvarsplikt i należy do szwedzkiej obrony całkowitej (totalförsvar).",
+      "so": "Dhammaan dadka ku nool Iswiidhan ee da'doodu u dhaxayso 16 ilaa 70 sano waxaa laga yaabaa in lagu qasbo inay ka caawiyaan difaaca dalka haddii loo baahdo. Tan waxaa la yiraahdaa totalförsvarsplikt waxayna ka mid tahay difaaca guud ee Iswiidhan (totalförsvar).",
+      "ti": "ኣብ ሽወደን ዝነብሩ ካብ 16 ክሳብ 70 ዓመት ዝዕድሚኦም ኩሎም ሰባት፣ እንተ ኣድልዩ ንሃገር ኣብ ምክልኻል ክሕግዙ ክግደዱ ይኽእሉ። እዚ totalförsvarsplikt ይበሃል ናይ ሽወደን ሓፈሻዊ ምክልኻል (totalförsvar) ኣካል እዩ።",
+      "tr": "İsveç'te yaşayan ve 16 ila 70 yaş arasındaki herkes, gerekirse ülkeyi savunmaya yardım etmek zorunda kalabilir. Buna totalförsvarsplikt denir ve İsveç'in topyekûn savunmasına (totalförsvar) aittir.",
+      "uk": "Усі, хто живе у Швеції та має від 16 до 70 років, можуть бути зобов'язані допомагати захищати країну, якщо це потрібно. Це називається totalförsvarsplikt і належить до загальної оборони Швеції (totalförsvar)."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9801,30 +10041,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes civil defence during war or crisis?",
-      "sv": "Vilket påstående beskriver det civila försvaret vid krig eller kris?"
+      "sv": "Vilket påstående beskriver det civila försvaret vid krig eller kris?",
+      "zh-Hant": "哪項說法描述了戰爭或危機時的民事防衛（civilt försvar）？",
+      "zh-Hans": "哪项说法描述了战争或危机时的民事防卫（civilt försvar）？",
+      "ar": "أيُّ عبارةٍ تصف الدفاع المدني عند الحرب أو الأزمة؟",
+      "ckb": "کام لێدوان بەرگریی مەدەنی لە کاتی جەنگ یان قەیراندا دەخاتە ڕوو؟",
+      "fa": "کدام گزاره دفاع غیرنظامی در زمان جنگ یا بحران را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje obronę cywilną podczas wojny lub kryzysu?",
+      "so": "Hadalkee qeexaya difaaca rayidka xilliga dagaal ama dhibaato?",
+      "ti": "ኣየናይ ኣበሃህላ ኣብ እዋን ኲናት ወይ ቅልውላው ሲቪላዊ ምክልኻል ይገልጽ?",
+      "tr": "Hangi ifade savaş veya kriz sırasındaki sivil savunmayı tanımlar?",
+      "uk": "Яке твердження описує цивільну оборону під час війни чи кризи?"
     },
     "opts": [
       {
         "en": "Important activities such as school, work, and health care can continue to function",
-        "sv": "Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera"
+        "sv": "Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera",
+        "zh-Hant": "學校、工作、醫療衛生等重要活動能夠繼續運轉",
+        "zh-Hans": "学校、工作、医疗卫生等重要活动能够继续运转",
+        "ar": "يمكن أن تستمرّ الأنشطة المهمة مثل المدرسة والعمل والرعاية الصحية في العمل",
+        "ckb": "چالاکییە گرنگەکان وەک قوتابخانە، کار و خزمەتگوزاریی تەندروستی دەتوانن بەردەوام بن لە کارکردن",
+        "fa": "فعالیت‌های مهم مانند مدرسه، کار و خدمات بهداشتی و درمانی می‌توانند به کار خود ادامه دهند",
+        "pl": "Ważne funkcje, takie jak szkoła, praca i opieka zdrowotna, mogą dalej działać",
+        "so": "Hawlaha muhiimka ah sida iskuulka, shaqada iyo daryeelka caafimaadka way sii shaqayn karaan",
+        "ti": "ኣገደስቲ ንጥፈታት ከም ቤት ትምህርቲ፣ ስራሕን ክንክን ጥዕናን ክቕጽሉ ይኽእሉ",
+        "tr": "Okul, iş ve sağlık hizmetleri gibi önemli işlevler işlemeye devam edebilir",
+        "uk": "Важливі функції, такі як школа, робота та охорона здоров'я, можуть продовжувати працювати"
       },
       {
         "en": "Political elections are replaced with military decisions",
-        "sv": "Politiska val ersätts med militära beslut"
+        "sv": "Politiska val ersätts med militära beslut",
+        "zh-Hant": "政治選舉被軍事決定所取代",
+        "zh-Hans": "政治选举被军事决定所取代",
+        "ar": "تُستبدَل الانتخابات السياسية بقرارات عسكرية",
+        "ckb": "هەڵبژاردنە سیاسییەکان بە بڕیاری سەربازی جێگۆڕکێ دەکرێن",
+        "fa": "انتخابات سیاسی با تصمیم‌های نظامی جایگزین می‌شود",
+        "pl": "Wybory polityczne zostają zastąpione decyzjami wojskowymi",
+        "so": "Doorashooyinka siyaasadeed waxaa lagu beddelaa go'aanno militari",
+        "ti": "ፖለቲካዊ ምርጫታት ብወተሃደራዊ ውሳነታት ይትክኡ",
+        "tr": "Siyasi seçimlerin yerini askeri kararlar alır",
+        "uk": "Політичні вибори замінюються військовими рішеннями"
       },
       {
         "en": "Only the Swedish Armed Forces are responsible for society’s resilience",
-        "sv": "Bara Försvarsmakten ansvarar för samhällets motståndskraft"
+        "sv": "Bara Försvarsmakten ansvarar för samhällets motståndskraft",
+        "zh-Hant": "只有 Försvarsmakten（瑞典武裝部隊）負責社會的抗禦能力",
+        "zh-Hans": "只有 Försvarsmakten（瑞典武装部队）负责社会的抗御能力",
+        "ar": "القوات المسلحة السويدية (Försvarsmakten) وحدها مسؤولة عن صمود المجتمع",
+        "ckb": "تەنها هێزە چەکدارەکانی سوید (Försvarsmakten) بەرپرسی بەرگەگرتنی کۆمەڵگان",
+        "fa": "تنها نیروهای مسلح سوئد (Försvarsmakten) مسئول تاب‌آوری جامعه هستند",
+        "pl": "Za odporność społeczeństwa odpowiadają wyłącznie Siły Zbrojne (Försvarsmakten)",
+        "so": "Kaliya Ciidamada Qalabka Sida ee Iswiidhan (Försvarsmakten) ayaa mas'uul ka ah adkaysiga bulshada",
+        "ti": "ንጽንዓት ሕብረተሰብ ጥራይ ሓይልታት ምክልኻል ሽወደን (Försvarsmakten) ሓላፍነት ይወስዳ",
+        "tr": "Toplumun dayanıklılığından yalnızca İsveç Silahlı Kuvvetleri (Försvarsmakten) sorumludur",
+        "uk": "За стійкість суспільства відповідають лише Збройні сили (Försvarsmakten)"
       },
       {
         "en": "The EU decides every school’s daily timetable",
-        "sv": "EU bestämmer varje skolas dagliga schema"
+        "sv": "EU bestämmer varje skolas dagliga schema",
+        "zh-Hant": "EU（歐盟）決定每所學校的每日課表",
+        "zh-Hans": "EU（欧盟）决定每所学校的每日课表",
+        "ar": "يحدّد الاتحاد الأوروبي (EU) الجدول اليومي لكلّ مدرسة",
+        "ckb": "EU خشتەی ڕۆژانەی هەر قوتابخانەیەک دیاری دەکات",
+        "fa": "EU برنامهٔ روزانهٔ هر مدرسه را تعیین می‌کند",
+        "pl": "EU ustala dzienny plan zajęć każdej szkoły",
+        "so": "EU waxay go'aamisaa jadwalka maalinlaha ah ee iskuul kasta",
+        "ti": "EU ናይ ነፍሲ ወከፍ ቤት ትምህርቲ መዓልታዊ ፕሮግራም ይውስን",
+        "tr": "EU, her okulun günlük ders programına karar verir",
+        "uk": "EU визначає щоденний розклад кожної школи"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Civil defence means that more than the military should be able to meet threats and challenges. It should help important social functions, such as school, work, and health care, continue during war or crisis.",
-      "sv": "Det civila försvaret innebär att fler än militären ska kunna möta hot och utmaningar. Det ska bidra till att samhällsviktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, kan fortsätta fungera vid krig eller kris."
+      "sv": "Det civila försvaret innebär att fler än militären ska kunna möta hot och utmaningar. Det ska bidra till att samhällsviktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, kan fortsätta fungera vid krig eller kris.",
+      "zh-Hant": "民事防衛意味著除軍隊之外，更多力量也應能夠應對威脅和挑戰。它應有助於讓學校、工作、醫療衛生等社會重要職能在戰爭或危機時仍能繼續運轉。",
+      "zh-Hans": "民事防卫意味着除军队之外，更多力量也应能够应对威胁和挑战。它应有助于让学校、工作、医疗卫生等社会重要职能在战争或危机时仍能继续运转。",
+      "ar": "يعني الدفاع المدني أن يكون أكثر من الجيش قادرين على مواجهة التهديدات والتحديات. ويُفترض أن يسهم في استمرار عمل الوظائف المهمة في المجتمع، مثل المدرسة والعمل والرعاية الصحية، أثناء الحرب أو الأزمة.",
+      "ckb": "بەرگریی مەدەنی واتە زیاتر لە سوپا بتوانن ڕووبەڕووی هەڕەشە و ئاستەنگەکان ببنەوە. دەبێت یارمەتی بدات کە کارە گرنگەکانی کۆمەڵگا، وەک قوتابخانە، کار و خزمەتگوزاریی تەندروستی، لە کاتی جەنگ یان قەیراندا بەردەوام بن لە کارکردن.",
+      "fa": "دفاع غیرنظامی به این معناست که افزون بر ارتش، دیگران نیز بتوانند با تهدیدها و چالش‌ها روبه‌رو شوند. این باید کمک کند کارکردهای مهم جامعه، مانند مدرسه، کار و خدمات بهداشتی و درمانی، در زمان جنگ یا بحران به کار خود ادامه دهند.",
+      "pl": "Obrona cywilna oznacza, że nie tylko wojsko powinno być w stanie stawić czoła zagrożeniom i wyzwaniom. Ma ona pomóc, aby ważne dla społeczeństwa funkcje, na przykład szkoła, praca oraz opieka zdrowotna, mogły dalej działać podczas wojny lub kryzysu.",
+      "so": "Difaaca rayidku waxa uu ka dhigan yahay in ka badan ciidanka ay awoodaan inay la qabsadaan hanjabaadaha iyo caqabadaha. Waa inuu ka caawiyaa in hawlaha bulshada muhiimka ah, sida iskuulka, shaqada iyo daryeelka caafimaadka, ay sii shaqaynayaan xilliga dagaal ama dhibaato.",
+      "ti": "ሲቪላዊ ምክልኻል ማለት ካብ ሰራዊት ንላዕሊ ንስግኣታትን ብድሆታትን ክገጥሙ ክኽእሉ ኣለዎም ማለት እዩ። ንሕብረተሰብ ኣገደስቲ ዝኾኑ ንጥፈታት፣ ንኣብነት ቤት ትምህርቲ፣ ስራሕን ክንክን ጥዕናን፣ ኣብ እዋን ኲናት ወይ ቅልውላው ክቕጽሉ ክሕግዝ ኣለዎ።",
+      "tr": "Sivil savunma, tehdit ve zorluklarla yalnızca ordunun değil daha fazlasının baş edebilmesi gerektiği anlamına gelir. Okul, iş ve sağlık hizmetleri gibi toplum açısından önemli işlevlerin savaş veya kriz sırasında işlemeye devam edebilmesine katkıda bulunmalıdır.",
+      "uk": "Цивільна оборона означає, що протидіяти загрозам і викликам має бути здатна не лише армія. Вона має сприяти тому, щоб важливі для суспільства функції, наприклад школа, робота та охорона здоров'я, могли й далі працювати під час війни чи кризи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9848,30 +10148,90 @@
     "type": "single_choice",
     "q": {
       "en": "How often are elections to the European Parliament held?",
-      "sv": "Hur ofta hålls val till EU-parlamentet?"
+      "sv": "Hur ofta hålls val till EU-parlamentet?",
+      "zh-Hant": "EU（歐盟）議會的選舉多久舉行一次？",
+      "zh-Hans": "EU（欧盟）议会的选举多久举行一次？",
+      "ar": "كم مرة تُجرى انتخابات البرلمان الأوروبي (EU-parlamentet)؟",
+      "ckb": "هەڵبژاردنی پەرلەمانی ئەورووپا (EU-parlamentet) هەر چەند جارێک ئەنجام دەدرێت؟",
+      "fa": "انتخابات پارلمان اروپا (EU-parlamentet) هر چند وقت یک‌بار برگزار می‌شود؟",
+      "pl": "Jak często odbywają się wybory do Parlamentu Europejskiego (EU-parlamentet)?",
+      "so": "Inta jeer ee la qabto doorashooyinka Baarlamaanka Yurub (EU-parlamentet)?",
+      "ti": "ምርጫታት ናይ ኤውሮጳዊ ባይቶ (EU-parlamentet) ክንደይ ግዜ ይካየድ?",
+      "tr": "Avrupa Parlamentosu (EU-parlamentet) seçimleri ne sıklıkla yapılır?",
+      "uk": "Як часто проводяться вибори до Європейського парламенту (EU-parlamentet)?"
     },
     "opts": [
       {
         "en": "Every five years",
-        "sv": "Vart femte år"
+        "sv": "Vart femte år",
+        "zh-Hant": "每五年一次",
+        "zh-Hans": "每五年一次",
+        "ar": "كلّ خمس سنوات",
+        "ckb": "هەر پێنج ساڵ جارێک",
+        "fa": "هر پنج سال یک‌بار",
+        "pl": "Co pięć lat",
+        "so": "Shantii sanaba mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት",
+        "tr": "Beş yılda bir",
+        "uk": "Кожні п'ять років"
       },
       {
         "en": "Every four years",
-        "sv": "Vart fjärde år"
+        "sv": "Vart fjärde år",
+        "zh-Hant": "每四年一次",
+        "zh-Hans": "每四年一次",
+        "ar": "كلّ أربع سنوات",
+        "ckb": "هەر چوار ساڵ جارێک",
+        "fa": "هر چهار سال یک‌بار",
+        "pl": "Co cztery lata",
+        "so": "Afartii sanaba mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት",
+        "tr": "Dört yılda bir",
+        "uk": "Кожні чотири роки"
       },
       {
         "en": "Every year",
-        "sv": "Varje år"
+        "sv": "Varje år",
+        "zh-Hant": "每年一次",
+        "zh-Hans": "每年一次",
+        "ar": "كلّ سنة",
+        "ckb": "هەموو ساڵێک",
+        "fa": "هر سال",
+        "pl": "Co roku",
+        "so": "Sannad kasta",
+        "ti": "ዓመት ዓመት",
+        "tr": "Her yıl",
+        "uk": "Щороку"
       },
       {
         "en": "Only when Sweden changes government",
-        "sv": "Endast när Sverige byter regering"
+        "sv": "Endast när Sverige byter regering",
+        "zh-Hant": "只在瑞典更換政府時舉行",
+        "zh-Hans": "只在瑞典更换政府时举行",
+        "ar": "فقط عندما تغيّر السويد حكومتها",
+        "ckb": "تەنها کاتێک سوید حکومەتی خۆی دەگۆڕێت",
+        "fa": "فقط زمانی که سوئد دولت خود را تغییر می‌دهد",
+        "pl": "Tylko wtedy, gdy Szwecja zmienia rząd",
+        "so": "Kaliya marka Iswiidhan ay beddesho dawladda",
+        "ti": "ሽወደን መንግስቲ ክትቅይር ከላ ጥራይ",
+        "tr": "Yalnızca İsveç hükümet değiştirdiğinde",
+        "uk": "Лише коли Швеція змінює уряд"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Elections to the European Parliament are held every five years. That differs from elections to the Riksdag, regional councils, and municipal councils, which are held every four years.",
-      "sv": "Val till EU-parlamentet hålls vart femte år. Det skiljer sig från val till riksdag, regionfullmäktige och kommunfullmäktige, som hålls vart fjärde år."
+      "sv": "Val till EU-parlamentet hålls vart femte år. Det skiljer sig från val till riksdag, regionfullmäktige och kommunfullmäktige, som hålls vart fjärde år.",
+      "zh-Hant": "EU 議會的選舉每五年舉行一次。這與 Riksdag（議會）、region（大區）議會和 kommun（市鎮）議會的選舉不同，後者每四年舉行一次。",
+      "zh-Hans": "EU 议会的选举每五年举行一次。这与 Riksdag（议会）、region（大区）议会和 kommun（市镇）议会的选举不同，后者每四年举行一次。",
+      "ar": "تُجرى انتخابات البرلمان الأوروبي (EU-parlamentet) كلّ خمس سنوات. ويختلف ذلك عن انتخابات البرلمان السويدي (Riksdag) والمجالس الإقليمية (region) والمجالس البلدية (kommun)، التي تُجرى كلّ أربع سنوات.",
+      "ckb": "هەڵبژاردنی پەرلەمانی ئەورووپا (EU-parlamentet) هەر پێنج ساڵ جارێک ئەنجام دەدرێت. ئەمە جیاوازە لە هەڵبژاردنی Riksdag (پارلەمانی سوید) و ئەنجوومەنی هەرێم (region) و ئەنجوومەنی شارەوانی (kommun) کە هەر چوار ساڵ جارێک ئەنجام دەدرێن.",
+      "fa": "انتخابات پارلمان اروپا (EU-parlamentet) هر پنج سال یک‌بار برگزار می‌شود. این با انتخابات Riksdag (پارلمان سوئد) و شوراهای منطقه‌ای (region) و شوراهای کمونی (kommun) که هر چهار سال برگزار می‌شوند، تفاوت دارد.",
+      "pl": "Wybory do EU-parlamentet odbywają się co pięć lat. Różni się to od wyborów do Riksdagu, rad regionalnych (regionfullmäktige) i rad gminnych (kommunfullmäktige), które odbywają się co cztery lata.",
+      "so": "Doorashooyinka EU-parlamentet waxaa la qabtaa shantii sanaba mar. Tani way ka duwan tahay doorashooyinka Riksdag, golayaasha gobolka (regionfullmäktige) iyo golayaasha degmada (kommunfullmäktige), kuwaas oo la qabto afartii sanaba mar.",
+      "ti": "ምርጫታት EU-parlamentet ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት ይካየድ። እዚ ካብቲ ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት ዝካየድ ምርጫታት Riksdag፣ ቤት ምኽሪ ዞባ (regionfullmäktige) ከምኡ’ውን ቤት ምኽሪ kommun (kommunfullmäktige) ይፍለ።",
+      "tr": "EU-parlamentet seçimleri beş yılda bir yapılır. Bu, dört yılda bir yapılan Riksdag, bölge meclisi (regionfullmäktige) ve belediye meclisi (kommunfullmäktige) seçimlerinden farklıdır.",
+      "uk": "Вибори до EU-parlamentet проводяться кожні п'ять років. Це відрізняється від виборів до Riksdag, регіональних рад (regionfullmäktige) та муніципальних рад (kommunfullmäktige), які проводяться кожні чотири роки."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9894,30 +10254,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
+      "sv": "Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
+      "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在 kommun（市鎮）和 region（大區）選舉中的投票權？",
+      "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在 kommun（市镇）和 region（大区）选举中的投票权？",
+      "ar": "أيُّ إجابةٍ تصف حقّ التصويت في انتخابات البلديات (kommun) والأقاليم (region) لمن ليسوا مواطنين سويديين؟",
+      "ckb": "کام وەڵام مافی دەنگدان لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) بۆ ئەو کەسانەی هاووڵاتی سوید نین دەخاتە ڕوو؟",
+      "fa": "کدام پاسخ حق رأی در انتخابات کمون (kommun) و منطقه (region) را برای کسانی که شهروند سوئد نیستند توصیف می‌کند؟",
+      "pl": "Która odpowiedź opisuje prawo do głosowania w wyborach do kommun i regionów dla osób, które nie są obywatelami Szwecji?",
+      "so": "Jawaabtee qeexaysa xaqa codbixinta ee doorashooyinka kommun iyo region ee dadka aan ahayn muwaadiniinta Iswiidhan?",
+      "ti": "ኣየናይ መልሲ ንዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ምርጫታት kommun ከምኡ’ውን region ዘሎ መሰል ምድማጽ ይገልጽ?",
+      "tr": "Hangi cevap, İsveç vatandaşı olmayan kişiler için kommun ve region seçimlerindeki oy kullanma hakkını tanımlar?",
+      "uk": "Який варіант відповіді описує право голосу на виборах до kommun і region для людей, які не є громадянами Швеції?"
     },
     "opts": [
       {
         "en": "Some may vote if they are registered as living in Sweden and meet the rules for their group",
-        "sv": "Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp"
+        "sv": "Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp",
+        "zh-Hant": "部分人如果在瑞典登記戶籍，並符合其所屬群體的規定，就可以投票",
+        "zh-Hans": "部分人如果在瑞典登记户籍，并符合其所属群体的规定，就可以投票",
+        "ar": "يستطيع بعضهم التصويت إذا كانوا مسجّلين كمقيمين في السويد ويستوفون قواعد فئتهم",
+        "ckb": "هەندێکیان دەتوانن دەنگ بدەن ئەگەر لە سوید وەک نیشتەجێ تۆمارکرابن و ڕێساکانی گرووپەکەی خۆیان بهێننە دی",
+        "fa": "برخی می‌توانند رأی بدهند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و قواعد گروه خود را برآورده کنند",
+        "pl": "Niektórzy mogą głosować, jeśli są zameldowani (folkbokförda) w Szwecji i spełniają zasady dla swojej grupy",
+        "so": "Qaar way codeyn karaan haddii ay ku diiwaangashan yihiin (folkbokförda) Iswiidhan oo ay buuxiyaan xeerarka kooxdooda",
+        "ti": "ገሊኦም ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ናይ ጉጅሌኦም ሕግታት እንተ ኣማሊኦምን ክመርጹ ይኽእሉ",
+        "tr": "İsveç'te kayıtlı (folkbokförda) olan ve grupları için kuralları karşılayan bazı kişiler oy kullanabilir",
+        "uk": "Дехто може голосувати, якщо вони зареєстровані (folkbokförda) у Швеції та відповідають правилам для своєї групи"
       },
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
-        "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval"
+        "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在 kommun 或 region 選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在 kommun 或 region 选举中投票",
+        "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
+        "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
+        "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach do kommun ani regionów",
+        "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka kommun ama region",
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት kommun ወይ region ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse kommun veya region seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на виборах до kommun чи region"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
-        "sv": "Alla turister får rösta om de är i Sverige på valdagen"
+        "sv": "Alla turister får rösta om de är i Sverige på valdagen",
+        "zh-Hant": "所有遊客只要在選舉日身處瑞典就可以投票",
+        "zh-Hans": "所有游客只要在选举日身处瑞典就可以投票",
+        "ar": "يحقّ لكلّ السياح التصويت إذا كانوا في السويد يوم الانتخابات",
+        "ckb": "هەموو گەشتیارەکان ئەگەر لە ڕۆژی هەڵبژاردندا لە سوید بن بۆیان هەیە دەنگ بدەن",
+        "fa": "همهٔ گردشگران اگر در روز انتخابات در سوئد باشند می‌توانند رأی بدهند",
+        "pl": "Wszyscy turyści mogą głosować, jeśli są w Szwecji w dniu wyborów",
+        "so": "Dhammaan dalxiisayaasha way codayn karaan haddii ay Iswiidhan joogaan maalinta doorashada",
+        "ti": "ኩሎም ቱሪስትታት ኣብ መዓልቲ ምርጫ ኣብ ሽወደን እንተ ኣልዮም ክመርጹ ይኽእሉ",
+        "tr": "Tüm turistler seçim gününde İsveç'teyseler oy kullanabilir",
+        "uk": "Усі туристи можуть голосувати, якщо вони в Швеції у день виборів"
       },
       {
         "en": "Party membership is always the only requirement",
-        "sv": "Partimedlemskap är alltid det enda kravet"
+        "sv": "Partimedlemskap är alltid det enda kravet",
+        "zh-Hant": "政黨黨籍始終是唯一的要求",
+        "zh-Hans": "政党党籍始终是唯一的要求",
+        "ar": "عضوية الحزب هي دائمًا الشرط الوحيد",
+        "ckb": "ئەندامێتیی پارت هەمیشە تەنها مەرجە",
+        "fa": "عضویت حزبی همیشه تنها شرط است",
+        "pl": "Członkostwo w partii jest zawsze jedynym wymogiem",
+        "so": "Xubinnimada xisbi had iyo jeer waa shuruudda kaliya",
+        "ti": "ኣባልነት ሰልፊ ኩሉ ግዜ እቲ ብቸኛ ቅድመ ኩነት እዩ",
+        "tr": "Parti üyeliği her zaman tek koşuldur",
+        "uk": "Членство в партії завжди є єдиною вимогою"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Swedish citizenship is not always required for municipal and regional elections. People who are not Swedish citizens may have the right to vote if they are registered as living in Sweden and meet the rules, such as three years of registration or special rules for EU and Nordic citizens.",
-      "sv": "För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna, till exempel tre års folkbokföring eller särskilda regler för EU- och nordiska medborgare."
+      "sv": "För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna, till exempel tre års folkbokföring eller särskilda regler för EU- och nordiska medborgare.",
+      "zh-Hant": "kommun 和 region 選舉並不總是要求具有瑞典公民身分。非瑞典公民如果在瑞典登記戶籍（folkbokförd）並符合相關規定，就可能擁有投票權，例如登記戶籍滿三年，或適用於 EU 公民和北歐公民的特殊規定。",
+      "zh-Hans": "kommun 和 region 选举并不总是要求具有瑞典公民身份。非瑞典公民如果在瑞典登记户籍（folkbokförd）并符合相关规定，就可能拥有投票权，例如登记户籍满三年，或适用于 EU 公民和北欧公民的特殊规定。",
+      "ar": "لا تُشترَط دائمًا الجنسية السويدية لانتخابات البلديات (kommun) والأقاليم (region). فالأشخاص الذين ليسوا مواطنين سويديين قد يكون لهم حقّ التصويت إذا كانوا مسجّلين كمقيمين في السويد ويستوفون الشروط، مثل ثلاث سنوات من التسجيل أو قواعد خاصة لمواطني الاتحاد الأوروبي (EU) ومواطني دول الشمال.",
+      "ckb": "بۆ هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) هەمیشە هاووڵاتیبوونی سوید پێویست نییە. ئەو کەسانەی هاووڵاتی سوید نین لەوانەیە مافی دەنگدانیان هەبێت ئەگەر لە سوید وەک نیشتەجێ تۆمارکرابن و مەرجەکان بهێننە دی، وەک سێ ساڵ تۆمارکردن یان ڕێسای تایبەت بۆ هاووڵاتیانی EU و وڵاتانی باکووری ئەورووپا.",
+      "fa": "برای انتخابات کمون (kommun) و منطقه (region) همیشه شهروندی سوئد لازم نیست. کسانی که شهروند سوئد نیستند ممکن است حق رأی داشته باشند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و شرایط را برآورده کنند، مانند سه سال ثبت اقامت یا قواعد ویژه برای شهروندان EU و کشورهای شمال اروپا.",
+      "pl": "W wyborach do kommun i regionów nie zawsze wymagane jest obywatelstwo szwedzkie. Osoby, które nie są obywatelami Szwecji, mogą mieć prawo do głosowania, jeśli są zameldowane (folkbokförda) w Szwecji i spełniają zasady, na przykład trzy lata zameldowania lub szczególne zasady dla obywateli EU i krajów nordyckich.",
+      "so": "Doorashooyinka kommun iyo region had iyo jeer looma baahna muwaadinimada Iswiidhan. Dadka aan ahayn muwaadiniinta Iswiidhan waxay yeelan karaan xaqa codbixinta haddii ay ku diiwaangashan yihiin (folkbokförda) Iswiidhan oo ay buuxiyaan xeerarka, sida saddex sano oo diiwaangelin ah ama xeerar gaar ah oo loogu talagalay muwaadiniinta EU iyo kuwa waqooyiga Yurub.",
+      "ti": "ንምርጫታት kommun ከምኡ’ውን region ኩሉ ግዜ ዜግነት ሽወደን ኣየድልን። ዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ሕግታት እንተ ኣማሊኦምን፣ ንኣብነት ሰለስተ ዓመት ምዝገባ ወይ ንዜጋታት EU ከምኡ’ውን ኖርዲክ ፍሉያት ሕግታት፣ መሰል ምድማጽ ክህልዎም ይኽእል።",
+      "tr": "kommun ve region seçimleri için İsveç vatandaşlığı her zaman gerekli değildir. İsveç vatandaşı olmayan kişiler, İsveç'te kayıtlı (folkbokförda) iseler ve kuralları karşılıyorlarsa oy kullanma hakkına sahip olabilir; örneğin üç yıllık kayıt ya da EU ve İskandinav vatandaşları için özel kurallar.",
+      "uk": "Для виборів до kommun і region не завжди потрібне шведське громадянство. Особи, які не є громадянами Швеції, можуть мати право голосу, якщо вони зареєстровані за місцем проживання (folkbokförda) у Швеції та відповідають правилам, наприклад три роки реєстрації або особливі правила для громадян EU та країн Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9941,30 +10361,90 @@
     "type": "single_choice",
     "q": {
       "en": "What is stated on the voting card sent home before an election?",
-      "sv": "Vad står på röstkortet som skickas hem före valet?"
+      "sv": "Vad står på röstkortet som skickas hem före valet?",
+      "zh-Hant": "選舉前寄到家中的投票卡（röstkort）上寫著什麼？",
+      "zh-Hans": "选举前寄到家中的投票卡（röstkort）上写着什么？",
+      "ar": "ماذا يُذكر في بطاقة التصويت التي تُرسَل إلى المنزل قبل الانتخابات؟",
+      "ckb": "لە کارتی دەنگدان کە پێش هەڵبژاردن بۆ ماڵەوە دەنێردرێت چی نووسراوە؟",
+      "fa": "در کارت رأی که پیش از انتخابات به خانه فرستاده می‌شود چه چیزی نوشته شده است؟",
+      "pl": "Co jest podane na karcie do głosowania wysyłanej do domu przed wyborami?",
+      "so": "Maxaa ku qoran kaarka codbixinta ee guriga loo soo diro doorashada ka hor?",
+      "ti": "ቅድሚ ምርጫ ናብ ገዛ ኣብ ዝለኣኽ ናይ ምርጫ ካርድ እንታይ ተጻሒፉ ኣሎ?",
+      "tr": "Seçimden önce eve gönderilen oy kartında ne yazar?",
+      "uk": "Що зазначено на картці для голосування, яку надсилають додому перед виборами?"
     },
     "opts": [
       {
         "en": "Which polling station the voter should go to",
-        "sv": "Vilken vallokal väljaren ska gå till"
+        "sv": "Vilken vallokal väljaren ska gå till",
+        "zh-Hant": "選民應前往哪個投票站",
+        "zh-Hans": "选民应前往哪个投票站",
+        "ar": "أيُّ مركز اقتراعٍ يجب أن يذهب إليه الناخب",
+        "ckb": "ئەو شوێنی دەنگدانەی کە دەنگدەر دەبێت بۆی بچێت",
+        "fa": "اینکه رأی‌دهنده باید به کدام شعبهٔ اخذ رأی برود",
+        "pl": "Do którego lokalu wyborczego ma się udać wyborca",
+        "so": "Goobta codbixinta ee uu doodaha tagi doono",
+        "ti": "እቲ መራጺ ናብ ኣየናይ መረጺ ቦታ ክኸይድ ከም ዘለዎ",
+        "tr": "Seçmenin hangi sandık merkezine gitmesi gerektiği",
+        "uk": "До якої виборчої дільниці має піти виборець"
       },
       {
         "en": "Which party the voter must vote for",
-        "sv": "Vilket parti väljaren måste rösta på"
+        "sv": "Vilket parti väljaren måste rösta på",
+        "zh-Hant": "選民必須投票給哪個政黨",
+        "zh-Hans": "选民必须投票给哪个政党",
+        "ar": "أيُّ حزبٍ يجب على الناخب أن يصوّت له",
+        "ckb": "ئەو پارتەی کە دەنگدەر دەبێت دەنگی بداتێ",
+        "fa": "اینکه رأی‌دهنده باید به کدام حزب رأی بدهد",
+        "pl": "Na którą partię wyborca musi zagłosować",
+        "so": "Xisbiga uu doodaha ku qasban yahay inuu u codeeyo",
+        "ti": "እቲ መራጺ ኣየናይ ሰልፊ ክመርጽ ግዴታ ዘለዎ",
+        "tr": "Seçmenin hangi partiye oy vermek zorunda olduğu",
+        "uk": "За яку партію виборець зобов'язаний проголосувати"
       },
       {
         "en": "How other people have voted",
-        "sv": "Hur andra personer har röstat"
+        "sv": "Hur andra personer har röstat",
+        "zh-Hant": "其他人是怎麼投票的",
+        "zh-Hans": "其他人是怎么投票的",
+        "ar": "كيف صوّت أشخاصٌ آخرون",
+        "ckb": "ئەوەی کەسانی تر چۆن دەنگیان داوە",
+        "fa": "اینکه دیگران چگونه رأی داده‌اند",
+        "pl": "Jak głosowały inne osoby",
+        "so": "Sida ay dadka kale u codeeyeen",
+        "ti": "ካልኦት ሰባት ብኸመይ ከም ዝመረጹ",
+        "tr": "Diğer kişilerin nasıl oy verdiği",
+        "uk": "Як проголосували інші люди"
       },
       {
         "en": "That advance voting is forbidden",
-        "sv": "Att förtidsröstning är förbjuden"
+        "sv": "Att förtidsröstning är förbjuden",
+        "zh-Hant": "提前投票是被禁止的",
+        "zh-Hans": "提前投票是被禁止的",
+        "ar": "أنّ التصويت المسبق محظور",
+        "ckb": "ئەوەی کە دەنگدانی پێشوەختە قەدەغەیە",
+        "fa": "اینکه رأی‌دادن پیش از موعد ممنوع است",
+        "pl": "Że głosowanie wcześniejsze jest zabronione",
+        "so": "In horay-codbixinta la mamnuucay",
+        "ti": "ቅድሚ ግዜ ምምራጽ ክልኩል ምዃኑ",
+        "tr": "Önceden oy vermenin yasak olduğu",
+        "uk": "Що дострокове голосування заборонене"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The voting card shows which polling station the voter should go to. It is also possible to vote in advance at special places, and polling stations have ballot papers for the different parties.",
-      "sv": "Röstkortet visar vilken vallokal väljaren ska gå till. Det går också att rösta i förväg på särskilda platser, och i vallokalen finns valsedlar till de olika partierna."
+      "sv": "Röstkortet visar vilken vallokal väljaren ska gå till. Det går också att rösta i förväg på särskilda platser, och i vallokalen finns valsedlar till de olika partierna.",
+      "zh-Hant": "投票卡顯示選民應前往哪個投票站。也可以在特定地點提前投票，投票站內備有各政黨的選票。",
+      "zh-Hans": "投票卡显示选民应前往哪个投票站。也可以在特定地点提前投票，投票站内备有各政党的选票。",
+      "ar": "تُبيّن بطاقة التصويت مركز الاقتراع الذي يجب أن يذهب إليه الناخب. ويمكن أيضًا التصويت مسبقًا في أماكن خاصة، وتتوفر في مركز الاقتراع أوراق اقتراع لمختلف الأحزاب.",
+      "ckb": "کارتی دەنگدان پیشان دەدات کە دەنگدەر دەبێت بۆ کام شوێنی دەنگدان بچێت. هەروەها دەکرێت پێشوەختە لە شوێنە تایبەتەکان دەنگ بدرێت، و لە شوێنی دەنگداندا برگەی دەنگدان بۆ پارتە جیاوازەکان هەیە.",
+      "fa": "کارت رأی نشان می‌دهد که رأی‌دهنده باید به کدام شعبهٔ اخذ رأی برود. همچنین می‌توان پیش از موعد در مکان‌های ویژه رأی داد، و در شعبهٔ اخذ رأی برگه‌های رأی برای احزاب مختلف موجود است.",
+      "pl": "Karta do głosowania pokazuje, do którego lokalu wyborczego ma się udać wyborca. Można też głosować wcześniej w wyznaczonych miejscach, a w lokalu wyborczym dostępne są karty do głosowania różnych partii.",
+      "so": "Kaarka codbixinta wuxuu tusayaa goobta codbixinta ee uu doodaha tagi doono. Waxaa kale oo suurtagal ah in horay loogu codeeyo meelo gaar ah, goobaha codbixintana waxaa yaal warqado codbixineed oo xisbiyada kala duwan u ah.",
+      "ti": "እታ ናይ ምርጫ ካርድ እቲ መራጺ ናብ ኣየናይ መረጺ ቦታ ክኸይድ ከም ዘለዎ ተርኢ። ኣብ ፍሉያት ቦታታት ቅድሚ ግዜ ምምራጽ እውን ይከኣል እዩ፣ ኣብ መረጺ ቦታ ድማ ናይ ዝተፈላለዩ ሰልፍታት ናይ ምርጫ ወረቐታት ኣለዋ።",
+      "tr": "Oy kartı, seçmenin gitmesi gereken sandık merkezini gösterir. Belirli yerlerde önceden oy vermek de mümkündür ve sandık merkezlerinde farklı partilere ait oy pusulaları bulunur.",
+      "uk": "Картка для голосування показує, до якої виборчої дільниці має піти виборець. Також можна проголосувати достроково у спеціальних місцях, а на виборчій дільниці є виборчі бюлетені різних партій."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9987,30 +10467,90 @@
     "type": "single_choice",
     "q": {
       "en": "What can someone do to influence the content of party politics?",
-      "sv": "Vad kan den som vill påverka innehållet i partipolitiken göra?"
+      "sv": "Vad kan den som vill påverka innehållet i partipolitiken göra?",
+      "zh-Hant": "想要影響政黨政治內容的人可以做什麼？",
+      "zh-Hans": "想要影响政党政治内容的人可以做什么？",
+      "ar": "ماذا يمكن أن يفعله من يريد التأثير في مضمون السياسة الحزبية؟",
+      "ckb": "ئەو کەسەی کە دەیەوێت کاریگەری لەسەر ناوەڕۆکی سیاسەتی پارتایەتی دابنێت چی دەتوانێت بکات؟",
+      "fa": "کسی که می‌خواهد بر محتوای سیاست حزبی تأثیر بگذارد چه کاری می‌تواند انجام دهد؟",
+      "pl": "Co może zrobić osoba, która chce wpływać na treść polityki partyjnej?",
+      "so": "Maxay samayn kartaa qofka raba inuu saameeyo waxa ku jira siyaasadda xisbiyada?",
+      "ti": "ኣብ ትሕዝቶ ናይ ሰልፊ ፖለቲካ ጽልዋ ክገብር ዝደሊ ሰብ እንታይ ክገብር ይኽእል?",
+      "tr": "Parti politikalarının içeriğini etkilemek isteyen biri ne yapabilir?",
+      "uk": "Що може зробити людина, яка хоче впливати на зміст партійної політики?"
     },
     "opts": [
       {
         "en": "Become a member of a political party or start a new party together with others",
-        "sv": "Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra"
+        "sv": "Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra",
+        "zh-Hant": "加入一個政黨，或與他人一起創立一個新政黨",
+        "zh-Hans": "加入一个政党，或与他人一起创建一个新政党",
+        "ar": "أن يصبح عضوًا في حزبٍ سياسي أو يؤسّس حزبًا جديدًا مع آخرين",
+        "ckb": "ببێتە ئەندامی پارتێکی سیاسی یان لەگەڵ کەسانی تردا پارتێکی نوێ دامەزرێنێت",
+        "fa": "عضو یک حزب سیاسی شدن یا تأسیس یک حزب جدید همراه با دیگران",
+        "pl": "Zostać członkiem partii politycznej lub założyć nową partię wspólnie z innymi",
+        "so": "Noqo xubin ka mid ah xisbi siyaasadeed ama dad kale la aas xisbi cusub",
+        "ti": "ኣባል ናይ ሓደ ፖለቲካዊ ሰልፊ ምዃን ወይ ምስ ካልኦት ሓቢርካ ሓድሽ ሰልፊ ምምስራት",
+        "tr": "Bir siyasi partiye üye olmak veya başkalarıyla birlikte yeni bir parti kurmak",
+        "uk": "Стати членом політичної партії або заснувати нову партію разом з іншими"
       },
       {
         "en": "Only vote if the person already sits in the Riksdag",
-        "sv": "Bara rösta om personen redan sitter i riksdagen"
+        "sv": "Bara rösta om personen redan sitter i riksdagen",
+        "zh-Hant": "只有當此人已經是 Riksdag（議會）議員時才能投票",
+        "zh-Hans": "只有当此人已经是 Riksdag（议会）议员时才能投票",
+        "ar": "أن يصوّت فقط إذا كان الشخص جالسًا أصلًا في برلمان السويد (Riksdag)",
+        "ckb": "تەنها ئەگەر ئەو کەسە پێشتر لە Riksdag (پارلەمانی سوید) بوو دەنگ بدات",
+        "fa": "فقط در صورتی رأی بدهد که آن شخص از پیش در Riksdag (پارلمان سوئد) عضو باشد",
+        "pl": "Głosować tylko wtedy, gdy osoba już zasiada w Riksdagu",
+        "so": "Kaliya cod bixi haddii qofku horay ugu jiro Riksdag-ga (baarlamaanka)",
+        "ti": "እቲ ሰብ ኣቐዲሙ ኣብ Riksdag (ሃገራዊ ባይቶ) እንተ ኣልዩ ጥራይ ምምራጽ",
+        "tr": "Yalnızca kişi zaten Riksdag'da bulunuyorsa oy vermek",
+        "uk": "Голосувати лише тоді, коли людина вже засідає в Riksdag (парламенті)"
       },
       {
         "en": "Let the courts write every party platform",
-        "sv": "Låta domstolarna skriva alla partiers program"
+        "sv": "Låta domstolarna skriva alla partiers program",
+        "zh-Hant": "讓法院來撰寫所有政黨的綱領",
+        "zh-Hans": "让法院来撰写所有政党的纲领",
+        "ar": "أن يدع المحاكم تكتب برامج جميع الأحزاب",
+        "ckb": "وا بکات دادگاکان پڕۆگرامی هەموو پارتەکان بنووسن",
+        "fa": "بگذارد دادگاه‌ها برنامهٔ همهٔ احزاب را بنویسند",
+        "pl": "Pozwolić sądom pisać programy wszystkich partii",
+        "so": "U oggolow maxkamadaha inay qoraan barnaamijka dhammaan xisbiyada",
+        "ti": "ንኹሎም ሰልፍታት መደብ ዝጽሕፍ ቤት ፍርዲ ክኸውን ምፍቃድ",
+        "tr": "Tüm partilerin programını mahkemelerin yazmasına izin vermek",
+        "uk": "Дозволити судам писати програми всіх партій"
       },
       {
         "en": "Ban other parties from having ideas",
-        "sv": "Förbjuda andra partier från att ha idéer"
+        "sv": "Förbjuda andra partier från att ha idéer",
+        "zh-Hant": "禁止其他政黨擁有自己的理念",
+        "zh-Hans": "禁止其他政党拥有自己的理念",
+        "ar": "أن يمنع الأحزاب الأخرى من امتلاك الأفكار",
+        "ckb": "پارتە دیکەکان لە هەبوونی بیرۆکە قەدەغە بکات",
+        "fa": "احزاب دیگر را از داشتن ایده منع کند",
+        "pl": "Zakazać innym partiom posiadania idei",
+        "so": "Mamnuuc xisbiyada kale inay fikrado lahaadaan",
+        "ti": "ካልኦት ሰልፍታት ሓሳባት ከይህልዎም ምኽልካል",
+        "tr": "Diğer partilerin fikir sahibi olmasını yasaklamak",
+        "uk": "Заборонити іншим партіям мати ідеї"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Someone who wants to influence party politics can become a member of a political party. It is also possible to start a new party together with others; parties’ ideas and proposals give voters different alternatives.",
-      "sv": "Den som vill påverka partipolitik kan bli medlem i ett politiskt parti. Det går också att starta ett nytt parti tillsammans med andra; partiernas idéer och förslag ger väljare olika alternativ."
+      "sv": "Den som vill påverka partipolitik kan bli medlem i ett politiskt parti. Det går också att starta ett nytt parti tillsammans med andra; partiernas idéer och förslag ger väljare olika alternativ.",
+      "zh-Hant": "想要影響政黨政治的人可以加入一個政黨。也可以與他人一起創立一個新政黨；各政黨的理念和主張為選民提供了不同的選擇。",
+      "zh-Hans": "想要影响政党政治的人可以加入一个政党。也可以与他人一起创建一个新政党；各政党的理念和主张为选民提供了不同的选择。",
+      "ar": "من يريد التأثير في السياسة الحزبية يمكنه أن يصبح عضوًا في حزبٍ سياسي. ويمكن أيضًا تأسيس حزبٍ جديد مع آخرين؛ فأفكار الأحزاب ومقترحاتها تمنح الناخبين خياراتٍ مختلفة.",
+      "ckb": "ئەو کەسەی کە دەیەوێت کاریگەری لەسەر سیاسەتی پارتایەتی دابنێت دەتوانێت ببێتە ئەندامی پارتێکی سیاسی. هەروەها دەکرێت لەگەڵ کەسانی تردا پارتێکی نوێ دامەزرێنرێت؛ بیرۆکە و پێشنیارەکانی پارتەکان هەڵبژاردەی جیاواز دەدەنە دەنگدەران.",
+      "fa": "کسی که می‌خواهد بر سیاست حزبی تأثیر بگذارد می‌تواند عضو یک حزب سیاسی شود. همچنین می‌توان همراه با دیگران حزب جدیدی تأسیس کرد؛ ایده‌ها و پیشنهادهای احزاب به رأی‌دهندگان گزینه‌های گوناگون می‌دهند.",
+      "pl": "Osoba, która chce wpływać na politykę partyjną, może zostać członkiem partii politycznej. Można też wspólnie z innymi założyć nową partię; idee i propozycje partii dają wyborcom różne możliwości wyboru.",
+      "so": "Qofka raba inuu saameeyo siyaasadda xisbiyada wuxuu noqon karaa xubin ka mid ah xisbi siyaasadeed. Waxaa kale oo suurtagal ah in dad kale lala aaso xisbi cusub; fikradaha iyo soo jeedinta xisbiyadu waxay codbixiyayaasha siiyaan doorashooyin kala duwan.",
+      "ti": "ኣብ ናይ ሰልፊ ፖለቲካ ጽልዋ ክገብር ዝደሊ ሰብ ኣባል ናይ ሓደ ፖለቲካዊ ሰልፊ ክኸውን ይኽእል። ምስ ካልኦት ሓቢሩ ሓድሽ ሰልፊ ምምስራት እውን ይከኣል እዩ፤ ሓሳባትን እማመታትን ሰልፍታት ንመረጽቲ ዝተፈላለየ ኣማራጺታት ይህብዎም።",
+      "tr": "Parti politikasını etkilemek isteyen biri bir siyasi partiye üye olabilir. Başkalarıyla birlikte yeni bir parti kurmak da mümkündür; partilerin fikir ve önerileri seçmenlere farklı seçenekler sunar.",
+      "uk": "Той, хто хоче впливати на партійну політику, може стати членом політичної партії. Також можна разом з іншими заснувати нову партію; ідеї та пропозиції партій дають виборцям різні варіанти вибору."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10034,30 +10574,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement about special parties in municipal and regional elections is correct?",
-      "sv": "Vilket påstående om särskilda partier i kommun- och regionval är korrekt?"
+      "sv": "Vilket påstående om särskilda partier i kommun- och regionval är korrekt?",
+      "zh-Hant": "關於 kommun（市鎮）和 region（大區）選舉中的特殊政黨，哪項說法是正確的？",
+      "zh-Hans": "关于 kommun（市镇）和 region（大区）选举中的特殊政党，哪项说法是正确的？",
+      "ar": "ما العبارة الصحيحة بشأن الأحزاب الخاصة في انتخابات البلديات (kommun) والأقاليم (region)؟",
+      "ckb": "کام لێدوان دەربارەی پارتە تایبەتەکان لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) ڕاستە؟",
+      "fa": "کدام گزاره دربارهٔ احزاب ویژه در انتخابات کمون (kommun) و منطقه (region) درست است؟",
+      "pl": "Które stwierdzenie o lokalnych partiach w wyborach do kommun i regionów jest prawidłowe?",
+      "so": "Hadalkee ku saabsan xisbiyada gaarka ah ee doorashooyinka kommun iyo region ayaa sax ah?",
+      "ti": "ኣብ ምርጫታት kommun ከምኡ’ውን region ብዛዕባ ፍሉያት ሰልፍታት ኣየናይ ኣበሃህላ ቅኑዕ እዩ?",
+      "tr": "kommun ve region seçimlerindeki özel partiler hakkında hangi ifade doğrudur?",
+      "uk": "Яке твердження про особливі партії на виборах до kommun і region є правильним?"
     },
     "opts": [
       {
         "en": "They can have policies only for their own municipality or region",
-        "sv": "De kan ha politik bara för den egna kommunen eller regionen"
+        "sv": "De kan ha politik bara för den egna kommunen eller regionen",
+        "zh-Hant": "它們可以只針對本 kommun 或本 region 制定政策",
+        "zh-Hans": "它们可以只针对本 kommun 或本 region 制定政策",
+        "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
+        "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
+        "pl": "Mogą prowadzić politykę tylko dla własnej kommun lub własnego regionu",
+        "so": "Waxay siyaasad u yeelan karaan kaliya kommun-kooda ama region-kooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም kommun ወይ region ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi kommun veya region'ları için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власної kommun чи власного region"
       },
       {
         "en": "They must always be parties in the Riksdag",
-        "sv": "De måste alltid vara partier i riksdagen"
+        "sv": "De måste alltid vara partier i riksdagen",
+        "zh-Hant": "它們必須一律是 Riksdag（議會）中的政黨",
+        "zh-Hans": "它们必须始终是 Riksdag（议会）中的政党",
+        "ar": "يجب أن تكون دائمًا أحزابًا في برلمان السويد (Riksdag)",
+        "ckb": "هەمیشە دەبێت پارتی ناو Riksdag (پارلەمانی سوید) بن",
+        "fa": "همیشه باید احزابی در Riksdag (پارلمان سوئد) باشند",
+        "pl": "Muszą zawsze być partiami zasiadającymi w Riksdagu",
+        "so": "Waa inay had iyo jeer ahaadaan xisbiyo ku jira Riksdag-ga (baarlamaanka)",
+        "ti": "ኩሉ ግዜ ኣብ Riksdag (ሃገራዊ ባይቶ) ዘለዉ ሰልፍታት ክዀኑ ኣለዎም",
+        "tr": "Her zaman Riksdag'daki partiler olmaları gerekir",
+        "uk": "Вони завжди мусять бути партіями в Riksdag (парламенті)"
       },
       {
         "en": "They may not take part in election campaigns",
-        "sv": "De får inte delta i valrörelser"
+        "sv": "De får inte delta i valrörelser",
+        "zh-Hant": "它們不得參與競選活動",
+        "zh-Hans": "它们不得参与竞选活动",
+        "ar": "لا يجوز لها المشاركة في الحملات الانتخابية",
+        "ckb": "بۆیان نییە بەشداری لە کەمپەینە هەڵبژاردنییەکان بکەن",
+        "fa": "اجازه ندارند در کارزارهای انتخاباتی شرکت کنند",
+        "pl": "Nie wolno im uczestniczyć w kampaniach wyborczych",
+        "so": "Looma oggola inay ka qaybgalaan ololeyaasha doorashada",
+        "ti": "ኣብ ናይ ምርጫ ወፍርታት ክሳተፉ ኣይፍቀደሎምን",
+        "tr": "Seçim kampanyalarına katılmalarına izin verilmez",
+        "uk": "Їм не дозволено брати участь у виборчих кампаніях"
       },
       {
         "en": "They replace the Riksdag election",
-        "sv": "De ersätter valet till riksdagen"
+        "sv": "De ersätter valet till riksdagen",
+        "zh-Hant": "它們取代了 Riksdag 的選舉",
+        "zh-Hans": "它们取代了 Riksdag 的选举",
+        "ar": "إنها تحلّ محلّ انتخابات برلمان السويد (Riksdag)",
+        "ckb": "جێگەی هەڵبژاردنی Riksdag (پارلەمانی سوید) دەگرنەوە",
+        "fa": "جایگزین انتخابات Riksdag (پارلمان سوئد) می‌شوند",
+        "pl": "Zastępują wybory do Riksdagu",
+        "so": "Waxay beddelaan doorashada Riksdag-ga (baarlamaanka)",
+        "ti": "ንምርጫ Riksdag (ሃገራዊ ባይቶ) ይትክኡ",
+        "tr": "Riksdag seçiminin yerine geçerler",
+        "uk": "Вони замінюють вибори до Riksdag (парламенту)"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Municipal and regional elections can include special parties with policies for their own municipality or region, not for the national level. Before elections, parties try to persuade voters through debates, meetings, political advertising, and campaigns.",
-      "sv": "I kommun- och regionval kan det finnas särskilda partier som har politik för just sin kommun eller region, inte på riksnivå. Inför valen försöker partier övertyga väljare genom debatter, möten, politisk reklam och kampanjer."
+      "sv": "I kommun- och regionval kan det finnas särskilda partier som har politik för just sin kommun eller region, inte på riksnivå. Inför valen försöker partier övertyga väljare genom debatter, möten, politisk reklam och kampanjer.",
+      "zh-Hant": "在 kommun 和 region 選舉中，可能存在只針對本 kommun 或本 region 制定政策、而不在全國層面活動的特殊政黨。選舉前，各政黨透過辯論、集會、政治廣告和競選活動來爭取選民。",
+      "zh-Hans": "在 kommun 和 region 选举中，可能存在只针对本 kommun 或本 region 制定政策、而不在全国层面活动的特殊政党。选举前，各政党通过辩论、集会、政治广告和竞选活动来争取选民。",
+      "ar": "في انتخابات البلديات (kommun) والأقاليم (region) قد توجد أحزاب خاصة لها سياسات تخصّ بلديتها أو إقليمها وحده، لا على المستوى الوطني. وقبل الانتخابات تحاول الأحزاب إقناع الناخبين عبر المناظرات والاجتماعات والدعاية السياسية والحملات.",
+      "ckb": "لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) دەکرێت پارتە تایبەتەکان هەبن کە تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەیە، نەک لە ئاستی نیشتمانیدا. پێش هەڵبژاردنەکان پارتەکان هەوڵ دەدەن لە ڕێگەی گفتوگۆ، کۆبوونەوە، ڕیکلامی سیاسی و کەمپەینەوە دەنگدەران ڕازی بکەن.",
+      "fa": "در انتخابات کمون (kommun) و منطقه (region) ممکن است احزاب ویژه‌ای وجود داشته باشند که سیاست‌هایشان تنها مربوط به همان کمون یا منطقه است، نه در سطح ملی. پیش از انتخابات احزاب می‌کوشند با مناظره‌ها، نشست‌ها، تبلیغات سیاسی و کارزارها رأی‌دهندگان را متقاعد کنند.",
+      "pl": "W wyborach do kommun i regionów mogą istnieć lokalne partie, które prowadzą politykę tylko dla swojej kommun lub swojego regionu, a nie na poziomie krajowym. Przed wyborami partie starają się przekonać wyborców za pomocą debat, spotkań, reklamy politycznej i kampanii.",
+      "so": "Doorashooyinka kommun iyo region waxaa ku jiri kara xisbiyo gaar ah oo siyaasad u leh kaliya kommun-koodda ama region-koodda, ee aan ahayn heer qaran. Doorashooyinka ka hor, xisbiyadu waxay isku dayaan inay codbixiyayaasha ku qanciyaan doodo, kulamo, xayeysiis siyaasadeed iyo ololeyaal.",
+      "ti": "ኣብ ምርጫታት kommun ከምኡ’ውን region፣ ኣብ ሃገራዊ ደረጃ ዘይኮነ ንናይ ገዛእ ርእሶም kommun ወይ region ጥራይ ፖሊሲ ዘለዎም ፍሉያት ሰልፍታት ክህልዉ ይኽእሉ። ቅድሚ ምርጫታት ሰልፍታት ንመረጽቲ ብክትዕ፣ ኣኼባታት፣ ፖለቲካዊ ምልክታን ወፍርታትን ከእምንዎም ይፍትኑ።",
+      "tr": "kommun ve region seçimlerinde, ulusal düzeyde değil yalnızca kendi kommun veya region'u için politikası olan özel partiler bulunabilir. Seçimlerden önce partiler tartışmalar, toplantılar, siyasi reklamlar ve kampanyalarla seçmenleri ikna etmeye çalışır.",
+      "uk": "На виборах до kommun і region можуть існувати особливі партії, які мають політику лише для своєї kommun чи свого region, а не на загальнодержавному рівні. Перед виборами партії намагаються переконати виборців через дебати, зустрічі, політичну рекламу та кампанії."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -41160,19 +41760,59 @@
     "opts": [
       {
         "en": "The UN works for peace and security in the world",
-        "sv": "FN arbetar för fred och säkerhet i världen"
+        "sv": "FN arbetar för fred och säkerhet i världen",
+        "zh-Hant": "FN 致力於維護世界的和平與安全",
+        "zh-Hans": "FN 致力于维护世界的和平与安全",
+        "ar": "تعمل الأمم المتحدة (FN) من أجل السلام والأمن في العالم",
+        "ckb": "FN بۆ ئاشتی و ئاسایش لە جیهاندا کار دەکات",
+        "fa": "FN برای صلح و امنیت در جهان تلاش می‌کند",
+        "pl": "FN działa na rzecz pokoju i bezpieczeństwa na świecie",
+        "so": "FN waxay u shaqaysaa nabad iyo amni adduunka",
+        "ti": "FN ኣብ ዓለም ንሰላምን ጸጥታን ይሰርሕ",
+        "tr": "FN, dünyada barış ve güvenlik için çalışır",
+        "uk": "FN працює заради миру та безпеки у світі"
       },
       {
         "en": "The UN decides the budgets of Swedish municipalities",
-        "sv": "FN bestämmer svenska kommuners budgetar"
+        "sv": "FN bestämmer svenska kommuners budgetar",
+        "zh-Hant": "FN 決定瑞典各 kommun（市鎮）的預算",
+        "zh-Hans": "FN 决定瑞典各 kommun（市镇）的预算",
+        "ar": "تحدّد الأمم المتحدة (FN) ميزانيات البلديات السويدية (kommun)",
+        "ckb": "FN بودجەی شارەوانییەکانی (kommun) سوید دیاری دەکات",
+        "fa": "FN بودجهٔ کمون‌های (kommun) سوئد را تعیین می‌کند",
+        "pl": "FN ustala budżety szwedzkich kommun",
+        "so": "FN waxay go'aamisaa miisaaniyadaha kommun-yada Iswiidhan",
+        "ti": "FN ባጀት ናይ ሽወደን kommun ይውስን",
+        "tr": "FN, İsveç kommun'larının bütçelerine karar verir",
+        "uk": "FN визначає бюджети шведських kommun"
       },
       {
         "en": "The UN replaces Sweden’s courts",
-        "sv": "FN ersätter Sveriges domstolar"
+        "sv": "FN ersätter Sveriges domstolar",
+        "zh-Hant": "FN 取代瑞典的各級法院",
+        "zh-Hans": "FN 取代瑞典的各级法院",
+        "ar": "تحلّ الأمم المتحدة (FN) محلّ محاكم السويد",
+        "ckb": "FN جێگەی دادگاکانی سوید دەگرێتەوە",
+        "fa": "FN جایگزین دادگاه‌های سوئد می‌شود",
+        "pl": "FN zastępuje szwedzkie sądy",
+        "so": "FN waxay beddeshaa maxkamadaha Iswiidhan",
+        "ti": "FN ንኣብያተ ፍርዲ ሽወደን ይትክእ",
+        "tr": "FN, İsveç'in mahkemelerinin yerine geçer",
+        "uk": "FN замінює суди Швеції"
       },
       {
         "en": "The UN elects Sweden’s Riksdag every four years",
-        "sv": "FN väljer Sveriges riksdag vart fjärde år"
+        "sv": "FN väljer Sveriges riksdag vart fjärde år",
+        "zh-Hant": "FN 每四年選出瑞典的 Riksdag（議會）",
+        "zh-Hans": "FN 每四年选出瑞典的 Riksdag（议会）",
+        "ar": "تنتخب الأمم المتحدة (FN) برلمان السويد (Riksdag) كل أربع سنوات",
+        "ckb": "FN هەر چوار ساڵ جارێک Riksdag (پارلەمانی سوید) هەڵدەبژێرێت",
+        "fa": "FN هر چهار سال یک‌بار Riksdag (پارلمان سوئد) را انتخاب می‌کند",
+        "pl": "FN co cztery lata wybiera szwedzki Riksdag",
+        "so": "FN waxay afartii sanoba mar doorataa Riksdag-ga Iswiidhan",
+        "ti": "FN ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት ንRiksdag (ሃገራዊ ባይቶ) ሽወደን ይመርጽ",
+        "tr": "FN, dört yılda bir İsveç'in Riksdag'ını seçer",
+        "uk": "FN кожні чотири роки обирає шведський Riksdag (парламент)"
       }
     ],
     "answer": 0,
@@ -41291,19 +41931,59 @@
     "opts": [
       {
         "en": "The UN works for peace and security in the world",
-        "sv": "FN arbetar för fred och säkerhet i världen"
+        "sv": "FN arbetar för fred och säkerhet i världen",
+        "zh-Hant": "FN 致力於維護世界的和平與安全",
+        "zh-Hans": "FN 致力于维护世界的和平与安全",
+        "ar": "تعمل الأمم المتحدة (FN) من أجل السلام والأمن في العالم",
+        "ckb": "FN بۆ ئاشتی و ئاسایش لە جیهاندا کار دەکات",
+        "fa": "FN برای صلح و امنیت در جهان تلاش می‌کند",
+        "pl": "FN działa na rzecz pokoju i bezpieczeństwa na świecie",
+        "so": "FN waxay u shaqaysaa nabad iyo amni adduunka",
+        "ti": "FN ኣብ ዓለም ንሰላምን ጸጥታን ይሰርሕ",
+        "tr": "FN, dünyada barış ve güvenlik için çalışır",
+        "uk": "FN працює заради миру та безпеки у світі"
       },
       {
         "en": "The UN decides the budgets of Swedish municipalities",
-        "sv": "FN bestämmer svenska kommuners budgetar"
+        "sv": "FN bestämmer svenska kommuners budgetar",
+        "zh-Hant": "FN 決定瑞典各 kommun（市鎮）的預算",
+        "zh-Hans": "FN 决定瑞典各 kommun（市镇）的预算",
+        "ar": "تحدّد الأمم المتحدة (FN) ميزانيات البلديات السويدية (kommun)",
+        "ckb": "FN بودجەی شارەوانییەکانی (kommun) سوید دیاری دەکات",
+        "fa": "FN بودجهٔ کمون‌های (kommun) سوئد را تعیین می‌کند",
+        "pl": "FN ustala budżety szwedzkich kommun",
+        "so": "FN waxay go'aamisaa miisaaniyadaha kommun-yada Iswiidhan",
+        "ti": "FN ባጀት ናይ ሽወደን kommun ይውስን",
+        "tr": "FN, İsveç kommun'larının bütçelerine karar verir",
+        "uk": "FN визначає бюджети шведських kommun"
       },
       {
         "en": "The UN replaces Sweden’s courts",
-        "sv": "FN ersätter Sveriges domstolar"
+        "sv": "FN ersätter Sveriges domstolar",
+        "zh-Hant": "FN 取代瑞典的各級法院",
+        "zh-Hans": "FN 取代瑞典的各级法院",
+        "ar": "تحلّ الأمم المتحدة (FN) محلّ محاكم السويد",
+        "ckb": "FN جێگەی دادگاکانی سوید دەگرێتەوە",
+        "fa": "FN جایگزین دادگاه‌های سوئد می‌شود",
+        "pl": "FN zastępuje szwedzkie sądy",
+        "so": "FN waxay beddeshaa maxkamadaha Iswiidhan",
+        "ti": "FN ንኣብያተ ፍርዲ ሽወደን ይትክእ",
+        "tr": "FN, İsveç'in mahkemelerinin yerine geçer",
+        "uk": "FN замінює суди Швеції"
       },
       {
         "en": "The UN elects Sweden’s Riksdag every four years",
-        "sv": "FN väljer Sveriges riksdag vart fjärde år"
+        "sv": "FN väljer Sveriges riksdag vart fjärde år",
+        "zh-Hant": "FN 每四年選出瑞典的 Riksdag（議會）",
+        "zh-Hans": "FN 每四年选出瑞典的 Riksdag（议会）",
+        "ar": "تنتخب الأمم المتحدة (FN) برلمان السويد (Riksdag) كل أربع سنوات",
+        "ckb": "FN هەر چوار ساڵ جارێک Riksdag (پارلەمانی سوید) هەڵدەبژێرێت",
+        "fa": "FN هر چهار سال یک‌بار Riksdag (پارلمان سوئد) را انتخاب می‌کند",
+        "pl": "FN co cztery lata wybiera szwedzki Riksdag",
+        "so": "FN waxay afartii sanoba mar doorataa Riksdag-ga Iswiidhan",
+        "ti": "FN ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት ንRiksdag (ሃገራዊ ባይቶ) ሽወደን ይመርጽ",
+        "tr": "FN, dört yılda bir İsveç'in Riksdag'ını seçer",
+        "uk": "FN кожні чотири роки обирає шведський Riksdag (парламент)"
       }
     ],
     "answer": 0,
@@ -41340,19 +42020,59 @@
     "opts": [
       {
         "en": "EU countries make joint decisions and create laws that apply in member countries",
-        "sv": "EU-länder fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna"
+        "sv": "EU-länder fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna",
+        "zh-Hant": "EU 各成員國共同作出決定，並制定適用於各成員國的法律",
+        "zh-Hans": "EU 各成员国共同作出决定，并制定适用于各成员国的法律",
+        "ar": "تتخذ دول الاتحاد الأوروبي (EU) قرارات مشتركة وتضع قوانين تسري في الدول الأعضاء",
+        "ckb": "وڵاتانی EU بڕیاری هاوبەش دەدەن و یاسا دادەنێن کە لە وڵاتە ئەندامەکاندا جێبەجێ دەکرێن",
+        "fa": "کشورهای EU تصمیم‌های مشترک می‌گیرند و قوانینی وضع می‌کنند که در کشورهای عضو اجرا می‌شود",
+        "pl": "Kraje EU podejmują wspólne decyzje i tworzą prawa obowiązujące w państwach członkowskich",
+        "so": "Dalalka EU waxay gaaraan go'aanno wadajir ah waxayna sameeyaan sharciyo ku shaqeeya dalalka xubnaha ah",
+        "ti": "ሃገራት EU ሓባራዊ ውሳነታት ይወስዳ ኣብ ኣባላት ሃገራት ዝሰርሑ ሕግታት የውጽኣ",
+        "tr": "EU ülkeleri ortak kararlar alır ve üye ülkelerde geçerli olan yasalar oluşturur",
+        "uk": "Країни EU ухвалюють спільні рішення та створюють закони, що діють у державах-членах"
       },
       {
         "en": "Each EU country stops having its own municipalities",
-        "sv": "Varje EU-land slutar ha egna kommuner"
+        "sv": "Varje EU-land slutar ha egna kommuner",
+        "zh-Hant": "每個 EU 國家都不再設有自己的 kommun（市鎮）",
+        "zh-Hans": "每个 EU 国家都不再设有自己的 kommun（市镇）",
+        "ar": "تتوقّف كلّ دولة في الاتحاد الأوروبي (EU) عن أن تكون لها بلدياتها الخاصة (kommun)",
+        "ckb": "هەر وڵاتێکی EU واز لە هەبوونی شارەوانییە تایبەتەکانی خۆی (kommun) دەهێنێت",
+        "fa": "هر کشور EU داشتن کمون‌های (kommun) خود را متوقف می‌کند",
+        "pl": "Każdy kraj EU przestaje mieć własne kommun",
+        "so": "Dal kasta oo EU wuxuu joojiyaa inuu yeesho kommun-yadiisa gaarka ah",
+        "ti": "ነፍሲ ወከፍ ሃገር EU ናይ ገዛእ ርእሳ kommun ምውናን ተቋርጽ",
+        "tr": "Her EU ülkesi kendi kommun'larına sahip olmayı bırakır",
+        "uk": "Кожна країна EU перестає мати власні kommun"
       },
       {
         "en": "The Council of Europe decides every EU country’s election results",
-        "sv": "Europarådet bestämmer alla EU-länders valresultat"
+        "sv": "Europarådet bestämmer alla EU-länders valresultat",
+        "zh-Hant": "Europarådet（歐洲委員會）決定所有 EU 國家的選舉結果",
+        "zh-Hans": "Europarådet（欧洲委员会）决定所有 EU 国家的选举结果",
+        "ar": "يحدّد مجلس أوروبا (Europarådet) نتائج انتخابات كلّ دول الاتحاد الأوروبي (EU)",
+        "ckb": "Europarådet (ئەنجوومەنی ئەورووپا) ئەنجامی هەڵبژاردنی هەموو وڵاتانی EU دیاری دەکات",
+        "fa": "Europarådet (شورای اروپا) نتایج انتخابات همهٔ کشورهای EU را تعیین می‌کند",
+        "pl": "Rada Europy ustala wyniki wyborów we wszystkich krajach EU",
+        "so": "Golaha Yurub wuxuu go'aamiyaa natiijooyinka doorashada dhammaan dalalka EU",
+        "ti": "ቤት ምኽሪ ኤውሮጳ ናይ ኩለን ሃገራት EU ውጽኢት ምርጫ ይውስን",
+        "tr": "Avrupa Konseyi, tüm EU ülkelerinin seçim sonuçlarına karar verir",
+        "uk": "Рада Європи визначає результати виборів усіх країн EU"
       },
       {
         "en": "The UN replaces the governments of EU countries",
-        "sv": "FN ersätter EU-ländernas regeringar"
+        "sv": "FN ersätter EU-ländernas regeringar",
+        "zh-Hant": "FN（聯合國）取代各 EU 國家的政府",
+        "zh-Hans": "FN（联合国）取代各 EU 国家的政府",
+        "ar": "تحلّ الأمم المتحدة (FN) محلّ حكومات دول الاتحاد الأوروبي (EU)",
+        "ckb": "FN جێگەی حکومەتەکانی وڵاتانی EU دەگرێتەوە",
+        "fa": "FN جایگزین دولت‌های کشورهای EU می‌شود",
+        "pl": "FN zastępuje rządy krajów EU",
+        "so": "FN waxay beddeshaa dawladaha dalalka EU",
+        "ti": "FN ንመንግስታት ሃገራት EU ይትክእ",
+        "tr": "FN, EU ülkelerinin hükümetlerinin yerine geçer",
+        "uk": "FN замінює уряди країн EU"
       }
     ],
     "answer": 0,
@@ -41471,19 +42191,59 @@
     "opts": [
       {
         "en": "EU countries make joint decisions and create laws that apply in member countries",
-        "sv": "EU-länder fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna"
+        "sv": "EU-länder fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna",
+        "zh-Hant": "EU 各成員國共同作出決定，並制定適用於各成員國的法律",
+        "zh-Hans": "EU 各成员国共同作出决定，并制定适用于各成员国的法律",
+        "ar": "تتخذ دول الاتحاد الأوروبي (EU) قرارات مشتركة وتضع قوانين تسري في الدول الأعضاء",
+        "ckb": "وڵاتانی EU بڕیاری هاوبەش دەدەن و یاسا دادەنێن کە لە وڵاتە ئەندامەکاندا جێبەجێ دەکرێن",
+        "fa": "کشورهای EU تصمیم‌های مشترک می‌گیرند و قوانینی وضع می‌کنند که در کشورهای عضو اجرا می‌شود",
+        "pl": "Kraje EU podejmują wspólne decyzje i tworzą prawa obowiązujące w państwach członkowskich",
+        "so": "Dalalka EU waxay gaaraan go'aanno wadajir ah waxayna sameeyaan sharciyo ku shaqeeya dalalka xubnaha ah",
+        "ti": "ሃገራት EU ሓባራዊ ውሳነታት ይወስዳ ኣብ ኣባላት ሃገራት ዝሰርሑ ሕግታት የውጽኣ",
+        "tr": "EU ülkeleri ortak kararlar alır ve üye ülkelerde geçerli olan yasalar oluşturur",
+        "uk": "Країни EU ухвалюють спільні рішення та створюють закони, що діють у державах-членах"
       },
       {
         "en": "Each EU country stops having its own municipalities",
-        "sv": "Varje EU-land slutar ha egna kommuner"
+        "sv": "Varje EU-land slutar ha egna kommuner",
+        "zh-Hant": "每個 EU 國家都不再設有自己的 kommun（市鎮）",
+        "zh-Hans": "每个 EU 国家都不再设有自己的 kommun（市镇）",
+        "ar": "تتوقّف كلّ دولة في الاتحاد الأوروبي (EU) عن أن تكون لها بلدياتها الخاصة (kommun)",
+        "ckb": "هەر وڵاتێکی EU واز لە هەبوونی شارەوانییە تایبەتەکانی خۆی (kommun) دەهێنێت",
+        "fa": "هر کشور EU داشتن کمون‌های (kommun) خود را متوقف می‌کند",
+        "pl": "Każdy kraj EU przestaje mieć własne kommun",
+        "so": "Dal kasta oo EU wuxuu joojiyaa inuu yeesho kommun-yadiisa gaarka ah",
+        "ti": "ነፍሲ ወከፍ ሃገር EU ናይ ገዛእ ርእሳ kommun ምውናን ተቋርጽ",
+        "tr": "Her EU ülkesi kendi kommun'larına sahip olmayı bırakır",
+        "uk": "Кожна країна EU перестає мати власні kommun"
       },
       {
         "en": "The Council of Europe decides every EU country’s election results",
-        "sv": "Europarådet bestämmer alla EU-länders valresultat"
+        "sv": "Europarådet bestämmer alla EU-länders valresultat",
+        "zh-Hant": "Europarådet（歐洲委員會）決定所有 EU 國家的選舉結果",
+        "zh-Hans": "Europarådet（欧洲委员会）决定所有 EU 国家的选举结果",
+        "ar": "يحدّد مجلس أوروبا (Europarådet) نتائج انتخابات كلّ دول الاتحاد الأوروبي (EU)",
+        "ckb": "Europarådet (ئەنجوومەنی ئەورووپا) ئەنجامی هەڵبژاردنی هەموو وڵاتانی EU دیاری دەکات",
+        "fa": "Europarådet (شورای اروپا) نتایج انتخابات همهٔ کشورهای EU را تعیین می‌کند",
+        "pl": "Rada Europy ustala wyniki wyborów we wszystkich krajach EU",
+        "so": "Golaha Yurub wuxuu go'aamiyaa natiijooyinka doorashada dhammaan dalalka EU",
+        "ti": "ቤት ምኽሪ ኤውሮጳ ናይ ኩለን ሃገራት EU ውጽኢት ምርጫ ይውስን",
+        "tr": "Avrupa Konseyi, tüm EU ülkelerinin seçim sonuçlarına karar verir",
+        "uk": "Рада Європи визначає результати виборів усіх країн EU"
       },
       {
         "en": "The UN replaces the governments of EU countries",
-        "sv": "FN ersätter EU-ländernas regeringar"
+        "sv": "FN ersätter EU-ländernas regeringar",
+        "zh-Hant": "FN（聯合國）取代各 EU 國家的政府",
+        "zh-Hans": "FN（联合国）取代各 EU 国家的政府",
+        "ar": "تحلّ الأمم المتحدة (FN) محلّ حكومات دول الاتحاد الأوروبي (EU)",
+        "ckb": "FN جێگەی حکومەتەکانی وڵاتانی EU دەگرێتەوە",
+        "fa": "FN جایگزین دولت‌های کشورهای EU می‌شود",
+        "pl": "FN zastępuje rządy krajów EU",
+        "so": "FN waxay beddeshaa dawladaha dalalka EU",
+        "ti": "FN ንመንግስታት ሃገራት EU ይትክእ",
+        "tr": "FN, EU ülkelerinin hükümetlerinin yerine geçer",
+        "uk": "FN замінює уряди країн EU"
       }
     ],
     "answer": 0,
@@ -41520,19 +42280,59 @@
     "opts": [
       {
         "en": "Sweden continued to be neutral and stayed outside NATO",
-        "sv": "Sverige fortsatte att vara neutralt och stod utanför Nato"
+        "sv": "Sverige fortsatte att vara neutralt och stod utanför Nato",
+        "zh-Hant": "瑞典繼續保持中立，置身於 Nato 之外",
+        "zh-Hans": "瑞典继续保持中立，置身于 Nato 之外",
+        "ar": "ظلّت السويد محايدة وبقيت خارج الناتو (NATO)",
+        "ckb": "سوید بێلایەن مایەوە و لە دەرەوەی NATO مایەوە",
+        "fa": "سوئد بی‌طرف ماند و بیرون از NATO باقی ماند",
+        "pl": "Szwecja nadal pozostawała neutralna i stała poza Nato",
+        "so": "Iswiidhan waxay sii ahaatay dhexdhexaad waxayna ka baxsanaatay Nato",
+        "ti": "ሽወደን ገለልተኛ ኮይና ቀጸለት ካብ Nato ወጻኢ ኮነት",
+        "tr": "İsveç tarafsız kalmaya devam etti ve Nato'nun dışında kaldı",
+        "uk": "Швеція й далі залишалася нейтральною та була поза Nato"
       },
       {
         "en": "Sweden left the EU to join NATO",
-        "sv": "Sverige lämnade EU för att gå med i Nato"
+        "sv": "Sverige lämnade EU för att gå med i Nato",
+        "zh-Hant": "瑞典退出 EU（歐盟）以加入 Nato",
+        "zh-Hans": "瑞典退出 EU（欧盟）以加入 Nato",
+        "ar": "غادرت السويد الاتحاد الأوروبي (EU) لتنضمّ إلى الناتو (NATO)",
+        "ckb": "سوید EU بەجێهێشت بۆ ئەوەی بچێتە ناو NATO",
+        "fa": "سوئد EU را ترک کرد تا به NATO بپیوندد",
+        "pl": "Szwecja opuściła EU, aby przystąpić do Nato",
+        "so": "Iswiidhan waxay ka tagtay EU si ay ugu biirto Nato",
+        "ti": "ሽወደን ናብ Nato ንምእታው ካብ EU ወጸት",
+        "tr": "İsveç, Nato'ya katılmak için EU'dan ayrıldı",
+        "uk": "Швеція вийшла з EU, щоб вступити до Nato"
       },
       {
         "en": "Sweden governed both Denmark and Norway through NATO",
-        "sv": "Sverige styrde både Danmark och Norge genom Nato"
+        "sv": "Sverige styrde både Danmark och Norge genom Nato",
+        "zh-Hant": "瑞典透過 Nato 統治了丹麥和挪威",
+        "zh-Hans": "瑞典通过 Nato 统治了丹麦和挪威",
+        "ar": "حكمت السويد كلًّا من الدنمارك والنرويج عبر الناتو (NATO)",
+        "ckb": "سوید هەردوو دانمارک و نەرویجی لە ڕێگەی NATOوە بەڕێوە برد",
+        "fa": "سوئد هم دانمارک و هم نروژ را از طریق NATO اداره کرد",
+        "pl": "Szwecja rządziła zarówno Danmark, jak i Norge poprzez Nato",
+        "so": "Iswiidhan waxay Nato ku xukuntay Danmark iyo Norge labadaba",
+        "ti": "ሽወደን ብNato ኣቢላ ንDanmark ኮነ ንNorge ትመርሕ ነበረት",
+        "tr": "İsveç, Nato aracılığıyla hem Danmark'ı hem Norge'yi yönetti",
+        "uk": "Швеція керувала і Danmark, і Norge через Nato"
       },
       {
         "en": "Sweden abolished its military defence",
-        "sv": "Sverige avskaffade sitt militära försvar"
+        "sv": "Sverige avskaffade sitt militära försvar",
+        "zh-Hant": "瑞典廢除了自己的軍事防衛",
+        "zh-Hans": "瑞典废除了自己的军事防卫",
+        "ar": "ألغت السويد دفاعها العسكري",
+        "ckb": "سوید بەرگریی سەربازیی خۆی هەڵوەشاندەوە",
+        "fa": "سوئد دفاع نظامی خود را برچید",
+        "pl": "Szwecja zlikwidowała swoją obronę wojskową",
+        "so": "Iswiidhan waxay baabi'isay difaaceeda militari",
+        "ti": "ሽወደን ወተሃደራዊ ምክልኻላ ኣፍረሰት",
+        "tr": "İsveç, askeri savunmasını kaldırdı",
+        "uk": "Швеція скасувала свою військову оборону"
       }
     ],
     "answer": 0,
@@ -41651,19 +42451,59 @@
     "opts": [
       {
         "en": "Sweden continued to be neutral and stayed outside NATO",
-        "sv": "Sverige fortsatte att vara neutralt och stod utanför Nato"
+        "sv": "Sverige fortsatte att vara neutralt och stod utanför Nato",
+        "zh-Hant": "瑞典繼續保持中立，置身於 Nato 之外",
+        "zh-Hans": "瑞典继续保持中立，置身于 Nato 之外",
+        "ar": "ظلّت السويد محايدة وبقيت خارج الناتو (NATO)",
+        "ckb": "سوید بێلایەن مایەوە و لە دەرەوەی NATO مایەوە",
+        "fa": "سوئد بی‌طرف ماند و بیرون از NATO باقی ماند",
+        "pl": "Szwecja nadal pozostawała neutralna i stała poza Nato",
+        "so": "Iswiidhan waxay sii ahaatay dhexdhexaad waxayna ka baxsanaatay Nato",
+        "ti": "ሽወደን ገለልተኛ ኮይና ቀጸለት ካብ Nato ወጻኢ ኮነት",
+        "tr": "İsveç tarafsız kalmaya devam etti ve Nato'nun dışında kaldı",
+        "uk": "Швеція й далі залишалася нейтральною та була поза Nato"
       },
       {
         "en": "Sweden left the EU to join NATO",
-        "sv": "Sverige lämnade EU för att gå med i Nato"
+        "sv": "Sverige lämnade EU för att gå med i Nato",
+        "zh-Hant": "瑞典退出 EU（歐盟）以加入 Nato",
+        "zh-Hans": "瑞典退出 EU（欧盟）以加入 Nato",
+        "ar": "غادرت السويد الاتحاد الأوروبي (EU) لتنضمّ إلى الناتو (NATO)",
+        "ckb": "سوید EU بەجێهێشت بۆ ئەوەی بچێتە ناو NATO",
+        "fa": "سوئد EU را ترک کرد تا به NATO بپیوندد",
+        "pl": "Szwecja opuściła EU, aby przystąpić do Nato",
+        "so": "Iswiidhan waxay ka tagtay EU si ay ugu biirto Nato",
+        "ti": "ሽወደን ናብ Nato ንምእታው ካብ EU ወጸት",
+        "tr": "İsveç, Nato'ya katılmak için EU'dan ayrıldı",
+        "uk": "Швеція вийшла з EU, щоб вступити до Nato"
       },
       {
         "en": "Sweden governed both Denmark and Norway through NATO",
-        "sv": "Sverige styrde både Danmark och Norge genom Nato"
+        "sv": "Sverige styrde både Danmark och Norge genom Nato",
+        "zh-Hant": "瑞典透過 Nato 統治了丹麥和挪威",
+        "zh-Hans": "瑞典通过 Nato 统治了丹麦和挪威",
+        "ar": "حكمت السويد كلًّا من الدنمارك والنرويج عبر الناتو (NATO)",
+        "ckb": "سوید هەردوو دانمارک و نەرویجی لە ڕێگەی NATOوە بەڕێوە برد",
+        "fa": "سوئد هم دانمارک و هم نروژ را از طریق NATO اداره کرد",
+        "pl": "Szwecja rządziła zarówno Danmark, jak i Norge poprzez Nato",
+        "so": "Iswiidhan waxay Nato ku xukuntay Danmark iyo Norge labadaba",
+        "ti": "ሽወደን ብNato ኣቢላ ንDanmark ኮነ ንNorge ትመርሕ ነበረት",
+        "tr": "İsveç, Nato aracılığıyla hem Danmark'ı hem Norge'yi yönetti",
+        "uk": "Швеція керувала і Danmark, і Norge через Nato"
       },
       {
         "en": "Sweden abolished its military defence",
-        "sv": "Sverige avskaffade sitt militära försvar"
+        "sv": "Sverige avskaffade sitt militära försvar",
+        "zh-Hant": "瑞典廢除了自己的軍事防衛",
+        "zh-Hans": "瑞典废除了自己的军事防卫",
+        "ar": "ألغت السويد دفاعها العسكري",
+        "ckb": "سوید بەرگریی سەربازیی خۆی هەڵوەشاندەوە",
+        "fa": "سوئد دفاع نظامی خود را برچید",
+        "pl": "Szwecja zlikwidowała swoją obronę wojskową",
+        "so": "Iswiidhan waxay baabi'isay difaaceeda militari",
+        "ti": "ሽወደን ወተሃደራዊ ምክልኻላ ኣፍረሰት",
+        "tr": "İsveç, askeri savunmasını kaldırdı",
+        "uk": "Швеція скасувала свою військову оборону"
       }
     ],
     "answer": 0,
@@ -41700,19 +42540,59 @@
     "opts": [
       {
         "en": "People who live in Sweden and are aged 16 to 70 may need to help defend the country",
-        "sv": "Personer som bor i Sverige och är 16 till 70 år kan behöva hjälpa till att försvara landet"
+        "sv": "Personer som bor i Sverige och är 16 till 70 år kan behöva hjälpa till att försvara landet",
+        "zh-Hant": "居住在瑞典、年齡為 16 至 70 歲的人，可能需要協助保衛國家",
+        "zh-Hans": "居住在瑞典、年龄为 16 至 70 岁的人，可能需要协助保卫国家",
+        "ar": "الأشخاص الذين يقيمون في السويد وتتراوح أعمارهم بين 16 و70 عامًا قد يحتاجون إلى المساعدة في الدفاع عن البلاد",
+        "ckb": "ئەو کەسانەی لە سوید دەژین و تەمەنیان ۱۶ بۆ ۷۰ ساڵە لەوانەیە پێویست بکات یارمەتیی بەرگریکردن لە وڵات بدەن",
+        "fa": "افرادی که در سوئد زندگی می‌کنند و بین ۱۶ تا ۷۰ سال دارند ممکن است لازم باشد در دفاع از کشور کمک کنند",
+        "pl": "Osoby mieszkające w Szwecji w wieku od 16 do 70 lat mogą musieć pomóc w obronie kraju",
+        "so": "Dadka ku nool Iswiidhan ee da'doodu tahay 16 ilaa 70 sano waxaa laga yaabaa inay u baahdaan inay ka caawiyaan difaaca dalka",
+        "ti": "ኣብ ሽወደን ዝነብሩ ካብ 16 ክሳብ 70 ዓመት ዝዕድሚኦም ሰባት ንሃገር ኣብ ምክልኻል ክሕግዙ ከድልዮም ይኽእል",
+        "tr": "İsveç'te yaşayan ve 16 ila 70 yaş arasındaki kişilerin ülkeyi savunmaya yardım etmesi gerekebilir",
+        "uk": "Особи, які живуть у Швеції та мають від 16 до 70 років, можуть бути змушені допомагати захищати країну"
       },
       {
         "en": "Only professional soldiers may help society during a crisis",
-        "sv": "Bara yrkessoldater får hjälpa samhället vid kris"
+        "sv": "Bara yrkessoldater får hjälpa samhället vid kris",
+        "zh-Hant": "危機時只有職業軍人才能協助社會",
+        "zh-Hans": "危机时只有职业军人才能协助社会",
+        "ar": "الجنود المحترفون وحدهم يُسمح لهم بمساعدة المجتمع وقت الأزمات",
+        "ckb": "تەنها سەربازە پیشەییەکان بۆیان هەیە لە کاتی قەیراندا یارمەتیی کۆمەڵگا بدەن",
+        "fa": "فقط سربازان حرفه‌ای اجازه دارند در زمان بحران به جامعه کمک کنند",
+        "pl": "Tylko zawodowi żołnierze mogą pomagać społeczeństwu w czasie kryzysu",
+        "so": "Kaliya askarta xirfadlayaasha ah ayaa caawin kara bulshada xilliga dhibaatada",
+        "ti": "ኣብ እዋን ቅልውላው ንሕብረተሰብ ክሕግዙ ዝኽእሉ ሞያውያን ወተሃደራት ጥራይ እዮም",
+        "tr": "Kriz sırasında topluma yalnızca profesyonel askerler yardım edebilir",
+        "uk": "Допомагати суспільству під час кризи можуть лише професійні солдати"
       },
       {
         "en": "All residents automatically complete basic military training",
-        "sv": "Alla invånare genomför automatiskt militär grundutbildning"
+        "sv": "Alla invånare genomför automatiskt militär grundutbildning",
+        "zh-Hant": "所有居民都自動完成基礎軍事訓練",
+        "zh-Hans": "所有居民都自动完成基础军事训练",
+        "ar": "جميع المقيمين يخضعون تلقائيًا للتدريب العسكري الأساسي",
+        "ckb": "هەموو دانیشتووان بە شێوەی خۆکار ڕاهێنانی سەرەتاییی سەربازی تەواو دەکەن",
+        "fa": "همهٔ ساکنان به‌طور خودکار آموزش پایهٔ نظامی را می‌گذرانند",
+        "pl": "Wszyscy mieszkańcy automatycznie odbywają podstawowe szkolenie wojskowe",
+        "so": "Dhammaan dadka deggan si toos ah ayay u dhameeyaan tababarka militari ee aasaasiga ah",
+        "ti": "ኩሎም ነበርቲ ብኣውቶማቲክ መሰረታዊ ወተሃደራዊ ስልጠና የጻፍዑ",
+        "tr": "Tüm ikamet edenler otomatik olarak temel askeri eğitimi tamamlar",
+        "uk": "Усі мешканці автоматично проходять базову військову підготовку"
       },
       {
         "en": "Municipalities alone are responsible for Sweden’s defence",
-        "sv": "Kommunerna ansvarar ensamma för Sveriges försvar"
+        "sv": "Kommunerna ansvarar ensamma för Sveriges försvar",
+        "zh-Hant": "各 kommun（市鎮）單獨負責瑞典的防衛",
+        "zh-Hans": "各 kommun（市镇）单独负责瑞典的防卫",
+        "ar": "البلديات (kommun) وحدها مسؤولة عن دفاع السويد",
+        "ckb": "شارەوانییەکان (kommun) بە تەنها بەرپرسی بەرگریی سوید",
+        "fa": "کمون‌ها (kommun) به‌تنهایی مسئول دفاع سوئد هستند",
+        "pl": "Za obronę Szwecji odpowiadają wyłącznie kommun",
+        "so": "Kaliya kommun-yada ayaa mas'uul ka ah difaaca Iswiidhan",
+        "ti": "ንምክልኻል ሽወደን ጥራይ kommun ሓላፍነት ይወስዳ",
+        "tr": "İsveç'in savunmasından yalnızca kommun'lar sorumludur",
+        "uk": "За оборону Швеції відповідають лише kommun"
       }
     ],
     "answer": 0,
@@ -41831,19 +42711,59 @@
     "opts": [
       {
         "en": "People who live in Sweden and are aged 16 to 70 may need to help defend the country",
-        "sv": "Personer som bor i Sverige och är 16 till 70 år kan behöva hjälpa till att försvara landet"
+        "sv": "Personer som bor i Sverige och är 16 till 70 år kan behöva hjälpa till att försvara landet",
+        "zh-Hant": "居住在瑞典、年齡為 16 至 70 歲的人，可能需要協助保衛國家",
+        "zh-Hans": "居住在瑞典、年龄为 16 至 70 岁的人，可能需要协助保卫国家",
+        "ar": "الأشخاص الذين يقيمون في السويد وتتراوح أعمارهم بين 16 و70 عامًا قد يحتاجون إلى المساعدة في الدفاع عن البلاد",
+        "ckb": "ئەو کەسانەی لە سوید دەژین و تەمەنیان ۱۶ بۆ ۷۰ ساڵە لەوانەیە پێویست بکات یارمەتیی بەرگریکردن لە وڵات بدەن",
+        "fa": "افرادی که در سوئد زندگی می‌کنند و بین ۱۶ تا ۷۰ سال دارند ممکن است لازم باشد در دفاع از کشور کمک کنند",
+        "pl": "Osoby mieszkające w Szwecji w wieku od 16 do 70 lat mogą musieć pomóc w obronie kraju",
+        "so": "Dadka ku nool Iswiidhan ee da'doodu tahay 16 ilaa 70 sano waxaa laga yaabaa inay u baahdaan inay ka caawiyaan difaaca dalka",
+        "ti": "ኣብ ሽወደን ዝነብሩ ካብ 16 ክሳብ 70 ዓመት ዝዕድሚኦም ሰባት ንሃገር ኣብ ምክልኻል ክሕግዙ ከድልዮም ይኽእል",
+        "tr": "İsveç'te yaşayan ve 16 ila 70 yaş arasındaki kişilerin ülkeyi savunmaya yardım etmesi gerekebilir",
+        "uk": "Особи, які живуть у Швеції та мають від 16 до 70 років, можуть бути змушені допомагати захищати країну"
       },
       {
         "en": "Only professional soldiers may help society during a crisis",
-        "sv": "Bara yrkessoldater får hjälpa samhället vid kris"
+        "sv": "Bara yrkessoldater får hjälpa samhället vid kris",
+        "zh-Hant": "危機時只有職業軍人才能協助社會",
+        "zh-Hans": "危机时只有职业军人才能协助社会",
+        "ar": "الجنود المحترفون وحدهم يُسمح لهم بمساعدة المجتمع وقت الأزمات",
+        "ckb": "تەنها سەربازە پیشەییەکان بۆیان هەیە لە کاتی قەیراندا یارمەتیی کۆمەڵگا بدەن",
+        "fa": "فقط سربازان حرفه‌ای اجازه دارند در زمان بحران به جامعه کمک کنند",
+        "pl": "Tylko zawodowi żołnierze mogą pomagać społeczeństwu w czasie kryzysu",
+        "so": "Kaliya askarta xirfadlayaasha ah ayaa caawin kara bulshada xilliga dhibaatada",
+        "ti": "ኣብ እዋን ቅልውላው ንሕብረተሰብ ክሕግዙ ዝኽእሉ ሞያውያን ወተሃደራት ጥራይ እዮም",
+        "tr": "Kriz sırasında topluma yalnızca profesyonel askerler yardım edebilir",
+        "uk": "Допомагати суспільству під час кризи можуть лише професійні солдати"
       },
       {
         "en": "All residents automatically complete basic military training",
-        "sv": "Alla invånare genomför automatiskt militär grundutbildning"
+        "sv": "Alla invånare genomför automatiskt militär grundutbildning",
+        "zh-Hant": "所有居民都自動完成基礎軍事訓練",
+        "zh-Hans": "所有居民都自动完成基础军事训练",
+        "ar": "جميع المقيمين يخضعون تلقائيًا للتدريب العسكري الأساسي",
+        "ckb": "هەموو دانیشتووان بە شێوەی خۆکار ڕاهێنانی سەرەتاییی سەربازی تەواو دەکەن",
+        "fa": "همهٔ ساکنان به‌طور خودکار آموزش پایهٔ نظامی را می‌گذرانند",
+        "pl": "Wszyscy mieszkańcy automatycznie odbywają podstawowe szkolenie wojskowe",
+        "so": "Dhammaan dadka deggan si toos ah ayay u dhameeyaan tababarka militari ee aasaasiga ah",
+        "ti": "ኩሎም ነበርቲ ብኣውቶማቲክ መሰረታዊ ወተሃደራዊ ስልጠና የጻፍዑ",
+        "tr": "Tüm ikamet edenler otomatik olarak temel askeri eğitimi tamamlar",
+        "uk": "Усі мешканці автоматично проходять базову військову підготовку"
       },
       {
         "en": "Municipalities alone are responsible for Sweden’s defence",
-        "sv": "Kommunerna ansvarar ensamma för Sveriges försvar"
+        "sv": "Kommunerna ansvarar ensamma för Sveriges försvar",
+        "zh-Hant": "各 kommun（市鎮）單獨負責瑞典的防衛",
+        "zh-Hans": "各 kommun（市镇）单独负责瑞典的防卫",
+        "ar": "البلديات (kommun) وحدها مسؤولة عن دفاع السويد",
+        "ckb": "شارەوانییەکان (kommun) بە تەنها بەرپرسی بەرگریی سوید",
+        "fa": "کمون‌ها (kommun) به‌تنهایی مسئول دفاع سوئد هستند",
+        "pl": "Za obronę Szwecji odpowiadają wyłącznie kommun",
+        "so": "Kaliya kommun-yada ayaa mas'uul ka ah difaaca Iswiidhan",
+        "ti": "ንምክልኻል ሽወደን ጥራይ kommun ሓላፍነት ይወስዳ",
+        "tr": "İsveç'in savunmasından yalnızca kommun'lar sorumludur",
+        "uk": "За оборону Швеції відповідають лише kommun"
       }
     ],
     "answer": 0,
@@ -41880,19 +42800,59 @@
     "opts": [
       {
         "en": "Important activities such as school, work, and health care can continue to function",
-        "sv": "Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera"
+        "sv": "Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera",
+        "zh-Hant": "學校、工作、醫療衛生等重要活動能夠繼續運轉",
+        "zh-Hans": "学校、工作、医疗卫生等重要活动能够继续运转",
+        "ar": "يمكن أن تستمرّ الأنشطة المهمة مثل المدرسة والعمل والرعاية الصحية في العمل",
+        "ckb": "چالاکییە گرنگەکان وەک قوتابخانە، کار و خزمەتگوزاریی تەندروستی دەتوانن بەردەوام بن لە کارکردن",
+        "fa": "فعالیت‌های مهم مانند مدرسه، کار و خدمات بهداشتی و درمانی می‌توانند به کار خود ادامه دهند",
+        "pl": "Ważne funkcje, takie jak szkoła, praca i opieka zdrowotna, mogą dalej działać",
+        "so": "Hawlaha muhiimka ah sida iskuulka, shaqada iyo daryeelka caafimaadka way sii shaqayn karaan",
+        "ti": "ኣገደስቲ ንጥፈታት ከም ቤት ትምህርቲ፣ ስራሕን ክንክን ጥዕናን ክቕጽሉ ይኽእሉ",
+        "tr": "Okul, iş ve sağlık hizmetleri gibi önemli işlevler işlemeye devam edebilir",
+        "uk": "Важливі функції, такі як школа, робота та охорона здоров'я, можуть продовжувати працювати"
       },
       {
         "en": "Political elections are replaced with military decisions",
-        "sv": "Politiska val ersätts med militära beslut"
+        "sv": "Politiska val ersätts med militära beslut",
+        "zh-Hant": "政治選舉被軍事決定所取代",
+        "zh-Hans": "政治选举被军事决定所取代",
+        "ar": "تُستبدَل الانتخابات السياسية بقرارات عسكرية",
+        "ckb": "هەڵبژاردنە سیاسییەکان بە بڕیاری سەربازی جێگۆڕکێ دەکرێن",
+        "fa": "انتخابات سیاسی با تصمیم‌های نظامی جایگزین می‌شود",
+        "pl": "Wybory polityczne zostają zastąpione decyzjami wojskowymi",
+        "so": "Doorashooyinka siyaasadeed waxaa lagu beddelaa go'aanno militari",
+        "ti": "ፖለቲካዊ ምርጫታት ብወተሃደራዊ ውሳነታት ይትክኡ",
+        "tr": "Siyasi seçimlerin yerini askeri kararlar alır",
+        "uk": "Політичні вибори замінюються військовими рішеннями"
       },
       {
         "en": "Only the Swedish Armed Forces are responsible for society’s resilience",
-        "sv": "Bara Försvarsmakten ansvarar för samhällets motståndskraft"
+        "sv": "Bara Försvarsmakten ansvarar för samhällets motståndskraft",
+        "zh-Hant": "只有 Försvarsmakten（瑞典武裝部隊）負責社會的抗禦能力",
+        "zh-Hans": "只有 Försvarsmakten（瑞典武装部队）负责社会的抗御能力",
+        "ar": "القوات المسلحة السويدية (Försvarsmakten) وحدها مسؤولة عن صمود المجتمع",
+        "ckb": "تەنها هێزە چەکدارەکانی سوید (Försvarsmakten) بەرپرسی بەرگەگرتنی کۆمەڵگان",
+        "fa": "تنها نیروهای مسلح سوئد (Försvarsmakten) مسئول تاب‌آوری جامعه هستند",
+        "pl": "Za odporność społeczeństwa odpowiadają wyłącznie Siły Zbrojne (Försvarsmakten)",
+        "so": "Kaliya Ciidamada Qalabka Sida ee Iswiidhan (Försvarsmakten) ayaa mas'uul ka ah adkaysiga bulshada",
+        "ti": "ንጽንዓት ሕብረተሰብ ጥራይ ሓይልታት ምክልኻል ሽወደን (Försvarsmakten) ሓላፍነት ይወስዳ",
+        "tr": "Toplumun dayanıklılığından yalnızca İsveç Silahlı Kuvvetleri (Försvarsmakten) sorumludur",
+        "uk": "За стійкість суспільства відповідають лише Збройні сили (Försvarsmakten)"
       },
       {
         "en": "The EU decides every school’s daily timetable",
-        "sv": "EU bestämmer varje skolas dagliga schema"
+        "sv": "EU bestämmer varje skolas dagliga schema",
+        "zh-Hant": "EU（歐盟）決定每所學校的每日課表",
+        "zh-Hans": "EU（欧盟）决定每所学校的每日课表",
+        "ar": "يحدّد الاتحاد الأوروبي (EU) الجدول اليومي لكلّ مدرسة",
+        "ckb": "EU خشتەی ڕۆژانەی هەر قوتابخانەیەک دیاری دەکات",
+        "fa": "EU برنامهٔ روزانهٔ هر مدرسه را تعیین می‌کند",
+        "pl": "EU ustala dzienny plan zajęć każdej szkoły",
+        "so": "EU waxay go'aamisaa jadwalka maalinlaha ah ee iskuul kasta",
+        "ti": "EU ናይ ነፍሲ ወከፍ ቤት ትምህርቲ መዓልታዊ ፕሮግራም ይውስን",
+        "tr": "EU, her okulun günlük ders programına karar verir",
+        "uk": "EU визначає щоденний розклад кожної школи"
       }
     ],
     "answer": 0,
@@ -42011,19 +42971,59 @@
     "opts": [
       {
         "en": "Important activities such as school, work, and health care can continue to function",
-        "sv": "Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera"
+        "sv": "Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera",
+        "zh-Hant": "學校、工作、醫療衛生等重要活動能夠繼續運轉",
+        "zh-Hans": "学校、工作、医疗卫生等重要活动能够继续运转",
+        "ar": "يمكن أن تستمرّ الأنشطة المهمة مثل المدرسة والعمل والرعاية الصحية في العمل",
+        "ckb": "چالاکییە گرنگەکان وەک قوتابخانە، کار و خزمەتگوزاریی تەندروستی دەتوانن بەردەوام بن لە کارکردن",
+        "fa": "فعالیت‌های مهم مانند مدرسه، کار و خدمات بهداشتی و درمانی می‌توانند به کار خود ادامه دهند",
+        "pl": "Ważne funkcje, takie jak szkoła, praca i opieka zdrowotna, mogą dalej działać",
+        "so": "Hawlaha muhiimka ah sida iskuulka, shaqada iyo daryeelka caafimaadka way sii shaqayn karaan",
+        "ti": "ኣገደስቲ ንጥፈታት ከም ቤት ትምህርቲ፣ ስራሕን ክንክን ጥዕናን ክቕጽሉ ይኽእሉ",
+        "tr": "Okul, iş ve sağlık hizmetleri gibi önemli işlevler işlemeye devam edebilir",
+        "uk": "Важливі функції, такі як школа, робота та охорона здоров'я, можуть продовжувати працювати"
       },
       {
         "en": "Political elections are replaced with military decisions",
-        "sv": "Politiska val ersätts med militära beslut"
+        "sv": "Politiska val ersätts med militära beslut",
+        "zh-Hant": "政治選舉被軍事決定所取代",
+        "zh-Hans": "政治选举被军事决定所取代",
+        "ar": "تُستبدَل الانتخابات السياسية بقرارات عسكرية",
+        "ckb": "هەڵبژاردنە سیاسییەکان بە بڕیاری سەربازی جێگۆڕکێ دەکرێن",
+        "fa": "انتخابات سیاسی با تصمیم‌های نظامی جایگزین می‌شود",
+        "pl": "Wybory polityczne zostają zastąpione decyzjami wojskowymi",
+        "so": "Doorashooyinka siyaasadeed waxaa lagu beddelaa go'aanno militari",
+        "ti": "ፖለቲካዊ ምርጫታት ብወተሃደራዊ ውሳነታት ይትክኡ",
+        "tr": "Siyasi seçimlerin yerini askeri kararlar alır",
+        "uk": "Політичні вибори замінюються військовими рішеннями"
       },
       {
         "en": "Only the Swedish Armed Forces are responsible for society’s resilience",
-        "sv": "Bara Försvarsmakten ansvarar för samhällets motståndskraft"
+        "sv": "Bara Försvarsmakten ansvarar för samhällets motståndskraft",
+        "zh-Hant": "只有 Försvarsmakten（瑞典武裝部隊）負責社會的抗禦能力",
+        "zh-Hans": "只有 Försvarsmakten（瑞典武装部队）负责社会的抗御能力",
+        "ar": "القوات المسلحة السويدية (Försvarsmakten) وحدها مسؤولة عن صمود المجتمع",
+        "ckb": "تەنها هێزە چەکدارەکانی سوید (Försvarsmakten) بەرپرسی بەرگەگرتنی کۆمەڵگان",
+        "fa": "تنها نیروهای مسلح سوئد (Försvarsmakten) مسئول تاب‌آوری جامعه هستند",
+        "pl": "Za odporność społeczeństwa odpowiadają wyłącznie Siły Zbrojne (Försvarsmakten)",
+        "so": "Kaliya Ciidamada Qalabka Sida ee Iswiidhan (Försvarsmakten) ayaa mas'uul ka ah adkaysiga bulshada",
+        "ti": "ንጽንዓት ሕብረተሰብ ጥራይ ሓይልታት ምክልኻል ሽወደን (Försvarsmakten) ሓላፍነት ይወስዳ",
+        "tr": "Toplumun dayanıklılığından yalnızca İsveç Silahlı Kuvvetleri (Försvarsmakten) sorumludur",
+        "uk": "За стійкість суспільства відповідають лише Збройні сили (Försvarsmakten)"
       },
       {
         "en": "The EU decides every school’s daily timetable",
-        "sv": "EU bestämmer varje skolas dagliga schema"
+        "sv": "EU bestämmer varje skolas dagliga schema",
+        "zh-Hant": "EU（歐盟）決定每所學校的每日課表",
+        "zh-Hans": "EU（欧盟）决定每所学校的每日课表",
+        "ar": "يحدّد الاتحاد الأوروبي (EU) الجدول اليومي لكلّ مدرسة",
+        "ckb": "EU خشتەی ڕۆژانەی هەر قوتابخانەیەک دیاری دەکات",
+        "fa": "EU برنامهٔ روزانهٔ هر مدرسه را تعیین می‌کند",
+        "pl": "EU ustala dzienny plan zajęć każdej szkoły",
+        "so": "EU waxay go'aamisaa jadwalka maalinlaha ah ee iskuul kasta",
+        "ti": "EU ናይ ነፍሲ ወከፍ ቤት ትምህርቲ መዓልታዊ ፕሮግራም ይውስን",
+        "tr": "EU, her okulun günlük ders programına karar verir",
+        "uk": "EU визначає щоденний розклад кожної школи"
       }
     ],
     "answer": 0,
@@ -42060,19 +43060,59 @@
     "opts": [
       {
         "en": "Every five years",
-        "sv": "Vart femte år"
+        "sv": "Vart femte år",
+        "zh-Hant": "每五年一次",
+        "zh-Hans": "每五年一次",
+        "ar": "كلّ خمس سنوات",
+        "ckb": "هەر پێنج ساڵ جارێک",
+        "fa": "هر پنج سال یک‌بار",
+        "pl": "Co pięć lat",
+        "so": "Shantii sanaba mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት",
+        "tr": "Beş yılda bir",
+        "uk": "Кожні п'ять років"
       },
       {
         "en": "Every four years",
-        "sv": "Vart fjärde år"
+        "sv": "Vart fjärde år",
+        "zh-Hant": "每四年一次",
+        "zh-Hans": "每四年一次",
+        "ar": "كلّ أربع سنوات",
+        "ckb": "هەر چوار ساڵ جارێک",
+        "fa": "هر چهار سال یک‌بار",
+        "pl": "Co cztery lata",
+        "so": "Afartii sanaba mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት",
+        "tr": "Dört yılda bir",
+        "uk": "Кожні чотири роки"
       },
       {
         "en": "Every year",
-        "sv": "Varje år"
+        "sv": "Varje år",
+        "zh-Hant": "每年一次",
+        "zh-Hans": "每年一次",
+        "ar": "كلّ سنة",
+        "ckb": "هەموو ساڵێک",
+        "fa": "هر سال",
+        "pl": "Co roku",
+        "so": "Sannad kasta",
+        "ti": "ዓመት ዓመት",
+        "tr": "Her yıl",
+        "uk": "Щороку"
       },
       {
         "en": "Only when Sweden changes government",
-        "sv": "Endast när Sverige byter regering"
+        "sv": "Endast när Sverige byter regering",
+        "zh-Hant": "只在瑞典更換政府時舉行",
+        "zh-Hans": "只在瑞典更换政府时举行",
+        "ar": "فقط عندما تغيّر السويد حكومتها",
+        "ckb": "تەنها کاتێک سوید حکومەتی خۆی دەگۆڕێت",
+        "fa": "فقط زمانی که سوئد دولت خود را تغییر می‌دهد",
+        "pl": "Tylko wtedy, gdy Szwecja zmienia rząd",
+        "so": "Kaliya marka Iswiidhan ay beddesho dawladda",
+        "ti": "ሽወደን መንግስቲ ክትቅይር ከላ ጥራይ",
+        "tr": "Yalnızca İsveç hükümet değiştirdiğinde",
+        "uk": "Лише коли Швеція змінює уряд"
       }
     ],
     "answer": 0,
@@ -42188,19 +43228,59 @@
     "opts": [
       {
         "en": "Every five years",
-        "sv": "Vart femte år"
+        "sv": "Vart femte år",
+        "zh-Hant": "每五年一次",
+        "zh-Hans": "每五年一次",
+        "ar": "كلّ خمس سنوات",
+        "ckb": "هەر پێنج ساڵ جارێک",
+        "fa": "هر پنج سال یک‌بار",
+        "pl": "Co pięć lat",
+        "so": "Shantii sanaba mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት",
+        "tr": "Beş yılda bir",
+        "uk": "Кожні п'ять років"
       },
       {
         "en": "Every four years",
-        "sv": "Vart fjärde år"
+        "sv": "Vart fjärde år",
+        "zh-Hant": "每四年一次",
+        "zh-Hans": "每四年一次",
+        "ar": "كلّ أربع سنوات",
+        "ckb": "هەر چوار ساڵ جارێک",
+        "fa": "هر چهار سال یک‌بار",
+        "pl": "Co cztery lata",
+        "so": "Afartii sanaba mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት",
+        "tr": "Dört yılda bir",
+        "uk": "Кожні чотири роки"
       },
       {
         "en": "Every year",
-        "sv": "Varje år"
+        "sv": "Varje år",
+        "zh-Hant": "每年一次",
+        "zh-Hans": "每年一次",
+        "ar": "كلّ سنة",
+        "ckb": "هەموو ساڵێک",
+        "fa": "هر سال",
+        "pl": "Co roku",
+        "so": "Sannad kasta",
+        "ti": "ዓመት ዓመት",
+        "tr": "Her yıl",
+        "uk": "Щороку"
       },
       {
         "en": "Only when Sweden changes government",
-        "sv": "Endast när Sverige byter regering"
+        "sv": "Endast när Sverige byter regering",
+        "zh-Hant": "只在瑞典更換政府時舉行",
+        "zh-Hans": "只在瑞典更换政府时举行",
+        "ar": "فقط عندما تغيّر السويد حكومتها",
+        "ckb": "تەنها کاتێک سوید حکومەتی خۆی دەگۆڕێت",
+        "fa": "فقط زمانی که سوئد دولت خود را تغییر می‌دهد",
+        "pl": "Tylko wtedy, gdy Szwecja zmienia rząd",
+        "so": "Kaliya marka Iswiidhan ay beddesho dawladda",
+        "ti": "ሽወደን መንግስቲ ክትቅይር ከላ ጥራይ",
+        "tr": "Yalnızca İsveç hükümet değiştirdiğinde",
+        "uk": "Лише коли Швеція змінює уряд"
       }
     ],
     "answer": 0,
@@ -42236,19 +43316,59 @@
     "opts": [
       {
         "en": "Some may vote if they are registered as living in Sweden and meet the rules for their group",
-        "sv": "Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp"
+        "sv": "Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp",
+        "zh-Hant": "部分人如果在瑞典登記戶籍，並符合其所屬群體的規定，就可以投票",
+        "zh-Hans": "部分人如果在瑞典登记户籍，并符合其所属群体的规定，就可以投票",
+        "ar": "يستطيع بعضهم التصويت إذا كانوا مسجّلين كمقيمين في السويد ويستوفون قواعد فئتهم",
+        "ckb": "هەندێکیان دەتوانن دەنگ بدەن ئەگەر لە سوید وەک نیشتەجێ تۆمارکرابن و ڕێساکانی گرووپەکەی خۆیان بهێننە دی",
+        "fa": "برخی می‌توانند رأی بدهند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و قواعد گروه خود را برآورده کنند",
+        "pl": "Niektórzy mogą głosować, jeśli są zameldowani (folkbokförda) w Szwecji i spełniają zasady dla swojej grupy",
+        "so": "Qaar way codeyn karaan haddii ay ku diiwaangashan yihiin (folkbokförda) Iswiidhan oo ay buuxiyaan xeerarka kooxdooda",
+        "ti": "ገሊኦም ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ናይ ጉጅሌኦም ሕግታት እንተ ኣማሊኦምን ክመርጹ ይኽእሉ",
+        "tr": "İsveç'te kayıtlı (folkbokförda) olan ve grupları için kuralları karşılayan bazı kişiler oy kullanabilir",
+        "uk": "Дехто може голосувати, якщо вони зареєстровані (folkbokförda) у Швеції та відповідають правилам для своєї групи"
       },
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
-        "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval"
+        "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在 kommun 或 region 選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在 kommun 或 region 选举中投票",
+        "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
+        "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
+        "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach do kommun ani regionów",
+        "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka kommun ama region",
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት kommun ወይ region ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse kommun veya region seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на виборах до kommun чи region"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
-        "sv": "Alla turister får rösta om de är i Sverige på valdagen"
+        "sv": "Alla turister får rösta om de är i Sverige på valdagen",
+        "zh-Hant": "所有遊客只要在選舉日身處瑞典就可以投票",
+        "zh-Hans": "所有游客只要在选举日身处瑞典就可以投票",
+        "ar": "يحقّ لكلّ السياح التصويت إذا كانوا في السويد يوم الانتخابات",
+        "ckb": "هەموو گەشتیارەکان ئەگەر لە ڕۆژی هەڵبژاردندا لە سوید بن بۆیان هەیە دەنگ بدەن",
+        "fa": "همهٔ گردشگران اگر در روز انتخابات در سوئد باشند می‌توانند رأی بدهند",
+        "pl": "Wszyscy turyści mogą głosować, jeśli są w Szwecji w dniu wyborów",
+        "so": "Dhammaan dalxiisayaasha way codayn karaan haddii ay Iswiidhan joogaan maalinta doorashada",
+        "ti": "ኩሎም ቱሪስትታት ኣብ መዓልቲ ምርጫ ኣብ ሽወደን እንተ ኣልዮም ክመርጹ ይኽእሉ",
+        "tr": "Tüm turistler seçim gününde İsveç'teyseler oy kullanabilir",
+        "uk": "Усі туристи можуть голосувати, якщо вони в Швеції у день виборів"
       },
       {
         "en": "Party membership is always the only requirement",
-        "sv": "Partimedlemskap är alltid det enda kravet"
+        "sv": "Partimedlemskap är alltid det enda kravet",
+        "zh-Hant": "政黨黨籍始終是唯一的要求",
+        "zh-Hans": "政党党籍始终是唯一的要求",
+        "ar": "عضوية الحزب هي دائمًا الشرط الوحيد",
+        "ckb": "ئەندامێتیی پارت هەمیشە تەنها مەرجە",
+        "fa": "عضویت حزبی همیشه تنها شرط است",
+        "pl": "Członkostwo w partii jest zawsze jedynym wymogiem",
+        "so": "Xubinnimada xisbi had iyo jeer waa shuruudda kaliya",
+        "ti": "ኣባልነት ሰልፊ ኩሉ ግዜ እቲ ብቸኛ ቅድመ ኩነት እዩ",
+        "tr": "Parti üyeliği her zaman tek koşuldur",
+        "uk": "Членство в партії завжди є єдиною вимогою"
       }
     ],
     "answer": 0,
@@ -42367,19 +43487,59 @@
     "opts": [
       {
         "en": "Some may vote if they are registered as living in Sweden and meet the rules for their group",
-        "sv": "Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp"
+        "sv": "Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp",
+        "zh-Hant": "部分人如果在瑞典登記戶籍，並符合其所屬群體的規定，就可以投票",
+        "zh-Hans": "部分人如果在瑞典登记户籍，并符合其所属群体的规定，就可以投票",
+        "ar": "يستطيع بعضهم التصويت إذا كانوا مسجّلين كمقيمين في السويد ويستوفون قواعد فئتهم",
+        "ckb": "هەندێکیان دەتوانن دەنگ بدەن ئەگەر لە سوید وەک نیشتەجێ تۆمارکرابن و ڕێساکانی گرووپەکەی خۆیان بهێننە دی",
+        "fa": "برخی می‌توانند رأی بدهند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و قواعد گروه خود را برآورده کنند",
+        "pl": "Niektórzy mogą głosować, jeśli są zameldowani (folkbokförda) w Szwecji i spełniają zasady dla swojej grupy",
+        "so": "Qaar way codeyn karaan haddii ay ku diiwaangashan yihiin (folkbokförda) Iswiidhan oo ay buuxiyaan xeerarka kooxdooda",
+        "ti": "ገሊኦም ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ናይ ጉጅሌኦም ሕግታት እንተ ኣማሊኦምን ክመርጹ ይኽእሉ",
+        "tr": "İsveç'te kayıtlı (folkbokförda) olan ve grupları için kuralları karşılayan bazı kişiler oy kullanabilir",
+        "uk": "Дехто може голосувати, якщо вони зареєстровані (folkbokförda) у Швеції та відповідають правилам для своєї групи"
       },
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
-        "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval"
+        "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在 kommun 或 region 選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在 kommun 或 region 选举中投票",
+        "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
+        "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
+        "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach do kommun ani regionów",
+        "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka kommun ama region",
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት kommun ወይ region ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse kommun veya region seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на виборах до kommun чи region"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
-        "sv": "Alla turister får rösta om de är i Sverige på valdagen"
+        "sv": "Alla turister får rösta om de är i Sverige på valdagen",
+        "zh-Hant": "所有遊客只要在選舉日身處瑞典就可以投票",
+        "zh-Hans": "所有游客只要在选举日身处瑞典就可以投票",
+        "ar": "يحقّ لكلّ السياح التصويت إذا كانوا في السويد يوم الانتخابات",
+        "ckb": "هەموو گەشتیارەکان ئەگەر لە ڕۆژی هەڵبژاردندا لە سوید بن بۆیان هەیە دەنگ بدەن",
+        "fa": "همهٔ گردشگران اگر در روز انتخابات در سوئد باشند می‌توانند رأی بدهند",
+        "pl": "Wszyscy turyści mogą głosować, jeśli są w Szwecji w dniu wyborów",
+        "so": "Dhammaan dalxiisayaasha way codayn karaan haddii ay Iswiidhan joogaan maalinta doorashada",
+        "ti": "ኩሎም ቱሪስትታት ኣብ መዓልቲ ምርጫ ኣብ ሽወደን እንተ ኣልዮም ክመርጹ ይኽእሉ",
+        "tr": "Tüm turistler seçim gününde İsveç'teyseler oy kullanabilir",
+        "uk": "Усі туристи можуть голосувати, якщо вони в Швеції у день виборів"
       },
       {
         "en": "Party membership is always the only requirement",
-        "sv": "Partimedlemskap är alltid det enda kravet"
+        "sv": "Partimedlemskap är alltid det enda kravet",
+        "zh-Hant": "政黨黨籍始終是唯一的要求",
+        "zh-Hans": "政党党籍始终是唯一的要求",
+        "ar": "عضوية الحزب هي دائمًا الشرط الوحيد",
+        "ckb": "ئەندامێتیی پارت هەمیشە تەنها مەرجە",
+        "fa": "عضویت حزبی همیشه تنها شرط است",
+        "pl": "Członkostwo w partii jest zawsze jedynym wymogiem",
+        "so": "Xubinnimada xisbi had iyo jeer waa shuruudda kaliya",
+        "ti": "ኣባልነት ሰልፊ ኩሉ ግዜ እቲ ብቸኛ ቅድመ ኩነት እዩ",
+        "tr": "Parti üyeliği her zaman tek koşuldur",
+        "uk": "Членство в партії завжди є єдиною вимогою"
       }
     ],
     "answer": 0,
@@ -42416,19 +43576,59 @@
     "opts": [
       {
         "en": "Which polling station the voter should go to",
-        "sv": "Vilken vallokal väljaren ska gå till"
+        "sv": "Vilken vallokal väljaren ska gå till",
+        "zh-Hant": "選民應前往哪個投票站",
+        "zh-Hans": "选民应前往哪个投票站",
+        "ar": "أيُّ مركز اقتراعٍ يجب أن يذهب إليه الناخب",
+        "ckb": "ئەو شوێنی دەنگدانەی کە دەنگدەر دەبێت بۆی بچێت",
+        "fa": "اینکه رأی‌دهنده باید به کدام شعبهٔ اخذ رأی برود",
+        "pl": "Do którego lokalu wyborczego ma się udać wyborca",
+        "so": "Goobta codbixinta ee uu doodaha tagi doono",
+        "ti": "እቲ መራጺ ናብ ኣየናይ መረጺ ቦታ ክኸይድ ከም ዘለዎ",
+        "tr": "Seçmenin hangi sandık merkezine gitmesi gerektiği",
+        "uk": "До якої виборчої дільниці має піти виборець"
       },
       {
         "en": "Which party the voter must vote for",
-        "sv": "Vilket parti väljaren måste rösta på"
+        "sv": "Vilket parti väljaren måste rösta på",
+        "zh-Hant": "選民必須投票給哪個政黨",
+        "zh-Hans": "选民必须投票给哪个政党",
+        "ar": "أيُّ حزبٍ يجب على الناخب أن يصوّت له",
+        "ckb": "ئەو پارتەی کە دەنگدەر دەبێت دەنگی بداتێ",
+        "fa": "اینکه رأی‌دهنده باید به کدام حزب رأی بدهد",
+        "pl": "Na którą partię wyborca musi zagłosować",
+        "so": "Xisbiga uu doodaha ku qasban yahay inuu u codeeyo",
+        "ti": "እቲ መራጺ ኣየናይ ሰልፊ ክመርጽ ግዴታ ዘለዎ",
+        "tr": "Seçmenin hangi partiye oy vermek zorunda olduğu",
+        "uk": "За яку партію виборець зобов'язаний проголосувати"
       },
       {
         "en": "How other people have voted",
-        "sv": "Hur andra personer har röstat"
+        "sv": "Hur andra personer har röstat",
+        "zh-Hant": "其他人是怎麼投票的",
+        "zh-Hans": "其他人是怎么投票的",
+        "ar": "كيف صوّت أشخاصٌ آخرون",
+        "ckb": "ئەوەی کەسانی تر چۆن دەنگیان داوە",
+        "fa": "اینکه دیگران چگونه رأی داده‌اند",
+        "pl": "Jak głosowały inne osoby",
+        "so": "Sida ay dadka kale u codeeyeen",
+        "ti": "ካልኦት ሰባት ብኸመይ ከም ዝመረጹ",
+        "tr": "Diğer kişilerin nasıl oy verdiği",
+        "uk": "Як проголосували інші люди"
       },
       {
         "en": "That advance voting is forbidden",
-        "sv": "Att förtidsröstning är förbjuden"
+        "sv": "Att förtidsröstning är förbjuden",
+        "zh-Hant": "提前投票是被禁止的",
+        "zh-Hans": "提前投票是被禁止的",
+        "ar": "أنّ التصويت المسبق محظور",
+        "ckb": "ئەوەی کە دەنگدانی پێشوەختە قەدەغەیە",
+        "fa": "اینکه رأی‌دادن پیش از موعد ممنوع است",
+        "pl": "Że głosowanie wcześniejsze jest zabronione",
+        "so": "In horay-codbixinta la mamnuucay",
+        "ti": "ቅድሚ ግዜ ምምራጽ ክልኩል ምዃኑ",
+        "tr": "Önceden oy vermenin yasak olduğu",
+        "uk": "Що дострокове голосування заборонене"
       }
     ],
     "answer": 0,
@@ -42544,19 +43744,59 @@
     "opts": [
       {
         "en": "Which polling station the voter should go to",
-        "sv": "Vilken vallokal väljaren ska gå till"
+        "sv": "Vilken vallokal väljaren ska gå till",
+        "zh-Hant": "選民應前往哪個投票站",
+        "zh-Hans": "选民应前往哪个投票站",
+        "ar": "أيُّ مركز اقتراعٍ يجب أن يذهب إليه الناخب",
+        "ckb": "ئەو شوێنی دەنگدانەی کە دەنگدەر دەبێت بۆی بچێت",
+        "fa": "اینکه رأی‌دهنده باید به کدام شعبهٔ اخذ رأی برود",
+        "pl": "Do którego lokalu wyborczego ma się udać wyborca",
+        "so": "Goobta codbixinta ee uu doodaha tagi doono",
+        "ti": "እቲ መራጺ ናብ ኣየናይ መረጺ ቦታ ክኸይድ ከም ዘለዎ",
+        "tr": "Seçmenin hangi sandık merkezine gitmesi gerektiği",
+        "uk": "До якої виборчої дільниці має піти виборець"
       },
       {
         "en": "Which party the voter must vote for",
-        "sv": "Vilket parti väljaren måste rösta på"
+        "sv": "Vilket parti väljaren måste rösta på",
+        "zh-Hant": "選民必須投票給哪個政黨",
+        "zh-Hans": "选民必须投票给哪个政党",
+        "ar": "أيُّ حزبٍ يجب على الناخب أن يصوّت له",
+        "ckb": "ئەو پارتەی کە دەنگدەر دەبێت دەنگی بداتێ",
+        "fa": "اینکه رأی‌دهنده باید به کدام حزب رأی بدهد",
+        "pl": "Na którą partię wyborca musi zagłosować",
+        "so": "Xisbiga uu doodaha ku qasban yahay inuu u codeeyo",
+        "ti": "እቲ መራጺ ኣየናይ ሰልፊ ክመርጽ ግዴታ ዘለዎ",
+        "tr": "Seçmenin hangi partiye oy vermek zorunda olduğu",
+        "uk": "За яку партію виборець зобов'язаний проголосувати"
       },
       {
         "en": "How other people have voted",
-        "sv": "Hur andra personer har röstat"
+        "sv": "Hur andra personer har röstat",
+        "zh-Hant": "其他人是怎麼投票的",
+        "zh-Hans": "其他人是怎么投票的",
+        "ar": "كيف صوّت أشخاصٌ آخرون",
+        "ckb": "ئەوەی کەسانی تر چۆن دەنگیان داوە",
+        "fa": "اینکه دیگران چگونه رأی داده‌اند",
+        "pl": "Jak głosowały inne osoby",
+        "so": "Sida ay dadka kale u codeeyeen",
+        "ti": "ካልኦት ሰባት ብኸመይ ከም ዝመረጹ",
+        "tr": "Diğer kişilerin nasıl oy verdiği",
+        "uk": "Як проголосували інші люди"
       },
       {
         "en": "That advance voting is forbidden",
-        "sv": "Att förtidsröstning är förbjuden"
+        "sv": "Att förtidsröstning är förbjuden",
+        "zh-Hant": "提前投票是被禁止的",
+        "zh-Hans": "提前投票是被禁止的",
+        "ar": "أنّ التصويت المسبق محظور",
+        "ckb": "ئەوەی کە دەنگدانی پێشوەختە قەدەغەیە",
+        "fa": "اینکه رأی‌دادن پیش از موعد ممنوع است",
+        "pl": "Że głosowanie wcześniejsze jest zabronione",
+        "so": "In horay-codbixinta la mamnuucay",
+        "ti": "ቅድሚ ግዜ ምምራጽ ክልኩል ምዃኑ",
+        "tr": "Önceden oy vermenin yasak olduğu",
+        "uk": "Що дострокове голосування заборонене"
       }
     ],
     "answer": 0,
@@ -42592,19 +43832,59 @@
     "opts": [
       {
         "en": "Become a member of a political party or start a new party together with others",
-        "sv": "Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra"
+        "sv": "Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra",
+        "zh-Hant": "加入一個政黨，或與他人一起創立一個新政黨",
+        "zh-Hans": "加入一个政党，或与他人一起创建一个新政党",
+        "ar": "أن يصبح عضوًا في حزبٍ سياسي أو يؤسّس حزبًا جديدًا مع آخرين",
+        "ckb": "ببێتە ئەندامی پارتێکی سیاسی یان لەگەڵ کەسانی تردا پارتێکی نوێ دامەزرێنێت",
+        "fa": "عضو یک حزب سیاسی شدن یا تأسیس یک حزب جدید همراه با دیگران",
+        "pl": "Zostać członkiem partii politycznej lub założyć nową partię wspólnie z innymi",
+        "so": "Noqo xubin ka mid ah xisbi siyaasadeed ama dad kale la aas xisbi cusub",
+        "ti": "ኣባል ናይ ሓደ ፖለቲካዊ ሰልፊ ምዃን ወይ ምስ ካልኦት ሓቢርካ ሓድሽ ሰልፊ ምምስራት",
+        "tr": "Bir siyasi partiye üye olmak veya başkalarıyla birlikte yeni bir parti kurmak",
+        "uk": "Стати членом політичної партії або заснувати нову партію разом з іншими"
       },
       {
         "en": "Only vote if the person already sits in the Riksdag",
-        "sv": "Bara rösta om personen redan sitter i riksdagen"
+        "sv": "Bara rösta om personen redan sitter i riksdagen",
+        "zh-Hant": "只有當此人已經是 Riksdag（議會）議員時才能投票",
+        "zh-Hans": "只有当此人已经是 Riksdag（议会）议员时才能投票",
+        "ar": "أن يصوّت فقط إذا كان الشخص جالسًا أصلًا في برلمان السويد (Riksdag)",
+        "ckb": "تەنها ئەگەر ئەو کەسە پێشتر لە Riksdag (پارلەمانی سوید) بوو دەنگ بدات",
+        "fa": "فقط در صورتی رأی بدهد که آن شخص از پیش در Riksdag (پارلمان سوئد) عضو باشد",
+        "pl": "Głosować tylko wtedy, gdy osoba już zasiada w Riksdagu",
+        "so": "Kaliya cod bixi haddii qofku horay ugu jiro Riksdag-ga (baarlamaanka)",
+        "ti": "እቲ ሰብ ኣቐዲሙ ኣብ Riksdag (ሃገራዊ ባይቶ) እንተ ኣልዩ ጥራይ ምምራጽ",
+        "tr": "Yalnızca kişi zaten Riksdag'da bulunuyorsa oy vermek",
+        "uk": "Голосувати лише тоді, коли людина вже засідає в Riksdag (парламенті)"
       },
       {
         "en": "Let the courts write every party platform",
-        "sv": "Låta domstolarna skriva alla partiers program"
+        "sv": "Låta domstolarna skriva alla partiers program",
+        "zh-Hant": "讓法院來撰寫所有政黨的綱領",
+        "zh-Hans": "让法院来撰写所有政党的纲领",
+        "ar": "أن يدع المحاكم تكتب برامج جميع الأحزاب",
+        "ckb": "وا بکات دادگاکان پڕۆگرامی هەموو پارتەکان بنووسن",
+        "fa": "بگذارد دادگاه‌ها برنامهٔ همهٔ احزاب را بنویسند",
+        "pl": "Pozwolić sądom pisać programy wszystkich partii",
+        "so": "U oggolow maxkamadaha inay qoraan barnaamijka dhammaan xisbiyada",
+        "ti": "ንኹሎም ሰልፍታት መደብ ዝጽሕፍ ቤት ፍርዲ ክኸውን ምፍቃድ",
+        "tr": "Tüm partilerin programını mahkemelerin yazmasına izin vermek",
+        "uk": "Дозволити судам писати програми всіх партій"
       },
       {
         "en": "Ban other parties from having ideas",
-        "sv": "Förbjuda andra partier från att ha idéer"
+        "sv": "Förbjuda andra partier från att ha idéer",
+        "zh-Hant": "禁止其他政黨擁有自己的理念",
+        "zh-Hans": "禁止其他政党拥有自己的理念",
+        "ar": "أن يمنع الأحزاب الأخرى من امتلاك الأفكار",
+        "ckb": "پارتە دیکەکان لە هەبوونی بیرۆکە قەدەغە بکات",
+        "fa": "احزاب دیگر را از داشتن ایده منع کند",
+        "pl": "Zakazać innym partiom posiadania idei",
+        "so": "Mamnuuc xisbiyada kale inay fikrado lahaadaan",
+        "ti": "ካልኦት ሰልፍታት ሓሳባት ከይህልዎም ምኽልካል",
+        "tr": "Diğer partilerin fikir sahibi olmasını yasaklamak",
+        "uk": "Заборонити іншим партіям мати ідеї"
       }
     ],
     "answer": 0,
@@ -42723,19 +44003,59 @@
     "opts": [
       {
         "en": "Become a member of a political party or start a new party together with others",
-        "sv": "Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra"
+        "sv": "Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra",
+        "zh-Hant": "加入一個政黨，或與他人一起創立一個新政黨",
+        "zh-Hans": "加入一个政党，或与他人一起创建一个新政党",
+        "ar": "أن يصبح عضوًا في حزبٍ سياسي أو يؤسّس حزبًا جديدًا مع آخرين",
+        "ckb": "ببێتە ئەندامی پارتێکی سیاسی یان لەگەڵ کەسانی تردا پارتێکی نوێ دامەزرێنێت",
+        "fa": "عضو یک حزب سیاسی شدن یا تأسیس یک حزب جدید همراه با دیگران",
+        "pl": "Zostać członkiem partii politycznej lub założyć nową partię wspólnie z innymi",
+        "so": "Noqo xubin ka mid ah xisbi siyaasadeed ama dad kale la aas xisbi cusub",
+        "ti": "ኣባል ናይ ሓደ ፖለቲካዊ ሰልፊ ምዃን ወይ ምስ ካልኦት ሓቢርካ ሓድሽ ሰልፊ ምምስራት",
+        "tr": "Bir siyasi partiye üye olmak veya başkalarıyla birlikte yeni bir parti kurmak",
+        "uk": "Стати членом політичної партії або заснувати нову партію разом з іншими"
       },
       {
         "en": "Only vote if the person already sits in the Riksdag",
-        "sv": "Bara rösta om personen redan sitter i riksdagen"
+        "sv": "Bara rösta om personen redan sitter i riksdagen",
+        "zh-Hant": "只有當此人已經是 Riksdag（議會）議員時才能投票",
+        "zh-Hans": "只有当此人已经是 Riksdag（议会）议员时才能投票",
+        "ar": "أن يصوّت فقط إذا كان الشخص جالسًا أصلًا في برلمان السويد (Riksdag)",
+        "ckb": "تەنها ئەگەر ئەو کەسە پێشتر لە Riksdag (پارلەمانی سوید) بوو دەنگ بدات",
+        "fa": "فقط در صورتی رأی بدهد که آن شخص از پیش در Riksdag (پارلمان سوئد) عضو باشد",
+        "pl": "Głosować tylko wtedy, gdy osoba już zasiada w Riksdagu",
+        "so": "Kaliya cod bixi haddii qofku horay ugu jiro Riksdag-ga (baarlamaanka)",
+        "ti": "እቲ ሰብ ኣቐዲሙ ኣብ Riksdag (ሃገራዊ ባይቶ) እንተ ኣልዩ ጥራይ ምምራጽ",
+        "tr": "Yalnızca kişi zaten Riksdag'da bulunuyorsa oy vermek",
+        "uk": "Голосувати лише тоді, коли людина вже засідає в Riksdag (парламенті)"
       },
       {
         "en": "Let the courts write every party platform",
-        "sv": "Låta domstolarna skriva alla partiers program"
+        "sv": "Låta domstolarna skriva alla partiers program",
+        "zh-Hant": "讓法院來撰寫所有政黨的綱領",
+        "zh-Hans": "让法院来撰写所有政党的纲领",
+        "ar": "أن يدع المحاكم تكتب برامج جميع الأحزاب",
+        "ckb": "وا بکات دادگاکان پڕۆگرامی هەموو پارتەکان بنووسن",
+        "fa": "بگذارد دادگاه‌ها برنامهٔ همهٔ احزاب را بنویسند",
+        "pl": "Pozwolić sądom pisać programy wszystkich partii",
+        "so": "U oggolow maxkamadaha inay qoraan barnaamijka dhammaan xisbiyada",
+        "ti": "ንኹሎም ሰልፍታት መደብ ዝጽሕፍ ቤት ፍርዲ ክኸውን ምፍቃድ",
+        "tr": "Tüm partilerin programını mahkemelerin yazmasına izin vermek",
+        "uk": "Дозволити судам писати програми всіх партій"
       },
       {
         "en": "Ban other parties from having ideas",
-        "sv": "Förbjuda andra partier från att ha idéer"
+        "sv": "Förbjuda andra partier från att ha idéer",
+        "zh-Hant": "禁止其他政黨擁有自己的理念",
+        "zh-Hans": "禁止其他政党拥有自己的理念",
+        "ar": "أن يمنع الأحزاب الأخرى من امتلاك الأفكار",
+        "ckb": "پارتە دیکەکان لە هەبوونی بیرۆکە قەدەغە بکات",
+        "fa": "احزاب دیگر را از داشتن ایده منع کند",
+        "pl": "Zakazać innym partiom posiadania idei",
+        "so": "Mamnuuc xisbiyada kale inay fikrado lahaadaan",
+        "ti": "ካልኦት ሰልፍታት ሓሳባት ከይህልዎም ምኽልካል",
+        "tr": "Diğer partilerin fikir sahibi olmasını yasaklamak",
+        "uk": "Заборонити іншим партіям мати ідеї"
       }
     ],
     "answer": 0,
@@ -42772,19 +44092,59 @@
     "opts": [
       {
         "en": "They can have policies only for their own municipality or region",
-        "sv": "De kan ha politik bara för den egna kommunen eller regionen"
+        "sv": "De kan ha politik bara för den egna kommunen eller regionen",
+        "zh-Hant": "它們可以只針對本 kommun 或本 region 制定政策",
+        "zh-Hans": "它们可以只针对本 kommun 或本 region 制定政策",
+        "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
+        "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
+        "pl": "Mogą prowadzić politykę tylko dla własnej kommun lub własnego regionu",
+        "so": "Waxay siyaasad u yeelan karaan kaliya kommun-kooda ama region-kooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም kommun ወይ region ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi kommun veya region'ları için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власної kommun чи власного region"
       },
       {
         "en": "They must always be parties in the Riksdag",
-        "sv": "De måste alltid vara partier i riksdagen"
+        "sv": "De måste alltid vara partier i riksdagen",
+        "zh-Hant": "它們必須一律是 Riksdag（議會）中的政黨",
+        "zh-Hans": "它们必须始终是 Riksdag（议会）中的政党",
+        "ar": "يجب أن تكون دائمًا أحزابًا في برلمان السويد (Riksdag)",
+        "ckb": "هەمیشە دەبێت پارتی ناو Riksdag (پارلەمانی سوید) بن",
+        "fa": "همیشه باید احزابی در Riksdag (پارلمان سوئد) باشند",
+        "pl": "Muszą zawsze być partiami zasiadającymi w Riksdagu",
+        "so": "Waa inay had iyo jeer ahaadaan xisbiyo ku jira Riksdag-ga (baarlamaanka)",
+        "ti": "ኩሉ ግዜ ኣብ Riksdag (ሃገራዊ ባይቶ) ዘለዉ ሰልፍታት ክዀኑ ኣለዎም",
+        "tr": "Her zaman Riksdag'daki partiler olmaları gerekir",
+        "uk": "Вони завжди мусять бути партіями в Riksdag (парламенті)"
       },
       {
         "en": "They may not take part in election campaigns",
-        "sv": "De får inte delta i valrörelser"
+        "sv": "De får inte delta i valrörelser",
+        "zh-Hant": "它們不得參與競選活動",
+        "zh-Hans": "它们不得参与竞选活动",
+        "ar": "لا يجوز لها المشاركة في الحملات الانتخابية",
+        "ckb": "بۆیان نییە بەشداری لە کەمپەینە هەڵبژاردنییەکان بکەن",
+        "fa": "اجازه ندارند در کارزارهای انتخاباتی شرکت کنند",
+        "pl": "Nie wolno im uczestniczyć w kampaniach wyborczych",
+        "so": "Looma oggola inay ka qaybgalaan ololeyaasha doorashada",
+        "ti": "ኣብ ናይ ምርጫ ወፍርታት ክሳተፉ ኣይፍቀደሎምን",
+        "tr": "Seçim kampanyalarına katılmalarına izin verilmez",
+        "uk": "Їм не дозволено брати участь у виборчих кампаніях"
       },
       {
         "en": "They replace the Riksdag election",
-        "sv": "De ersätter valet till riksdagen"
+        "sv": "De ersätter valet till riksdagen",
+        "zh-Hant": "它們取代了 Riksdag 的選舉",
+        "zh-Hans": "它们取代了 Riksdag 的选举",
+        "ar": "إنها تحلّ محلّ انتخابات برلمان السويد (Riksdag)",
+        "ckb": "جێگەی هەڵبژاردنی Riksdag (پارلەمانی سوید) دەگرنەوە",
+        "fa": "جایگزین انتخابات Riksdag (پارلمان سوئد) می‌شوند",
+        "pl": "Zastępują wybory do Riksdagu",
+        "so": "Waxay beddelaan doorashada Riksdag-ga (baarlamaanka)",
+        "ti": "ንምርጫ Riksdag (ሃገራዊ ባይቶ) ይትክኡ",
+        "tr": "Riksdag seçiminin yerine geçerler",
+        "uk": "Вони замінюють вибори до Riksdag (парламенту)"
       }
     ],
     "answer": 0,
@@ -42903,19 +44263,59 @@
     "opts": [
       {
         "en": "They can have policies only for their own municipality or region",
-        "sv": "De kan ha politik bara för den egna kommunen eller regionen"
+        "sv": "De kan ha politik bara för den egna kommunen eller regionen",
+        "zh-Hant": "它們可以只針對本 kommun 或本 region 制定政策",
+        "zh-Hans": "它们可以只针对本 kommun 或本 region 制定政策",
+        "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
+        "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
+        "pl": "Mogą prowadzić politykę tylko dla własnej kommun lub własnego regionu",
+        "so": "Waxay siyaasad u yeelan karaan kaliya kommun-kooda ama region-kooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም kommun ወይ region ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi kommun veya region'ları için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власної kommun чи власного region"
       },
       {
         "en": "They must always be parties in the Riksdag",
-        "sv": "De måste alltid vara partier i riksdagen"
+        "sv": "De måste alltid vara partier i riksdagen",
+        "zh-Hant": "它們必須一律是 Riksdag（議會）中的政黨",
+        "zh-Hans": "它们必须始终是 Riksdag（议会）中的政党",
+        "ar": "يجب أن تكون دائمًا أحزابًا في برلمان السويد (Riksdag)",
+        "ckb": "هەمیشە دەبێت پارتی ناو Riksdag (پارلەمانی سوید) بن",
+        "fa": "همیشه باید احزابی در Riksdag (پارلمان سوئد) باشند",
+        "pl": "Muszą zawsze być partiami zasiadającymi w Riksdagu",
+        "so": "Waa inay had iyo jeer ahaadaan xisbiyo ku jira Riksdag-ga (baarlamaanka)",
+        "ti": "ኩሉ ግዜ ኣብ Riksdag (ሃገራዊ ባይቶ) ዘለዉ ሰልፍታት ክዀኑ ኣለዎም",
+        "tr": "Her zaman Riksdag'daki partiler olmaları gerekir",
+        "uk": "Вони завжди мусять бути партіями в Riksdag (парламенті)"
       },
       {
         "en": "They may not take part in election campaigns",
-        "sv": "De får inte delta i valrörelser"
+        "sv": "De får inte delta i valrörelser",
+        "zh-Hant": "它們不得參與競選活動",
+        "zh-Hans": "它们不得参与竞选活动",
+        "ar": "لا يجوز لها المشاركة في الحملات الانتخابية",
+        "ckb": "بۆیان نییە بەشداری لە کەمپەینە هەڵبژاردنییەکان بکەن",
+        "fa": "اجازه ندارند در کارزارهای انتخاباتی شرکت کنند",
+        "pl": "Nie wolno im uczestniczyć w kampaniach wyborczych",
+        "so": "Looma oggola inay ka qaybgalaan ololeyaasha doorashada",
+        "ti": "ኣብ ናይ ምርጫ ወፍርታት ክሳተፉ ኣይፍቀደሎምን",
+        "tr": "Seçim kampanyalarına katılmalarına izin verilmez",
+        "uk": "Їм не дозволено брати участь у виборчих кампаніях"
       },
       {
         "en": "They replace the Riksdag election",
-        "sv": "De ersätter valet till riksdagen"
+        "sv": "De ersätter valet till riksdagen",
+        "zh-Hant": "它們取代了 Riksdag 的選舉",
+        "zh-Hans": "它们取代了 Riksdag 的选举",
+        "ar": "إنها تحلّ محلّ انتخابات برلمان السويد (Riksdag)",
+        "ckb": "جێگەی هەڵبژاردنی Riksdag (پارلەمانی سوید) دەگرنەوە",
+        "fa": "جایگزین انتخابات Riksdag (پارلمان سوئد) می‌شوند",
+        "pl": "Zastępują wybory do Riksdagu",
+        "so": "Waxay beddelaan doorashada Riksdag-ga (baarlamaanka)",
+        "ti": "ንምርጫ Riksdag (ሃገራዊ ባይቶ) ይትክኡ",
+        "tr": "Riksdag seçiminin yerine geçerler",
+        "uk": "Вони замінюють вибори до Riksdag (парламенту)"
       }
     ],
     "answer": 0,
@@ -42943,434 +44343,434 @@
 ];
 
   window.SMT_CHAPTERS_META = [
-    {
-      "id": 1,
-      "emoji": "🌍",
-      "title": {
-        "en": "The country of Sweden",
-        "sv": "Landet Sverige",
-        "zh-Hans": "瑞典这个国家",
-        "zh-Hant": "瑞典這個國家",
-        "ar": "دولة السويد",
-        "ckb": "وڵاتی سوید",
-        "fa": "کشور سوئد",
-        "pl": "Kraj Szwecja",
-        "so": "Dalka Iswiidhan",
-        "ti": "ሃገረ ሽወደን",
-        "tr": "İsveç ülkesi",
-        "uk": "Країна Швеція"
-      },
-      "description": {
-        "en": "Geography, climate, nature, population, natural resources, and climate change.",
-        "sv": "Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.",
-        "zh-Hans": "地理、气候、自然、人口、自然资源与气候变化。",
-        "zh-Hant": "地理、氣候、自然、人口、自然資源與氣候變遷。",
-        "ar": "الجغرافيا والمناخ والطبيعة والسكان والموارد الطبيعية وتغيّر المناخ.",
-        "ckb": "جوگرافیا، کەشوهەوا، سروشت، دانیشتووان، سەرچاوە سروشتییەکان و گۆڕانی کەشوهەوا.",
-        "fa": "جغرافیا، آب‌وهوا، طبیعت، جمعیت، منابع طبیعی و تغییرات اقلیمی.",
-        "pl": "Geografia, klimat, przyroda, ludność, zasoby naturalne i zmiany klimatu.",
-        "so": "Juqraafi, cimilo, dabeecad, dadweyne, kheyraadka dabiiciga ah iyo isbeddelka cimilada.",
-        "ti": "ጂኦግራፊ፣ ክሊማ፣ ተፈጥሮ፣ ህዝቢ፣ ተፈጥሮኣዊ ጸጋታትን ለውጢ ኩነታት ኣየርን።",
-        "tr": "Coğrafya, iklim, doğa, nüfus, doğal kaynaklar ve iklim değişikliği.",
-        "uk": "Географія, клімат, природа, населення, природні ресурси та зміна клімату."
-      },
-      "questionCount": 65
+  {
+    "id": 1,
+    "emoji": "🌍",
+    "title": {
+      "en": "The country of Sweden",
+      "sv": "Landet Sverige",
+      "zh-Hans": "瑞典这个国家",
+      "zh-Hant": "瑞典這個國家",
+      "ar": "دولة السويد",
+      "ckb": "وڵاتی سوید",
+      "fa": "کشور سوئد",
+      "pl": "Kraj Szwecja",
+      "so": "Dalka Iswiidhan",
+      "ti": "ሃገረ ሽወደን",
+      "tr": "İsveç ülkesi",
+      "uk": "Країна Швеція"
     },
-    {
-      "id": 2,
-      "emoji": "🏛",
-      "title": {
-        "en": "Sweden's democratic system",
-        "sv": "Sveriges demokratiska system",
-        "zh-Hans": "瑞典的民主制度",
-        "zh-Hant": "瑞典的民主制度",
-        "ar": "النظام الديمقراطي في السويد",
-        "ckb": "سیستەمی دیموکراتیی سوید",
-        "fa": "نظام دموکراتیک سوئد",
-        "pl": "Demokratyczny system Szwecji",
-        "so": "Nidaamka dimoqraadiga ah ee Iswiidhan",
-        "ti": "ደሞክራስያዊ ስርዓት ሽወደን",
-        "tr": "İsveç'in demokratik sistemi",
-        "uk": "Демократична система Швеції"
-      },
-      "description": {
-        "en": "Democracy, rule by the people, ways to influence society, and threats to democracy.",
-        "sv": "Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.",
-        "zh-Hans": "民主、人民主权、影响社会的途径，以及对民主的威胁。",
-        "zh-Hant": "民主、人民主權、影響社會的途徑，以及對民主的威脅。",
-        "ar": "الديمقراطية وحكم الشعب وسُبل التأثير في المجتمع والتهديدات التي تواجه الديمقراطية.",
-        "ckb": "دیموکراسی، فەرمانڕەوایی گەل، ڕێگاکانی کاریگەری لەسەر کۆمەڵگا و هەڕەشەکان لەسەر دیموکراسی.",
-        "fa": "دموکراسی، مردم‌سالاری، راه‌های تأثیرگذاری بر جامعه و تهدیدهای علیه دموکراسی.",
-        "pl": "Demokracja, rządy ludu, sposoby wpływania na społeczeństwo i zagrożenia dla demokracji.",
-        "so": "Dimoqraadiyad, xukunka dadweynaha, siyaabaha lagu saameeyo bulshada iyo hanjabaadaha ka dhanka ah dimoqraadiyadda.",
-        "ti": "ደሞክራሲ፣ ህዝባዊ ምሕደራ፣ ኣብ ሕብረተሰብ ጽልዋ ናይ ምግባር መንገድታትን ኣንጻር ደሞክራሲ ዘሎ ስግኣታትን።",
-        "tr": "Demokrasi, halkın yönetimi, topluma etki etme yolları ve demokrasiye yönelik tehditler.",
-        "uk": "Демократія, народовладдя, способи впливу на суспільство та загрози демократії."
-      },
-      "questionCount": 50
+    "description": {
+      "en": "Geography, climate, nature, population, natural resources, and climate change.",
+      "sv": "Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.",
+      "zh-Hans": "地理、气候、自然、人口、自然资源与气候变化。",
+      "zh-Hant": "地理、氣候、自然、人口、自然資源與氣候變遷。",
+      "ar": "الجغرافيا والمناخ والطبيعة والسكان والموارد الطبيعية وتغيّر المناخ.",
+      "ckb": "جوگرافیا، کەشوهەوا، سروشت، دانیشتووان، سەرچاوە سروشتییەکان و گۆڕانی کەشوهەوا.",
+      "fa": "جغرافیا، آب‌وهوا، طبیعت، جمعیت، منابع طبیعی و تغییرات اقلیمی.",
+      "pl": "Geografia, klimat, przyroda, ludność, zasoby naturalne i zmiany klimatu.",
+      "so": "Juqraafi, cimilo, dabeecad, dadweyne, kheyraadka dabiiciga ah iyo isbeddelka cimilada.",
+      "ti": "ጂኦግራፊ፣ ክሊማ፣ ተፈጥሮ፣ ህዝቢ፣ ተፈጥሮኣዊ ጸጋታትን ለውጢ ኩነታት ኣየርን።",
+      "tr": "Coğrafya, iklim, doğa, nüfus, doğal kaynaklar ve iklim değişikliği.",
+      "uk": "Географія, клімат, природа, населення, природні ресурси та зміна клімату."
     },
-    {
-      "id": 3,
-      "emoji": "🗳",
-      "title": {
-        "en": "How Sweden is governed",
-        "sv": "Så här styrs Sverige",
-        "zh-Hans": "瑞典如何治理",
-        "zh-Hant": "瑞典如何治理",
-        "ar": "كيف تُحكَم السويد",
-        "ckb": "سوید چۆن بەڕێوە دەبردرێت",
-        "fa": "سوئد چگونه اداره می‌شود",
-        "pl": "Jak rządzona jest Szwecja",
-        "so": "Sida Iswiidhan loo maamulo",
-        "ti": "ሽወደን ብኸመይ ከም እትመሓደር",
-        "tr": "İsveç nasıl yönetilir",
-        "uk": "Як управляється Швеція"
-      },
-      "description": {
-        "en": "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
-        "sv": "Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick.",
-        "zh-Hans": "政治权力如何在国家、region（大区）和 kommun（市镇）之间划分，以及瑞典的政体。",
-        "zh-Hant": "政治權力如何在國家、region（大區）和 kommun（市鎮）之間劃分，以及瑞典的政體。",
-        "ar": "كيف تُقسَّم السلطة السياسية بين الدولة والأقاليم (region) والبلديات (kommun)، إضافةً إلى نظام الحكم في السويد.",
-        "ckb": "ئەوەی هێزی سیاسی چۆن لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun) دابەش دەکرێت، هەروەها شێوەی فەرمانڕەواییی سوید.",
-        "fa": "اینکه قدرت سیاسی چگونه میان دولت، مناطق (region) و کمون‌ها (kommun) تقسیم می‌شود، و نیز شکل حکومت سوئد.",
-        "pl": "Jak władza polityczna jest dzielona między państwo, regiony (region) i kommun, oraz ustrój państwowy Szwecji.",
-        "so": "Sida awoodda siyaasadeed loogu qaybiyo dawladda, region-yada iyo kommun-yada, iyo nidaamka dawladnimo ee Iswiidhan.",
-        "ti": "ፖለቲካዊ ስልጣን ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun ብኸመይ ከም ዝመቓራሕ፣ ከምኡ’ውን ስርዓተ መንግስቲ ሽወደን።",
-        "tr": "Siyasi gücün devlet, region'lar ve kommun'lar arasında nasıl paylaşıldığı ve İsveç'in yönetim biçimi.",
-        "uk": "Як політична влада розподіляється між державою, region і kommun, а також державний устрій Швеції."
-      },
-      "questionCount": 55
+    "questionCount": 65
+  },
+  {
+    "id": 2,
+    "emoji": "🏛",
+    "title": {
+      "en": "Sweden's democratic system",
+      "sv": "Sveriges demokratiska system",
+      "zh-Hans": "瑞典的民主制度",
+      "zh-Hant": "瑞典的民主制度",
+      "ar": "النظام الديمقراطي في السويد",
+      "ckb": "سیستەمی دیموکراتیی سوید",
+      "fa": "نظام دموکراتیک سوئد",
+      "pl": "Demokratyczny system Szwecji",
+      "so": "Nidaamka dimoqraadiga ah ee Iswiidhan",
+      "ti": "ደሞክራስያዊ ስርዓት ሽወደን",
+      "tr": "İsveç'in demokratik sistemi",
+      "uk": "Демократична система Швеції"
     },
-    {
-      "id": 4,
-      "emoji": "🗳",
-      "title": {
-        "en": "Political elections and parties",
-        "sv": "Politiska val och partier",
-        "zh-Hans": "政治选举与政党",
-        "zh-Hant": "政治選舉與政黨",
-        "ar": "الانتخابات السياسية والأحزاب",
-        "ckb": "هەڵبژاردنە سیاسییەکان و پارتەکان",
-        "fa": "انتخابات سیاسی و احزاب",
-        "pl": "Wybory polityczne i partie",
-        "so": "Doorashooyinka siyaasadeed iyo xisbiyada",
-        "ti": "ፖለቲካዊ ምርጫታትን ሰልፍታትን",
-        "tr": "Siyasi seçimler ve partiler",
-        "uk": "Політичні вибори та партії"
-      },
-      "description": {
-        "en": "Elections, voting, referendums, and the role of political parties in Sweden.",
-        "sv": "Val, röstning, folkomröstningar och politiska partiers roll i Sverige.",
-        "zh-Hans": "选举、投票、公民投票，以及政党在瑞典所扮演的角色。",
-        "zh-Hant": "選舉、投票、公民投票，以及政黨在瑞典所扮演的角色。",
-        "ar": "الانتخابات والتصويت والاستفتاءات ودور الأحزاب السياسية في السويد.",
-        "ckb": "هەڵبژاردن، دەنگدان، ڕاپرسییەکان و ڕۆڵی پارتە سیاسییەکان لە سوید.",
-        "fa": "انتخابات، رأی‌گیری، همه‌پرسی‌ها و نقش احزاب سیاسی در سوئد.",
-        "pl": "Wybory, głosowanie, referenda oraz rola partii politycznych w Szwecji.",
-        "so": "Doorashooyinka, codbixinta, afti iyo doorka xisbiyada siyaasadeed ee Iswiidhan.",
-        "ti": "ምርጫታት፣ ምድማጽ፣ ህዝበ-ውሳነታትን ኣብ ሽወደን ዘሎ ተራ ፖለቲካዊ ሰልፍታትን።",
-        "tr": "Seçimler, oy verme, referandumlar ve İsveç'te siyasi partilerin rolü.",
-        "uk": "Вибори, голосування, референдуми та роль політичних партій у Швеції."
-      },
-      "questionCount": 70
+    "description": {
+      "en": "Democracy, rule by the people, ways to influence society, and threats to democracy.",
+      "sv": "Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.",
+      "zh-Hans": "民主、人民主权、影响社会的途径，以及对民主的威胁。",
+      "zh-Hant": "民主、人民主權、影響社會的途徑，以及對民主的威脅。",
+      "ar": "الديمقراطية وحكم الشعب وسُبل التأثير في المجتمع والتهديدات التي تواجه الديمقراطية.",
+      "ckb": "دیموکراسی، فەرمانڕەوایی گەل، ڕێگاکانی کاریگەری لەسەر کۆمەڵگا و هەڕەشەکان لەسەر دیموکراسی.",
+      "fa": "دموکراسی، مردم‌سالاری، راه‌های تأثیرگذاری بر جامعه و تهدیدهای علیه دموکراسی.",
+      "pl": "Demokracja, rządy ludu, sposoby wpływania na społeczeństwo i zagrożenia dla demokracji.",
+      "so": "Dimoqraadiyad, xukunka dadweynaha, siyaabaha lagu saameeyo bulshada iyo hanjabaadaha ka dhanka ah dimoqraadiyadda.",
+      "ti": "ደሞክራሲ፣ ህዝባዊ ምሕደራ፣ ኣብ ሕብረተሰብ ጽልዋ ናይ ምግባር መንገድታትን ኣንጻር ደሞክራሲ ዘሎ ስግኣታትን።",
+      "tr": "Demokrasi, halkın yönetimi, topluma etki etme yolları ve demokrasiye yönelik tehditler.",
+      "uk": "Демократія, народовладдя, способи впливу на суспільство та загрози демократії."
     },
-    {
-      "id": 5,
-      "emoji": "⚖️",
-      "title": {
-        "en": "Law and justice",
-        "sv": "Lag och rätt",
-        "zh-Hans": "法律与司法",
-        "zh-Hant": "法律與司法",
-        "ar": "القانون والعدالة",
-        "ckb": "یاسا و دادپەروەری",
-        "fa": "قانون و عدالت",
-        "pl": "Prawo i sprawiedliwość",
-        "so": "Sharciga iyo caddaaladda",
-        "ti": "ሕግን ፍትሕን",
-        "tr": "Hukuk ve adalet",
-        "uk": "Право та правосуддя"
-      },
-      "description": {
-        "en": "The fundamental laws, the justice system, rule of law, and the right of public access.",
-        "sv": "Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.",
-        "zh-Hans": "基本法（Grundlagarna）、司法体系、法治保障与公众通行权（allemansrätten）。",
-        "zh-Hant": "基本法（Grundlagarna）、司法體系、法治保障與公眾通行權（allemansrätten）。",
-        "ar": "القوانين الأساسية (Grundlagarna) ونظام القضاء وسيادة القانون وحقّ الوصول العام إلى الطبيعة (Allemansrätten).",
-        "ckb": "یاسا بنەڕەتییەکان (Grundlagarna)، سیستەمی دادوەری، سەروەریی یاسا و مافی گشتیی دەستگەیشتن بە سروشت (Allemansrätten).",
-        "fa": "قوانین اساسی (Grundlagarna)، نظام قضایی، حاکمیت قانون و حق دسترسی همگانی به طبیعت (Allemansrätten).",
-        "pl": "Grundlagarna (ustawy zasadnicze), wymiar sprawiedliwości, państwo prawa i allemansrätten (prawo do swobodnego dostępu do przyrody).",
-        "so": "Grundlagarna (sharciyada aasaasiga ah), nidaamka caddaaladda, sharcinimada iyo allemansrätten (xaqa loo leeyahay helitaanka dabeecadda).",
-        "ti": "Grundlagarna (መሰረታውያን ሕግታት)፣ ስርዓተ ፍትሒ፣ ግዝኣተ ሕግን allemansrätten (ናጻ ናብ ተፈጥሮ ናይ ምብጻሕ መሰል)ን።",
-        "tr": "Grundlagarna (anayasal temel yasalar), yargı sistemi, hukukun üstünlüğü ve allemansrätten (doğaya serbest erişim hakkı).",
-        "uk": "Grundlagarna (основні закони), система правосуддя, верховенство права та allemansrätten (право вільного доступу до природи)."
-      },
-      "questionCount": 45
+    "questionCount": 50
+  },
+  {
+    "id": 3,
+    "emoji": "🗳",
+    "title": {
+      "en": "How Sweden is governed",
+      "sv": "Så här styrs Sverige",
+      "zh-Hans": "瑞典如何治理",
+      "zh-Hant": "瑞典如何治理",
+      "ar": "كيف تُحكَم السويد",
+      "ckb": "سوید چۆن بەڕێوە دەبردرێت",
+      "fa": "سوئد چگونه اداره می‌شود",
+      "pl": "Jak rządzona jest Szwecja",
+      "so": "Sida Iswiidhan loo maamulo",
+      "ti": "ሽወደን ብኸመይ ከም እትመሓደር",
+      "tr": "İsveç nasıl yönetilir",
+      "uk": "Як управляється Швеція"
     },
-    {
-      "id": 6,
-      "emoji": "📰",
-      "title": {
-        "en": "The role of the media",
-        "sv": "Mediernas roll",
-        "zh-Hans": "媒体的角色",
-        "zh-Hant": "媒體的角色",
-        "ar": "دور وسائل الإعلام",
-        "ckb": "ڕۆڵی ڕاگەیاندنەکان",
-        "fa": "نقش رسانه‌ها",
-        "pl": "Rola mediów",
-        "so": "Doorka warbaahinta",
-        "ti": "ተራ ማዕከናት ዜና",
-        "tr": "Medyanın rolü",
-        "uk": "Роль медіа"
-      },
-      "description": {
-        "en": "Free media, different types of media, public service broadcasting, and source criticism.",
-        "sv": "Fria medier, olika slags medier, public service och källkritik.",
-        "zh-Hans": "自由媒体、各类媒体、公共服务广播（public service）与信息来源辨析。",
-        "zh-Hant": "自由媒體、各類媒體、公共服務廣播（public service）與資料來源判讀。",
-        "ar": "الإعلام الحرّ وأنواع وسائل الإعلام المختلفة وإعلام الخدمة العامة (public service) وتقييم المصادر.",
-        "ckb": "ڕاگەیاندنی ئازاد، جۆرە جیاوازەکانی ڕاگەیاندن، ڕاگەیاندنی خزمەتگوزاریی گشتی (public service) و هەڵسەنگاندنی سەرچاوە.",
-        "fa": "رسانه‌های آزاد، انواع گوناگون رسانه‌ها، رسانهٔ خدمات عمومی (public service) و ارزیابی منابع.",
-        "pl": "Wolne media, różne rodzaje mediów, public service (media publiczne) i ocena wiarygodności źródeł (källkritik).",
-        "so": "Warbaahin xor ah, noocyo kala duwan oo warbaahin ah, public service (warbaahinta dadweynaha) iyo qiimeynta ilaha macluumaadka (källkritik).",
-        "ti": "ናጻ ማዕከናት ዜና፣ ዝተፈላለዩ ዓይነታት ማዕከናት ዜና፣ public service (ህዝባዊ መሰናድኦ ዜና) ከምኡ’ውን ነቐፌታዊ ኣረኣእያ ምንጪ (källkritik)።",
-        "tr": "Özgür medya, farklı medya türleri, public service (kamu yayıncılığı) ve kaynak değerlendirmesi (källkritik).",
-        "uk": "Вільні медіа, різні види медіа, public service (суспільне мовлення) та критична оцінка джерел (källkritik)."
-      },
-      "questionCount": 55
+    "description": {
+      "en": "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
+      "sv": "Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick.",
+      "zh-Hans": "政治权力如何在国家、region（大区）和 kommun（市镇）之间划分，以及瑞典的政体。",
+      "zh-Hant": "政治權力如何在國家、region（大區）和 kommun（市鎮）之間劃分，以及瑞典的政體。",
+      "ar": "كيف تُقسَّم السلطة السياسية بين الدولة والأقاليم (region) والبلديات (kommun)، إضافةً إلى نظام الحكم في السويد.",
+      "ckb": "ئەوەی هێزی سیاسی چۆن لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun) دابەش دەکرێت، هەروەها شێوەی فەرمانڕەواییی سوید.",
+      "fa": "اینکه قدرت سیاسی چگونه میان دولت، مناطق (region) و کمون‌ها (kommun) تقسیم می‌شود، و نیز شکل حکومت سوئد.",
+      "pl": "Jak władza polityczna jest dzielona między państwo, regiony (region) i kommun, oraz ustrój państwowy Szwecji.",
+      "so": "Sida awoodda siyaasadeed loogu qaybiyo dawladda, region-yada iyo kommun-yada, iyo nidaamka dawladnimo ee Iswiidhan.",
+      "ti": "ፖለቲካዊ ስልጣን ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun ብኸመይ ከም ዝመቓራሕ፣ ከምኡ’ውን ስርዓተ መንግስቲ ሽወደን።",
+      "tr": "Siyasi gücün devlet, region'lar ve kommun'lar arasında nasıl paylaşıldığı ve İsveç'in yönetim biçimi.",
+      "uk": "Як політична влада розподіляється між державою, region і kommun, а також державний устрій Швеції."
     },
-    {
-      "id": 7,
-      "emoji": "🤝",
-      "title": {
-        "en": "Human rights",
-        "sv": "Mänskliga rättigheter",
-        "zh-Hans": "人权",
-        "zh-Hant": "人權",
-        "ar": "حقوق الإنسان",
-        "ckb": "مافەکانی مرۆڤ",
-        "fa": "حقوق بشر",
-        "pl": "Prawa człowieka",
-        "so": "Xuquuqda bani'aadamka",
-        "ti": "ሰብኣዊ መሰላት",
-        "tr": "İnsan hakları",
-        "uk": "Права людини"
-      },
-      "description": {
-        "en": "Human rights, gender equality, children's rights, minority rights, and discrimination.",
-        "sv": "Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.",
-        "zh-Hans": "人权、性别平等、儿童权利、少数群体权利与歧视。",
-        "zh-Hant": "人權、性別平等、兒童權利、少數群體權利與歧視。",
-        "ar": "حقوق الإنسان والمساواة بين الجنسين وحقوق الطفل وحقوق الأقليات والتمييز.",
-        "ckb": "مافەکانی مرۆڤ، یەکسانیی ڕەگەزی، مافەکانی منداڵان، مافەکانی کەمینەکان و جیاکاری.",
-        "fa": "حقوق بشر، برابری جنسیتی، حقوق کودکان، حقوق اقلیت‌ها و تبعیض.",
-        "pl": "Prawa człowieka, równość płci, prawa dzieci, prawa mniejszości i dyskryminacja.",
-        "so": "Xuquuqda bani'aadamka, sinnaanta jinsiga, xuquuqda carruurta, xuquuqda laamiyada iyo takoorid.",
-        "ti": "ሰብኣዊ መሰላት፣ ጾታዊ ማዕርነት፣ መሰላት ቆልዑ፣ መሰላት ውሑዳትን ኣድልዎን።",
-        "tr": "İnsan hakları, toplumsal cinsiyet eşitliği, çocuk hakları, azınlık hakları ve ayrımcılık.",
-        "uk": "Права людини, гендерна рівність, права дітей, права меншин та дискримінація."
-      },
-      "questionCount": 55
+    "questionCount": 55
+  },
+  {
+    "id": 4,
+    "emoji": "🗳",
+    "title": {
+      "en": "Political elections and parties",
+      "sv": "Politiska val och partier",
+      "zh-Hans": "政治选举与政党",
+      "zh-Hant": "政治選舉與政黨",
+      "ar": "الانتخابات السياسية والأحزاب",
+      "ckb": "هەڵبژاردنە سیاسییەکان و پارتەکان",
+      "fa": "انتخابات سیاسی و احزاب",
+      "pl": "Wybory polityczne i partie",
+      "so": "Doorashooyinka siyaasadeed iyo xisbiyada",
+      "ti": "ፖለቲካዊ ምርጫታትን ሰልፍታትን",
+      "tr": "Siyasi seçimler ve partiler",
+      "uk": "Політичні вибори та партії"
     },
-    {
-      "id": 8,
-      "emoji": "💼",
-      "title": {
-        "en": "Labour market and personal finance",
-        "sv": "Arbetsmarknad och privatekonomi",
-        "zh-Hans": "劳动力市场与个人理财",
-        "zh-Hant": "勞動市場與個人理財",
-        "ar": "سوق العمل والاقتصاد الشخصي",
-        "ckb": "بازاڕی کار و ئابووریی کەسی",
-        "fa": "بازار کار و اقتصاد شخصی",
-        "pl": "Rynek pracy i finanse osobiste",
-        "so": "Suuqa shaqada iyo maaliyadda shakhsiga",
-        "ti": "ዕዳጋ ስራሕን ውልቃዊ ቍጠባን",
-        "tr": "İş gücü piyasası ve kişisel finans",
-        "uk": "Ринок праці та особисті фінанси"
-      },
-      "description": {
-        "en": "The labour market, labour-market parties, workplace rules, and personal finance.",
-        "sv": "Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.",
-        "zh-Hans": "劳动力市场、劳动力市场双方、劳动规则与个人理财。",
-        "zh-Hant": "勞動市場、勞資雙方、勞動規則與個人理財。",
-        "ar": "سوق العمل وأطراف سوق العمل وقواعد العمل والاقتصاد الشخصي.",
-        "ckb": "بازاڕی کار، لایەنەکانی بازاڕی کار، ڕێساکانی کار و ئابووریی کەسی.",
-        "fa": "بازار کار، طرف‌های بازار کار، قواعد کار و اقتصاد شخصی.",
-        "pl": "Rynek pracy, partnerzy rynku pracy, przepisy dotyczące pracy oraz finanse osobiste.",
-        "so": "Suuqa shaqada, dhinacyada suuqa shaqada, xeerarka shaqada iyo maaliyadda shakhsiga.",
-        "ti": "ዕዳጋ ስራሕ፣ ኣካላት ዕዳጋ ስራሕ፣ ሕግታት ስራሕን ውልቃዊ ቍጠባን።",
-        "tr": "İş gücü piyasası, iş gücü piyasası tarafları, çalışma kuralları ve kişisel finans.",
-        "uk": "Ринок праці, сторони ринку праці, правила праці та особисті фінанси."
-      },
-      "questionCount": 35
+    "description": {
+      "en": "Elections, voting, referendums, and the role of political parties in Sweden.",
+      "sv": "Val, röstning, folkomröstningar och politiska partiers roll i Sverige.",
+      "zh-Hans": "选举、投票、公民投票，以及政党在瑞典所扮演的角色。",
+      "zh-Hant": "選舉、投票、公民投票，以及政黨在瑞典所扮演的角色。",
+      "ar": "الانتخابات والتصويت والاستفتاءات ودور الأحزاب السياسية في السويد.",
+      "ckb": "هەڵبژاردن، دەنگدان، ڕاپرسییەکان و ڕۆڵی پارتە سیاسییەکان لە سوید.",
+      "fa": "انتخابات، رأی‌گیری، همه‌پرسی‌ها و نقش احزاب سیاسی در سوئد.",
+      "pl": "Wybory, głosowanie, referenda oraz rola partii politycznych w Szwecji.",
+      "so": "Doorashooyinka, codbixinta, afti iyo doorka xisbiyada siyaasadeed ee Iswiidhan.",
+      "ti": "ምርጫታት፣ ምድማጽ፣ ህዝበ-ውሳነታትን ኣብ ሽወደን ዘሎ ተራ ፖለቲካዊ ሰልፍታትን።",
+      "tr": "Seçimler, oy verme, referandumlar ve İsveç'te siyasi partilerin rolü.",
+      "uk": "Вибори, голосування, референдуми та роль політичних партій у Швеції."
     },
-    {
-      "id": 9,
-      "emoji": "🏥",
-      "title": {
-        "en": "The welfare society",
-        "sv": "Välfärdssamhället",
-        "zh-Hans": "福利社会",
-        "zh-Hant": "福利社會",
-        "ar": "مجتمع الرفاه",
-        "ckb": "کۆمەڵگای خۆشگوزەرانی",
-        "fa": "جامعهٔ رفاه",
-        "pl": "Społeczeństwo dobrobytu",
-        "so": "Bulshada daryeelka (welfare)",
-        "ti": "ሕብረተሰብ ድሕነት (welfare)",
-        "tr": "Refah toplumu",
-        "uk": "Суспільство добробуту"
-      },
-      "description": {
-        "en": "Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.",
-        "sv": "Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.",
-        "zh-Hans": "税收、福利，以及国家、region（大区）和 kommun（市镇）之间的责任分配。",
-        "zh-Hant": "稅收、福利，以及國家、region（大區）和 kommun（市鎮）之間的責任分配。",
-        "ar": "الضرائب والرفاه وتوزيع المسؤوليات بين الدولة والأقاليم (region) والبلديات (kommun).",
-        "ckb": "باجەکان، خۆشگوزەرانی و دابەشکردنی بەرپرسیارێتی لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun).",
-        "fa": "مالیات‌ها، رفاه و تقسیم مسئولیت‌ها میان دولت، مناطق (region) و کمون‌ها (kommun).",
-        "pl": "Podatki, dobrobyt (welfare) i podział odpowiedzialności między państwo, regiony (region) i kommun.",
-        "so": "Canshuuraha, daryeelka (welfare) iyo qaybinta mas'uuliyadda inta u dhaxaysa dawladda, region-yada iyo kommun-yada.",
-        "ti": "ቀረጽ፣ ድሕነት (welfare) ከምኡ’ውን ምክፍፋል ሓላፍነት ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun።",
-        "tr": "Vergiler, refah (welfare) ve sorumlulukların devlet, region'lar ve kommun'lar arasında paylaşımı.",
-        "uk": "Податки, добробут (welfare) та розподіл відповідальності між державою, region і kommun."
-      },
-      "questionCount": 55
+    "questionCount": 70
+  },
+  {
+    "id": 5,
+    "emoji": "⚖️",
+    "title": {
+      "en": "Law and justice",
+      "sv": "Lag och rätt",
+      "zh-Hans": "法律与司法",
+      "zh-Hant": "法律與司法",
+      "ar": "القانون والعدالة",
+      "ckb": "یاسا و دادپەروەری",
+      "fa": "قانون و عدالت",
+      "pl": "Prawo i sprawiedliwość",
+      "so": "Sharciga iyo caddaaladda",
+      "ti": "ሕግን ፍትሕን",
+      "tr": "Hukuk ve adalet",
+      "uk": "Право та правосуддя"
     },
-    {
-      "id": 10,
-      "emoji": "📜",
-      "title": {
-        "en": "Sweden's modern history",
-        "sv": "Sveriges moderna historia",
-        "zh-Hans": "瑞典近现代史",
-        "zh-Hant": "瑞典近現代史",
-        "ar": "تاريخ السويد الحديث",
-        "ckb": "مێژووی هاوچەرخی سوید",
-        "fa": "تاریخ معاصر سوئد",
-        "pl": "Współczesna historia Szwecji",
-        "so": "Taariikhda casriga ah ee Iswiidhan",
-        "ti": "ዘመናዊ ታሪኽ ሽወደን",
-        "tr": "İsveç'in modern tarihi",
-        "uk": "Сучасна історія Швеції"
-      },
-      "description": {
-        "en": "From agricultural society to industrial society, democratization, the people's home, and globalization.",
-        "sv": "Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering.",
-        "zh-Hans": "从农业社会到工业社会、民主化进程、人民之家（folkhemmet）与全球化。",
-        "zh-Hant": "從農業社會到工業社會、民主化進程、人民之家（folkhemmet）與全球化。",
-        "ar": "من مجتمع زراعي إلى مجتمع صناعي، والتحوّل الديمقراطي، و«بيت الشعب» (Folkhemmet)، والعولمة.",
-        "ckb": "لە کۆمەڵگای کشتوکاڵییەوە بۆ کۆمەڵگای پیشەسازی، دیموکراتیکبوون، «ماڵی گەل» (Folkhemmet) و جیهانیبوون.",
-        "fa": "از جامعهٔ کشاورزی به جامعهٔ صنعتی، دموکراتیک‌شدن، «خانهٔ مردم» (Folkhemmet) و جهانی‌شدن.",
-        "pl": "Od społeczeństwa rolniczego do przemysłowego, demokratyzacja, Folkhemmet (dom ludowy) i globalizacja.",
-        "so": "Laga soo bilaabo bulsho beeraley ah ilaa bulsho warshadeed, dimoqraadiyeyn, Folkhemmet (guriga dadweynaha) iyo caalamiyeyn.",
-        "ti": "ካብ ሕርሻዊ ሕብረተሰብ ናብ ኢንዱስትሪያዊ ሕብረተሰብ፣ ደሞክራሲ ምስፋን፣ Folkhemmet (ቤት ህዝቢ) ከምኡ’ውን ግሎባላይዜሽን።",
-        "tr": "Tarım toplumundan sanayi toplumuna, demokratikleşme, Folkhemmet (halkın evi) ve küreselleşme.",
-        "uk": "Від аграрного суспільства до промислового, демократизація, Folkhemmet (народний дім) та глобалізація."
-      },
-      "questionCount": 50
+    "description": {
+      "en": "The fundamental laws, the justice system, rule of law, and the right of public access.",
+      "sv": "Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.",
+      "zh-Hans": "基本法（Grundlagarna）、司法体系、法治保障与公众通行权（allemansrätten）。",
+      "zh-Hant": "基本法（Grundlagarna）、司法體系、法治保障與公眾通行權（allemansrätten）。",
+      "ar": "القوانين الأساسية (Grundlagarna) ونظام القضاء وسيادة القانون وحقّ الوصول العام إلى الطبيعة (Allemansrätten).",
+      "ckb": "یاسا بنەڕەتییەکان (Grundlagarna)، سیستەمی دادوەری، سەروەریی یاسا و مافی گشتیی دەستگەیشتن بە سروشت (Allemansrätten).",
+      "fa": "قوانین اساسی (Grundlagarna)، نظام قضایی، حاکمیت قانون و حق دسترسی همگانی به طبیعت (Allemansrätten).",
+      "pl": "Grundlagarna (ustawy zasadnicze), wymiar sprawiedliwości, państwo prawa i allemansrätten (prawo do swobodnego dostępu do przyrody).",
+      "so": "Grundlagarna (sharciyada aasaasiga ah), nidaamka caddaaladda, sharcinimada iyo allemansrätten (xaqa loo leeyahay helitaanka dabeecadda).",
+      "ti": "Grundlagarna (መሰረታውያን ሕግታት)፣ ስርዓተ ፍትሒ፣ ግዝኣተ ሕግን allemansrätten (ናጻ ናብ ተፈጥሮ ናይ ምብጻሕ መሰል)ን።",
+      "tr": "Grundlagarna (anayasal temel yasalar), yargı sistemi, hukukun üstünlüğü ve allemansrätten (doğaya serbest erişim hakkı).",
+      "uk": "Grundlagarna (основні закони), система правосуддя, верховенство права та allemansrätten (право вільного доступу до природи)."
     },
-    {
-      "id": 11,
-      "emoji": "🌐",
-      "title": {
-        "en": "Sweden and the outside world",
-        "sv": "Sverige och omvärlden",
-        "zh-Hans": "瑞典与外部世界",
-        "zh-Hant": "瑞典與外部世界",
-        "ar": "السويد والعالم الخارجي",
-        "ckb": "سوید و جیهانی دەرەوە",
-        "fa": "سوئد و جهان بیرون",
-        "pl": "Szwecja i świat zewnętrzny",
-        "so": "Iswiidhan iyo dunida dibadda",
-        "ti": "ሽወደንን ግዳማዊ ዓለምን",
-        "tr": "İsveç ve dış dünya",
-        "uk": "Швеція та зовнішній світ"
-      },
-      "description": {
-        "en": "Nordic, European, and global cooperation, plus defence and security policy.",
-        "sv": "Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik.",
-        "zh-Hans": "北欧、欧洲和全球范围的合作，以及国防与安全政策。",
-        "zh-Hant": "北歐、歐洲和全球範圍的合作，以及國防與安全政策。",
-        "ar": "التعاون النوردي والأوروبي والعالمي، إضافةً إلى سياسة الدفاع والأمن.",
-        "ckb": "هاوکاریی باکووری ئەورووپا، ئەورووپی و جیهانی، هەروەها سیاسەتی بەرگری و ئاسایش.",
-        "fa": "همکاری شمال اروپا، اروپایی و جهانی، و نیز سیاست دفاعی و امنیتی.",
-        "pl": "Współpraca nordycka, europejska i globalna oraz polityka obronna i bezpieczeństwa.",
-        "so": "Iskaashiga waqooyiga Yurub, kan Yurub iyo kan caalamiga ah, iyo siyaasadda difaaca iyo amniga.",
-        "ti": "ኖርዲካዊ፣ ኤውሮጳዊን ዓለማውን ምትሕብባር፣ ከምኡ’ውን ፖሊሲ ምክልኻልን ጸጥታን።",
-        "tr": "İskandinav, Avrupa ve küresel iş birliği ile savunma ve güvenlik politikası.",
-        "uk": "Співпраця на рівні країн Північної Європи, європейська та глобальна, а також оборонна та безпекова політика."
-      },
-      "questionCount": 60
+    "questionCount": 45
+  },
+  {
+    "id": 6,
+    "emoji": "📰",
+    "title": {
+      "en": "The role of the media",
+      "sv": "Mediernas roll",
+      "zh-Hans": "媒体的角色",
+      "zh-Hant": "媒體的角色",
+      "ar": "دور وسائل الإعلام",
+      "ckb": "ڕۆڵی ڕاگەیاندنەکان",
+      "fa": "نقش رسانه‌ها",
+      "pl": "Rola mediów",
+      "so": "Doorka warbaahinta",
+      "ti": "ተራ ማዕከናት ዜና",
+      "tr": "Medyanın rolü",
+      "uk": "Роль медіа"
     },
-    {
-      "id": 12,
-      "emoji": "🕊",
-      "title": {
-        "en": "A secular state and a multi-religious country",
-        "sv": "En sekulär stat och ett mångreligiöst land",
-        "zh-Hans": "世俗国家与多宗教的国度",
-        "zh-Hant": "世俗國家與多宗教的國度",
-        "ar": "دولة علمانية وبلد متعدّد الأديان",
-        "ckb": "دەوڵەتێکی سێکۆلار و وڵاتێکی فرە‌ئاینی",
-        "fa": "دولتی سکولار و کشوری چنددینی",
-        "pl": "Państwo świeckie i kraj wielowyznaniowy",
-        "so": "Dawlad cilmaani ah iyo dal diimo badan leh",
-        "ti": "ዓለማዊ መንግስትን ብዙሕ ሃይማኖት ዘለዋ ሃገርን",
-        "tr": "Laik bir devlet ve çok dinli bir ülke",
-        "uk": "Світська держава та багатоконфесійна країна"
-      },
-      "description": {
-        "en": "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
-        "sv": "Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället.",
-        "zh-Hans": "宗教自由、国家在宗教上的中立，以及宗教在社会中的角色。",
-        "zh-Hant": "宗教自由、國家在宗教上的中立，以及宗教在社會中的角色。",
-        "ar": "حرية الدين والحياد الديني للدولة ودور الدين في المجتمع.",
-        "ckb": "ئازادیی ئاین، بێلایەنیی ئاینیی دەوڵەت و ڕۆڵی ئاین لە کۆمەڵگادا.",
-        "fa": "آزادی دین، بی‌طرفی دینی دولت و نقش دین در جامعه.",
-        "pl": "Wolność wyznania, neutralność religijna państwa i rola religii w społeczeństwie.",
-        "so": "Xorriyadda diinta, dhexdhexaadnimada diineed ee dawladda iyo doorka diinta ee bulshada.",
-        "ti": "ናጽነት ሃይማኖት፣ ሃይማኖታዊ ገለልተኝነት መንግስትን ኣብ ሕብረተሰብ ዘሎ ተራ ሃይማኖትን።",
-        "tr": "Din özgürlüğü, devletin dini tarafsızlığı ve dinin toplumdaki rolü.",
-        "uk": "Свобода віросповідання, релігійна нейтральність держави та роль релігії в суспільстві."
-      },
-      "questionCount": 105
+    "description": {
+      "en": "Free media, different types of media, public service broadcasting, and source criticism.",
+      "sv": "Fria medier, olika slags medier, public service och källkritik.",
+      "zh-Hans": "自由媒体、各类媒体、公共服务广播（public service）与信息来源辨析。",
+      "zh-Hant": "自由媒體、各類媒體、公共服務廣播（public service）與資料來源判讀。",
+      "ar": "الإعلام الحرّ وأنواع وسائل الإعلام المختلفة وإعلام الخدمة العامة (public service) وتقييم المصادر.",
+      "ckb": "ڕاگەیاندنی ئازاد، جۆرە جیاوازەکانی ڕاگەیاندن، ڕاگەیاندنی خزمەتگوزاریی گشتی (public service) و هەڵسەنگاندنی سەرچاوە.",
+      "fa": "رسانه‌های آزاد، انواع گوناگون رسانه‌ها، رسانهٔ خدمات عمومی (public service) و ارزیابی منابع.",
+      "pl": "Wolne media, różne rodzaje mediów, public service (media publiczne) i ocena wiarygodności źródeł (källkritik).",
+      "so": "Warbaahin xor ah, noocyo kala duwan oo warbaahin ah, public service (warbaahinta dadweynaha) iyo qiimeynta ilaha macluumaadka (källkritik).",
+      "ti": "ናጻ ማዕከናት ዜና፣ ዝተፈላለዩ ዓይነታት ማዕከናት ዜና፣ public service (ህዝባዊ መሰናድኦ ዜና) ከምኡ’ውን ነቐፌታዊ ኣረኣእያ ምንጪ (källkritik)።",
+      "tr": "Özgür medya, farklı medya türleri, public service (kamu yayıncılığı) ve kaynak değerlendirmesi (källkritik).",
+      "uk": "Вільні медіа, різні види медіа, public service (суспільне мовлення) та критична оцінка джерел (källkritik)."
     },
-    {
-      "id": 13,
-      "emoji": "🕯",
-      "title": {
-        "en": "Traditions and holidays",
-        "sv": "Traditioner och högtider",
-        "zh-Hans": "传统与节日",
-        "zh-Hant": "傳統與節日",
-        "ar": "التقاليد والأعياد",
-        "ckb": "نەریت و جەژنەکان",
-        "fa": "سنت‌ها و جشن‌ها",
-        "pl": "Tradycje i święta",
-        "so": "Caadooyinka iyo ciidaha",
-        "ti": "ባህልታትን በዓላትን",
-        "tr": "Gelenekler ve özel günler",
-        "uk": "Традиції та свята"
-      },
-      "description": {
-        "en": "Traditional holidays in Sweden and how traditions change over time.",
-        "sv": "Traditionella högtider i Sverige och hur traditioner förändras över tid.",
-        "zh-Hans": "瑞典的传统节日，以及传统如何随时间而变化。",
-        "zh-Hant": "瑞典的傳統節日，以及傳統如何隨時間而變化。",
-        "ar": "الأعياد التقليدية في السويد وكيف تتغيّر التقاليد عبر الزمن.",
-        "ckb": "جەژنە نەریتییەکان لە سوید و ئەوەی نەریتەکان چۆن بە تێپەڕبوونی کاتدا دەگۆڕێن.",
-        "fa": "جشن‌های سنتی در سوئد و اینکه سنت‌ها چگونه در گذر زمان تغییر می‌کنند.",
-        "pl": "Tradycyjne święta w Szwecji oraz to, jak tradycje zmieniają się z biegiem czasu.",
-        "so": "Ciidaha dhaqameed ee Iswiidhan iyo sida caadooyinku ay isu beddelaan muddo ka dib.",
-        "ti": "ኣብ ሽወደን ዘለዉ ባህላዊ በዓላትን ባህልታት ብግዜ ብኸመይ ከም ዝቕየሩን።",
-        "tr": "İsveç'teki geleneksel özel günler ve geleneklerin zaman içinde nasıl değiştiği.",
-        "uk": "Традиційні свята у Швеції та те, як традиції змінюються з часом."
-      },
-      "questionCount": 145
-    }
-  ];
+    "questionCount": 55
+  },
+  {
+    "id": 7,
+    "emoji": "🤝",
+    "title": {
+      "en": "Human rights",
+      "sv": "Mänskliga rättigheter",
+      "zh-Hans": "人权",
+      "zh-Hant": "人權",
+      "ar": "حقوق الإنسان",
+      "ckb": "مافەکانی مرۆڤ",
+      "fa": "حقوق بشر",
+      "pl": "Prawa człowieka",
+      "so": "Xuquuqda bani'aadamka",
+      "ti": "ሰብኣዊ መሰላት",
+      "tr": "İnsan hakları",
+      "uk": "Права людини"
+    },
+    "description": {
+      "en": "Human rights, gender equality, children's rights, minority rights, and discrimination.",
+      "sv": "Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.",
+      "zh-Hans": "人权、性别平等、儿童权利、少数群体权利与歧视。",
+      "zh-Hant": "人權、性別平等、兒童權利、少數群體權利與歧視。",
+      "ar": "حقوق الإنسان والمساواة بين الجنسين وحقوق الطفل وحقوق الأقليات والتمييز.",
+      "ckb": "مافەکانی مرۆڤ، یەکسانیی ڕەگەزی، مافەکانی منداڵان، مافەکانی کەمینەکان و جیاکاری.",
+      "fa": "حقوق بشر، برابری جنسیتی، حقوق کودکان، حقوق اقلیت‌ها و تبعیض.",
+      "pl": "Prawa człowieka, równość płci, prawa dzieci, prawa mniejszości i dyskryminacja.",
+      "so": "Xuquuqda bani'aadamka, sinnaanta jinsiga, xuquuqda carruurta, xuquuqda laamiyada iyo takoorid.",
+      "ti": "ሰብኣዊ መሰላት፣ ጾታዊ ማዕርነት፣ መሰላት ቆልዑ፣ መሰላት ውሑዳትን ኣድልዎን።",
+      "tr": "İnsan hakları, toplumsal cinsiyet eşitliği, çocuk hakları, azınlık hakları ve ayrımcılık.",
+      "uk": "Права людини, гендерна рівність, права дітей, права меншин та дискримінація."
+    },
+    "questionCount": 55
+  },
+  {
+    "id": 8,
+    "emoji": "💼",
+    "title": {
+      "en": "Labour market and personal finance",
+      "sv": "Arbetsmarknad och privatekonomi",
+      "zh-Hans": "劳动力市场与个人理财",
+      "zh-Hant": "勞動市場與個人理財",
+      "ar": "سوق العمل والاقتصاد الشخصي",
+      "ckb": "بازاڕی کار و ئابووریی کەسی",
+      "fa": "بازار کار و اقتصاد شخصی",
+      "pl": "Rynek pracy i finanse osobiste",
+      "so": "Suuqa shaqada iyo maaliyadda shakhsiga",
+      "ti": "ዕዳጋ ስራሕን ውልቃዊ ቍጠባን",
+      "tr": "İş gücü piyasası ve kişisel finans",
+      "uk": "Ринок праці та особисті фінанси"
+    },
+    "description": {
+      "en": "The labour market, labour-market parties, workplace rules, and personal finance.",
+      "sv": "Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.",
+      "zh-Hans": "劳动力市场、劳动力市场双方、劳动规则与个人理财。",
+      "zh-Hant": "勞動市場、勞資雙方、勞動規則與個人理財。",
+      "ar": "سوق العمل وأطراف سوق العمل وقواعد العمل والاقتصاد الشخصي.",
+      "ckb": "بازاڕی کار، لایەنەکانی بازاڕی کار، ڕێساکانی کار و ئابووریی کەسی.",
+      "fa": "بازار کار، طرف‌های بازار کار، قواعد کار و اقتصاد شخصی.",
+      "pl": "Rynek pracy, partnerzy rynku pracy, przepisy dotyczące pracy oraz finanse osobiste.",
+      "so": "Suuqa shaqada, dhinacyada suuqa shaqada, xeerarka shaqada iyo maaliyadda shakhsiga.",
+      "ti": "ዕዳጋ ስራሕ፣ ኣካላት ዕዳጋ ስራሕ፣ ሕግታት ስራሕን ውልቃዊ ቍጠባን።",
+      "tr": "İş gücü piyasası, iş gücü piyasası tarafları, çalışma kuralları ve kişisel finans.",
+      "uk": "Ринок праці, сторони ринку праці, правила праці та особисті фінанси."
+    },
+    "questionCount": 35
+  },
+  {
+    "id": 9,
+    "emoji": "🏥",
+    "title": {
+      "en": "The welfare society",
+      "sv": "Välfärdssamhället",
+      "zh-Hans": "福利社会",
+      "zh-Hant": "福利社會",
+      "ar": "مجتمع الرفاه",
+      "ckb": "کۆمەڵگای خۆشگوزەرانی",
+      "fa": "جامعهٔ رفاه",
+      "pl": "Społeczeństwo dobrobytu",
+      "so": "Bulshada daryeelka (welfare)",
+      "ti": "ሕብረተሰብ ድሕነት (welfare)",
+      "tr": "Refah toplumu",
+      "uk": "Суспільство добробуту"
+    },
+    "description": {
+      "en": "Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.",
+      "sv": "Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.",
+      "zh-Hans": "税收、福利，以及国家、region（大区）和 kommun（市镇）之间的责任分配。",
+      "zh-Hant": "稅收、福利，以及國家、region（大區）和 kommun（市鎮）之間的責任分配。",
+      "ar": "الضرائب والرفاه وتوزيع المسؤوليات بين الدولة والأقاليم (region) والبلديات (kommun).",
+      "ckb": "باجەکان، خۆشگوزەرانی و دابەشکردنی بەرپرسیارێتی لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun).",
+      "fa": "مالیات‌ها، رفاه و تقسیم مسئولیت‌ها میان دولت، مناطق (region) و کمون‌ها (kommun).",
+      "pl": "Podatki, dobrobyt (welfare) i podział odpowiedzialności między państwo, regiony (region) i kommun.",
+      "so": "Canshuuraha, daryeelka (welfare) iyo qaybinta mas'uuliyadda inta u dhaxaysa dawladda, region-yada iyo kommun-yada.",
+      "ti": "ቀረጽ፣ ድሕነት (welfare) ከምኡ’ውን ምክፍፋል ሓላፍነት ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun።",
+      "tr": "Vergiler, refah (welfare) ve sorumlulukların devlet, region'lar ve kommun'lar arasında paylaşımı.",
+      "uk": "Податки, добробут (welfare) та розподіл відповідальності між державою, region і kommun."
+    },
+    "questionCount": 55
+  },
+  {
+    "id": 10,
+    "emoji": "📜",
+    "title": {
+      "en": "Sweden's modern history",
+      "sv": "Sveriges moderna historia",
+      "zh-Hans": "瑞典近现代史",
+      "zh-Hant": "瑞典近現代史",
+      "ar": "تاريخ السويد الحديث",
+      "ckb": "مێژووی هاوچەرخی سوید",
+      "fa": "تاریخ معاصر سوئد",
+      "pl": "Współczesna historia Szwecji",
+      "so": "Taariikhda casriga ah ee Iswiidhan",
+      "ti": "ዘመናዊ ታሪኽ ሽወደን",
+      "tr": "İsveç'in modern tarihi",
+      "uk": "Сучасна історія Швеції"
+    },
+    "description": {
+      "en": "From agricultural society to industrial society, democratization, the people's home, and globalization.",
+      "sv": "Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering.",
+      "zh-Hans": "从农业社会到工业社会、民主化进程、人民之家（folkhemmet）与全球化。",
+      "zh-Hant": "從農業社會到工業社會、民主化進程、人民之家（folkhemmet）與全球化。",
+      "ar": "من مجتمع زراعي إلى مجتمع صناعي، والتحوّل الديمقراطي، و«بيت الشعب» (Folkhemmet)، والعولمة.",
+      "ckb": "لە کۆمەڵگای کشتوکاڵییەوە بۆ کۆمەڵگای پیشەسازی، دیموکراتیکبوون، «ماڵی گەل» (Folkhemmet) و جیهانیبوون.",
+      "fa": "از جامعهٔ کشاورزی به جامعهٔ صنعتی، دموکراتیک‌شدن، «خانهٔ مردم» (Folkhemmet) و جهانی‌شدن.",
+      "pl": "Od społeczeństwa rolniczego do przemysłowego, demokratyzacja, Folkhemmet (dom ludowy) i globalizacja.",
+      "so": "Laga soo bilaabo bulsho beeraley ah ilaa bulsho warshadeed, dimoqraadiyeyn, Folkhemmet (guriga dadweynaha) iyo caalamiyeyn.",
+      "ti": "ካብ ሕርሻዊ ሕብረተሰብ ናብ ኢንዱስትሪያዊ ሕብረተሰብ፣ ደሞክራሲ ምስፋን፣ Folkhemmet (ቤት ህዝቢ) ከምኡ’ውን ግሎባላይዜሽን።",
+      "tr": "Tarım toplumundan sanayi toplumuna, demokratikleşme, Folkhemmet (halkın evi) ve küreselleşme.",
+      "uk": "Від аграрного суспільства до промислового, демократизація, Folkhemmet (народний дім) та глобалізація."
+    },
+    "questionCount": 50
+  },
+  {
+    "id": 11,
+    "emoji": "🌐",
+    "title": {
+      "en": "Sweden and the outside world",
+      "sv": "Sverige och omvärlden",
+      "zh-Hans": "瑞典与外部世界",
+      "zh-Hant": "瑞典與外部世界",
+      "ar": "السويد والعالم الخارجي",
+      "ckb": "سوید و جیهانی دەرەوە",
+      "fa": "سوئد و جهان بیرون",
+      "pl": "Szwecja i świat zewnętrzny",
+      "so": "Iswiidhan iyo dunida dibadda",
+      "ti": "ሽወደንን ግዳማዊ ዓለምን",
+      "tr": "İsveç ve dış dünya",
+      "uk": "Швеція та зовнішній світ"
+    },
+    "description": {
+      "en": "Nordic, European, and global cooperation, plus defence and security policy.",
+      "sv": "Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik.",
+      "zh-Hans": "北欧、欧洲和全球范围的合作，以及国防与安全政策。",
+      "zh-Hant": "北歐、歐洲和全球範圍的合作，以及國防與安全政策。",
+      "ar": "التعاون النوردي والأوروبي والعالمي، إضافةً إلى سياسة الدفاع والأمن.",
+      "ckb": "هاوکاریی باکووری ئەورووپا، ئەورووپی و جیهانی، هەروەها سیاسەتی بەرگری و ئاسایش.",
+      "fa": "همکاری شمال اروپا، اروپایی و جهانی، و نیز سیاست دفاعی و امنیتی.",
+      "pl": "Współpraca nordycka, europejska i globalna oraz polityka obronna i bezpieczeństwa.",
+      "so": "Iskaashiga waqooyiga Yurub, kan Yurub iyo kan caalamiga ah, iyo siyaasadda difaaca iyo amniga.",
+      "ti": "ኖርዲካዊ፣ ኤውሮጳዊን ዓለማውን ምትሕብባር፣ ከምኡ’ውን ፖሊሲ ምክልኻልን ጸጥታን።",
+      "tr": "İskandinav, Avrupa ve küresel iş birliği ile savunma ve güvenlik politikası.",
+      "uk": "Співпраця на рівні країн Північної Європи, європейська та глобальна, а також оборонна та безпекова політика."
+    },
+    "questionCount": 60
+  },
+  {
+    "id": 12,
+    "emoji": "🕊",
+    "title": {
+      "en": "A secular state and a multi-religious country",
+      "sv": "En sekulär stat och ett mångreligiöst land",
+      "zh-Hans": "世俗国家与多宗教的国度",
+      "zh-Hant": "世俗國家與多宗教的國度",
+      "ar": "دولة علمانية وبلد متعدّد الأديان",
+      "ckb": "دەوڵەتێکی سێکۆلار و وڵاتێکی فرە‌ئاینی",
+      "fa": "دولتی سکولار و کشوری چنددینی",
+      "pl": "Państwo świeckie i kraj wielowyznaniowy",
+      "so": "Dawlad cilmaani ah iyo dal diimo badan leh",
+      "ti": "ዓለማዊ መንግስትን ብዙሕ ሃይማኖት ዘለዋ ሃገርን",
+      "tr": "Laik bir devlet ve çok dinli bir ülke",
+      "uk": "Світська держава та багатоконфесійна країна"
+    },
+    "description": {
+      "en": "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
+      "sv": "Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället.",
+      "zh-Hans": "宗教自由、国家在宗教上的中立，以及宗教在社会中的角色。",
+      "zh-Hant": "宗教自由、國家在宗教上的中立，以及宗教在社會中的角色。",
+      "ar": "حرية الدين والحياد الديني للدولة ودور الدين في المجتمع.",
+      "ckb": "ئازادیی ئاین، بێلایەنیی ئاینیی دەوڵەت و ڕۆڵی ئاین لە کۆمەڵگادا.",
+      "fa": "آزادی دین، بی‌طرفی دینی دولت و نقش دین در جامعه.",
+      "pl": "Wolność wyznania, neutralność religijna państwa i rola religii w społeczeństwie.",
+      "so": "Xorriyadda diinta, dhexdhexaadnimada diineed ee dawladda iyo doorka diinta ee bulshada.",
+      "ti": "ናጽነት ሃይማኖት፣ ሃይማኖታዊ ገለልተኝነት መንግስትን ኣብ ሕብረተሰብ ዘሎ ተራ ሃይማኖትን።",
+      "tr": "Din özgürlüğü, devletin dini tarafsızlığı ve dinin toplumdaki rolü.",
+      "uk": "Свобода віросповідання, релігійна нейтральність держави та роль релігії в суспільстві."
+    },
+    "questionCount": 105
+  },
+  {
+    "id": 13,
+    "emoji": "🕯",
+    "title": {
+      "en": "Traditions and holidays",
+      "sv": "Traditioner och högtider",
+      "zh-Hans": "传统与节日",
+      "zh-Hant": "傳統與節日",
+      "ar": "التقاليد والأعياد",
+      "ckb": "نەریت و جەژنەکان",
+      "fa": "سنت‌ها و جشن‌ها",
+      "pl": "Tradycje i święta",
+      "so": "Caadooyinka iyo ciidaha",
+      "ti": "ባህልታትን በዓላትን",
+      "tr": "Gelenekler ve özel günler",
+      "uk": "Традиції та свята"
+    },
+    "description": {
+      "en": "Traditional holidays in Sweden and how traditions change over time.",
+      "sv": "Traditionella högtider i Sverige och hur traditioner förändras över tid.",
+      "zh-Hans": "瑞典的传统节日，以及传统如何随时间而变化。",
+      "zh-Hant": "瑞典的傳統節日，以及傳統如何隨時間而變化。",
+      "ar": "الأعياد التقليدية في السويد وكيف تتغيّر التقاليد عبر الزمن.",
+      "ckb": "جەژنە نەریتییەکان لە سوید و ئەوەی نەریتەکان چۆن بە تێپەڕبوونی کاتدا دەگۆڕێن.",
+      "fa": "جشن‌های سنتی در سوئد و اینکه سنت‌ها چگونه در گذر زمان تغییر می‌کنند.",
+      "pl": "Tradycyjne święta w Szwecji oraz to, jak tradycje zmieniają się z biegiem czasu.",
+      "so": "Ciidaha dhaqameed ee Iswiidhan iyo sida caadooyinku ay isu beddelaan muddo ka dib.",
+      "ti": "ኣብ ሽወደን ዘለዉ ባህላዊ በዓላትን ባህልታት ብግዜ ብኸመይ ከም ዝቕየሩን።",
+      "tr": "İsveç'teki geleneksel özel günler ve geleneklerin zaman içinde nasıl değiştiği.",
+      "uk": "Традиційні свята у Швеції та те, як традиції змінюються з часом."
+    },
+    "questionCount": 145
+  }
+];
 })();
