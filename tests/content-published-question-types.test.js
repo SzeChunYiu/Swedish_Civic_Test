@@ -32,6 +32,8 @@ const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods h
 const authoredWayToPromptPattern = /\b(?:Vilket är ett sätt att|Which is a way to)\b/i;
 const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
+const sourceRecallPromptPattern =
+  /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -716,6 +718,21 @@ test('free-media source prompts ask the civic concept directly in exports', () =
   assert.deepEqual(generatedOffenders, []);
   assert.deepEqual(actualOffenders, []);
   assert.deepEqual(csvOffenders, []);
+});
+
+test('published question prompts do not use source-recall wording', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => sourceRecallPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => sourceRecallPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
 });
 
 test('free-media source prompt guard rejects answer-key wording', () => {
