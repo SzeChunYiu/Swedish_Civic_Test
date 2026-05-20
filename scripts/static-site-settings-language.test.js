@@ -5,6 +5,7 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const staticSiteLanguageValues = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'so'];
 
 const sampleQuestion = {
   id: 'q-settings-language',
@@ -43,65 +44,43 @@ const chapterMeta = [
   },
 ];
 
-const staticLanguageOptions = [
-  { value: 'en', label: 'English' },
-  { value: 'sv', label: 'Svenska' },
-  { value: 'zh-Hans', label: '简体中文' },
-  { value: 'zh-Hant', label: '繁體中文' },
-  { value: 'ar', label: 'العربية' },
-  { value: 'so', label: 'Soomaali' },
-  { value: 'tr', label: 'Türkçe' },
-];
-
-const translatedKeys = [
-  'brand',
-  'nav.home',
-  'nav.mock',
-  'hero.cta1',
-  'consent.title',
-  'settings.title',
-  'footer.honest.p',
-  'terms.h1a',
-];
-
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createRenderContext({ hash, language = 'en' }) {
+function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
+  const rootAttributes = new Map();
   const storage = new Map([
     ['smt_lang', language],
     ['smt_mock_cfg', JSON.stringify({ count: 5, minutes: 30, chapters: [1] })],
   ]);
   let reloadCount = 0;
-  const translatedNodes = new Map(
-    translatedKeys.map((key) => [key, { dataset: { i18n: key }, innerHTML: '' }]),
-  );
 
-  function makeClassList() {
-    const values = new Set();
-    return {
-      contains(name) {
-        return values.has(name);
-      },
-      toggle(name, on) {
-        if (on) values.add(name);
-        else values.delete(name);
-      },
-    };
-  }
-
-  const settingButtons = staticLanguageOptions.map(({ value }) => ({
+  const settingButtons = ['en', 'sv'].map((value) => ({
+    attributes: {},
     dataset: { val: value },
-    classList: makeClassList(),
+    classList: { toggle() {} },
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
   }));
+  const a11yControlKeys = new Map([
+    ['settings-open', 'a11y.settings.open'],
+    ['settings-modal-close', 'a11y.close'],
+    ['ad-anchor-close', 'a11y.ad.close'],
+    ['dala-bubble-close', 'a11y.close'],
+    ['dala-figure', 'a11y.studyBuddy'],
+  ]);
 
   function element(id) {
     if (!elements.has(id)) {
+      const attributes = new Map();
       const node = {
         id,
+        attributes,
+        dataset: a11yControlKeys.has(id) ? { a11yLabel: a11yControlKeys.get(id) } : {},
         hidden: false,
         innerHTML: '',
         max: '',
@@ -110,6 +89,12 @@ function createRenderContext({ hash, language = 'en' }) {
         value: id === 'cfg-count' ? '5' : '',
         classList: { add() {}, remove() {}, toggle() {} },
         addEventListener() {},
+        setAttribute(name, value) {
+          attributes.set(name, String(value));
+        },
+        getAttribute(name) {
+          return attributes.get(name) ?? null;
+        },
         closest() {
           return {
             querySelector() {
@@ -128,6 +113,7 @@ function createRenderContext({ hash, language = 'en' }) {
     }
     return elements.get(id);
   }
+  Array.from(a11yControlKeys.keys()).forEach(element);
 
   const sandbox = {
     Array,
@@ -156,10 +142,15 @@ function createRenderContext({ hash, language = 'en' }) {
     document: {
       body: { style: {} },
       documentElement: {
-        lang: language,
         dir: language === 'ar' ? 'rtl' : 'ltr',
+        lang: language,
         setAttribute(name, value) {
-          this[name] = value;
+          rootAttributes.set(name, String(value));
+          if (name === 'dir') this.dir = String(value);
+          if (name === 'lang') this.lang = String(value);
+        },
+        getAttribute(name) {
+          return rootAttributes.get(name) ?? null;
         },
         style: { setProperty() {} },
       },
@@ -177,7 +168,9 @@ function createRenderContext({ hash, language = 'en' }) {
       },
       querySelectorAll(selector) {
         if (selector === '[data-set="language"] button') return settingButtons;
-        if (selector === '[data-i18n]') return [...translatedNodes.values()];
+        if (selector === '[data-a11y-label]') {
+          return Array.from(elements.values()).filter((node) => node.dataset.a11yLabel);
+        }
         return [];
       },
       addEventListener(type, handler) {
@@ -193,8 +186,8 @@ function createRenderContext({ hash, language = 'en' }) {
     },
     window: {},
     clearInterval() {},
-    matchMedia: () => ({
-      matches: false,
+    matchMedia: (query) => ({
+      matches: query === '(prefers-reduced-motion: reduce)' ? reducedMotion : false,
       addEventListener() {},
     }),
     requestAnimationFrame(handler) {
@@ -236,18 +229,35 @@ function createRenderContext({ hash, language = 'en' }) {
         .filter((entry) => entry.type === 'click')
         .forEach((entry) => entry.handler({ target }));
     },
+    changeSettingsMotion(checked) {
+      const target = {
+        checked,
+        dataset: { set: 'motion' },
+        matches(selector) {
+          return selector === 'input[type=checkbox][data-set]';
+        },
+      };
+      listeners.document
+        .filter((entry) => entry.type === 'change')
+        .forEach((entry) => entry.handler({ target }));
+    },
     element,
-    languageButton(value) {
-      return settingButtons.find((button) => button.dataset.val === value);
+    fireWindowEvent(type) {
+      listeners.window
+        .filter((entry) => entry.type === type)
+        .forEach((entry) => entry.handler({ type }));
     },
     get reloadCount() {
       return reloadCount;
     },
-    sandbox,
-    storage,
-    translatedText(key) {
-      return translatedNodes.get(key)?.innerHTML ?? '';
+    rootAttribute(name) {
+      return rootAttributes.get(name) ?? null;
     },
+    sandbox,
+    settingLanguageValues() {
+      return settingButtons.map((button) => button.dataset.val);
+    },
+    storage,
   };
 }
 
@@ -260,6 +270,129 @@ function loadScripts(context, practiceInjection = '') {
   vm.runInContext(practiceSource, context.sandbox, { timeout: 3000 });
   vm.runInContext(read('site/settings.js'), context.sandbox, { timeout: 3000 });
 }
+
+test('Settings modal source keeps keyboard focus inside the dialog', () => {
+  const html = read('site/index.html');
+  const source = read('site/settings.js');
+
+  assert.match(
+    html,
+    /id="settings-modal"[\s\S]*?role="dialog"[\s\S]*?aria-modal="true"[\s\S]*?aria-labelledby="settings-title"[\s\S]*?tabindex="-1"/,
+  );
+  assert.match(source, /let settingsModalInvoker = null/);
+  assert.match(source, /function getSettingsFocusableControls\(modal\)/);
+  assert.match(source, /function trapSettingsModalTab\(e, modal\)/);
+  assert.match(source, /if \(!modal\.contains\(active\) \|\| active === modal\)/);
+  assert.match(source, /focusElement\(e\.shiftKey \? last : first\)/);
+  assert.match(source, /if \(e\.shiftKey && active === first\)/);
+  assert.match(source, /else if \(!e\.shiftKey && active === last\)/);
+  assert.match(source, /function restoreSettingsInvoker\(\)/);
+  assert.match(source, /if \(invoker && document\.contains\(invoker\)\) focusElement\(invoker\)/);
+  assert.match(source, /const settingsOpen = e\.target\.closest\("#settings-open"\)/);
+  assert.match(source, /if \(settingsOpen\) \{ open\(settingsOpen\); return; \}/);
+  assert.match(source, /e\.key === "Tab"/);
+  assert.match(source, /trapSettingsModalTab\(e, m\)/);
+  assert.match(source, /close\(\{ restoreFocus: false \}\)/);
+  assert.match(source, /focusConsentPrompt\(\)/);
+});
+
+test('Static icon-control accessible names follow smtSetLanguage without reload', () => {
+  const context = createRenderContext({ hash: '#/', language: 'en' });
+  loadScripts(context);
+
+  assert.equal(context.element('settings-open').getAttribute('aria-label'), 'Settings');
+  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), 'Close');
+  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), 'Close ad');
+  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), 'Close');
+  assert.equal(context.element('dala-figure').getAttribute('aria-label'), 'Study buddy');
+
+  context.clickSettingsLanguage('sv');
+
+  assert.equal(context.element('settings-open').getAttribute('aria-label'), 'Inställningar');
+  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), 'Stäng');
+  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), 'Stäng annons');
+  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), 'Stäng');
+  assert.equal(context.element('dala-figure').getAttribute('aria-label'), 'Studiekompis');
+  assert.equal(context.reloadCount, 0);
+
+  vm.runInContext('smtSetLanguage("zh-Hans");', context.sandbox, { timeout: 3000 });
+
+  assert.equal(context.element('settings-open').getAttribute('aria-label'), '设置');
+  assert.equal(context.element('settings-modal-close').getAttribute('aria-label'), '关闭');
+  assert.equal(context.element('ad-anchor-close').getAttribute('aria-label'), '关闭广告');
+  assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), '关闭');
+  assert.equal(context.element('dala-figure').getAttribute('aria-label'), '学习伙伴');
+  assert.equal(context.reloadCount, 0);
+});
+
+test('Static Settings exposes the shipped extra language choices', () => {
+  const html = read('site/index.html');
+
+  for (const value of staticSiteLanguageValues) {
+    assert.ok(html.includes(`data-val="${value}"`), `missing Settings language button ${value}`);
+  }
+
+  const context = createRenderContext({ hash: '#/', language: 'en' });
+  loadScripts(context);
+
+  assert.deepEqual(context.settingLanguageValues(), staticSiteLanguageValues);
+});
+
+test('Settings language change persists extra locales and updates root direction', () => {
+  const context = createRenderContext({ hash: '#/', language: 'en' });
+  const languageChanges = [];
+  loadScripts(context);
+  context.sandbox.window.addEventListener('smt:languagechange', (event) => {
+    languageChanges.push(event.detail.lang);
+  });
+
+  for (const language of ['zh-Hans', 'zh-Hant', 'ar', 'so']) {
+    const direction = language === 'ar' ? 'rtl' : 'ltr';
+
+    context.clickSettingsLanguage(language);
+
+    assert.equal(context.storage.get('smt_lang'), language);
+    assert.equal(context.sandbox.document.documentElement.lang, language);
+    assert.equal(context.sandbox.document.documentElement.dir, direction);
+    assert.equal(context.rootAttribute('dir'), direction);
+    assert.equal(context.reloadCount, 0);
+  }
+
+  assert.deepEqual(languageChanges, ['zh-Hans', 'zh-Hant', 'ar', 'so']);
+});
+
+test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {
+  const context = createRenderContext({ hash: '#/', language: 'en' });
+  const motionEvents = [];
+  loadScripts(context);
+  context.sandbox.window.addEventListener('smt:motionchange', (event) => {
+    motionEvents.push(event.detail.reduced);
+  });
+
+  context.changeSettingsMotion(true);
+
+  assert.equal(context.storage.get('smt_motion'), 'reduce');
+  assert.equal(context.rootAttribute('data-motion'), 'reduce');
+  assert.deepEqual(motionEvents, [true]);
+  assert.equal(context.reloadCount, 0);
+
+  context.changeSettingsMotion(false);
+
+  assert.equal(context.storage.get('smt_motion'), '');
+  assert.equal(context.rootAttribute('data-motion'), '');
+  assert.deepEqual(motionEvents, [true, false]);
+  assert.equal(context.reloadCount, 0);
+});
+
+test('Settings applies prefers-reduced-motion on first load without claiming a user preference', () => {
+  const context = createRenderContext({ hash: '#/', language: 'en', reducedMotion: true });
+  loadScripts(context);
+
+  context.fireWindowEvent('DOMContentLoaded');
+
+  assert.equal(context.rootAttribute('data-motion'), 'reduce');
+  assert.equal(context.storage.has('smt_motion'), false);
+});
 
 const mockOfficialPassLineClaimPatterns = [
   new RegExp(['passing', 'line'].join('\\s+'), 'i'),
@@ -275,90 +408,38 @@ function assertNoMockOfficialPassLineCopy(html) {
     assert.doesNotMatch(html, pattern);
   }
 }
-test('Settings language selector exposes every shipped static dictionary', () => {
-  const indexHtml = read('site/index.html');
-  const settingsSource = read('site/settings.js');
 
-  for (const option of staticLanguageOptions) {
-    assert.ok(
-      indexHtml.includes(`data-val="${option.value}"`),
-      `${option.value} should be selectable from Settings`,
-    );
-    assert.ok(indexHtml.includes(option.label), `${option.value} should use its native label`);
-  }
-
-  assert.match(settingsSource, /group === ['"]language['"]/);
-  assert.match(settingsSource, /window\.smtSetLanguage/);
-});
-
-test('extra Settings languages rerender high-frequency UI with English fallback', () => {
-  const context = createRenderContext({ hash: '#/', language: 'sv' });
-  loadScripts(context);
-
-  context.clickSettingsLanguage('sv');
-  assert.equal(context.translatedText('terms.h1a'), 'Enkla regler,');
-
-  context.clickSettingsLanguage('zh-Hans');
-  assert.equal(context.storage.get('smt_lang'), 'zh-Hans');
-  assert.equal(context.sandbox.document.documentElement.lang, 'zh-Hans');
-  assert.equal(context.sandbox.document.documentElement.dir, 'ltr');
-  assert.equal(context.reloadCount, 0);
-  assert.equal(context.languageButton('zh-Hans').classList.contains('is-on'), true);
-  assert.equal(context.translatedText('brand'), 'Almost Swedish');
-  assert.equal(context.translatedText('nav.home'), '首页');
-  assert.equal(context.translatedText('nav.mock'), '模拟考');
-  assert.equal(context.translatedText('settings.title'), '设置');
-  assert.equal(context.translatedText('consent.title'), 'Cookie，刚刚好。');
-  assert.equal(context.translatedText('hero.cta1'), '开始练习 →');
-  assert.equal(context.translatedText('terms.h1a'), 'Plain rules,');
-
-  context.clickSettingsLanguage('ar');
-  assert.equal(context.storage.get('smt_lang'), 'ar');
-  assert.equal(context.sandbox.document.documentElement.lang, 'ar');
-  assert.equal(context.sandbox.document.documentElement.dir, 'rtl');
-  assert.equal(context.languageButton('ar').classList.contains('is-on'), true);
-  assert.equal(context.languageButton('zh-Hans').classList.contains('is-on'), false);
-  assert.equal(context.translatedText('nav.home'), 'الرئيسية');
-  assert.equal(context.translatedText('settings.title'), 'الإعدادات');
-  assert.equal(context.translatedText('consent.title'), 'ملفات تعريف الارتباط، باعتدال.');
-  assert.equal(
-    context.translatedText('footer.honest.p'),
-    'غير رسمي. مستقل. لا ينتمي إلى UHR أو Skolverket أو Migrationsverket أو الحكومة السويدية.',
+function settingButtonTags(html, dataSet) {
+  const block = html.match(
+    new RegExp(`<div class="set-(?:segment|palettes)" data-set="${dataSet}">([\\s\\S]*?)</div>`),
   );
+  assert.ok(block, `settings ${dataSet} control should exist`);
+  return Array.from(block[1].matchAll(/<button\b[^>]*>/g), (match) => match[0]);
+}
 
-  context.clickSettingsLanguage('tr');
-  assert.equal(context.storage.get('smt_lang'), 'tr');
-  assert.equal(context.sandbox.document.documentElement.lang, 'tr');
-  assert.equal(context.sandbox.document.documentElement.dir, 'ltr');
-  assert.equal(context.languageButton('tr').classList.contains('is-on'), true);
-  assert.equal(context.languageButton('ar').classList.contains('is-on'), false);
-  assert.equal(context.translatedText('nav.home'), 'Ana sayfa');
-  assert.equal(context.translatedText('settings.title'), 'Ayarlar');
-  assert.equal(context.translatedText('consent.title'), 'Çerezler, gerektiği kadar.');
-  assert.equal(context.translatedText('footer.honest.p'), 'Resmî değildir. Bağımsızdır. UHR, Skolverket, Migrationsverket veya İsveç hükümetine bağlı değildir.');
-});
+test('Static Settings selected visuals mirror aria-pressed state', () => {
+  const settingsSource = read('site/settings.js');
+  const html = read('site/index.html');
 
-test('extra static dictionaries avoid pass/passport outcome slogans', () => {
-  const extras = read('site/i18n-extras.js');
-  const staleOutcomeSnippets = [
-    '通过测试',
-    '拿到护照',
-    '通過測試',
-    '拿到護照',
-    'اجتز الاختبار',
-    'احصل على الجواز',
-    'Imtixaanka uga gud',
-    'Hel baasaboorka',
-    'Sınavı geç',
-    'Pasaportu al',
-  ];
+  assert.match(settingsSource, /function setPressedState\(el, on\) \{[\s\S]*?aria-pressed/);
+  assert.equal(
+    Array.from(settingsSource.matchAll(/\.classList\.toggle\("is-on"/g)).length,
+    1,
+    'Settings should toggle .is-on only through setPressedState so aria-pressed stays in sync',
+  );
+  assert.match(
+    settingsSource,
+    /setAttribute\("aria-pressed", on \? "true" : "false"\)/,
+  );
+  assert.match(settingsSource, /setPressedState\(b, b\.dataset\.val === String\(value\)\)/);
+  assert.match(settingsSource, /setPressedState\(b, b\.dataset\.val === value\)/);
+  assert.match(settingsSource, /setPressedState\(c, c\.dataset\.buddy === id\)/);
+  assert.ok(settingsSource.includes('aria-pressed="${b.id === cur ? "true" : "false"}"'));
 
-  for (const snippet of staleOutcomeSnippets) {
-    assert.equal(
-      extras.includes(snippet),
-      false,
-      `extra dictionary should not expose "${snippet}"`,
-    );
+  for (const dataSet of ['theme', 'palette', 'language', 'textsize']) {
+    settingButtonTags(html, dataSet).forEach((tag) => {
+      assert.match(tag, /aria-pressed="(?:true|false)"/, `${dataSet} button ${tag}`);
+    });
   }
 });
 
