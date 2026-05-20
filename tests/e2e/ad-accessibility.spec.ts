@@ -68,7 +68,7 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   await dismissBlockingModals(page);
   await expect(
     page.getByLabel(
-      /(Test native ad: Sponsored study placement|Inbyggd testannons: Sponsrad studieplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
+      /(Test native ad: Study flow ad|Inbyggd testannons: Annons i studieflödet)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
     ),
   ).toBeVisible();
 
