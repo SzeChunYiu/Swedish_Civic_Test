@@ -52,6 +52,7 @@ test('practice header controls keep English labels, states, and mobile targets',
   await enableEnglishSupport(page);
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
+  await page.getByRole('button', { name: 'Start practice with all visible questions' }).click();
 
   await expect(page.getByText('Question 1')).toBeVisible();
 
