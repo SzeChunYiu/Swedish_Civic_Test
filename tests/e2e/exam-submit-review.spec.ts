@@ -1,7 +1,12 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
+import {
+  dismissBlockingModals,
+  markAboutTheTestSeen,
+  seedSettingsLanguage,
+  type AppLanguage,
+} from './browserLaunch';
 
 const totalQuestions = 20;
 const unsupportedPassVerdictPattern =
@@ -45,17 +50,11 @@ async function expectNoPassVerdictCopy(page: Page) {
   await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
 }
 
-async function enableEnglishSupport(page: Page) {
-  await page.goto('/settings', { waitUntil: 'networkidle' });
+async function openExamWithLanguage(page: Page, language: AppLanguage) {
+  await seedSettingsLanguage(page, language);
+  await markAboutTheTestSeen(page);
+  await page.goto('/exam', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page
-    .getByRole('radio', {
-      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
-    })
-    .click();
-  await expect(
-    page.getByRole('radio', { name: 'Set question language to English support' }),
-  ).toHaveAttribute('aria-checked', 'true');
 }
 
 test('mock exam requires all answers before showing Swedish score and source-backed review', async ({
@@ -68,8 +67,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openExamWithLanguage(page, 'sv');
 
   await expect(page.getByRole('heading', { name: 'Övningsprov' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-baserade frågor`))).toBeVisible();
@@ -140,9 +138,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await enableEnglishSupport(page);
-  await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openExamWithLanguage(page, 'en');
 
   await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();
