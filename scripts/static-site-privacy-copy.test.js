@@ -4,6 +4,15 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const unqualifiedNoTrackingPatterns = [
+  /\bNo tracking\b/i,
+  /\bzero tracking\b/i,
+  /\btrack(?:s|ing)? nothing\b/i,
+  /\bNo third-party trackers\b/i,
+  /\bIngen spårning\b/i,
+  /\bspårar inte\b/i,
+  /\bInga tredjepartssp[aå]rare\b/i,
+];
 
 function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
@@ -33,6 +42,14 @@ test('static site privacy copy rejects stale monetization claims', () => {
     /No third-party trackers/i,
     /Inga tredjepartssp[aå]rare/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+});
+
+test('static site privacy copy avoids unqualified no-tracking claims', () => {
+  const surface = [read('site/app.js'), read('site/index.html')].join('\n');
+
+  unqualifiedNoTrackingPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
+  assert.match(surface, /No login\. Study progress stays local\./);
+  assert.match(surface, /Ingen inloggning\. Dina framsteg sparas lokalt\./);
 });
 
 test('static site privacy copy names current ads, consent, and Remove Ads behavior', () => {
