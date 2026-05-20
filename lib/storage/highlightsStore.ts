@@ -33,6 +33,7 @@ export interface Highlight {
 }
 
 const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';
+const highlightsStorageId = 'highlights';
 export const MAX_HIGHLIGHT_SPAN = 5000;
 export const MAX_HIGHLIGHT_NOTE_LENGTH = 1000;
 
@@ -156,14 +157,22 @@ function read(): {
   );
   if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
   try {
-    return normalizeHighlightsState(JSON.parse(raw));
+    return {
+      state: normalizeHighlightsState(JSON.parse(result.value)),
+      persistenceWarning: result.warning,
+    };
   } catch {
     return { state: EMPTY, persistenceWarning: result.warning };
   }
 }
 
-function write(state: PersistedHighlights): void {
-  highlightsStorage?.set(HIGHLIGHTS_STATE_KEY, JSON.stringify(normalizeHighlightsState(state)));
+function write(state: PersistedHighlights): RecoverablePersistenceWarning | null {
+  return writeRecoverably(
+    highlightsStorage,
+    highlightsStorageId,
+    HIGHLIGHTS_STATE_KEY,
+    JSON.stringify(normalizeHighlightsState(state)),
+  );
 }
 
 function genId(): string {
@@ -177,6 +186,11 @@ export interface AddHighlightInput {
   endOffset: number;
   color: HighlightColor;
   note?: string;
+}
+
+function normalizeAddHighlightInput(input: AddHighlightInput): AddHighlightInput | null {
+  if (!input || typeof input !== 'object') return null;
+  return input;
 }
 
 function createHighlight(input: AddHighlightInput, now: string): Highlight {
@@ -215,7 +229,7 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     const normalizedInput = normalizeAddHighlightInput(input);
     if (!normalizedInput) return null;
     const now = new Date().toISOString();
-    const highlight = createHighlight(input, now);
+    const highlight = createHighlight(normalizedInput, now);
     set((state) => {
       const existing = state.byChapter[normalizedInput.chapterId] ?? [];
       const next = {

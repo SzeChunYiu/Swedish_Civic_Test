@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'r
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
+import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
@@ -209,9 +210,11 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+  const persistenceWarning = useSettingsStore((state) => state.persistenceWarning);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
+  const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
   const copy = settingsCopy[language];
@@ -280,6 +283,11 @@ export default function Screen() {
         {copy.title}
       </Text>
       <Text style={styles.subtitle}>{copy.subtitle}</Text>
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearPersistenceWarning}
+        warning={persistenceWarning}
+      />
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>

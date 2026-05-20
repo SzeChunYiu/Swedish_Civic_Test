@@ -13,6 +13,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { questions } from '../../data/questions';
+import type { RecoverablePersistenceWarning } from '../../lib/storage/persistenceWarning';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -54,6 +55,19 @@ type MistakesReviewListItem =
       type: 'question';
     };
 
+type AnswerReviewBlockProps = {
+  copy: MistakesCopy;
+  correctAnswer: string;
+  selectedWrongAnswer?: string;
+};
+
+type OptionalPersistenceWarningSlice = {
+  persistenceWarning?: RecoverablePersistenceWarning | null;
+  clearPersistenceWarning?: () => void;
+};
+
+const noopDismissPersistenceWarning = () => {};
+
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
@@ -62,7 +76,7 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
         : `Fråga att öva igen. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad till senare övning',
+    bookmarkedMeta: 'Sparad för att öva igen',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
@@ -70,12 +84,11 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
     emptyText: 'När du missar en övningsfråga visas den här.',
     emptyTitle: 'Inga missade frågor ännu',
     mistakeBadge: 'Öva igen',
-    mistakeTitle: 'Frågor att öva på',
+    mistakeTitle: 'Frågor att öva igen',
     selectedWrongAnswerLabel: 'Ditt senaste svar',
-    subtitle:
-      'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och hur många gånger de har missats.',
+    subtitle: 'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
     title: 'Missade frågor',
-    wrongAnswers: (count) => (count === 1 ? 'Missad 1 gång' : `Missad ${count} gånger`),
+    wrongAnswers: (count) => `Antal missar: ${count}`,
   },
   en: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
@@ -109,23 +122,6 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
   return language === 'en' ? option.textEn : option.textSv;
 }
 
-type AnswerReviewBlockProps = {
-  copy: MistakesCopy;
-  correctAnswer: string;
-  selectedWrongAnswer?: string;
-};
-
-type MistakesListHeaderProps = {
-  clearMistakeReviewPersistenceWarning: () => void;
-  clearProgressPersistenceWarning: () => void;
-  copy: MistakesCopy;
-  language: AppLanguage;
-  mistakeReviewPersistenceWarning: ReturnType<
-    typeof useMistakeReviewStore.getState
-  >['persistenceWarning'];
-  progressPersistenceWarning: ReturnType<typeof useProgressStore.getState>['persistenceWarning'];
-};
-
 function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
   return (
     <View
@@ -147,56 +143,27 @@ function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerR
   );
 }
 
-function renderListHeader({
-  clearMistakeReviewPersistenceWarning,
-  clearProgressPersistenceWarning,
-  copy,
-  language,
-  mistakeReviewPersistenceWarning,
-  progressPersistenceWarning,
-}: MistakesListHeaderProps) {
-  return (
-    <View style={styles.headerStack}>
-      <View style={styles.hero}>
-        <Badge tone="orange">{copy.badge}</Badge>
-        <Text accessibilityRole="header" style={styles.title}>
-          {copy.title}
-        </Text>
-        <Text style={styles.subtitle}>{copy.subtitle}</Text>
-      </View>
-      <QuestionDisclaimer />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearProgressPersistenceWarning}
-        warning={progressPersistenceWarning}
-      />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearMistakeReviewPersistenceWarning}
-        warning={mistakeReviewPersistenceWarning}
-      />
-
-      <NativeAdCard />
-      <RemoveAdsPlacementCta placement="results_native" />
-    </View>
-  );
-}
-
 export default function Screen() {
   const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
+  const progressPersistenceWarning = useProgressStore(
+    (state) => (state as OptionalPersistenceWarningSlice).persistenceWarning ?? null,
+  );
   const clearProgressPersistenceWarning = useProgressStore(
-    (state) => state.clearPersistenceWarning,
+    (state) =>
+      (state as OptionalPersistenceWarningSlice).clearPersistenceWarning ??
+      noopDismissPersistenceWarning,
   );
   const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
   const mistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.persistenceWarning,
+    (state) => (state as OptionalPersistenceWarningSlice).persistenceWarning ?? null,
   );
   const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.clearPersistenceWarning,
+    (state) =>
+      (state as OptionalPersistenceWarningSlice).clearPersistenceWarning ??
+      noopDismissPersistenceWarning,
   );
   const reviewItems = useMemo<MistakesReviewListItem[]>(() => {
     const mistakenQuestions = questions.filter(
@@ -243,6 +210,32 @@ export default function Screen() {
 
     return items;
   }, [questionProgress]);
+
+  const renderListHeader = () => (
+    <View style={styles.headerStack}>
+      <View style={styles.hero}>
+        <Badge tone="orange">{copy.badge}</Badge>
+        <Text accessibilityRole="header" style={styles.title}>
+          {copy.title}
+        </Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
+      </View>
+      <QuestionDisclaimer />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearProgressPersistenceWarning}
+        warning={progressPersistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearMistakeReviewPersistenceWarning}
+        warning={mistakeReviewPersistenceWarning}
+      />
+
+      <NativeAdCard />
+      <RemoveAdsPlacementCta placement="results_native" />
+    </View>
+  );
 
   const renderReviewItem = ({ item }: ListRenderItemInfo<MistakesReviewListItem>) => {
     if (item.type === 'section') {
@@ -331,14 +324,7 @@ export default function Screen() {
       initialNumToRender={10}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={renderEmptyState}
-      ListHeaderComponent={renderListHeader({
-        clearMistakeReviewPersistenceWarning,
-        clearProgressPersistenceWarning,
-        copy,
-        language,
-        mistakeReviewPersistenceWarning,
-        progressPersistenceWarning,
-      })}
+      ListHeaderComponent={renderListHeader}
       maxToRenderPerBatch={8}
       renderItem={renderReviewItem}
       removeClippedSubviews
