@@ -144,6 +144,9 @@ export async function selectQuestionLanguageInSettings(
   const selectedLanguageLabel =
     language === 'en' ? 'Set question language to English support' : 'Byt frågespråk till Svenska';
 
-  await page.getByLabel(targetLanguageLabel).click();
-  await expect(page.getByLabel(selectedLanguageLabel)).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('radio', { name: targetLanguageLabel }).click();
+  await expect(page.getByRole('radio', { name: selectedLanguageLabel })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 }
