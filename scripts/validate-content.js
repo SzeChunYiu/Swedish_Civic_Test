@@ -1480,7 +1480,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -4045,6 +4045,7 @@ const EXPECTED_PURCHASE_INTERFACES = [
       { name: 'loadIap', type: '() => Promise<NativeIapModule>', optional: true },
       { name: 'platform', type: 'RemoveAdsStorePlatform', optional: true },
       { name: 'purchaseTimeoutMs', type: 'number', optional: true },
+      { name: 'receiptValidator', type: 'NativeRemoveAdsReceiptValidator', optional: true },
     ],
   },
   {
@@ -13917,6 +13918,24 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
         normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
       'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      normalizedPurchaseSource.includes('export type NativeRemoveAdsReceiptValidator =') &&
+        normalizedPurchaseSource.includes('receiptValidator?: NativeRemoveAdsReceiptValidator;'),
+      'native Remove Ads provider must require an explicit receipt validator hook',
+    ],
+    [
+      /async validateRemoveAdsReceipt\(purchase, productId\) \{[\s\S]*if \(!receiptValidator\) \{[\s\S]*status:\s*'pending'[\s\S]*return receiptValidator\(purchase, productId\);/.test(
+        purchaseSource,
+      ) &&
+        normalizedPurchaseSource.includes(
+          ": ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);",
+        ) &&
+        normalizedPurchaseSource.includes('return removeAdsEntitlements(true);') &&
+        !/if \(!provider\) \{[\s\S]*clearStoredRemoveAdsEntitlement\(storage\)/.test(
+          purchaseSource,
+        ),
+      'default native, missing receipt validation, and providerless relaunch entitlements must fail closed correctly',
     ],
     [
       normalizedPurchaseSource.includes(

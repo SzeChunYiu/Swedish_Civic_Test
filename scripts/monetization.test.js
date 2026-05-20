@@ -1395,6 +1395,23 @@ test('remove-ads entitlement storage rejects stale boolean and malformed records
     }),
   );
   assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, false);
+
+  await storage.setItemAsync(
+    REMOVE_ADS_STORAGE_KEY,
+    JSON.stringify({
+      grantedAt: new Date().toISOString(),
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'mock-token-buy-remove-ads',
+      receiptValidatedAt: new Date().toISOString(),
+      receiptValidationStatus: 'valid',
+      schemaVersion: 1,
+      source: 'purchase',
+      transactionId: 'buy-remove-ads',
+    }),
+  );
+  const validPersistedRecord = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
+  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
+  assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), validPersistedRecord);
 });
 
 test('pending remove-ads purchase does not grant adsDisabled until store confirmation', async () => {

@@ -45,6 +45,7 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
     buyRemoveAds,
     createMemoryPurchaseStorage,
     createNativePurchaseProvider,
+    getPurchaseEntitlements,
     restoreRemoveAdsPurchase,
   } = loadTs('lib/monetization/purchases.ts');
   const fakePurchase = {
@@ -108,6 +109,15 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
 
   assert.equal(pendingRestore.status, 'not_found');
   assert.equal(pendingRestore.entitlements.adsDisabled, false);
+
+  const relaunchStorage = createMemoryPurchaseStorage(true);
+  const storedBeforeRelaunch = await relaunchStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
+  const relaunchEntitlements = await getPurchaseEntitlements({
+    storage: relaunchStorage,
+  });
+
+  assert.equal(relaunchEntitlements.adsDisabled, true);
+  assert.equal(await relaunchStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), storedBeforeRelaunch);
 
   const verifiedNativeProvider = createNativePurchaseProvider({
     async receiptValidator(purchase, productId) {
