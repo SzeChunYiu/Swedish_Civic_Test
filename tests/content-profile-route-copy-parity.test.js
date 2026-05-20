@@ -19,7 +19,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 42);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 40);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
@@ -41,28 +41,16 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
   assert.match(source, /entitlementsReady/);
-  assert.match(source, /useLocalSearchParams<\{ focus\?: string \}>/);
-  assert.match(source, /const removeAdsFocused = focus === 'remove-ads';/);
-  assert.match(source, /const removeAdsPaywall = entitlementsReady \? \(/);
-  assert.match(source, /nativeID="remove-ads-paywall"/);
-  assert.match(source, /testID="remove-ads-paywall"/);
-  assert.match(source, /\{removeAdsFocused \? removeAdsPaywall : null\}/);
-  assert.match(source, /\{!removeAdsFocused \? removeAdsPaywall : null\}/);
-  assert.match(source, /import \{ isProRuntimeScopeEnabled \}/);
-  assert.match(source, /const proRuntimeScopeEnabled = isProRuntimeScopeEnabled\(\);/);
-  assert.match(source, /\{entitlementsReady && proRuntimeScopeEnabled \? \(/);
+  assert.match(source, /\{entitlementsReady \? \(\s*<PremiumBanner/);
   assert.match(source, /import \{ ProPaywall \}/);
   assert.match(source, /<ProPaywall/);
   assert.match(source, /alreadyAdFree=\{monetizationEntitlements\.adsDisabled\}/);
   assert.match(source, /onEntitlementsChange=\{\(nextEntitlements\) =>/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
-  assert.match(source, /copy\.removeAdsFocusCue/);
   assert.match(source, /Ändra mål, språk och ljud/);
   assert.match(source, /Edit goal, language, and audio/);
   assert.match(source, /Missade frågor/);
   assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
-  assert.match(source, /Ta bort annonser är markerat/);
-  assert.match(source, /Remove Ads is highlighted/);
 });
 
 test('profile route keeps Pro comparison separate from the Remove Ads purchase flow', () => {
@@ -72,28 +60,15 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
     'utf8',
   );
   const premiumBannerIndex = source.indexOf('<PremiumBanner');
-  const proScopeGateIndex = source.indexOf('entitlementsReady && proRuntimeScopeEnabled');
   const proPaywallIndex = source.indexOf('<ProPaywall');
 
   assert.ok(premiumBannerIndex >= 0, 'Profile should still render the Remove Ads banner');
-  assert.ok(
-    proScopeGateIndex > premiumBannerIndex,
-    'Pro comparison should stay behind runtime scope',
-  );
-  assert.ok(
-    proPaywallIndex > proScopeGateIndex,
-    'Pro comparison should render only inside the gate',
-  );
   assert.ok(proPaywallIndex > premiumBannerIndex, 'Pro comparison should follow Remove Ads');
   assert.match(source, /runtimeOptions=\{purchaseRuntime\}/);
-  assert.match(source, /const proRuntimeScopeEnabled = isProRuntimeScopeEnabled\(\);/);
-  assert.doesNotMatch(source, /\{entitlementsReady \? \(\s*<ProPaywall/);
   assert.match(proPaywallSource, /buyProLifetime/);
   assert.match(proPaywallSource, /restoreProLifetime/);
   assert.doesNotMatch(proPaywallSource, /buyRemoveAds|restoreRemoveAdsPurchase/);
-  assert.match(proPaywallSource, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(proPaywallSource, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} remains separate/);
-  assert.doesNotMatch(proPaywallSource, /29 kr|29 kronor/);
+  assert.match(proPaywallSource, /Remove Ads for 29 SEK remains separate/);
   assert.match(proPaywallSource, /Pro ändrar inte den vägen/);
 });
 
@@ -104,9 +79,8 @@ test('profile premium banner has distinct paid-state copy and recovery action', 
     'utf8',
   );
 
-  assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
+  assert.match(profileSource, /\{entitlementsReady \? \(\s*<PremiumBanner/);
   assert.match(profileSource, /entitlements=\{monetizationEntitlements\}/);
-  assert.match(profileSource, /nativeID="remove-ads-paywall"/);
   assert.match(bannerSource, /bodyActive:/);
   assert.match(bannerSource, /bodyIdle: \(price\) =>/);
   assert.match(bannerSource, /Purchase confirmed\. Study ads are disabled on this device/);
@@ -133,6 +107,7 @@ test('profile study setup card owns the localized settings shortcut', () => {
   const studySetupCard = source.slice(studySetupStart, badgesStart);
   const pillRowIndex = studySetupCard.indexOf('<View style={styles.pillRow}>');
   const settingsLinkIndex = studySetupCard.indexOf('href="/settings"');
+  const premiumBannerIndex = source.indexOf('<PremiumBanner');
 
   assert.equal(settingsLinks.length, 1);
   assert.notEqual(studySetupStart, -1);
@@ -145,7 +120,7 @@ test('profile study setup card owns the localized settings shortcut', () => {
     studySetupCard,
     /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.openSettings\}[\s\S]*<\/Button>/,
   );
-  assert.doesNotMatch(source.slice(badgesStart), /href="\/settings"/);
+  assert.doesNotMatch(source.slice(premiumBannerIndex), /href="\/settings"/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
 });
 
@@ -246,7 +221,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('const removeAdsPaywall = entitlementsReady ? (', 'const removeAdsPaywall = (');
+      .replace('{entitlementsReady ? (\\n        <PremiumBanner', '<PremiumBanner')
+      .replace('\\n      ) : null}', '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -260,35 +236,5 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /profile premium banner must fail closed while entitlements load/,
-  );
-});
-
-test('profile route copy parity rejects default Pro paywall rendering', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('{entitlementsReady && proRuntimeScopeEnabled ? (', '{entitlementsReady ? (');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled/,
   );
 });

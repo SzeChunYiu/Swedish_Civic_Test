@@ -161,7 +161,6 @@ export default function Screen() {
                 chapter={chapter}
                 completedCount={completedCount}
                 language={language}
-                progressPresentationOnly
                 questionCount={questionCount}
               />
             </Link>

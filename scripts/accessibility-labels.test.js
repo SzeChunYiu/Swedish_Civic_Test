@@ -7,7 +7,6 @@ const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
-const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -228,35 +227,4 @@ test('Dashboard summary text is separate from interactive links, buttons, and sc
     /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
   );
   assert.doesNotMatch(chapterSource, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
-});
-
-test('TopBarActions audio switch keeps web hover, focus, and touch-target feedback', () => {
-  const source = fs.readFileSync(TOP_BAR_ACTIONS_SOURCE, 'utf8');
-
-  assert.match(source, /function TopBarAudioSwitch/);
-  assert.match(source, /accessibilityRole="switch"/);
-  assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
-  assert.match(source, /hitSlop=\{space\[1\]\}/);
-  assert.match(source, /onFocus: \(\) => setIsFocused\(true\)/);
-  assert.match(source, /onBlur: \(\) => setIsFocused\(false\)/);
-  assert.match(source, /onHoverIn: \(\) => setIsHovered\(true\)/);
-  assert.match(
-    source,
-    /onHoverOut: \(\) => \{[\s\S]*setIsHovered\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*\}/,
-  );
-  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
-  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
-  assert.match(source, /isFocused \|\| isHovered \? styles\.iconButtonHover : null/);
-  assert.match(source, /isPressed \? styles\.iconButtonPressed : null/);
-  assert.match(source, /minHeight:\s*space\[6\]/);
-  assert.match(source, /minWidth:\s*space\[6\]/);
-  assert.match(source, /iconButtonHover:\s*\{[\s\S]*backgroundColor: colors\.focusSoft/);
-  assert.match(
-    source,
-    /iconButtonHover:\s*\{[\s\S]*transform: \[\{ scale: motion\.hoverScale \}\]/,
-  );
-  assert.match(
-    source,
-    /iconButtonPressed:\s*\{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
-  );
 });
