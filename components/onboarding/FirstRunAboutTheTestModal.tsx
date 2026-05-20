@@ -48,7 +48,7 @@ const firstRunCopy: Record<AppLanguage, FirstRunCopy> = {
     title: 'Vad är medborgarskapsprovet?',
     body: 'En kort guide till vad provet är, vem som ska göra det och hur det här studieverktyget förhåller sig till UHR:s officiella material.',
     open: 'Läs guiden',
-    openAccessibilityLabel: 'Öppna om-provet-guiden',
+    openAccessibilityLabel: 'Läs guiden om medborgarskapsprovet',
     skip: 'Hoppa över',
     skipAccessibilityLabel: 'Hoppa över guiden',
   },
