@@ -220,11 +220,11 @@ test('mockExamLibrary: library contains the canonical 7 mocks', () => {
   assert.ok(MOCK_EXAM_LIBRARY.find((m) => m.id === 'mock-random'));
 });
 
-test('mockExamLibrary: format constants match Sverige-i-fokus paraphrase', () => {
+test('mockExamLibrary: format constants avoid unsourced pass threshold claims', () => {
   const lib = loadTs('lib/learning/mockExamLibrary.ts');
   assert.equal(lib.MOCK_EXAM_QUESTION_COUNT, 25);
   assert.equal(lib.MOCK_EXAM_TIME_LIMIT_MINUTES, 30);
-  assert.ok(lib.MOCK_EXAM_PASS_THRESHOLD >= 0.6 && lib.MOCK_EXAM_PASS_THRESHOLD <= 0.8);
+  assert.equal(Object.prototype.hasOwnProperty.call(lib, 'MOCK_EXAM_PASS_THRESHOLD'), false);
 });
 
 test('materializeMock: same mockId + same bank → deterministic question pick', () => {
@@ -277,7 +277,7 @@ function fakeExamSession(answers) {
   };
 }
 
-test('buildExamDiagnostic: overall accuracy + pass flag + per-chapter sort', () => {
+test('buildExamDiagnostic: overall accuracy + per-chapter sort without threshold verdict', () => {
   const { buildExamDiagnostic } = loadTs('lib/learning/examDiagnostic.ts');
   const answers = [
     // chapter c1: 4 of 6
@@ -307,12 +307,14 @@ test('buildExamDiagnostic: overall accuracy + pass flag + per-chapter sort', () 
   });
   assert.equal(diag.correctCount, 6);
   assert.equal(diag.totalCount, 14);
+  assert.equal(Math.round(diag.overallAccuracy * 100), 43);
   assert.equal(diag.perChapter[0].chapterId, 'c2'); // weaker first
   assert.equal(diag.perChapter[1].chapterId, 'c1');
-  assert.equal(diag.passed, false); // 6/14 < 70%
+  assert.equal(Object.prototype.hasOwnProperty.call(diag, 'passed'), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(diag, 'passThreshold'), false);
 });
 
-test('buildExamDiagnostic: high score → passed=true', () => {
+test('buildExamDiagnostic: high score remains neutral percent-correct evidence', () => {
   const { buildExamDiagnostic } = loadTs('lib/learning/examDiagnostic.ts');
   const answers = Array.from({ length: 25 }, (_, i) => ({
     questionId: `q${i}`,
@@ -329,7 +331,10 @@ test('buildExamDiagnostic: high score → passed=true', () => {
     session: fakeExamSession(answers),
     questionChapterIndex: idx,
   });
-  assert.equal(diag.passed, true);
+  assert.equal(diag.correctCount, 22);
+  assert.equal(diag.totalCount, 25);
+  assert.equal(diag.overallAccuracy, 22 / 25);
+  assert.equal(Object.prototype.hasOwnProperty.call(diag, 'passed'), false);
 });
 
 test('buildExamDiagnostic: time-per-question + median populated', () => {
@@ -366,47 +371,19 @@ test('buildExamDiagnostic: time-per-question + median populated', () => {
   assert.equal(diag.medianMs, 15000);
 });
 
-test('formatPassLine: passing message in Sv + En', () => {
-  const { buildExamDiagnostic, formatPassLine } = loadTs('lib/learning/examDiagnostic.ts');
-  const answers = Array.from({ length: 25 }, (_, i) => ({
-    questionId: `q${i}`,
-    selectedOptionIds: [],
-    isCorrect: i < 22,
-    answeredAt: '2026-05-19T09:00:00.000Z',
-    timeSpentSeconds: 5,
-  }));
-  const idx = {};
-  answers.forEach((a) => {
-    idx[a.questionId] = 'c1';
-  });
-  const diag = buildExamDiagnostic({
-    session: fakeExamSession(answers),
-    questionChapterIndex: idx,
-  });
-  const sv = formatPassLine(diag, 'sv');
-  const en = formatPassLine(diag, 'en');
-  assert.match(sv, /klarade/i);
-  assert.match(en, /threshold/i);
-});
+test('exam diagnostic source rejects unsourced pass/fail threshold helpers', () => {
+  const diagnosticSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/learning/examDiagnostic.ts'),
+    'utf8',
+  );
+  const librarySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/learning/mockExamLibrary.ts'),
+    'utf8',
+  );
 
-test('formatPassLine: failing message names the shortfall', () => {
-  const { buildExamDiagnostic, formatPassLine } = loadTs('lib/learning/examDiagnostic.ts');
-  const answers = Array.from({ length: 25 }, (_, i) => ({
-    questionId: `q${i}`,
-    selectedOptionIds: [],
-    isCorrect: i < 10,
-    answeredAt: '2026-05-19T09:00:00.000Z',
-    timeSpentSeconds: 5,
-  }));
-  const idx = {};
-  answers.forEach((a) => {
-    idx[a.questionId] = 'c1';
-  });
-  const diag = buildExamDiagnostic({
-    session: fakeExamSession(answers),
-    questionChapterIndex: idx,
-  });
-  const en = formatPassLine(diag, 'en');
-  assert.match(en, /needed/i);
-  assert.match(en, /to go/i);
+  assert.doesNotMatch(diagnosticSource, /\bformatPassLine\b/);
+  assert.doesNotMatch(diagnosticSource, /\bpassThreshold\b/);
+  assert.doesNotMatch(diagnosticSource, /\bpassed\b/);
+  assert.doesNotMatch(librarySource, /\bMOCK_EXAM_PASS_THRESHOLD\b/);
+  assert.doesNotMatch(librarySource, /Official pass threshold/i);
 });

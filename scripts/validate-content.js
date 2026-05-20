@@ -6087,6 +6087,8 @@ let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let mockExamTimerParityValidated = false;
+let examDiagnosticThresholdGuardRulesValidated = 0;
+let examDiagnosticThresholdSourceParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
@@ -7438,6 +7440,77 @@ function validateMockExamTimerParity(config) {
   }
 
   if (valid) mockExamTimerParityValidated = true;
+}
+
+function validateExamDiagnosticThresholdSourceParity() {
+  const diagnosticSource = loadText('lib/learning/examDiagnostic.ts');
+  const librarySource = loadText('lib/learning/mockExamLibrary.ts');
+  const bannedRules = [
+    {
+      label: 'MOCK_EXAM_PASS_THRESHOLD export',
+      source: librarySource,
+      pattern: /\bMOCK_EXAM_PASS_THRESHOLD\b/,
+    },
+    {
+      label: 'official pass-threshold claim',
+      source: librarySource,
+      pattern: /Official pass threshold/i,
+    },
+    {
+      label: 'passThreshold diagnostic property',
+      source: diagnosticSource,
+      pattern: /\bpassThreshold\b/,
+    },
+    {
+      label: 'passed diagnostic verdict',
+      source: diagnosticSource,
+      pattern: /\bpassed\b/,
+    },
+    {
+      label: 'formatPassLine threshold helper',
+      source: diagnosticSource,
+      pattern: /\bformatPassLine\b/,
+    },
+  ];
+  const requiredDiagnosticRules = [
+    { label: 'correct count metric', pattern: /\bcorrectCount\b/ },
+    { label: 'total count metric', pattern: /\btotalCount\b/ },
+    { label: 'overall accuracy metric', pattern: /\boverallAccuracy\b/ },
+    { label: 'weakest chapter breakdown', pattern: /\bweakestChapters\b/ },
+    { label: 'per-question time metric', pattern: /\bperQuestionMs\b/ },
+    { label: 'median time metric', pattern: /\bmedianMs\b/ },
+  ];
+  const libraryExports = loadTs('lib/learning/mockExamLibrary.ts');
+  const diagnosticExports = loadTs('lib/learning/examDiagnostic.ts');
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  for (const rule of bannedRules) {
+    examDiagnosticThresholdGuardRulesValidated += 1;
+    if (rule.pattern.test(rule.source)) {
+      reject(`exam diagnostic threshold guard still exposes ${rule.label}`);
+    }
+  }
+
+  for (const rule of requiredDiagnosticRules) {
+    examDiagnosticThresholdGuardRulesValidated += 1;
+    if (!rule.pattern.test(diagnosticSource)) {
+      reject(`exam diagnostic threshold guard lost ${rule.label}`);
+    }
+  }
+
+  if (Object.prototype.hasOwnProperty.call(libraryExports, 'MOCK_EXAM_PASS_THRESHOLD')) {
+    reject('mockExamLibrary still exports MOCK_EXAM_PASS_THRESHOLD');
+  }
+  if (Object.prototype.hasOwnProperty.call(diagnosticExports, 'formatPassLine')) {
+    reject('examDiagnostic still exports formatPassLine');
+  }
+
+  if (valid) examDiagnosticThresholdSourceParityValidated = true;
 }
 
 function validateExamSubmissionFinalityParity() {
@@ -13777,6 +13850,7 @@ validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
+validateExamDiagnosticThresholdSourceParity();
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
@@ -13899,6 +13973,8 @@ console.log(
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
       mockExamTimerParityValidated,
+      examDiagnosticThresholdGuardRulesValidated,
+      examDiagnosticThresholdSourceParityValidated,
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,
