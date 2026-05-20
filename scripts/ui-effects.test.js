@@ -1215,6 +1215,22 @@ test('exam results are final after submission', () => {
   assert.doesNotMatch(source, /Back to answers/);
 });
 
+test('exam result practice line is source-safe and not presented as official', () => {
+  const source = read('app/(tabs)/exam.tsx');
+
+  assert.match(source, /const PRACTICE_PASS_THRESHOLD_PERCENT = 75;/);
+  assert.match(source, /practiceLineReachedBadge: 'Övningsnivå nådd'/);
+  assert.match(source, /practiceLineReviewBadge: 'Keep practicing'/);
+  assert.match(
+    source,
+    /copy\.practiceLineStatus\(result\.percent, PRACTICE_PASS_THRESHOLD_PERCENT\)/,
+  );
+  assert.match(source, /copy\.practiceLineSummary\(PRACTICE_PASS_THRESHOLD_PERCENT\)/);
+  assert.match(source, /UHR har inte publicerat exakt antal frågor, provtid eller godkändgräns/);
+  assert.match(source, /UHR has not published the official test's exact question count/);
+  assert.doesNotMatch(source, /official pass line is 75|officiell godkändgräns.*75/i);
+});
+
 test('exam auto-submits at timeout and explains unanswered scoring', () => {
   const source = read('app/(tabs)/exam.tsx');
 
