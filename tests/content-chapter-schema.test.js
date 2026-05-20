@@ -1,10 +1,12 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const path = require('node:path');
 const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
 
 test('chapter metadata schema validates every chapter', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -28,14 +30,14 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/chapters.ts')) {
     return String(contents)
       .replace("    nameEn: 'The country of Sweden',", "    nameEn: 'Landet Sverige',")
-      .replace('    questionCount: 25,', '    questionCount: 0,');
+      .replace('    questionCount: 50,', '    questionCount: 0,');
   }
   return contents;
 };
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
