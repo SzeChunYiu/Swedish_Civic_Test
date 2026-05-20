@@ -4522,8 +4522,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
-      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where Lucia wears a crown of lights and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där Lucia bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24805,8 +24805,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
-      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where Lucia wears a crown of lights and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där Lucia bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24846,8 +24846,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
-      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where Lucia wears a crown of lights and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där Lucia bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24887,8 +24887,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
-      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where Lucia wears a crown of lights and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där Lucia bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24936,8 +24936,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where one person is Lucia, wears a crown of lights, and sings special songs with other participants.",
-      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
+      "en": "The Lucia celebration is largely about spreading light when the year is at its darkest. The celebration is linked to 13 December and can include Lucia processions where Lucia wears a crown of lights and sings special songs with other participants.",
+      "sv": "Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där Lucia bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare."
     },
     "source": {
       "title": "Sverige i fokus",
