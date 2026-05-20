@@ -62,7 +62,7 @@ export const chapters: Chapter[] = [
       'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',
     descriptionEn:
       "Human rights, gender equality, children's rights, minority rights, and discrimination.",
-    questionCount: 60,
+    questionCount: 55,
   },
   {
     id: 'ch08',
@@ -80,7 +80,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.',
     descriptionEn:
       'Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.',
-    questionCount: 60,
+    questionCount: 55,
   },
   {
     id: 'ch10',

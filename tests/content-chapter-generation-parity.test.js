@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync, spawnSync } = require('node:child_process');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -37,20 +37,11 @@ function countByChapter(questions) {
 }
 
 test('chapter source and generated question counts stay in parity', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-
-  const summary = JSON.parse(match[0]);
   const { chapters } = loadTs('data/chapters.ts');
   const { sourceQuestions, generatedPublishedQuestions, questions } = loadTs('data/questions.ts');
   const sourceCounts = countByChapter(sourceQuestions);
   const generatedCounts = countByChapter(generatedPublishedQuestions);
   const publishedCounts = countByChapter(questions);
-
-  assert.equal(summary.chapterGenerationParityValidated, chapters.length);
 
   chapters.forEach((chapter) => {
     const sourceCount = sourceCounts.get(chapter.id) || 0;
@@ -62,6 +53,38 @@ test('chapter source and generated question counts stay in parity', () => {
     assert.equal(publishedCount, sourceCount + generatedCount);
     assert.equal(chapter.questionCount, publishedCount);
   });
+});
+
+test('chapter question-count guard reports focused metadata drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/chapters.ts')) {
+    return String(contents).replace(
+      "    id: 'ch07',\\n    nameSv: 'Mänskliga rättigheter',\\n    nameEn: 'Human rights',\\n    descriptionSv:\\n      'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',\\n    descriptionEn:\\n      \\"Human rights, gender equality, children's rights, minority rights, and discrimination.\\",\\n    questionCount: 55,",
+      "    id: 'ch07',\\n    nameSv: 'Mänskliga rättigheter',\\n    nameEn: 'Human rights',\\n    descriptionSv:\\n      'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',\\n    descriptionEn:\\n      \\"Human rights, gender equality, children's rights, minority rights, and discrimination.\\",\\n    questionCount: 60,",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /ch07 questionCount is 60, expected 55 published questions/,
+  );
 });
 
 test('published question chapter schema rejects unknown chapter ids', () => {
