@@ -203,8 +203,6 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
-  /^En anledning är\b/i,
-  /^One reason is\b/i,
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
   /\bIt is true that\s+(?:The|In|Approximately)\b/i,
   /\bbelongs to\s+[a-zåäö][^.,"]*/i,
@@ -4447,58 +4445,21 @@ function englishGainedRightStatement(subject, answer) {
     stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
   )}`;
 }
-function reasonAnswerClauseSv(answer) {
+function reasonStatementSv(answer) {
   const stripped = stripLeadingPurposeSv(answer);
-  if (/^för att|^att\s+/i.test(answer.trim())) return `att ${lowerFirst(stripped)}`;
-  if (
-    /^[A-ZÅÄÖ]/.test(stripped) &&
-    /\b(?:hade|saknade|var|är|kan|ska|måste|gör|gjorde|ger|skapar|ersätter)\b/i.test(stripped)
-  ) {
-    return `att ${lowerFirst(stripped)}`;
+  if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
+  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
+    return `En anledning är att ${stripped}`;
   }
-  return lowerFirst(stripped).replace(/\beU\b/g, 'EU');
+  return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
-function reasonAnswerClauseEn(answer) {
+function reasonStatementEn(answer) {
   const stripped = stripLeadingPurposeEn(answer);
-  if (/^to\b/i.test(answer.trim())) return `to ${lowerFirst(stripped)}`;
-  if (
-    /^[A-ZÅÄÖ]/.test(stripped) &&
-    /\b(?:had|was|were|is|are|can|must|should|gives|gave|makes|made|creates|created|replaces|replaced)\b/i.test(
-      stripped,
-    )
-  ) {
-    return `that ${lowerFirst(stripped)}`;
+  if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
+  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
+    return `One reason is that ${stripped}`;
   }
-  return lowerFirst(stripped);
-}
-function whyTargetStatementSv(target) {
-  const statement = stripFinalPunctuation(target).trim();
-  const modal = statement.match(
-    /^(kan|ska|måste|bör|får)\s+(.+?)\s+(vara|bli|ha|göra|skapa|hota|påverka|räknas|kallas|ses)\b(.*)$/i,
-  );
-  if (modal) return `${lowerFirst(modal[2])} ${modal[1].toLowerCase()} ${modal[3]}${modal[4]}`;
-  return lowerFirst(statement);
-}
-function whyTargetStatementEn(target) {
-  const statement = stripFinalPunctuation(target).trim();
-  const modal = statement.match(
-    /^(can|should|must|could|would|will)\s+(.+?)\s+(be|have|make|create|affect|threaten|replace|give)\b(.*)$/i,
-  );
-  if (modal) return `${lowerFirst(modal[2])} ${modal[1].toLowerCase()} ${modal[3]}${modal[4]}`;
-
-  const beVerb = statement.match(/^(is|are|was|were)\s+(.+?)\s+(.+)$/i);
-  if (beVerb) return `${lowerFirst(beVerb[2])} ${beVerb[1].toLowerCase()} ${beVerb[3]}`;
-
-  const doVerb = statement.match(/^(?:do|does|did)\s+(.+?)\s+(.+)$/i);
-  if (doVerb) return `${lowerFirst(doVerb[1])} ${doVerb[2]}`;
-
-  return lowerFirst(statement);
-}
-function reasonStatementSv(target, answer) {
-  return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(answer)}`;
-}
-function reasonStatementEn(target, answer) {
-  return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
+  return `One reason is ${lowerFirst(stripped)}`;
 }
 function frontedManyActionSv(answer) {
   const words = lowerFirst(answer).split(/\s+/);
@@ -5014,7 +4975,7 @@ function civicStatementSv(source, option) {
   if (match)
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
   match = q.match(/^Varför (.+)$/i);
-  if (match) return reasonStatementSv(match[1], answer);
+  if (match) return reasonStatementSv(answer);
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
@@ -5314,7 +5275,7 @@ function civicStatementEn(source, option) {
   if (match)
     return `${upperFirst(match[1])} is often called ${match[2]} because ${embeddedEnglishClause(answer)}`;
   match = q.match(/^Why (.+)$/i);
-  if (match) return reasonStatementEn(match[1], answer);
+  if (match) return reasonStatementEn(answer);
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
   match = q.match(/^What happens in (.+?) if (.+)$/i);
@@ -10537,6 +10498,27 @@ function validateSettingsStoreSchemaParity() {
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   const requiredSnippets = [
     ["createMMKV({ id: 'settings' })", 'settings storage must use the stable settings MMKV id'],
+    [
+      'function readStorageString(key: string): string | undefined',
+      'settings store must read persisted strings through a fail-soft helper',
+    ],
+    [
+      'function readStorageBoolean(key: string): boolean | undefined',
+      'settings store must read persisted booleans through a fail-soft helper',
+    ],
+    [
+      'function readStorageNumber(key: string): number | undefined',
+      'settings store must read persisted numbers through a fail-soft helper',
+    ],
+    ['const language = readStorageString(languageKey);', 'readLanguage must fail softly'],
+    [
+      'const storedValue = readStorageBoolean(audioEnabledKey);',
+      'readAudioEnabled must fail softly',
+    ],
+    [
+      'const storedValue = readStorageNumber(dailyGoalKey);',
+      'readDailyGoalAnswers must fail softly',
+    ],
     ['language: readLanguage()', 'SettingsState must initialize language from persisted storage'],
     [
       'audioEnabled: readAudioEnabled()',
@@ -10627,6 +10609,9 @@ function validateSettingsDailyGoalParity() {
   }
   if (!normalizedSettingsStore.includes('return normalizeDailyGoalAnswers(storedValue);')) {
     reject('readDailyGoalAnswers must normalize the raw persisted value');
+  }
+  if (!normalizedSettingsStore.includes('const storedValue = readStorageNumber(dailyGoalKey);')) {
+    reject('readDailyGoalAnswers must read persisted values through the fail-soft helper');
   }
   if (normalizedSettingsStore.includes('storedValue && storedValue > 0 ? storedValue : 10')) {
     reject('readDailyGoalAnswers must not hydrate raw positive persisted values');
@@ -10737,11 +10722,18 @@ function validateSettingsAudioParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (
+    !normalizedSettingsStore.includes('const storedValue = readStorageBoolean(audioEnabledKey);')
+  ) {
+    reject(
+      'readAudioEnabled must read the persisted audioEnabled boolean through the fail-soft helper',
+    );
+  }
+  if (
     !normalizedSettingsStore.includes(
-      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
+      'function readStorageBoolean(key: string): boolean | undefined',
     )
   ) {
-    reject('readAudioEnabled must read the persisted audioEnabled boolean');
+    reject('settings store must expose a fail-soft boolean storage reader');
   }
   if (!normalizedSettingsStore.includes('return storedValue ?? true;')) {
     reject('readAudioEnabled must default audio to enabled');
@@ -11092,8 +11084,8 @@ function validateProgressStoreSchemaParity() {
   const requiredSnippets = [
     ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
     [
-      'const rawProgress = progressStorage?.getString(progressStateKey);',
-      'readProgress must read persisted JSON through progressStateKey',
+      'try { const rawProgress = progressStorage?.getString(progressStateKey);',
+      'readProgress must fail softly when persisted progress cannot be read',
     ],
     [
       'return normalizeProgress(JSON.parse(rawProgress));',

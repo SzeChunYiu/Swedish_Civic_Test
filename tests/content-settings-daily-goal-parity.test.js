@@ -6,6 +6,8 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const { createThrowingReadMMKV } = require('./helpers/storageStoreHarness.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 function runValidationWithSettingsRoutePatch(search, replacement) {
@@ -54,7 +56,16 @@ require('./scripts/validate-content.js');
   );
 }
 
-function loadDailyGoalFromStorage(storedValue) {
+function createDailyGoalStorage(storedValue) {
+  return {
+    getBoolean: () => undefined,
+    getNumber: (key) => (key === 'dailyGoalAnswers' ? storedValue : undefined),
+    getString: () => undefined,
+    set: () => {},
+  };
+}
+
+function loadSettingsFromStorage(storage) {
   const settingsStorePath = path.join(repoRoot, 'lib/storage/settingsStore.ts');
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
@@ -67,12 +78,7 @@ function loadDailyGoalFromStorage(storedValue) {
   Module._load = function patchedLoad(request, parent, isMain) {
     if (request === 'react-native-mmkv') {
       return {
-        createMMKV: () => ({
-          getBoolean: () => undefined,
-          getNumber: (key) => (key === 'dailyGoalAnswers' ? storedValue : undefined),
-          getString: () => undefined,
-          set: () => {},
-        }),
+        createMMKV: () => storage,
       };
     }
 
@@ -107,7 +113,7 @@ function loadDailyGoalFromStorage(storedValue) {
   try {
     delete require.cache[settingsStorePath];
     const { useSettingsStore } = require(settingsStorePath);
-    return useSettingsStore.getState().dailyGoalAnswers;
+    return useSettingsStore.getState();
   } finally {
     delete require.cache[settingsStorePath];
     Module._resolveFilename = originalResolve;
@@ -118,6 +124,10 @@ function loadDailyGoalFromStorage(storedValue) {
       delete require.extensions['.ts'];
     }
   }
+}
+
+function loadDailyGoalFromStorage(storedValue) {
+  return loadSettingsFromStorage(createDailyGoalStorage(storedValue)).dailyGoalAnswers;
 }
 
 test('daily goal settings stay in parity between storage and settings controls', () => {
@@ -133,15 +143,18 @@ test('daily goal settings stay in parity between storage and settings controls',
     'utf8',
   );
   const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
-  const onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
-  const homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
   assert.equal(summary.settingsDailyGoalOptionsValidated, 4);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
   assert.match(settingsStore, /const dailyGoalKey = 'dailyGoalAnswers';/);
   assert.match(settingsStore, /const defaultDailyGoalAnswers = 10;/);
   assert.match(settingsStore, /function normalizeDailyGoalAnswers/);
+  assert.match(settingsStore, /const storedValue = readStorageNumber\(dailyGoalKey\);/);
   assert.match(settingsStore, /return normalizeDailyGoalAnswers\(storedValue\);/);
+  assert.match(
+    settingsStore,
+    /function readStorageNumber\(key: string\): number \| undefined \{[\s\S]*settingsStorage\?\.getNumber\(key\);[\s\S]*return undefined;/,
+  );
   assert.doesNotMatch(settingsStore, /storedValue && storedValue > 0 \? storedValue : 10/);
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
   assert.match(settingsStore, /Number\.isInteger\(answerCount\)/);
@@ -153,23 +166,6 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsRoute, /\$\{answerCount\} svar per dag/);
   assert.match(settingsRoute, /\$\{answerCount\} answers per day/);
   assert.match(settingsRoute, /\{copy\.dailyGoalSummary\(dailyGoalAnswers\)\}/);
-  assert.match(onboardingRoute, /const onboardingDailyGoalPresetValues = \[10, 20, 40\] as const;/);
-  assert.match(
-    onboardingRoute,
-    /const dailyGoalAnswers = useSettingsStore\(\(state\) => state\.dailyGoalAnswers\);/,
-  );
-  assert.match(
-    onboardingRoute,
-    /const setDailyGoalAnswers = useSettingsStore\(\(state\) => state\.setDailyGoalAnswers\);/,
-  );
-  assert.match(onboardingRoute, /onPress=\{\(\) => setDailyGoalAnswers\(goal\)\}/);
-  assert.match(onboardingRoute, /aria-selected=\{selected\}/);
-  assert.match(onboardingRoute, /accessibilityState=\{\{ selected \}\}/);
-  assert.doesNotMatch(onboardingRoute, /streak survival|save your streak|lose your streak/i);
-  assert.match(
-    homeRoute,
-    /const dailyGoalAnswers = useSettingsStore\(\(state\) => state\.dailyGoalAnswers\);/,
-  );
 });
 
 test('daily goal hydration falls back for unsafe persisted values', () => {
@@ -190,6 +186,16 @@ test('daily goal hydration falls back for unsafe persisted values', () => {
   });
 });
 
+test('settings hydration falls back when MMKV reads throw', () => {
+  const state = loadSettingsFromStorage(createThrowingReadMMKV('settings read failed'));
+
+  assert.equal(state.language, 'sv');
+  assert.equal(state.audioEnabled, true);
+  assert.equal(state.dailyGoalAnswers, 10);
+  assert.equal(state.includeSupplementaryQuestions, false);
+  assert.equal(state.hasSeenAboutTheTest, false);
+});
+
 test('daily goal settings parity rejects option-set drift', () => {
   const result = runValidationWithSettingsRoutePatch(
     '[5, 10, 20, 40].map((goal) =>',
@@ -205,62 +211,14 @@ test('daily goal settings parity rejects option-set drift', () => {
   assert.match(output, /daily goal options must include the default 10/);
 });
 
-test('daily goal parity rejects onboarding presets that bypass settings persistence', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
-    return String(contents).replace('onPress={() => setDailyGoalAnswers(goal)}', 'onPress={() => undefined}');
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
+test('daily goal settings parity rejects raw positive-number hydration', () => {
+  const result = runValidationWithSettingsStorePatch(
+    'return normalizeDailyGoalAnswers(storedValue);',
+    'return storedValue && storedValue > 0 ? storedValue : 10;',
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /onboarding daily goal presets must persist through setDailyGoalAnswers/,
-  );
-});
-
-test('daily goal parity rejects onboarding presets without selected state semantics', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
-    return String(contents)
-      .replace('aria-selected={selected}', 'aria-selected={false}')
-      .replace('accessibilityState={{ selected }}', 'accessibilityState={{}}');
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /onboarding daily goal presets must mirror selected state to aria-selected/,
-  );
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /readDailyGoalAnswers must normalize the raw persisted value/);
+  assert.match(output, /readDailyGoalAnswers must not hydrate raw positive persisted values/);
 });

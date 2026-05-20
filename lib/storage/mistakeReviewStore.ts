@@ -2,8 +2,6 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
-import { createStoragePersistenceWarning, type StoragePersistenceWarning } from './persistence';
-
 export type MistakeAnswerReview = {
   answeredAt: string;
   questionId: string;
@@ -21,7 +19,7 @@ try {
   mistakeReviewStorage = null;
 }
 
-type PersistedMistakeReview = {
+export type PersistedMistakeReview = {
   wrongAnswerReviews: Record<string, MistakeAnswerReview>;
 };
 
@@ -60,29 +58,41 @@ function normalizeMistakeReview(value: unknown): PersistedMistakeReview {
   return { wrongAnswerReviews };
 }
 
-function readMistakeReview(): PersistedMistakeReview {
-  const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
-  if (!rawReview) return emptyMistakeReview;
+export function normalizeImportedMistakeReview(value: unknown): PersistedMistakeReview {
+  return normalizeMistakeReview(value);
+}
 
+function readMistakeReview(): PersistedMistakeReview {
   try {
+    const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
+    if (!rawReview) return emptyMistakeReview;
+
     return normalizeMistakeReview(JSON.parse(rawReview));
   } catch {
     return emptyMistakeReview;
   }
 }
 
-function writeMistakeReview(review: PersistedMistakeReview): StoragePersistenceWarning | null {
-  try {
-    mistakeReviewStorage?.set(mistakeReviewStateKey, JSON.stringify(review));
-    return null;
-  } catch (error) {
-    return createStoragePersistenceWarning('mistake-review', mistakeReviewStateKey, error);
+function writeMistakeReview(review: PersistedMistakeReview): void {
+  mistakeReviewStorage?.set(mistakeReviewStateKey, JSON.stringify(review));
+}
+
+function mergeMistakeReview(
+  current: PersistedMistakeReview,
+  imported: PersistedMistakeReview,
+): PersistedMistakeReview {
+  const wrongAnswerReviews = { ...current.wrongAnswerReviews };
+  for (const [questionId, importedReview] of Object.entries(imported.wrongAnswerReviews)) {
+    const currentReview = wrongAnswerReviews[questionId];
+    if (!currentReview || importedReview.answeredAt >= currentReview.answeredAt) {
+      wrongAnswerReviews[questionId] = importedReview;
+    }
   }
+
+  return { wrongAnswerReviews };
 }
 
 type MistakeReviewState = PersistedMistakeReview & {
-  persistenceWarning: StoragePersistenceWarning | null;
-  clearPersistenceWarning: () => void;
   clearWrongAnswerReviews: () => void;
   recordWrongAnswerReview: (review: {
     questionId: string;
@@ -95,11 +105,9 @@ const initialMistakeReview = readMistakeReview();
 
 export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   ...initialMistakeReview,
-  persistenceWarning: null,
-  clearPersistenceWarning: () => set({ persistenceWarning: null }),
   clearWrongAnswerReviews: () => {
-    const persistenceWarning = writeMistakeReview(emptyMistakeReview);
-    set({ ...emptyMistakeReview, persistenceWarning });
+    writeMistakeReview(emptyMistakeReview);
+    set(emptyMistakeReview);
   },
   recordWrongAnswerReview: ({ questionId, selectedOptionTextEn, selectedOptionTextSv }) =>
     set((state) => {
@@ -114,8 +122,16 @@ export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
           },
         },
       };
-      const persistenceWarning = writeMistakeReview(nextReview);
+      writeMistakeReview(nextReview);
 
-      return { ...nextReview, persistenceWarning };
+      return nextReview;
     }),
 }));
+
+export function importMistakeReviewSnapshot(value: unknown): PersistedMistakeReview {
+  const importedReview = normalizeImportedMistakeReview(value);
+  const nextReview = mergeMistakeReview(useMistakeReviewStore.getState(), importedReview);
+  writeMistakeReview(nextReview);
+  useMistakeReviewStore.setState(nextReview);
+  return nextReview;
+}

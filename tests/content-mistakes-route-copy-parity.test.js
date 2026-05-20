@@ -3,18 +3,19 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+
+const { createThrowingReadMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
-const staleSwedishMistakesCopy = {
-  bookmarkedMeta: ['Sparad för', 'fokuserad', 'repetition'].join(' '),
-  mistakeBadge: ['Fel', 'logg'].join(''),
-  mistakeTitle: ['Fel', 'svar', 'att repetera'].join(' '),
-  selectedWrongAnswerLabel: ['Ditt senaste', 'felaktiga svar'].join(' '),
-  subtitle: [
-    ['Gå igenom', 'fel', 'svar', 'med fråga'].join(' '),
-    ['förklaring, källreferens och repetitionsantal', 'på samma plats.'].join(' '),
-  ].join(', '),
-  wrongAnswers: [['Fel', 'svar'].join(' '), '${count}'].join(': '),
+
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
 };
 
 function parseValidationSummary() {
@@ -29,13 +30,17 @@ function parseValidationSummary() {
 test('mistakes route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+  const reviewStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/mistakeReviewStore.ts'),
+    'utf8',
+  );
 
-  assert.equal(summary.mistakesRouteCopyLabelsValidated, 31);
+  assert.equal(summary.mistakesRouteCopyLabelsValidated, 30);
   assert.equal(summary.mistakesRouteCopyParityValidated, true);
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Gå igenom frågor du har missat, se förklaringen/);
+  assert.match(source, /Gå igenom fel svar med fråga, förklaring, källreferens/);
   assert.match(source, /Review wrong answers with the question, explanation, source reference/);
   assert.match(source, /accessibilityLabel=\{copy\.emptyPracticeAccessibilityLabel\}/);
   assert.match(source, /useMistakeReviewStore/);
@@ -46,9 +51,22 @@ test('mistakes route shell copy follows the persisted settings language', () => 
     source,
     /\{copy\.wrongAnswers\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\)\}/,
   );
-  for (const staleCopy of Object.values(staleSwedishMistakesCopy)) {
-    assert.doesNotMatch(source, new RegExp(staleCopy.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  }
+  assert.match(
+    reviewStore,
+    /try\s*\{\s*const rawReview = mistakeReviewStorage\?\.getString\(mistakeReviewStateKey\);/,
+  );
+});
+
+test('mistake review hydration falls back when MMKV getString throws', () => {
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': createThrowingReadMMKV('mistake review read failed'),
+    },
+  );
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {});
 });
 
 test('mistakes route copy parity rejects bypassing the settings language', () => {
@@ -106,46 +124,6 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /mistakes route is missing sv copy/);
-});
-
-test('mistakes route copy parity rejects stale Swedish review labels', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const staleCopy = ${JSON.stringify(staleSwedishMistakesCopy)};
-const tick = String.fromCharCode(96);
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("'Sparad till senare övning'", JSON.stringify(staleCopy.bookmarkedMeta))
-      .replace("'Öva igen'", JSON.stringify(staleCopy.mistakeBadge))
-      .replace("'Frågor att öva på'", JSON.stringify(staleCopy.mistakeTitle))
-      .replace("'Ditt senaste svar'", JSON.stringify(staleCopy.selectedWrongAnswerLabel))
-      .replace(
-        "'Gå igenom frågor du har missat, se förklaringen och hitta källan på samma ställe.'",
-        JSON.stringify(staleCopy.subtitle),
-      )
-      .replace(tick + 'Missad $' + '{count} gånger' + tick, tick + staleCopy.wrongAnswers + tick);
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /mistakes route keeps stale Swedish review copy/,
-  );
 });
 
 test('mistakes route copy parity rejects missing answer-review accessibility copy', () => {

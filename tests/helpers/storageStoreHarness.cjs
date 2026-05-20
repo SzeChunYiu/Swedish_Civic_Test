@@ -40,6 +40,21 @@ function createThrowingSetMMKV(message = 'MMKV set failed') {
   };
 }
 
+function createThrowingReadMMKV(message = 'MMKV read failed') {
+  return {
+    getBoolean() {
+      throw new Error(message);
+    },
+    getNumber() {
+      throw new Error(message);
+    },
+    getString() {
+      throw new Error(message);
+    },
+    set() {},
+  };
+}
+
 function createZustandStub() {
   return {
     create: (factory) => {
@@ -72,6 +87,10 @@ function clearModuleCache(modulePath) {
 function loadTsWithStorage(repoRoot, relativePath, storageById) {
   const targetPath = path.join(repoRoot, relativePath);
   clearModuleCache(targetPath);
+  const storageDir = path.join(repoRoot, 'lib/storage');
+  for (const cacheKey of Object.keys(require.cache)) {
+    if (cacheKey.startsWith(storageDir)) delete require.cache[cacheKey];
+  }
 
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
@@ -101,6 +120,7 @@ function loadTsWithStorage(repoRoot, relativePath, storageById) {
 
 module.exports = {
   createMemoryMMKV,
+  createThrowingReadMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 };
