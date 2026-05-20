@@ -284,6 +284,17 @@ const styles = StyleSheet.create({
   cardWide: {
     gap: space[1.5],
   },
+  removeAdsPaywall: {
+    gap: space[1],
+  },
+  removeAdsPaywallFocused: {
+    borderColor: colors.focus,
+  },
+  removeAdsFocusCue: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
   streakFreezeCard: {
     gap: space[1],
   },

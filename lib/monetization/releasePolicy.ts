@@ -27,3 +27,7 @@ export function isReleaseMonetizationPolicyReady(): boolean {
     releaseMonetizationPolicy.removeAdsPriceLabel === '29 SEK'
   );
 }
+
+export function isProRuntimeScopeEnabled(): boolean {
+  return true;
+}
