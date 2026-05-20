@@ -259,6 +259,12 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.trueFalseOptionLabelsValidated, summary.trueFalseQuestions);
   assert.equal(summary.questionTagsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+  assert.deepEqual(summary.questionBankCsvProvenanceCounts, {
+    uhr: summary.sourceQuestions,
+    derived: summary.generatedPublishedQuestions,
+    editorial: 0,
+  });
+  assert.equal(summary.questionBankCsvProvenanceCountsParityValidated, true);
   assert.equal(summary.staticSiteQuestionBankQuestionsValidated, summary.publishedQuestions);
   assert.equal(summary.staticSiteQuestionBankChaptersValidated, 13);
   assert.equal(summary.staticSiteQuestionBankParityValidated, true);
