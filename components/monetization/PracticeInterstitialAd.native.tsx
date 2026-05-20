@@ -9,6 +9,7 @@ import type { PremiumEntitlements } from '../../types/monetization';
 
 let lastInterstitialShowKey: string | undefined;
 let interstitialLoadInFlight = false;
+let interstitialShowInFlight = false;
 
 export function PracticeInterstitialAd({
   entitlements,
@@ -26,6 +27,7 @@ export function PracticeInterstitialAd({
       !showKey ||
       lastInterstitialShowKey === showKey ||
       interstitialLoadInFlight ||
+      interstitialShowInFlight ||
       !entitlementsReady ||
       !mobileAdsConsent.initialized ||
       !shouldShowAd(
@@ -41,8 +43,11 @@ export function PracticeInterstitialAd({
     if (!unitId) return undefined;
 
     let unsubscribeLoaded: (() => void) | undefined;
+    let unsubscribeOpened: (() => void) | undefined;
+    let unsubscribeClosed: (() => void) | undefined;
     let unsubscribeError: (() => void) | undefined;
-    let didReachShowPath = false;
+    let didRequestShow = false;
+    let didOpen = false;
 
     try {
       const interstitialAd = InterstitialAd.createForAdRequest(unitId, {
@@ -52,33 +57,54 @@ export function PracticeInterstitialAd({
       interstitialLoadInFlight = true;
 
       unsubscribeLoaded = interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
-        lastInterstitialShowKey = showKey;
         interstitialLoadInFlight = false;
-        didReachShowPath = true;
+        interstitialShowInFlight = true;
+        didRequestShow = true;
 
         try {
-          void Promise.resolve(interstitialAd.show()).catch(() => undefined);
+          void Promise.resolve(interstitialAd.show()).catch(() => {
+            interstitialShowInFlight = false;
+          });
         } catch {
+          interstitialShowInFlight = false;
           // Interstitial ads are optional; feedback and navigation must continue.
         }
       });
 
+      unsubscribeOpened = interstitialAd.addAdEventListener(AdEventType.OPENED, () => {
+        lastInterstitialShowKey = showKey;
+        didOpen = true;
+      });
+
+      unsubscribeClosed = interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
+        interstitialShowInFlight = false;
+      });
+
       unsubscribeError = interstitialAd.addAdEventListener(AdEventType.ERROR, () => {
         interstitialLoadInFlight = false;
+        interstitialShowInFlight = false;
       });
 
       interstitialAd.load();
       return () => {
         unsubscribeLoaded?.();
+        unsubscribeOpened?.();
+        unsubscribeClosed?.();
         unsubscribeError?.();
-        if (!didReachShowPath) {
+        if (!didRequestShow) {
           interstitialLoadInFlight = false;
+        }
+        if (!didOpen) {
+          interstitialShowInFlight = false;
         }
       };
     } catch {
       unsubscribeLoaded?.();
+      unsubscribeOpened?.();
+      unsubscribeClosed?.();
       unsubscribeError?.();
       interstitialLoadInFlight = false;
+      interstitialShowInFlight = false;
       return undefined;
     }
   }, [entitlementsReady, mobileAdsConsent, resolvedEntitlements, showKey]);

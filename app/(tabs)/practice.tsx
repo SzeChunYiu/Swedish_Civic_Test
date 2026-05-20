@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
-import { AdBanner } from '../../components/monetization/AdBanner';
+import { PracticeInterstitialAd } from '../../components/monetization/PracticeInterstitialAd';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
@@ -261,6 +261,10 @@ function buildChapterPracticeSummaries(
   });
 }
 
+function getPracticeInterstitialShowKey(questionId: string, shuffleSessionId: string): string {
+  return `${shuffleSessionId}:${questionId}`;
+}
+
 export default function Screen() {
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
@@ -494,6 +498,7 @@ export default function Screen() {
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress =
     selectedPracticeQuestions.length > 0 ? questionNumber / selectedPracticeQuestions.length : 0;
+  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -682,8 +687,8 @@ export default function Screen() {
             screen="practice"
             selectedOptionId={selectedOptionId}
           />
-          <AdBanner placement="quiz_completed_interstitial" />
           <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
+          <PracticeInterstitialAd showKey={practiceInterstitialShowKey} />
           <View style={styles.feedbackActions}>
             <Button
               accessibilityLabel={copy.nextQuestionAccessibilityLabel}

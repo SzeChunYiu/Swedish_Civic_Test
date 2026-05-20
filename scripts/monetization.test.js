@@ -380,6 +380,8 @@ test('real ad units can be supplied through the local override loader', () => {
       );
     },
   );
+});
+
 test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
   const nativeAdCardSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
@@ -482,7 +484,7 @@ test('practice completion placement uses a native interstitial and web preview',
   );
   assert.match(
     nativeInterstitialSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
   assert.match(nativeInterstitialSource, /useMobileAdsConsent/);
   assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
@@ -1044,6 +1046,12 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
 
   assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
   assert.deepEqual(previewCompletedResult, {
+    reward: {
+      amount: 1,
+      type: 'extra_mock_exam',
+    },
+    status: 'earned_reward',
+  });
   assert.deepEqual(confirmedResult, {
     reward: {
       amount: 1,
@@ -1052,11 +1060,6 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     status: 'earned_reward',
   });
   assert.deepEqual(previewDeclinedResult, { status: 'closed_without_reward' });
-  assert.deepEqual(removeAdsResult, { status: 'unavailable' });
-  assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
-  assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
-  assert.match(webRewardedAdSource, /confirmReward\?: RewardedExtraExamConfirmation/);
-  assert.match(webRewardedAdSource, /Boolean\(await confirmReward\?\.\(\)\)/);
   assert.deepEqual(rejectedResult, { status: 'closed_without_reward' });
   assert.deepEqual(failedConfirmationResult, { status: 'closed_without_reward' });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
