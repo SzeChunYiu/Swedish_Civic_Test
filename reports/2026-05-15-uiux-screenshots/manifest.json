@@ -1,15 +1,14 @@
 {
   "capturedAt": "2026-05-18T19:03:12.264Z",
+  "outputMode": "committed-baseline",
+  "outputPolicy": "Default visual-smoke runs write screenshots under ignored tmp/visual-smoke-uiux-screenshots. Set VISUAL_SMOKE_UPDATE_BASELINE=1 only when intentionally refreshing the committed reports/2026-05-15-uiux-screenshots baseline.",
   "viewport": "iPhone 12 via Playwright project config",
   "source": "dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs",
   "launchOverlayPolicy": "Visual smoke dismisses the launch sponsor overlay before every screenshot and rejects visible overlays.",
   "duplicatePolicy": "Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.",
   "duplicateExplanations": [
     {
-      "names": [
-        "home",
-        "index"
-      ],
+      "names": ["home", "index"],
       "reason": "The root route is a redirect to /home, so it may match the Home screenshot exactly."
     }
   ],

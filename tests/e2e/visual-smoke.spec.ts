@@ -5,8 +5,11 @@ import path from 'node:path';
 
 import { dismissBlockingModals } from './browserLaunch';
 
-const screenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+const baselineScreenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+const runtimeScreenshotDir = path.resolve('tmp/visual-smoke-uiux-screenshots');
 const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
+const refreshCommittedBaseline = process.env.VISUAL_SMOKE_UPDATE_BASELINE === '1';
+const screenshotDir = refreshCommittedBaseline ? baselineScreenshotDir : runtimeScreenshotDir;
 type RouteCapture = {
   name: string;
   route: string;
@@ -81,6 +84,11 @@ function sha256File(filePath: string): string {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
+function isCommittedBaselineOutput(outputDir: string): boolean {
+  const relativePath = path.relative(baselineScreenshotDir, outputDir);
+  return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
+}
+
 function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[] {
   const namesByHash = new Map<string, string[]>();
 
@@ -103,6 +111,10 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
 
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
   expectExportBundleToContainRouteContext();
+  expect(
+    refreshCommittedBaseline || !isCommittedBaselineOutput(screenshotDir),
+    'Default visual-smoke runs must not write into the committed screenshot baseline',
+  ).toBe(true);
 
   fs.rmSync(screenshotDir, { force: true, recursive: true });
   fs.mkdirSync(screenshotDir, { recursive: true });
@@ -157,6 +169,9 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     JSON.stringify(
       {
         capturedAt: new Date().toISOString(),
+        outputMode: refreshCommittedBaseline ? 'committed-baseline-refresh' : 'runtime-temp',
+        outputPolicy:
+          'Default visual-smoke runs write screenshots under ignored tmp/visual-smoke-uiux-screenshots. Set VISUAL_SMOKE_UPDATE_BASELINE=1 only when intentionally refreshing the committed reports/2026-05-15-uiux-screenshots baseline.',
         viewport: 'iPhone 12 via Playwright project config',
         source: 'dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs',
         launchOverlayPolicy:
