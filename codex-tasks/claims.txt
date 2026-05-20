@@ -734,3 +734,5 @@ CLAIMED Q086-EU-COOPERATION-EN-NATURALNESS-1 by pane4-data-integrity-3456661 202
 
 CLAIMED XP-RULE-INPUT-NUMERIC-GUARD-1 by pane0-manager-build-3468071 2026-05-20T05:27:11Z
 CLAIMED E2E-LANGUAGE-SEED-MIGRATION-1 by pane2-setup-3476008 2026-05-20T05:28:24Z
+
+CLAIMED GENERATED-SINGLE-CHOICE-META-PROMPT-CLEANUP-1 by pane4-data-integrity-3560000 2026-05-20T05:33:11Z (takeover: prior claim stale, no remote branch, current origin/main still publishes Vilket svar stämmer bäst / Which answer best matches generated starts)
