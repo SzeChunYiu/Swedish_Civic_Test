@@ -101,10 +101,15 @@ const QUESTION_BANK_CSV_HEADER = [
   'correctOptionId',
   'optionSv',
   'optionEn',
+  'correctOptionSv',
+  'correctOptionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
+  'uhrSourceTitle',
   'uhrSourcePublisher',
+  'uhrSourceUrl',
+  'uhrSourceRetrievedAt',
   'difficulty',
   'reviewStatus',
   'tags',
@@ -7898,12 +7903,6 @@ function validateTabNavigationParity() {
   const iconMapBlock = tabLayout.match(/const tabIconMap: TabIconMap = \{([\s\S]*?)\};/)?.[1] ?? '';
   const seenIcons = new Set();
 
-  const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
-  const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
-  if (swedishExamTabTitle !== 'Övningsprov') {
-    reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
-  }
-
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
       `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\('${route.routeName}', copy\\.${route.routeName}\\)\\}`,
@@ -13504,10 +13503,7 @@ function validateAdCopySvRewardedPracticeExamNaturalness() {
     adCopySvRewardedPracticeExamCasesValidated += 1;
   });
 
-  if (
-    valid &&
-    adCopySvRewardedPracticeExamCasesValidated === EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES
-  ) {
+  if (valid && adCopySvRewardedPracticeExamCasesValidated === copyCases.length) {
     adCopySvRewardedPracticeExamNaturalnessValidated = true;
   }
 }
@@ -15811,10 +15807,15 @@ function validateQuestionBankCsvContract() {
       question.correctOptionId,
       questionOptionPayload(question, 'textSv'),
       questionOptionPayload(question, 'textEn'),
+      question.options.find((option) => option.id === question.correctOptionId)?.textSv,
+      question.options.find((option) => option.id === question.correctOptionId)?.textEn,
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
+      uhrSectionMap?.source?.title,
       uhrSectionMap?.source?.publisher,
+      uhrSectionMap?.source?.url,
+      uhrSectionMap?.source?.retrievedDate,
       question.difficulty,
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',

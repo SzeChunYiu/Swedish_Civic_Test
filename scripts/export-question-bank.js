@@ -169,6 +169,7 @@ const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionPr
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
 );
+const uhrSource = uhrSectionMap.source ?? {};
 const rows = [
   [
     'id',
@@ -186,7 +187,10 @@ const rows = [
     'uhrChapter',
     'uhrSection',
     'uhrPageApprox',
+    'uhrSourceTitle',
     'uhrSourcePublisher',
+    'uhrSourceUrl',
+    'uhrSourceRetrievedAt',
     'difficulty',
     'reviewStatus',
     'tags',
@@ -208,7 +212,10 @@ const rows = [
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,
-    uhrSectionMap.source.publisher,
+    uhrSource.title,
+    uhrSource.publisher,
+    uhrSource.url,
+    uhrSource.retrievedDate,
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),
@@ -223,10 +230,7 @@ validateQuestionProvenanceComposition(rows, 'generated question-bank export');
 if (checkMode) {
   const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
   if (existing) {
-    validateQuestionProvenanceComposition(
-      parseCsvRows(existing),
-      'content/question-bank.csv',
-    );
+    validateQuestionProvenanceComposition(parseCsvRows(existing), 'content/question-bank.csv');
   }
   if (existing !== csv) {
     console.error('content/question-bank.csv is out of sync; run npm run content:export');
