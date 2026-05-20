@@ -25,9 +25,9 @@ test('static practice quiz renders localized source citations below each questio
   );
   assert.match(
     source,
-    /function smtQuizSourceRow\(question, lang, citationClassName = "quiz__source"\)/,
+    /function smtQuizQuestionSourceRow\(question, lang, citationClassName = ['"]quiz__source['"]\)/,
   );
-  assert.match(source, /const sourceRow = smtQuizSourceRow\(q, lang\);/);
+  assert.match(source, /const sourceRow = smtQuizQuestionSourceRow\(q, lang\);/);
   assert.match(source, /\$\{sourceRow\}/);
   assert.match(source, /questionProvenance/);
   assert.match(source, /quiz__provenance--\$\{provenance\}/);
@@ -49,10 +49,10 @@ test('static mock exam and review render per-question source citations', () => {
   );
   assert.match(
     source,
-    /function questionSourceRow\(question, citationClassName = "quiz__source"\)/,
+    /function questionSourceRow\(question, citationClassName = ['"]quiz__source['"]\)/,
   );
   assert.match(source, /\$\{questionSourceRow\(q\)\}/);
-  assert.match(source, /\$\{questionSourceRow\(q, "mock-review__source"\)\}/);
+  assert.match(source, /\$\{questionSourceRow\(q, ['"]mock-review__source['"]\)\}/);
   assert.match(source, /questionProvenance/);
   assert.match(source, /quiz__provenance--\$\{provenance\}/);
 });
