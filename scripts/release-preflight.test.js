@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
-const { spawnSync } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
+const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
@@ -9,6 +10,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
+const appAdsSellerLine = 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0';
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -185,6 +187,71 @@ function runPreflight(options = {}) {
     assert.equal(result.status, options.expectedStatus, result.stderr || result.stdout);
   }
   return JSON.parse(result.stdout);
+}
+
+function runPreflightAsync(options = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(
+      process.execPath,
+      ['scripts/release-preflight.js', '--json', ...(options.args || [])],
+      {
+        cwd: repoRoot,
+        env: { ...process.env, ...(options.env || {}) },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      },
+    );
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk;
+    });
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk;
+    });
+    child.on('error', reject);
+    child.on('close', (status) => {
+      try {
+        if (options.expectedStatus !== undefined) {
+          assert.equal(status, options.expectedStatus, stderr || stdout);
+        }
+        resolve(JSON.parse(stdout));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
+
+function withPublicUrlServer(callback) {
+  const requestedPaths = [];
+  const server = http.createServer((request, response) => {
+    requestedPaths.push(new URL(request.url, 'http://127.0.0.1').pathname);
+    if (request.url === '/support/' || request.url === '/privacy/') {
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end('<!doctype html><title>public page</title>');
+      return;
+    }
+    if (request.url === '/app-ads.txt') {
+      response.writeHead(200, { 'content-type': 'text/plain' });
+      response.end(`# hosted app-ads fixture\n${appAdsSellerLine}\n`);
+      return;
+    }
+    response.writeHead(404, { 'content-type': 'text/plain' });
+    response.end('missing');
+  });
+
+  return new Promise((resolve, reject) => {
+    server.listen(0, '127.0.0.1', async () => {
+      const { port } = server.address();
+      try {
+        resolve(await callback(`http://127.0.0.1:${port}`, requestedPaths));
+      } catch (error) {
+        reject(error);
+      } finally {
+        server.close();
+      }
+    });
+  });
 }
 
 function writeFakeReleaseCommands(tmpDir, options = {}) {
@@ -1772,6 +1839,40 @@ test('release preflight blocks stale public URL evidence when live check fails',
   const publicUrls = report.gates.find((gate) => gate.id === 'public-urls');
   assert.equal(publicUrls.status, 'BLOCKED');
   assert.match(publicUrls.evidence, /live URL check failed/i);
+});
+
+test('release preflight accepts live public URLs and app-ads seller-line parity', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-public-url-ready-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  writeFakeReleaseCommands(tmpDir);
+
+  await withPublicUrlServer(async (baseUrl, requestedPaths) => {
+    writeAllReadyEvidence(evidencePath, {
+      'public-urls': {
+        status: 'READY',
+        evidence: `Support URL ${supportUrl}, Privacy Policy URL ${privacyUrl}, and app-ads.txt URL ${baseUrl}/app-ads.txt verified by local release-preflight fixture.`,
+      },
+    });
+
+    const report = await runPreflightAsync({
+      expectedStatus: 0,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_PUBLIC_URLS: JSON.stringify([
+          `${baseUrl}/support/`,
+          `${baseUrl}/privacy/`,
+        ]),
+        RELEASE_PREFLIGHT_APP_ADS_URL: `${baseUrl}/app-ads.txt`,
+      },
+    });
+
+    const publicUrls = report.gates.find((gate) => gate.id === 'public-urls');
+    assert.equal(publicUrls.status, 'READY');
+    assert.match(publicUrls.evidence, /Live URL check passed/i);
+    assert.match(publicUrls.evidence, /app-ads seller line matches/i);
+    assert.deepEqual(requestedPaths, ['/support/', '/privacy/', '/app-ads.txt']);
+  });
 });
 
 test('release preflight blocks READY manual gates with weak evidence', () => {
