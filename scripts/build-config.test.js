@@ -1717,7 +1717,17 @@ test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live 
   assert.match(workflow, /['"]scripts\/check-live-site\.js['"]/);
   assert.match(workflow, /secrets\.VERCEL_DEPLOY_HOOK/);
   assert.match(workflow, /curl [^\n]*-X POST "\$HOOK"/);
-  assert.match(workflow, /node scripts\/check-live-site\.js "\$VERCEL_PRODUCTION_URL"/);
+  assert.match(runCommands, /\bmax_attempts=10\b/);
+  assert.match(runCommands, /\bpoll_interval_seconds=30\b/);
+  assert.match(
+    runCommands,
+    /for attempt in \$\(seq 1 "\$max_attempts"\); do[\s\S]*if node scripts\/check-live-site\.js "\$VERCEL_PRODUCTION_URL"; then[\s\S]*sleep "\$poll_interval_seconds"[\s\S]*done/,
+  );
+  assert.doesNotMatch(
+    runCommands,
+    /sleep 30\s*\n\s*node scripts\/check-live-site\.js "\$VERCEL_PRODUCTION_URL"/,
+  );
+  assert.match(runCommands, /Live smoke failed after \$max_attempts attempts/);
   assert.match(workflow, /VERCEL_PRODUCTION_URL/);
   assert.doesNotMatch(workflow, /\bVERCEL_TOKEN\b/);
   assert.doesNotMatch(workflow, /\.vercel\/project\.json/);
