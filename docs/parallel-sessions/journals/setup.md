@@ -1316,3 +1316,11 @@ Verification: clean SETUP worktree rebased onto current `origin/main` `5a7bf2af`
 PR: pending from `task/settings-import-local-study-data-1779258123-pane2` at handoff commit time.
 Blocked? no for this local study-data import surface; no Vercel CLI was run.
 Next suggested validator action: inspect the import parser rejection rules and Settings dry-run/confirm UI, then rerun the full required gate plus ownership and diff checks before accepting `SETTINGS-IMPORT-LOCAL-STUDY-DATA-1`.
+
+## Iteration 267 - 2026-05-20
+
+Task completed: EXPO-DOCTOR-CRYPTO-SDK54-1 - removed the unused `expo-crypto` direct dependency because no runtime, script, or test path imports it, clearing the Expo SDK 54 dependency check without adding a stale native module.
+Artifacts changed: `package.json`, `package-lock.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main`; linked shared ignored `node_modules`; `rg -n "expo-crypto|Crypto\.|digestStringAsync|getRandomBytes" package.json package-lock.json app components lib scripts tests` exit 1 with no matches; `NODE_OPTIONS='--v8-pool-size=1' npm exec -- expo-doctor` exit 0 with 17/17 checks passing; `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'native appearance config has its required Expo module|EAS CLI is invoked through npx so Expo Doctor accepts the dependency graph' scripts/build-config.test.js` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check for package files exit 0; `git diff --check` exit 0. Full `npm run test:build-config` currently exits 1 on unrelated current-main failures in `about-test-seen-effect.spec.ts` modal helper centralization and the empty-route-context postbuild fixture expecting a later error than the manifest-link guard.
+Blocked? no for this Expo Doctor dependency cleanup; no Vercel CLI was run.
+Next suggested validator action: inspect that `expo-crypto` is absent from both manifest files and rerun Expo Doctor plus the focused build-config dependency checks before accepting `EXPO-DOCTOR-CRYPTO-SDK54-1`.
