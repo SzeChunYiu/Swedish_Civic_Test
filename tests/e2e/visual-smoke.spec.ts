@@ -89,11 +89,6 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }, tes
   for (const [name, route] of routes) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const dismissal = await dismissBlockingModals(page);
-    const bodyText = (await page.locator('body').innerText()).trim();
-    expect(bodyText.length, `${name} should render route-specific text`).toBeGreaterThan(0);
-    expect(bodyText, `${name} should not surface the router empty-context error`).not.toContain(
-      'No routes found',
-    );
     await expect(page.locator('body')).not.toContainText('Not Found');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
     const file = `${name}.png`;

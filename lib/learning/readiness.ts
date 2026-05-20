@@ -1,18 +1,19 @@
-// Local preparation signal (competitive-teardown.md rec #1, P0).
+// Readiness score (competitive-teardown.md rec #1, P0).
 //
-// Synthesized number on the home dashboard derived from rolling accuracy,
-// chapter coverage, recency, and recent mock scores. Pure function over
-// UserProgress + chapter index + mock history. No I/O.
+// "Are you ready to pass?" — a synthesized number on the home dashboard
+// derived from rolling accuracy, chapter coverage, recency, and recent
+// mock scores. Pure function over UserProgress + chapter index + mock
+// history. No I/O.
 //
-// Verdict ladder maps to the local practice-preparation bands in
+// Verdict ladder maps to the existing exam-readiness band copy in
 // `06_learning_and_gamification.md`:
 //   0–49  not_ready_yet
 //   50–69 getting_there
 //   70–84 almost_ready
 //   85–100 strong_preparation
 //
-// NEVER frame this as an official outcome forecast. Verdict strings are codes;
-// UI maps them through i18n to user-facing copy.
+// NEVER say "you will pass". Verdict strings are codes; UI maps them
+// through i18n to user-facing copy.
 
 import { perChapterProgress, mockHistory } from './dashboardStats';
 import type {
@@ -52,27 +53,13 @@ function clamp01(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
 
-function validTimestampMs(value: string | undefined): number | null {
-  if (!value) return null;
-  const timestampMs = new Date(value).getTime();
-  return Number.isFinite(timestampMs) ? timestampMs : null;
-}
-
-function recencyFromProgressEvents(progress: UserProgress, now: Date): number {
+function recencyFromLastAnswer(progress: UserProgress, now: Date): number {
   let mostRecent: number | null = null;
-  const recordTimestamp = (timestampMs: number | null) => {
-    if (timestampMs === null) return;
-    if (mostRecent === null || timestampMs > mostRecent) mostRecent = timestampMs;
-  };
-
   for (const session of progress.sessions ?? []) {
-    if (session.mode === 'exam') {
-      recordTimestamp(validTimestampMs(session.completedAt));
-      continue;
-    }
-
     for (const answer of session.answers) {
-      recordTimestamp(validTimestampMs(answer.answeredAt));
+      const t = new Date(answer.answeredAt).getTime();
+      if (Number.isNaN(t)) continue;
+      if (mostRecent === null || t > mostRecent) mostRecent = t;
     }
   }
   if (mostRecent === null) return 0;
@@ -250,7 +237,7 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
 
   const accuracy = rollingAccuracy(input.progress, now);
   const coverage = chapterCoverage(input.progress, input.chapters, input.questionChapterIndex);
-  const recency = recencyFromProgressEvents(input.progress, now);
+  const recency = recencyFromLastAnswer(input.progress, now);
   const mockAvg = mockAverage(input.progress);
 
   // Weights: accuracy is the strongest signal, coverage second, recency third,
