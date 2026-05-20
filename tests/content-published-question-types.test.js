@@ -29,6 +29,7 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
+const luciaWearingSvFragmentPattern = /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -440,13 +441,33 @@ test('Lucia explanation copy and exports avoid role-scaffold wording', () => {
   const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
     .filter((question) => luciaExplanationRoleScaffoldPattern.test(textForQuestion(question)))
     .map((question) => question.id);
+  const luciaWearingFragmentFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => question.type === 'true_false')
+    .filter((question) => luciaWearingSvFragmentPattern.test(question.q?.sv ?? ''))
+    .map((question) => question.id);
   const q129 = generatedSiteBank.find((question) => question.id === 'q129');
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q129True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q129', 'trueStatement'),
+  );
+  const q129False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q129', 'falseStatement'),
+  );
 
   assert.deepEqual(fileFindings, []);
   assert.deepEqual(bankFindings, []);
+  assert.deepEqual(luciaWearingFragmentFindings, []);
   assert.ok(q129, 'q129 should be published in the site bank');
+  assert.ok(q129True, 'q129 true generated variant should be published');
+  assert.ok(q129False, 'q129 false generated variant should be published');
   assert.match(q129.why.sv, /I ett luciatåg bär Lucia en ljuskrona på huvudet/);
   assert.match(q129.why.en, /In a Lucia procession, Lucia wears a crown of lights on her head/);
+  assert.equal(q129True.q.sv, 'Lucia brukar bära en ljuskrona på huvudet.');
+  assert.equal(q129True.q.en, 'Lucia usually wears a crown of lights on her head.');
+  assert.equal(q129False.q.sv, 'Lucia brukar bära en blomsterkrans på huvudet.');
+  assert.equal(q129False.q.en, 'Lucia usually wears a flower wreath on her head.');
 });
 
 test('Lucia explanation naturalness guard rejects role-scaffold wording', () => {
@@ -3151,6 +3172,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const q656Residuals = {",
+        "  [generatedFixtureId('q129', 1)]: { questionSv: 'En ljuskrona på huvudet.' },",
+        "  [generatedFixtureId('q129', 2)]: { questionSv: 'En blomsterkrans på huvudet.' },",
         "  [generatedFixtureId('q130', 2)]: { questionSv: 'Gudstjänsten tidigt på morgonen den 25 december kallas Luciatåg.', questionEn: 'The church service early on the morning of 25 December is called Lucia procession.' },",
         "  [generatedFixtureId('q132', 1)]: { questionSv: 'Barn öppnar en lucka varje dag fram till julafton med en adventskalender hemma.', questionEn: 'Children often open one door each day until Christmas Eve with an Advent calendar at home.' },",
         "  [generatedFixtureId('q132', 2)]: { questionSv: 'Barn tänder stora brasor på kvällen med en adventskalender hemma.', questionEn: 'Children often light large bonfires in the evening with an Advent calendar at home.' },",
@@ -3176,7 +3199,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 3);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 5);
 });
 
 test('published question schema rejects generated web/social-media target fragments', () => {

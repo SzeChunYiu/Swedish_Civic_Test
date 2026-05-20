@@ -1489,6 +1489,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilken högtid avslutar (.+)$/i);
   if (match) return `${answer} avslutar ${match[1]}`;
 
+  match = q.match(/^Vad brukar Lucia bära i ett luciatåg$/i);
+  if (match) return `Lucia brukar bära ${lowerFirst(answer)}`;
+
   match = q.match(/^Vad brukar personen som är Lucia bära i ett luciatåg$/i);
   if (match) return `Personen som är Lucia brukar bära ${lowerFirst(answer)}`;
 

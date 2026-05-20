@@ -30072,7 +30072,7 @@
     "type": "true_false",
     "q": {
       "en": "Lucia usually wears a crown of lights on her head.",
-      "sv": "En ljuskrona på huvudet."
+      "sv": "Lucia brukar bära en ljuskrona på huvudet."
     },
     "opts": [
       {
@@ -30113,7 +30113,7 @@
     "type": "true_false",
     "q": {
       "en": "Lucia usually wears a flower wreath on her head.",
-      "sv": "En blomsterkrans på huvudet."
+      "sv": "Lucia brukar bära en blomsterkrans på huvudet."
     },
     "opts": [
       {

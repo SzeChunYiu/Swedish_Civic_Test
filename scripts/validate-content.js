@@ -314,6 +314,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
   /\bthere are buddhist and Hindu\b/,
   /\bcalled Lucia procession\b/i,
+  /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
@@ -5142,6 +5143,8 @@ function civicStatementSv(source, option) {
   if (match) return `Under ${match[1]} är det vanligt med ${lowerFirst(answer)} i många hem`;
   match = q.match(/^Vilken högtid avslutar (.+)$/i);
   if (match) return `${answer} avslutar ${match[1]}`;
+  match = q.match(/^Vad brukar Lucia bära i ett luciatåg$/i);
+  if (match) return `Lucia brukar bära ${lowerFirst(answer)}`;
   match = q.match(/^Vad brukar personen som är Lucia bära i ett luciatåg$/i);
   if (match) return `Personen som är Lucia brukar bära ${lowerFirst(answer)}`;
   match = q.match(/^Vad kallas gudstjänsten tidigt på morgonen den 25 december$/i);
