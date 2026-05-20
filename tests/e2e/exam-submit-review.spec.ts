@@ -84,7 +84,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
 
-  const submit = page.getByLabel('Skicka övningsprov');
+  const submit = page.getByLabel('Skicka in övningsprovet');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
@@ -102,7 +102,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
 
   await submit.click();
 
-  await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();
+  await expect(page.getByText('Resultat från övningsprov', { exact: true })).toBeVisible();
   await expectNeutralResultSummary(page, {
     correctCountPattern: new RegExp(`\\d+/${totalQuestions} rätt`),
     progressPattern: /\d+ procent rätt/,
@@ -156,7 +156,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
   await expect(page.getByText('Övningsprov')).toHaveCount(0);
 
-  const submit = page.getByLabel('Submit mock exam');
+  const submit = page.getByLabel('Submit the mock exam');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
@@ -174,13 +174,12 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await submit.click();
 
-  await expect(page.getByText('Exam result', { exact: true })).toBeVisible();
-  await expect(page.getByText('Mock exam result')).toBeVisible();
+  await expect(page.getByText('Mock exam result', { exact: true })).toBeVisible();
   await expectNeutralResultSummary(page, {
     correctCountPattern: new RegExp(`\\d+/${totalQuestions} correct`),
     progressPattern: /\d+ percent correct/,
-    summaryAriaPrefix: 'Practice result.',
-    visibleLabel: 'Practice result',
+    summaryAriaPrefix: 'Mock exam score.',
+    visibleLabel: 'Mock exam score',
   });
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
   await expectTimeHeatmap(page, {
