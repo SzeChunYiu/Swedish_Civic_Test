@@ -47,10 +47,35 @@ export interface ReadinessScore {
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const MAX_READINESS_ADAPTER_QUESTION_ANSWERS = 10000;
+const MAX_READINESS_ADAPTER_MOCK_QUESTIONS = 720;
 
 function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.max(0, Math.min(1, value));
+}
+
+function normalizeReadinessAdapterCount(
+  value: unknown,
+  fallback = 0,
+  max = MAX_READINESS_ADAPTER_QUESTION_ANSWERS,
+): number {
+  const fallbackValue =
+    typeof fallback === 'number' && Number.isFinite(fallback) && Number.isInteger(fallback)
+      ? Math.max(0, Math.min(max, fallback))
+      : 0;
+
+  if (
+    typeof value !== 'number' ||
+    !Number.isFinite(value) ||
+    !Number.isInteger(value) ||
+    value < 0 ||
+    value > max
+  ) {
+    return fallbackValue;
+  }
+
+  return value;
 }
 
 function validTimestampMs(value: string | undefined): number | null {
@@ -164,16 +189,14 @@ export function computeReadinessFromQuestionProgress(input: {
       ) {
         return [];
       }
-      const seenCount = Math.max(
-        0,
-        progress.seenCount ?? progress.correctCount + progress.wrongCount,
-        progress.correctCount + progress.wrongCount,
+      const rawCorrectCount = normalizeReadinessAdapterCount(progress.correctCount);
+      const rawWrongCount = normalizeReadinessAdapterCount(progress.wrongCount);
+      const seenCount = normalizeReadinessAdapterCount(
+        progress.seenCount,
+        rawCorrectCount + rawWrongCount,
       );
-      const correctCount = Math.min(Math.max(0, progress.correctCount), seenCount);
-      const wrongCount = Math.min(
-        Math.max(0, progress.wrongCount),
-        Math.max(0, seenCount - correctCount),
-      );
+      const correctCount = Math.min(rawCorrectCount, seenCount);
+      const wrongCount = Math.min(rawWrongCount, Math.max(0, seenCount - correctCount));
       const residualCount = Math.max(0, seenCount - correctCount - wrongCount);
 
       return Array.from({ length: correctCount }, () => ({
@@ -211,8 +234,15 @@ export function computeReadinessFromQuestionProgress(input: {
 
   const mockSessions: QuizSession[] = (input.mockExamSessions ?? []).flatMap((s) => {
     if (validAnswerTimestampMs(s.completedAt, input.now ?? new Date()) === null) return [];
-    const totalCount = Math.max(0, Math.round(s.totalCount ?? 0));
-    const correctCount = Math.min(Math.max(0, Math.round(s.correctCount ?? 0)), totalCount);
+    const totalCount = normalizeReadinessAdapterCount(
+      s.totalCount,
+      0,
+      MAX_READINESS_ADAPTER_MOCK_QUESTIONS,
+    );
+    const correctCount = Math.min(
+      normalizeReadinessAdapterCount(s.correctCount, 0, MAX_READINESS_ADAPTER_MOCK_QUESTIONS),
+      totalCount,
+    );
 
     return [
       {

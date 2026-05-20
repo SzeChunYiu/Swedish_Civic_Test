@@ -318,6 +318,47 @@ test('readiness mock recency uses completion metadata without depending on synth
   assert.equal(countedMock.components.accuracy, 0);
 });
 
+test('readiness adapter ignores malformed finite counters and mock totals', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const commonInput = {
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  const malformedProgress = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    questionProgress: {
+      q1: {
+        seenCount: '40',
+        correctCount: Infinity,
+        wrongCount: 10001,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+      },
+    },
+  });
+  const malformedMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    questionProgress: {},
+    mockExamSessions: [
+      {
+        sessionId: 'malformed-mock',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: '32',
+        totalCount: 1000,
+      },
+    ],
+  });
+
+  assert.equal(malformedProgress.components.accuracy, 0);
+  assert.equal(malformedProgress.components.recency, 0);
+  assert.equal(malformedProgress.isSparse, true);
+  assert.equal(malformedMock.components.accuracy, 0);
+  assert.equal(malformedMock.components.mockAverage, 0.8);
+  assert.equal(malformedMock.isSparse, true);
+});
+
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
   const { bestMockScore, mockHistory } = loadAllTs('lib/learning/dashboardStats.ts');
   const progress = {

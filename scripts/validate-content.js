@@ -688,6 +688,7 @@ const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
+const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -7693,6 +7694,8 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const readinessModule = loadTs('lib/learning/readiness.ts');
+const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7962,6 +7965,8 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
+let readinessAdapterRulesValidated = 0;
+let readinessAdapterRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -8389,6 +8394,16 @@ if (process.argv.includes('--focus-progress-schema-parity')) {
     progressTypeSchemaParityValidated,
     progressStoreFieldsValidated,
     progressStoreSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-readiness-adapter-rules')) {
+  validateReadinessAdapterRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    readinessAdapterRulesValidated,
+    readinessAdapterRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -15987,6 +16002,188 @@ function validateMasteryRules() {
   }
 }
 
+function validateReadinessAdapterRules() {
+  if (typeof computeReadinessFromQuestionProgress !== 'function') {
+    fail('computeReadinessFromQuestionProgress export is not a function');
+    return;
+  }
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const baseInput = {
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    now,
+  };
+  const completedAt = '2026-05-19T10:00:00.000Z';
+  const cases = [
+    {
+      label: 'valid finite question counters preserve rolling accuracy',
+      run: () => {
+        const result = computeReadinessFromQuestionProgress({
+          ...baseInput,
+          questionProgress: {
+            q1: { seenCount: 3, correctCount: 2, wrongCount: 1, lastAnsweredAt: completedAt },
+          },
+        });
+        return (
+          Math.abs(result.components.accuracy - 2 / 3) < 0.0001 &&
+          result.components.recency > 0.99 &&
+          result.isSparse === true
+        );
+      },
+    },
+    {
+      label: 'string question counters do not create synthetic answers',
+      run: () => {
+        const result = computeReadinessFromQuestionProgress({
+          ...baseInput,
+          questionProgress: {
+            q1: {
+              seenCount: '40',
+              correctCount: '40',
+              wrongCount: '0',
+              lastAnsweredAt: completedAt,
+            },
+          },
+        });
+        return (
+          result.components.accuracy === 0 &&
+          result.components.recency === 0 &&
+          result.isSparse === true
+        );
+      },
+    },
+    {
+      label: 'non-finite question counters do not create synthetic answers',
+      run: () => {
+        const result = computeReadinessFromQuestionProgress({
+          ...baseInput,
+          questionProgress: {
+            q1: {
+              seenCount: Number.NaN,
+              correctCount: Number.POSITIVE_INFINITY,
+              wrongCount: Number.NEGATIVE_INFINITY,
+              lastAnsweredAt: completedAt,
+            },
+          },
+        });
+        return (
+          result.components.accuracy === 0 &&
+          result.components.recency === 0 &&
+          result.isSparse === true
+        );
+      },
+    },
+    {
+      label: 'oversized question counters do not create unbounded answers',
+      run: () => {
+        const result = computeReadinessFromQuestionProgress({
+          ...baseInput,
+          questionProgress: {
+            q1: {
+              seenCount: 10001,
+              correctCount: 10001,
+              wrongCount: 0,
+              lastAnsweredAt: completedAt,
+            },
+          },
+        });
+        return (
+          result.components.accuracy === 0 &&
+          result.components.recency === 0 &&
+          result.isSparse === true
+        );
+      },
+    },
+    {
+      label: 'valid finite mock totals preserve recent mock average',
+      run: () => {
+        const result = computeReadinessFromQuestionProgress({
+          ...baseInput,
+          questionProgress: {},
+          mockExamSessions: [
+            {
+              sessionId: 'valid-mock',
+              score: 0.8,
+              completedAt,
+              correctCount: 32,
+              totalCount: 40,
+            },
+          ],
+        });
+        return (
+          result.components.accuracy === 0 &&
+          Math.abs(result.components.mockAverage - 0.8) < 0.0001 &&
+          result.components.recency > 0.99 &&
+          result.isSparse === false
+        );
+      },
+    },
+    {
+      label: 'malformed mock totals keep scores without synthetic answer rows',
+      run: () => {
+        const result = computeReadinessFromQuestionProgress({
+          ...baseInput,
+          questionProgress: {},
+          mockExamSessions: [
+            {
+              sessionId: 'string-count-mock',
+              score: 0.8,
+              completedAt,
+              correctCount: '32',
+              totalCount: '40',
+            },
+            {
+              sessionId: 'non-finite-mock',
+              score: 0.8,
+              completedAt,
+              correctCount: Number.POSITIVE_INFINITY,
+              totalCount: Number.NaN,
+            },
+            {
+              sessionId: 'oversized-mock',
+              score: 0.8,
+              completedAt,
+              correctCount: 721,
+              totalCount: 721,
+            },
+          ],
+        });
+        return (
+          result.components.accuracy === 0 &&
+          Math.abs(result.components.mockAverage - 0.8) < 0.0001 &&
+          result.components.recency > 0.99 &&
+          result.isSparse === true
+        );
+      },
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, run }) => {
+    let passed = false;
+    try {
+      passed = run();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`readiness adapter rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!passed) {
+      rulesAreValid = false;
+      fail(`readiness adapter rule ${label} failed`);
+    } else {
+      readinessAdapterRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && readinessAdapterRulesValidated === EXPECTED_READINESS_ADAPTER_RULE_COUNT) {
+    readinessAdapterRuntimeParityValidated = true;
+  }
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -17545,6 +17742,7 @@ validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
+validateReadinessAdapterRules();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -17811,6 +18009,8 @@ console.log(
       xpRulesParityValidated,
       masteryRulesValidated,
       masteryRulesParityValidated,
+      readinessAdapterRulesValidated,
+      readinessAdapterRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
