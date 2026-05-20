@@ -2,7 +2,8 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
-import { stopSpeech } from '../audio/speak';
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
+import { writeRecoverably } from './persistenceWarning';
 
 export type AppLanguage = 'sv' | 'en';
 
@@ -11,6 +12,7 @@ const audioEnabledKey = 'audioEnabled';
 const dailyGoalKey = 'dailyGoalAnswers';
 const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
+const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
 const minDailyGoalAnswers = 1;
 const maxDailyGoalAnswers = 50;
@@ -18,7 +20,7 @@ const maxDailyGoalAnswers = 50;
 let settingsStorage: MMKV | null = null;
 
 try {
-  settingsStorage = createMMKV({ id: 'settings' });
+  settingsStorage = createMMKV({ id: settingsStorageId });
 } catch {
   settingsStorage = null;
 }
@@ -127,11 +129,13 @@ type SettingsState = {
   dailyGoalAnswers: number;
   includeSupplementaryQuestions: boolean;
   hasSeenAboutTheTest: boolean;
+  persistenceWarning: RecoverablePersistenceWarning | null;
   setLanguage: (language: AppLanguage) => void;
   setAudioEnabled: (enabled: boolean) => void;
   setDailyGoalAnswers: (answerCount: number) => void;
   setIncludeSupplementaryQuestions: (include: boolean) => void;
   markAboutTheTestSeen: () => void;
+  clearPersistenceWarning: () => void;
 };
 
 export const useSettingsStore = create<SettingsState>((set) => ({
@@ -140,32 +144,56 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   dailyGoalAnswers: readDailyGoalAnswers(),
   includeSupplementaryQuestions: readIncludeSupplementary(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
+  persistenceWarning: null,
   setLanguage: (language) => {
-    settingsStorage?.set(languageKey, language);
-    set({ language });
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      languageKey,
+      language,
+    );
+    set({ language, persistenceWarning });
   },
   setAudioEnabled: (audioEnabled) => {
-    if (!audioEnabled) {
-      stopSpeech();
-    }
-    settingsStorage?.set(audioEnabledKey, audioEnabled);
-    set({ audioEnabled });
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      audioEnabledKey,
+      audioEnabled,
+    );
+    set({ audioEnabled, persistenceWarning });
   },
   setDailyGoalAnswers: (dailyGoalAnswers) => {
     const safeGoal = normalizeDailyGoalAnswers(
       Math.max(minDailyGoalAnswers, Math.min(maxDailyGoalAnswers, Math.round(dailyGoalAnswers))),
     );
-    settingsStorage?.set(dailyGoalKey, safeGoal);
-    set({ dailyGoalAnswers: safeGoal });
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      dailyGoalKey,
+      safeGoal,
+    );
+    set({ dailyGoalAnswers: safeGoal, persistenceWarning });
   },
   setIncludeSupplementaryQuestions: (include) => {
-    settingsStorage?.set(includeSupplementaryKey, include);
-    set({ includeSupplementaryQuestions: include });
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      includeSupplementaryKey,
+      include,
+    );
+    set({ includeSupplementaryQuestions: include, persistenceWarning });
   },
   markAboutTheTestSeen: () => {
-    settingsStorage?.set(hasSeenAboutTheTestKey, true);
-    set({ hasSeenAboutTheTest: true });
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      hasSeenAboutTheTestKey,
+      true,
+    );
+    set({ hasSeenAboutTheTest: true, persistenceWarning });
   },
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 export function importSettingsSnapshot(value: unknown): ImportableSettings {

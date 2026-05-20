@@ -2,6 +2,9 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
+import { writeRecoverably } from './persistenceWarning';
+
 export type MistakeAnswerReview = {
   answeredAt: string;
   questionId: string;
@@ -10,11 +13,12 @@ export type MistakeAnswerReview = {
 };
 
 const mistakeReviewStateKey = 'mistakeReviewState';
+const mistakeReviewStorageId = 'mistake-review';
 
 let mistakeReviewStorage: MMKV | null = null;
 
 try {
-  mistakeReviewStorage = createMMKV({ id: 'mistake-review' });
+  mistakeReviewStorage = createMMKV({ id: mistakeReviewStorageId });
 } catch {
   mistakeReviewStorage = null;
 }
@@ -73,8 +77,13 @@ function readMistakeReview(): PersistedMistakeReview {
   }
 }
 
-function writeMistakeReview(review: PersistedMistakeReview): void {
-  mistakeReviewStorage?.set(mistakeReviewStateKey, JSON.stringify(review));
+function writeMistakeReview(review: PersistedMistakeReview): RecoverablePersistenceWarning | null {
+  return writeRecoverably(
+    mistakeReviewStorage,
+    mistakeReviewStorageId,
+    mistakeReviewStateKey,
+    JSON.stringify(review),
+  );
 }
 
 function mergeMistakeReview(
@@ -93,21 +102,24 @@ function mergeMistakeReview(
 }
 
 type MistakeReviewState = PersistedMistakeReview & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
   clearWrongAnswerReviews: () => void;
   recordWrongAnswerReview: (review: {
     questionId: string;
     selectedOptionTextEn: string;
     selectedOptionTextSv: string;
   }) => void;
+  clearPersistenceWarning: () => void;
 };
 
 const initialMistakeReview = readMistakeReview();
 
 export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   ...initialMistakeReview,
+  persistenceWarning: null,
   clearWrongAnswerReviews: () => {
-    writeMistakeReview(emptyMistakeReview);
-    set(emptyMistakeReview);
+    const persistenceWarning = writeMistakeReview(emptyMistakeReview);
+    set({ ...emptyMistakeReview, persistenceWarning });
   },
   recordWrongAnswerReview: ({ questionId, selectedOptionTextEn, selectedOptionTextSv }) =>
     set((state) => {
@@ -122,10 +134,11 @@ export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
           },
         },
       };
-      writeMistakeReview(nextReview);
+      const persistenceWarning = writeMistakeReview(nextReview);
 
-      return nextReview;
+      return { ...nextReview, persistenceWarning };
     }),
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 export function importMistakeReviewSnapshot(value: unknown): PersistedMistakeReview {

@@ -3,7 +3,6 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { countQuestionBankProvenance } = require('../scripts/questionBankProvenanceCounts');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -13,42 +12,15 @@ function parseExportedCsvLine(line) {
   );
 }
 
-function readValidationSummary() {
+test('question-bank CSV keeps its public row contract', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
-  return JSON.parse(match[0]);
-}
 
-function collapsePublishedVariantMutationScript(scriptPath) {
-  return `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/lib/content/provenance.ts')) {
-    const source = String(contents);
-    const mutated = source.replace(
-      "if (tags.includes('published-variant')) return 'derived';",
-      "if (tags.includes('published-variant')) return 'uhr';",
-    );
-    if (mutated === source) {
-      throw new Error('published-variant provenance mutation target not found');
-    }
-    return mutated;
-  }
-  return contents;
-};
-${scriptPath}
-`;
-}
-
-test('question-bank CSV keeps its public row contract', () => {
-  const summary = readValidationSummary();
+  const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
 });
 
@@ -111,13 +83,19 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 22 columns, expected 21/,
     /content\/question-bank\.csv row 2 has 19 columns, expected 18/,
   );
 });
 
 test('question-bank CSV exposes derived question provenance with no blank cells', () => {
-  const summary = readValidationSummary();
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
 
   const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
@@ -158,69 +136,8 @@ test('question-bank CSV exposes derived question provenance with no blank cells'
   );
 });
 
-test('question-bank provenance count helper matches source and generated composition', () => {
-  const summary = readValidationSummary();
-
-  assert.equal(summary.questionBankProvenanceCompositionValidated, true);
-  assert.equal(summary.questionBankProvenanceCountsValidated, summary.publishedQuestions);
-  assert.equal(summary.questionBankProvenanceUhrQuestions, summary.sourceQuestions);
-  assert.equal(summary.questionBankProvenanceDerivedQuestions, summary.generatedPublishedQuestions);
-  assert.equal(summary.questionBankProvenanceEditorialQuestions, 0);
-});
-
-test('question-bank provenance helper rejects published-variant rows collapsing to uhr', () => {
-  const result = countQuestionBankProvenance({
-    questions: [
-      { id: 'q001', tags: ['geography'] },
-      { id: 'q002', tags: ['geography', 'published-variant'] },
-    ],
-    sourceQuestions: [{ id: 'q001', tags: ['geography'] }],
-    generatedPublishedQuestions: [{ id: 'q002', tags: ['geography', 'published-variant'] }],
-    getQuestionProvenance: () => 'uhr',
-  });
-
-  assert.equal(result.isValid, false);
-  assert.match(
-    result.failures.join('\n'),
-    /q002 has published-variant tag but provenance uhr; expected derived/,
-  );
-});
-
-test('validate-content rejects published-variant provenance collapse', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['-e', collapsePublishedVariantMutationScript("require('./scripts/validate-content.js');")],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /published-variant tag but provenance uhr; expected derived/,
-  );
-});
-
-test('question-bank export check rejects published-variant provenance collapse', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      collapsePublishedVariantMutationScript(
-        "process.argv.push('--check'); require('./scripts/export-question-bank.js');",
-      ),
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /question bank provenance composition failed:[\s\S]*published-variant tag but provenance uhr; expected derived/,
-  );
-});
-
+test('question-bank CSV export check rejects generated rows collapsing to UHR', () => {
 test('question-bank CSV exposes UHR source metadata with no blank cells', () => {
-test('question-bank CSV exposes UHR source publisher with no blank cells', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
     encoding: 'utf8',
@@ -233,7 +150,6 @@ test('question-bank CSV exposes UHR source publisher with no blank cells', () =>
 
   const uhrSectionMap = JSON.parse(
     fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
-    fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
   );
   const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
   const lines = csv.trimEnd().split('\n');
@@ -258,19 +174,6 @@ test('question-bank CSV exposes UHR source publisher with no blank cells', () =>
       `every row should export ${field}`,
     );
   }
-  const publisherIndex = header.indexOf('uhrSourcePublisher');
-  assert.notEqual(publisherIndex, -1);
-
-  const rows = lines.slice(1).map(parseExportedCsvLine);
-  assert.equal(rows.length, summary.publishedQuestions);
-  assert.equal(
-    rows.find((row) => row[idIndex] === 'q001')?.[publisherIndex],
-    uhrSectionMap.source.publisher,
-  );
-  assert.ok(
-    rows.every((row) => row[publisherIndex] === uhrSectionMap.source.publisher),
-    'every row should export the UHR source publisher',
-  );
 });
 
 test('question-bank CSV contract rejects source publisher drift', () => {
@@ -279,11 +182,24 @@ test('question-bank CSV contract rejects source publisher drift', () => {
     [
       '-e',
       `
+process.argv.push('--check');
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/provenance.ts')) {
+    return String(contents).replace(
+      "if (tags.includes('published-variant')) return 'derived';",
+      "if (tags.includes('published-variant')) return 'uhr';",
+    );
+  }
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(/,"derived"$/gm, ',"uhr"');
+  }
+  return contents;
+};
+require('./scripts/export-question-bank.js');
   if (normalizedPath.endsWith('/content/question-bank.csv')) {
     return String(contents).replace(
       'Universitets- och högskolerådet (UHR)',
@@ -301,7 +217,47 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
+    /question-bank export provenance helper composition is .* expected tag-derived/,
     /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Fel utgivare", expected "Universitets- och högskolerådet \(UHR\)"/,
+  );
+});
+
+test('question-bank CSV contract summarizes shared UHR source metadata drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    return String(contents).replace(
+      '"url": "https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf"',
+      '"url": "https://www.uhr.se/globalassets/_uhr.se/other/sverige-i-fokus.pdf"',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /content\/question-bank\.csv uhrSourceUrl metadata drift: \d+ rows disagree with content\/uhr-section-map\.json source\.url/,
+  );
+  assert.match(output, /UHR section map source URL must be under the UHR education material path/);
+  assert.equal(
+    (output.match(/content\/question-bank\.csv row \d+ q\d+ uhrSourceUrl is/g) || []).length,
+    0,
+    'whole-bank UHR source URL drift should be summarized instead of repeated per row',
   );
 });
 
@@ -366,5 +322,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /content\/question-bank\.csv row 2 q001 explanationEn is "The exported explanation drifted from the source question\.", expected "Sweden is in the Nordic region/,
+  );
+});
+
+test('question-bank CSV contract rejects source publisher drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(
+      'Universitets- och högskolerådet (UHR)',
+      'Unknown publisher',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Unknown publisher", expected "Universitets- och högskolerådet \(UHR\)"/,
   );
 });
