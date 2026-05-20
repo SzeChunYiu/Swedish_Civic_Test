@@ -1248,6 +1248,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
   if (match) return `${answer} nämns som exempel i ${match[1]}`;
 
+  match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
+  if (match) return `${answer} nämns som exempel i ${match[1]}`;
+
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
@@ -1272,6 +1275,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
   if (match) return `${answer} nämns som exempel i ${match[2]}`;
+
+  match = q.match(/^Vad nämns som exempel på (.+)$/i);
+  if (match) return swedishMentionedExample(answer, match[1]);
 
   match = q.match(/^Vad nämns som exempel på (.+)$/i);
   if (match) return swedishMentionedExample(answer, match[1]);
@@ -1694,6 +1700,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
   if (match) return `${answer} are mentioned as examples in ${match[1]}`;
 
+  match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
+  if (match) return `${answer} are mentioned as examples in ${match[1]}`;
+
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
 
@@ -1718,6 +1727,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
   if (match) return `${answer} are mentioned as examples in ${match[2]}`;
+
+  match = q.match(/^What is mentioned as an example of (.+)$/i);
+  if (match) return englishMentionedExample(answer, match[1]);
 
   match = q.match(/^What is mentioned as an example of (.+)$/i);
   if (match) return englishMentionedExample(answer, match[1]);

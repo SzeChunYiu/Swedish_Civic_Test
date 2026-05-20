@@ -22,6 +22,9 @@ export function buildQuestionSpeechText(question: SpeakableQuestion): string {
 export interface SpeakSwedishOptions {
   /** Playback rate. Default 1.0. expo-speech clamps engine-supported range. */
   rate?: number;
+  onDone?: () => void;
+  onError?: (error: Error) => void;
+  onStopped?: () => void;
 }
 
 export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): void {

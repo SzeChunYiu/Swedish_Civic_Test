@@ -45,7 +45,6 @@ test('practice source drawer renders natural English close copy and preserves Sw
 
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page.getByRole('button', { name: 'Start practice with all visible questions' }).click();
   await expect(page.getByText('Question 1')).toBeVisible();
 
   const aboutSources = page.getByRole('button', { name: 'About the sources' });
@@ -68,7 +67,6 @@ test('practice source drawer renders natural English close copy and preserves Sw
   await switchQuestionLanguage(page, 'sv');
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page.getByRole('button', { name: 'Starta övning med alla synliga frågor' }).click();
 
   const omKallorna = page.getByRole('button', { name: 'Om källorna' });
   await expect(omKallorna).toHaveAttribute('aria-expanded', 'false');

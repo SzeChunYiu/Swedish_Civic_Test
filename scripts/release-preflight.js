@@ -191,13 +191,6 @@ function removeAdsV1AcceptanceFindings() {
   const findings = [];
   const adsSource = readFileIfExists('lib/monetization/ads.ts');
   const purchasesSource = readFileIfExists('lib/monetization/purchases.ts');
-  const publicPrivacySurface = [
-    'publishing/public-site/privacy/index.html',
-    'publishing/public-support-and-privacy.md',
-    'publishing/google-play-listing.md',
-  ]
-    .map(readFileIfExists)
-    .join('\n');
 
   if (!/REAL_ADS_ENABLED/.test(adsSource)) {
     findings.push('GOAL step 1 is not structurally green: REAL_ADS_ENABLED is missing.');
