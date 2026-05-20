@@ -43,7 +43,9 @@ type PremiumBannerCopy = {
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
     body: (price) =>
-      `Ta bort annonser för ${price} en gång. Ingen prenumeration, och provet är alltid annonsfritt.`,
+      `Hela frågebanken och alla 13 ämnen ingår gratis. Betala ${price} en gång för att ta bort annonser från studieskärmar; provläget är redan annonsfritt.`,
+    buyAccessibilityHint:
+      'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyHint: 'Startar ett engångsköp som tar bort annonser från studieskärmar.',
     buyIdle: (price) => `Köp ${price}`,
@@ -70,7 +72,9 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   },
   en: {
     body: (price) =>
-      `Remove ads forever for ${price}, one time. No subscription, and exams stay ad-free.`,
+      `The full question bank and all 13 topics are free. Pay ${price} once to remove ads from study screens; exams stay ad-free.`,
+    buyAccessibilityHint:
+      'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
     buyHint: 'Starts a one-time purchase that removes ads from study screens.',
     buyIdle: (price) => `Buy ${price}`,

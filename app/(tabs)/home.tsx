@@ -74,20 +74,8 @@ type HomeCopy = {
   feedbackLinkAccessibilityLabel: string;
   feedbackText: string;
   feedbackTitle: string;
-  guidedPathDailyAccessibilityLabel: (completed: number, goal: number) => string;
-  guidedPathDailyCta: string;
-  guidedPathDailyText: (completed: number, goal: number) => string;
-  guidedPathDailyTitle: string;
-  guidedPathResumeAccessibilityLabel: (stageTitle: string) => string;
-  guidedPathResumeCta: string;
-  guidedPathStageStatuses: {
-    active: string;
-    completed: string;
-    upcoming: string;
-  };
-  guidedPathStages: GuidedPathStageCopy[];
-  guidedPathSubtitle: string;
-  guidedPathTitle: string;
+  freeBankBadge: string;
+  freeBankText: string;
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
@@ -216,69 +204,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     feedbackTitle: 'Håll koll på det som behöver övas',
-    guidedPathDailyAccessibilityLabel: (completed, goal) =>
-      `Starta dagens övning. ${completed} av ${goal} svar klara idag.`,
-    guidedPathDailyCta: 'Starta dagens övning',
-    guidedPathDailyText: (completed, goal) => `${completed}/${goal} svar idag håller vanan synlig.`,
-    guidedPathDailyTitle: 'Daglig övning',
-    guidedPathResumeAccessibilityLabel: (stageTitle) => `Fortsätt på ${stageTitle}`,
-    guidedPathResumeCta: 'Fortsätt på nästa kapitel',
-    guidedPathStageStatuses: {
-      active: 'Pågår',
-      completed: 'Klar',
-      upcoming: 'Nästa',
-    },
-    guidedPathStages: [
-      {
-        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
-          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
-        chapterRange: 'Kapitel 1-4',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
-        ctaAccessibilityLabel: (title, isCompleted) =>
-          isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
-            : `${title}: öppna nästa kapitel i steget.`,
-        description: 'Börja med landet, demokratin, styret och valen.',
-        levelLabel: 'Nybörjare',
-        progressLabel: (completedChapters, totalChapters) =>
-          `${completedChapters}/${totalChapters} kapitel provade`,
-        title: 'Grunderna i Sverige och demokrati',
-      },
-      {
-        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
-          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
-        chapterRange: 'Kapitel 5-9',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
-        ctaAccessibilityLabel: (title, isCompleted) =>
-          isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
-            : `${title}: öppna nästa kapitel i steget.`,
-        description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
-        levelLabel: 'Fortsättning',
-        progressLabel: (completedChapters, totalChapters) =>
-          `${completedChapters}/${totalChapters} kapitel provade`,
-        title: 'Rättigheter, medier och samhällsliv',
-      },
-      {
-        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
-          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
-        chapterRange: 'Kapitel 10-13',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
-        ctaAccessibilityLabel: (title, isCompleted) =>
-          isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
-            : `${title}: öppna nästa kapitel i steget.`,
-        description:
-          'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
-        levelLabel: 'Avancerad',
-        progressLabel: (completedChapters, totalChapters) =>
-          `${completedChapters}/${totalChapters} kapitel provade`,
-        title: 'Historia, omvärld, religion och traditioner',
-      },
-    ],
-    guidedPathSubtitle:
-      'Följ 13 samhällskapitel i tre steg, fortsätt där du var och håll igång dagens övning.',
-    guidedPathTitle: 'Väg från grund till provträning',
+    freeBankBadge: 'Hela banken gratis',
+    freeBankText:
+      'Alla 13 ämnen och hela frågebanken ingår gratis. Betala bara om du vill ta bort annonser från studieskärmar.',
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
@@ -350,70 +278,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     feedbackTitle: 'Keep track of what needs review',
-    guidedPathDailyAccessibilityLabel: (completed, goal) =>
-      `Start today's practice. ${completed} of ${goal} answers complete today.`,
-    guidedPathDailyCta: "Start today's practice",
-    guidedPathDailyText: (completed, goal) =>
-      `${completed}/${goal} answers today keeps the habit visible.`,
-    guidedPathDailyTitle: 'Daily practice',
-    guidedPathResumeAccessibilityLabel: (stageTitle) => `Continue with ${stageTitle}`,
-    guidedPathResumeCta: 'Continue the next chapter',
-    guidedPathStageStatuses: {
-      active: 'In progress',
-      completed: 'Done',
-      upcoming: 'Next',
-    },
-    guidedPathStages: [
-      {
-        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
-          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
-        chapterRange: 'Chapters 1-4',
-        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
-        ctaAccessibilityLabel: (title, isCompleted) =>
-          isCompleted
-            ? `${title}: go to the mock exam after completing this stage.`
-            : `${title}: open the next chapter in this stage.`,
-        description: 'Start with Sweden, democracy, government, and elections.',
-        levelLabel: 'Beginner',
-        progressLabel: (completedChapters, totalChapters) =>
-          `${completedChapters}/${totalChapters} chapters tried`,
-        title: 'Sweden and democracy basics',
-      },
-      {
-        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
-          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
-        chapterRange: 'Chapters 5-9',
-        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
-        ctaAccessibilityLabel: (title, isCompleted) =>
-          isCompleted
-            ? `${title}: go to the mock exam after completing this stage.`
-            : `${title}: open the next chapter in this stage.`,
-        description: 'Build through law, media, rights, working life, and welfare.',
-        levelLabel: 'Builder',
-        progressLabel: (completedChapters, totalChapters) =>
-          `${completedChapters}/${totalChapters} chapters tried`,
-        title: 'Rights, media, and civic life',
-      },
-      {
-        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
-          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
-        chapterRange: 'Chapters 10-13',
-        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
-        ctaAccessibilityLabel: (title, isCompleted) =>
-          isCompleted
-            ? `${title}: go to the mock exam after completing this stage.`
-            : `${title}: open the next chapter in this stage.`,
-        description:
-          'Finish with modern Sweden, international topics, freedom of religion, and holidays.',
-        levelLabel: 'Advanced',
-        progressLabel: (completedChapters, totalChapters) =>
-          `${completedChapters}/${totalChapters} chapters tried`,
-        title: 'History, the wider world, religion, and traditions',
-      },
-    ],
-    guidedPathSubtitle:
-      "Follow 13 civic chapters in three stages, resume where you left off, and keep today's practice visible.",
-    guidedPathTitle: 'Guided path from basics to exam practice',
+    freeBankBadge: 'Full bank free',
+    freeBankText:
+      'All 13 topics and the full question bank are included for free. Pay only if you want to remove ads from study screens.',
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
@@ -583,7 +450,11 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
+      <Card style={styles.freeBankCard}>
+        <Badge tone="blue">{copy.freeBankBadge}</Badge>
+        <Text style={styles.freeBankText}>{copy.freeBankText}</Text>
+      </Card>
+      {!monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -821,6 +692,14 @@ const styles = StyleSheet.create({
     gap: space[1],
   },
   streakFreezeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  freeBankCard: {
+    gap: space[1],
+  },
+  freeBankText: {
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,

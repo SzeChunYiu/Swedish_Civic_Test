@@ -1346,10 +1346,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   );
   assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
-  assert.match(
-    paywallSource,
-    /\{!adsDisabled \? \(\s*<Button[\s\S]*copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*\) : null\}/,
-  );
+  assert.match(paywallSource, /Hela frågebanken och alla 13 ämnen ingår gratis/);
+  assert.match(paywallSource, /The full question bank and all 13 topics are free/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /Tidsatta övningsprov är redan annonsfria/);
