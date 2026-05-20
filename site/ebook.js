@@ -6,7 +6,16 @@
 (function () {
   'use strict';
 
-  function svStudyBrief(points, facts, practiceHint, sourceNote) {
+  const CITIZENSHIP_REQUIREMENTS_CURRENTNESS = {
+    rulesUrl:
+      'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
+    testUrl: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+    retrievedAt: '2026-05-19',
+    rulesEffectiveDate: '2026-06-06',
+    firstCivicKnowledgeTestDate: '2026-08-15',
+  };
+
+  function svStudyBrief(points, facts, practiceHint) {
     const items = points.map((point) => `<li>${point}</li>`).join('');
     const sourceNoteMarkup = sourceNote ? `<p class="ebook__source-note">${sourceNote}</p>` : '';
     return `
@@ -482,28 +491,38 @@
           <h2>Routes to permanent residence</h2>
           <p>You can come to Sweden as: a worker (with a job offer above a minimum wage), a student, a researcher, a family member of a resident, an EU citizen exercising freedom of movement, or an asylum seeker. After a period of legal residence — typically four to five years — you may apply for permanent residence (<em>permanent uppehållstillstånd</em>) or, for EU citizens, permanent right of residence.</p>
           <h2>Becoming Swedish</h2>
-          <p>To apply for Swedish citizenship by naturalisation, you generally need to:</p>
+          <p>Citizenship rules change on 6 June 2026. Migrationsverket says applications decided after that date are assessed under the new rules, even if the application was filed earlier. For adult naturalisation, the usual checklist becomes:</p>
           <ul>
-            <li>Be at least 18 years old (children are usually included with a parent's application).</li>
+            <li>Be at least 18 years old and able to prove your identity.</li>
             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
-            <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
-            <li>Have led an orderly life — no significant criminal record.</li>
-            <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
+            <li>Have lived in Sweden for the required period. The ordinary adult rule is at least eight years from 6 June 2026, with different periods for Nordic citizens, refugees, stateless people, young adults, and some partners of Swedish citizens.</li>
+            <li>Have lived in an orderly and honest way.</li>
+            <li>Be able to support yourself through stable own income. In 2026 Migrationsverket describes the level as three income base amounts per year, about SEK 20,000 per month before tax.</li>
+            <li>Show knowledge of Swedish and Swedish society if you are 16 to 66 years old. School, adult education, folk high school, or SFI course D can count; otherwise you may be directed to a citizenship test.</li>
           </ul>
+          <h2>Children and the first knowledge test</h2>
+          <p>From 6 June 2026, children are not added to a parent's citizenship application. They apply separately with a guardian's signature, and children do not have to support themselves. UHR says the first society-knowledge test is planned for 15 August 2026 in Stockholm. You can register only after Migrationsverket sends you a letter, and Swedish-language tests come later.</p>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          ${ebookFactBox('en', 'Facts to review', 'Citizenship-test requirements are changing from 2026 · Residence requirements depend on the applicant · Dual citizenship has been allowed since 2001 · Decision authority: Migrationsverket.', ['uhrStudy'])}
+          <p class="ebook__source-note">Sources checked ${CITIZENSHIP_REQUIREMENTS_CURRENTNESS.retrievedAt}: <a href="${CITIZENSHIP_REQUIREMENTS_CURRENTNESS.rulesUrl}">Migrationsverket, new citizenship rules</a> and <a href="${CITIZENSHIP_REQUIREMENTS_CURRENTNESS.testUrl}">UHR, medborgarskapsprovet</a>.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>New rules: 6 June 2026 · Ordinary adult residence rule: 8 years · First society-knowledge test: 15 August 2026 in Stockholm after a Migrationsverket letter · Children apply separately · Dual citizenship allowed since 2001.</p></div>
         `,
-        sv: svStudyBrief(
-          [
-            'Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.',
-            'Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.',
-            'Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.',
-            'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
-          ],
-          'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
-          'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
-        ),
+        sv: `
+          <h2>Det viktigaste</h2>
+          <ul>
+            <li>Migrationsverket handlägger frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.</li>
+            <li>Den 6 juni 2026 ändras reglerna för svenskt medborgarskap. Migrationsverket skriver att ärenden som avgörs efter det datumet prövas enligt de nya reglerna, även om ansökan skickades in tidigare.</li>
+            <li>För vuxna blir huvudregeln minst åtta års hemvist i Sverige. Andra tidsgränser gäller för bland annat nordiska medborgare, flyktingar, statslösa personer, unga vuxna och vissa partner till svenska medborgare.</li>
+            <li>Den som ansöker behöver också uppfylla krav på skötsamhet, egen försörjning och kunskaper i svenska och om det svenska samhället.</li>
+            <li>Barn ska från 6 juni 2026 ansöka separat med vårdnadshavares underskrift. Barn behöver inte kunna försörja sig själva.</li>
+          </ul>
+          <h2>Plugga smart</h2>
+          <p>Lär dig skillnaden mellan uppehållstillstånd, permanent uppehållstillstånd och medborgarskap. Kontrollera alltid dagsaktuella krav hos Migrationsverket och UHR, eftersom den här boken är ett studiehjälpmedel och inte juridisk rådgivning.</p>
+          <h2>Kunskapskravet</h2>
+          <p>Kunskaper i svenska och om det svenska samhället kan visas genom till exempel svensk skola, komvux, folkhögskola eller godkänt betyg i SFI kurs D. Den som saknar sådana intyg kan få göra medborgarskapsprov. UHR anger att det första samhällskunskapsprovet genomförs den 15 augusti 2026 i Stockholm och att anmälan bara kan göras efter brev från Migrationsverket. Prov i svenska införs senare.</p>
+          <p class="ebook__source-note">Källor kontrollerade ${CITIZENSHIP_REQUIREMENTS_CURRENTNESS.retrievedAt}: <a href="${CITIZENSHIP_REQUIREMENTS_CURRENTNESS.rulesUrl}">Migrationsverket om nya medborgarskapsregler</a> och <a href="${CITIZENSHIP_REQUIREMENTS_CURRENTNESS.testUrl}">UHR om medborgarskapsprovet</a>.</p>
+          <div class="ebook__factbox"><h4>Fakta att kunna</h4><p>Nya regler: 6 juni 2026 · Huvudregel för vuxnas hemvist: 8 år · Första samhällskunskapsprovet: 15 augusti 2026 i Stockholm efter brev från Migrationsverket · Barn ansöker separat · Dubbelt medborgarskap tillåts sedan 2001.</p></div>
+        `,
       },
     },
 
