@@ -76,6 +76,14 @@ export function normalizeImportedReviewState(value: unknown): PersistedReviews {
   return normalize(value);
 }
 
+export function getReviewSnapshot(): PersistedReviews {
+  const state = useReviewStore.getState();
+  return normalize({
+    byId: state.byId,
+    gradedPerDay: state.gradedPerDay,
+  });
+}
+
 function read(): PersistedReviews {
   const raw = reviewStorage?.getString(REVIEW_STORE_KEY);
   if (!raw) return EMPTY;

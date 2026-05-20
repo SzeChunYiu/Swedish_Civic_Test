@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-route-copy'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -19,7 +23,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 92);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 128);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -31,6 +35,15 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /Set study language to \$\{label\}/);
   assert.match(source, /Studiespråk/);
   assert.match(source, /Study language/);
+  assert.match(source, /Exportera studiedata/);
+  assert.match(source, /Export study data/);
+  assert.match(source, /Kopiera lokal studiedataexport som JSON/);
+  assert.match(source, /Copy local study data export as JSON/);
+  assert.match(source, /Ladda ner lokal studiedataexport som JSON/);
+  assert.match(source, /Download local study data export as JSON/);
+  assert.match(source, /Dela lokal studiedataexport som JSON/);
+  assert.match(source, /Share local study data export as JSON/);
+  assert.match(source, /serializeLocalStudyDataExport/);
   assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
   assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
@@ -62,6 +75,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -92,6 +106,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -119,6 +134,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -151,6 +167,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],

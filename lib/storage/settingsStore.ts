@@ -110,6 +110,17 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   return settings;
 }
 
+export function getImportableSettingsSnapshot(): ImportableSettings {
+  const state = useSettingsStore.getState();
+  return normalizeImportedSettings({
+    language: state.language,
+    audioEnabled: state.audioEnabled,
+    dailyGoalAnswers: state.dailyGoalAnswers,
+    includeSupplementaryQuestions: state.includeSupplementaryQuestions,
+    hasSeenAboutTheTest: state.hasSeenAboutTheTest,
+  });
+}
+
 export const useSettingsStore = create<SettingsState>((set) => ({
   language: readLanguage(),
   audioEnabled: readAudioEnabled(),

@@ -338,6 +338,19 @@ export function normalizeImportedProgress(value: unknown): PersistedProgress {
   return normalizeProgress(value);
 }
 
+export function getProgressSnapshot(): PersistedProgress {
+  const state = useProgressStore.getState();
+  return normalizeProgress({
+    completedQuestionIds: state.completedQuestionIds,
+    questionProgress: state.questionProgress,
+    totalXp: state.totalXp,
+    answerDates: state.answerDates,
+    answerHistory: state.answerHistory,
+    mockExamSessions: state.mockExamSessions,
+    streakFreezeState: state.streakFreezeState,
+  });
+}
+
 function readProgress(): PersistedProgress {
   let rawProgress: string | undefined;
   try {

@@ -1878,6 +1878,11 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
   {
+    label: 'export section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.exportTitle\}\s*<\/Text>/,
+  },
+  {
     label: 'import section title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.importTitle\}\s*<\/Text>/,
@@ -1894,6 +1899,22 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Dagligt mål',
     'Stäng av ljud',
     'Slå på ljud',
+    'JSON-exporten är kopierad.',
+    'Kopiera JSON',
+    'Kopiera lokal studiedataexport som JSON',
+    'Ladda ner JSON',
+    'Ladda ner lokal studiedataexport som JSON',
+    'JSON-exporten har laddats ner.',
+    'JSON-exporten kunde inte skapas.',
+    'Exporten innehåller inte köp, kvitton, IAP-data eller annonsbehörigheter.',
+    'Skapa en lokal JSON-export av progression, felgenomgång, FSRS-repetition och importbara inställningar. Spara den bara där du själv kontrollerar filen.',
+    'Dela JSON',
+    'Dela lokal studiedataexport som JSON',
+    'Swedish Civic Test studiedata',
+    'JSON-exporten har delats.',
+    'Senast skapade JSON-export',
+    'Exportera studiedata',
+    'Den här exportåtgärden stöds inte i den här miljön.',
     'Bekräfta import',
     'Bekräfta lokal studiedataimport',
     'Klistra in JSON innan du förhandsgranskar.',
@@ -1944,6 +1965,22 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Daily goal',
     'Disable audio',
     'Enable audio',
+    'JSON export copied.',
+    'Copy JSON',
+    'Copy local study data export as JSON',
+    'Download JSON',
+    'Download local study data export as JSON',
+    'JSON export downloaded.',
+    'JSON export could not be created.',
+    'The export does not include purchases, receipts, IAP data, or ad entitlements.',
+    'Create a local JSON export of progress, mistake review, FSRS review, and importable settings. Keep it only where you control the file.',
+    'Share JSON',
+    'Share local study data export as JSON',
+    'Swedish Civic Test study data',
+    'JSON export shared.',
+    'Most recent JSON export',
+    'Export study data',
+    'This export action is not supported in this environment.',
     'Confirm import',
     'Confirm local study data import',
     'Paste JSON before previewing.',
@@ -2055,6 +2092,22 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
     'accessibilityState={{ checked: dailyGoalAnswers === goal }}',
     'settings daily-goal options must mirror checked state to accessibilityState',
   ],
+  ['{copy.exportTitle}', 'settings export section must render localized copy'],
+  ['{copy.exportSectionSubtitle}', 'settings export section must describe local JSON scope'],
+  ['{copy.exportLocalOnlyNote}', 'settings export section must keep purchase data out of scope'],
+  [
+    'accessibilityLabel={copy.exportCopyAccessibilityLabel}',
+    'settings export copy button must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityLabel={copy.exportDownloadAccessibilityLabel}',
+    'settings export download button must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityLabel={copy.exportShareAccessibilityLabel}',
+    'settings export share button must expose localized accessibility copy',
+  ],
+  ['serializeLocalStudyDataExport', 'settings export controls must use local study data exporter'],
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
   {
@@ -7535,6 +7588,22 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-settings-route-copy')) {
+  validateSettingsRouteHeaderParity();
+  validateSettingsRouteCopyParity();
+  validateSettingsRouteScrollParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteHeadersValidated,
+    settingsRouteHeaderParityValidated,
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+    settingsRouteScrollRulesValidated,
+    settingsRouteScrollParityValidated,
   });
   process.exit(0);
 }

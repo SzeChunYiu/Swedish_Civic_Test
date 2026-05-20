@@ -20,6 +20,16 @@ test('settings controls expose selected and checked state on web', async ({ page
   await expect(englishLanguage).toHaveAttribute('aria-checked', 'true');
   await expect(swedishLanguage).toHaveAttribute('aria-checked', 'false');
 
+  await expect(
+    page.getByRole('button', { name: 'Copy local study data export as JSON' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Download local study data export as JSON' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Share local study data export as JSON' }),
+  ).toBeVisible();
+
   const tenAnswers = page.getByLabel('Set daily goal to 10 answers');
   const twentyAnswers = page.getByLabel('Set daily goal to 20 answers');
   await twentyAnswers.click();

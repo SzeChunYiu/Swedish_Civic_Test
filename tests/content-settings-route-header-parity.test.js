@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-route-copy'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -19,7 +23,7 @@ test('settings route title and preference sections stay accessible as headers', 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteHeadersValidated, 6);
+  assert.equal(summary.settingsRouteHeadersValidated, 7);
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
   assert.match(source, /const copy = settingsCopy\[language\]/);
   assert.match(
@@ -44,6 +48,10 @@ test('settings route title and preference sections stay accessible as headers', 
   );
   assert.match(
     source,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.exportTitle\}\s*<\/Text>/,
+  );
+  assert.match(
+    source,
     /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.importTitle\}\s*<\/Text>/,
   );
   assert.match(source, /Inställningar/);
@@ -55,6 +63,7 @@ test('settings route title and preference sections stay accessible as headers', 
   assert.match(source, /Study language/);
   assert.match(source, /Daily goal/);
   assert.match(source, /Theme/);
+  assert.match(source, /Export study data/);
   assert.match(source, /Import study data/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
 });
@@ -79,6 +88,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],

@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TextInput,
@@ -19,6 +21,10 @@ import {
   type LocalStudyDataImportPreview,
   type LocalStudyDataImportSummary,
 } from '../lib/storage/localStudyDataImport';
+import {
+  buildLocalStudyDataExportFilename,
+  serializeLocalStudyDataExport,
+} from '../lib/storage/localStudyDataExport';
 import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
@@ -37,6 +43,22 @@ type SettingsCopy = {
   dailyGoalTitle: string;
   disableAudioAccessibilityLabel: string;
   enableAudioAccessibilityLabel: string;
+  exportCopied: string;
+  exportCopy: string;
+  exportCopyAccessibilityLabel: string;
+  exportDownload: string;
+  exportDownloadAccessibilityLabel: string;
+  exportDownloaded: string;
+  exportError: string;
+  exportLocalOnlyNote: string;
+  exportSectionSubtitle: string;
+  exportShare: string;
+  exportShareAccessibilityLabel: string;
+  exportShareTitle: string;
+  exportShared: string;
+  exportTextLabel: string;
+  exportTitle: string;
+  exportUnavailable: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
   importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
@@ -89,6 +111,24 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
     enableAudioAccessibilityLabel: 'Slå på ljud',
+    exportCopied: 'JSON-exporten är kopierad.',
+    exportCopy: 'Kopiera JSON',
+    exportCopyAccessibilityLabel: 'Kopiera lokal studiedataexport som JSON',
+    exportDownload: 'Ladda ner JSON',
+    exportDownloadAccessibilityLabel: 'Ladda ner lokal studiedataexport som JSON',
+    exportDownloaded: 'JSON-exporten har laddats ner.',
+    exportError: 'JSON-exporten kunde inte skapas.',
+    exportLocalOnlyNote:
+      'Exporten innehåller inte köp, kvitton, IAP-data eller annonsbehörigheter.',
+    exportSectionSubtitle:
+      'Skapa en lokal JSON-export av progression, felgenomgång, FSRS-repetition och importbara inställningar. Spara den bara där du själv kontrollerar filen.',
+    exportShare: 'Dela JSON',
+    exportShareAccessibilityLabel: 'Dela lokal studiedataexport som JSON',
+    exportShareTitle: 'Swedish Civic Test studiedata',
+    exportShared: 'JSON-exporten har delats.',
+    exportTextLabel: 'Senast skapade JSON-export',
+    exportTitle: 'Exportera studiedata',
+    exportUnavailable: 'Den här exportåtgärden stöds inte i den här miljön.',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
     importErrorMessage: (code) => {
@@ -150,6 +190,24 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
     enableAudioAccessibilityLabel: 'Enable audio',
+    exportCopied: 'JSON export copied.',
+    exportCopy: 'Copy JSON',
+    exportCopyAccessibilityLabel: 'Copy local study data export as JSON',
+    exportDownload: 'Download JSON',
+    exportDownloadAccessibilityLabel: 'Download local study data export as JSON',
+    exportDownloaded: 'JSON export downloaded.',
+    exportError: 'JSON export could not be created.',
+    exportLocalOnlyNote:
+      'The export does not include purchases, receipts, IAP data, or ad entitlements.',
+    exportSectionSubtitle:
+      'Create a local JSON export of progress, mistake review, FSRS review, and importable settings. Keep it only where you control the file.',
+    exportShare: 'Share JSON',
+    exportShareAccessibilityLabel: 'Share local study data export as JSON',
+    exportShareTitle: 'Swedish Civic Test study data',
+    exportShared: 'JSON export shared.',
+    exportTextLabel: 'Most recent JSON export',
+    exportTitle: 'Export study data',
+    exportUnavailable: 'This export action is not supported in this environment.',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
     importErrorMessage: (code) => {
@@ -202,6 +260,59 @@ type ImportFeedback = {
   text: string;
 };
 
+type WebExportNavigator = {
+  clipboard?: {
+    writeText?: (text: string) => Promise<void>;
+  };
+  share?: (data: { text?: string; title?: string }) => Promise<void>;
+};
+
+function getWebExportNavigator(): WebExportNavigator | null {
+  if (Platform.OS !== 'web') return null;
+  return (globalThis as typeof globalThis & { navigator?: WebExportNavigator }).navigator ?? null;
+}
+
+async function copyExportText(text: string): Promise<boolean> {
+  const clipboard = getWebExportNavigator()?.clipboard;
+  if (typeof clipboard?.writeText !== 'function') return false;
+  await clipboard.writeText(text);
+  return true;
+}
+
+function downloadExportText(text: string): boolean {
+  if (
+    Platform.OS !== 'web' ||
+    typeof document === 'undefined' ||
+    typeof Blob === 'undefined' ||
+    typeof URL === 'undefined'
+  ) {
+    return false;
+  }
+
+  const objectUrl = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = buildLocalStudyDataExportFilename();
+  link.rel = 'noopener';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(objectUrl);
+  return true;
+}
+
+async function shareExportText(text: string, title: string): Promise<boolean> {
+  if (Platform.OS === 'web') {
+    const webShare = getWebExportNavigator()?.share;
+    if (typeof webShare !== 'function') return false;
+    await webShare({ title, text });
+    return true;
+  }
+
+  await Share.share({ message: text, title });
+  return true;
+}
+
 function buildImportSummaryLines(
   copy: SettingsCopy,
   summary: LocalStudyDataImportSummary,
@@ -234,6 +345,8 @@ export default function Screen() {
   const copy = settingsCopy[language];
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const [exportText, setExportText] = useState('');
+  const [exportFeedback, setExportFeedback] = useState<ImportFeedback | null>(null);
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
@@ -291,6 +404,51 @@ export default function Screen() {
         <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
       </Pressable>
     );
+  };
+
+  const createLocalStudyDataExportText = () => {
+    const nextExportText = serializeLocalStudyDataExport();
+    setExportText(nextExportText);
+    return nextExportText;
+  };
+
+  const handleCopyExport = async () => {
+    try {
+      const nextExportText = createLocalStudyDataExportText();
+      const copied = await copyExportText(nextExportText);
+      setExportFeedback({
+        tone: copied ? 'success' : 'error',
+        text: copied ? copy.exportCopied : copy.exportUnavailable,
+      });
+    } catch {
+      setExportFeedback({ tone: 'error', text: copy.exportError });
+    }
+  };
+
+  const handleDownloadExport = () => {
+    try {
+      const nextExportText = createLocalStudyDataExportText();
+      const downloaded = downloadExportText(nextExportText);
+      setExportFeedback({
+        tone: downloaded ? 'success' : 'error',
+        text: downloaded ? copy.exportDownloaded : copy.exportUnavailable,
+      });
+    } catch {
+      setExportFeedback({ tone: 'error', text: copy.exportError });
+    }
+  };
+
+  const handleShareExport = async () => {
+    try {
+      const nextExportText = createLocalStudyDataExportText();
+      const shared = await shareExportText(nextExportText, copy.exportShareTitle);
+      setExportFeedback({
+        tone: shared ? 'success' : 'error',
+        text: shared ? copy.exportShared : copy.exportUnavailable,
+      });
+    } catch {
+      setExportFeedback({ tone: 'error', text: copy.exportError });
+    }
   };
 
   const handleImportTextChange = (text: string) => {
@@ -433,6 +591,74 @@ export default function Screen() {
             );
           })}
         </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          {copy.exportTitle}
+        </Text>
+        <Text style={styles.subtitle}>{copy.exportSectionSubtitle}</Text>
+        <Text style={styles.disclaimerText}>{copy.exportLocalOnlyNote}</Text>
+        <View style={styles.importActions}>
+          <Pressable
+            accessibilityLabel={copy.exportCopyAccessibilityLabel}
+            accessibilityRole="button"
+            hitSlop={space[1]}
+            onPress={handleCopyExport}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              pressed ? styles.secondaryButtonPressed : null,
+            ]}
+          >
+            <Text style={styles.secondaryButtonText}>{copy.exportCopy}</Text>
+          </Pressable>
+          <Pressable
+            accessibilityLabel={copy.exportDownloadAccessibilityLabel}
+            accessibilityRole="button"
+            hitSlop={space[1]}
+            onPress={handleDownloadExport}
+            style={({ pressed }) => [
+              styles.outlineButton,
+              pressed ? styles.outlineButtonPressed : null,
+            ]}
+          >
+            <Text style={styles.outlineButtonText}>{copy.exportDownload}</Text>
+          </Pressable>
+          <Pressable
+            accessibilityLabel={copy.exportShareAccessibilityLabel}
+            accessibilityRole="button"
+            hitSlop={space[1]}
+            onPress={handleShareExport}
+            style={({ pressed }) => [
+              styles.outlineButton,
+              pressed ? styles.outlineButtonPressed : null,
+            ]}
+          >
+            <Text style={styles.outlineButtonText}>{copy.exportShare}</Text>
+          </Pressable>
+        </View>
+        {exportText ? (
+          <TextInput
+            accessibilityLabel={copy.exportTextLabel}
+            editable={false}
+            multiline
+            placeholderTextColor={themeColors.textPlaceholder}
+            style={styles.exportOutput}
+            textAlignVertical="top"
+            value={exportText}
+          />
+        ) : null}
+        {exportFeedback ? (
+          <Text
+            accessibilityRole={exportFeedback.tone === 'error' ? 'alert' : 'text'}
+            style={[
+              styles.feedbackText,
+              exportFeedback.tone === 'error' ? styles.feedbackError : styles.feedbackSuccess,
+            ]}
+          >
+            {exportFeedback.text}
+          </Text>
+        ) : null}
       </View>
 
       <View style={styles.section}>
@@ -644,6 +870,18 @@ function createStyles(themeColors: ThemeColors) {
       fontSize: typography.body.fontSize,
       lineHeight: typography.body.lineHeight,
       minHeight: space[15],
+      padding: space[1.5],
+    },
+    exportOutput: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.input,
+      borderWidth: StyleSheet.hairlineWidth,
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      maxHeight: space[15],
+      minHeight: space[10],
       padding: space[1.5],
     },
     importActions: {

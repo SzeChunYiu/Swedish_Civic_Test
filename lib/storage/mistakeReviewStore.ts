@@ -86,6 +86,13 @@ export function normalizeImportedMistakeReview(value: unknown): PersistedMistake
   return normalizeMistakeReview(value);
 }
 
+export function getMistakeReviewSnapshot(): PersistedMistakeReview {
+  const state = useMistakeReviewStore.getState();
+  return normalizeMistakeReview({
+    wrongAnswerReviews: state.wrongAnswerReviews,
+  });
+}
+
 function readMistakeReview(): PersistedMistakeReview {
   const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
   if (!rawReview) return emptyMistakeReview;
