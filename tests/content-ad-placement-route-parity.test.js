@@ -250,6 +250,39 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('ad placement route parity rejects hardcoded native banner live status', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+        'const adStatusLabel = copy.liveStatus;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native AdBanner must derive the status label from unit\.testOnly/,
+  );
+});
+
 test('ad placement route parity rejects practice interstitials routed through BannerAd', () => {
   const result = spawnSync(
     process.execPath,
