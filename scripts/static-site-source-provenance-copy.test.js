@@ -3,7 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
-const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
+const {
+  assertNoUnsupportedStaticOutcomeSlogans,
+  findStaticHeadMetadataTitleIssues,
+} = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -284,6 +287,17 @@ test('static FAQ no-JS fallback keeps ordered question and answer pairs', () => 
 
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+
+  const indexHtml = read('site/index.html');
+  assert.deepEqual(findStaticHeadMetadataTitleIssues(indexHtml), []);
+  assert.match(
+    findStaticHeadMetadataTitleIssues(
+      indexHtml.replace(/(<title>)[\s\S]*?(<\/title>)/, '$1Almost Swedish — Study, fika, pass.$2'),
+    )
+      .map((issue) => issue.match)
+      .join('\n'),
+    /Study,\s*fika,\s*pass/,
+  );
 });
 
 test('static ebook practical test copy is backed by current UHR source metadata', () => {

@@ -6,6 +6,7 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const { REQUIRED_SECURITY_HEADERS } = require('./check-live-site');
 const { readWebDocumentMetadata } = require('./prepare-web-export.js');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -1450,13 +1451,21 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
   const pkg = readJson('package.json');
+  const vercel = readJson('vercel.json');
   const workflow = fs.readFileSync(
     path.join(repoRoot, '.github/workflows/scheduled-deploy.yml'),
     'utf8',
   );
   const runCommands = workflow.match(/run: \|\n([\s\S]*)/)?.[1] ?? '';
+  const staticHeaderRoute = vercel.headers?.find((entry) => entry.source === '/(.*)');
+  const staticHeaders = new Map(
+    staticHeaderRoute?.headers?.map((header) => [header.key, header.value]) ?? [],
+  );
 
   assert.equal(pkg.scripts['test:site-live'], 'node scripts/check-live-site.js');
+  for (const header of REQUIRED_SECURITY_HEADERS) {
+    assert.equal(staticHeaders.get(header.name), header.value);
+  }
   assert.match(workflow, /branches:\s*\n\s+- main/);
   assert.match(workflow, /paths:\s*\n(?:\s+- ['"].+['"]\n)+/);
   assert.match(workflow, /['"]site\/\*\*['"]/);
