@@ -18,12 +18,6 @@ export type QuestionProgress = {
   bookmarked?: boolean;
 };
 
-export type AnswerAttemptProgress = {
-  questionId: string;
-  isCorrect: boolean;
-  answeredAt: string;
-};
-
 export type MockExamAnswerProgress = {
   questionId: string;
   isCorrect: boolean;
@@ -41,7 +35,6 @@ export type MockExamProgress = {
 
 const progressStateKey = 'progressState';
 const maxHydratedQuestionAnswerCount = 10000;
-const maxHydratedAnswerAttemptCount = 10000;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
 const maxHydratedMockQuestionTimeSeconds = 12 * 60 * 60;
@@ -61,7 +54,6 @@ try {
 type PersistedProgress = {
   completedQuestionIds: string[];
   questionProgress: Record<string, QuestionProgress>;
-  answerAttempts: AnswerAttemptProgress[];
   totalXp: number;
   answerDates: string[];
   mockExamSessions: MockExamProgress[];
@@ -71,7 +63,6 @@ type PersistedProgress = {
 const emptyProgress: PersistedProgress = {
   completedQuestionIds: [],
   questionProgress: {},
-  answerAttempts: [],
   totalXp: 0,
   answerDates: [],
   mockExamSessions: [],
@@ -125,31 +116,6 @@ function normalizeMockExamAnswers(value: unknown): MockExamAnswerProgress[] {
   }
 
   return answers;
-}
-
-function normalizeAnswerAttempts(value: unknown): AnswerAttemptProgress[] {
-  if (!Array.isArray(value)) return [];
-
-  const attempts: AnswerAttemptProgress[] = [];
-  const input = value.slice(-maxHydratedAnswerAttemptCount);
-  for (const attempt of input) {
-    if (!attempt || typeof attempt !== 'object') continue;
-
-    const item = attempt as Partial<AnswerAttemptProgress>;
-    if (typeof item.questionId !== 'string' || item.questionId.trim().length === 0) continue;
-    if (typeof item.isCorrect !== 'boolean') continue;
-
-    const answeredAt = normalizeIsoTimestamp(item.answeredAt);
-    if (!answeredAt) continue;
-
-    attempts.push({
-      questionId: item.questionId,
-      isCorrect: item.isCorrect,
-      answeredAt,
-    });
-  }
-
-  return attempts.sort((a, b) => a.answeredAt.localeCompare(b.answeredAt));
 }
 
 function isHydratableDateTime(timeMs: number): boolean {
@@ -310,7 +276,6 @@ function normalizeProgress(value: unknown): PersistedProgress {
   return {
     completedQuestionIds,
     questionProgress,
-    answerAttempts: normalizeAnswerAttempts(candidate.answerAttempts),
     totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp),
     answerDates,
     mockExamSessions,
@@ -361,7 +326,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
       const nextProgress = {
         completedQuestionIds: [...state.completedQuestionIds, questionId],
         questionProgress: state.questionProgress,
-        answerAttempts: state.answerAttempts,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
         mockExamSessions: state.mockExamSessions,
@@ -397,17 +361,12 @@ export const useProgressStore = create<ProgressState>((set) => ({
       const answerDates = state.answerDates.includes(answerDate)
         ? state.answerDates
         : [...state.answerDates, answerDate];
-      const answerAttempts: AnswerAttemptProgress[] = [
-        ...state.answerAttempts,
-        { questionId, isCorrect, answeredAt },
-      ].slice(-maxHydratedAnswerAttemptCount);
       const nextProgress = {
         completedQuestionIds,
         questionProgress: {
           ...state.questionProgress,
           [questionId]: nextQuestionProgress,
         },
-        answerAttempts,
         totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
         answerDates,
         mockExamSessions: state.mockExamSessions,
@@ -456,7 +415,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
       const nextProgress = {
         completedQuestionIds: state.completedQuestionIds,
         questionProgress: state.questionProgress,
-        answerAttempts: state.answerAttempts,
         totalXp: state.totalXp + completionXp,
         answerDates: state.answerDates,
         mockExamSessions: [...otherSessions, nextSession],
@@ -472,7 +430,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
       const nextProgress = {
         completedQuestionIds: state.completedQuestionIds,
         questionProgress: state.questionProgress,
-        answerAttempts: state.answerAttempts,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
         mockExamSessions: state.mockExamSessions,
@@ -496,7 +453,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
           ...state.questionProgress,
           [questionId]: { ...previous, bookmarked: !previous.bookmarked },
         },
-        answerAttempts: state.answerAttempts,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
         mockExamSessions: state.mockExamSessions,

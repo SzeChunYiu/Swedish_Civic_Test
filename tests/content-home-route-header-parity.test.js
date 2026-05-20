@@ -24,9 +24,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
-  assert.equal(summary.homeRouteHeadersValidated, 6);
+  assert.equal(summary.homeRouteHeadersValidated, 7);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 150);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 156);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
@@ -34,23 +34,23 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
   assert.match(source, /computeReadinessFromQuestionProgress/);
-  assert.match(source, /countAnswerAttemptsForLocalDate/);
-  assert.match(
-    source,
-    /const answerAttempts = useProgressStore\(\(state\) => state\.answerAttempts\);/,
-  );
-  assert.match(source, /countAnswerAttemptsForLocalDate\(\{ answerAttempts, questionProgress \}\)/);
   assert.match(
     source,
     /const mockExamSessions = useProgressStore\(\(state\) => state\.mockExamSessions\);/,
   );
-  assert.match(source, /answerAttempts,/);
   assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
   assert.match(source, /Redoindikator/);
   assert.match(source, /Readiness indicator/);
+  assert.match(source, /resumeWhereLeftOff/);
+  assert.match(source, /resumeBannerCopy/);
+  assert.match(source, /Fortsätt \${chapterTitle}/);
+  assert.match(source, /Resume \${chapterTitle}/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
+  assert.match(source, /\{resumeCopy\.title\}/);
+  assert.match(source, /href=\{`\/chapter\/\$\{resumeChapter\.id\}`\}/);
   assert.match(source, /Väg från grund till provträning/);
   assert.match(source, /Guided path from basics to exam practice/);
   assert.match(source, /const guidedPathChapterGroups = \[/);
@@ -101,11 +101,12 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /helper=\{dayStreakHelper\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
   assert.match(source, /\{copy\.readinessTitle\}/);
+  assert.match(source, /\{copy\.resumeKicker\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.doesNotMatch(
     source,
-    /<Text style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/,
+    /<Text style=\{styles\.(?:goalLabel|readinessTitle|resumeTitle|feedbackTitle)\}>/,
   );
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);

@@ -67,11 +67,11 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
   assert.equal(summary.profileRouteHeadersValidated, 3);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
-  assert.equal(summary.profileRouteCopyLabelsValidated, 40);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 42);
   assert.equal(summary.profileRouteCopyParityValidated, true);
-  assert.equal(summary.homeRouteHeadersValidated, 6);
+  assert.equal(summary.homeRouteHeadersValidated, 7);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 150);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 156);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
@@ -109,7 +109,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.metricCardAccessibilityParityValidated, true);
   assert.equal(summary.badgeAccessibilityRulesValidated, 8);
   assert.equal(summary.badgeAccessibilityParityValidated, true);
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 23);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 25);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.equal(summary.flashcardAccessibilityRulesValidated, 15);
   assert.equal(summary.flashcardAccessibilityParityValidated, true);
@@ -180,7 +180,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 13);
+  assert.equal(summary.progressStoreFieldsValidated, 12);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.ok(summary.reviewStoreHydrationCasesValidated >= 15);
   assert.equal(summary.reviewStoreHydrationParityValidated, true);
@@ -267,6 +267,20 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
   assert.equal(summary.questionNestedMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionJudgementMetaStemsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.questionStateWelfareEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionTraditionCommonToDoEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
+    summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
+    summary.questionSaltsjobadenAgreementEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.questionPromptTextUniquenessValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionTextLabelsValidated, summary.publishedQuestions);
   assert.equal(summary.questionTypeOptionCountsValidated, summary.publishedQuestions);

@@ -42,24 +42,23 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
       selectedWrongAnswer
-        ? `Svar att repetera. Ditt senaste felaktiga svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
-        : `Svar att repetera. Rätt svar: ${correctAnswer}.`,
+        ? `Fråga att öva igen. Ditt senaste svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
+        : `Fråga att öva igen. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad för fokuserad repetition',
+    bookmarkedMeta: 'Sparad för att öva igen',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
-    emptyText: 'Svara fel på en övningsfråga så visas den här.',
-    emptyTitle: 'Inga misstag ännu',
-    mistakeBadge: 'Fellogg',
-    mistakeTitle: 'Fel svar att repetera',
-    selectedWrongAnswerLabel: 'Ditt senaste felaktiga svar',
-    subtitle:
-      'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
-    title: 'Misstag',
-    wrongAnswers: (count) => `Fel svar: ${count}`,
+    emptyText: 'När du missar en övningsfråga visas den här.',
+    emptyTitle: 'Inga missade frågor ännu',
+    mistakeBadge: 'Öva igen',
+    mistakeTitle: 'Frågor att öva igen',
+    selectedWrongAnswerLabel: 'Ditt senaste svar',
+    subtitle: 'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
+    title: 'Missade frågor',
+    wrongAnswers: (count) => `Antal missar: ${count}`,
   },
   en: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
@@ -93,6 +92,33 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
   return language === 'en' ? option.textEn : option.textSv;
 }
 
+type AnswerReviewBlockProps = {
+  copy: MistakesCopy;
+  correctAnswer: string;
+  selectedWrongAnswer?: string;
+};
+
+function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
+  return (
+    <View
+      accessible
+      accessibilityLabel={copy.answerReviewAccessibilityLabel(correctAnswer, selectedWrongAnswer)}
+      style={styles.answerReview}
+    >
+      {selectedWrongAnswer ? (
+        <View style={styles.answerReviewRow}>
+          <Text style={styles.answerReviewLabel}>{copy.selectedWrongAnswerLabel}</Text>
+          <Text style={styles.answerReviewValue}>{selectedWrongAnswer}</Text>
+        </View>
+      ) : null}
+      <View style={styles.answerReviewRow}>
+        <Text style={styles.answerReviewLabel}>{copy.correctAnswerLabel}</Text>
+        <Text style={styles.correctAnswerValue}>{correctAnswer}</Text>
+      </View>
+    </View>
+  );
+}
+
 export default function Screen() {
   const router = useRouter();
   const language = useSettingsStore((state) => state.language);
@@ -102,8 +128,10 @@ export default function Screen() {
   const mistakenQuestions = questions.filter(
     (question) => questionProgress[question.id]?.wrongCount > 0,
   );
-  const bookmarkedQuestions = questions.filter(
-    (question) => questionProgress[question.id]?.bookmarked,
+  const bookmarkedReviewQuestions = questions.filter(
+    (question) =>
+      questionProgress[question.id]?.bookmarked &&
+      (questionProgress[question.id]?.wrongCount ?? 0) === 0,
   );
 
   return (
@@ -120,7 +148,7 @@ export default function Screen() {
       <NativeAdCard />
       <RemoveAdsPlacementCta placement="results_native" />
 
-      {bookmarkedQuestions.length > 0 ? (
+      {bookmarkedReviewQuestions.length > 0 ? (
         <View style={styles.list}>
           <View style={styles.sectionHeading}>
             <Badge tone="blue">{copy.bookmarkedBadge}</Badge>
@@ -128,18 +156,25 @@ export default function Screen() {
               {copy.bookmarkedTitle}
             </Text>
           </View>
-          {bookmarkedQuestions.map((question) => (
-            <View key={question.id} style={styles.questionBlock}>
-              <QuestionCard question={question} language={language} />
-              <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
-              <ExplanationPanel
-                explanationEn={question.explanationEn}
-                explanationSv={question.explanationSv}
-                language={language}
-              />
-              <UHRReferenceCard language={language} reference={question.uhrReference} />
-            </View>
-          ))}
+          {bookmarkedReviewQuestions.map((question) => {
+            const correctAnswer = getOptionLabel(question, question.correctOptionId, language);
+
+            return (
+              <View key={question.id} style={styles.questionBlock}>
+                <QuestionCard question={question} language={language} />
+                <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
+                {correctAnswer ? (
+                  <AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />
+                ) : null}
+                <ExplanationPanel
+                  explanationEn={question.explanationEn}
+                  explanationSv={question.explanationSv}
+                  language={language}
+                />
+                <UHRReferenceCard language={language} reference={question.uhrReference} />
+              </View>
+            );
+          })}
         </View>
       ) : null}
 
@@ -167,27 +202,11 @@ export default function Screen() {
                   {copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}
                 </Text>
                 {correctAnswer ? (
-                  <View
-                    accessible
-                    accessibilityLabel={copy.answerReviewAccessibilityLabel(
-                      correctAnswer,
-                      selectedWrongAnswer,
-                    )}
-                    style={styles.answerReview}
-                  >
-                    {selectedWrongAnswer ? (
-                      <View style={styles.answerReviewRow}>
-                        <Text style={styles.answerReviewLabel}>
-                          {copy.selectedWrongAnswerLabel}
-                        </Text>
-                        <Text style={styles.answerReviewValue}>{selectedWrongAnswer}</Text>
-                      </View>
-                    ) : null}
-                    <View style={styles.answerReviewRow}>
-                      <Text style={styles.answerReviewLabel}>{copy.correctAnswerLabel}</Text>
-                      <Text style={styles.correctAnswerValue}>{correctAnswer}</Text>
-                    </View>
-                  </View>
+                  <AnswerReviewBlock
+                    copy={copy}
+                    correctAnswer={correctAnswer}
+                    selectedWrongAnswer={selectedWrongAnswer}
+                  />
                 ) : null}
                 <ExplanationPanel
                   explanationEn={question.explanationEn}
@@ -199,7 +218,7 @@ export default function Screen() {
             );
           })}
         </View>
-      ) : bookmarkedQuestions.length === 0 ? (
+      ) : bookmarkedReviewQuestions.length === 0 ? (
         <View style={styles.emptyCard}>
           <Text accessibilityRole="header" style={styles.emptyTitle}>
             {copy.emptyTitle}

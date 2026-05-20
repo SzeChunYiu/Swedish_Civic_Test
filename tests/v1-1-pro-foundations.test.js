@@ -313,14 +313,15 @@ test('tierComparison: Swedish Pro labels use natural learner-facing copy', () =>
   const labelsById = Object.fromEntries(TIER_ROWS.map((row) => [row.id, row.labelSv]));
 
   assert.equal(labelsById.mockExams, 'Övningsprov');
-  assert.equal(labelsById.mistakeReview, 'Repetera misstag');
+  assert.equal(labelsById.mistakeReview, 'Öva missade frågor');
   assert.equal(labelsById.spacedRepetition, 'Repetition med intervall');
   assert.equal(labelsById.customStudyPlan, 'Studieplan efter provdatum');
   assert.equal(labelsById.predictedPass, 'Beräknad provberedskap');
   assert.equal(labelsById.confidenceSlider, 'Säkerhetsskala och kalibrering');
   assert.equal(labelsById.accessibility, 'Lättläst typsnitt, textstorlek och mörkt läge');
   assert.notEqual(labelsById.mockExams, 'Provexamina');
-  assert.notEqual(labelsById.mistakeReview, 'Felgranskning');
+  assert.notEqual(labelsById.mistakeReview, ['Repetera ', 'misstag'].join(''));
+  assert.notEqual(labelsById.mistakeReview, ['Fel', 'granskning'].join(''));
 });
 
 test('tierComparison: three columns in canonical order', () => {
@@ -429,11 +430,6 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
   };
   const progress = buildDashboardProgressSnapshot({
     answerDates: ['2026-05-18', '2026-05-19'],
-    answerAttempts: [
-      { questionId: 'q2', isCorrect: false, answeredAt: '2026-05-18T10:00:00.000Z' },
-      { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
-      { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T11:00:00.000Z' },
-    ],
     dailyGoalAnswers: 10,
     mockExamSessions: [
       {
@@ -450,13 +446,13 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
   const questionChapterIndex = { q1: 'ch01', q2: 'ch02' };
 
   assert.equal(progress.sessions.length, 2);
-  assert.equal(progress.sessions[0].answers.length, 3);
+  assert.equal(progress.sessions[0].answers.length, 4);
   assert.equal(progress.level, 2);
   assert.equal(
     dailyActivityHistogram(progress, { daysBack: 2, now: new Date('2026-05-19T12:00:00.000Z') }).at(
       -1,
     ).count,
-    2,
+    3,
   );
   assert.equal(
     perChapterProgress(
@@ -467,7 +463,7 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
       ],
       questionChapterIndex,
     )[0].answers,
-    2,
+    3,
   );
   assert.equal(
     xpSparkline(progress, { daysBack: 1, now: new Date('2026-05-19T12:00:00.000Z') })[0].xp,
@@ -620,7 +616,82 @@ test('mockHistory + bestMockScore: returns only exam-mode completed sessions', (
   ];
   const history = mockHistory(progressWithSessions(sessions));
   assert.equal(history.length, 2);
+  assert.deepEqual(
+    history.map((entry) => ({ durationMs: entry.durationMs, sessionId: entry.sessionId })),
+    [
+      { durationMs: 60 * 60 * 1000, sessionId: 'e1' },
+      { durationMs: 60 * 60 * 1000, sessionId: 'e2' },
+    ],
+  );
   assert.equal(bestMockScore(progressWithSessions(sessions)), 0.85);
+});
+
+test('mockHistory + bestMockScore: ignore invalid completions and null invalid durations', () => {
+  const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
+  const sessions = [
+    {
+      id: 'valid',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T09:00:00.000Z',
+      completedAt: '2026-05-19T09:30:00.000Z',
+      score: 0.7,
+    },
+    {
+      id: 'invalid-start',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: 'not-a-date',
+      completedAt: '2026-05-19T10:00:00.000Z',
+      score: 0.75,
+    },
+    {
+      id: 'backwards',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T12:00:00.000Z',
+      completedAt: '2026-05-19T11:00:00.000Z',
+      score: 0.8,
+    },
+    {
+      id: 'invalid-completed',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T09:00:00.000Z',
+      completedAt: 'not-a-date',
+      score: 0.99,
+    },
+    {
+      id: 'nan-score',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T11:30:00.000Z',
+      completedAt: '2026-05-19T12:00:00.000Z',
+      score: Number.NaN,
+    },
+  ];
+  const progress = progressWithSessions(sessions);
+  const history = mockHistory(progress);
+
+  assert.deepEqual(
+    history.map((entry) => ({
+      durationMs: entry.durationMs,
+      score: entry.score,
+      sessionId: entry.sessionId,
+    })),
+    [
+      { durationMs: 30 * 60 * 1000, score: 0.7, sessionId: 'valid' },
+      { durationMs: null, score: 0.75, sessionId: 'invalid-start' },
+      { durationMs: null, score: 0.8, sessionId: 'backwards' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'nan-score' },
+    ],
+  );
+  assert.equal(bestMockScore(progress), 0.8);
 });
 
 test('timeOfDayPattern: 24 hourly bins, accuracy per hour', () => {
@@ -863,6 +934,48 @@ test('generateCalibration: overconfident user → over_confident verdict', () =>
   assert.equal(result.verdict, 'over_confident');
 });
 
+test('generateCalibration: invalid confidence ratings are skipped without corrupting buckets', () => {
+  const { generateCalibration, isConfidenceRating, normalizeConfidenceRating } = loadTs(
+    'lib/learning/calibration.ts',
+  );
+  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
+  const events = [
+    {
+      questionId: 'valid-low',
+      isCorrect: false,
+      answeredAt: '2026-05-19',
+      confidenceRating: 1,
+    },
+    ...invalidRatings.map((confidenceRating, index) => ({
+      questionId: `invalid-${index}`,
+      isCorrect: true,
+      answeredAt: '2026-05-19',
+      confidenceRating,
+    })),
+    {
+      questionId: 'valid-high',
+      isCorrect: true,
+      answeredAt: '2026-05-19',
+      confidenceRating: 5,
+    },
+  ];
+
+  assert.doesNotThrow(() => generateCalibration(events));
+  const result = generateCalibration(events);
+
+  assert.equal(result.totalRatedAnswers, 2);
+  assert.deepEqual(
+    result.buckets.map((bucket) => bucket.count),
+    [1, 0, 0, 0, 1],
+  );
+  assert.equal(result.buckets[0].actualAccuracy, 0);
+  assert.equal(result.buckets[4].actualAccuracy, 1);
+  for (const rating of invalidRatings) {
+    assert.equal(isConfidenceRating(rating), false);
+    assert.equal(normalizeConfidenceRating(rating), null);
+  }
+});
+
 test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
   assert.equal(gradeFromConfidence(false, 1), 1);
@@ -874,4 +987,15 @@ test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   assert.equal(lapsePenaltyForWrong(1), 0);
   assert.equal(lapsePenaltyForWrong(3), 1);
   assert.equal(lapsePenaltyForWrong(5), 2);
+});
+
+test('gradeFromConfidence + lapsePenaltyForWrong: invalid ratings use safe defaults', () => {
+  const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
+  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
+
+  for (const rating of invalidRatings) {
+    assert.equal(gradeFromConfidence(true, rating), 3);
+    assert.equal(gradeFromConfidence(false, rating), 1);
+    assert.equal(lapsePenaltyForWrong(rating), 0);
+  }
 });

@@ -554,31 +554,31 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which is a way to influence and participate in society?",
-      "sv": "Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "How can people influence society and participate in democracy?",
+      "sv": "Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
-        "en": "Contact politicians, demonstrate, or sign a petition",
-        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling"
+        "en": "By contacting politicians, demonstrating, or signing a petition",
+        "sv": "Genom att kontakta politiker, demonstrera eller skriva på en namninsamling"
       },
       {
-        "en": "Ban others from voting in political elections",
-        "sv": "Förbjuda andra från att rösta i politiska val"
+        "en": "By banning others from voting in political elections",
+        "sv": "Genom att förbjuda andra från att rösta i politiska val"
       },
       {
-        "en": "Force journalists to write certain opinions",
-        "sv": "Tvinga journalister att skriva vissa åsikter"
+        "en": "By forcing journalists to write certain opinions",
+        "sv": "Genom att tvinga journalister att skriva vissa åsikter"
       },
       {
-        "en": "Stop people from talking about politics",
-        "sv": "Stoppa människor från att prata om politik"
+        "en": "By stopping people from talking about politics",
+        "sv": "Genom att stoppa människor från att prata om politik"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
-      "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
+      "en": "People can influence society and participate in democracy in several ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "sv": "Det finns flera demokratiska sätt att påverka samhället och delta i demokratin, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1144,8 +1144,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which example describes municipal responsibilities?",
-      "sv": "Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Which everyday services are municipalities responsible for?",
+      "sv": "Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {
@@ -1697,8 +1697,8 @@
         "sv": "När kommunala skolor ska öppna"
       },
       {
-        "en": "Which goods have VAT",
-        "sv": "Vilka varor som har moms"
+        "en": "When VAT is paid on goods and services",
+        "sv": "När moms betalas på varor och tjänster"
       }
     ],
     "answer": 0,
@@ -3185,13 +3185,13 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What does the state finance within welfare?",
-      "sv": "Vad finansierar staten inom välfärden?"
+      "en": "What does the state finance within higher education and research?",
+      "sv": "Vad finansierar staten inom högre utbildning och forskning?"
     },
     "opts": [
       {
-        "en": "Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance",
-        "sv": "Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag"
+        "en": "Higher education and research at colleges and universities",
+        "sv": "Högre utbildning och forskning vid högskolor och universitet"
       },
       {
         "en": "Hospitals, health centres, and regional health care",
@@ -3208,8 +3208,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3221,9 +3221,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support"
+      "higher-education",
+      "research",
+      "universities"
     ]
   },
   {
@@ -3639,7 +3639,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "What did the 1938 Saltsjöbaden Agreement become important for?",
+      "en": "What was the 1938 Saltsjöbaden Agreement important for?",
       "sv": "Vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
     },
     "opts": [
@@ -3662,7 +3662,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -3961,7 +3961,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What does the Council of Europe work for?",
+      "en": "What does the Council of Europe promote?",
       "sv": "Vad arbetar Europarådet för?"
     },
     "opts": [
@@ -3984,7 +3984,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -4559,7 +4559,7 @@
         "sv": "Advent"
       },
       {
-        "en": "First of May",
+        "en": "May Day",
         "sv": "Första maj"
       },
       {
@@ -4569,7 +4569,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -4615,7 +4615,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -4639,7 +4639,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is marked on First of May in Sweden?",
+      "en": "What is marked on May Day in Sweden?",
       "sv": "Vad uppmärksammas på första maj i Sverige?"
     },
     "opts": [
@@ -4662,7 +4662,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -4803,7 +4803,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -4840,7 +4840,7 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -5311,7 +5311,7 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -5701,7 +5701,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -5890,8 +5890,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -5984,7 +5984,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -6363,7 +6363,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -6387,13 +6387,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about Christmas celebrations in Sweden?",
-      "sv": "Vilket påstående stämmer om julfirande i Sverige?"
+      "en": "How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
+      "sv": "Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
     },
     "opts": [
       {
-        "en": "Many people celebrate Christmas as a family holiday even without religious meaning",
-        "sv": "Många firar jul som en familjehögtid även utan religiös betydelse"
+        "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them",
+        "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem"
       },
       {
         "en": "Christmas is always celebrated with demonstrations about social issues",
@@ -6410,8 +6410,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6621,7 +6621,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
@@ -9442,31 +9442,31 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which is a way to influence and participate in society?",
-      "sv": "Vilket svar stämmer bäst? Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Which answer best matches? How can people influence society and participate in democracy?",
+      "sv": "Vilket svar stämmer bäst? Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
-        "en": "Contact politicians, demonstrate, or sign a petition",
-        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling"
+        "en": "By contacting politicians, demonstrating, or signing a petition",
+        "sv": "Genom att kontakta politiker, demonstrera eller skriva på en namninsamling"
       },
       {
-        "en": "Ban others from voting in political elections",
-        "sv": "Förbjuda andra från att rösta i politiska val"
+        "en": "By banning others from voting in political elections",
+        "sv": "Genom att förbjuda andra från att rösta i politiska val"
       },
       {
-        "en": "Force journalists to write certain opinions",
-        "sv": "Tvinga journalister att skriva vissa åsikter"
+        "en": "By forcing journalists to write certain opinions",
+        "sv": "Genom att tvinga journalister att skriva vissa åsikter"
       },
       {
-        "en": "Stop people from talking about politics",
-        "sv": "Stoppa människor från att prata om politik"
+        "en": "By stopping people from talking about politics",
+        "sv": "Genom att stoppa människor från att prata om politik"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
-      "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
+      "en": "People can influence society and participate in democracy in several ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "sv": "Det finns flera demokratiska sätt att påverka samhället och delta i demokratin, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9490,8 +9490,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.",
-      "sv": "Ett sätt att påverka och delta i samhället är att kontakta politiker, demonstrera eller skriva på en namninsamling."
+      "en": "People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling."
     },
     "opts": [
       {
@@ -9505,8 +9505,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
-      "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
+      "en": "People can influence society and participate in democracy in several ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "sv": "Det finns flera demokratiska sätt att påverka samhället och delta i demokratin, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9530,8 +9530,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to ban others from voting in political elections.",
-      "sv": "Ett sätt att påverka och delta i samhället är att förbjuda andra från att rösta i politiska val."
+      "en": "People can influence society and participate in democracy by banning others from voting in political elections.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att förbjuda andra från att rösta i politiska val."
     },
     "opts": [
       {
@@ -9545,8 +9545,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
-      "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
+      "en": "People can influence society and participate in democracy in several ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "sv": "Det finns flera demokratiska sätt att påverka samhället och delta i demokratin, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9570,31 +9570,31 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which is a way to influence and participate in society?",
-      "sv": "Välj rätt alternativ: Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Choose the correct option: How can people influence society and participate in democracy?",
+      "sv": "Välj rätt alternativ: Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
-        "en": "Contact politicians, demonstrate, or sign a petition",
-        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling"
+        "en": "By contacting politicians, demonstrating, or signing a petition",
+        "sv": "Genom att kontakta politiker, demonstrera eller skriva på en namninsamling"
       },
       {
-        "en": "Ban others from voting in political elections",
-        "sv": "Förbjuda andra från att rösta i politiska val"
+        "en": "By banning others from voting in political elections",
+        "sv": "Genom att förbjuda andra från att rösta i politiska val"
       },
       {
-        "en": "Force journalists to write certain opinions",
-        "sv": "Tvinga journalister att skriva vissa åsikter"
+        "en": "By forcing journalists to write certain opinions",
+        "sv": "Genom att tvinga journalister att skriva vissa åsikter"
       },
       {
-        "en": "Stop people from talking about politics",
-        "sv": "Stoppa människor från att prata om politik"
+        "en": "By stopping people from talking about politics",
+        "sv": "Genom att stoppa människor från att prata om politik"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
-      "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
+      "en": "People can influence society and participate in democracy in several ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "sv": "Det finns flera demokratiska sätt att påverka samhället och delta i demokratin, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11730,8 +11730,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which example describes municipal responsibilities?",
-      "sv": "Vilket svar stämmer bäst? Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Which answer best matches? Which everyday services are municipalities responsible for?",
+      "sv": "Vilket svar stämmer bäst? Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {
@@ -11778,8 +11778,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.",
-      "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning är exempel på kommunernas ansvar."
+      "en": "Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.",
+      "sv": "Kommuner ansvarar för vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning."
     },
     "opts": [
       {
@@ -11818,8 +11818,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Sending ambassadors to other countries belongs among municipal responsibilities.",
-      "sv": "Att skicka ambassadörer till andra länder är exempel på kommunernas ansvar."
+      "en": "Municipalities are responsible for sending ambassadors to other countries.",
+      "sv": "Kommuner ansvarar för att skicka ambassadörer till andra länder."
     },
     "opts": [
       {
@@ -11858,8 +11858,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which example describes municipal responsibilities?",
-      "sv": "Välj rätt alternativ: Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Choose the correct option: Which everyday services are municipalities responsible for?",
+      "sv": "Välj rätt alternativ: Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {
@@ -13859,8 +13859,8 @@
         "sv": "När kommunala skolor ska öppna"
       },
       {
-        "en": "Which goods have VAT",
-        "sv": "Vilka varor som har moms"
+        "en": "When VAT is paid on goods and services",
+        "sv": "När moms betalas på varor och tjänster"
       }
     ],
     "answer": 0,
@@ -13987,8 +13987,8 @@
         "sv": "När kommunala skolor ska öppna"
       },
       {
-        "en": "Which goods have VAT",
-        "sv": "Vilka varor som har moms"
+        "en": "When VAT is paid on goods and services",
+        "sv": "När moms betalas på varor och tjänster"
       }
     ],
     "answer": 0,
@@ -19662,13 +19662,13 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the state finance within welfare?",
-      "sv": "Vilket svar stämmer bäst? Vad finansierar staten inom välfärden?"
+      "en": "Which answer best matches? What does the state finance within higher education and research?",
+      "sv": "Vilket svar stämmer bäst? Vad finansierar staten inom högre utbildning och forskning?"
     },
     "opts": [
       {
-        "en": "Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance",
-        "sv": "Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag"
+        "en": "Higher education and research at colleges and universities",
+        "sv": "Högre utbildning och forskning vid högskolor och universitet"
       },
       {
         "en": "Hospitals, health centres, and regional health care",
@@ -19685,8 +19685,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19698,9 +19698,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "section-practice"
     ]
@@ -19711,8 +19711,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance.",
-      "sv": "Staten finansierar pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag."
+      "en": "The state finances higher education and research at colleges and universities.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet."
     },
     "opts": [
       {
@@ -19726,8 +19726,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19739,9 +19739,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "true-false"
     ]
@@ -19767,8 +19767,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19780,9 +19780,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "false-statement"
     ]
@@ -19793,13 +19793,13 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does the state finance within welfare?",
-      "sv": "Välj rätt alternativ: Vad finansierar staten inom välfärden?"
+      "en": "Choose the correct option: What does the state finance within higher education and research?",
+      "sv": "Välj rätt alternativ: Vad finansierar staten inom högre utbildning och forskning?"
     },
     "opts": [
       {
-        "en": "Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance",
-        "sv": "Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag"
+        "en": "Higher education and research at colleges and universities",
+        "sv": "Högre utbildning och forskning vid högskolor och universitet"
       },
       {
         "en": "Hospitals, health centres, and regional health care",
@@ -19816,8 +19816,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19829,9 +19829,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "judgement"
     ]
@@ -21430,7 +21430,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What did the 1938 Saltsjöbaden Agreement become important for?",
+      "en": "Which answer best matches? What was the 1938 Saltsjöbaden Agreement important for?",
       "sv": "Vilket svar stämmer bäst? Vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
     },
     "opts": [
@@ -21453,7 +21453,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -21478,7 +21478,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.",
+      "en": "The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.",
       "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare."
     },
     "opts": [
@@ -21493,7 +21493,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -21518,7 +21518,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The 1938 Saltsjöbaden Agreement became important for Sweden’s entry into the EU.",
+      "en": "The 1938 Saltsjöbaden Agreement was important for Sweden’s entry into the EU.",
       "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för Sveriges inträde i EU."
     },
     "opts": [
@@ -21533,7 +21533,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -21558,7 +21558,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What did the 1938 Saltsjöbaden Agreement become important for?",
+      "en": "Choose the correct option: What was the 1938 Saltsjöbaden Agreement important for?",
       "sv": "Välj rätt alternativ: Vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
     },
     "opts": [
@@ -21581,7 +21581,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -22662,7 +22662,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the Council of Europe work for?",
+      "en": "Which answer best matches? What does the Council of Europe promote?",
       "sv": "Vilket svar stämmer bäst? Vad arbetar Europarådet för?"
     },
     "opts": [
@@ -22685,7 +22685,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -22710,7 +22710,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer."
     },
     "opts": [
@@ -22725,7 +22725,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -22750,7 +22750,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "The Council of Europe works only for agricultural policy.",
+      "en": "The Council of Europe promotes only agricultural policy.",
       "sv": "Europarådet arbetar endast för jordbrukspolitik."
     },
     "opts": [
@@ -22765,7 +22765,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -22790,7 +22790,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does the Council of Europe work for?",
+      "en": "Choose the correct option: What does the Council of Europe promote?",
       "sv": "Välj rätt alternativ: Vad arbetar Europarådet för?"
     },
     "opts": [
@@ -22813,7 +22813,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -24975,7 +24975,7 @@
         "sv": "Advent"
       },
       {
-        "en": "First of May",
+        "en": "May Day",
         "sv": "Första maj"
       },
       {
@@ -24985,7 +24985,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25025,7 +25025,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25065,7 +25065,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25103,7 +25103,7 @@
         "sv": "Advent"
       },
       {
-        "en": "First of May",
+        "en": "May Day",
         "sv": "Första maj"
       },
       {
@@ -25113,7 +25113,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25161,7 +25161,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25202,7 +25202,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25243,7 +25243,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25292,7 +25292,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25318,7 +25318,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is marked on First of May in Sweden?",
+      "en": "Which answer best matches? What is marked on May Day in Sweden?",
       "sv": "Vilket svar stämmer bäst? Vad uppmärksammas på första maj i Sverige?"
     },
     "opts": [
@@ -25341,7 +25341,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25367,7 +25367,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "First of May marks workers' day with demonstrations and speeches.",
+      "en": "May Day marks workers' day with demonstrations and speeches.",
       "sv": "På första maj uppmärksammas arbetarnas dag med demonstrationer och tal."
     },
     "opts": [
@@ -25382,7 +25382,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25408,7 +25408,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "First of May marks the new year with parties and fireworks.",
+      "en": "May Day marks the new year with parties and fireworks.",
       "sv": "På första maj uppmärksammas det nya året med fester och fyrverkerier."
     },
     "opts": [
@@ -25423,7 +25423,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25449,7 +25449,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is marked on First of May in Sweden?",
+      "en": "Choose the correct option: What is marked on May Day in Sweden?",
       "sv": "Välj rätt alternativ: Vad uppmärksammas på första maj i Sverige?"
     },
     "opts": [
@@ -25472,7 +25472,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25881,7 +25881,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -25922,7 +25922,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -25963,7 +25963,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -26012,7 +26012,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -26051,7 +26051,7 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -26182,7 +26182,7 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -27855,7 +27855,7 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -27989,7 +27989,7 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -29321,7 +29321,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -29363,7 +29363,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -29405,7 +29405,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -29455,7 +29455,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -30045,8 +30045,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30086,8 +30086,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30127,8 +30127,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30176,8 +30176,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30405,7 +30405,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -30447,7 +30447,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -30489,7 +30489,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -30539,7 +30539,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -31857,7 +31857,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -31898,7 +31898,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -31939,7 +31939,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -31988,7 +31988,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -32014,13 +32014,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement is correct about Christmas celebrations in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om julfirande i Sverige?"
+      "en": "Which answer best matches? How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
+      "sv": "Vilket svar stämmer bäst? Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
     },
     "opts": [
       {
-        "en": "Many people celebrate Christmas as a family holiday even without religious meaning",
-        "sv": "Många firar jul som en familjehögtid även utan religiös betydelse"
+        "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them",
+        "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem"
       },
       {
         "en": "Christmas is always celebrated with demonstrations about social issues",
@@ -32037,8 +32037,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32063,8 +32063,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Many people celebrate Christmas as a family holiday even without religious meaning.",
-      "sv": "Många firar jul som en familjehögtid även utan religiös betydelse."
+      "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them.",
+      "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem."
     },
     "opts": [
       {
@@ -32078,8 +32078,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32119,8 +32119,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32145,13 +32145,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement is correct about Christmas celebrations in Sweden?",
-      "sv": "Välj rätt alternativ: Vilket påstående stämmer om julfirande i Sverige?"
+      "en": "Choose the correct option: How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
+      "sv": "Välj rätt alternativ: Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
     },
     "opts": [
       {
-        "en": "Many people celebrate Christmas as a family holiday even without religious meaning",
-        "sv": "Många firar jul som en familjehögtid även utan religiös betydelse"
+        "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them",
+        "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem"
       },
       {
         "en": "Christmas is always celebrated with demonstrations about social issues",
@@ -32168,8 +32168,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32924,7 +32924,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
@@ -32967,7 +32967,7 @@
     "type": "true_false",
     "q": {
       "en": "That elections in a democracy are secret means no one has to reveal how they vote.",
-      "sv": "Att val i en demokrati är hemliga betyder att ingen behöver avslöja hur den röstar."
+      "sv": "Att val i en demokrati är hemliga betyder att väljare inte behöver avslöja hur de röstar."
     },
     "opts": [
       {
@@ -33052,7 +33052,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
