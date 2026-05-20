@@ -14,11 +14,8 @@ async function switchQuestionLanguage(page: Page, language: 'sv' | 'en') {
   const selectedLabel =
     language === 'sv' ? 'Byt frågespråk till Svenska' : 'Set question language to English support';
 
-  await page.getByRole('radio', { name: label }).click();
-  await expect(page.getByRole('radio', { name: selectedLabel })).toHaveAttribute(
-    'aria-checked',
-    'true',
-  );
+  await page.getByLabel(label).click();
+  await expect(page.getByLabel(selectedLabel)).toHaveAttribute('aria-selected', 'true');
   await page.evaluate((nextLanguage) => {
     window.localStorage.setItem('settings\\language', nextLanguage);
   }, language);
@@ -45,7 +42,6 @@ test('practice source drawer renders natural English close copy and preserves Sw
 
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page.getByRole('button', { name: 'Start practice with all visible questions' }).click();
   await expect(page.getByText('Question 1')).toBeVisible();
 
   const aboutSources = page.getByRole('button', { name: 'About the sources' });
@@ -68,7 +64,6 @@ test('practice source drawer renders natural English close copy and preserves Sw
   await switchQuestionLanguage(page, 'sv');
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page.getByRole('button', { name: 'Starta övning med alla synliga frågor' }).click();
 
   const omKallorna = page.getByRole('button', { name: 'Om källorna' });
   await expect(omKallorna).toHaveAttribute('aria-expanded', 'false');
