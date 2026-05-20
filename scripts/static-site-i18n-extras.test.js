@@ -69,6 +69,9 @@ const englishFallbacksByKey = {
   'settings.theme.auto': 'Auto',
   'settings.done': 'Done',
 };
+const chineseScriptLocales = ['zh-Hans', 'zh-Hant'];
+const chineseTextPattern = /[\u3400-\u9fff]/;
+const asciiSentencePunctuationNearChinese = /[\u3400-\u9fff][,:;?!.]|[,:;?!.][\u3400-\u9fff]/;
 
 function loadExtraI18n() {
   const source = fs.readFileSync(path.join(repoRoot, 'site/i18n-extras.js'), 'utf8');
@@ -76,6 +79,17 @@ function loadExtraI18n() {
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox, { timeout: 3000 });
   return sandbox.window.__i18n_extra;
+}
+
+function withoutAllowedMarkupAndTokens(value) {
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/https?:\/\/\S+/gi, ' ')
+    .replace(/#[/a-z0-9_-]+/gi, ' ')
+    .replace(
+      /\b(?:Almost Swedish|Google AdSense|Google Mobile Ads|AdMob|Cookie|cookies|UHR|Skolverket|Migrationsverket|BankID|MVP|EN|SV|SEK|Jantelagen|Allemansrätten|Lagom|Fika|fika)\b/g,
+      ' ',
+    );
 }
 
 test('Somali static-site high-frequency labels use reviewed local copy', () => {
@@ -112,4 +126,29 @@ test('Somali static-site labels reject known machine-like strings and English fa
       `Somali dictionary still contains ${fragment}`,
     );
   }
+});
+
+test('Chinese static-site labels use script-native sentence punctuation', () => {
+  const extra = loadExtraI18n();
+  let checkedValues = 0;
+
+  for (const locale of chineseScriptLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    for (const [key, value] of Object.entries(dictionary)) {
+      assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
+      if (!chineseTextPattern.test(value)) continue;
+
+      checkedValues += 1;
+      const learnerText = withoutAllowedMarkupAndTokens(value);
+      assert.doesNotMatch(
+        learnerText,
+        asciiSentencePunctuationNearChinese,
+        `${locale}.${key} uses Latin sentence punctuation next to Chinese text`,
+      );
+    }
+  }
+
+  assert.ok(checkedValues > 0, 'Chinese punctuation guard must inspect learner-facing text');
 });
