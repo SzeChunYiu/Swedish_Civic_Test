@@ -8509,6 +8509,21 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-rewarded-exam-schema')) {
+  validateRewardedAdTypeSchemaParity();
+  validateMockExamAccessTypeSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    rewardedAdTypeUnionsValidated,
+    rewardedAdTypeInterfacesValidated,
+    rewardedAdTypeSchemaParityValidated,
+    mockExamAccessTypeUnionsValidated,
+    mockExamAccessTypeInterfacesValidated,
+    mockExamAccessTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-native-quiz-copy')) {
   validateQuizRouteHeaderParity();
   validateQuizRouteCopyParity();
