@@ -1263,6 +1263,69 @@ test('published true/false question banks omit UI-afforded prefixes', () => {
   assert.deepEqual(csvOffenders, []);
 });
 
+test('secret-ballot Swedish copy uses plural voter wording across published banks', () => {
+  const secretBallotPronounPattern = /\bhur\s+den\s+röstar\b/i;
+  const expectedOption = 'Att väljare inte behöver avslöja hur de röstar';
+  const source = fs.readFileSync(path.join(repoRoot, 'data/additionalQuestions.ts'), 'utf8');
+  const csv = fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8');
+  const staticSource = fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8');
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+
+  function learnerFacingSvText(question) {
+    return [
+      question.q?.sv,
+      question.why?.sv,
+      ...(question.opts || []).map((option) => option.sv),
+    ].join(' ');
+  }
+
+  function bankFindings(bank) {
+    return Array.from(bank)
+      .filter((question) => secretBallotPronounPattern.test(learnerFacingSvText(question)))
+      .map((question) => question.id);
+  }
+
+  assert.equal(source.includes(expectedOption), true);
+  assert.equal(secretBallotPronounPattern.test(source), false);
+  assert.equal(secretBallotPronounPattern.test(csv), false);
+  assert.equal(secretBallotPronounPattern.test(staticSource), false);
+  assert.deepEqual(bankFindings(generatedSiteBank), []);
+  assert.deepEqual(bankFindings(actualSiteBank), []);
+});
+
+test('secret-ballot Swedish copy rejects singular den voting wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'Att väljare inte behöver avslöja hur de röstar',
+      'Ingen behöver avslöja hur den röstar',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q145 uses unnatural secret-ballot Swedish voting pronoun/,
+  );
+});
+
 test('generated single-choice banks omit true-false and filler option shells', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
