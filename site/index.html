@@ -1097,9 +1097,9 @@
           <div class="set-group">
             <h3 class="set-group__h" data-i18n="settings.theme">Theme</h3>
             <div class="set-segment" data-set="theme">
-              <button data-val="light"><span data-i18n="settings.theme.light">Light</span></button>
-              <button data-val="dark"><span data-i18n="settings.theme.dark">Dark</span></button>
-              <button data-val="auto"><span data-i18n="settings.theme.auto">Auto</span></button>
+              <button data-val="light" aria-pressed="false"><span data-i18n="settings.theme.light">Light</span></button>
+              <button data-val="dark" aria-pressed="false"><span data-i18n="settings.theme.dark">Dark</span></button>
+              <button data-val="auto" aria-pressed="true"><span data-i18n="settings.theme.auto">Auto</span></button>
             </div>
           </div>
 
@@ -1107,7 +1107,7 @@
             <h3 class="set-group__h" data-i18n="settings.palette">Color palette</h3>
             <p class="set-group__sub" data-i18n="settings.palette.sub">Pick a Swedish flavour.</p>
             <div class="set-palettes" data-set="palette">
-              <button data-val="flag" class="set-palette">
+              <button data-val="flag" class="set-palette" aria-pressed="true">
                 <span class="set-palette__chips"
                   ><i style="background: #006aa7"></i><i style="background: #fecc00"></i
                   ><i style="background: #faf6ec"></i><i style="background: #0b1f33"></i
@@ -1117,7 +1117,7 @@
                   >Blue + gold, the original</span
                 >
               </button>
-              <button data-val="midsommar" class="set-palette">
+              <button data-val="midsommar" class="set-palette" aria-pressed="false">
                 <span class="set-palette__chips"
                   ><i style="background: #3e7c52"></i><i style="background: #f4c542"></i
                   ><i style="background: #fbf6e6"></i><i style="background: #1d3324"></i
@@ -1127,7 +1127,7 @@
                   >Pasture green + flower yellow</span
                 >
               </button>
-              <button data-val="falu" class="set-palette">
+              <button data-val="falu" class="set-palette" aria-pressed="false">
                 <span class="set-palette__chips"
                   ><i style="background: #8c1a2b"></i><i style="background: #e9b94a"></i
                   ><i style="background: #fbf3e7"></i><i style="background: #2a0b11"></i
@@ -1137,7 +1137,7 @@
                   >The red of every Swedish barn</span
                 >
               </button>
-              <button data-val="skargard" class="set-palette">
+              <button data-val="skargard" class="set-palette" aria-pressed="false">
                 <span class="set-palette__chips"
                   ><i style="background: #2f4a5c"></i><i style="background: #ffd166"></i
                   ><i style="background: #f5f2eb"></i><i style="background: #10212c"></i
@@ -1147,7 +1147,7 @@
                   >Slate sea + low summer sun</span
                 >
               </button>
-              <button data-val="norrsken" class="set-palette">
+              <button data-val="norrsken" class="set-palette" aria-pressed="false">
                 <span class="set-palette__chips"
                   ><i style="background: #2b6a86"></i><i style="background: #9be7c4"></i
                   ><i style="background: #0e1726"></i><i style="background: #e8f4ff"></i
@@ -1193,17 +1193,17 @@
           <div class="set-group">
             <h3 class="set-group__h" data-i18n="settings.text">Text size</h3>
             <div class="set-segment" data-set="textsize">
-              <button data-val="90"><span data-i18n="settings.text.s">Small</span></button>
-              <button data-val="100"><span data-i18n="settings.text.m">Regular</span></button>
-              <button data-val="115"><span data-i18n="settings.text.l">Large</span></button>
+              <button data-val="90" aria-pressed="false"><span data-i18n="settings.text.s">Small</span></button>
+              <button data-val="100" aria-pressed="true"><span data-i18n="settings.text.m">Regular</span></button>
+              <button data-val="115" aria-pressed="false"><span data-i18n="settings.text.l">Large</span></button>
             </div>
           </div>
 
           <div class="set-group">
             <h3 class="set-group__h" data-i18n="settings.sources">Question sources</h3>
             <div class="set-segment" data-set="sources">
-              <button data-val="all"><span data-i18n="settings.sources.all">All sources</span></button>
-              <button data-val="uhr"><span data-i18n="settings.sources.uhr">UHR only</span></button>
+              <button data-val="all" aria-pressed="true"><span data-i18n="settings.sources.all">All sources</span></button>
+              <button data-val="uhr" aria-pressed="false"><span data-i18n="settings.sources.uhr">UHR only</span></button>
             </div>
             <p class="set-hint" data-i18n="settings.sources.hint">
               All = full bank (UHR-cited + editorially derived from UHR themes).
