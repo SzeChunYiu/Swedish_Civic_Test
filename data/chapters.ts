@@ -90,7 +90,7 @@ export const chapters: Chapter[] = [
       'Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering.',
     descriptionEn:
       "From agricultural society to industrial society, democratization, the people's home, and globalization.",
-    questionCount: 50,
+    questionCount: 75,
   },
   {
     id: 'ch11',

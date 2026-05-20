@@ -19,18 +19,19 @@ test('authored source questions stay reviewed and publish without field drift', 
   assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
 });
 
-test('derived q155 explanation expectation stays anchored to authored q002 source', () => {
+test('derived q002 explanation expectation stays anchored to authored q002 source', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
 
+  assert.match(source, /generatedQuestionId\(sourceQuestions, 'q002', 'trueStatement'\)/);
   assert.match(source, /const \{ questions, sourceQuestions \} = loadTs\('data\/questions\.ts'\);/);
   assert.match(source, /question\.id === 'q002'/);
   assert.match(
     source,
-    /byId\.get\(shiftedGeneratedQuestionId\('q155', sourceQuestions\)\)\?\.explanationSv,\s+sourceQ002\.explanationSv/s,
+    /byId\.get\(generatedQuestionIdForCurrentSourceCount\('q155', sourceQuestions\)\)\?\.explanationSv,\s*sourceQ002\.explanationSv/s,
   );
   assert.match(
     source,
-    /byId\.get\(shiftedGeneratedQuestionId\('q155', sourceQuestions\)\)\?\.explanationEn,\s+sourceQ002\.explanationEn/s,
+    /byId\.get\(generatedQuestionIdForCurrentSourceCount\('q155', sourceQuestions\)\)\?\.explanationEn,\s*sourceQ002\.explanationEn/s,
   );
   assert.doesNotMatch(
     source,

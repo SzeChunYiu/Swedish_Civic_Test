@@ -6842,228 +6842,232 @@
   },
   {
     "id": "q150",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "What must public institutions counteract under the Instrument of Government?",
-      "sv": "Vad ska det allmänna motverka enligt regeringsformen?"
+      "en": "Which activities were among Sweden's first larger industries in the mid-19th century?",
+      "sv": "Vilka verksamheter hörde till Sveriges första större industrier i mitten av 1800-talet?"
     },
     "opts": [
       {
-        "en": "Discrimination based on factors such as sex, origin, religion, disability, or age",
-        "sv": "Diskriminering på grund av till exempel kön, ursprung, religion, funktionsnedsättning eller ålder"
+        "en": "Sawmills producing timber products and steel industries",
+        "sv": "Sågverk som producerade trävaror och stålindustrier"
       },
       {
-        "en": "People participating in society",
-        "sv": "Att människor deltar i samhället"
+        "en": "Mobile phone factories and game studios",
+        "sv": "Mobiltelefonfabriker och dataspelsstudior"
       },
       {
-        "en": "Children having their rights protected",
-        "sv": "Att barn får sina rättigheter skyddade"
+        "en": "Space industry and nuclear power plants",
+        "sv": "Rymdindustri och kärnkraftverk"
       },
       {
-        "en": "All people being treated equally",
-        "sv": "Att alla människor behandlas jämlikt"
+        "en": "Tourist resorts and airports",
+        "sv": "Turistanläggningar och flygplatser"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Instrument of Government says public institutions must counteract discrimination based on grounds such as sex, skin colour, national or ethnic origin, language, religion, disability, sexual orientation, age, or other personal circumstances. Participation, children’s rights, and equality are described as things public institutions should promote.",
-      "sv": "Regeringsformen säger att det allmänna ska motverka diskriminering av människor på grunder som kön, hudfärg, nationellt eller etniskt ursprung, språk, religion, funktionshinder, sexuell läggning, ålder eller andra personliga omständigheter. Delaktighet, barns rättigheter och jämlikhet beskrivs som sådant det allmänna ska främja."
+      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
+      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Mänskliga rättigheter gäller alla",
-      "page": 22
+      "chapter": "Sveriges moderna historia",
+      "section": "Industrialisering",
+      "page": 32
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "instrument-of-government",
-      "anti-discrimination",
-      "human-rights"
+      "industrialization",
+      "sawmills",
+      "steel",
+      "modern-history"
     ]
   },
   {
     "id": "q151",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "What does Sweden’s consent law mean?",
-      "sv": "Vad innebär Sveriges samtyckeslag?"
+      "en": "How was Sweden affected by the First World War despite being neutral?",
+      "sv": "Hur påverkades Sverige av första världskriget trots att landet var neutralt?"
     },
     "opts": [
       {
-        "en": "A person who wants sex must make sure the other person participates voluntarily",
-        "sv": "Den som vill ha sex måste försäkra sig om att den andra personen deltar frivilligt"
+        "en": "There were shortages of food and important goods, which led to protests",
+        "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester"
       },
       {
-        "en": "Consent is not needed if the people are married",
-        "sv": "Samtycke behövs inte om personerna är gifta"
+        "en": "All Swedish cities were occupied by foreign armies",
+        "sv": "Alla svenska städer ockuperades av främmande arméer"
       },
       {
-        "en": "The law applies only in public places",
-        "sv": "Lagen gäller bara offentliga platser"
+        "en": "The Riksdag was abolished for the whole war",
+        "sv": "Riksdagen avskaffades under hela kriget"
       },
       {
-        "en": "It is enough that no one says no afterwards",
-        "sv": "Det räcker att ingen säger nej efteråt"
+        "en": "Sweden joined a military alliance the same year",
+        "sv": "Sverige gick med i en militärallians samma år"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The consent law means that a person who wants sex with someone must make sure the other person participates voluntarily. This also applies when the people are married, so the options about marriage, public places, or a later no do not describe the law.",
-      "sv": "Samtyckeslagen betyder att den som vill ha sex med en person måste försäkra sig om att den andra personen deltar frivilligt. Det gäller också när personerna är gifta, så alternativen om äktenskap, offentliga platser eller ett nej i efterhand beskriver inte lagen."
+      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
+      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Könsrelaterat våld och förtryck",
-      "page": 23
+      "chapter": "Sveriges moderna historia",
+      "section": "Första världskriget",
+      "page": 34
     },
     "difficulty": "medium",
     "tags": [
-      "consent-law",
-      "gender-related-violence",
-      "rights"
+      "first-world-war",
+      "neutrality",
+      "shortages",
+      "protests"
     ]
   },
   {
     "id": "q152",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "How should public actors use the Convention on the Rights of the Child in decisions affecting children?",
-      "sv": "Hur ska offentliga aktörer använda barnkonventionen i beslut som påverkar barn?"
+      "en": "What idea was behind the people’s home?",
+      "sv": "Vilken idé låg bakom folkhemmet?"
     },
     "opts": [
       {
-        "en": "They should apply the convention and consider the best interests of children",
-        "sv": "De ska tillämpa barnkonventionen och ta hänsyn till barns bästa"
+        "en": "That everyone should be able to feel security and community regardless of background",
+        "sv": "Att alla skulle kunna känna trygghet och gemenskap oavsett bakgrund"
       },
       {
-        "en": "They should ask only adults even when the decision concerns children",
-        "sv": "De ska bara fråga vuxna även när beslutet gäller barn"
+        "en": "That only rural areas should receive public support",
+        "sv": "Att bara landsbygden skulle få samhällsstöd"
       },
       {
-        "en": "They should use the convention only in schools",
-        "sv": "De ska använda barnkonventionen bara i skolor"
+        "en": "That the state should abolish all general elections",
+        "sv": "Att staten skulle avskaffa alla allmänna val"
       },
       {
-        "en": "They should let each municipality choose whether children’s rights apply",
-        "sv": "De ska låta varje kommun välja om barns rättigheter ska gälla"
+        "en": "That Sweden should stop expanding welfare",
+        "sv": "Att Sverige skulle sluta bygga ut välfärden"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies, courts, municipalities, and regions should apply the Convention on the Rights of the Child. In practice, this includes letting children say what they think before decisions that affect them and municipalities considering children’s best interests when planning things such as housing, playgrounds, or schools.",
-      "sv": "Myndigheter, domstolar, kommuner och regioner ska tillämpa barnkonventionen. I praktiken innebär det bland annat att barn ska få säga vad de tycker inför beslut som påverkar dem och att kommuner ska tänka på barns bästa när de planerar sådant som bostäder, lekplatser eller skolor."
+      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
+      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
+      "chapter": "Sveriges moderna historia",
+      "section": "Modernisering och folkhem",
+      "page": 35
     },
     "difficulty": "medium",
     "tags": [
-      "children-rights",
-      "best-interests-of-the-child",
-      "public-decisions"
+      "folkhemmet",
+      "per-albin-hansson",
+      "security",
+      "community"
     ]
   },
   {
     "id": "q153",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which special right is mentioned for the Sami as an Indigenous people in Swedish Sápmi?",
-      "sv": "Vilken särskild rättighet nämns för samer som urfolk i svenska Sápmi?"
+      "en": "What helped more women work outside the home during the record years?",
+      "sv": "Vad bidrog till att fler kvinnor kunde arbeta utanför hemmet under rekordåren?"
     },
     "opts": [
       {
-        "en": "Special rights connected to land and natural resources",
-        "sv": "Särskilda rättigheter kopplade till mark och naturresurser"
+        "en": "Childcare was expanded",
+        "sv": "Barnomsorgen byggdes ut"
       },
       {
-        "en": "The right to decide all Swedish laws",
-        "sv": "Rätt att bestämma alla svenska lagar"
+        "en": "Women were forbidden to study",
+        "sv": "Kvinnor förbjöds att utbilda sig"
       },
       {
-        "en": "The right to replace the Riksdag",
-        "sv": "Rätt att ersätta riksdagen"
+        "en": "Women's voting rights were removed",
+        "sv": "Rösträtten för kvinnor togs bort"
       },
       {
-        "en": "The right to run all courts",
-        "sv": "Rätt att driva alla domstolar"
+        "en": "All households had to run farms",
+        "sv": "Alla hushåll måste driva jordbruk"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Sami are a recognized Indigenous people with special rights connected to land and natural resources in Swedish Sápmi. Members of Sami villages also have the right to practise reindeer husbandry within specific grazing areas.",
-      "sv": "Samerna är ett erkänt urfolk med särskilda rättigheter kopplade till mark och naturresurser i svenska Sápmi. Medlemmar i samebyar har också rätt att bedriva renskötsel inom särskilda betesområden."
+      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
+      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Nationella minoriteter och urfolk",
-      "page": 25
+      "chapter": "Sveriges moderna historia",
+      "section": "Jämställdhet och kulturförändringar",
+      "page": 37
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "sami",
-      "indigenous-rights",
-      "sapmi",
-      "reindeer-husbandry"
+      "gender-equality",
+      "daycare",
+      "record-years",
+      "women-work"
     ]
   },
   {
     "id": "q154",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Why does Sweden have specific laws for people with disabilities?",
-      "sv": "Varför finns särskilda lagar för personer med funktionsnedsättning i Sverige?"
+      "en": "Why did lifelong learning become more important as the information society emerged?",
+      "sv": "Varför blev livslångt lärande viktigare när informationssamhället växte fram?"
     },
     "opts": [
       {
-        "en": "To protect against discrimination and make equal participation in society possible",
-        "sv": "För att skydda mot diskriminering och göra jämlikt deltagande i samhället möjligt"
+        "en": "Knowledge quickly became outdated as technology developed faster",
+        "sv": "Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare"
       },
       {
-        "en": "To keep people with disabilities out of working life and education",
-        "sv": "För att personer med funktionsnedsättning ska hållas utanför arbetsliv och utbildning"
+        "en": "All education ended after compulsory school",
+        "sv": "All utbildning avslutades efter grundskolan"
       },
       {
-        "en": "So the Discrimination Act does not apply to disability",
-        "sv": "För att diskrimineringslagen inte ska gälla funktionsnedsättning"
+        "en": "Digital technology left work and studies unchanged",
+        "sv": "Digital teknik gjorde arbete och studier oförändrade"
       },
       {
-        "en": "So only municipalities may decide whether rights apply",
-        "sv": "För att bara kommuner ska få bestämma om rättigheter gäller"
+        "en": "Adults lost the right to study",
+        "sv": "Vuxna förlorade rätten att studera"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "People with disabilities can face barriers or risk discrimination. Sweden therefore has laws that protect against discrimination and laws intended to make it possible to participate in society on equal terms.",
-      "sv": "Personer med funktionsnedsättning kan möta hinder eller riskera diskriminering. Därför finns lagar som skyddar mot diskriminering och lagar som ska ge möjlighet att delta i samhället på jämlika villkor."
+      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
+      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Personer med funktionsnedsättning",
-      "page": 26
+      "chapter": "Sveriges moderna historia",
+      "section": "Informationssamhället och globalisering",
+      "page": 37
     },
     "difficulty": "medium",
     "tags": [
-      "disability-rights",
-      "anti-discrimination",
-      "equal-participation"
+      "information-society",
+      "lifelong-learning",
+      "adult-education",
+      "technology"
     ]
   },
   {
@@ -33558,59 +33562,60 @@
   },
   {
     "id": "q751",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What must public institutions counteract under the Instrument of Government?",
-      "sv": "Vilket svar stämmer bäst? Vad ska det allmänna motverka enligt regeringsformen?"
+      "en": "Which answer best matches? Which activities were among Sweden's first larger industries in the mid-19th century?",
+      "sv": "Vilket svar stämmer bäst? Vilka verksamheter hörde till Sveriges första större industrier i mitten av 1800-talet?"
     },
     "opts": [
       {
-        "en": "Discrimination based on factors such as sex, origin, religion, disability, or age",
-        "sv": "Diskriminering på grund av till exempel kön, ursprung, religion, funktionsnedsättning eller ålder"
+        "en": "Sawmills producing timber products and steel industries",
+        "sv": "Sågverk som producerade trävaror och stålindustrier"
       },
       {
-        "en": "People participating in society",
-        "sv": "Att människor deltar i samhället"
+        "en": "Mobile phone factories and game studios",
+        "sv": "Mobiltelefonfabriker och dataspelsstudior"
       },
       {
-        "en": "Children having their rights protected",
-        "sv": "Att barn får sina rättigheter skyddade"
+        "en": "Space industry and nuclear power plants",
+        "sv": "Rymdindustri och kärnkraftverk"
       },
       {
-        "en": "All people being treated equally",
-        "sv": "Att alla människor behandlas jämlikt"
+        "en": "Tourist resorts and airports",
+        "sv": "Turistanläggningar och flygplatser"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Instrument of Government says public institutions must counteract discrimination based on grounds such as sex, skin colour, national or ethnic origin, language, religion, disability, sexual orientation, age, or other personal circumstances. Participation, children’s rights, and equality are described as things public institutions should promote.",
-      "sv": "Regeringsformen säger att det allmänna ska motverka diskriminering av människor på grunder som kön, hudfärg, nationellt eller etniskt ursprung, språk, religion, funktionshinder, sexuell läggning, ålder eller andra personliga omständigheter. Delaktighet, barns rättigheter och jämlikhet beskrivs som sådant det allmänna ska främja."
+      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
+      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Mänskliga rättigheter gäller alla",
-      "page": 22
+      "chapter": "Sveriges moderna historia",
+      "section": "Industrialisering",
+      "page": 32
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "instrument-of-government",
-      "anti-discrimination",
-      "human-rights",
+      "industrialization",
+      "sawmills",
+      "steel",
+      "modern-history",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q752",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "Discrimination based on factors such as sex, origin, religion, disability, or age.",
-      "sv": "Diskriminering på grund av till exempel kön, ursprung, religion, funktionsnedsättning eller ålder."
+      "en": "Sawmills producing timber products and steel industries.",
+      "sv": "Sågverk som producerade trävaror och stålindustrier."
     },
     "opts": [
       {
@@ -33624,32 +33629,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Instrument of Government says public institutions must counteract discrimination based on grounds such as sex, skin colour, national or ethnic origin, language, religion, disability, sexual orientation, age, or other personal circumstances. Participation, children’s rights, and equality are described as things public institutions should promote.",
-      "sv": "Regeringsformen säger att det allmänna ska motverka diskriminering av människor på grunder som kön, hudfärg, nationellt eller etniskt ursprung, språk, religion, funktionshinder, sexuell läggning, ålder eller andra personliga omständigheter. Delaktighet, barns rättigheter och jämlikhet beskrivs som sådant det allmänna ska främja."
+      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
+      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Mänskliga rättigheter gäller alla",
-      "page": 22
+      "chapter": "Sveriges moderna historia",
+      "section": "Industrialisering",
+      "page": 32
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "instrument-of-government",
-      "anti-discrimination",
-      "human-rights",
+      "industrialization",
+      "sawmills",
+      "steel",
+      "modern-history",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q753",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "People participating in society.",
-      "sv": "Människor deltar i samhället."
+      "en": "Mobile phone factories and game studios.",
+      "sv": "Mobiltelefonfabriker och dataspelsstudior."
     },
     "opts": [
       {
@@ -33663,126 +33669,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Instrument of Government says public institutions must counteract discrimination based on grounds such as sex, skin colour, national or ethnic origin, language, religion, disability, sexual orientation, age, or other personal circumstances. Participation, children’s rights, and equality are described as things public institutions should promote.",
-      "sv": "Regeringsformen säger att det allmänna ska motverka diskriminering av människor på grunder som kön, hudfärg, nationellt eller etniskt ursprung, språk, religion, funktionshinder, sexuell läggning, ålder eller andra personliga omständigheter. Delaktighet, barns rättigheter och jämlikhet beskrivs som sådant det allmänna ska främja."
+      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
+      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Mänskliga rättigheter gäller alla",
-      "page": 22
+      "chapter": "Sveriges moderna historia",
+      "section": "Industrialisering",
+      "page": 32
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "instrument-of-government",
-      "anti-discrimination",
-      "human-rights",
+      "industrialization",
+      "sawmills",
+      "steel",
+      "modern-history",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q754",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What must public institutions counteract under the Instrument of Government?",
-      "sv": "Välj rätt alternativ: Vad ska det allmänna motverka enligt regeringsformen?"
+      "en": "Choose the correct option: Which activities were among Sweden's first larger industries in the mid-19th century?",
+      "sv": "Välj rätt alternativ: Vilka verksamheter hörde till Sveriges första större industrier i mitten av 1800-talet?"
     },
     "opts": [
       {
-        "en": "Discrimination based on factors such as sex, origin, religion, disability, or age",
-        "sv": "Diskriminering på grund av till exempel kön, ursprung, religion, funktionsnedsättning eller ålder"
+        "en": "Sawmills producing timber products and steel industries",
+        "sv": "Sågverk som producerade trävaror och stålindustrier"
       },
       {
-        "en": "People participating in society",
-        "sv": "Att människor deltar i samhället"
+        "en": "Mobile phone factories and game studios",
+        "sv": "Mobiltelefonfabriker och dataspelsstudior"
       },
       {
-        "en": "Children having their rights protected",
-        "sv": "Att barn får sina rättigheter skyddade"
+        "en": "Space industry and nuclear power plants",
+        "sv": "Rymdindustri och kärnkraftverk"
       },
       {
-        "en": "All people being treated equally",
-        "sv": "Att alla människor behandlas jämlikt"
+        "en": "Tourist resorts and airports",
+        "sv": "Turistanläggningar och flygplatser"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Instrument of Government says public institutions must counteract discrimination based on grounds such as sex, skin colour, national or ethnic origin, language, religion, disability, sexual orientation, age, or other personal circumstances. Participation, children’s rights, and equality are described as things public institutions should promote.",
-      "sv": "Regeringsformen säger att det allmänna ska motverka diskriminering av människor på grunder som kön, hudfärg, nationellt eller etniskt ursprung, språk, religion, funktionshinder, sexuell läggning, ålder eller andra personliga omständigheter. Delaktighet, barns rättigheter och jämlikhet beskrivs som sådant det allmänna ska främja."
+      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
+      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Mänskliga rättigheter gäller alla",
-      "page": 22
+      "chapter": "Sveriges moderna historia",
+      "section": "Industrialisering",
+      "page": 32
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "instrument-of-government",
-      "anti-discrimination",
-      "human-rights",
+      "industrialization",
+      "sawmills",
+      "steel",
+      "modern-history",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q755",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does Sweden’s consent law mean?",
-      "sv": "Vilket svar stämmer bäst? Vad innebär Sveriges samtyckeslag?"
+      "en": "Which answer best matches? How was Sweden affected by the First World War despite being neutral?",
+      "sv": "Vilket svar stämmer bäst? Hur påverkades Sverige av första världskriget trots att landet var neutralt?"
     },
     "opts": [
       {
-        "en": "A person who wants sex must make sure the other person participates voluntarily",
-        "sv": "Den som vill ha sex måste försäkra sig om att den andra personen deltar frivilligt"
+        "en": "There were shortages of food and important goods, which led to protests",
+        "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester"
       },
       {
-        "en": "Consent is not needed if the people are married",
-        "sv": "Samtycke behövs inte om personerna är gifta"
+        "en": "All Swedish cities were occupied by foreign armies",
+        "sv": "Alla svenska städer ockuperades av främmande arméer"
       },
       {
-        "en": "The law applies only in public places",
-        "sv": "Lagen gäller bara offentliga platser"
+        "en": "The Riksdag was abolished for the whole war",
+        "sv": "Riksdagen avskaffades under hela kriget"
       },
       {
-        "en": "It is enough that no one says no afterwards",
-        "sv": "Det räcker att ingen säger nej efteråt"
+        "en": "Sweden joined a military alliance the same year",
+        "sv": "Sverige gick med i en militärallians samma år"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The consent law means that a person who wants sex with someone must make sure the other person participates voluntarily. This also applies when the people are married, so the options about marriage, public places, or a later no do not describe the law.",
-      "sv": "Samtyckeslagen betyder att den som vill ha sex med en person måste försäkra sig om att den andra personen deltar frivilligt. Det gäller också när personerna är gifta, så alternativen om äktenskap, offentliga platser eller ett nej i efterhand beskriver inte lagen."
+      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
+      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Könsrelaterat våld och förtryck",
-      "page": 23
+      "chapter": "Sveriges moderna historia",
+      "section": "Första världskriget",
+      "page": 34
     },
     "difficulty": "medium",
     "tags": [
-      "consent-law",
-      "gender-related-violence",
-      "rights",
+      "first-world-war",
+      "neutrality",
+      "shortages",
+      "protests",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q756",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "Sweden’s consent law means a person who wants sex must make sure the other person participates voluntarily.",
-      "sv": "Sveriges samtyckeslag som vill ha sex måste försäkra sig om att den andra personen deltar frivilligt."
+      "en": "There were shortages of food and important goods, which led to protests.",
+      "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester."
     },
     "opts": [
       {
@@ -33796,32 +33805,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The consent law means that a person who wants sex with someone must make sure the other person participates voluntarily. This also applies when the people are married, so the options about marriage, public places, or a later no do not describe the law.",
-      "sv": "Samtyckeslagen betyder att den som vill ha sex med en person måste försäkra sig om att den andra personen deltar frivilligt. Det gäller också när personerna är gifta, så alternativen om äktenskap, offentliga platser eller ett nej i efterhand beskriver inte lagen."
+      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
+      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Könsrelaterat våld och förtryck",
-      "page": 23
+      "chapter": "Sveriges moderna historia",
+      "section": "Första världskriget",
+      "page": 34
     },
     "difficulty": "medium",
     "tags": [
-      "consent-law",
-      "gender-related-violence",
-      "rights",
+      "first-world-war",
+      "neutrality",
+      "shortages",
+      "protests",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q757",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "Sweden’s consent law means consent is not needed if the people are married.",
-      "sv": "Sveriges samtyckeslag innebär att samtycke behövs inte om personerna är gifta."
+      "en": "All Swedish cities were occupied by foreign armies.",
+      "sv": "Alla svenska städer ockuperades av främmande arméer."
     },
     "opts": [
       {
@@ -33835,126 +33845,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The consent law means that a person who wants sex with someone must make sure the other person participates voluntarily. This also applies when the people are married, so the options about marriage, public places, or a later no do not describe the law.",
-      "sv": "Samtyckeslagen betyder att den som vill ha sex med en person måste försäkra sig om att den andra personen deltar frivilligt. Det gäller också när personerna är gifta, så alternativen om äktenskap, offentliga platser eller ett nej i efterhand beskriver inte lagen."
+      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
+      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Könsrelaterat våld och förtryck",
-      "page": 23
+      "chapter": "Sveriges moderna historia",
+      "section": "Första världskriget",
+      "page": 34
     },
     "difficulty": "medium",
     "tags": [
-      "consent-law",
-      "gender-related-violence",
-      "rights",
+      "first-world-war",
+      "neutrality",
+      "shortages",
+      "protests",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q758",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does Sweden’s consent law mean?",
-      "sv": "Välj rätt alternativ: Vad innebär Sveriges samtyckeslag?"
+      "en": "Choose the correct option: How was Sweden affected by the First World War despite being neutral?",
+      "sv": "Välj rätt alternativ: Hur påverkades Sverige av första världskriget trots att landet var neutralt?"
     },
     "opts": [
       {
-        "en": "A person who wants sex must make sure the other person participates voluntarily",
-        "sv": "Den som vill ha sex måste försäkra sig om att den andra personen deltar frivilligt"
+        "en": "There were shortages of food and important goods, which led to protests",
+        "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester"
       },
       {
-        "en": "Consent is not needed if the people are married",
-        "sv": "Samtycke behövs inte om personerna är gifta"
+        "en": "All Swedish cities were occupied by foreign armies",
+        "sv": "Alla svenska städer ockuperades av främmande arméer"
       },
       {
-        "en": "The law applies only in public places",
-        "sv": "Lagen gäller bara offentliga platser"
+        "en": "The Riksdag was abolished for the whole war",
+        "sv": "Riksdagen avskaffades under hela kriget"
       },
       {
-        "en": "It is enough that no one says no afterwards",
-        "sv": "Det räcker att ingen säger nej efteråt"
+        "en": "Sweden joined a military alliance the same year",
+        "sv": "Sverige gick med i en militärallians samma år"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The consent law means that a person who wants sex with someone must make sure the other person participates voluntarily. This also applies when the people are married, so the options about marriage, public places, or a later no do not describe the law.",
-      "sv": "Samtyckeslagen betyder att den som vill ha sex med en person måste försäkra sig om att den andra personen deltar frivilligt. Det gäller också när personerna är gifta, så alternativen om äktenskap, offentliga platser eller ett nej i efterhand beskriver inte lagen."
+      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
+      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Könsrelaterat våld och förtryck",
-      "page": 23
+      "chapter": "Sveriges moderna historia",
+      "section": "Första världskriget",
+      "page": 34
     },
     "difficulty": "medium",
     "tags": [
-      "consent-law",
-      "gender-related-violence",
-      "rights",
+      "first-world-war",
+      "neutrality",
+      "shortages",
+      "protests",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q759",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How should public actors use the Convention on the Rights of the Child in decisions affecting children?",
-      "sv": "Vilket svar stämmer bäst? Hur ska offentliga aktörer använda barnkonventionen i beslut som påverkar barn?"
+      "en": "Which answer best matches? What idea was behind the people’s home?",
+      "sv": "Vilket svar stämmer bäst? Vilken idé låg bakom folkhemmet?"
     },
     "opts": [
       {
-        "en": "They should apply the convention and consider the best interests of children",
-        "sv": "De ska tillämpa barnkonventionen och ta hänsyn till barns bästa"
+        "en": "That everyone should be able to feel security and community regardless of background",
+        "sv": "Att alla skulle kunna känna trygghet och gemenskap oavsett bakgrund"
       },
       {
-        "en": "They should ask only adults even when the decision concerns children",
-        "sv": "De ska bara fråga vuxna även när beslutet gäller barn"
+        "en": "That only rural areas should receive public support",
+        "sv": "Att bara landsbygden skulle få samhällsstöd"
       },
       {
-        "en": "They should use the convention only in schools",
-        "sv": "De ska använda barnkonventionen bara i skolor"
+        "en": "That the state should abolish all general elections",
+        "sv": "Att staten skulle avskaffa alla allmänna val"
       },
       {
-        "en": "They should let each municipality choose whether children’s rights apply",
-        "sv": "De ska låta varje kommun välja om barns rättigheter ska gälla"
+        "en": "That Sweden should stop expanding welfare",
+        "sv": "Att Sverige skulle sluta bygga ut välfärden"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies, courts, municipalities, and regions should apply the Convention on the Rights of the Child. In practice, this includes letting children say what they think before decisions that affect them and municipalities considering children’s best interests when planning things such as housing, playgrounds, or schools.",
-      "sv": "Myndigheter, domstolar, kommuner och regioner ska tillämpa barnkonventionen. I praktiken innebär det bland annat att barn ska få säga vad de tycker inför beslut som påverkar dem och att kommuner ska tänka på barns bästa när de planerar sådant som bostäder, lekplatser eller skolor."
+      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
+      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
+      "chapter": "Sveriges moderna historia",
+      "section": "Modernisering och folkhem",
+      "page": 35
     },
     "difficulty": "medium",
     "tags": [
-      "children-rights",
-      "best-interests-of-the-child",
-      "public-decisions",
+      "folkhemmet",
+      "per-albin-hansson",
+      "security",
+      "community",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q760",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "They should apply the convention and consider the best interests of children.",
-      "sv": "De ska tillämpa barnkonventionen och ta hänsyn till barns bästa."
+      "en": "That everyone should be able to feel security and community regardless of background.",
+      "sv": "Alla skulle kunna känna trygghet och gemenskap oavsett bakgrund."
     },
     "opts": [
       {
@@ -33968,32 +33981,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies, courts, municipalities, and regions should apply the Convention on the Rights of the Child. In practice, this includes letting children say what they think before decisions that affect them and municipalities considering children’s best interests when planning things such as housing, playgrounds, or schools.",
-      "sv": "Myndigheter, domstolar, kommuner och regioner ska tillämpa barnkonventionen. I praktiken innebär det bland annat att barn ska få säga vad de tycker inför beslut som påverkar dem och att kommuner ska tänka på barns bästa när de planerar sådant som bostäder, lekplatser eller skolor."
+      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
+      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
+      "chapter": "Sveriges moderna historia",
+      "section": "Modernisering och folkhem",
+      "page": 35
     },
     "difficulty": "medium",
     "tags": [
-      "children-rights",
-      "best-interests-of-the-child",
-      "public-decisions",
+      "folkhemmet",
+      "per-albin-hansson",
+      "security",
+      "community",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q761",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "They should ask only adults even when the decision concerns children.",
-      "sv": "De ska bara fråga vuxna även när beslutet gäller barn."
+      "en": "That only rural areas should receive public support.",
+      "sv": "Bara landsbygden skulle få samhällsstöd."
     },
     "opts": [
       {
@@ -34007,127 +34021,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Agencies, courts, municipalities, and regions should apply the Convention on the Rights of the Child. In practice, this includes letting children say what they think before decisions that affect them and municipalities considering children’s best interests when planning things such as housing, playgrounds, or schools.",
-      "sv": "Myndigheter, domstolar, kommuner och regioner ska tillämpa barnkonventionen. I praktiken innebär det bland annat att barn ska få säga vad de tycker inför beslut som påverkar dem och att kommuner ska tänka på barns bästa när de planerar sådant som bostäder, lekplatser eller skolor."
+      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
+      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
+      "chapter": "Sveriges moderna historia",
+      "section": "Modernisering och folkhem",
+      "page": 35
     },
     "difficulty": "medium",
     "tags": [
-      "children-rights",
-      "best-interests-of-the-child",
-      "public-decisions",
+      "folkhemmet",
+      "per-albin-hansson",
+      "security",
+      "community",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q762",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: How should public actors use the Convention on the Rights of the Child in decisions affecting children?",
-      "sv": "Välj rätt alternativ: Hur ska offentliga aktörer använda barnkonventionen i beslut som påverkar barn?"
+      "en": "Choose the correct option: What idea was behind the people’s home?",
+      "sv": "Välj rätt alternativ: Vilken idé låg bakom folkhemmet?"
     },
     "opts": [
       {
-        "en": "They should apply the convention and consider the best interests of children",
-        "sv": "De ska tillämpa barnkonventionen och ta hänsyn till barns bästa"
+        "en": "That everyone should be able to feel security and community regardless of background",
+        "sv": "Att alla skulle kunna känna trygghet och gemenskap oavsett bakgrund"
       },
       {
-        "en": "They should ask only adults even when the decision concerns children",
-        "sv": "De ska bara fråga vuxna även när beslutet gäller barn"
+        "en": "That only rural areas should receive public support",
+        "sv": "Att bara landsbygden skulle få samhällsstöd"
       },
       {
-        "en": "They should use the convention only in schools",
-        "sv": "De ska använda barnkonventionen bara i skolor"
+        "en": "That the state should abolish all general elections",
+        "sv": "Att staten skulle avskaffa alla allmänna val"
       },
       {
-        "en": "They should let each municipality choose whether children’s rights apply",
-        "sv": "De ska låta varje kommun välja om barns rättigheter ska gälla"
+        "en": "That Sweden should stop expanding welfare",
+        "sv": "Att Sverige skulle sluta bygga ut välfärden"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies, courts, municipalities, and regions should apply the Convention on the Rights of the Child. In practice, this includes letting children say what they think before decisions that affect them and municipalities considering children’s best interests when planning things such as housing, playgrounds, or schools.",
-      "sv": "Myndigheter, domstolar, kommuner och regioner ska tillämpa barnkonventionen. I praktiken innebär det bland annat att barn ska få säga vad de tycker inför beslut som påverkar dem och att kommuner ska tänka på barns bästa när de planerar sådant som bostäder, lekplatser eller skolor."
+      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
+      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Barns rättigheter",
-      "page": 24
+      "chapter": "Sveriges moderna historia",
+      "section": "Modernisering och folkhem",
+      "page": 35
     },
     "difficulty": "medium",
     "tags": [
-      "children-rights",
-      "best-interests-of-the-child",
-      "public-decisions",
+      "folkhemmet",
+      "per-albin-hansson",
+      "security",
+      "community",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q763",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which special right is mentioned for the Sami as an Indigenous people in Swedish Sápmi?",
-      "sv": "Vilket svar stämmer bäst? Vilken särskild rättighet nämns för samer som urfolk i svenska Sápmi?"
+      "en": "Which answer best matches? What helped more women work outside the home during the record years?",
+      "sv": "Vilket svar stämmer bäst? Vad bidrog till att fler kvinnor kunde arbeta utanför hemmet under rekordåren?"
     },
     "opts": [
       {
-        "en": "Special rights connected to land and natural resources",
-        "sv": "Särskilda rättigheter kopplade till mark och naturresurser"
+        "en": "Childcare was expanded",
+        "sv": "Barnomsorgen byggdes ut"
       },
       {
-        "en": "The right to decide all Swedish laws",
-        "sv": "Rätt att bestämma alla svenska lagar"
+        "en": "Women were forbidden to study",
+        "sv": "Kvinnor förbjöds att utbilda sig"
       },
       {
-        "en": "The right to replace the Riksdag",
-        "sv": "Rätt att ersätta riksdagen"
+        "en": "Women's voting rights were removed",
+        "sv": "Rösträtten för kvinnor togs bort"
       },
       {
-        "en": "The right to run all courts",
-        "sv": "Rätt att driva alla domstolar"
+        "en": "All households had to run farms",
+        "sv": "Alla hushåll måste driva jordbruk"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Sami are a recognized Indigenous people with special rights connected to land and natural resources in Swedish Sápmi. Members of Sami villages also have the right to practise reindeer husbandry within specific grazing areas.",
-      "sv": "Samerna är ett erkänt urfolk med särskilda rättigheter kopplade till mark och naturresurser i svenska Sápmi. Medlemmar i samebyar har också rätt att bedriva renskötsel inom särskilda betesområden."
+      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
+      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Nationella minoriteter och urfolk",
-      "page": 25
+      "chapter": "Sveriges moderna historia",
+      "section": "Jämställdhet och kulturförändringar",
+      "page": 37
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "sami",
-      "indigenous-rights",
-      "sapmi",
-      "reindeer-husbandry",
+      "gender-equality",
+      "daycare",
+      "record-years",
+      "women-work",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q764",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "Special rights connected to land and natural resources.",
-      "sv": "Särskilda rättigheter kopplade till mark och naturresurser."
+      "en": "Childcare was expanded.",
+      "sv": "Barnomsorgen byggdes ut."
     },
     "opts": [
       {
@@ -34141,33 +34157,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Sami are a recognized Indigenous people with special rights connected to land and natural resources in Swedish Sápmi. Members of Sami villages also have the right to practise reindeer husbandry within specific grazing areas.",
-      "sv": "Samerna är ett erkänt urfolk med särskilda rättigheter kopplade till mark och naturresurser i svenska Sápmi. Medlemmar i samebyar har också rätt att bedriva renskötsel inom särskilda betesområden."
+      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
+      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Nationella minoriteter och urfolk",
-      "page": 25
+      "chapter": "Sveriges moderna historia",
+      "section": "Jämställdhet och kulturförändringar",
+      "page": 37
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "sami",
-      "indigenous-rights",
-      "sapmi",
-      "reindeer-husbandry",
+      "gender-equality",
+      "daycare",
+      "record-years",
+      "women-work",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q765",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The right to decide all Swedish laws.",
-      "sv": "Rätt att bestämma alla svenska lagar."
+      "en": "Women were forbidden to study.",
+      "sv": "Kvinnor förbjöds att utbilda sig."
     },
     "opts": [
       {
@@ -34181,128 +34197,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Sami are a recognized Indigenous people with special rights connected to land and natural resources in Swedish Sápmi. Members of Sami villages also have the right to practise reindeer husbandry within specific grazing areas.",
-      "sv": "Samerna är ett erkänt urfolk med särskilda rättigheter kopplade till mark och naturresurser i svenska Sápmi. Medlemmar i samebyar har också rätt att bedriva renskötsel inom särskilda betesområden."
+      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
+      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Nationella minoriteter och urfolk",
-      "page": 25
+      "chapter": "Sveriges moderna historia",
+      "section": "Jämställdhet och kulturförändringar",
+      "page": 37
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "sami",
-      "indigenous-rights",
-      "sapmi",
-      "reindeer-husbandry",
+      "gender-equality",
+      "daycare",
+      "record-years",
+      "women-work",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q766",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which special right is mentioned for the Sami as an Indigenous people in Swedish Sápmi?",
-      "sv": "Välj rätt alternativ: Vilken särskild rättighet nämns för samer som urfolk i svenska Sápmi?"
+      "en": "Choose the correct option: What helped more women work outside the home during the record years?",
+      "sv": "Välj rätt alternativ: Vad bidrog till att fler kvinnor kunde arbeta utanför hemmet under rekordåren?"
     },
     "opts": [
       {
-        "en": "Special rights connected to land and natural resources",
-        "sv": "Särskilda rättigheter kopplade till mark och naturresurser"
+        "en": "Childcare was expanded",
+        "sv": "Barnomsorgen byggdes ut"
       },
       {
-        "en": "The right to decide all Swedish laws",
-        "sv": "Rätt att bestämma alla svenska lagar"
+        "en": "Women were forbidden to study",
+        "sv": "Kvinnor förbjöds att utbilda sig"
       },
       {
-        "en": "The right to replace the Riksdag",
-        "sv": "Rätt att ersätta riksdagen"
+        "en": "Women's voting rights were removed",
+        "sv": "Rösträtten för kvinnor togs bort"
       },
       {
-        "en": "The right to run all courts",
-        "sv": "Rätt att driva alla domstolar"
+        "en": "All households had to run farms",
+        "sv": "Alla hushåll måste driva jordbruk"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Sami are a recognized Indigenous people with special rights connected to land and natural resources in Swedish Sápmi. Members of Sami villages also have the right to practise reindeer husbandry within specific grazing areas.",
-      "sv": "Samerna är ett erkänt urfolk med särskilda rättigheter kopplade till mark och naturresurser i svenska Sápmi. Medlemmar i samebyar har också rätt att bedriva renskötsel inom särskilda betesområden."
+      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
+      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Nationella minoriteter och urfolk",
-      "page": 25
+      "chapter": "Sveriges moderna historia",
+      "section": "Jämställdhet och kulturförändringar",
+      "page": 37
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "sami",
-      "indigenous-rights",
-      "sapmi",
-      "reindeer-husbandry",
+      "gender-equality",
+      "daycare",
+      "record-years",
+      "women-work",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q767",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why does Sweden have specific laws for people with disabilities?",
-      "sv": "Vilket svar stämmer bäst? Varför finns särskilda lagar för personer med funktionsnedsättning i Sverige?"
+      "en": "Which answer best matches? Why did lifelong learning become more important as the information society emerged?",
+      "sv": "Vilket svar stämmer bäst? Varför blev livslångt lärande viktigare när informationssamhället växte fram?"
     },
     "opts": [
       {
-        "en": "To protect against discrimination and make equal participation in society possible",
-        "sv": "För att skydda mot diskriminering och göra jämlikt deltagande i samhället möjligt"
+        "en": "Knowledge quickly became outdated as technology developed faster",
+        "sv": "Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare"
       },
       {
-        "en": "To keep people with disabilities out of working life and education",
-        "sv": "För att personer med funktionsnedsättning ska hållas utanför arbetsliv och utbildning"
+        "en": "All education ended after compulsory school",
+        "sv": "All utbildning avslutades efter grundskolan"
       },
       {
-        "en": "So the Discrimination Act does not apply to disability",
-        "sv": "För att diskrimineringslagen inte ska gälla funktionsnedsättning"
+        "en": "Digital technology left work and studies unchanged",
+        "sv": "Digital teknik gjorde arbete och studier oförändrade"
       },
       {
-        "en": "So only municipalities may decide whether rights apply",
-        "sv": "För att bara kommuner ska få bestämma om rättigheter gäller"
+        "en": "Adults lost the right to study",
+        "sv": "Vuxna förlorade rätten att studera"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "People with disabilities can face barriers or risk discrimination. Sweden therefore has laws that protect against discrimination and laws intended to make it possible to participate in society on equal terms.",
-      "sv": "Personer med funktionsnedsättning kan möta hinder eller riskera diskriminering. Därför finns lagar som skyddar mot diskriminering och lagar som ska ge möjlighet att delta i samhället på jämlika villkor."
+      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
+      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Personer med funktionsnedsättning",
-      "page": 26
+      "chapter": "Sveriges moderna historia",
+      "section": "Informationssamhället och globalisering",
+      "page": 37
     },
     "difficulty": "medium",
     "tags": [
-      "disability-rights",
-      "anti-discrimination",
-      "equal-participation",
+      "information-society",
+      "lifelong-learning",
+      "adult-education",
+      "technology",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q768",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "One reason is to protect against discrimination and make equal participation in society possible.",
-      "sv": "En anledning är att skydda mot diskriminering och göra jämlikt deltagande i samhället möjligt."
+      "en": "One reason is knowledge quickly became outdated as technology developed faster.",
+      "sv": "En anledning är att Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare."
     },
     "opts": [
       {
@@ -34316,32 +34333,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "People with disabilities can face barriers or risk discrimination. Sweden therefore has laws that protect against discrimination and laws intended to make it possible to participate in society on equal terms.",
-      "sv": "Personer med funktionsnedsättning kan möta hinder eller riskera diskriminering. Därför finns lagar som skyddar mot diskriminering och lagar som ska ge möjlighet att delta i samhället på jämlika villkor."
+      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
+      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Personer med funktionsnedsättning",
-      "page": 26
+      "chapter": "Sveriges moderna historia",
+      "section": "Informationssamhället och globalisering",
+      "page": 37
     },
     "difficulty": "medium",
     "tags": [
-      "disability-rights",
-      "anti-discrimination",
-      "equal-participation",
+      "information-society",
+      "lifelong-learning",
+      "adult-education",
+      "technology",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q769",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "One reason is to keep people with disabilities out of working life and education.",
-      "sv": "En anledning är att personer med funktionsnedsättning ska hållas utanför arbetsliv och utbildning."
+      "en": "One reason is all education ended after compulsory school.",
+      "sv": "En anledning är all utbildning avslutades efter grundskolan."
     },
     "opts": [
       {
@@ -34355,67 +34373,69 @@
     ],
     "answer": 1,
     "why": {
-      "en": "People with disabilities can face barriers or risk discrimination. Sweden therefore has laws that protect against discrimination and laws intended to make it possible to participate in society on equal terms.",
-      "sv": "Personer med funktionsnedsättning kan möta hinder eller riskera diskriminering. Därför finns lagar som skyddar mot diskriminering och lagar som ska ge möjlighet att delta i samhället på jämlika villkor."
+      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
+      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Personer med funktionsnedsättning",
-      "page": 26
+      "chapter": "Sveriges moderna historia",
+      "section": "Informationssamhället och globalisering",
+      "page": 37
     },
     "difficulty": "medium",
     "tags": [
-      "disability-rights",
-      "anti-discrimination",
-      "equal-participation",
+      "information-society",
+      "lifelong-learning",
+      "adult-education",
+      "technology",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q770",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
+    "chapterId": 10,
+    "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Why does Sweden have specific laws for people with disabilities?",
-      "sv": "Välj rätt alternativ: Varför finns särskilda lagar för personer med funktionsnedsättning i Sverige?"
+      "en": "Choose the correct option: Why did lifelong learning become more important as the information society emerged?",
+      "sv": "Välj rätt alternativ: Varför blev livslångt lärande viktigare när informationssamhället växte fram?"
     },
     "opts": [
       {
-        "en": "To protect against discrimination and make equal participation in society possible",
-        "sv": "För att skydda mot diskriminering och göra jämlikt deltagande i samhället möjligt"
+        "en": "Knowledge quickly became outdated as technology developed faster",
+        "sv": "Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare"
       },
       {
-        "en": "To keep people with disabilities out of working life and education",
-        "sv": "För att personer med funktionsnedsättning ska hållas utanför arbetsliv och utbildning"
+        "en": "All education ended after compulsory school",
+        "sv": "All utbildning avslutades efter grundskolan"
       },
       {
-        "en": "So the Discrimination Act does not apply to disability",
-        "sv": "För att diskrimineringslagen inte ska gälla funktionsnedsättning"
+        "en": "Digital technology left work and studies unchanged",
+        "sv": "Digital teknik gjorde arbete och studier oförändrade"
       },
       {
-        "en": "So only municipalities may decide whether rights apply",
-        "sv": "För att bara kommuner ska få bestämma om rättigheter gäller"
+        "en": "Adults lost the right to study",
+        "sv": "Vuxna förlorade rätten att studera"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "People with disabilities can face barriers or risk discrimination. Sweden therefore has laws that protect against discrimination and laws intended to make it possible to participate in society on equal terms.",
-      "sv": "Personer med funktionsnedsättning kan möta hinder eller riskera diskriminering. Därför finns lagar som skyddar mot diskriminering och lagar som ska ge möjlighet att delta i samhället på jämlika villkor."
+      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
+      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "Personer med funktionsnedsättning",
-      "page": 26
+      "chapter": "Sveriges moderna historia",
+      "section": "Informationssamhället och globalisering",
+      "page": 37
     },
     "difficulty": "medium",
     "tags": [
-      "disability-rights",
-      "anti-discrimination",
-      "equal-participation",
+      "information-society",
+      "lifelong-learning",
+      "adult-education",
+      "technology",
       "published-variant",
       "judgement"
     ]
@@ -34512,7 +34532,7 @@
       "en": "Human rights, gender equality, children's rights, minority rights, and discrimination.",
       "sv": "Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering."
     },
-    "questionCount": 80
+    "questionCount": 55
   },
   {
     "id": 8,
@@ -34551,7 +34571,7 @@
       "en": "From agricultural society to industrial society, democratization, the people's home, and globalization.",
       "sv": "Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering."
     },
-    "questionCount": 50
+    "questionCount": 75
   },
   {
     "id": 11,
