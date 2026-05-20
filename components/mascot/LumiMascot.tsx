@@ -1,26 +1,29 @@
-import { Circle, Ellipse, G, Path, Svg } from 'react-native-svg';
-import type { SvgProps } from 'react-native-svg';
+import { Circle, Ellipse, G, Path, Svg } from "react-native-svg";
+import type { SvgProps } from "react-native-svg";
 
-import { colors } from '../../lib/theme';
-import type { MascotExpression } from './DalaMascot';
+import { colors } from "../../lib/theme";
+import type { MascotExpression } from "./DalaMascot";
 
-export interface LumiMascotProps extends Omit<SvgProps, 'height' | 'viewBox' | 'width'> {
+export interface LumiMascotProps extends Omit<
+  SvgProps,
+  "height" | "viewBox" | "width"
+> {
   accessibilityLabel?: string;
   expression?: MascotExpression;
   size?: number;
 }
 
 const expressionLabels: Record<MascotExpression, string> = {
-  idle: 'Lumi mascot idle',
-  happy: 'Lumi mascot happy',
-  oops: 'Lumi mascot oops',
-  thinking: 'Lumi mascot thinking',
-  celebrate: 'Lumi mascot celebrate',
+  idle: "Lumi mascot idle",
+  happy: "Lumi mascot happy",
+  oops: "Lumi mascot oops",
+  thinking: "Lumi mascot thinking",
+  celebrate: "Lumi mascot celebrate",
 };
 
 export function LumiMascot({
   accessibilityLabel,
-  expression = 'idle',
+  expression = "idle",
   size = 96,
   ...svgProps
 }: LumiMascotProps) {
@@ -36,7 +39,12 @@ export function LumiMascot({
       {...svgProps}
     >
       <G id="shadow" fill={colors.text} opacity={0.12}>
-        <Ellipse cx={64} cy={expression === 'celebrate' ? 114 : 112} rx={31} ry={7} />
+        <Ellipse
+          cx={64}
+          cy={expression === "celebrate" ? 114 : 112}
+          rx={31}
+          ry={7}
+        />
       </G>
       <G
         id="body"
@@ -49,7 +57,10 @@ export function LumiMascot({
           d="M43 31c0-7 6-13 13-13h16c7 0 13 6 13 13v56c0 9-7 16-16 16H59c-9 0-16-7-16-16V31Z"
           fill={colors.teal}
         />
-        <Path d="M52 38h24v38c0 7-5 12-12 12s-12-5-12-12V38Z" fill={colors.badgeBlueBg} />
+        <Path
+          d="M52 38h24v38c0 7-5 12-12 12s-12-5-12-12V38Z"
+          fill={colors.badgeBlueBg}
+        />
         <Path d="M54 18h20l5 13H49l5-13Z" fill={colors.surfaceWarm} />
         <Path d="M53 101l11 12 11-12H53Z" fill={colors.pink} />
       </G>
@@ -65,16 +76,16 @@ export function LumiMascot({
         <Circle cx={80} cy={86} fill={colors.surfaceWarm} r={4} />
       </G>
       {renderFace(expression)}
-      {expression === 'happy' ? renderHappyAccent() : null}
-      {expression === 'oops' ? renderOopsAccent() : null}
-      {expression === 'thinking' ? renderThinkingAccent() : null}
-      {expression === 'celebrate' ? renderCelebrateAccent() : null}
+      {expression === "happy" ? renderHappyAccent() : null}
+      {expression === "oops" ? renderOopsAccent() : null}
+      {expression === "thinking" ? renderThinkingAccent() : null}
+      {expression === "celebrate" ? renderCelebrateAccent() : null}
     </Svg>
   );
 }
 
 function renderFace(expression: MascotExpression) {
-  if (expression === 'oops') {
+  if (expression === "oops") {
     return (
       <G id="face" stroke={colors.text} strokeLinecap="round" strokeWidth={4}>
         <Path d="M57 58h.1M71 58h.1" />
@@ -83,7 +94,7 @@ function renderFace(expression: MascotExpression) {
     );
   }
 
-  if (expression === 'thinking') {
+  if (expression === "thinking") {
     return (
       <G id="face" stroke={colors.text} strokeLinecap="round" strokeWidth={4}>
         <Path d="M56 58h.1M70 57h.1" />
@@ -92,10 +103,13 @@ function renderFace(expression: MascotExpression) {
     );
   }
 
-  if (expression === 'happy' || expression === 'celebrate') {
+  if (expression === "happy" || expression === "celebrate") {
     return (
       <G id="face" stroke={colors.text} strokeLinecap="round" strokeWidth={4}>
-        <Path d="M56 57c3 3 6 3 8 0M66 57c3 3 6 3 8 0M57 69c5 7 10 7 15 0" fill="none" />
+        <Path
+          d="M56 57c3 3 6 3 8 0M66 57c3 3 6 3 8 0M57 69c5 7 10 7 15 0"
+          fill="none"
+        />
       </G>
     );
   }
@@ -111,7 +125,12 @@ function renderFace(expression: MascotExpression) {
 function renderHappyAccent() {
   return (
     <G id="expression" strokeLinecap="round" strokeLinejoin="round">
-      <Path d="M30 42l4 7 8-11" fill="none" stroke={colors.success} strokeWidth={4} />
+      <Path
+        d="M30 42l4 7 8-11"
+        fill="none"
+        stroke={colors.success}
+        strokeWidth={4}
+      />
       <Circle
         cx={91}
         cy={45}
@@ -126,7 +145,13 @@ function renderHappyAccent() {
 
 function renderOopsAccent() {
   return (
-    <G id="expression" fill="none" stroke={colors.warning} strokeLinecap="round" strokeWidth={4}>
+    <G
+      id="expression"
+      fill="none"
+      stroke={colors.warning}
+      strokeLinecap="round"
+      strokeWidth={4}
+    >
       <Path d="M34 45c5-5 12-5 17 0M42 39v13" />
     </G>
   );
