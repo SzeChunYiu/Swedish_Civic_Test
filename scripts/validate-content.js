@@ -1722,6 +1722,10 @@ const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
     'chapter route must select copy from settings language',
   ],
   [
+    '<QuestionDisclaimer language={language} />',
+    'chapter route disclaimer must receive settings language',
+  ],
+  [
     'chapterDescription: (chapter) => chapter.descriptionSv',
     'chapter route Swedish copy must use the Swedish chapter description',
   ],
