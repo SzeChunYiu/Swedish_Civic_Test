@@ -47,6 +47,8 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
     /Ta bort annonser .*eng[aå]ngsk[oö]p p[aå] 29 SEK som tar bort annonser/,
     /ads never collect study answers or progress/,
     /annonser samlar aldrig in dina studiesvar eller framsteg/,
+    /requestNonPersonalizedAds\s*=\s*1/,
+    /requestNonPersonalizedAds\s*=\s*0/,
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
