@@ -19,6 +19,12 @@ const { checkAssetManifest, writeAssetManifest } = require('./update-site-asset-
 
 const repoRoot = path.resolve(__dirname, '..');
 const localHeadMetadata = resolveRequiredHeadMetadata();
+const defaultSecurityHeaders = {
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Frame-Options': 'DENY',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
 
 function headMarkup(metadata = localHeadMetadata) {
   return [
@@ -94,11 +100,14 @@ function staleHeadAssets(replacement) {
   return assets;
 }
 
-async function withStaticServer(assets, callback) {
+async function withStaticServer(assets, callback, options = {}) {
   const server = http.createServer((request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
     const body = assets[pathname] ?? assets['/index.html'];
-    response.writeHead(body == null ? 404 : 200, { 'content-type': 'text/plain; charset=utf-8' });
+    response.writeHead(body == null ? 404 : 200, {
+      'content-type': 'text/plain; charset=utf-8',
+      ...(options.includeSecurityHeaders === false ? {} : defaultSecurityHeaders),
+    });
     response.end(body ?? 'not found');
   });
 
