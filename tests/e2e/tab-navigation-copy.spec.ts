@@ -39,10 +39,10 @@ async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await page
-    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
+    .getByLabel(/Byt studiespråk till Engelskt stöd|Set study language to English support/)
     .click();
   await expect(
-    page.getByRole('radio', { name: 'Set question language to English support' }),
+    page.getByRole('radio', { name: 'Set study language to English support' }),
   ).toHaveAttribute('aria-checked', 'true');
 }
 

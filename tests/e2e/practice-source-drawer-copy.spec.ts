@@ -3,16 +3,16 @@ import type { Page } from '@playwright/test';
 
 import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
 
-async function switchQuestionLanguage(page: Page, language: 'sv' | 'en') {
+async function switchStudyLanguage(page: Page, language: 'sv' | 'en') {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
   const label =
     language === 'sv'
-      ? /Byt frågespråk till Svenska|Set question language to Swedish/
-      : /Byt frågespråk till Engelskt stöd|Set question language to English support/;
+      ? /Byt studiespråk till Svenska|Set study language to Swedish/
+      : /Byt studiespråk till Engelskt stöd|Set study language to English support/;
   const selectedLabel =
-    language === 'sv' ? 'Byt frågespråk till Svenska' : 'Set question language to English support';
+    language === 'sv' ? 'Byt studiespråk till Svenska' : 'Set study language to English support';
 
   await page.getByRole('radio', { name: label }).click();
   await expect(page.getByRole('radio', { name: selectedLabel })).toHaveAttribute(
@@ -41,7 +41,7 @@ test('practice source drawer renders natural English close copy and preserves Sw
 
   await page.setViewportSize({ width: 390, height: 844 });
   await markAboutTheTestSeen(page);
-  await switchQuestionLanguage(page, 'en');
+  await switchStudyLanguage(page, 'en');
 
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
@@ -64,7 +64,7 @@ test('practice source drawer renders natural English close copy and preserves Sw
     'false',
   );
 
-  await switchQuestionLanguage(page, 'sv');
+  await switchStudyLanguage(page, 'sv');
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
