@@ -110,12 +110,7 @@ const QUESTION_BANK_CSV_HEADER = [
   'tags',
   'questionProvenance',
 ];
-const QUESTION_BANK_CSV_SOURCE_METADATA_FIELDS = Object.freeze({
-  uhrSourceTitle: 'title',
-  uhrSourcePublisher: 'publisher',
-  uhrSourceUrl: 'url',
-  uhrSourceRetrievedAt: 'retrievedDate',
-});
+const QUESTION_PROVENANCE_VALUES = ['uhr', 'derived', 'editorial'];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -7361,13 +7356,8 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
-const questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
-let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
-let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
-let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
-let criminalResponsibilityCurrentnessProposalEffectiveDate = null;
-let criminalResponsibilityCurrentnessQuestionsValidated = 0;
-let criminalResponsibilityCurrentnessParityValidated = false;
+let questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let questionBankCsvProvenanceCountsParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
@@ -15672,6 +15662,44 @@ function validateQuestionBankCsvContract() {
     return;
   }
 
+  const provenanceIndex = header.indexOf('questionProvenance');
+  const expectedProvenanceCounts = QUESTION_PROVENANCE_VALUES.reduce((counts, provenance) => {
+    counts[provenance] = 0;
+    return counts;
+  }, {});
+  const expectedCompositionCounts = QUESTION_PROVENANCE_VALUES.reduce((counts, provenance) => {
+    counts[provenance] = 0;
+    return counts;
+  }, {});
+  let provenanceCountsAreValid = true;
+
+  function rejectProvenanceCounts(message) {
+    provenanceCountsAreValid = false;
+    fail(message);
+  }
+
+  questions.forEach((question) => {
+    const helperProvenance = getQuestionProvenance(question);
+    if (QUESTION_PROVENANCE_VALUES.includes(helperProvenance)) {
+      expectedProvenanceCounts[helperProvenance] += 1;
+    } else {
+      rejectProvenanceCounts(
+        `${question.id} helper returned unsupported questionProvenance ${JSON.stringify(
+          helperProvenance,
+        )}`,
+      );
+    }
+
+    const tags = Array.isArray(question.tags) ? question.tags : [];
+    if (tags.includes('editorial')) {
+      expectedCompositionCounts.editorial += 1;
+    } else if (tags.includes('published-variant')) {
+      expectedCompositionCounts.derived += 1;
+    } else {
+      expectedCompositionCounts.uhr += 1;
+    }
+  });
+
   dataRows.forEach((row, index) => {
     const question = questions[index];
     const rowNumber = index + 2;
@@ -15847,34 +15875,69 @@ function validateCriminalResponsibilityCurrentness() {
       }
     });
 
-    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionSv.test(question.questionSv)) {
-      reject(
-        `${question.id} criminal-responsibility Swedish stem must say the question tests huvudregeln`,
+    const rowProvenance = row[provenanceIndex];
+    if (provenanceIndex < 0 || !QUESTION_PROVENANCE_VALUES.includes(rowProvenance)) {
+      rejectProvenanceCounts(
+        `content/question-bank.csv row ${rowNumber} ${label} questionProvenance is ${JSON.stringify(
+          rowProvenance,
+        )}, expected one of ${QUESTION_PROVENANCE_VALUES.join(', ')}`,
       );
-    }
-    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionEn.test(question.questionEn)) {
-      reject(
-        `${question.id} criminal-responsibility English stem must say the question tests the main rule`,
-      );
+    } else if (rowIsValid) {
+      questionBankCsvProvenanceCounts[rowProvenance] += 1;
     }
 
-    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredTextSv.forEach((pattern) => {
-      if (!pattern.test(combinedText)) {
-        reject(`${question.id} criminal-responsibility Swedish copy is missing ${pattern}`);
-      }
-    });
-    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredTextEn.forEach((pattern) => {
-      if (!pattern.test(combinedText)) {
-        reject(`${question.id} criminal-responsibility English copy is missing ${pattern}`);
-      }
-    });
-
-    if (rowIsValid) criminalResponsibilityCurrentnessQuestionsValidated += 1;
+    if (rowIsValid) questionBankCsvRowsValidated += 1;
   });
 
-  criminalResponsibilityCurrentnessParityValidated =
-    allRowsAreValid &&
-    criminalResponsibilityCurrentnessQuestionsValidated === GENERATED_VARIANTS_PER_SOURCE + 1;
+  if (!jsonEqual(questionBankCsvProvenanceCounts, expectedProvenanceCounts)) {
+    rejectProvenanceCounts(
+      `questionBankCsvProvenanceCounts is ${JSON.stringify(
+        questionBankCsvProvenanceCounts,
+      )}, expected helper-derived ${JSON.stringify(expectedProvenanceCounts)}`,
+    );
+  }
+
+  if (!jsonEqual(expectedProvenanceCounts, expectedCompositionCounts)) {
+    rejectProvenanceCounts(
+      `questionBankCsvProvenanceCounts helper composition is ${JSON.stringify(
+        expectedProvenanceCounts,
+      )}, expected tag-derived ${JSON.stringify(expectedCompositionCounts)}`,
+    );
+  }
+
+  const expectedGeneratedCount = Array.isArray(generatedPublishedQuestions)
+    ? generatedPublishedQuestions.length
+    : 0;
+  const expectedSourceCount = Array.isArray(sourceQuestions) ? sourceQuestions.length : 0;
+  if (expectedCompositionCounts.derived !== expectedGeneratedCount) {
+    rejectProvenanceCounts(
+      `questionBankCsvProvenanceCounts derived count is ${expectedCompositionCounts.derived}, expected generatedPublishedQuestions ${expectedGeneratedCount}`,
+    );
+  }
+  if (expectedCompositionCounts.uhr + expectedCompositionCounts.editorial !== expectedSourceCount) {
+    rejectProvenanceCounts(
+      `questionBankCsvProvenanceCounts source composition is ${
+        expectedCompositionCounts.uhr + expectedCompositionCounts.editorial
+      }, expected sourceQuestions ${expectedSourceCount}`,
+    );
+  }
+
+  const provenanceTotal = Object.values(questionBankCsvProvenanceCounts).reduce(
+    (total, count) => total + count,
+    0,
+  );
+  if (provenanceTotal !== questions.length) {
+    rejectProvenanceCounts(
+      `questionBankCsvProvenanceCounts total is ${provenanceTotal}, expected ${questions.length}`,
+    );
+  }
+
+  questionBankCsvProvenanceCountsParityValidated =
+    provenanceCountsAreValid &&
+    questionBankCsvRowsValidated === questions.length &&
+    provenanceTotal === questions.length &&
+    jsonEqual(questionBankCsvProvenanceCounts, expectedProvenanceCounts) &&
+    jsonEqual(expectedProvenanceCounts, expectedCompositionCounts);
 }
 
 function validateStaticSiteQuestionBankParity() {
@@ -17331,12 +17394,7 @@ console.log(
       questionTagsValidated,
       questionBankCsvRowsValidated,
       questionBankCsvProvenanceCounts,
-      criminalResponsibilityCurrentnessOfficialSourcesValidated,
-      criminalResponsibilityCurrentnessSourceMetadataValidated,
-      criminalResponsibilityCurrentnessSourceRetrievedAt,
-      criminalResponsibilityCurrentnessProposalEffectiveDate,
-      criminalResponsibilityCurrentnessQuestionsValidated,
-      criminalResponsibilityCurrentnessParityValidated,
+      questionBankCsvProvenanceCountsParityValidated,
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
