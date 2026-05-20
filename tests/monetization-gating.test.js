@@ -134,6 +134,14 @@ test('real ad serving still requires consent after entitlement gating passes', (
       );
       assert.equal(shouldShowAd('home_banner', freeEntitlements, { adServingAllowed: true }), true);
       assert.equal(
+        shouldShowAd('home_banner', freeEntitlements, { adServingAllowed: true }, 'android'),
+        true,
+      );
+      assert.equal(
+        shouldShowAd('home_banner', freeEntitlements, { adServingAllowed: true }, 'ios'),
+        false,
+      );
+      assert.equal(
         shouldShowAd('home_banner', removeAdsEntitlements, { adServingAllowed: true }),
         false,
       );
