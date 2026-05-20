@@ -54,6 +54,20 @@ type InitialAccessibilityState = {
   persistenceWarning: RecoverablePersistenceWarning | null;
 };
 
+function normalizeEasyReadFont(value: unknown): boolean {
+  return value === true;
+}
+
+function normalizeFontSizeStep(value: unknown): FontSizeStep {
+  return value === 0 || value === 1 || value === 2 || value === 3 ? value : 1;
+}
+
+function normalizeAudioPlaybackRate(value: unknown): AudioPlaybackRate {
+  return AUDIO_PLAYBACK_RATES.includes(value as AudioPlaybackRate)
+    ? (value as AudioPlaybackRate)
+    : 1.0;
+}
+
 function readEasyReadFont(): {
   value: boolean;
   persistenceWarning: RecoverablePersistenceWarning | null;
@@ -64,7 +78,7 @@ function readEasyReadFont(): {
     easyReadFontKey,
     () => accessibilityStorage?.getBoolean(easyReadFontKey),
   );
-  return { value: result.value ?? false, persistenceWarning: result.warning };
+  return { value: normalizeEasyReadFont(result.value), persistenceWarning: result.warning };
 }
 
 function readFontSizeStep(): {
@@ -77,11 +91,7 @@ function readFontSizeStep(): {
     fontSizeStepKey,
     () => accessibilityStorage?.getNumber(fontSizeStepKey),
   );
-  const v = result.value;
-  if (v === 0 || v === 1 || v === 2 || v === 3) {
-    return { value: v, persistenceWarning: result.warning };
-  }
-  return { value: 1, persistenceWarning: result.warning };
+  return { value: normalizeFontSizeStep(result.value), persistenceWarning: result.warning };
 }
 
 function readAudioPlaybackRate(): {
@@ -94,11 +104,7 @@ function readAudioPlaybackRate(): {
     audioPlaybackRateKey,
     () => accessibilityStorage?.getNumber(audioPlaybackRateKey),
   );
-  const v = result.value;
-  if (v === 0.5 || v === 0.75 || v === 1.0 || v === 1.25) {
-    return { value: v, persistenceWarning: result.warning };
-  }
-  return { value: 1.0, persistenceWarning: result.warning };
+  return { value: normalizeAudioPlaybackRate(result.value), persistenceWarning: result.warning };
 }
 
 function readInitialAccessibilityState(): InitialAccessibilityState {
@@ -155,16 +161,17 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
   themeMode: initialAccessibilityState.themeMode,
   persistenceWarning: initialAccessibilityState.persistenceWarning,
   setEasyReadFont: (enabled) => {
+    const normalized = normalizeEasyReadFont(enabled);
     const persistenceWarning = writeRecoverably(
       accessibilityStorage,
       accessibilityStorageId,
       easyReadFontKey,
-      enabled,
+      normalized,
     );
-    set({ easyReadFont: enabled, persistenceWarning });
+    set({ easyReadFont: normalized, persistenceWarning });
   },
   setFontSizeStep: (step) => {
-    const clamped: FontSizeStep = step === 0 || step === 1 || step === 2 || step === 3 ? step : 1;
+    const clamped = normalizeFontSizeStep(step);
     const persistenceWarning = writeRecoverably(
       accessibilityStorage,
       accessibilityStorageId,
@@ -174,7 +181,7 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
     set({ fontSizeStep: clamped, persistenceWarning });
   },
   setAudioPlaybackRate: (rate) => {
-    const clamped: AudioPlaybackRate = AUDIO_PLAYBACK_RATES.includes(rate) ? rate : 1.0;
+    const clamped = normalizeAudioPlaybackRate(rate);
     const persistenceWarning = writeRecoverably(
       accessibilityStorage,
       accessibilityStorageId,
@@ -197,6 +204,6 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
 }));
 
 /** Pure selector for the active font scale multiplier. */
-export function fontScaleFor(step: FontSizeStep): number {
-  return FONT_SIZE_MULTIPLIERS[step];
+export function fontScaleFor(step: unknown): number {
+  return FONT_SIZE_MULTIPLIERS[normalizeFontSizeStep(step)];
 }
