@@ -1,8 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { getChromiumLaunchOptions } from './tests/e2e/browserLaunch';
+import { getChromiumLaunchOptions, shouldUseStaticSiteServer } from './tests/e2e/browserLaunch';
 
 const chromiumLaunchOptions = getChromiumLaunchOptions();
+const useStaticSiteServer = shouldUseStaticSiteServer();
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -17,7 +18,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'node tests/e2e/serve-dist-web.cjs',
+    command: useStaticSiteServer
+      ? 'node tests/e2e/serve-static-site.cjs'
+      : 'node tests/e2e/serve-dist-web.cjs',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 10_000,
