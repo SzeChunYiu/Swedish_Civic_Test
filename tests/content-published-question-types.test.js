@@ -18,6 +18,13 @@ const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
+const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
+const councilOfEuropeWorkForEnglishPattern =
+  /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
+const saltsjobadenAgreementStiltedEnglishPattern =
+  /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
+const luciaExplanationRoleScaffoldPattern =
+  /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const generatedIdLiteralPatterns = [
@@ -104,6 +111,12 @@ test('published question types stay answerable by quiz runtime', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -322,6 +335,238 @@ require('./scripts/validate-content.js');
   assert.match(output, /q097 uses literal common-to-do English wording/);
   assert.match(output, /q104 uses literal common-to-do English wording/);
   assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 6, output);
+});
+
+test('May Day source and exports use natural English holiday name', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    mayDayEnglishCalquePattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const bankFindings = [...generatedSiteBank, ...actualSiteBank]
+    .filter((question) => mayDayEnglishCalquePattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const q103 = generatedSiteBank.find((question) => question.id === 'q103');
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q103, 'q103 should be published in the site bank');
+  assert.equal(q103.q.en, 'What is marked on May Day in Sweden?');
+  assert.match(q103.why.en, /^May Day is International Workers’ Day and a public holiday/);
+});
+
+test('May Day English naturalness guard rejects literal First of May wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'What is marked on May Day in Sweden?',
+      'What is marked on First of May in Sweden?',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q103 uses literal First of May English wording/);
+});
+
+test('Council of Europe source and exports use natural promote English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q088GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q088', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q088', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q088', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q088', 'judgement'),
+  ];
+  const q088Ids = ['q088', ...q088GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q088Ids.includes(question.id))
+    .filter((question) => councilOfEuropeWorkForEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q088Ids.includes(question.id))
+    .filter((question) => councilOfEuropeWorkForEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split('\n')
+    .filter((line) => /^"q0?88"|"q50[89]"|"q51[01]"/.test(line))
+    .filter((line) => councilOfEuropeWorkForEnglishPattern.test(line));
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.equal(
+    generatedSiteBank.find((question) => question.id === 'q088')?.q.en,
+    'What does the Council of Europe promote?',
+  );
+  assert.equal(
+    generatedSiteBank.find((question) => question.id === q088GeneratedIds[2])?.q.en,
+    'The Council of Europe promotes only agricultural policy.',
+  );
+});
+
+test('Council of Europe English naturalness guard rejects literal work-for prompts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'What does the Council of Europe promote?',
+        'What does the Council of Europe work for?',
+      )
+      .replace(
+        'The Council of Europe promotes human rights, democracy, and rule-of-law principles.',
+        'The Council of Europe works for human rights, democracy, and rule-of-law principles.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q088 uses literal Council of Europe work-for English wording/);
+  assert.ok(
+    (output.match(/uses literal Council of Europe work-for English wording/g) || []).length >= 5,
+    output,
+  );
+});
+
+test('Saltsjöbaden Agreement source and exports use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q081GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q081', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q081', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q081', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q081', 'judgement'),
+  ];
+  const q081Ids = ['q081', ...q081GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q081Ids.includes(question.id))
+    .filter((question) =>
+      saltsjobadenAgreementStiltedEnglishPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q081Ids.includes(question.id))
+    .filter((question) =>
+      saltsjobadenAgreementStiltedEnglishPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q081Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => saltsjobadenAgreementStiltedEnglishPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q081 = generatedSiteBank.find((question) => question.id === 'q081');
+  const q081True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q081', 'trueStatement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q081, 'q081 should be published in the site bank');
+  assert.equal(q081.q.en, 'What was the 1938 Saltsjöbaden Agreement important for?');
+  assert.equal(
+    q081.why.en,
+    'The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.',
+  );
+  assert.ok(q081True, 'q081 true generated variant should be published');
+  assert.equal(
+    q081True.q.en,
+    'The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.',
+  );
+});
+
+test('Saltsjöbaden Agreement English naturalness guard rejects the old phrasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'What was the 1938 Saltsjöbaden Agreement important for?',
+        'What did the 1938 Saltsjöbaden Agreement become important for?',
+      )
+      .replace(
+        'It was important for cooperation between them',
+        'It became important for cooperation between them',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q081 uses stilted Saltsjöbaden Agreement English wording/,
+  );
 });
 
 test('free-media source prompts ask the civic concept directly in exports', () => {
