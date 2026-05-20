@@ -1319,9 +1319,14 @@ test('web export script is available for local production bundle smoke', () => {
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
+    pkg.scripts['test:web-export-asset-path-hygiene'],
+    'node --test tests/web-export-asset-path-hygiene.test.js',
+  );
+  assert.equal(
     pkg.scripts['release:web-export-smoke'],
     'rm -rf dist-web && npm run build:web:export',
   );
+  assert.match(pkg.scripts.test, /npm run test:web-export-asset-path-hygiene/);
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
   assert.match(workflow, /npm run build:web:export/);
@@ -1372,6 +1377,7 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
+  assert.doesNotMatch(bundle, /__home|Swedish_Civic_Test|node_modules/);
 
   const checkResult = spawnSync(
     process.execPath,
