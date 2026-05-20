@@ -1023,30 +1023,90 @@
     "type": "single_choice",
     "q": {
       "en": "What does democracy mean?",
-      "sv": "Vad betyder demokrati?"
+      "sv": "Vad betyder demokrati?",
+      "zh-Hant": "民主是什麼意思？",
+      "zh-Hans": "民主是什么意思？",
+      "ar": "ماذا تعني الديمقراطية؟",
+      "ckb": "دیموکراسی چی دەگەیەنێت؟",
+      "fa": "دموکراسی به چه معناست؟",
+      "pl": "Co oznacza demokracja?",
+      "so": "Dimuqraadiyaddu maxay ka dhigan tahay?",
+      "ti": "ዲሞክራሲ እንታይ ማለት እዩ?",
+      "tr": "Demokrasi ne anlama gelir?",
+      "uk": "Що означає демократія?"
     },
     "opts": [
       {
         "en": "Rule by the people",
-        "sv": "Folkstyre"
+        "sv": "Folkstyre",
+        "zh-Hant": "人民治理",
+        "zh-Hans": "人民治理",
+        "ar": "حكم الشعب",
+        "ckb": "دەسەڵاتی گەل",
+        "fa": "حکومت مردم",
+        "pl": "Rządy ludu",
+        "so": "Xukunka dadka",
+        "ti": "ምምሕዳር ብህዝቢ",
+        "tr": "Halkın yönetimi",
+        "uk": "Народовладдя"
       },
       {
         "en": "Military rule",
-        "sv": "Militärstyre"
+        "sv": "Militärstyre",
+        "zh-Hant": "軍事統治",
+        "zh-Hans": "军事统治",
+        "ar": "حكم عسكري",
+        "ckb": "دەسەڵاتی سەربازی",
+        "fa": "حکومت نظامی",
+        "pl": "Rządy wojskowe",
+        "so": "Xukun milatari",
+        "ti": "ምምሕዳር ሰራዊት",
+        "tr": "Askerî yönetim",
+        "uk": "Військове правління"
       },
       {
         "en": "Autocracy",
-        "sv": "Envälde"
+        "sv": "Envälde",
+        "zh-Hant": "專制統治",
+        "zh-Hans": "专制统治",
+        "ar": "حكم فردي مطلق",
+        "ckb": "دەسەڵاتی تاکەکەسی",
+        "fa": "خودکامگی",
+        "pl": "Samowładztwo",
+        "so": "Kelitalisnimo",
+        "ti": "ምልክነት ወይ ሓደ ሰብ ዝገዝእ",
+        "tr": "Mutlak yönetim",
+        "uk": "Самодержавство"
       },
       {
         "en": "Rule by companies",
-        "sv": "Företagsstyre"
+        "sv": "Företagsstyre",
+        "zh-Hant": "公司治理",
+        "zh-Hans": "公司治理",
+        "ar": "حكم الشركات",
+        "ckb": "دەسەڵاتی کۆمپانیاکان",
+        "fa": "حکومت شرکت‌ها",
+        "pl": "Rządy firm",
+        "so": "Xukun shirkado",
+        "ti": "ምምሕዳር ብኩባንያታት",
+        "tr": "Şirketlerin yönetimi",
+        "uk": "Правління компаній"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans.",
+      "zh-Hant": "民主是人民治理：權力來自人民，公民可以影響決定。人們應能在多個政治選項之間選擇，掌權者也應能被更換。",
+      "zh-Hans": "民主是人民治理：权力来自人民，公民可以影响决定。人们应能在多个政治选项之间选择，掌权者也应能被更换。",
+      "ar": "تعني الديمقراطية حكم الشعب: فالسلطة تنبع من الشعب ويمكن للمواطنين التأثير في القرارات. ويجب أن يستطيع الناس الاختيار بين بدائل سياسية متعددة وأن يمكن استبدال من يتولى السلطة.",
+      "ckb": "دیموکراسی واتە دەسەڵاتی گەل: دەسەڵات لە خەڵکەوە دێت و هاووڵاتیان دەتوانن کاریگەری لەسەر بڕیارەکان هەبێت. خەڵک دەبێ بتوانن لەنێوان هەڵبژاردە سیاسییە جیاوازەکان هەڵبژێرن و ئەوانەی دەسەڵات دەگرن دەبێ بتوانرێت بگۆڕدرێن.",
+      "fa": "دموکراسی یعنی حکومت مردم: قدرت از مردم سرچشمه می‌گیرد و شهروندان می‌توانند بر تصمیم‌ها اثر بگذارند. مردم باید بتوانند میان چند گزینه سیاسی انتخاب کنند و صاحبان قدرت باید قابل تغییر باشند.",
+      "pl": "Demokracja oznacza rządy ludu: władza pochodzi od ludzi, a obywatele mogą wpływać na decyzje. Ludzie powinni móc wybierać między kilkoma alternatywami politycznymi, a osoby sprawujące władzę powinny móc zostać zastąpione.",
+      "so": "Dimuqraadiyaddu waxay ka dhigan tahay xukunka dadka: awooddu waxay ka timaaddaa dadka, muwaadiniintuna waxay saameyn ku yeelan karaan go’aamada. Dadku waa inay dooran karaan ikhtiyaarro siyaasadeed oo kala duwan, kuwa awoodda hayana waa in la beddeli karaa.",
+      "ti": "ዲሞክራሲ ማለት ህዝቢ ዝመርሖ ምምሕዳር እዩ፤ ስልጣን ካብ ህዝቢ ይመጽእ፣ ዜጋታት ድማ ኣብ ውሳነታት ተጽዕኖ ክገብሩ ይኽእሉ። ሰባት ካብ ብዙሓት ፖለቲካዊ ምርጫታት ክመርጹ እና እቶም ስልጣን ዝሓዙ ክቕየሩ ክኽእሉ ኣለዎም።",
+      "tr": "Demokrasi halkın yönetimi demektir: güç halktan gelir ve vatandaşlar kararları etkileyebilir. İnsanlar birden fazla siyasi seçenek arasında seçim yapabilmeli ve iktidara gelenler değiştirilebilmelidir.",
+      "uk": "Демократія означає народовладдя: влада походить від народу, а громадяни можуть впливати на рішення. Люди мають мати змогу обирати між кількома політичними варіантами, а тих, хто отримує владу, має бути можливо замінити."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1069,30 +1129,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which of the following is part of free elections in a democracy?",
-      "sv": "Vilket av följande ingår i fria val i en demokrati?"
+      "sv": "Vilket av följande ingår i fria val i en demokrati?",
+      "zh-Hant": "以下哪一項屬於民主中的自由選舉？",
+      "zh-Hans": "以下哪一项属于民主中的自由选举？",
+      "ar": "أي مما يلي يدخل في الانتخابات الحرة في الديمقراطية؟",
+      "ckb": "کامەی خوارەوە بەشێکە لە هەڵبژاردنی ئازاد لە دیموکراسیدا؟",
+      "fa": "کدام یک از موارد زیر بخشی از انتخابات آزاد در دموکراسی است؟",
+      "pl": "Który z poniższych elementów należy do wolnych wyborów w demokracji?",
+      "so": "Kuwan soo socda kee baa ka mid ah doorashooyinka xorta ah ee dimuqraadiyadda?",
+      "ti": "ካብዞም ዝስዕቡ ኣብ ዲሞክራሲ ናጻ ምርጫ ዝካተት ኣየናይ እዩ?",
+      "tr": "Aşağıdakilerden hangisi demokraside serbest seçimlerin parçasıdır?",
+      "uk": "Що з наведеного є частиною вільних виборів у демократії?"
     },
     "opts": [
       {
         "en": "Everyone who has the right to vote has one vote each",
-        "sv": "Alla som har rätt att rösta har en röst var"
+        "sv": "Alla som har rätt att rösta har en röst var",
+        "zh-Hant": "每個有投票權的人各有一票",
+        "zh-Hans": "每个有投票权的人各有一票",
+        "ar": "كل من له حق التصويت له صوت واحد",
+        "ckb": "هەر کەسێک مافی دەنگدانی هەیە یەک دەنگی هەیە",
+        "fa": "هر کس حق رأی دارد، یک رأی دارد",
+        "pl": "Każdy uprawniony do głosowania ma po jednym głosie",
+        "so": "Qof kasta oo xaq u leh inuu codeeyo wuxuu leeyahay hal cod",
+        "ti": "ናይ ምርጫ መሰል ዘለዎ ነፍሲ ወከፍ ሰብ ሓደ ድምጺ ኣለዎ",
+        "tr": "Oy verme hakkı olan herkesin birer oyu vardır",
+        "uk": "Кожен, хто має право голосу, має по одному голосу"
       },
       {
         "en": "Only one party may stand for election",
-        "sv": "Bara ett parti får ställa upp"
+        "sv": "Bara ett parti får ställa upp",
+        "zh-Hant": "只有一個政黨可以參選",
+        "zh-Hans": "只有一个政党可以参选",
+        "ar": "يسمح لحزب واحد فقط بالترشح",
+        "ckb": "تەنها یەک پارت دەتوانێت بەشداری بکات",
+        "fa": "فقط یک حزب می‌تواند نامزد شود",
+        "pl": "Tylko jedna partia może startować",
+        "so": "Hal xisbi oo keliya ayaa isu soo taagi kara",
+        "ti": "ሓንቲ ፓርቲ ጥራይ ክትወዳደር ትኽእል",
+        "tr": "Sadece bir parti seçime girebilir",
+        "uk": "Лише одна партія може брати участь у виборах"
       },
       {
         "en": "Voters must publicly show how they vote",
-        "sv": "Väljare måste visa offentligt hur de röstar"
+        "sv": "Väljare måste visa offentligt hur de röstar",
+        "zh-Hant": "選民必須公開展示如何投票",
+        "zh-Hans": "选民必须公开展示如何投票",
+        "ar": "يجب على الناخبين أن يبينوا علنًا كيف يصوتون",
+        "ckb": "دەنگدەران دەبێ بە ئاشکرا پیشان بدەن چۆن دەنگ دەدەن",
+        "fa": "رأی‌دهندگان باید آشکارا نشان دهند چگونه رأی می‌دهند",
+        "pl": "Wyborcy muszą publicznie pokazać, jak głosują",
+        "so": "Codbixiyayaashu waa inay si cad u muujiyaan sida ay u codeeyaan",
+        "ti": "መረጽቲ ከመይ ከምዝመርጹ ብግልጺ ከርእዩ ኣለዎም",
+        "tr": "Seçmenler nasıl oy verdiklerini açıkça göstermek zorundadır",
+        "uk": "Виборці мають публічно показувати, як голосують"
       },
       {
         "en": "The government decides how all votes must be used",
-        "sv": "Regeringen bestämmer hur alla röster ska användas"
+        "sv": "Regeringen bestämmer hur alla röster ska användas",
+        "zh-Hant": "政府決定所有選票如何使用",
+        "zh-Hans": "政府决定所有选票如何使用",
+        "ar": "تقرر الحكومة كيف تستخدم كل الأصوات",
+        "ckb": "حکومەت بڕیار دەدات هەموو دەنگەکان چۆن بەکاربهێنرێن",
+        "fa": "دولت تصمیم می‌گیرد همه رأی‌ها چگونه استفاده شوند",
+        "pl": "Rząd decyduje, jak mają zostać wykorzystane wszystkie głosy",
+        "so": "Dowladdu waxay go’aamisaa sida dhammaan codadka loo isticmaalo",
+        "ti": "መንግስቲ ኩሉ ድምጺ ከመይ ክጥቀመሉ ከምዘለዎ ይውስን",
+        "tr": "Hükümet tüm oyların nasıl kullanılacağına karar verir",
+        "uk": "Уряд вирішує, як використовувати всі голоси"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt.",
+      "zh-Hant": "自由選舉表示每個有投票權的人各有一票。選民應能在沒有威脅或強迫的情況下表達意見，應有多個政黨，而且投票應是秘密的。",
+      "zh-Hans": "自由选举表示每个有投票权的人各有一票。选民应能在没有威胁或强迫的情况下表达意见，应有多个政党，而且投票应是秘密的。",
+      "ar": "تعني الانتخابات الحرة أن كل من له حق التصويت له صوت واحد. وينبغي أن يستطيع الناخبون التعبير عن آرائهم من دون تهديد أو إكراه، وأن توجد عدة أحزاب، وأن يكون التصويت سريًا.",
+      "ckb": "هەڵبژاردنی ئازاد واتە هەر کەسێک مافی دەنگدانی هەیە یەک دەنگی هەیە. دەنگدەران دەبێ بتوانن بێ هەڕەشە و زۆرەملێ بۆچوونیان دەرببڕن، پارتە جیاوازەکان هەبن و دەنگدان نهێنی بێت.",
+      "fa": "انتخابات آزاد یعنی هر فرد دارای حق رأی یک رأی دارد. رأی‌دهندگان باید بتوانند بدون تهدید یا اجبار نظر خود را بیان کنند، چند حزب وجود داشته باشد و رأی‌گیری مخفی باشد.",
+      "pl": "Wolne wybory oznaczają, że każdy uprawniony do głosowania ma po jednym głosie. Wyborcy powinni móc wyrażać poglądy bez gróźb lub przymusu, powinno istnieć kilka partii, a głosowanie powinno być tajne.",
+      "so": "Doorashooyinka xorta ahi waxay ka dhigan yihiin in qof kasta oo xaq u leh inuu codeeyo uu leeyahay hal cod. Codbixiyayaashu waa inay aragtidooda dhiiban karaan cabsi gelin ama khasab la’aan, xisbiyo badan waa inay jiraan, codkuna waa inuu qarsoodi ahaadaa.",
+      "ti": "ናጻ ምርጫ ማለት ናይ ምርጫ መሰል ዘለዎ ነፍሲ ወከፍ ሰብ ሓደ ድምጺ ኣለዎ ማለት እዩ። መረጽቲ ብዘይ ምፍርራሕ ወይ ብዘይ ግዴታ ርእይቶኦም ክገልጹ ክኽእሉ ኣለዎም፣ ብዙሓት ፓርቲታት ክህልዉ ኣለዎም፣ ምርጫውን ምስጢራዊ ክኸውን ኣለዎ።",
+      "tr": "Serbest seçimler, oy verme hakkı olan herkesin birer oyu olması demektir. Seçmenler tehdit veya zorlama olmadan görüşlerini ifade edebilmeli, birden fazla parti olmalı ve oy gizli olmalıdır.",
+      "uk": "Вільні вибори означають, що кожен, хто має право голосу, має по одному голосу. Виборці повинні мати змогу висловлювати свої погляди без погроз чи примусу, має бути кілька партій, а голосування має бути таємним."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1115,30 +1235,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which is a way to influence and participate in society?",
-      "sv": "Vilket är ett sätt att påverka och delta i samhället?"
+      "sv": "Vilket är ett sätt att påverka och delta i samhället?",
+      "zh-Hant": "哪一種方式可以影響並參與社會？",
+      "zh-Hans": "哪一种方式可以影响并参与社会？",
+      "ar": "ما الطريقة التي يمكن بها التأثير والمشاركة في المجتمع؟",
+      "ckb": "کام ڕێگایەکە بۆ کاریگەری کردن و بەشداری لە کۆمەڵگە؟",
+      "fa": "کدام راهی برای اثرگذاری و مشارکت در جامعه است؟",
+      "pl": "Który sposób pozwala wpływać na społeczeństwo i uczestniczyć w nim?",
+      "so": "Kee baa ah hab lagu saameeyo laguna ka qayb qaato bulshada?",
+      "ti": "ኣብ ሕብረተሰብ ተጽዕኖ ምግባርን ምስታፍን ዝከኣል መንገዲ ኣየናይ እዩ?",
+      "tr": "Toplumu etkilemenin ve topluma katılmanın bir yolu hangisidir?",
+      "uk": "Який спосіб дає змогу впливати на суспільство й брати в ньому участь?"
     },
     "opts": [
       {
         "en": "Contact politicians, demonstrate, or sign a petition",
-        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling"
+        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling",
+        "zh-Hant": "聯絡政治人物、示威或簽署請願書",
+        "zh-Hans": "联系政治人物、示威或签署请愿书",
+        "ar": "الاتصال بالسياسيين أو التظاهر أو توقيع عريضة",
+        "ckb": "پەیوەندی کردن بە سیاسەتمەداران، خۆپیشاندان یان واژۆکردنی داواکاری",
+        "fa": "تماس با سیاستمداران، تظاهرات یا امضای دادخواست",
+        "pl": "Kontakt z politykami, demonstracja lub podpisanie petycji",
+        "so": "La xiriir siyaasiyiin, bannaanbax samee ama saxiix codsi",
+        "ti": "ምስ ፖለቲከኛታት ምርኻብ፣ ሰልፊ ምግባር ወይ ፊርማ ምእካብ",
+        "tr": "Siyasetçilerle iletişime geçmek, gösteri yapmak veya imza kampanyası imzalamak",
+        "uk": "Звернутися до політиків, демонструвати або підписати петицію"
       },
       {
         "en": "Ban others from voting in political elections",
-        "sv": "Förbjuda andra från att rösta i politiska val"
+        "sv": "Förbjuda andra från att rösta i politiska val",
+        "zh-Hant": "禁止他人在政治選舉中投票",
+        "zh-Hans": "禁止他人在政治选举中投票",
+        "ar": "منع الآخرين من التصويت في الانتخابات السياسية",
+        "ckb": "قەدەغەکردنی ئەوانی تر لە دەنگدان لە هەڵبژاردنی سیاسی",
+        "fa": "منع دیگران از رأی دادن در انتخابات سیاسی",
+        "pl": "Zakazywanie innym głosowania w wyborach politycznych",
+        "so": "In dadka kale laga mamnuuco inay codeeyaan doorashooyinka siyaasadeed",
+        "ti": "ካልኦት ሰባት ኣብ ፖለቲካዊ ምርጫ ከይመርጹ ምኽልካል",
+        "tr": "Başkalarının siyasi seçimlerde oy vermesini yasaklamak",
+        "uk": "Забороняти іншим голосувати на політичних виборах"
       },
       {
         "en": "Force journalists to write certain opinions",
-        "sv": "Tvinga journalister att skriva vissa åsikter"
+        "sv": "Tvinga journalister att skriva vissa åsikter",
+        "zh-Hant": "強迫記者寫某些意見",
+        "zh-Hans": "强迫记者写某些意见",
+        "ar": "إجبار الصحفيين على كتابة آراء معينة",
+        "ckb": "ناچارکردنی ڕۆژنامەنووسان بە نووسینی بۆچوونی دیاریکراو",
+        "fa": "وادار کردن روزنامه‌نگاران به نوشتن نظرهای خاص",
+        "pl": "Zmuszanie dziennikarzy do pisania określonych opinii",
+        "so": "In saxafiyiinta lagu qasbo inay qoraan fikrado gaar ah",
+        "ti": "ጋዜጠኛታት ውሱናት ርእይቶታት ክጽሕፉ ምግዳድ",
+        "tr": "Gazetecileri belirli görüşleri yazmaya zorlamak",
+        "uk": "Змушувати журналістів писати певні думки"
       },
       {
         "en": "Stop people from talking about politics",
-        "sv": "Stoppa människor från att prata om politik"
+        "sv": "Stoppa människor från att prata om politik",
+        "zh-Hant": "阻止人們談論政治",
+        "zh-Hans": "阻止人们谈论政治",
+        "ar": "منع الناس من الحديث عن السياسة",
+        "ckb": "ڕێگریکردن لە خەڵک بۆ قسەکردن دەربارەی سیاسەت",
+        "fa": "جلوگیری از صحبت مردم درباره سیاست",
+        "pl": "Powstrzymywanie ludzi od rozmów o polityce",
+        "so": "In dadka laga joojiyo inay ka hadlaan siyaasadda",
+        "ti": "ሰባት ብዛዕባ ፖለቲካ ከይዛረቡ ምኽልካል",
+        "tr": "İnsanların siyaset hakkında konuşmasını engellemek",
+        "uk": "Зупиняти людей від розмов про політику"
       }
     ],
     "answer": 0,
     "why": {
       "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
-      "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
+      "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin.",
+      "zh-Hant": "影響並參與社會有多種民主方式，例如聯絡政治人物、示威，以及發起或簽署請願書。其他選項會阻礙人們投票、表達意見或參與民主。",
+      "zh-Hans": "影响并参与社会有多种民主方式，例如联系政治人物、示威，以及发起或签署请愿书。其他选项会阻碍人们投票、表达意见或参与民主。",
+      "ar": "توجد عدة طرق ديمقراطية للتأثير والمشاركة في المجتمع، مثل الاتصال بالسياسيين والتظاهر وبدء عريضة أو توقيعها. أما الخيارات الأخرى فتمنع الناس من التصويت أو التعبير عن الآراء أو المشاركة في الديمقراطية.",
+      "ckb": "چەند ڕێگای دیموکراتی هەیە بۆ کاریگەری کردن و بەشداری لە کۆمەڵگە، وەک پەیوەندی کردن بە سیاسەتمەداران، خۆپیشاندان، و دەستپێکردن یان واژۆکردنی داواکاری. هەڵبژاردەکانی تر ڕێگری لە خەڵک دەکەن بۆ دەنگدان، دەربڕینی بۆچوون یان بەشداری لە دیموکراسیدا.",
+      "fa": "راه‌های دموکراتیک گوناگونی برای اثرگذاری و مشارکت در جامعه وجود دارد، مانند تماس با سیاستمداران، تظاهرات و شروع یا امضای دادخواست. گزینه‌های دیگر مانع رأی دادن، بیان نظر یا مشارکت مردم در دموکراسی می‌شوند.",
+      "pl": "Istnieje kilka demokratycznych sposobów wpływania na społeczeństwo i uczestniczenia w nim, na przykład kontakt z politykami, demonstracje oraz rozpoczęcie lub podpisanie petycji. Pozostałe opcje utrudniałyby ludziom głosowanie, wyrażanie opinii lub udział w demokracji.",
+      "so": "Waxaa jira dhowr hab oo dimuqraadi ah oo lagu saameeyo laguna ka qayb qaato bulshada, tusaale ahaan la xiriir siyaasiyiin, bannaanbax, ama bilaabid ama saxiixid codsi. Xulashooyinka kale waxay dadka ka hor istaagi lahaayeen codeynta, muujinta fikradaha ama ka qayb qaadashada dimuqraadiyadda.",
+      "ti": "ኣብ ሕብረተሰብ ተጽዕኖ ምግባርን ምስታፍን ብዙሓት ዲሞክራሲያዊ መንገድታት ኣለዉ፣ ንኣብነት ምስ ፖለቲከኛታት ምርኻብ፣ ሰልፊ ምግባር፣ ወይ የቕርቦት ወረቐት ምጅማር ወይ ምፍራም። ካልኦት ምርጫታት ሰባት ካብ ምምራጽ፣ ርእይቶ ምግላጽ ወይ ኣብ ዲሞክራሲ ምስታፍ ይኽልክሉ።",
+      "tr": "Toplumu etkilemenin ve topluma katılmanın birkaç demokratik yolu vardır; örneğin siyasetçilerle iletişim kurmak, gösteri yapmak ve imza kampanyası başlatmak veya imzalamak. Diğer seçenekler insanların oy vermesini, görüş belirtmesini veya demokrasiye katılmasını engeller.",
+      "uk": "Є кілька демократичних способів впливати на суспільство й брати в ньому участь, наприклад звертатися до політиків, демонструвати, починати або підписувати петицію. Інші варіанти заважали б людям голосувати, висловлювати думки або брати участь у демократії."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1161,30 +1341,90 @@
     "type": "single_choice",
     "q": {
       "en": "What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?",
-      "sv": "Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
+      "sv": "Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?",
+      "zh-Hant": "法律平等適用於所有人，而且任何人未經公平審判不得被定罪，這叫什麼？",
+      "zh-Hans": "法律平等适用于所有人，而且任何人未经公平审判不得被定罪，这叫什么？",
+      "ar": "ماذا يسمى عندما تطبق القوانين بالتساوي على الجميع ولا يدان أحد من دون محاكمة عادلة؟",
+      "ckb": "کاتێک یاساکان بە یەکسانی بۆ هەمووان کاردەکەن و کەس بێ دادگایی دادپەروەرانە سزادان ناکرێت، ئەمە چی پێدەوترێت؟",
+      "fa": "وقتی قانون‌ها برای همه یکسان اجرا می‌شوند و هیچ‌کس بدون دادرسی عادلانه محکوم نمی‌شود، به آن چه می‌گویند؟",
+      "pl": "Jak nazywa się sytuacja, gdy prawo obowiązuje wszystkich tak samo i nikt nie może zostać skazany bez sprawiedliwego procesu?",
+      "so": "Maxaa la yiraahdaa marka sharciyadu si siman u khuseeyaan qof kasta oo aan qofna la xukumi karin maxkamad cadaalad ah la’aanteed?",
+      "ti": "ሕግታት ንኩሉ ብማዕረ ክትግበሩ እና ሓደ ሰብ ብዘይ ፍትሓዊ ፍርዲ ክፍረድ ከይክእል እንታይ ይበሃል?",
+      "tr": "Yasaların herkese eşit uygulanmasına ve kimsenin adil yargılama olmadan mahkûm edilememesine ne denir?",
+      "uk": "Як називається ситуація, коли закони однаково діють для всіх і нікого не можна засудити без справедливого суду?"
     },
     "opts": [
       {
         "en": "Legal certainty",
-        "sv": "Rättssäkerhet"
+        "sv": "Rättssäkerhet",
+        "zh-Hant": "法律確定性",
+        "zh-Hans": "法律确定性",
+        "ar": "الأمن القانوني",
+        "ckb": "دڵنیایی یاسایی",
+        "fa": "قطعیت حقوقی",
+        "pl": "Pewność prawna",
+        "so": "Hubaal sharci",
+        "ti": "ሕጋዊ ውሕስነት",
+        "tr": "Hukuki güvenlik",
+        "uk": "Правова визначеність"
       },
       {
         "en": "Censorship",
-        "sv": "Censur"
+        "sv": "Censur",
+        "zh-Hant": "審查制度",
+        "zh-Hans": "审查制度",
+        "ar": "رقابة",
+        "ckb": "سانسۆر",
+        "fa": "سانسور",
+        "pl": "Cenzura",
+        "so": "Faafreeb",
+        "ti": "ሳንሱር",
+        "tr": "Sansür",
+        "uk": "Цензура"
       },
       {
         "en": "Segregation",
-        "sv": "Segregation"
+        "sv": "Segregation",
+        "zh-Hant": "隔離",
+        "zh-Hans": "隔离",
+        "ar": "عزل اجتماعي",
+        "ckb": "جیابوونەوە",
+        "fa": "جداسازی",
+        "pl": "Segregacja",
+        "so": "Kala soocid",
+        "ti": "ምፍልላይ",
+        "tr": "Ayrışma",
+        "uk": "Сегрегація"
       },
       {
         "en": "Monarchy",
-        "sv": "Monarki"
+        "sv": "Monarki",
+        "zh-Hant": "君主制",
+        "zh-Hans": "君主制",
+        "ar": "ملكية",
+        "ckb": "پاشایەتی",
+        "fa": "پادشاهی",
+        "pl": "Monarchia",
+        "so": "Boqortooyo",
+        "ti": "ንግስነት",
+        "tr": "Monarşi",
+        "uk": "Монархія"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker.",
+      "zh-Hant": "法律確定性表示法律適用於所有人，任何人不得在沒有公平審判的情況下被定罪。審查制度、隔離和君主制是其他概念。",
+      "zh-Hans": "法律确定性表示法律适用于所有人，任何人不得在没有公平审判的情况下被定罪。审查制度、隔离和君主制是其他概念。",
+      "ar": "الأمن القانوني يعني أن القوانين تطبق على الجميع وأنه لا يجوز إدانة أحد من دون محاكمة عادلة. أما الرقابة والعزل الاجتماعي والملكية فهي أمور أخرى.",
+      "ckb": "دڵنیایی یاسایی واتە یاساکان بۆ هەمووان کاردەکەن و کەس نابێ بێ دادگایی دادپەروەرانە سزادان بکرێت. سانسۆر، جیابوونەوە و پاشایەتی مانای تری هەیە.",
+      "fa": "قطعیت حقوقی یعنی قانون‌ها برای همه اجرا می‌شوند و هیچ‌کس بدون دادرسی عادلانه محکوم نمی‌شود. سانسور، جداسازی و پادشاهی معنی‌های دیگری دارند.",
+      "pl": "Pewność prawna oznacza, że prawo obowiązuje wszystkich i że nikt nie może zostać skazany bez sprawiedliwego procesu. Cenzura, segregacja i monarchia oznaczają coś innego.",
+      "so": "Hubaal sharci waxay ka dhigan tahay in sharciyadu qof kasta khuseeyaan, qofna aan la xukumi karin maxkamad cadaalad ah la’aanteed. Faafreeb, kala soocid iyo boqortooyo waa waxyaabo kale.",
+      "ti": "ሕጋዊ ውሕስነት ማለት ሕግታት ንኩሉ ክትግበሩ እና ሓደ ሰብ ብዘይ ፍትሓዊ ፍርዲ ክፍረድ ዘይክእል ማለት እዩ። ሳንሱር፣ ምፍልላይን ንግስነትን ካልእ ነገር ማለት እዮም።",
+      "tr": "Hukuki güvenlik, yasaların herkes için geçerli olması ve kimsenin adil yargılama olmadan mahkûm edilememesi demektir. Sansür, ayrışma ve monarşi başka şeylerdir.",
+      "uk": "Правова визначеність означає, що закони діють для всіх і нікого не можна засудити без справедливого суду. Цензура, сегрегація і монархія означають інше."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1207,30 +1447,90 @@
     "type": "single_choice",
     "q": {
       "en": "How can a low voter turnout affect democracy?",
-      "sv": "Hur kan ett lågt valdeltagande påverka demokratin?"
+      "sv": "Hur kan ett lågt valdeltagande påverka demokratin?",
+      "zh-Hant": "低投票率會如何影響民主？",
+      "zh-Hans": "低投票率会如何影响民主？",
+      "ar": "كيف يمكن أن يؤثر انخفاض نسبة المشاركة في التصويت على الديمقراطية؟",
+      "ckb": "بەشداری کەم لە هەڵبژاردن چۆن دەتوانێت کاریگەری لەسەر دیموکراسی هەبێت؟",
+      "fa": "مشارکت پایین در انتخابات چگونه می‌تواند بر دموکراسی اثر بگذارد؟",
+      "pl": "Jak niska frekwencja wyborcza może wpłynąć na demokrację?",
+      "so": "Sidee ka qaybgal doorasho oo hooseeya u saameyn karaa dimuqraadiyadda?",
+      "ti": "ዝተሓተ ተሳትፎ መረጽቲ ንዲሞክራሲ ከመይ ክጸልዎ ይኽእል?",
+      "tr": "Düşük seçmen katılımı demokrasiyi nasıl etkileyebilir?",
+      "uk": "Як низька явка виборців може вплинути на демократію?"
     },
     "opts": [
       {
         "en": "People may have fewer opportunities to influence political decisions",
-        "sv": "Människor kan få mindre möjlighet att påverka politiska beslut"
+        "sv": "Människor kan få mindre möjlighet att påverka politiska beslut",
+        "zh-Hant": "人們影響政治決定的機會可能變少",
+        "zh-Hans": "人们影响政治决定的机会可能变少",
+        "ar": "قد تقل فرص الناس في التأثير على القرارات السياسية",
+        "ckb": "خەڵک ڕەنگە دەرفەتی کەمتریان هەبێت بۆ کاریگەری لەسەر بڕیارە سیاسییەکان",
+        "fa": "مردم ممکن است فرصت کمتری برای اثرگذاری بر تصمیم‌های سیاسی داشته باشند",
+        "pl": "Ludzie mogą mieć mniejsze możliwości wpływania na decyzje polityczne",
+        "so": "Dadku waxay yeelan karaan fursado yar oo ay ku saameeyaan go’aamada siyaasadeed",
+        "ti": "ሰባት ኣብ ፖለቲካዊ ውሳነታት ተጽዕኖ ንምግባር ዝተነከየ ዕድል ክህልዎም ይኽእል",
+        "tr": "İnsanların siyasi kararları etkileme olanağı azalabilir",
+        "uk": "Люди можуть мати менше можливостей впливати на політичні рішення"
       },
       {
         "en": "All voters get two votes each in the next election",
-        "sv": "Alla väljare får två röster var i nästa val"
+        "sv": "Alla väljare får två röster var i nästa val",
+        "zh-Hant": "所有選民在下次選舉各有兩票",
+        "zh-Hans": "所有选民在下次选举各有两票",
+        "ar": "يحصل كل الناخبين على صوتين في الانتخابات التالية",
+        "ckb": "هەموو دەنگدەران لە هەڵبژاردنی داهاتوودا دوو دەنگیان دەبێت",
+        "fa": "همه رأی‌دهندگان در انتخابات بعدی دو رأی خواهند داشت",
+        "pl": "Wszyscy wyborcy dostają po dwa głosy w następnych wyborach",
+        "so": "Dhammaan codbixiyayaashu waxay helayaan labo cod doorashada xigta",
+        "ti": "ኩሎም መረጽቲ ኣብ ምርጫ ዝቕጽል ክልተ ድምጺ ይረኽቡ",
+        "tr": "Tüm seçmenler sonraki seçimde ikişer oy alır",
+        "uk": "Усі виборці отримують по два голоси на наступних виборах"
       },
       {
         "en": "The courts take over the Riksdag's tasks",
-        "sv": "Domstolarna tar över riksdagens uppgifter"
+        "sv": "Domstolarna tar över riksdagens uppgifter",
+        "zh-Hant": "法院接管議會的任務",
+        "zh-Hans": "法院接管议会的任务",
+        "ar": "تتولى المحاكم مهام البرلمان",
+        "ckb": "دادگاکان ئەرکەکانی پەرلەمان وەردەگرن",
+        "fa": "دادگاه‌ها وظایف ریکسداگ را بر عهده می‌گیرند",
+        "pl": "Sądy przejmują zadania parlamentu",
+        "so": "Maxkamaduhu waxay la wareegaan hawlaha baarlamaanka",
+        "ti": "ቤት ፍርድታት ስራሕ ፓርላማ ይወስዱ",
+        "tr": "Mahkemeler Riksdag’ın görevlerini devralır",
+        "uk": "Суди перебирають завдання Риксдагу"
       },
       {
         "en": "Society automatically becomes more integrated",
-        "sv": "Samhället blir automatiskt mer integrerat"
+        "sv": "Samhället blir automatiskt mer integrerat",
+        "zh-Hant": "社會自動變得更融合",
+        "zh-Hans": "社会自动变得更融合",
+        "ar": "يصبح المجتمع أكثر اندماجًا تلقائيًا",
+        "ckb": "کۆمەڵگە بە شێوەیەکی خۆکارانە زیاتر تێکەڵ دەبێت",
+        "fa": "جامعه به طور خودکار یکپارچه‌تر می‌شود",
+        "pl": "Społeczeństwo automatycznie staje się bardziej zintegrowane",
+        "so": "Bulshadu si toos ah ayay u noqotaa mid isdhexgal badan",
+        "ti": "ሕብረተሰብ ብራሱ ዝያዳ ይተሓዋወስ",
+        "tr": "Toplum kendiliğinden daha bütünleşmiş olur",
+        "uk": "Суспільство автоматично стає більш інтегрованим"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Low voter turnout can leave people with fewer opportunities to influence political decisions in everyday life. It can also widen differences between groups in society; the other options describe effects that do not follow from low voter turnout.",
-      "sv": "Ett lågt valdeltagande kan göra det svårare för människor att påverka politiska beslut i sin vardag. Det kan också öka skillnaderna mellan grupper i samhället; de andra alternativen beskriver följder som inte följer av lågt valdeltagande."
+      "sv": "Ett lågt valdeltagande kan göra det svårare för människor att påverka politiska beslut i sin vardag. Det kan också öka skillnaderna mellan grupper i samhället; de andra alternativen beskriver följder som inte följer av lågt valdeltagande.",
+      "zh-Hant": "低投票率會使人們更難在日常生活中影響政治決定，也可能加大社會群體之間的差異。其他選項不是低投票率的結果。",
+      "zh-Hans": "低投票率会使人们更难在日常生活中影响政治决定，也可能加大社会群体之间的差异。其他选项不是低投票率的结果。",
+      "ar": "قد يجعل انخفاض المشاركة في التصويت من الصعب على الناس التأثير في القرارات السياسية في حياتهم اليومية. وقد يزيد أيضًا الفروق بين المجموعات في المجتمع. الخيارات الأخرى لا تترتب على انخفاض المشاركة.",
+      "ckb": "بەشداری کەم لە هەڵبژاردن دەتوانێت کاریگەری خەڵک لەسەر بڕیارە سیاسییەکانی ژیانی ڕۆژانە قورس‌تر بکات. هەروەها دەتوانێت جیاوازی نێوان گرووپەکانی کۆمەڵگە زیاد بکات. هەڵبژاردەکانی تر ئەنجامی بەشداری کەم نین.",
+      "fa": "مشارکت پایین در انتخابات می‌تواند اثرگذاری مردم بر تصمیم‌های سیاسی در زندگی روزمره را دشوارتر کند. همچنین می‌تواند تفاوت میان گروه‌های جامعه را افزایش دهد. گزینه‌های دیگر نتیجه مشارکت پایین نیستند.",
+      "pl": "Niska frekwencja może utrudnić ludziom wpływanie na decyzje polityczne w codziennym życiu. Może też zwiększać różnice między grupami w społeczeństwie. Pozostałe opcje nie wynikają z niskiej frekwencji.",
+      "so": "Ka qaybgalka hoose ee doorashadu wuxuu adkayn karaa in dadku saameeyaan go’aamada siyaasadeed ee nolol maalmeedkooda. Waxa kale oo uu kordhin karaa kala duwanaanshaha u dhexeeya kooxaha bulshada. Xulashooyinka kale kama dhashaan ka qaybgal hoose.",
+      "ti": "ዝተሓተ ተሳትፎ መረጽቲ ሰባት ኣብ ዕለታዊ ህይወቶም ፖለቲካዊ ውሳነታት ንምጽላው ዝያዳ ከጸግሞም ይኽእል። ኣብ መንጎ ጉጅለታት ሕብረተሰብ ፍልልይ እውን ክውስኽ ይኽእል። ካልኦት ምርጫታት ካብዚ ኣይመጹን።",
+      "tr": "Düşük seçmen katılımı, insanların günlük yaşamlarında siyasi kararları etkilemesini zorlaştırabilir. Toplumdaki gruplar arasındaki farkları da artırabilir. Diğer seçenekler düşük katılımın sonucu değildir.",
+      "uk": "Низька явка може ускладнити людям вплив на політичні рішення у повсякденному житті. Вона також може збільшувати відмінності між групами в суспільстві. Інші варіанти не є наслідками низької явки."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1253,30 +1553,90 @@
     "type": "single_choice",
     "q": {
       "en": "How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
-      "sv": "Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?"
+      "sv": "Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?",
+      "zh-Hant": "在瑞典的議會代表民主中，公民如何選出國會議員？",
+      "zh-Hans": "在瑞典的议会代表民主中，公民如何选出国会议员？",
+      "ar": "كيف يختار المواطنون أعضاء البرلمان في ديمقراطية السويد البرلمانية التمثيلية؟",
+      "ckb": "هاووڵاتیان لە دیموکراسی نوێنەرایەتی پەرلەمانی سویددا چۆن ئەندامانی ڕیکسداگ هەڵدەبژێرن؟",
+      "fa": "در دموکراسی نمایندگی پارلمانی سوئد، شهروندان چگونه اعضای ریکسداگ را انتخاب می‌کنند؟",
+      "pl": "Jak obywatele wybierają członków Riksdagu w szwedzkiej demokracji parlamentarnej przedstawicielskiej?",
+      "so": "Muwaadiniintu sidee bay u doortaan xubnaha Riksdag-ka ee dimuqraadiyadda wakiillada baarlamaaniga ah ee Iswiidhan?",
+      "ti": "ዜጋታት ኣብ ናይ ሽወደን ፓርላማዊ ተወካሊ ዲሞክራሲ ኣባላት ሪክስዳግ ከመይ ይመርጹ?",
+      "tr": "Vatandaşlar İsveç’in parlamenter temsili demokrasisinde Riksdag üyelerini nasıl seçer?",
+      "uk": "Як громадяни обирають членів Риксдагу в парламентській представницькій демократії Швеції?"
     },
     "opts": [
       {
         "en": "By voting in general elections",
-        "sv": "Genom att rösta i allmänna val"
+        "sv": "Genom att rösta i allmänna val",
+        "zh-Hant": "透過普選投票",
+        "zh-Hans": "通过普选投票",
+        "ar": "بالتصويت في انتخابات عامة",
+        "ckb": "بە دەنگدان لە هەڵبژاردنی گشتی",
+        "fa": "با رأی دادن در انتخابات عمومی",
+        "pl": "Głosując w wyborach powszechnych",
+        "so": "Iyagoo ka codeeya doorashooyinka guud",
+        "ti": "ብምምራጽ ኣብ ሓፈሻዊ ምርጫ",
+        "tr": "Genel seçimlerde oy vererek",
+        "uk": "Голосуванням на загальних виборах"
       },
       {
         "en": "The courts elect all members of the Riksdag",
-        "sv": "Domstolarna väljer alla riksdagsledamöter"
+        "sv": "Domstolarna väljer alla riksdagsledamöter",
+        "zh-Hant": "法院選出所有國會議員",
+        "zh-Hans": "法院选出所有国会议员",
+        "ar": "تنتخب المحاكم كل أعضاء البرلمان",
+        "ckb": "دادگاکان هەموو ئەندامانی ڕیکسداگ هەڵدەبژێرن",
+        "fa": "دادگاه‌ها همه اعضای ریکسداگ را انتخاب می‌کنند",
+        "pl": "Sądy wybierają wszystkich członków Riksdagu",
+        "so": "Maxkamaduhu waxay doortaan dhammaan xubnaha Riksdag-ka",
+        "ti": "ቤት ፍርድታት ኩሎም ኣባላት ሪክስዳግ ይመርጹ",
+        "tr": "Mahkemeler tüm Riksdag üyelerini seçer",
+        "uk": "Суди обирають усіх членів Риксдагу"
       },
       {
         "en": "The king alone decides over the Riksdag",
-        "sv": "Kungen bestämmer ensam över riksdagen"
+        "sv": "Kungen bestämmer ensam över riksdagen",
+        "zh-Hant": "國王單獨決定國會",
+        "zh-Hans": "国王单独决定国会",
+        "ar": "يقرر الملك وحده بشأن البرلمان",
+        "ckb": "پاشا بە تەنها بڕیار لەسەر ڕیکسداگ دەدات",
+        "fa": "پادشاه به تنهایی درباره ریکسداگ تصمیم می‌گیرد",
+        "pl": "Król sam decyduje o Riksdagu",
+        "so": "Boqorku keligiis ayuu ka taliyaa Riksdag-ka",
+        "ti": "ንጉስ በይኑ ብዛዕባ ሪክስዳግ ይውስን",
+        "tr": "Kral Riksdag hakkında tek başına karar verir",
+        "uk": "Король сам вирішує щодо Риксдагу"
       },
       {
         "en": "Government agencies vote the government into office",
-        "sv": "Myndigheter röstar fram regeringen"
+        "sv": "Myndigheter röstar fram regeringen",
+        "zh-Hant": "政府機關投票選出政府",
+        "zh-Hans": "政府机关投票选出政府",
+        "ar": "تصوت السلطات الحكومية لاختيار الحكومة",
+        "ckb": "دامەزراوە حکومییەکان دەنگ دەدەن بۆ هەڵبژاردنی حکومەت",
+        "fa": "سازمان‌های دولتی دولت را با رأی انتخاب می‌کنند",
+        "pl": "Urzędy państwowe wybierają rząd w głosowaniu",
+        "so": "Hay’adaha dowladdu waxay cod ku doortaan dowladda",
+        "ti": "ትካላት መንግስቲ መንግስቲ ብድምጺ ይመርጹ",
+        "tr": "Kamu kurumları hükümeti oylayarak seçer",
+        "uk": "Державні органи голосуванням обирають уряд"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden is a parliamentary representative democracy: citizens elect members of the Riksdag by voting in general elections. The Riksdag then decides on laws and the state budget, so the courts, the king, and government agencies do not choose its members.",
-      "sv": "Sverige är en parlamentarisk representativ demokrati: medborgarna väljer riksdagsledamöter genom att rösta i allmänna val. Riksdagen fattar sedan beslut om lagar och statens budget, så varken domstolarna, kungen eller myndigheter väljer ledamöterna."
+      "sv": "Sverige är en parlamentarisk representativ demokrati: medborgarna väljer riksdagsledamöter genom att rösta i allmänna val. Riksdagen fattar sedan beslut om lagar och statens budget, så varken domstolarna, kungen eller myndigheter väljer ledamöterna.",
+      "zh-Hant": "瑞典是議會代表民主：公民透過普選投票選出國會議員。之後國會決定法律和國家預算，因此法院、國王或政府機關並不選出議員。",
+      "zh-Hans": "瑞典是议会代表民主：公民通过普选投票选出国会议员。之后国会决定法律和国家预算，因此法院、国王或政府机关并不选出议员。",
+      "ar": "السويد ديمقراطية برلمانية تمثيلية: يختار المواطنون أعضاء البرلمان بالتصويت في انتخابات عامة. ثم يقرر البرلمان القوانين وميزانية الدولة، لذلك لا تختار المحاكم أو الملك أو السلطات الحكومية الأعضاء.",
+      "ckb": "سوید دیموکراسی نوێنەرایەتی پەرلەمانییە: هاووڵاتیان بە دەنگدان لە هەڵبژاردنی گشتی ئەندامانی ڕیکسداگ هەڵدەبژێرن. پاشان ڕیکسداگ یاساکان و بودجەی دەوڵەت دیاری دەکات، بۆیە دادگاکان، پاشا یان دامەزراوە حکومییەکان ئەندامان هەڵنابژێرن.",
+      "fa": "سوئد یک دموکراسی نمایندگی پارلمانی است: شهروندان با رأی دادن در انتخابات عمومی اعضای ریکسداگ را انتخاب می‌کنند. سپس ریکسداگ درباره قانون‌ها و بودجه دولت تصمیم می‌گیرد، بنابراین دادگاه‌ها، پادشاه یا سازمان‌های دولتی اعضا را انتخاب نمی‌کنند.",
+      "pl": "Szwecja jest parlamentarną demokracją przedstawicielską: obywatele wybierają członków Riksdagu, głosując w wyborach powszechnych. Riksdag decyduje potem o ustawach i budżecie państwa, więc sądy, król ani urzędy nie wybierają posłów.",
+      "so": "Iswiidhan waa dimuqraadiyad wakiillo baarlamaani ah: muwaadiniintu waxay xubnaha Riksdag-ka ku doortaan codbixin doorashooyin guud. Riksdag-ku markaas wuxuu go’aamiyaa sharciyada iyo miisaaniyadda dowladda, sidaa darteed maxkamadaha, boqorka ama hay’adaha dowladdu ma doortaan xubnaha.",
+      "ti": "ሽወደን ፓርላማዊ ተወካሊ ዲሞክራሲ እያ፤ ዜጋታት ኣባላት ሪክስዳግ ብሓፈሻዊ ምርጫ ይመርጹ። ድሕሪኡ ሪክስዳግ ሕግታትን ባጀት መንግስትን ይውስን፣ ስለዚ ቤት ፍርድታት፣ ንጉስ ወይ ትካላት መንግስቲ ኣባላት ኣይመርጹን።",
+      "tr": "İsveç parlamenter temsili bir demokrasidir: vatandaşlar Riksdag üyelerini genel seçimlerde oy vererek seçer. Riksdag daha sonra yasalar ve devlet bütçesi hakkında karar verir; bu yüzden mahkemeler, kral veya kamu kurumları üyeleri seçmez.",
+      "uk": "Швеція є парламентською представницькою демократією: громадяни обирають членів Риксдагу голосуванням на загальних виборах. Потім Риксдаг ухвалює закони й державний бюджет, тому суди, король або державні органи не обирають депутатів."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1299,30 +1659,90 @@
     "type": "single_choice",
     "q": {
       "en": "How many members does the Riksdag have?",
-      "sv": "Hur många ledamöter har riksdagen?"
+      "sv": "Hur många ledamöter har riksdagen?",
+      "zh-Hant": "瑞典國會有多少名議員？",
+      "zh-Hans": "瑞典国会有多少名议员？",
+      "ar": "كم عدد أعضاء البرلمان السويدي؟",
+      "ckb": "ڕیکسداگی سوید چەند ئەندامی هەیە؟",
+      "fa": "ریکسداگ چند عضو دارد؟",
+      "pl": "Ilu członków ma Riksdag?",
+      "so": "Immisa xubnood ayuu Riksdag-ku leeyahay?",
+      "ti": "ሪክስዳግ ክንደይ ኣባላት ኣለዎ?",
+      "tr": "Riksdag’ın kaç üyesi vardır?",
+      "uk": "Скільки членів має Риксдаг?"
     },
     "opts": [
       {
         "en": "21",
-        "sv": "21"
+        "sv": "21",
+        "zh-Hant": "21",
+        "zh-Hans": "21",
+        "ar": "21",
+        "ckb": "٢١",
+        "fa": "۲۱",
+        "pl": "21",
+        "so": "21",
+        "ti": "21",
+        "tr": "21",
+        "uk": "21"
       },
       {
         "en": "290",
-        "sv": "290"
+        "sv": "290",
+        "zh-Hant": "290",
+        "zh-Hans": "290",
+        "ar": "290",
+        "ckb": "٢٩٠",
+        "fa": "۲۹۰",
+        "pl": "290",
+        "so": "290",
+        "ti": "290",
+        "tr": "290",
+        "uk": "290"
       },
       {
         "en": "349",
-        "sv": "349"
+        "sv": "349",
+        "zh-Hant": "349",
+        "zh-Hans": "349",
+        "ar": "349",
+        "ckb": "٣٤٩",
+        "fa": "۳۴۹",
+        "pl": "349",
+        "so": "349",
+        "ti": "349",
+        "tr": "349",
+        "uk": "349"
       },
       {
         "en": "1,600",
-        "sv": "1 600"
+        "sv": "1 600",
+        "zh-Hant": "1,600",
+        "zh-Hans": "1,600",
+        "ar": "1600",
+        "ckb": "١٦٠٠",
+        "fa": "۱۶۰۰",
+        "pl": "1600",
+        "so": "1,600",
+        "ti": "1,600",
+        "tr": "1600",
+        "uk": "1600"
       }
     ],
     "answer": 2,
     "why": {
       "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen.",
+      "zh-Hant": "瑞典國會有 349 名議員，他們每四年選出一次。21、290 和 1,600 不是國會議員的人數。",
+      "zh-Hans": "瑞典国会有 349 名议员，他们每四年选出一次。21、290 和 1,600 不是国会议员的人数。",
+      "ar": "يتكون البرلمان السويدي من 349 عضوًا، ويتم انتخابهم كل أربع سنوات. الأعداد 21 و290 و1600 ليست عدد أعضاء البرلمان.",
+      "ckb": "ڕیکسداگ ٣٤٩ ئەندامی هەیە و هەر چوار ساڵ جارێک هەڵدەبژێردرێن. ژمارەکانی ٢١، ٢٩٠ و ١٦٠٠ ژمارەی ئەندامانی ڕیکسداگ نین.",
+      "fa": "ریکسداگ ۳۴۹ عضو دارد و آن‌ها هر چهار سال انتخاب می‌شوند. عددهای ۲۱، ۲۹۰ و ۱۶۰۰ شمار اعضای ریکسداگ نیستند.",
+      "pl": "Riksdag ma 349 członków, wybieranych co cztery lata. Liczby 21, 290 i 1600 nie oznaczają liczby członków Riksdagu.",
+      "so": "Riksdag-ku wuxuu leeyahay 349 xubnood, waxaana la doortaa afartii sano mar. Tirooyinka 21, 290 iyo 1,600 ma aha tirada xubnaha Riksdag-ka.",
+      "ti": "ሪክስዳግ 349 ኣባላት ኣለዎ፣ እቶም ኣባላት ድማ ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት ይምረጹ። 21፣ 290 እና 1,600 ቁጽሪ ኣባላት ሪክስዳግ ኣይኮኑን።",
+      "tr": "Riksdag’ın 349 üyesi vardır ve üyeler dört yılda bir seçilir. 21, 290 ve 1600 sayıları Riksdag üye sayısı değildir.",
+      "uk": "Риксдаг має 349 членів, яких обирають кожні чотири роки. Числа 21, 290 і 1600 не є кількістю членів Риксдагу."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1345,30 +1765,90 @@
     "type": "single_choice",
     "q": {
       "en": "Who chooses the prime minister?",
-      "sv": "Vem väljer statsministern?"
+      "sv": "Vem väljer statsministern?",
+      "zh-Hant": "誰選出首相？",
+      "zh-Hans": "谁选出首相？",
+      "ar": "من يختار رئيس الوزراء؟",
+      "ckb": "کێ سەرۆک وەزیران هەڵدەبژێرێت؟",
+      "fa": "چه کسی نخست‌وزیر را انتخاب می‌کند؟",
+      "pl": "Kto wybiera premiera?",
+      "so": "Yaa doorta ra’iisul wasaaraha?",
+      "ti": "መን ንቀዳማይ ሚኒስተር ይመርጽ?",
+      "tr": "Başbakanı kim seçer?",
+      "uk": "Хто обирає прем’єр-міністра?"
     },
     "opts": [
       {
         "en": "The Riksdag",
-        "sv": "Riksdagen"
+        "sv": "Riksdagen",
+        "zh-Hant": "國會",
+        "zh-Hans": "国会",
+        "ar": "البرلمان",
+        "ckb": "ڕیکسداگ",
+        "fa": "ریکسداگ",
+        "pl": "Riksdag",
+        "so": "Riksdag-ka",
+        "ti": "ሪክስዳግ",
+        "tr": "Riksdag",
+        "uk": "Риксдаг"
       },
       {
         "en": "The king alone",
-        "sv": "Kungen ensam"
+        "sv": "Kungen ensam",
+        "zh-Hant": "只有國王",
+        "zh-Hans": "只有国王",
+        "ar": "الملك وحده",
+        "ckb": "تەنها پاشا",
+        "fa": "تنها پادشاه",
+        "pl": "Sam król",
+        "so": "Boqorka oo keliya",
+        "ti": "ንጉስ በይኑ",
+        "tr": "Sadece kral",
+        "uk": "Лише король"
       },
       {
         "en": "The Swedish Police Authority",
-        "sv": "Polismyndigheten"
+        "sv": "Polismyndigheten",
+        "zh-Hant": "瑞典警察局",
+        "zh-Hans": "瑞典警察局",
+        "ar": "سلطة الشرطة السويدية",
+        "ckb": "پۆلیسی سوید",
+        "fa": "اداره پلیس سوئد",
+        "pl": "Szwedzka Policja",
+        "so": "Hay’adda Booliska Iswiidhan",
+        "ti": "በዓል መዚ ፖሊስ ሽወደን",
+        "tr": "İsveç Polis Kurumu",
+        "uk": "Поліція Швеції"
       },
       {
         "en": "The regional council",
-        "sv": "Regionfullmäktige"
+        "sv": "Regionfullmäktige",
+        "zh-Hant": "地區議會",
+        "zh-Hans": "地区议会",
+        "ar": "مجلس الإقليم",
+        "ckb": "ئەنجومەنی هەرێم",
+        "fa": "شورای منطقه",
+        "pl": "Rada regionu",
+        "so": "Golaha gobolka",
+        "ti": "ቤት ምኽሪ ክልል",
+        "tr": "Bölge meclisi",
+        "uk": "Регіональна рада"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The Riksdag chooses the prime minister, who is then tasked with forming a government. The prime minister chooses the ministers; neither the king, the Swedish Police Authority, nor regional councils choose the prime minister.",
-      "sv": "Riksdagen väljer statsministern, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna; varken kungen, Polismyndigheten eller regionfullmäktige väljer statsminister."
+      "sv": "Riksdagen väljer statsministern, som får i uppdrag att bilda regering. Statsministern väljer därefter ministrarna; varken kungen, Polismyndigheten eller regionfullmäktige väljer statsminister.",
+      "zh-Hant": "國會選出首相，首相隨後負責組成政府。首相再選擇各部長；國王、警察局或地區議會都不選首相。",
+      "zh-Hans": "国会选出首相，首相随后负责组成政府。首相再选择各部长；国王、警察局或地区议会都不选首相。",
+      "ar": "يختار البرلمان رئيس الوزراء، ثم يكلف بتشكيل الحكومة. بعد ذلك يختار رئيس الوزراء الوزراء؛ فلا يختار الملك أو الشرطة أو مجلس الإقليم رئيس الوزراء.",
+      "ckb": "ڕیکسداگ سەرۆک وەزیران هەڵدەبژێرێت و ئەو ئەرکی پێدەدرێت حکومەت پێکبهێنێت. پاشان سەرۆک وەزیران وەزیرەکان هەڵدەبژێرێت؛ پاشا، پۆلیس یان ئەنجومەنی هەرێم سەرۆک وەزیران هەڵنابژێرن.",
+      "fa": "ریکسداگ نخست‌وزیر را انتخاب می‌کند و او مأمور تشکیل دولت می‌شود. سپس نخست‌وزیر وزیران را انتخاب می‌کند؛ پادشاه، پلیس یا شورای منطقه نخست‌وزیر را انتخاب نمی‌کنند.",
+      "pl": "Riksdag wybiera premiera, któremu powierza się utworzenie rządu. Następnie premier wybiera ministrów; ani król, ani policja, ani rada regionu nie wybierają premiera.",
+      "so": "Riksdag-ka ayaa doorta ra’iisul wasaaraha, kaas oo markaas loo xilsaaro inuu soo dhiso dowladda. Ra’iisul wasaaraha ayaa dabadeed doorta wasiirrada; boqorka, booliska ama golaha gobolku ma doortaan ra’iisul wasaaraha.",
+      "ti": "ሪክስዳግ ንቀዳማይ ሚኒስተር ይመርጽ፣ ንሱ ድማ መንግስቲ ንምቕማጥ ሓላፍነት ይወሃቦ። ቀዳማይ ሚኒስተር ድማ ሚኒስተራት ይመርጽ፤ ንጉስ፣ ፖሊስ ወይ ቤት ምኽሪ ክልል ቀዳማይ ሚኒስተር ኣይመርጹን።",
+      "tr": "Riksdag başbakanı seçer ve başbakana hükümeti kurma görevi verilir. Başbakan daha sonra bakanları seçer; kral, Polis Kurumu veya bölge meclisi başbakanı seçmez.",
+      "uk": "Риксдаг обирає прем’єр-міністра, якому доручають сформувати уряд. Потім прем’єр-міністр обирає міністрів; ні король, ні поліція, ні регіональна рада не обирають прем’єр-міністра."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1391,30 +1871,90 @@
     "type": "single_choice",
     "q": {
       "en": "How old must a person be to have the right to vote?",
-      "sv": "Hur gammal måste man ha fyllt för att ha rösträtt?"
+      "sv": "Hur gammal måste man ha fyllt för att ha rösträtt?",
+      "zh-Hant": "要有投票權，必須年滿多少歲？",
+      "zh-Hans": "要有投票权，必须年满多少岁？",
+      "ar": "كم يجب أن يكون عمر الشخص ليكون له حق التصويت؟",
+      "ckb": "کەسێک دەبێ چەند ساڵی تەواو کردبێت بۆ مافی دەنگدان؟",
+      "fa": "برای داشتن حق رأی، فرد باید چند ساله شده باشد؟",
+      "pl": "Ile lat trzeba mieć ukończone, aby mieć prawo głosu?",
+      "so": "Immisa jir ayuu qofku noqonayaa si uu xaq ugu yeesho codeyn?",
+      "ti": "ናይ ምርጫ መሰል ንምርካብ ሰብ ክንደይ ዕድመ ክመልእ ኣለዎ?",
+      "tr": "Oy hakkına sahip olmak için kaç yaşını doldurmak gerekir?",
+      "uk": "Скільки років має виповнитися людині, щоб мати право голосу?"
     },
     "opts": [
       {
         "en": "16 years old",
-        "sv": "16 år"
+        "sv": "16 år",
+        "zh-Hant": "16 歲",
+        "zh-Hans": "16 岁",
+        "ar": "16 سنة",
+        "ckb": "١٦ ساڵ",
+        "fa": "۱۶ سال",
+        "pl": "16 lat",
+        "so": "16 sano",
+        "ti": "16 ዓመት",
+        "tr": "16 yaş",
+        "uk": "16 років"
       },
       {
         "en": "18 years old",
-        "sv": "18 år"
+        "sv": "18 år",
+        "zh-Hant": "18 歲",
+        "zh-Hans": "18 岁",
+        "ar": "18 سنة",
+        "ckb": "١٨ ساڵ",
+        "fa": "۱۸ سال",
+        "pl": "18 lat",
+        "so": "18 sano",
+        "ti": "18 ዓመት",
+        "tr": "18 yaş",
+        "uk": "18 років"
       },
       {
         "en": "20 years old",
-        "sv": "20 år"
+        "sv": "20 år",
+        "zh-Hant": "20 歲",
+        "zh-Hans": "20 岁",
+        "ar": "20 سنة",
+        "ckb": "٢٠ ساڵ",
+        "fa": "۲۰ سال",
+        "pl": "20 lat",
+        "so": "20 sano",
+        "ti": "20 ዓመት",
+        "tr": "20 yaş",
+        "uk": "20 років"
       },
       {
         "en": "25 years old",
-        "sv": "25 år"
+        "sv": "25 år",
+        "zh-Hant": "25 歲",
+        "zh-Hans": "25 岁",
+        "ar": "25 سنة",
+        "ckb": "٢٥ ساڵ",
+        "fa": "۲۵ سال",
+        "pl": "25 lat",
+        "so": "25 sano",
+        "ti": "25 ዓመት",
+        "tr": "25 yaş",
+        "uk": "25 років"
       }
     ],
     "answer": 1,
     "why": {
       "en": "A person must have turned 18 to have the right to vote. That is why 16, 20, and 25 are wrong here; voting in a Riksdag election also requires Swedish citizenship.",
-      "sv": "Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap."
+      "sv": "Man måste ha fyllt 18 år för att ha rösträtt. Därför är 16, 20 och 25 år fel här; i riksdagsval krävs också svenskt medborgarskap.",
+      "zh-Hant": "要有投票權，必須已年滿 18 歲。因此 16、20 和 25 歲在這裡是錯的；在瑞典國會選舉中還需要瑞典公民身份。",
+      "zh-Hans": "要有投票权，必须已年满 18 岁。因此 16、20 和 25 岁在这里是错的；在瑞典国会选举中还需要瑞典公民身份。",
+      "ar": "يجب أن يكون الشخص قد بلغ 18 عامًا ليكون له حق التصويت. لذلك فإن 16 و20 و25 خطأ هنا؛ وفي انتخابات البرلمان السويدي يشترط أيضًا الحصول على الجنسية السويدية.",
+      "ckb": "بۆ مافی دەنگدان، کەسەکە دەبێ ١٨ ساڵی تەواو کردبێت. بۆیە ١٦، ٢٠ و ٢٥ لێرەدا هەڵەن؛ لە هەڵبژاردنی ڕیکسداگدا هاووڵاتیبوونی سویدییش پێویستە.",
+      "fa": "برای داشتن حق رأی، فرد باید ۱۸ ساله شده باشد. بنابراین ۱۶، ۲۰ و ۲۵ در اینجا نادرست هستند؛ در انتخابات ریکسداگ شهروندی سوئد نیز لازم است.",
+      "pl": "Aby mieć prawo głosu, trzeba mieć ukończone 18 lat. Dlatego 16, 20 i 25 lat są tutaj błędne; w wyborach do Riksdagu wymagane jest także obywatelstwo szwedzkie.",
+      "so": "Qofku waa inuu gaaray 18 sano si uu xaq ugu yeesho codeyn. Sidaas awgeed 16, 20 iyo 25 halkan waa khalad; doorashada Riksdag-ka waxaa sidoo kale loo baahan yahay muwaadinimo Iswiidhan.",
+      "ti": "ናይ ምርጫ መሰል ንምርካብ ሰብ 18 ዓመት ክመልእ ኣለዎ። ስለዚ 16፣ 20 እና 25 ኣብዚ ጌጋ እዮም፤ ኣብ ምርጫ ሪክስዳግ ዜግነት ሽወደን እውን የድሊ።",
+      "tr": "Oy hakkına sahip olmak için 18 yaşını doldurmuş olmak gerekir. Bu nedenle 16, 20 ve 25 burada yanlıştır; Riksdag seçimlerinde İsveç vatandaşı olmak da gerekir.",
+      "uk": "Щоб мати право голосу, людині має виповнитися 18 років. Тому 16, 20 і 25 тут неправильні; на виборах до Риксдагу також потрібне шведське громадянство."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1437,30 +1977,90 @@
     "type": "single_choice",
     "q": {
       "en": "What does it mean that referendums in Sweden are advisory?",
-      "sv": "Vad betyder det att folkomröstningar i Sverige är rådgivande?"
+      "sv": "Vad betyder det att folkomröstningar i Sverige är rådgivande?",
+      "zh-Hant": "瑞典的公投是諮詢性的，這是什麼意思？",
+      "zh-Hans": "瑞典的公投是咨询性的，这是什么意思？",
+      "ar": "ماذا يعني أن الاستفتاءات في السويد استشارية؟",
+      "ckb": "ئەوە چی دەگەیەنێت کە ڕاپرسییەکان لە سوید ڕاوێژکارین؟",
+      "fa": "اینکه همه‌پرسی‌ها در سوئد مشورتی هستند یعنی چه؟",
+      "pl": "Co oznacza, że referenda w Szwecji mają charakter doradczy?",
+      "so": "Maxay ka dhigan tahay in aftida Iswiidhan ay tahay talo-bixin?",
+      "ti": "ረፈረንደማት ኣብ ሽወደን ናይ ምኽሪ እዮም ማለት እንታይ ማለት እዩ?",
+      "tr": "İsveç’te referandumların danışma niteliğinde olması ne anlama gelir?",
+      "uk": "Що означає, що референдуми у Швеції є дорадчими?"
     },
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet"
+        "sv": "Politikerna måste inte följa resultatet",
+        "zh-Hant": "政治人物不一定必須遵循結果",
+        "zh-Hans": "政治人物不一定必须遵循结果",
+        "ar": "لا يجب على السياسيين بالضرورة اتباع النتيجة",
+        "ckb": "سیاسەتمەداران پێویست ناکات هەمیشە ئەنجامەکە پەیڕەو بکەن",
+        "fa": "سیاستمداران مجبور نیستند نتیجه را دنبال کنند",
+        "pl": "Politycy nie muszą stosować się do wyniku",
+        "so": "Siyaasiyiintu qasab kuma aha inay raacaan natiijada",
+        "ti": "ፖለቲከኛታት ውጽኢቱ ክኽተሉ ግድን ኣይኮነን",
+        "tr": "Siyasetçiler sonucu takip etmek zorunda değildir",
+        "uk": "Політики не зобов’язані дотримуватися результату"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna måste alltid följa resultatet"
+        "sv": "Politikerna måste alltid följa resultatet",
+        "zh-Hant": "政治人物必須永遠遵循結果",
+        "zh-Hans": "政治人物必须永远遵循结果",
+        "ar": "يجب على السياسيين دائمًا اتباع النتيجة",
+        "ckb": "سیاسەتمەداران دەبێ هەمیشە ئەنجامەکە پەیڕەو بکەن",
+        "fa": "سیاستمداران همیشه باید نتیجه را دنبال کنند",
+        "pl": "Politycy muszą zawsze stosować się do wyniku",
+        "so": "Siyaasiyiintu waa inay had iyo jeer raacaan natiijada",
+        "ti": "ፖለቲከኛታት ውጽኢቱ ምኽታል ምሉእ ግዴታ ኣለዎም",
+        "tr": "Siyasetçiler sonucu her zaman takip etmek zorundadır",
+        "uk": "Політики завжди зобов’язані дотримуватися результату"
       },
       {
         "en": "Referendums may only be held nationally",
-        "sv": "Folkomröstningar får bara hållas på nationell nivå"
+        "sv": "Folkomröstningar får bara hållas på nationell nivå",
+        "zh-Hant": "公投只能在全國層級舉行",
+        "zh-Hans": "公投只能在全国层级举行",
+        "ar": "لا يجوز إجراء الاستفتاءات إلا على المستوى الوطني",
+        "ckb": "ڕاپرسی تەنها لە ئاستی نیشتیمانی ئەنجام دەدرێت",
+        "fa": "همه‌پرسی فقط در سطح ملی می‌تواند برگزار شود",
+        "pl": "Referenda mogą odbywać się tylko na poziomie krajowym",
+        "so": "Aftida waxaa lagu qaban karaa heer qaran oo keliya",
+        "ti": "ረፈረንደም ኣብ ደረጃ ሃገር ጥራይ ክካየድ ይኽእል",
+        "tr": "Referandumlar sadece ulusal düzeyde yapılabilir",
+        "uk": "Референдуми можна проводити лише на національному рівні"
       },
       {
         "en": "They replace regular Riksdag elections",
-        "sv": "De ersätter ordinarie val till riksdagen"
+        "sv": "De ersätter ordinarie val till riksdagen",
+        "zh-Hant": "它們取代正常的國會選舉",
+        "zh-Hans": "它们取代正常的国会选举",
+        "ar": "إنها تستبدل الانتخابات العادية للبرلمان",
+        "ckb": "ئەوان جێگای هەڵبژاردنی ئاسایی ڕیکسداگ دەگرنەوە",
+        "fa": "آن‌ها جای انتخابات عادی ریکسداگ را می‌گیرند",
+        "pl": "Zastępują zwykłe wybory do Riksdagu",
+        "so": "Waxay beddelaan doorashooyinka caadiga ah ee Riksdag-ka",
+        "ti": "እቶም ረፈረንደማት ንመደበኛ ምርጫ ሪክስዳግ ይትክኡ",
+        "tr": "Normal Riksdag seçimlerinin yerini alırlar",
+        "uk": "Вони замінюють звичайні вибори до Риксдагу"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.",
+      "zh-Hant": "公投可以就某個特定問題在全國、地區或市鎮舉行。它們是諮詢性的，所以政治人物不一定必須遵循結果。",
+      "zh-Hans": "公投可以就某个特定问题在全国、地区或市镇举行。它们是咨询性的，所以政治人物不一定必须遵循结果。",
+      "ar": "يمكن إجراء الاستفتاءات حول مسألة معينة على المستوى الوطني أو في إقليم أو بلدية. وهي استشارية، لذلك لا يجب على السياسيين بالضرورة اتباع النتيجة.",
+      "ckb": "ڕاپرسی دەتوانرێت دەربارەی پرسێکی دیاریکراو لە ئاستی نیشتیمانی، هەرێم یان شارەوانی ئەنجام بدرێت. ئەوان ڕاوێژکارین، بۆیە سیاسەتمەداران پێویست ناکات ئەنجامەکە پەیڕەو بکەن.",
+      "fa": "همه‌پرسی می‌تواند درباره یک موضوع مشخص در سطح ملی، منطقه یا کمون برگزار شود. این همه‌پرسی‌ها مشورتی هستند، بنابراین سیاستمداران مجبور نیستند نتیجه را دنبال کنند.",
+      "pl": "Referenda mogą odbywać się w konkretnej sprawie na poziomie krajowym, w regionie lub w gminie. Mają charakter doradczy, więc politycy nie muszą stosować się do wyniku.",
+      "so": "Aftida waxaa lagu qaban karaa arrin gaar ah heer qaran, gobol ama degmo. Waa talo-bixin, sidaa darteed siyaasiyiintu qasab kuma aha inay raacaan natiijada.",
+      "ti": "ረፈረንደማት ብዛዕባ ውሱን ጉዳይ ኣብ ሃገራዊ ደረጃ፣ ኣብ ክልል ወይ ኣብ ምምሕዳር ከባቢ ክካየዱ ይኽእሉ። ናይ ምኽሪ ስለዝኾኑ ፖለቲከኛታት ውጽኢቱ ክኽተሉ ግድን ኣይኮነን።",
+      "tr": "Referandumlar belirli bir konu hakkında ulusal düzeyde, bir bölgede veya bir belediyede yapılabilir. Danışma niteliğindedir; bu yüzden siyasetçiler sonucu takip etmek zorunda değildir.",
+      "uk": "Референдуми можуть проводитися щодо окремого питання на національному рівні, у регіоні або в комуні. Вони є дорадчими, тому політики не зобов’язані дотримуватися результату."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10531,19 +11131,59 @@
     "opts": [
       {
         "en": "Rule by the people",
-        "sv": "Folkstyre"
+        "sv": "Folkstyre",
+        "zh-Hant": "人民治理",
+        "zh-Hans": "人民治理",
+        "ar": "حكم الشعب",
+        "ckb": "دەسەڵاتی گەل",
+        "fa": "حکومت مردم",
+        "pl": "Rządy ludu",
+        "so": "Xukunka dadka",
+        "ti": "ምምሕዳር ብህዝቢ",
+        "tr": "Halkın yönetimi",
+        "uk": "Народовладдя"
       },
       {
         "en": "Military rule",
-        "sv": "Militärstyre"
+        "sv": "Militärstyre",
+        "zh-Hant": "軍事統治",
+        "zh-Hans": "军事统治",
+        "ar": "حكم عسكري",
+        "ckb": "دەسەڵاتی سەربازی",
+        "fa": "حکومت نظامی",
+        "pl": "Rządy wojskowe",
+        "so": "Xukun milatari",
+        "ti": "ምምሕዳር ሰራዊት",
+        "tr": "Askerî yönetim",
+        "uk": "Військове правління"
       },
       {
         "en": "Autocracy",
-        "sv": "Envälde"
+        "sv": "Envälde",
+        "zh-Hant": "專制統治",
+        "zh-Hans": "专制统治",
+        "ar": "حكم فردي مطلق",
+        "ckb": "دەسەڵاتی تاکەکەسی",
+        "fa": "خودکامگی",
+        "pl": "Samowładztwo",
+        "so": "Kelitalisnimo",
+        "ti": "ምልክነት ወይ ሓደ ሰብ ዝገዝእ",
+        "tr": "Mutlak yönetim",
+        "uk": "Самодержавство"
       },
       {
         "en": "Rule by companies",
-        "sv": "Företagsstyre"
+        "sv": "Företagsstyre",
+        "zh-Hant": "公司治理",
+        "zh-Hans": "公司治理",
+        "ar": "حكم الشركات",
+        "ckb": "دەسەڵاتی کۆمپانیاکان",
+        "fa": "حکومت شرکت‌ها",
+        "pl": "Rządy firm",
+        "so": "Xukun shirkado",
+        "ti": "ምምሕዳር ብኩባንያታት",
+        "tr": "Şirketlerin yönetimi",
+        "uk": "Правління компаній"
       }
     ],
     "answer": 0,
@@ -10659,19 +11299,59 @@
     "opts": [
       {
         "en": "Rule by the people",
-        "sv": "Folkstyre"
+        "sv": "Folkstyre",
+        "zh-Hant": "人民治理",
+        "zh-Hans": "人民治理",
+        "ar": "حكم الشعب",
+        "ckb": "دەسەڵاتی گەل",
+        "fa": "حکومت مردم",
+        "pl": "Rządy ludu",
+        "so": "Xukunka dadka",
+        "ti": "ምምሕዳር ብህዝቢ",
+        "tr": "Halkın yönetimi",
+        "uk": "Народовладдя"
       },
       {
         "en": "Military rule",
-        "sv": "Militärstyre"
+        "sv": "Militärstyre",
+        "zh-Hant": "軍事統治",
+        "zh-Hans": "军事统治",
+        "ar": "حكم عسكري",
+        "ckb": "دەسەڵاتی سەربازی",
+        "fa": "حکومت نظامی",
+        "pl": "Rządy wojskowe",
+        "so": "Xukun milatari",
+        "ti": "ምምሕዳር ሰራዊት",
+        "tr": "Askerî yönetim",
+        "uk": "Військове правління"
       },
       {
         "en": "Autocracy",
-        "sv": "Envälde"
+        "sv": "Envälde",
+        "zh-Hant": "專制統治",
+        "zh-Hans": "专制统治",
+        "ar": "حكم فردي مطلق",
+        "ckb": "دەسەڵاتی تاکەکەسی",
+        "fa": "خودکامگی",
+        "pl": "Samowładztwo",
+        "so": "Kelitalisnimo",
+        "ti": "ምልክነት ወይ ሓደ ሰብ ዝገዝእ",
+        "tr": "Mutlak yönetim",
+        "uk": "Самодержавство"
       },
       {
         "en": "Rule by companies",
-        "sv": "Företagsstyre"
+        "sv": "Företagsstyre",
+        "zh-Hant": "公司治理",
+        "zh-Hans": "公司治理",
+        "ar": "حكم الشركات",
+        "ckb": "دەسەڵاتی کۆمپانیاکان",
+        "fa": "حکومت شرکت‌ها",
+        "pl": "Rządy firm",
+        "so": "Xukun shirkado",
+        "ti": "ምምሕዳር ብኩባንያታት",
+        "tr": "Şirketlerin yönetimi",
+        "uk": "Правління компаній"
       }
     ],
     "answer": 0,
@@ -10707,19 +11387,59 @@
     "opts": [
       {
         "en": "Everyone who has the right to vote has one vote each",
-        "sv": "Alla som har rätt att rösta har en röst var"
+        "sv": "Alla som har rätt att rösta har en röst var",
+        "zh-Hant": "每個有投票權的人各有一票",
+        "zh-Hans": "每个有投票权的人各有一票",
+        "ar": "كل من له حق التصويت له صوت واحد",
+        "ckb": "هەر کەسێک مافی دەنگدانی هەیە یەک دەنگی هەیە",
+        "fa": "هر کس حق رأی دارد، یک رأی دارد",
+        "pl": "Każdy uprawniony do głosowania ma po jednym głosie",
+        "so": "Qof kasta oo xaq u leh inuu codeeyo wuxuu leeyahay hal cod",
+        "ti": "ናይ ምርጫ መሰል ዘለዎ ነፍሲ ወከፍ ሰብ ሓደ ድምጺ ኣለዎ",
+        "tr": "Oy verme hakkı olan herkesin birer oyu vardır",
+        "uk": "Кожен, хто має право голосу, має по одному голосу"
       },
       {
         "en": "Only one party may stand for election",
-        "sv": "Bara ett parti får ställa upp"
+        "sv": "Bara ett parti får ställa upp",
+        "zh-Hant": "只有一個政黨可以參選",
+        "zh-Hans": "只有一个政党可以参选",
+        "ar": "يسمح لحزب واحد فقط بالترشح",
+        "ckb": "تەنها یەک پارت دەتوانێت بەشداری بکات",
+        "fa": "فقط یک حزب می‌تواند نامزد شود",
+        "pl": "Tylko jedna partia może startować",
+        "so": "Hal xisbi oo keliya ayaa isu soo taagi kara",
+        "ti": "ሓንቲ ፓርቲ ጥራይ ክትወዳደር ትኽእል",
+        "tr": "Sadece bir parti seçime girebilir",
+        "uk": "Лише одна партія може брати участь у виборах"
       },
       {
         "en": "Voters must publicly show how they vote",
-        "sv": "Väljare måste visa offentligt hur de röstar"
+        "sv": "Väljare måste visa offentligt hur de röstar",
+        "zh-Hant": "選民必須公開展示如何投票",
+        "zh-Hans": "选民必须公开展示如何投票",
+        "ar": "يجب على الناخبين أن يبينوا علنًا كيف يصوتون",
+        "ckb": "دەنگدەران دەبێ بە ئاشکرا پیشان بدەن چۆن دەنگ دەدەن",
+        "fa": "رأی‌دهندگان باید آشکارا نشان دهند چگونه رأی می‌دهند",
+        "pl": "Wyborcy muszą publicznie pokazać, jak głosują",
+        "so": "Codbixiyayaashu waa inay si cad u muujiyaan sida ay u codeeyaan",
+        "ti": "መረጽቲ ከመይ ከምዝመርጹ ብግልጺ ከርእዩ ኣለዎም",
+        "tr": "Seçmenler nasıl oy verdiklerini açıkça göstermek zorundadır",
+        "uk": "Виборці мають публічно показувати, як голосують"
       },
       {
         "en": "The government decides how all votes must be used",
-        "sv": "Regeringen bestämmer hur alla röster ska användas"
+        "sv": "Regeringen bestämmer hur alla röster ska användas",
+        "zh-Hant": "政府決定所有選票如何使用",
+        "zh-Hans": "政府决定所有选票如何使用",
+        "ar": "تقرر الحكومة كيف تستخدم كل الأصوات",
+        "ckb": "حکومەت بڕیار دەدات هەموو دەنگەکان چۆن بەکاربهێنرێن",
+        "fa": "دولت تصمیم می‌گیرد همه رأی‌ها چگونه استفاده شوند",
+        "pl": "Rząd decyduje, jak mają zostać wykorzystane wszystkie głosy",
+        "so": "Dowladdu waxay go’aamisaa sida dhammaan codadka loo isticmaalo",
+        "ti": "መንግስቲ ኩሉ ድምጺ ከመይ ክጥቀመሉ ከምዘለዎ ይውስን",
+        "tr": "Hükümet tüm oyların nasıl kullanılacağına karar verir",
+        "uk": "Уряд вирішує, як використовувати всі голоси"
       }
     ],
     "answer": 0,
@@ -10835,19 +11555,59 @@
     "opts": [
       {
         "en": "Everyone who has the right to vote has one vote each",
-        "sv": "Alla som har rätt att rösta har en röst var"
+        "sv": "Alla som har rätt att rösta har en röst var",
+        "zh-Hant": "每個有投票權的人各有一票",
+        "zh-Hans": "每个有投票权的人各有一票",
+        "ar": "كل من له حق التصويت له صوت واحد",
+        "ckb": "هەر کەسێک مافی دەنگدانی هەیە یەک دەنگی هەیە",
+        "fa": "هر کس حق رأی دارد، یک رأی دارد",
+        "pl": "Każdy uprawniony do głosowania ma po jednym głosie",
+        "so": "Qof kasta oo xaq u leh inuu codeeyo wuxuu leeyahay hal cod",
+        "ti": "ናይ ምርጫ መሰል ዘለዎ ነፍሲ ወከፍ ሰብ ሓደ ድምጺ ኣለዎ",
+        "tr": "Oy verme hakkı olan herkesin birer oyu vardır",
+        "uk": "Кожен, хто має право голосу, має по одному голосу"
       },
       {
         "en": "Only one party may stand for election",
-        "sv": "Bara ett parti får ställa upp"
+        "sv": "Bara ett parti får ställa upp",
+        "zh-Hant": "只有一個政黨可以參選",
+        "zh-Hans": "只有一个政党可以参选",
+        "ar": "يسمح لحزب واحد فقط بالترشح",
+        "ckb": "تەنها یەک پارت دەتوانێت بەشداری بکات",
+        "fa": "فقط یک حزب می‌تواند نامزد شود",
+        "pl": "Tylko jedna partia może startować",
+        "so": "Hal xisbi oo keliya ayaa isu soo taagi kara",
+        "ti": "ሓንቲ ፓርቲ ጥራይ ክትወዳደር ትኽእል",
+        "tr": "Sadece bir parti seçime girebilir",
+        "uk": "Лише одна партія може брати участь у виборах"
       },
       {
         "en": "Voters must publicly show how they vote",
-        "sv": "Väljare måste visa offentligt hur de röstar"
+        "sv": "Väljare måste visa offentligt hur de röstar",
+        "zh-Hant": "選民必須公開展示如何投票",
+        "zh-Hans": "选民必须公开展示如何投票",
+        "ar": "يجب على الناخبين أن يبينوا علنًا كيف يصوتون",
+        "ckb": "دەنگدەران دەبێ بە ئاشکرا پیشان بدەن چۆن دەنگ دەدەن",
+        "fa": "رأی‌دهندگان باید آشکارا نشان دهند چگونه رأی می‌دهند",
+        "pl": "Wyborcy muszą publicznie pokazać, jak głosują",
+        "so": "Codbixiyayaashu waa inay si cad u muujiyaan sida ay u codeeyaan",
+        "ti": "መረጽቲ ከመይ ከምዝመርጹ ብግልጺ ከርእዩ ኣለዎም",
+        "tr": "Seçmenler nasıl oy verdiklerini açıkça göstermek zorundadır",
+        "uk": "Виборці мають публічно показувати, як голосують"
       },
       {
         "en": "The government decides how all votes must be used",
-        "sv": "Regeringen bestämmer hur alla röster ska användas"
+        "sv": "Regeringen bestämmer hur alla röster ska användas",
+        "zh-Hant": "政府決定所有選票如何使用",
+        "zh-Hans": "政府决定所有选票如何使用",
+        "ar": "تقرر الحكومة كيف تستخدم كل الأصوات",
+        "ckb": "حکومەت بڕیار دەدات هەموو دەنگەکان چۆن بەکاربهێنرێن",
+        "fa": "دولت تصمیم می‌گیرد همه رأی‌ها چگونه استفاده شوند",
+        "pl": "Rząd decyduje, jak mają zostać wykorzystane wszystkie głosy",
+        "so": "Dowladdu waxay go’aamisaa sida dhammaan codadka loo isticmaalo",
+        "ti": "መንግስቲ ኩሉ ድምጺ ከመይ ክጥቀመሉ ከምዘለዎ ይውስን",
+        "tr": "Hükümet tüm oyların nasıl kullanılacağına karar verir",
+        "uk": "Уряд вирішує, як використовувати всі голоси"
       }
     ],
     "answer": 0,
@@ -10883,19 +11643,59 @@
     "opts": [
       {
         "en": "Contact politicians, demonstrate, or sign a petition",
-        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling"
+        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling",
+        "zh-Hant": "聯絡政治人物、示威或簽署請願書",
+        "zh-Hans": "联系政治人物、示威或签署请愿书",
+        "ar": "الاتصال بالسياسيين أو التظاهر أو توقيع عريضة",
+        "ckb": "پەیوەندی کردن بە سیاسەتمەداران، خۆپیشاندان یان واژۆکردنی داواکاری",
+        "fa": "تماس با سیاستمداران، تظاهرات یا امضای دادخواست",
+        "pl": "Kontakt z politykami, demonstracja lub podpisanie petycji",
+        "so": "La xiriir siyaasiyiin, bannaanbax samee ama saxiix codsi",
+        "ti": "ምስ ፖለቲከኛታት ምርኻብ፣ ሰልፊ ምግባር ወይ ፊርማ ምእካብ",
+        "tr": "Siyasetçilerle iletişime geçmek, gösteri yapmak veya imza kampanyası imzalamak",
+        "uk": "Звернутися до політиків, демонструвати або підписати петицію"
       },
       {
         "en": "Ban others from voting in political elections",
-        "sv": "Förbjuda andra från att rösta i politiska val"
+        "sv": "Förbjuda andra från att rösta i politiska val",
+        "zh-Hant": "禁止他人在政治選舉中投票",
+        "zh-Hans": "禁止他人在政治选举中投票",
+        "ar": "منع الآخرين من التصويت في الانتخابات السياسية",
+        "ckb": "قەدەغەکردنی ئەوانی تر لە دەنگدان لە هەڵبژاردنی سیاسی",
+        "fa": "منع دیگران از رأی دادن در انتخابات سیاسی",
+        "pl": "Zakazywanie innym głosowania w wyborach politycznych",
+        "so": "In dadka kale laga mamnuuco inay codeeyaan doorashooyinka siyaasadeed",
+        "ti": "ካልኦት ሰባት ኣብ ፖለቲካዊ ምርጫ ከይመርጹ ምኽልካል",
+        "tr": "Başkalarının siyasi seçimlerde oy vermesini yasaklamak",
+        "uk": "Забороняти іншим голосувати на політичних виборах"
       },
       {
         "en": "Force journalists to write certain opinions",
-        "sv": "Tvinga journalister att skriva vissa åsikter"
+        "sv": "Tvinga journalister att skriva vissa åsikter",
+        "zh-Hant": "強迫記者寫某些意見",
+        "zh-Hans": "强迫记者写某些意见",
+        "ar": "إجبار الصحفيين على كتابة آراء معينة",
+        "ckb": "ناچارکردنی ڕۆژنامەنووسان بە نووسینی بۆچوونی دیاریکراو",
+        "fa": "وادار کردن روزنامه‌نگاران به نوشتن نظرهای خاص",
+        "pl": "Zmuszanie dziennikarzy do pisania określonych opinii",
+        "so": "In saxafiyiinta lagu qasbo inay qoraan fikrado gaar ah",
+        "ti": "ጋዜጠኛታት ውሱናት ርእይቶታት ክጽሕፉ ምግዳድ",
+        "tr": "Gazetecileri belirli görüşleri yazmaya zorlamak",
+        "uk": "Змушувати журналістів писати певні думки"
       },
       {
         "en": "Stop people from talking about politics",
-        "sv": "Stoppa människor från att prata om politik"
+        "sv": "Stoppa människor från att prata om politik",
+        "zh-Hant": "阻止人們談論政治",
+        "zh-Hans": "阻止人们谈论政治",
+        "ar": "منع الناس من الحديث عن السياسة",
+        "ckb": "ڕێگریکردن لە خەڵک بۆ قسەکردن دەربارەی سیاسەت",
+        "fa": "جلوگیری از صحبت مردم درباره سیاست",
+        "pl": "Powstrzymywanie ludzi od rozmów o polityce",
+        "so": "In dadka laga joojiyo inay ka hadlaan siyaasadda",
+        "ti": "ሰባት ብዛዕባ ፖለቲካ ከይዛረቡ ምኽልካል",
+        "tr": "İnsanların siyaset hakkında konuşmasını engellemek",
+        "uk": "Зупиняти людей від розмов про політику"
       }
     ],
     "answer": 0,
@@ -11011,19 +11811,59 @@
     "opts": [
       {
         "en": "Contact politicians, demonstrate, or sign a petition",
-        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling"
+        "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling",
+        "zh-Hant": "聯絡政治人物、示威或簽署請願書",
+        "zh-Hans": "联系政治人物、示威或签署请愿书",
+        "ar": "الاتصال بالسياسيين أو التظاهر أو توقيع عريضة",
+        "ckb": "پەیوەندی کردن بە سیاسەتمەداران، خۆپیشاندان یان واژۆکردنی داواکاری",
+        "fa": "تماس با سیاستمداران، تظاهرات یا امضای دادخواست",
+        "pl": "Kontakt z politykami, demonstracja lub podpisanie petycji",
+        "so": "La xiriir siyaasiyiin, bannaanbax samee ama saxiix codsi",
+        "ti": "ምስ ፖለቲከኛታት ምርኻብ፣ ሰልፊ ምግባር ወይ ፊርማ ምእካብ",
+        "tr": "Siyasetçilerle iletişime geçmek, gösteri yapmak veya imza kampanyası imzalamak",
+        "uk": "Звернутися до політиків, демонструвати або підписати петицію"
       },
       {
         "en": "Ban others from voting in political elections",
-        "sv": "Förbjuda andra från att rösta i politiska val"
+        "sv": "Förbjuda andra från att rösta i politiska val",
+        "zh-Hant": "禁止他人在政治選舉中投票",
+        "zh-Hans": "禁止他人在政治选举中投票",
+        "ar": "منع الآخرين من التصويت في الانتخابات السياسية",
+        "ckb": "قەدەغەکردنی ئەوانی تر لە دەنگدان لە هەڵبژاردنی سیاسی",
+        "fa": "منع دیگران از رأی دادن در انتخابات سیاسی",
+        "pl": "Zakazywanie innym głosowania w wyborach politycznych",
+        "so": "In dadka kale laga mamnuuco inay codeeyaan doorashooyinka siyaasadeed",
+        "ti": "ካልኦት ሰባት ኣብ ፖለቲካዊ ምርጫ ከይመርጹ ምኽልካል",
+        "tr": "Başkalarının siyasi seçimlerde oy vermesini yasaklamak",
+        "uk": "Забороняти іншим голосувати на політичних виборах"
       },
       {
         "en": "Force journalists to write certain opinions",
-        "sv": "Tvinga journalister att skriva vissa åsikter"
+        "sv": "Tvinga journalister att skriva vissa åsikter",
+        "zh-Hant": "強迫記者寫某些意見",
+        "zh-Hans": "强迫记者写某些意见",
+        "ar": "إجبار الصحفيين على كتابة آراء معينة",
+        "ckb": "ناچارکردنی ڕۆژنامەنووسان بە نووسینی بۆچوونی دیاریکراو",
+        "fa": "وادار کردن روزنامه‌نگاران به نوشتن نظرهای خاص",
+        "pl": "Zmuszanie dziennikarzy do pisania określonych opinii",
+        "so": "In saxafiyiinta lagu qasbo inay qoraan fikrado gaar ah",
+        "ti": "ጋዜጠኛታት ውሱናት ርእይቶታት ክጽሕፉ ምግዳድ",
+        "tr": "Gazetecileri belirli görüşleri yazmaya zorlamak",
+        "uk": "Змушувати журналістів писати певні думки"
       },
       {
         "en": "Stop people from talking about politics",
-        "sv": "Stoppa människor från att prata om politik"
+        "sv": "Stoppa människor från att prata om politik",
+        "zh-Hant": "阻止人們談論政治",
+        "zh-Hans": "阻止人们谈论政治",
+        "ar": "منع الناس من الحديث عن السياسة",
+        "ckb": "ڕێگریکردن لە خەڵک بۆ قسەکردن دەربارەی سیاسەت",
+        "fa": "جلوگیری از صحبت مردم درباره سیاست",
+        "pl": "Powstrzymywanie ludzi od rozmów o polityce",
+        "so": "In dadka laga joojiyo inay ka hadlaan siyaasadda",
+        "ti": "ሰባት ብዛዕባ ፖለቲካ ከይዛረቡ ምኽልካል",
+        "tr": "İnsanların siyaset hakkında konuşmasını engellemek",
+        "uk": "Зупиняти людей від розмов про політику"
       }
     ],
     "answer": 0,
@@ -11059,19 +11899,59 @@
     "opts": [
       {
         "en": "Legal certainty",
-        "sv": "Rättssäkerhet"
+        "sv": "Rättssäkerhet",
+        "zh-Hant": "法律確定性",
+        "zh-Hans": "法律确定性",
+        "ar": "الأمن القانوني",
+        "ckb": "دڵنیایی یاسایی",
+        "fa": "قطعیت حقوقی",
+        "pl": "Pewność prawna",
+        "so": "Hubaal sharci",
+        "ti": "ሕጋዊ ውሕስነት",
+        "tr": "Hukuki güvenlik",
+        "uk": "Правова визначеність"
       },
       {
         "en": "Censorship",
-        "sv": "Censur"
+        "sv": "Censur",
+        "zh-Hant": "審查制度",
+        "zh-Hans": "审查制度",
+        "ar": "رقابة",
+        "ckb": "سانسۆر",
+        "fa": "سانسور",
+        "pl": "Cenzura",
+        "so": "Faafreeb",
+        "ti": "ሳንሱር",
+        "tr": "Sansür",
+        "uk": "Цензура"
       },
       {
         "en": "Segregation",
-        "sv": "Segregation"
+        "sv": "Segregation",
+        "zh-Hant": "隔離",
+        "zh-Hans": "隔离",
+        "ar": "عزل اجتماعي",
+        "ckb": "جیابوونەوە",
+        "fa": "جداسازی",
+        "pl": "Segregacja",
+        "so": "Kala soocid",
+        "ti": "ምፍልላይ",
+        "tr": "Ayrışma",
+        "uk": "Сегрегація"
       },
       {
         "en": "Monarchy",
-        "sv": "Monarki"
+        "sv": "Monarki",
+        "zh-Hant": "君主制",
+        "zh-Hans": "君主制",
+        "ar": "ملكية",
+        "ckb": "پاشایەتی",
+        "fa": "پادشاهی",
+        "pl": "Monarchia",
+        "so": "Boqortooyo",
+        "ti": "ንግስነት",
+        "tr": "Monarşi",
+        "uk": "Монархія"
       }
     ],
     "answer": 0,
@@ -11187,19 +12067,59 @@
     "opts": [
       {
         "en": "Legal certainty",
-        "sv": "Rättssäkerhet"
+        "sv": "Rättssäkerhet",
+        "zh-Hant": "法律確定性",
+        "zh-Hans": "法律确定性",
+        "ar": "الأمن القانوني",
+        "ckb": "دڵنیایی یاسایی",
+        "fa": "قطعیت حقوقی",
+        "pl": "Pewność prawna",
+        "so": "Hubaal sharci",
+        "ti": "ሕጋዊ ውሕስነት",
+        "tr": "Hukuki güvenlik",
+        "uk": "Правова визначеність"
       },
       {
         "en": "Censorship",
-        "sv": "Censur"
+        "sv": "Censur",
+        "zh-Hant": "審查制度",
+        "zh-Hans": "审查制度",
+        "ar": "رقابة",
+        "ckb": "سانسۆر",
+        "fa": "سانسور",
+        "pl": "Cenzura",
+        "so": "Faafreeb",
+        "ti": "ሳንሱር",
+        "tr": "Sansür",
+        "uk": "Цензура"
       },
       {
         "en": "Segregation",
-        "sv": "Segregation"
+        "sv": "Segregation",
+        "zh-Hant": "隔離",
+        "zh-Hans": "隔离",
+        "ar": "عزل اجتماعي",
+        "ckb": "جیابوونەوە",
+        "fa": "جداسازی",
+        "pl": "Segregacja",
+        "so": "Kala soocid",
+        "ti": "ምፍልላይ",
+        "tr": "Ayrışma",
+        "uk": "Сегрегація"
       },
       {
         "en": "Monarchy",
-        "sv": "Monarki"
+        "sv": "Monarki",
+        "zh-Hant": "君主制",
+        "zh-Hans": "君主制",
+        "ar": "ملكية",
+        "ckb": "پاشایەتی",
+        "fa": "پادشاهی",
+        "pl": "Monarchia",
+        "so": "Boqortooyo",
+        "ti": "ንግስነት",
+        "tr": "Monarşi",
+        "uk": "Монархія"
       }
     ],
     "answer": 0,
@@ -11235,19 +12155,59 @@
     "opts": [
       {
         "en": "People may have fewer opportunities to influence political decisions",
-        "sv": "Människor kan få mindre möjlighet att påverka politiska beslut"
+        "sv": "Människor kan få mindre möjlighet att påverka politiska beslut",
+        "zh-Hant": "人們影響政治決定的機會可能變少",
+        "zh-Hans": "人们影响政治决定的机会可能变少",
+        "ar": "قد تقل فرص الناس في التأثير على القرارات السياسية",
+        "ckb": "خەڵک ڕەنگە دەرفەتی کەمتریان هەبێت بۆ کاریگەری لەسەر بڕیارە سیاسییەکان",
+        "fa": "مردم ممکن است فرصت کمتری برای اثرگذاری بر تصمیم‌های سیاسی داشته باشند",
+        "pl": "Ludzie mogą mieć mniejsze możliwości wpływania na decyzje polityczne",
+        "so": "Dadku waxay yeelan karaan fursado yar oo ay ku saameeyaan go’aamada siyaasadeed",
+        "ti": "ሰባት ኣብ ፖለቲካዊ ውሳነታት ተጽዕኖ ንምግባር ዝተነከየ ዕድል ክህልዎም ይኽእል",
+        "tr": "İnsanların siyasi kararları etkileme olanağı azalabilir",
+        "uk": "Люди можуть мати менше можливостей впливати на політичні рішення"
       },
       {
         "en": "All voters get two votes each in the next election",
-        "sv": "Alla väljare får två röster var i nästa val"
+        "sv": "Alla väljare får två röster var i nästa val",
+        "zh-Hant": "所有選民在下次選舉各有兩票",
+        "zh-Hans": "所有选民在下次选举各有两票",
+        "ar": "يحصل كل الناخبين على صوتين في الانتخابات التالية",
+        "ckb": "هەموو دەنگدەران لە هەڵبژاردنی داهاتوودا دوو دەنگیان دەبێت",
+        "fa": "همه رأی‌دهندگان در انتخابات بعدی دو رأی خواهند داشت",
+        "pl": "Wszyscy wyborcy dostają po dwa głosy w następnych wyborach",
+        "so": "Dhammaan codbixiyayaashu waxay helayaan labo cod doorashada xigta",
+        "ti": "ኩሎም መረጽቲ ኣብ ምርጫ ዝቕጽል ክልተ ድምጺ ይረኽቡ",
+        "tr": "Tüm seçmenler sonraki seçimde ikişer oy alır",
+        "uk": "Усі виборці отримують по два голоси на наступних виборах"
       },
       {
         "en": "The courts take over the Riksdag's tasks",
-        "sv": "Domstolarna tar över riksdagens uppgifter"
+        "sv": "Domstolarna tar över riksdagens uppgifter",
+        "zh-Hant": "法院接管議會的任務",
+        "zh-Hans": "法院接管议会的任务",
+        "ar": "تتولى المحاكم مهام البرلمان",
+        "ckb": "دادگاکان ئەرکەکانی پەرلەمان وەردەگرن",
+        "fa": "دادگاه‌ها وظایف ریکسداگ را بر عهده می‌گیرند",
+        "pl": "Sądy przejmują zadania parlamentu",
+        "so": "Maxkamaduhu waxay la wareegaan hawlaha baarlamaanka",
+        "ti": "ቤት ፍርድታት ስራሕ ፓርላማ ይወስዱ",
+        "tr": "Mahkemeler Riksdag’ın görevlerini devralır",
+        "uk": "Суди перебирають завдання Риксдагу"
       },
       {
         "en": "Society automatically becomes more integrated",
-        "sv": "Samhället blir automatiskt mer integrerat"
+        "sv": "Samhället blir automatiskt mer integrerat",
+        "zh-Hant": "社會自動變得更融合",
+        "zh-Hans": "社会自动变得更融合",
+        "ar": "يصبح المجتمع أكثر اندماجًا تلقائيًا",
+        "ckb": "کۆمەڵگە بە شێوەیەکی خۆکارانە زیاتر تێکەڵ دەبێت",
+        "fa": "جامعه به طور خودکار یکپارچه‌تر می‌شود",
+        "pl": "Społeczeństwo automatycznie staje się bardziej zintegrowane",
+        "so": "Bulshadu si toos ah ayay u noqotaa mid isdhexgal badan",
+        "ti": "ሕብረተሰብ ብራሱ ዝያዳ ይተሓዋወስ",
+        "tr": "Toplum kendiliğinden daha bütünleşmiş olur",
+        "uk": "Суспільство автоматично стає більш інтегрованим"
       }
     ],
     "answer": 0,
@@ -11363,19 +12323,59 @@
     "opts": [
       {
         "en": "People may have fewer opportunities to influence political decisions",
-        "sv": "Människor kan få mindre möjlighet att påverka politiska beslut"
+        "sv": "Människor kan få mindre möjlighet att påverka politiska beslut",
+        "zh-Hant": "人們影響政治決定的機會可能變少",
+        "zh-Hans": "人们影响政治决定的机会可能变少",
+        "ar": "قد تقل فرص الناس في التأثير على القرارات السياسية",
+        "ckb": "خەڵک ڕەنگە دەرفەتی کەمتریان هەبێت بۆ کاریگەری لەسەر بڕیارە سیاسییەکان",
+        "fa": "مردم ممکن است فرصت کمتری برای اثرگذاری بر تصمیم‌های سیاسی داشته باشند",
+        "pl": "Ludzie mogą mieć mniejsze możliwości wpływania na decyzje polityczne",
+        "so": "Dadku waxay yeelan karaan fursado yar oo ay ku saameeyaan go’aamada siyaasadeed",
+        "ti": "ሰባት ኣብ ፖለቲካዊ ውሳነታት ተጽዕኖ ንምግባር ዝተነከየ ዕድል ክህልዎም ይኽእል",
+        "tr": "İnsanların siyasi kararları etkileme olanağı azalabilir",
+        "uk": "Люди можуть мати менше можливостей впливати на політичні рішення"
       },
       {
         "en": "All voters get two votes each in the next election",
-        "sv": "Alla väljare får två röster var i nästa val"
+        "sv": "Alla väljare får två röster var i nästa val",
+        "zh-Hant": "所有選民在下次選舉各有兩票",
+        "zh-Hans": "所有选民在下次选举各有两票",
+        "ar": "يحصل كل الناخبين على صوتين في الانتخابات التالية",
+        "ckb": "هەموو دەنگدەران لە هەڵبژاردنی داهاتوودا دوو دەنگیان دەبێت",
+        "fa": "همه رأی‌دهندگان در انتخابات بعدی دو رأی خواهند داشت",
+        "pl": "Wszyscy wyborcy dostają po dwa głosy w następnych wyborach",
+        "so": "Dhammaan codbixiyayaashu waxay helayaan labo cod doorashada xigta",
+        "ti": "ኩሎም መረጽቲ ኣብ ምርጫ ዝቕጽል ክልተ ድምጺ ይረኽቡ",
+        "tr": "Tüm seçmenler sonraki seçimde ikişer oy alır",
+        "uk": "Усі виборці отримують по два голоси на наступних виборах"
       },
       {
         "en": "The courts take over the Riksdag's tasks",
-        "sv": "Domstolarna tar över riksdagens uppgifter"
+        "sv": "Domstolarna tar över riksdagens uppgifter",
+        "zh-Hant": "法院接管議會的任務",
+        "zh-Hans": "法院接管议会的任务",
+        "ar": "تتولى المحاكم مهام البرلمان",
+        "ckb": "دادگاکان ئەرکەکانی پەرلەمان وەردەگرن",
+        "fa": "دادگاه‌ها وظایف ریکسداگ را بر عهده می‌گیرند",
+        "pl": "Sądy przejmują zadania parlamentu",
+        "so": "Maxkamaduhu waxay la wareegaan hawlaha baarlamaanka",
+        "ti": "ቤት ፍርድታት ስራሕ ፓርላማ ይወስዱ",
+        "tr": "Mahkemeler Riksdag’ın görevlerini devralır",
+        "uk": "Суди перебирають завдання Риксдагу"
       },
       {
         "en": "Society automatically becomes more integrated",
-        "sv": "Samhället blir automatiskt mer integrerat"
+        "sv": "Samhället blir automatiskt mer integrerat",
+        "zh-Hant": "社會自動變得更融合",
+        "zh-Hans": "社会自动变得更融合",
+        "ar": "يصبح المجتمع أكثر اندماجًا تلقائيًا",
+        "ckb": "کۆمەڵگە بە شێوەیەکی خۆکارانە زیاتر تێکەڵ دەبێت",
+        "fa": "جامعه به طور خودکار یکپارچه‌تر می‌شود",
+        "pl": "Społeczeństwo automatycznie staje się bardziej zintegrowane",
+        "so": "Bulshadu si toos ah ayay u noqotaa mid isdhexgal badan",
+        "ti": "ሕብረተሰብ ብራሱ ዝያዳ ይተሓዋወስ",
+        "tr": "Toplum kendiliğinden daha bütünleşmiş olur",
+        "uk": "Суспільство автоматично стає більш інтегрованим"
       }
     ],
     "answer": 0,
@@ -11411,19 +12411,59 @@
     "opts": [
       {
         "en": "By voting in general elections",
-        "sv": "Genom att rösta i allmänna val"
+        "sv": "Genom att rösta i allmänna val",
+        "zh-Hant": "透過普選投票",
+        "zh-Hans": "通过普选投票",
+        "ar": "بالتصويت في انتخابات عامة",
+        "ckb": "بە دەنگدان لە هەڵبژاردنی گشتی",
+        "fa": "با رأی دادن در انتخابات عمومی",
+        "pl": "Głosując w wyborach powszechnych",
+        "so": "Iyagoo ka codeeya doorashooyinka guud",
+        "ti": "ብምምራጽ ኣብ ሓፈሻዊ ምርጫ",
+        "tr": "Genel seçimlerde oy vererek",
+        "uk": "Голосуванням на загальних виборах"
       },
       {
         "en": "The courts elect all members of the Riksdag",
-        "sv": "Domstolarna väljer alla riksdagsledamöter"
+        "sv": "Domstolarna väljer alla riksdagsledamöter",
+        "zh-Hant": "法院選出所有國會議員",
+        "zh-Hans": "法院选出所有国会议员",
+        "ar": "تنتخب المحاكم كل أعضاء البرلمان",
+        "ckb": "دادگاکان هەموو ئەندامانی ڕیکسداگ هەڵدەبژێرن",
+        "fa": "دادگاه‌ها همه اعضای ریکسداگ را انتخاب می‌کنند",
+        "pl": "Sądy wybierają wszystkich członków Riksdagu",
+        "so": "Maxkamaduhu waxay doortaan dhammaan xubnaha Riksdag-ka",
+        "ti": "ቤት ፍርድታት ኩሎም ኣባላት ሪክስዳግ ይመርጹ",
+        "tr": "Mahkemeler tüm Riksdag üyelerini seçer",
+        "uk": "Суди обирають усіх членів Риксдагу"
       },
       {
         "en": "The king alone decides over the Riksdag",
-        "sv": "Kungen bestämmer ensam över riksdagen"
+        "sv": "Kungen bestämmer ensam över riksdagen",
+        "zh-Hant": "國王單獨決定國會",
+        "zh-Hans": "国王单独决定国会",
+        "ar": "يقرر الملك وحده بشأن البرلمان",
+        "ckb": "پاشا بە تەنها بڕیار لەسەر ڕیکسداگ دەدات",
+        "fa": "پادشاه به تنهایی درباره ریکسداگ تصمیم می‌گیرد",
+        "pl": "Król sam decyduje o Riksdagu",
+        "so": "Boqorku keligiis ayuu ka taliyaa Riksdag-ka",
+        "ti": "ንጉስ በይኑ ብዛዕባ ሪክስዳግ ይውስን",
+        "tr": "Kral Riksdag hakkında tek başına karar verir",
+        "uk": "Король сам вирішує щодо Риксдагу"
       },
       {
         "en": "Government agencies vote the government into office",
-        "sv": "Myndigheter röstar fram regeringen"
+        "sv": "Myndigheter röstar fram regeringen",
+        "zh-Hant": "政府機關投票選出政府",
+        "zh-Hans": "政府机关投票选出政府",
+        "ar": "تصوت السلطات الحكومية لاختيار الحكومة",
+        "ckb": "دامەزراوە حکومییەکان دەنگ دەدەن بۆ هەڵبژاردنی حکومەت",
+        "fa": "سازمان‌های دولتی دولت را با رأی انتخاب می‌کنند",
+        "pl": "Urzędy państwowe wybierają rząd w głosowaniu",
+        "so": "Hay’adaha dowladdu waxay cod ku doortaan dowladda",
+        "ti": "ትካላት መንግስቲ መንግስቲ ብድምጺ ይመርጹ",
+        "tr": "Kamu kurumları hükümeti oylayarak seçer",
+        "uk": "Державні органи голосуванням обирають уряд"
       }
     ],
     "answer": 0,
@@ -11539,19 +12579,59 @@
     "opts": [
       {
         "en": "By voting in general elections",
-        "sv": "Genom att rösta i allmänna val"
+        "sv": "Genom att rösta i allmänna val",
+        "zh-Hant": "透過普選投票",
+        "zh-Hans": "通过普选投票",
+        "ar": "بالتصويت في انتخابات عامة",
+        "ckb": "بە دەنگدان لە هەڵبژاردنی گشتی",
+        "fa": "با رأی دادن در انتخابات عمومی",
+        "pl": "Głosując w wyborach powszechnych",
+        "so": "Iyagoo ka codeeya doorashooyinka guud",
+        "ti": "ብምምራጽ ኣብ ሓፈሻዊ ምርጫ",
+        "tr": "Genel seçimlerde oy vererek",
+        "uk": "Голосуванням на загальних виборах"
       },
       {
         "en": "The courts elect all members of the Riksdag",
-        "sv": "Domstolarna väljer alla riksdagsledamöter"
+        "sv": "Domstolarna väljer alla riksdagsledamöter",
+        "zh-Hant": "法院選出所有國會議員",
+        "zh-Hans": "法院选出所有国会议员",
+        "ar": "تنتخب المحاكم كل أعضاء البرلمان",
+        "ckb": "دادگاکان هەموو ئەندامانی ڕیکسداگ هەڵدەبژێرن",
+        "fa": "دادگاه‌ها همه اعضای ریکسداگ را انتخاب می‌کنند",
+        "pl": "Sądy wybierają wszystkich członków Riksdagu",
+        "so": "Maxkamaduhu waxay doortaan dhammaan xubnaha Riksdag-ka",
+        "ti": "ቤት ፍርድታት ኩሎም ኣባላት ሪክስዳግ ይመርጹ",
+        "tr": "Mahkemeler tüm Riksdag üyelerini seçer",
+        "uk": "Суди обирають усіх членів Риксдагу"
       },
       {
         "en": "The king alone decides over the Riksdag",
-        "sv": "Kungen bestämmer ensam över riksdagen"
+        "sv": "Kungen bestämmer ensam över riksdagen",
+        "zh-Hant": "國王單獨決定國會",
+        "zh-Hans": "国王单独决定国会",
+        "ar": "يقرر الملك وحده بشأن البرلمان",
+        "ckb": "پاشا بە تەنها بڕیار لەسەر ڕیکسداگ دەدات",
+        "fa": "پادشاه به تنهایی درباره ریکسداگ تصمیم می‌گیرد",
+        "pl": "Król sam decyduje o Riksdagu",
+        "so": "Boqorku keligiis ayuu ka taliyaa Riksdag-ka",
+        "ti": "ንጉስ በይኑ ብዛዕባ ሪክስዳግ ይውስን",
+        "tr": "Kral Riksdag hakkında tek başına karar verir",
+        "uk": "Король сам вирішує щодо Риксдагу"
       },
       {
         "en": "Government agencies vote the government into office",
-        "sv": "Myndigheter röstar fram regeringen"
+        "sv": "Myndigheter röstar fram regeringen",
+        "zh-Hant": "政府機關投票選出政府",
+        "zh-Hans": "政府机关投票选出政府",
+        "ar": "تصوت السلطات الحكومية لاختيار الحكومة",
+        "ckb": "دامەزراوە حکومییەکان دەنگ دەدەن بۆ هەڵبژاردنی حکومەت",
+        "fa": "سازمان‌های دولتی دولت را با رأی انتخاب می‌کنند",
+        "pl": "Urzędy państwowe wybierają rząd w głosowaniu",
+        "so": "Hay’adaha dowladdu waxay cod ku doortaan dowladda",
+        "ti": "ትካላት መንግስቲ መንግስቲ ብድምጺ ይመርጹ",
+        "tr": "Kamu kurumları hükümeti oylayarak seçer",
+        "uk": "Державні органи голосуванням обирають уряд"
       }
     ],
     "answer": 0,
@@ -11587,19 +12667,59 @@
     "opts": [
       {
         "en": "21",
-        "sv": "21"
+        "sv": "21",
+        "zh-Hant": "21",
+        "zh-Hans": "21",
+        "ar": "21",
+        "ckb": "٢١",
+        "fa": "۲۱",
+        "pl": "21",
+        "so": "21",
+        "ti": "21",
+        "tr": "21",
+        "uk": "21"
       },
       {
         "en": "290",
-        "sv": "290"
+        "sv": "290",
+        "zh-Hant": "290",
+        "zh-Hans": "290",
+        "ar": "290",
+        "ckb": "٢٩٠",
+        "fa": "۲۹۰",
+        "pl": "290",
+        "so": "290",
+        "ti": "290",
+        "tr": "290",
+        "uk": "290"
       },
       {
         "en": "349",
-        "sv": "349"
+        "sv": "349",
+        "zh-Hant": "349",
+        "zh-Hans": "349",
+        "ar": "349",
+        "ckb": "٣٤٩",
+        "fa": "۳۴۹",
+        "pl": "349",
+        "so": "349",
+        "ti": "349",
+        "tr": "349",
+        "uk": "349"
       },
       {
         "en": "1,600",
-        "sv": "1 600"
+        "sv": "1 600",
+        "zh-Hant": "1,600",
+        "zh-Hans": "1,600",
+        "ar": "1600",
+        "ckb": "١٦٠٠",
+        "fa": "۱۶۰۰",
+        "pl": "1600",
+        "so": "1,600",
+        "ti": "1,600",
+        "tr": "1600",
+        "uk": "1600"
       }
     ],
     "answer": 2,
@@ -11715,19 +12835,59 @@
     "opts": [
       {
         "en": "21",
-        "sv": "21"
+        "sv": "21",
+        "zh-Hant": "21",
+        "zh-Hans": "21",
+        "ar": "21",
+        "ckb": "٢١",
+        "fa": "۲۱",
+        "pl": "21",
+        "so": "21",
+        "ti": "21",
+        "tr": "21",
+        "uk": "21"
       },
       {
         "en": "290",
-        "sv": "290"
+        "sv": "290",
+        "zh-Hant": "290",
+        "zh-Hans": "290",
+        "ar": "290",
+        "ckb": "٢٩٠",
+        "fa": "۲۹۰",
+        "pl": "290",
+        "so": "290",
+        "ti": "290",
+        "tr": "290",
+        "uk": "290"
       },
       {
         "en": "349",
-        "sv": "349"
+        "sv": "349",
+        "zh-Hant": "349",
+        "zh-Hans": "349",
+        "ar": "349",
+        "ckb": "٣٤٩",
+        "fa": "۳۴۹",
+        "pl": "349",
+        "so": "349",
+        "ti": "349",
+        "tr": "349",
+        "uk": "349"
       },
       {
         "en": "1,600",
-        "sv": "1 600"
+        "sv": "1 600",
+        "zh-Hant": "1,600",
+        "zh-Hans": "1,600",
+        "ar": "1600",
+        "ckb": "١٦٠٠",
+        "fa": "۱۶۰۰",
+        "pl": "1600",
+        "so": "1,600",
+        "ti": "1,600",
+        "tr": "1600",
+        "uk": "1600"
       }
     ],
     "answer": 2,
@@ -11763,19 +12923,59 @@
     "opts": [
       {
         "en": "The Riksdag",
-        "sv": "Riksdagen"
+        "sv": "Riksdagen",
+        "zh-Hant": "國會",
+        "zh-Hans": "国会",
+        "ar": "البرلمان",
+        "ckb": "ڕیکسداگ",
+        "fa": "ریکسداگ",
+        "pl": "Riksdag",
+        "so": "Riksdag-ka",
+        "ti": "ሪክስዳግ",
+        "tr": "Riksdag",
+        "uk": "Риксдаг"
       },
       {
         "en": "The king alone",
-        "sv": "Kungen ensam"
+        "sv": "Kungen ensam",
+        "zh-Hant": "只有國王",
+        "zh-Hans": "只有国王",
+        "ar": "الملك وحده",
+        "ckb": "تەنها پاشا",
+        "fa": "تنها پادشاه",
+        "pl": "Sam król",
+        "so": "Boqorka oo keliya",
+        "ti": "ንጉስ በይኑ",
+        "tr": "Sadece kral",
+        "uk": "Лише король"
       },
       {
         "en": "The Swedish Police Authority",
-        "sv": "Polismyndigheten"
+        "sv": "Polismyndigheten",
+        "zh-Hant": "瑞典警察局",
+        "zh-Hans": "瑞典警察局",
+        "ar": "سلطة الشرطة السويدية",
+        "ckb": "پۆلیسی سوید",
+        "fa": "اداره پلیس سوئد",
+        "pl": "Szwedzka Policja",
+        "so": "Hay’adda Booliska Iswiidhan",
+        "ti": "በዓል መዚ ፖሊስ ሽወደን",
+        "tr": "İsveç Polis Kurumu",
+        "uk": "Поліція Швеції"
       },
       {
         "en": "The regional council",
-        "sv": "Regionfullmäktige"
+        "sv": "Regionfullmäktige",
+        "zh-Hant": "地區議會",
+        "zh-Hans": "地区议会",
+        "ar": "مجلس الإقليم",
+        "ckb": "ئەنجومەنی هەرێم",
+        "fa": "شورای منطقه",
+        "pl": "Rada regionu",
+        "so": "Golaha gobolka",
+        "ti": "ቤት ምኽሪ ክልል",
+        "tr": "Bölge meclisi",
+        "uk": "Регіональна рада"
       }
     ],
     "answer": 0,
@@ -11891,19 +13091,59 @@
     "opts": [
       {
         "en": "The Riksdag",
-        "sv": "Riksdagen"
+        "sv": "Riksdagen",
+        "zh-Hant": "國會",
+        "zh-Hans": "国会",
+        "ar": "البرلمان",
+        "ckb": "ڕیکسداگ",
+        "fa": "ریکسداگ",
+        "pl": "Riksdag",
+        "so": "Riksdag-ka",
+        "ti": "ሪክስዳግ",
+        "tr": "Riksdag",
+        "uk": "Риксдаг"
       },
       {
         "en": "The king alone",
-        "sv": "Kungen ensam"
+        "sv": "Kungen ensam",
+        "zh-Hant": "只有國王",
+        "zh-Hans": "只有国王",
+        "ar": "الملك وحده",
+        "ckb": "تەنها پاشا",
+        "fa": "تنها پادشاه",
+        "pl": "Sam król",
+        "so": "Boqorka oo keliya",
+        "ti": "ንጉስ በይኑ",
+        "tr": "Sadece kral",
+        "uk": "Лише король"
       },
       {
         "en": "The Swedish Police Authority",
-        "sv": "Polismyndigheten"
+        "sv": "Polismyndigheten",
+        "zh-Hant": "瑞典警察局",
+        "zh-Hans": "瑞典警察局",
+        "ar": "سلطة الشرطة السويدية",
+        "ckb": "پۆلیسی سوید",
+        "fa": "اداره پلیس سوئد",
+        "pl": "Szwedzka Policja",
+        "so": "Hay’adda Booliska Iswiidhan",
+        "ti": "በዓል መዚ ፖሊስ ሽወደን",
+        "tr": "İsveç Polis Kurumu",
+        "uk": "Поліція Швеції"
       },
       {
         "en": "The regional council",
-        "sv": "Regionfullmäktige"
+        "sv": "Regionfullmäktige",
+        "zh-Hant": "地區議會",
+        "zh-Hans": "地区议会",
+        "ar": "مجلس الإقليم",
+        "ckb": "ئەنجومەنی هەرێم",
+        "fa": "شورای منطقه",
+        "pl": "Rada regionu",
+        "so": "Golaha gobolka",
+        "ti": "ቤት ምኽሪ ክልል",
+        "tr": "Bölge meclisi",
+        "uk": "Регіональна рада"
       }
     ],
     "answer": 0,
@@ -11939,19 +13179,59 @@
     "opts": [
       {
         "en": "16 years old",
-        "sv": "16 år"
+        "sv": "16 år",
+        "zh-Hant": "16 歲",
+        "zh-Hans": "16 岁",
+        "ar": "16 سنة",
+        "ckb": "١٦ ساڵ",
+        "fa": "۱۶ سال",
+        "pl": "16 lat",
+        "so": "16 sano",
+        "ti": "16 ዓመት",
+        "tr": "16 yaş",
+        "uk": "16 років"
       },
       {
         "en": "18 years old",
-        "sv": "18 år"
+        "sv": "18 år",
+        "zh-Hant": "18 歲",
+        "zh-Hans": "18 岁",
+        "ar": "18 سنة",
+        "ckb": "١٨ ساڵ",
+        "fa": "۱۸ سال",
+        "pl": "18 lat",
+        "so": "18 sano",
+        "ti": "18 ዓመት",
+        "tr": "18 yaş",
+        "uk": "18 років"
       },
       {
         "en": "20 years old",
-        "sv": "20 år"
+        "sv": "20 år",
+        "zh-Hant": "20 歲",
+        "zh-Hans": "20 岁",
+        "ar": "20 سنة",
+        "ckb": "٢٠ ساڵ",
+        "fa": "۲۰ سال",
+        "pl": "20 lat",
+        "so": "20 sano",
+        "ti": "20 ዓመት",
+        "tr": "20 yaş",
+        "uk": "20 років"
       },
       {
         "en": "25 years old",
-        "sv": "25 år"
+        "sv": "25 år",
+        "zh-Hant": "25 歲",
+        "zh-Hans": "25 岁",
+        "ar": "25 سنة",
+        "ckb": "٢٥ ساڵ",
+        "fa": "۲۵ سال",
+        "pl": "25 lat",
+        "so": "25 sano",
+        "ti": "25 ዓመት",
+        "tr": "25 yaş",
+        "uk": "25 років"
       }
     ],
     "answer": 1,
@@ -12067,19 +13347,59 @@
     "opts": [
       {
         "en": "16 years old",
-        "sv": "16 år"
+        "sv": "16 år",
+        "zh-Hant": "16 歲",
+        "zh-Hans": "16 岁",
+        "ar": "16 سنة",
+        "ckb": "١٦ ساڵ",
+        "fa": "۱۶ سال",
+        "pl": "16 lat",
+        "so": "16 sano",
+        "ti": "16 ዓመት",
+        "tr": "16 yaş",
+        "uk": "16 років"
       },
       {
         "en": "18 years old",
-        "sv": "18 år"
+        "sv": "18 år",
+        "zh-Hant": "18 歲",
+        "zh-Hans": "18 岁",
+        "ar": "18 سنة",
+        "ckb": "١٨ ساڵ",
+        "fa": "۱۸ سال",
+        "pl": "18 lat",
+        "so": "18 sano",
+        "ti": "18 ዓመት",
+        "tr": "18 yaş",
+        "uk": "18 років"
       },
       {
         "en": "20 years old",
-        "sv": "20 år"
+        "sv": "20 år",
+        "zh-Hant": "20 歲",
+        "zh-Hans": "20 岁",
+        "ar": "20 سنة",
+        "ckb": "٢٠ ساڵ",
+        "fa": "۲۰ سال",
+        "pl": "20 lat",
+        "so": "20 sano",
+        "ti": "20 ዓመት",
+        "tr": "20 yaş",
+        "uk": "20 років"
       },
       {
         "en": "25 years old",
-        "sv": "25 år"
+        "sv": "25 år",
+        "zh-Hant": "25 歲",
+        "zh-Hans": "25 岁",
+        "ar": "25 سنة",
+        "ckb": "٢٥ ساڵ",
+        "fa": "۲۵ سال",
+        "pl": "25 lat",
+        "so": "25 sano",
+        "ti": "25 ዓመት",
+        "tr": "25 yaş",
+        "uk": "25 років"
       }
     ],
     "answer": 1,
@@ -12115,19 +13435,59 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet"
+        "sv": "Politikerna måste inte följa resultatet",
+        "zh-Hant": "政治人物不一定必須遵循結果",
+        "zh-Hans": "政治人物不一定必须遵循结果",
+        "ar": "لا يجب على السياسيين بالضرورة اتباع النتيجة",
+        "ckb": "سیاسەتمەداران پێویست ناکات هەمیشە ئەنجامەکە پەیڕەو بکەن",
+        "fa": "سیاستمداران مجبور نیستند نتیجه را دنبال کنند",
+        "pl": "Politycy nie muszą stosować się do wyniku",
+        "so": "Siyaasiyiintu qasab kuma aha inay raacaan natiijada",
+        "ti": "ፖለቲከኛታት ውጽኢቱ ክኽተሉ ግድን ኣይኮነን",
+        "tr": "Siyasetçiler sonucu takip etmek zorunda değildir",
+        "uk": "Політики не зобов’язані дотримуватися результату"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna måste alltid följa resultatet"
+        "sv": "Politikerna måste alltid följa resultatet",
+        "zh-Hant": "政治人物必須永遠遵循結果",
+        "zh-Hans": "政治人物必须永远遵循结果",
+        "ar": "يجب على السياسيين دائمًا اتباع النتيجة",
+        "ckb": "سیاسەتمەداران دەبێ هەمیشە ئەنجامەکە پەیڕەو بکەن",
+        "fa": "سیاستمداران همیشه باید نتیجه را دنبال کنند",
+        "pl": "Politycy muszą zawsze stosować się do wyniku",
+        "so": "Siyaasiyiintu waa inay had iyo jeer raacaan natiijada",
+        "ti": "ፖለቲከኛታት ውጽኢቱ ምኽታል ምሉእ ግዴታ ኣለዎም",
+        "tr": "Siyasetçiler sonucu her zaman takip etmek zorundadır",
+        "uk": "Політики завжди зобов’язані дотримуватися результату"
       },
       {
         "en": "Referendums may only be held nationally",
-        "sv": "Folkomröstningar får bara hållas på nationell nivå"
+        "sv": "Folkomröstningar får bara hållas på nationell nivå",
+        "zh-Hant": "公投只能在全國層級舉行",
+        "zh-Hans": "公投只能在全国层级举行",
+        "ar": "لا يجوز إجراء الاستفتاءات إلا على المستوى الوطني",
+        "ckb": "ڕاپرسی تەنها لە ئاستی نیشتیمانی ئەنجام دەدرێت",
+        "fa": "همه‌پرسی فقط در سطح ملی می‌تواند برگزار شود",
+        "pl": "Referenda mogą odbywać się tylko na poziomie krajowym",
+        "so": "Aftida waxaa lagu qaban karaa heer qaran oo keliya",
+        "ti": "ረፈረንደም ኣብ ደረጃ ሃገር ጥራይ ክካየድ ይኽእል",
+        "tr": "Referandumlar sadece ulusal düzeyde yapılabilir",
+        "uk": "Референдуми можна проводити лише на національному рівні"
       },
       {
         "en": "They replace regular Riksdag elections",
-        "sv": "De ersätter ordinarie val till riksdagen"
+        "sv": "De ersätter ordinarie val till riksdagen",
+        "zh-Hant": "它們取代正常的國會選舉",
+        "zh-Hans": "它们取代正常的国会选举",
+        "ar": "إنها تستبدل الانتخابات العادية للبرلمان",
+        "ckb": "ئەوان جێگای هەڵبژاردنی ئاسایی ڕیکسداگ دەگرنەوە",
+        "fa": "آن‌ها جای انتخابات عادی ریکسداگ را می‌گیرند",
+        "pl": "Zastępują zwykłe wybory do Riksdagu",
+        "so": "Waxay beddelaan doorashooyinka caadiga ah ee Riksdag-ka",
+        "ti": "እቶም ረፈረንደማት ንመደበኛ ምርጫ ሪክስዳግ ይትክኡ",
+        "tr": "Normal Riksdag seçimlerinin yerini alırlar",
+        "uk": "Вони замінюють звичайні вибори до Риксдагу"
       }
     ],
     "answer": 0,
@@ -12243,19 +13603,59 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet"
+        "sv": "Politikerna måste inte följa resultatet",
+        "zh-Hant": "政治人物不一定必須遵循結果",
+        "zh-Hans": "政治人物不一定必须遵循结果",
+        "ar": "لا يجب على السياسيين بالضرورة اتباع النتيجة",
+        "ckb": "سیاسەتمەداران پێویست ناکات هەمیشە ئەنجامەکە پەیڕەو بکەن",
+        "fa": "سیاستمداران مجبور نیستند نتیجه را دنبال کنند",
+        "pl": "Politycy nie muszą stosować się do wyniku",
+        "so": "Siyaasiyiintu qasab kuma aha inay raacaan natiijada",
+        "ti": "ፖለቲከኛታት ውጽኢቱ ክኽተሉ ግድን ኣይኮነን",
+        "tr": "Siyasetçiler sonucu takip etmek zorunda değildir",
+        "uk": "Політики не зобов’язані дотримуватися результату"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna måste alltid följa resultatet"
+        "sv": "Politikerna måste alltid följa resultatet",
+        "zh-Hant": "政治人物必須永遠遵循結果",
+        "zh-Hans": "政治人物必须永远遵循结果",
+        "ar": "يجب على السياسيين دائمًا اتباع النتيجة",
+        "ckb": "سیاسەتمەداران دەبێ هەمیشە ئەنجامەکە پەیڕەو بکەن",
+        "fa": "سیاستمداران همیشه باید نتیجه را دنبال کنند",
+        "pl": "Politycy muszą zawsze stosować się do wyniku",
+        "so": "Siyaasiyiintu waa inay had iyo jeer raacaan natiijada",
+        "ti": "ፖለቲከኛታት ውጽኢቱ ምኽታል ምሉእ ግዴታ ኣለዎም",
+        "tr": "Siyasetçiler sonucu her zaman takip etmek zorundadır",
+        "uk": "Політики завжди зобов’язані дотримуватися результату"
       },
       {
         "en": "Referendums may only be held nationally",
-        "sv": "Folkomröstningar får bara hållas på nationell nivå"
+        "sv": "Folkomröstningar får bara hållas på nationell nivå",
+        "zh-Hant": "公投只能在全國層級舉行",
+        "zh-Hans": "公投只能在全国层级举行",
+        "ar": "لا يجوز إجراء الاستفتاءات إلا على المستوى الوطني",
+        "ckb": "ڕاپرسی تەنها لە ئاستی نیشتیمانی ئەنجام دەدرێت",
+        "fa": "همه‌پرسی فقط در سطح ملی می‌تواند برگزار شود",
+        "pl": "Referenda mogą odbywać się tylko na poziomie krajowym",
+        "so": "Aftida waxaa lagu qaban karaa heer qaran oo keliya",
+        "ti": "ረፈረንደም ኣብ ደረጃ ሃገር ጥራይ ክካየድ ይኽእል",
+        "tr": "Referandumlar sadece ulusal düzeyde yapılabilir",
+        "uk": "Референдуми можна проводити лише на національному рівні"
       },
       {
         "en": "They replace regular Riksdag elections",
-        "sv": "De ersätter ordinarie val till riksdagen"
+        "sv": "De ersätter ordinarie val till riksdagen",
+        "zh-Hant": "它們取代正常的國會選舉",
+        "zh-Hans": "它们取代正常的国会选举",
+        "ar": "إنها تستبدل الانتخابات العادية للبرلمان",
+        "ckb": "ئەوان جێگای هەڵبژاردنی ئاسایی ڕیکسداگ دەگرنەوە",
+        "fa": "آن‌ها جای انتخابات عادی ریکسداگ را می‌گیرند",
+        "pl": "Zastępują zwykłe wybory do Riksdagu",
+        "so": "Waxay beddelaan doorashooyinka caadiga ah ee Riksdag-ka",
+        "ti": "እቶም ረፈረንደማት ንመደበኛ ምርጫ ሪክስዳግ ይትክኡ",
+        "tr": "Normal Riksdag seçimlerinin yerini alırlar",
+        "uk": "Вони замінюють звичайні вибори до Риксдагу"
       }
     ],
     "answer": 0,
