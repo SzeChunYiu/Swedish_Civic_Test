@@ -8515,6 +8515,21 @@ if (typeof answerShuffleDistributionIsBalanced !== 'function') {
 if (typeof ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE !== 'number') {
   fail('ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE export is not a number');
 }
+if (process.argv.includes('--focus-answer-shuffle-parity')) {
+  validateAnswerShuffleDistributionParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    answerShuffleSingleChoiceQuestionsValidated,
+    answerShuffleTrueFalseQuestionsValidated,
+    answerShuffleSeedDistributionsValidated,
+    answerShuffleSessionMovementQuestionsValidated,
+    answerShuffleDistributionParityValidated,
+    publishedQuestions: Array.isArray(questions)
+      ? questions.filter((question) => question.reviewStatus === 'published').length
+      : 0,
+  });
+  process.exit(0);
+}
 if (typeof buildQuestionSpeechText !== 'function') {
   fail('buildQuestionSpeechText export is not a function');
 }
