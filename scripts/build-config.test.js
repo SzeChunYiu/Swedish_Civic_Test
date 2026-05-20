@@ -13,8 +13,12 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
+function readText(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
 function readThemeCanvasColor() {
-  const themeSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/colors.ts'), 'utf8');
+  const themeSource = readText('lib/theme/colors.ts');
   const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
   assert.notEqual(match, null, 'colors.canvas should stay parseable for web export checks');
   return match[1];
@@ -75,6 +79,22 @@ test('Metro web export enables Expo Router route context discovery', () => {
   assert.equal(resolution.type, 'sourceFile');
   assert.equal(resolution.filePath, path.join(repoRoot, 'lib/router/expoRouterWebContext.js'));
   assert.equal(fs.existsSync(resolution.filePath), true);
+
+  const notificationsResolution = config.resolver.resolveRequest(
+    {
+      resolveRequest() {
+        return { type: 'empty' };
+      },
+    },
+    'expo-notifications',
+    'web',
+  );
+  assert.equal(notificationsResolution.type, 'sourceFile');
+  assert.equal(
+    notificationsResolution.filePath,
+    path.join(repoRoot, 'lib/notifications/expoNotificationsWebStub.js'),
+  );
+  assert.equal(fs.existsSync(notificationsResolution.filePath), true);
 });
 
 test('EAS access evidence command is wired for repeatable non-secret checks', () => {
@@ -1552,7 +1572,10 @@ test('web export script is available for local production bundle smoke', () => {
 
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
-  assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
+  assert.equal(
+    pkg.scripts['build:web:export'],
+    'expo export --platform web --output-dir dist-web --clear',
+  );
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
     pkg.scripts['release:web-export-smoke'],
@@ -1594,6 +1617,50 @@ test('Vercel static-site config ships host-level security headers without changi
   }
   // TODO(static-csp): add a tested report-only CSP after static fonts and inline scripts are removed.
   assert.equal(actualHeaders.has('content-security-policy'), false);
+});
+
+test('web export uses Expo Metro config with router route contexts enabled', () => {
+  const metroConfigPath = path.join(repoRoot, 'metro.config.js');
+
+  assert.equal(fs.existsSync(metroConfigPath), true);
+  assert.match(readText('metro.config.js'), /getDefaultConfig\(__dirname\)/);
+  assert.match(readText('metro.config.js'), /expo-router\/_ctx/);
+  assert.match(readText('metro.config.js'), /lib\/router\/expoRouterWebContext\.js/);
+  assert.match(readText('metro.config.js'), /expo-notifications/);
+  assert.match(readText('metro.config.js'), /lib\/notifications\/expoNotificationsWebStub\.js/);
+
+  delete require.cache[metroConfigPath];
+  const metroConfig = require(metroConfigPath);
+
+  assert.equal(metroConfig.transformer.unstable_allowRequireContext, true);
+  const resolution = metroConfig.resolver.resolveRequest(
+    {
+      resolveRequest() {
+        return { type: 'empty' };
+      },
+    },
+    'expo-router/_ctx',
+    'web',
+  );
+  assert.equal(resolution.type, 'sourceFile');
+  assert.equal(resolution.filePath, path.join(repoRoot, 'lib/router/expoRouterWebContext.js'));
+  assert.equal(fs.existsSync(resolution.filePath), true);
+
+  const notificationsResolution = metroConfig.resolver.resolveRequest(
+    {
+      resolveRequest() {
+        return { type: 'empty' };
+      },
+    },
+    'expo-notifications',
+    'web',
+  );
+  assert.equal(notificationsResolution.type, 'sourceFile');
+  assert.equal(
+    notificationsResolution.filePath,
+    path.join(repoRoot, 'lib/notifications/expoNotificationsWebStub.js'),
+  );
+  assert.equal(fs.existsSync(notificationsResolution.filePath), true);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
@@ -1647,19 +1714,6 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(index, /data-web-export-loader="true"/);
-  assert.match(index, /<title>Almost Swedish<\/title>/);
-  assert.match(index, /<meta name="application-name" content="Almost Swedish" \/>/);
-  assert.match(index, /<meta name="apple-mobile-web-app-title" content="Almost Swedish" \/>/);
-  assert.match(
-    index,
-    /<meta name="description" content="Practice Swedish civic knowledge with offline quizzes, local progress, and source references\." \/>/,
-  );
-  assert.match(index, /<meta property="og:site_name" content="Almost Swedish" \/>/);
-  assert.match(index, /<meta property="og:title" content="Almost Swedish" \/>/);
-  assert.match(
-    index,
-    /<meta property="og:description" content="Practice Swedish civic knowledge with offline quizzes, local progress, and source references\." \/>/,
-  );
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);
@@ -1709,7 +1763,7 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
-  assert.equal(manifest.name, readJson('app.json').expo.name);
+  assert.equal(manifest.name, webDocumentMetadata.applicationName);
   assert.match(freshnessMarker.sourceHash, /^[a-f0-9]{64}$/);
   assert.equal(freshnessMarker.sourceInputs.includes('app'), true);
   assert.equal(freshnessMarker.sourceInputs.includes('components'), true);

@@ -5,9 +5,14 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '../../dist-web');
 const port = Number(process.env.PORT || 4173);
 
-if (!fs.existsSync(path.join(root, 'index.html'))) {
-  console.error('dist-web/index.html is missing. Run `npm run build:web:export` first.');
-  process.exit(1);
+
+function assertDistWebReady(outputDir = root, repoRoot = path.resolve(__dirname, '../..')) {
+  const indexPath = path.join(outputDir, 'index.html');
+  if (!fs.existsSync(indexPath)) {
+    throw new Error('dist-web/index.html is missing. Run `npm run build:web:export` first.');
+  }
+  const { assertWebExportFreshness } = require('../../scripts/prepare-web-export.js');
+  assertWebExportFreshness(outputDir, { repoRoot });
 }
 
 const contentTypeByExt = {
@@ -25,17 +30,34 @@ function sendFile(res, filePath) {
   fs.createReadStream(filePath).pipe(res);
 }
 
-http
-  .createServer((req, res) => {
-    const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
-    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
-    const requested = path.join(root, safePath);
-    if (requested.startsWith(root) && fs.existsSync(requested) && fs.statSync(requested).isFile()) {
-      sendFile(res, requested);
-      return;
-    }
-    sendFile(res, path.join(root, 'index.html'));
-  })
-  .listen(port, '127.0.0.1', () => {
-    console.log(`Serving dist-web on http://127.0.0.1:${port}`);
-  });
+function startServer() {
+  assertDistWebReady(root, path.resolve(__dirname, '../..'));
+  return http
+    .createServer((req, res) => {
+      const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
+      const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
+      const requested = path.join(root, safePath);
+      if (requested.startsWith(root) && fs.existsSync(requested) && fs.statSync(requested).isFile()) {
+        sendFile(res, requested);
+        return;
+      }
+      sendFile(res, path.join(root, 'index.html'));
+    })
+    .listen(port, '127.0.0.1', () => {
+      console.log(`Serving dist-web on http://127.0.0.1:${port}`);
+    });
+}
+
+if (require.main === module) {
+  try {
+    startServer();
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
+}
+
+module.exports = {
+  assertDistWebReady,
+  startServer,
+};

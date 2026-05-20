@@ -83,6 +83,15 @@ function walkFiles(directory) {
   return files;
 }
 
+test('web export path hygiene allows public support URLs containing repository slug prefixes', () => {
+  assert.equal(
+    hasForbiddenExportPathFragment(
+      'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
+    ),
+    false,
+  );
+});
+
 test('prepare web export flattens leaked asset paths and rewrites bundle references', () => {
   const { outputDir, tmpDir } = makeExportFixture();
 
