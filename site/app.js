@@ -493,6 +493,11 @@ const i18n = (window.i18n = {
     'settings.buddy.sub': 'Choose a Swedish buddy. They will cheer you on with tips and facts.',
     'settings.buddy.show': 'Show study buddy',
     'settings.language': 'Language',
+    'settings.sources': 'Question sources',
+    'settings.sources.all': 'All sources',
+    'settings.sources.uhr': 'UHR only',
+    'settings.sources.hint':
+      'All sources includes UHR-cited and derived practice questions. UHR only limits practice and mock exams to the ~169 questions traceable to Sverige i fokus citations.',
     'settings.text': 'Text size',
     'settings.text.s': 'Small',
     'settings.text.m': 'Regular',
@@ -526,7 +531,7 @@ const i18n = (window.i18n = {
     'hero.h1b': 'Öva med källor.',
     'hero.h1c': 'Känn dig förberedd.',
     'hero.lede':
-      'Ett lugnt, fristående studieverktyg för svensk samhällskunskap. Korta kapitel, fokuserad övning och ett tidsatt övningsprov hjälper dig att förstå innehållet steg för steg.',
+      'Ett lugnt, fristående studieverktyg för svensk samhällskunskap. Korta kapitel, fokuserad övning och provexempel hjälper dig att förstå innehållet steg för steg.',
     'hero.cta1': 'Börja öva',
     'hero.cta2': 'Testa en fråga',
     'hero.stat1': 'samhällsfrågor',
@@ -879,6 +884,11 @@ const i18n = (window.i18n = {
     'settings.buddy.sub': 'Välj en svensk kompis. De peppar dig med tips och fakta.',
     'settings.buddy.show': 'Visa studiekompis',
     'settings.language': 'Språk',
+    'settings.sources': 'Frågekällor',
+    'settings.sources.all': 'Alla källor',
+    'settings.sources.uhr': 'Endast UHR',
+    'settings.sources.hint':
+      'Alla källor visar UHR-hänvisade frågor och härledda övningsfrågor. Endast UHR begränsar övning och övningsprov till de cirka 169 frågor som kan spåras till hänvisningar i Sverige i fokus.',
     'settings.text': 'Textstorlek',
     'settings.text.s': 'Liten',
     'settings.text.m': 'Normal',
