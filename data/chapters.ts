@@ -34,7 +34,7 @@ export const chapters: Chapter[] = [
     nameEn: 'Political elections and parties',
     descriptionSv: 'Val, röstning, folkomröstningar och politiska partiers roll i Sverige.',
     descriptionEn: 'Elections, voting, referendums, and the role of political parties in Sweden.',
-    questionCount: 45,
+    questionCount: 70,
   },
   {
     id: 'ch05',
