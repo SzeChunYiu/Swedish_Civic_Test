@@ -20,13 +20,12 @@ Ukrainian public-service/civic-orientation prose; formal, direct, learner-friend
 
 ## Reusable localization notes
 
-- See `style-guide.md` for Ukrainian civic voice, anti-calque repairs, UI patterns, glossary, and word-by-word audit checklist.
 - Error encouragement should reassure and teach; never shame the learner.
 - Source labels must say the app is based on/reference material, not an official exam authority.
 - Institution names should teach the Swedish term when the term itself matters.
 
 ## Next tasks
 
-1. Native-speaker review of `style-guide.md` examples and terminology.
-2. Apply the audit checklist before introducing Ukrainian app strings.
-3. Add short source cards for any new Ukrainian government/newcomer pages used later.
+1. Add native-speaker observations after reading the sources directly.
+2. Add glossary terms with source URLs before translating UI or questions.
+3. Add humor/tone examples that are newly authored, not copied.
