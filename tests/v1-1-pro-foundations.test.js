@@ -308,6 +308,21 @@ test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays
   assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
 });
 
+test('tierComparison: Swedish Pro labels use natural learner-facing copy', () => {
+  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const labelsById = Object.fromEntries(TIER_ROWS.map((row) => [row.id, row.labelSv]));
+
+  assert.equal(labelsById.mockExams, 'Övningsprov');
+  assert.equal(labelsById.mistakeReview, 'Repetera misstag');
+  assert.equal(labelsById.spacedRepetition, 'Repetition med intervall');
+  assert.equal(labelsById.customStudyPlan, 'Studieplan efter provdatum');
+  assert.equal(labelsById.predictedPass, 'Beräknad provberedskap');
+  assert.equal(labelsById.confidenceSlider, 'Säkerhetsskala och kalibrering');
+  assert.equal(labelsById.accessibility, 'Lättläst typsnitt, textstorlek och mörkt läge');
+  assert.notEqual(labelsById.mockExams, 'Provexamina');
+  assert.notEqual(labelsById.mistakeReview, 'Felgranskning');
+});
+
 test('tierComparison: three columns in canonical order', () => {
   const { TIER_COLUMNS } = loadTs('lib/monetization/tierComparison.ts');
   assert.deepEqual(
@@ -329,6 +344,27 @@ test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', 
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
+});
+
+test('ProPaywall: renders the canonical tier model with separate Pro and Remove Ads paths', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /TIER_COLUMNS/);
+  assert.match(source, /TIER_ROWS/);
+  assert.match(source, /paywallCtaLabels/);
+  assert.match(source, /buyProLifetime/);
+  assert.match(source, /restoreProLifetime/);
+  assert.match(source, /alreadyAdFree/);
+  assert.match(source, /rowSummary:/);
+  assert.match(source, /accessibilityRole="summary"/);
+  assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
+  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
+  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
+  assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 // -------------------------------------------------------- Dashboard stats

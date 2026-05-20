@@ -11,6 +11,9 @@
   // ---------- helpers ----------
 
   function lang() { try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; } }
+  function staticFxPrefersReducedMotion(fx) {
+    return !!(fx && typeof fx.prefersReducedMotion === "function" && fx.prefersReducedMotion());
+  }
   function tr(map) { return (map && (map[lang()] || map.en)) || ""; }
   function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>"]/g, (c) => ({
@@ -649,8 +652,10 @@
 
     if (window.smtFx) {
       window.smtFx.countUp(document.getElementById("mock-score-num"), 0, correct, 1100);
-      if (strongPracticeScore) {
+      if (strongPracticeScore && !staticFxPrefersReducedMotion(window.smtFx)) {
         setTimeout(() => window.smtFx.rain({ colors: window.smtFx.PALETTES.big, count: 90 }), 300);
+      }
+      if (strongPracticeScore) {
         if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
           `${pct}%. Strong practice round.`, `${pct}%. Stark övningsrunda.`
         );

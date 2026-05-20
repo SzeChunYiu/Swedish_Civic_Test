@@ -43,7 +43,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     bodyActive:
       'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen.',
     bodyIdle: (price) =>
-      `Gratisstudier visar AdMob-annonser. Betala ${price} en gång för att ta bort annonser från studieskärmar. Tidsatta övningsprov är redan annonsfria.`,
+      `Hela frågebanken är gratis och annonser finansierar studieskärmar. Betala ${price} en gång för att ta bort annonser från studieskärmar; det låser inte upp frågor. Tidsatta övningsprov är redan annonsfria.`,
     buyAccessibilityHint:
       'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
@@ -72,7 +72,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     bodyActive:
       'Purchase confirmed. Study ads are disabled on this device, and Restore stays available if this store account needs to be checked again.',
     bodyIdle: (price) =>
-      `Free study keeps AdMob ads on. Pay ${price} once to remove ads from study screens while exams stay ad-free.`,
+      `The full question bank stays free and ads support study screens. Pay ${price} once to remove ads from study screens; it does not unlock questions. Exams stay ad-free.`,
     buyAccessibilityHint:
       'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,

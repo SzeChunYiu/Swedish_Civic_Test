@@ -10,12 +10,16 @@ const {
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  REQUIRED_SECURITY_HEADERS,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 } = require('./check-live-site');
 const { checkAssetManifest, writeAssetManifest } = require('./update-site-asset-manifest');
 
 const repoRoot = path.resolve(__dirname, '..');
+const SECURITY_RESPONSE_HEADERS = Object.fromEntries(
+  REQUIRED_SECURITY_HEADERS.map((header) => [header.name, header.value]),
+);
 
 function generatedQuestions(count, label = 'current') {
   const questions = Array.from({ length: count }, (_, index) => ({
@@ -80,11 +84,16 @@ function sameCountStaleAssets() {
   };
 }
 
-async function withStaticServer(assets, callback) {
+async function withStaticServer(assets, callback, options = {}) {
   const server = http.createServer((request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
     const body = assets[pathname] ?? assets['/index.html'];
-    response.writeHead(body == null ? 404 : 200, { 'content-type': 'text/plain; charset=utf-8' });
+    const headers = {
+      'content-type': 'text/plain; charset=utf-8',
+      ...(options.includeSecurityHeaders === false ? {} : SECURITY_RESPONSE_HEADERS),
+      ...(options.headers ?? {}),
+    };
+    response.writeHead(body == null ? 404 : 200, headers);
     response.end(body ?? 'not found');
   });
 
@@ -161,6 +170,26 @@ test('live site check passes current static assets', async () => {
       true,
     );
   });
+});
+
+test('live site check rejects missing static security headers', async () => {
+  await withStaticServer(
+    currentAssets(),
+    async (baseUrl) => {
+      const result = await checkLiveSite(baseUrl, {
+        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+        requiredQuestionCount: 715,
+      });
+      const failedCheck = result.checks.find((check) => check.name === 'static security headers');
+      assert.equal(result.ok, false);
+      assert.equal(failedCheck?.ok, false);
+      assert.match(failedCheck?.details ?? '', /missing X-Content-Type-Options/);
+      assert.match(failedCheck?.details ?? '', /missing Referrer-Policy/);
+      assert.match(failedCheck?.details ?? '', /missing X-Frame-Options/);
+      assert.match(failedCheck?.details ?? '', /missing Permissions-Policy/);
+    },
+    { includeSecurityHeaders: false },
+  );
 });
 
 test('live site check rejects stale deploy assets', async () => {
