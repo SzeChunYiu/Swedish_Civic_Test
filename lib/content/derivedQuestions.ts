@@ -166,7 +166,7 @@ function lowerLeadingSwedishClauseStart(value: string): string {
 }
 
 function lowerLeadingEnglishClauseStart(value: string): string {
-  return value.replace(/^(The|In|A|An|At|On|Almost|Politicians|All)\b/, (match) =>
+  return value.replace(/^(The|In|A|An|At|On|Almost|Politicians|All|It)\b/, (match) =>
     match.toLowerCase(),
   );
 }
@@ -452,7 +452,7 @@ function whyTargetStatementEn(target: string): string {
   const cleaned = stripFinalPunctuation(target);
 
   let match = cleaned.match(
-    /^(can|could|should|must|will|would|may|might)\s+(.+?)\s+(be|have|do|make|create|spread|replace|give|become)\b(.*)$/i,
+    /^(can|could|should|must|will|would|may|might)\s+(.+?)\s+(be|have|do|make|create|spread|replace|give|become|affect)\b(.*)$/i,
   );
   if (match) {
     return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
@@ -502,7 +502,7 @@ function reasonStatementSv(answer: string, target?: string): string {
   const stripped = stripLeadingPurposeSv(answer);
   if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
-    return `En anledning är att ${stripped}`;
+    return `En anledning är att ${lowerLeadingSwedishClauseStart(stripped)}`;
   }
   return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
@@ -515,7 +515,7 @@ function reasonStatementEn(answer: string, target?: string): string {
   const stripped = stripLeadingPurposeEn(answer);
   if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
-    return `One reason is that ${stripped}`;
+    return `One reason is that ${lowerLeadingEnglishClauseStart(stripped)}`;
   }
   return `One reason is ${lowerFirst(stripped)}`;
 }
