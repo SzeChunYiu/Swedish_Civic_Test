@@ -33,6 +33,7 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /const primaryName = language === 'en' \? nameEn : nameSv;/);
   assert.match(source, /const secondaryName = language === 'en' \? nameSv : nameEn;/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel\(\{/);
+  assert.match(source, /accessibilityMode="presentation"/);
   assert.match(source, /language=\{language\}/);
 });
 

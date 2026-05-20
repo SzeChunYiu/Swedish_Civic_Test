@@ -578,6 +578,8 @@ test('chapter card groups title, translation, status, and description into an ac
 
   assert.match(source, /type ChapterCardCopy =/);
   assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy>/);
+  assert.match(source, /accessibilityMode = 'summary'/);
+  assert.match(source, /accessibilityMode\?: 'summary' \| 'presentation'/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /const copy = chapterCardCopy\[language\]/);
   assert.match(source, /\$\{completedCount\}\/\$\{questionCount\} besvarade/);
@@ -598,7 +600,20 @@ test('chapter card groups title, translation, status, and description into an ac
   assert.match(source, /copy\.accessibilityLabel\.secondaryName\(secondaryName\)/);
   assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
   assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
-  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
+  assert.match(source, /const shouldGroupForAccessibility = accessibilityMode === 'summary'/);
+  assert.match(
+    source,
+    /const shouldHideNestedAccessibility = accessibilityMode === 'presentation'/,
+  );
+  assert.match(
+    source,
+    /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/,
+  );
+  assert.match(source, /accessibilityElementsHidden=\{shouldHideNestedAccessibility\}/);
+  assert.match(
+    source,
+    /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/,
+  );
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -642,6 +657,7 @@ test('learn route chapter links announce chapter progress', () => {
     /copy\.accessibilityLabel\(\{ primaryName, secondaryName, progressLabel \}\)/,
   );
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
+  assert.match(source, /accessibilityMode="presentation"/);
   assert.match(source, /language=\{language\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);

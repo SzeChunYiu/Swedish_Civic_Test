@@ -494,6 +494,10 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
     'learn route chapter links must expose localized accessibility labels',
   ],
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
+  [
+    'accessibilityMode="presentation"',
+    'learn route chapter links must make nested ChapterCard presentation-only',
+  ],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
@@ -2319,8 +2323,16 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /language = 'sv'/,
   },
   {
+    label: 'standalone summary mode default',
+    pattern: /accessibilityMode = 'summary'/,
+  },
+  {
     label: 'settings language copy selection',
     pattern: /const copy = chapterCardCopy\[language\];/,
+  },
+  {
+    label: 'accessibility mode prop contract',
+    pattern: /accessibilityMode\?: 'summary' \| 'presentation';/,
   },
   {
     label: 'optional Chapter prop contract',
@@ -2377,9 +2389,26 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /description \? copy\.accessibilityLabel\.description\(description\) : null/,
   },
   {
-    label: 'Card receives chapter accessibility summary',
+    label: 'summary mode groups the ChapterCard',
+    pattern: /const shouldGroupForAccessibility = accessibilityMode === 'summary';/,
+  },
+  {
+    label: 'presentation mode hides nested accessible descendants',
+    pattern: /const shouldHideNestedAccessibility = accessibilityMode === 'presentation';/,
+  },
+  {
+    label: 'Card receives conditional chapter accessibility summary',
     pattern:
-      /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated style=\{styles\.card\}>/,
+      /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/,
+  },
+  {
+    label: 'Card hides nested accessibility in presentation mode',
+    pattern: /accessibilityElementsHidden=\{shouldHideNestedAccessibility\}/,
+  },
+  {
+    label: 'Card hides native descendants in presentation mode',
+    pattern:
+      /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/,
   },
   {
     label: 'visible chapter title',
