@@ -51,7 +51,7 @@ try {
   progressStorage = null;
 }
 
-type PersistedProgress = {
+export type PersistedProgress = {
   completedQuestionIds: string[];
   questionProgress: Record<string, QuestionProgress>;
   totalXp: number;
@@ -283,6 +283,10 @@ function normalizeProgress(value: unknown): PersistedProgress {
   };
 }
 
+export function normalizeImportedProgress(value: unknown): PersistedProgress {
+  return normalizeProgress(value);
+}
+
 function readProgress(): PersistedProgress {
   let rawProgress: string | undefined;
   try {
@@ -304,6 +308,90 @@ function writeProgress(progress: PersistedProgress): PersistedProgress {
   const serializedProgress = JSON.stringify(progress);
   progressStorage?.set(progressStateKey, serializedProgress);
   return normalizeProgress(JSON.parse(serializedProgress));
+}
+
+function latestString(a: string | undefined, b: string | undefined): string | undefined {
+  if (!a) return b;
+  if (!b) return a;
+  return b > a ? b : a;
+}
+
+function mergeQuestionProgress(
+  current: QuestionProgress | undefined,
+  imported: QuestionProgress,
+): QuestionProgress {
+  if (!current) return imported;
+
+  const next: QuestionProgress = {
+    questionId: imported.questionId,
+    seenCount: Math.max(current.seenCount, imported.seenCount),
+    correctCount: Math.max(current.correctCount, imported.correctCount),
+    wrongCount: Math.max(current.wrongCount, imported.wrongCount),
+    correctStreak: Math.max(current.correctStreak, imported.correctStreak),
+  };
+  const lastAnsweredAt = latestString(current.lastAnsweredAt, imported.lastAnsweredAt);
+  const nextReviewAt = latestString(current.nextReviewAt, imported.nextReviewAt);
+  if (lastAnsweredAt) next.lastAnsweredAt = lastAnsweredAt;
+  if (nextReviewAt) next.nextReviewAt = nextReviewAt;
+  if (current.bookmarked === true || imported.bookmarked === true) {
+    next.bookmarked = true;
+  } else if (current.bookmarked === false || imported.bookmarked === false) {
+    next.bookmarked = false;
+  }
+
+  return next;
+}
+
+function mergeStreakFreezeState(
+  current: StreakFreezeState,
+  imported: StreakFreezeState,
+): StreakFreezeState {
+  return {
+    available: Math.max(current.available, imported.available),
+    lastEarnedAt: latestString(current.lastEarnedAt, imported.lastEarnedAt) ?? current.lastEarnedAt,
+    lifetimeEarned: Math.max(current.lifetimeEarned, imported.lifetimeEarned),
+    lifetimeSpent: Math.max(current.lifetimeSpent, imported.lifetimeSpent),
+    rescuedDayKeys: [...new Set([...current.rescuedDayKeys, ...imported.rescuedDayKeys])].sort(),
+  };
+}
+
+function mergeMockExamSessions(
+  current: MockExamProgress[],
+  imported: MockExamProgress[],
+): MockExamProgress[] {
+  const bySessionId = new Map(current.map((session) => [session.sessionId, session]));
+  for (const importedSession of imported) {
+    const currentSession = bySessionId.get(importedSession.sessionId);
+    if (!currentSession || importedSession.completedAt >= currentSession.completedAt) {
+      bySessionId.set(importedSession.sessionId, importedSession);
+    }
+  }
+
+  return [...bySessionId.values()].sort((a, b) => a.completedAt.localeCompare(b.completedAt));
+}
+
+function mergeProgress(current: PersistedProgress, imported: PersistedProgress): PersistedProgress {
+  const questionProgress = { ...current.questionProgress };
+  for (const [questionId, importedProgress] of Object.entries(imported.questionProgress)) {
+    questionProgress[questionId] = mergeQuestionProgress(
+      questionProgress[questionId],
+      importedProgress,
+    );
+  }
+
+  return normalizeProgress({
+    completedQuestionIds: [
+      ...new Set([...current.completedQuestionIds, ...imported.completedQuestionIds]),
+    ],
+    questionProgress,
+    totalXp: Math.max(current.totalXp, imported.totalXp),
+    answerDates: [...new Set([...current.answerDates, ...imported.answerDates])].sort(),
+    mockExamSessions: mergeMockExamSessions(current.mockExamSessions, imported.mockExamSessions),
+    streakFreezeState: mergeStreakFreezeState(
+      current.streakFreezeState,
+      imported.streakFreezeState,
+    ),
+  });
 }
 
 type ProgressState = PersistedProgress & {
@@ -468,3 +556,12 @@ export const useProgressStore = create<ProgressState>((set) => ({
     set(persistedProgress);
   },
 }));
+
+export function importProgressSnapshot(value: unknown): PersistedProgress {
+  const importedProgress = normalizeImportedProgress(value);
+  const currentProgress = normalizeProgress(useProgressStore.getState());
+  const nextProgress = mergeProgress(currentProgress, importedProgress);
+  const persistedProgress = writeProgress(nextProgress);
+  useProgressStore.setState(persistedProgress);
+  return persistedProgress;
+}
