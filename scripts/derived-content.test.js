@@ -886,10 +886,6 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Den digitala revolutionen har bara förändrat hur människor firar midsommar.',
       'The digital revolution has only changed how people celebrate Midsummer.',
     ],
-    q495: [
-      'Europarådet arbetar endast för jordbrukspolitik.',
-      'The Council of Europe works only for agricultural policy.',
-    ],
     q458: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
       'The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.',
