@@ -1078,13 +1078,16 @@ test('mistakes screen has a bookmarked-question review section', () => {
 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /bookmarkedQuestions/);
+  assert.match(source, /bookmarkedReviewQuestions/);
+  assert.match(source, /\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\) === 0/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
   assert.match(source, /Sparad för att öva igen/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
+  assert.match(source, /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} \/>/);
+  assert.match(source, /accessibilityLabel=\{copy\.answerReviewAccessibilityLabel/);
 });
 
 test('mistakes screen exposes page and review section headings as headers', () => {
