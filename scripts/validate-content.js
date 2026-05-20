@@ -1877,17 +1877,27 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     file: 'app/sources.tsx',
     requiredSnippets: [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
+      'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
+      "retrievedDate: '2026-05-20'",
+      "title: 'UHR: Om medborgarskapsprovet'",
+      "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
       'Källor',
       'Primärt studiematerial',
+      'UHR inte står bakom dessa',
+      'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
+      'Varje övningsfråga visar en källrad med UHR:s kapitel',
       'Sources',
       'Primary study material',
+      'quality is not controlled by UHR or any other authority',
+      'Source accessed ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
+      'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -1922,6 +1932,8 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     ],
   },
 ];
+const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 59;
+const FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS = ['streaks', 'settings'];
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
@@ -7308,10 +7320,6 @@ const expectedGeneratedPublishedQuestions =
     ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
     : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
-const applyQuestionLocalizationPilot = loadTs(
-  'data/questionLocalizations.ts',
-  'applyQuestionLocalizationPilot',
-);
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
@@ -7463,6 +7471,8 @@ let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
+let legalSwedishEnglishTokenGuardValidated = 0;
+let legalSwedishEnglishTokenGuardParityValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let staticSiteSwedishGrammarToneValidated = 0;
@@ -7931,6 +7941,20 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
     chapterRouteHeaderParityValidated,
     chapterRouteCopyLabelsValidated,
     chapterRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-legal-route-parity')) {
+  validateLegalRouteHeaderParity();
+  validateLegalSwedishEnglishTokenGuard();
+  exitWithValidationFailures();
+  printValidationSummary({
+    legalRouteHeadersValidated,
+    legalRouteHeaderParityValidated,
+    swedishPrivacyStreakCopyNaturalnessValidated,
+    legalSwedishEnglishTokenGuardValidated,
+    legalSwedishEnglishTokenGuardParityValidated,
   });
   process.exit(0);
 }
@@ -10473,11 +10497,7 @@ function validateLegalRouteHeaderParity() {
       continue;
     }
 
-    if (
-      !routeSource.includes(
-        "import { LegalPage, LegalSection } from '../components/compliance/LegalPage';",
-      )
-    ) {
+    if (!/LegalPage,\s+LegalSection/.test(routeSource)) {
       reject(`${expectedRoute.file} must use shared LegalPage and LegalSection headers`);
     }
 
@@ -10538,6 +10558,129 @@ function validateLegalRouteHeaderParity() {
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
   }
+}
+
+function extractBraceBlockFromKey(source, keyPattern) {
+  const keyMatch = keyPattern.exec(source);
+  if (!keyMatch) return '';
+
+  const blockStart = source.indexOf('{', keyMatch.index);
+  if (blockStart < 0) return '';
+
+  let depth = 0;
+  let quote = '';
+  let escaped = false;
+  for (let index = blockStart; index < source.length; index += 1) {
+    const char = source[index];
+
+    if (quote) {
+      if (escaped) {
+        escaped = false;
+      } else if (char === '\\') {
+        escaped = true;
+      } else if (char === quote) {
+        quote = '';
+      }
+      continue;
+    }
+
+    if (char === "'" || char === '"' || char === '`') {
+      quote = char;
+      escaped = false;
+      continue;
+    }
+
+    if (char === '{') depth += 1;
+    if (char === '}') {
+      depth -= 1;
+      if (depth === 0) return source.slice(blockStart, index + 1);
+    }
+  }
+
+  return '';
+}
+
+function extractStaticStringLiterals(source) {
+  const values = [];
+
+  for (let index = 0; index < source.length; index += 1) {
+    const quote = source[index];
+    if (quote !== "'" && quote !== '"' && quote !== '`') continue;
+
+    const lineStart = source.lastIndexOf('\n', index) + 1;
+    const prefix = source.slice(lineStart, index);
+    const skipDynamicTemplate = quote === '`' && prefix.includes('=>');
+    let value = '';
+    let escaped = false;
+    let cursor = index + 1;
+
+    for (; cursor < source.length; cursor += 1) {
+      const char = source[cursor];
+      if (escaped) {
+        value += char;
+        escaped = false;
+        continue;
+      }
+      if (char === '\\') {
+        escaped = true;
+        continue;
+      }
+      if (char === quote) break;
+      value += char;
+    }
+
+    if (!skipDynamicTemplate) {
+      values.push(value.replace(/\$\{[\s\S]*?\}/g, ' '));
+    }
+    index = cursor;
+  }
+
+  return values;
+}
+
+function validateLegalSwedishEnglishTokenGuard() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
+    let routeSource = '';
+    try {
+      routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
+    } catch (error) {
+      reject(`${expectedRoute.file} could not be read for Swedish token guard: ${error.message}`);
+      continue;
+    }
+
+    const swedishBlock = extractBraceBlockFromKey(routeSource, /\bsv\s*:/);
+    if (!swedishBlock) {
+      reject(`${expectedRoute.file} Swedish legal copy block must stay parseable`);
+      continue;
+    }
+
+    const stringValues = extractStaticStringLiterals(swedishBlock);
+    for (const value of stringValues) {
+      let stringIsValid = true;
+      for (const token of FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS) {
+        if (new RegExp(`\\b${escapeRegExp(token)}\\b`, 'i').test(value)) {
+          stringIsValid = false;
+          reject(`Swedish legal copy contains English token "${token}" in ${expectedRoute.file}`);
+        }
+      }
+      if (stringIsValid) legalSwedishEnglishTokenGuardValidated += 1;
+    }
+  }
+
+  if (legalSwedishEnglishTokenGuardValidated !== EXPECTED_LEGAL_SWEDISH_COPY_STRINGS) {
+    reject(
+      `Swedish legal copy token guard validated ${legalSwedishEnglishTokenGuardValidated} strings, expected ${EXPECTED_LEGAL_SWEDISH_COPY_STRINGS}`,
+    );
+  }
+
+  if (valid) legalSwedishEnglishTokenGuardParityValidated = true;
 }
 
 function validateSettingsRouteHeaderParity() {
@@ -16484,6 +16627,7 @@ validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
 validateLegalRouteHeaderParity();
+validateLegalSwedishEnglishTokenGuard();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -16635,6 +16779,8 @@ console.log(
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
+      legalSwedishEnglishTokenGuardValidated,
+      legalSwedishEnglishTokenGuardParityValidated,
       staticSiteSwedishStudyTermsValidated,
       staticSiteSwedishStudyTermNaturalnessValidated,
       staticSiteSwedishGrammarToneValidated,
