@@ -20,15 +20,34 @@ test('mock exam access TypeScript schema stays in parity with validator expectat
   );
 
   assert.equal(summary.mockExamAccessTypeUnionsValidated, 1);
-  assert.equal(summary.mockExamAccessTypeInterfacesValidated, 6);
+  assert.equal(summary.mockExamAccessTypeInterfacesValidated, 7);
   assert.equal(summary.mockExamAccessTypeSchemaParityValidated, true);
   assert.match(rewardedExamSource, /export type MockExamAccessReason =/);
   assert.match(rewardedExamSource, /\| 'access_read_failed';/);
   assert.match(rewardedExamSource, /export type MockExamAccessDecision = \{/);
+  assert.match(rewardedExamSource, /completedMockExamSessionIdsByDate: Record<string, string\[]>;/);
+  assert.match(rewardedExamSource, /export type RecordMockExamCompletionOptions =/);
+  assert.match(rewardedExamSource, /sessionId: string;/);
   assert.match(rewardedExamSource, /platform\?: AdRuntimePlatform \| string;/);
   assert.match(rewardedExamSource, /placement: typeof REWARDED_EXTRA_EXAM_PLACEMENT;/);
   assert.match(rewardedExamSource, /export interface MockExamAccessStorage/);
   assert.match(rewardedExamSource, /getItemAsync\(key: string\): Promise<string \| null>;/);
+});
+
+test('mock exam access schema includes idempotent completion identity', () => {
+  const rewardedExamSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
+    'utf8',
+  );
+
+  assert.match(rewardedExamSource, /completedMockExamSessionIdsByDate: Record<string, string\[]>;/);
+  assert.match(
+    rewardedExamSource,
+    /type RecordMockExamCompletionOptions = MockExamAccessStorageOptions & \{/,
+  );
+  assert.match(rewardedExamSource, /sessionId: string;/);
+  assert.match(rewardedExamSource, /normalizeMockExamSessionId\(sessionId\)/);
+  assert.match(rewardedExamSource, /completedSessionIds\.includes\(normalizedSessionId\)/);
 });
 
 test('mock exam access schema parity rejects credit optionality drift', () => {
