@@ -243,22 +243,72 @@ const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
     /\bage 13 option refers to\b/i,
   ],
 };
-const STATIC_SWEDISH_GRAMMAR_TONE_REJECTIONS = [
-  {
-    label: 'ungrammatical legal-explanation phrase',
-    pattern: phrasePattern('ingen ', 'juridiska'),
-  },
-  { label: 'cutesy study-habit size phrase', pattern: phrasePattern('fika', '-stor') },
-  { label: 'joke liability phrase', pattern: phrasePattern('fika', '-skador') },
+const STATIC_SITE_ARABIC_SCRIPT_PATTERN = /[\u0600-\u06ff]/;
+const STATIC_SITE_ARABIC_REQUIRED_UI_KEYS = [
+  'nav.home',
+  'nav.practice',
+  'nav.mock',
+  'nav.ebook',
+  'nav.support',
+  'nav.privacy',
+  'nav.terms',
+  'nav.sources',
+  'nav.cta',
+  'hero.eyebrow',
+  'hero.h1a',
+  'hero.h1b',
+  'hero.h1c',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'consent.title',
+  'consent.body',
+  'consent.min',
+  'consent.all',
+  'settings.title',
+  'settings.theme',
+  'settings.theme.light',
+  'settings.theme.dark',
+  'settings.theme.auto',
+  'settings.palette',
+  'settings.palette.sub',
+  'settings.buddy',
+  'settings.buddy.sub',
+  'settings.buddy.show',
+  'settings.language',
+  'settings.text',
+  'settings.text.s',
+  'settings.text.m',
+  'settings.text.l',
+  'settings.misc',
+  'settings.motion',
+  'settings.aurora',
+  'settings.flag',
+  'settings.consent.reset',
+  'settings.savedHint',
+  'settings.done',
+  'footer.t1',
+  'footer.t2',
+  'footer.h.study',
+  'footer.h.legal',
+  'footer.h.about',
+  'footer.about.p',
+  'footer.h.fika',
+  'footer.fika.p',
+  'footer.honest.p',
+  'footer.copyright',
+  'footer.fika',
 ];
-const STATIC_SWEDISH_GRAMMAR_TONE_REQUIRED_COPY = [
-  { label: 'legal-explanation replacement', pattern: /inget juridiskt kr[aå]ngel/i },
-  { label: 'study-habit replacement', pattern: /en kort studievana/i },
-  {
-    label: 'neutral liability replacement',
-    pattern: /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/i,
-  },
-];
+const STATIC_SITE_ARABIC_BANNED_UI_VALUES = new Map([
+  [
+    'hero.lede',
+    'تطبيق دراسة هادئ وغير رسمي لاختبار المواطنة السويدي. فصول قصيرة، ووضع تدريب ذكي، واختبار وهمي يجعل يوم الامتحان أقل رعباً.',
+  ],
+  ['settings.consent.reset', 'إعادة ضبط موافقة الكوكيز / الإعلانات…'],
+  ['footer.fika', 'صُنع باعتدال · مُختبر بالقهوة.'],
+  ['nav.ebook', 'كتاب'],
+  ['settings.theme', 'السمة'],
+]);
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -4312,6 +4362,12 @@ function loadText(relativePath) {
   return fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8');
 }
 
+function loadStaticSiteI18nExtras() {
+  const window = { i18n: {} };
+  const source = loadText('site/i18n-extras.js');
+  return new Function('window', `${source}\nreturn window.i18n || window.__i18n_extra;`)(window);
+}
+
 function fail(message) {
   failures.push(message);
 }
@@ -7620,6 +7676,8 @@ let staticHeadMetadataDescriptionValidated = false;
 let staticV11ReadinessUnsupportedCopyValidated = 0;
 let staticV11ReadinessRequiredCopyValidated = 0;
 let staticV11ReadinessCopyParityValidated = false;
+let staticSiteArabicUiLabelsValidated = 0;
+let staticSiteArabicUiNaturalnessValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookSwedishQuizLoanwordPatternsValidated = 0;
@@ -16307,6 +16365,71 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankParityValidated = true;
 }
 
+function validateStaticSiteArabicI18nExtras() {
+  let extras;
+  try {
+    extras = loadStaticSiteI18nExtras();
+  } catch (error) {
+    fail(`site/i18n-extras.js Arabic dictionary could not be loaded: ${error.message}`);
+    return;
+  }
+
+  const arabic = extras?.ar;
+  if (!arabic || typeof arabic !== 'object' || Array.isArray(arabic)) {
+    fail('site/i18n-extras.js is missing the Arabic dictionary');
+    return;
+  }
+
+  STATIC_SITE_ARABIC_REQUIRED_UI_KEYS.forEach((key) => {
+    const value = arabic[key];
+    let labelIsValid = true;
+
+    if (!hasText(value)) {
+      labelIsValid = false;
+      fail(`site/i18n-extras.js Arabic ${key} is missing or blank`);
+    } else {
+      const normalizedValue = normalizeOptionText(value);
+      if (value !== normalizedValue) {
+        labelIsValid = false;
+        fail(`site/i18n-extras.js Arabic ${key} must be trimmed and single-spaced`);
+      }
+      if (!STATIC_SITE_ARABIC_SCRIPT_PATTERN.test(value)) {
+        labelIsValid = false;
+        fail(`site/i18n-extras.js Arabic ${key} appears to fall back to English`);
+      }
+    }
+
+    if (labelIsValid) staticSiteArabicUiLabelsValidated += 1;
+  });
+
+  let naturalnessIsValid = true;
+  STATIC_SITE_ARABIC_BANNED_UI_VALUES.forEach((bannedValue, key) => {
+    if (arabic[key] === bannedValue) {
+      naturalnessIsValid = false;
+      fail(`site/i18n-extras.js Arabic ${key} uses literal machine-like wording`);
+    }
+  });
+
+  if (!/اختبار تجريبي/.test(arabic['hero.lede'] || '')) {
+    naturalnessIsValid = false;
+    fail('site/i18n-extras.js Arabic hero.lede must use natural mock-exam wording');
+  }
+  if (!/ملفات تعريف الارتباط/.test(arabic['settings.consent.reset'] || '')) {
+    naturalnessIsValid = false;
+    fail('site/i18n-extras.js Arabic consent reset copy must use native cookie terminology');
+  }
+  if (!/دليل/.test(arabic['nav.ebook'] || '')) {
+    naturalnessIsValid = false;
+    fail('site/i18n-extras.js Arabic nav.ebook must be more specific than a bare book label');
+  }
+  if (arabic['settings.theme'] !== 'المظهر') {
+    naturalnessIsValid = false;
+    fail('site/i18n-extras.js Arabic settings.theme must use native appearance wording');
+  }
+
+  if (naturalnessIsValid) staticSiteArabicUiNaturalnessValidated = true;
+}
+
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'id',
   'chapterId',
@@ -17431,6 +17554,7 @@ validateMasteryRules();
 validateQuestionBankCsvContract();
 validateCriminalResponsibilityCurrentness();
 validateStaticSiteQuestionBankParity();
+validateStaticSiteArabicI18nExtras();
 validateUhrSourceMaterialLinkParity();
 
 if (failures.length) {
@@ -17744,6 +17868,8 @@ console.log(
       staticV11ReadinessUnsupportedCopyValidated,
       staticV11ReadinessRequiredCopyValidated,
       staticV11ReadinessCopyParityValidated,
+      staticSiteArabicUiLabelsValidated,
+      staticSiteArabicUiNaturalnessValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookSwedishQuizLoanwordPatternsValidated,
