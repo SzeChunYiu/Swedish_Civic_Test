@@ -48,12 +48,13 @@ test('native routed Swedish study copy avoids learner-facing quiz loanwords', ()
     new RegExp(['Quiz', 'pass'].join('')),
     new RegExp(['quiz', 'frågor'].join('')),
     new RegExp(['quiz', 'frågan'].join('')),
+    new RegExp(['Starta', 'kapitelövning'].join(' ')),
   ];
 
   for (const pattern of bannedSwedishLearnerCopy) {
     assert.doesNotMatch(sources, pattern);
   }
-  assert.match(sources, /Starta kapitelövning/);
+  assert.match(sources, /Starta frågepass/);
   assert.match(sources, /Frågepass/);
   assert.match(sources, /övningsfrågor/);
   assert.match(sources, /övningsfrågan/);

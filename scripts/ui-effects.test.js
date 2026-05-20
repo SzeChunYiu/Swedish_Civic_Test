@@ -186,8 +186,24 @@ test('language picker future-language rows are disabled instead of selectable', 
   const source = read('components/ui/LanguagePicker.tsx');
 
   assert.match(source, /const availableLocaleOptions = useMemo\(/);
+  assert.match(source, /const closeButtonRef = useRef<View \| null>\(null\);/);
   assert.match(source, /const focusAvailableOption = \(optionCode: string\) => \{/);
+  assert.match(source, /const focusCloseButton = \(\) => \{/);
+  assert.match(source, /focusView\(closeButtonRef\.current\);/);
+  assert.match(source, /const containTabFocus = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /if \(!availableLocaleOptions\.length\) \{/);
+  assert.match(
+    source,
+    /focusAvailableIndex\(event\.shiftKey \? availableLocaleOptions\.length - 1 : 0\);/,
+  );
+  assert.match(
+    source,
+    /const nextIndex = event\.shiftKey \? focusedIndex - 1 : focusedIndex \+ 1;/,
+  );
+  assert.match(source, /if \(nextIndex < 0 \|\| nextIndex >= availableLocaleOptions\.length\) \{/);
   assert.match(source, /const handleMenuKeyDown = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /case 'Tab':/);
+  assert.match(source, /containTabFocus\(event\);/);
   assert.match(source, /case 'Escape':/);
   assert.match(source, /closePicker\(\{ restoreFocus: true \}\);/);
   assert.match(source, /case 'ArrowDown':/);
@@ -233,6 +249,7 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
   assert.match(source, /styles\.closeButton/);
+  assert.match(source, /ref=\{closeButtonRef\}/);
   assert.doesNotMatch(
     source,
     /const handleSelect = \(option: LocaleOption\) => \{[\s\S]*setOpen\(false\);[\s\S]*if \(!option\.available\) return;/,
@@ -548,6 +565,41 @@ test('onboarding route remains scrollable on narrow mobile viewports', () => {
   assert.match(source, /content: \{\n\s+flexGrow: 1,/);
   assert.match(source, /paddingBottom: space\[10\]/);
   assert.doesNotMatch(source, /<View style=\{styles\.container\}>/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('first-run about modal manages web focus and real actions', () => {
+  const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
+
+  assert.match(source, /import \{ useCallback, useEffect, useRef \} from 'react';/);
+  assert.match(source, /Modal, Platform, Pressable/);
+  assert.match(source, /type FocusableView =/);
+  assert.match(source, /type RestorableElement =/);
+  assert.match(source, /type WebKeyboardEvent =/);
+  assert.match(source, /findFirstRunFocusFallback/);
+  assert.match(source, /getFirstRunFocusRestoreTarget/);
+  assert.match(source, /const visible =/);
+  assert.match(source, /const guideLinkRef = useRef<View \| null>\(null\);/);
+  assert.match(source, /const skipButtonRef = useRef<View \| null>\(null\);/);
+  assert.match(source, /const restoreFocusRef = useRef<RestorableElement \| null>\(null\);/);
+  assert.match(source, /focusFirstRunAction/);
+  assert.match(source, /getFocusedFirstRunActionIndex/);
+  assert.match(source, /restoreFirstRunFocus/);
+  assert.match(source, /dismissFirstRunModal/);
+  assert.match(source, /handleDialogKeyDown/);
+  assert.match(source, /case 'Escape':/);
+  assert.match(source, /case 'Tab':/);
+  assert.match(source, /document\.addEventListener\('keydown', handleDialogKeyDown, true\)/);
+  assert.match(source, /document\.removeEventListener\('keydown', handleDialogKeyDown, true\)/);
+  assert.match(source, /onRequestClose=\{dismissFirstRunModal\}/);
+  assert.match(source, /onPress=\{dismissFirstRunModal\}/);
+  assert.match(source, /ref=\{guideLinkRef\}/);
+  assert.match(source, /ref=\{skipButtonRef\}/);
+  assert.match(source, /router\.push\('\/about-the-test'\)/);
+  assert.match(source, /accessible=\{false\}/);
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.doesNotMatch(source, /<Pressable[\s\S]*accessibilityRole="button"[\s\S]*styles\.backdrop/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1020,6 +1072,8 @@ test('chapter detail route exposes page and question section headings as headers
 
   assert.match(source, /Kapitlet hittades inte/);
   assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
+  assert.match(source, /Starta frågepass för \$\{chapterTitle\}/);
+  assert.doesNotMatch(source, new RegExp(['Starta', 'kapitelövning'].join(' ')));
   assert.match(source, /Chapter not found/);
   assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.equal(headerMatches?.length, 3);
@@ -1112,15 +1166,37 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
   assert.match(nativeSource, /<BannerAd/);
-  assert.match(practiceSource, /<PracticeInterstitialAd showKey=/);
+  assert.match(practiceSource, /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\}/);
+  assert.match(
+    practiceSource,
+    /getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\)/,
+  );
+  assert.doesNotMatch(
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
+  );
   assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(webInterstitialSource, /shouldShowAd\('quiz_completed_interstitial'/);
   assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
   assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
   assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.OPENED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.CLOSED/);
   assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
   assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
   assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
+  assert.match(
+    nativeInterstitialSource,
+    /AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/,
+  );
+  assert.doesNotMatch(
+    nativeInterstitialSource,
+    /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/,
+  );
+  assert.match(
+    nativeInterstitialSource,
+    /Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/,
+  );
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
@@ -1406,7 +1482,17 @@ test('home screen surfaces a guided civic readiness path', () => {
   assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
   assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
   assert.match(source, /dailyProgress=\{progress\}/);
+  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
+  assert.match(
+    source,
+    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
+  );
+  assert.match(source, /: '\/exam';/);
+  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
   assert.match(componentSource, /href="\/practice"/);
+  assert.match(componentSource, /href=\{stage\.href\}/);
+  assert.match(componentSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
+  assert.match(componentSource, /\{stage\.cta\}/);
   assert.match(componentSource, /ProgressBar language=\{language\} progress=\{stage\.progress\}/);
   assert.match(componentSource, /minHeight: space\[6\]/);
   assert.doesNotMatch(`${source}\n${componentSource}`, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -1434,13 +1520,9 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
-  assert.match(source, /Förberedelsesignal/);
-  assert.match(source, /Gör ett tidsatt övningsprov/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
-  assert.match(source, /Preparation signal/);
-  assert.match(source, /Take a timed practice exam/);
   assert.match(source, /Smart study habits/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

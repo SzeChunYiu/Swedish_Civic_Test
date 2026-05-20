@@ -63,7 +63,8 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /recordMockExamSession\(\{/);
   assert.match(source, /recordExamCompletion\(examSessionId\)/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
-  assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
+  assert.match(source, /completedAt: completedExamSession\.completedAt/);
+  assert.match(source, /<MockExamTimeHeatmap/);
   assert.match(source, /<Badge tone=\{endedByTime \? 'orange' : 'blue'\}>/);
   assert.doesNotMatch(source, new RegExp(['result\\.percent\\s*>=\\s*', '75'].join('')));
   assert.doesNotMatch(source, new RegExp(['75', '%'].join('')));

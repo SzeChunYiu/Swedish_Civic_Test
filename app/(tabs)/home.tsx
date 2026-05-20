@@ -50,6 +50,8 @@ type GuidedPathStageCopy = {
     status: string,
   ) => string;
   chapterRange: string;
+  cta: (isCompleted: boolean) => string;
+  ctaAccessibilityLabel: (title: string, isCompleted: boolean) => string;
   description: string;
   levelLabel: string;
   progressLabel: (completedChapters: number, totalChapters: number) => string;
@@ -95,7 +97,7 @@ type HomeCopy = {
   readinessCtaAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
   readinessMetricLabel: string;
-  readinessCaveat: string;
+  readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
   reviewWeakChapters: string;
@@ -171,9 +173,7 @@ function buildGuidedPracticePathStages(
     const nextChapterId = group.chapterIds.find((chapterId) => !answeredChapterIds.has(chapterId));
     const href = nextChapterId
       ? (`/chapter/${nextChapterId}` as GuidedPracticePathStage['href'])
-      : group.id === 'advanced'
-        ? '/exam'
-        : '/learn';
+      : '/exam';
 
     return {
       accessibilityLabel: stageCopy.accessibilityLabel(
@@ -183,6 +183,8 @@ function buildGuidedPracticePathStages(
         statusLabel,
       ),
       chapterRange: stageCopy.chapterRange,
+      cta: stageCopy.cta(isCompleted),
+      ctaAccessibilityLabel: stageCopy.ctaAccessibilityLabel(stageCopy.title, isCompleted),
       description: stageCopy.description,
       href,
       id: group.id,
@@ -232,6 +234,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 1-4',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
         description: 'Börja med landet, demokratin, styret och valen.',
         levelLabel: 'Nybörjare',
         progressLabel: (completedChapters, totalChapters) =>
@@ -242,6 +249,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 5-9',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
         description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
         levelLabel: 'Fortsättning',
         progressLabel: (completedChapters, totalChapters) =>
@@ -252,6 +264,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 10-13',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
         description:
           'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
         levelLabel: 'Avancerad',
@@ -267,21 +284,20 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Förberedelsesignal: ${score} procent. ${verdict}. ${details}`,
-    readinessCta: 'Gör ett tidsatt övningsprov',
-    readinessCtaAccessibilityLabel:
-      'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
+    readinessCta: 'Gör ett mockprov',
+    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade`,
-    readinessMetricLabel: 'lokalt',
-    readinessCaveat:
-      'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
-    readinessTitle: 'Förberedelsesignal',
+      `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
+    readinessMetricLabel: 'redo',
+    readinessSparseNote:
+      'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    readinessTitle: 'Redoindikator',
     readinessVerdicts: {
-      not_ready_yet: 'Mer underlag behövs',
-      getting_there: 'Framsteg syns',
-      almost_ready: 'Bra övningstakt',
-      strong_preparation: 'Stark lokal övning',
+      not_ready_yet: 'Öva mer först',
+      getting_there: 'På rätt väg',
+      almost_ready: 'Nästan redo',
+      strong_preparation: 'Stark förberedelse',
     },
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
@@ -303,9 +319,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
       },
       {
-        label: 'Övningsläge',
-        lesson:
-          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+        label: 'Provredo',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
@@ -354,6 +369,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Chapters 1-4',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
         description: 'Start with Sweden, democracy, government, and elections.',
         levelLabel: 'Beginner',
         progressLabel: (completedChapters, totalChapters) =>
@@ -364,6 +384,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Chapters 5-9',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
         description: 'Build through law, media, rights, working life, and welfare.',
         levelLabel: 'Builder',
         progressLabel: (completedChapters, totalChapters) =>
@@ -374,6 +399,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Chapters 10-13',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
         description:
           'Finish with modern Sweden, international topics, freedom of religion, and holidays.',
         levelLabel: 'Advanced',
@@ -389,21 +419,20 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Preparation signal: ${score} percent. ${verdict}. ${details}`,
-    readinessCta: 'Take a timed practice exam',
-    readinessCtaAccessibilityLabel:
-      'Start a timed practice exam to compare with your local preparation signal',
+      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
+    readinessCta: 'Take a mock exam',
+    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried`,
-    readinessMetricLabel: 'local',
-    readinessCaveat:
-      'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
-    readinessTitle: 'Preparation signal',
+      `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
+    readinessMetricLabel: 'ready',
+    readinessSparseNote:
+      'Based on your answers so far. Answer more questions for a steadier signal.',
+    readinessTitle: 'Readiness indicator',
     readinessVerdicts: {
-      not_ready_yet: 'More evidence needed',
-      getting_there: 'Progress is visible',
-      almost_ready: 'Solid practice pace',
-      strong_preparation: 'Strong local practice',
+      not_ready_yet: 'Keep practicing first',
+      getting_there: 'Getting there',
+      almost_ready: 'Almost ready',
+      strong_preparation: 'Strong preparation',
     },
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
@@ -425,9 +454,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Get one simple next action and gentle habit feedback without blocking serious study.',
       },
       {
-        label: 'Timed practice',
+        label: 'Exam readiness',
         lesson:
-          'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
@@ -598,7 +627,9 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
-        <Text style={styles.readinessCaveat}>{copy.readinessCaveat}</Text>
+        {readiness.isSparse ? (
+          <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
+        ) : null}
         <Link
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
           accessibilityRole="link"
@@ -802,7 +833,7 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  readinessCaveat: {
+  readinessSparseNote: {
     color: colors.textDisclaimer,
     fontSize: typography.micro.fontSize,
     lineHeight: typography.micro.lineHeight,
