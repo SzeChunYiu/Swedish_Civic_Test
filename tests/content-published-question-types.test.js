@@ -1530,6 +1530,74 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('political-party options keep one grammatical answer shape', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace('Makt att ersätta domstolarna', 'De ersätter domstolarna')
+      .replace('The power to replace the courts', 'They replace the courts');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q033 mixes political-party option grammar shapes/,
+  );
+});
+
+test('Christmas Eve options keep one grammatical answer shape', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Samlas, äta särskild julmat och ge varandra julklappar',
+        'Att samlas, äta särskild julmat och ge varandra julklappar',
+      )
+      .replace(
+        'Gather, eat special Christmas food, and give each other Christmas presents',
+        'To gather, eat special Christmas food, and give each other Christmas presents',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q106 mixes Christmas Eve option grammar shapes/,
+  );
+});
+
 test('generated single-choice banks omit true-false and filler option shells', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();

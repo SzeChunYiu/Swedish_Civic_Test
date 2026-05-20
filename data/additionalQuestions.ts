@@ -1944,8 +1944,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'What do families commonly do on Christmas Eve, 24 December, in Sweden?',
     [
       [
-        'Att samlas, äta särskild julmat och ge varandra julklappar',
-        'To gather, eat special Christmas food, and give each other Christmas presents',
+        'Samlas, äta särskild julmat och ge varandra julklappar',
+        'Gather, eat special Christmas food, and give each other Christmas presents',
       ],
       ['Tända stora brasor och sjunga vårsånger', 'Light large bonfires and sing spring songs'],
       [
@@ -1958,8 +1958,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår.',
-    'Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.',
+    'Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar. Valborg, första maj och nyår har andra vanliga firanden.',
+    'Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents. Walpurgis Night, May Day, and New Year have other common celebrations.',
     ['christmas', 'christmas-eve', 'family-holiday', 'traditions'],
     'easy',
   ),
