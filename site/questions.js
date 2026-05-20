@@ -9962,7 +9962,7 @@
         "uk": "Великі вогнища та весняні пісні"
       },
       {
-        "en": "Demonstrations on workers’ day",
+        "en": "May Day demonstrations",
         "sv": "Demonstrationer på arbetarnas dag",
         "zh-Hant": "在勞工節遊行示威",
         "zh-Hans": "在劳动者节游行示威",
@@ -10296,7 +10296,7 @@
         "uk": "Святкування Національного дня промовами"
       },
       {
-        "en": "Holding demonstrations on workers’ day",
+        "en": "Holding May Day demonstrations",
         "sv": "Att ordna demonstrationer på arbetarnas dag",
         "zh-Hant": "在勞工節舉行示威",
         "zh-Hans": "在劳动者节举行示威",
@@ -10574,7 +10574,7 @@
     },
     "opts": [
       {
-        "en": "Workers' day with demonstrations and speeches",
+        "en": "International Workers' Day with demonstrations and speeches",
         "sv": "Arbetarnas dag med demonstrationer och tal",
         "zh-Hant": "勞工節，有示威和演講",
         "zh-Hans": "劳动者节，有示威和演讲",
@@ -41547,7 +41547,7 @@
         "uk": "Великі вогнища та весняні пісні"
       },
       {
-        "en": "Demonstrations on workers’ day",
+        "en": "May Day demonstrations",
         "sv": "Demonstrationer på arbetarnas dag",
         "zh-Hant": "在勞工節遊行示威",
         "zh-Hans": "在劳动者节游行示威",
@@ -41715,7 +41715,7 @@
         "uk": "Великі вогнища та весняні пісні"
       },
       {
-        "en": "Demonstrations on workers’ day",
+        "en": "May Day demonstrations",
         "sv": "Demonstrationer på arbetarnas dag",
         "zh-Hant": "在勞工節遊行示威",
         "zh-Hans": "在劳动者节游行示威",
@@ -42337,7 +42337,7 @@
         "uk": "Святкування Національного дня промовами"
       },
       {
-        "en": "Holding demonstrations on workers’ day",
+        "en": "Holding May Day demonstrations",
         "sv": "Att ordna demonstrationer på arbetarnas dag",
         "zh-Hant": "在勞工節舉行示威",
         "zh-Hans": "在劳动者节举行示威",
@@ -42508,7 +42508,7 @@
         "uk": "Святкування Національного дня промовами"
       },
       {
-        "en": "Holding demonstrations on workers’ day",
+        "en": "Holding May Day demonstrations",
         "sv": "Att ordna demonstrationer på arbetarnas dag",
         "zh-Hant": "在勞工節舉行示威",
         "zh-Hans": "在劳动者节举行示威",
@@ -43071,7 +43071,7 @@
     },
     "opts": [
       {
-        "en": "Workers' day with demonstrations and speeches",
+        "en": "International Workers' Day with demonstrations and speeches",
         "sv": "Arbetarnas dag med demonstrationer och tal",
         "zh-Hant": "勞工節，有示威和演講",
         "zh-Hans": "劳动者节，有示威和演讲",
@@ -43155,7 +43155,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "May Day marks workers' day with demonstrations and speeches.",
+      "en": "May Day marks international Workers' Day with demonstrations and speeches.",
       "sv": "På första maj uppmärksammas arbetarnas dag med demonstrationer och tal."
     },
     "opts": [
@@ -43242,7 +43242,7 @@
     },
     "opts": [
       {
-        "en": "Workers' day with demonstrations and speeches",
+        "en": "International Workers' Day with demonstrations and speeches",
         "sv": "Arbetarnas dag med demonstrationer och tal",
         "zh-Hant": "勞工節，有示威和演講",
         "zh-Hans": "劳动者节，有示威和演讲",

@@ -472,6 +472,12 @@ const QUESTION_UMEA_DEMONYM_SWEDISH_NATURALNESS_PATTERNS = [/\bumebor\b/i];
 const QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS = [
   /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i,
 ];
+const QUESTION_WORKERS_DAY_HOLIDAY_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bDemonstrations on workers[’'] day\b/i,
+  /\bHolding demonstrations on workers[’'] day\b/i,
+  /\bWorkers[’'] day with demonstrations and speeches\b/,
+  /\bmarks workers[’'] day with demonstrations and speeches\b/i,
+];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -4672,6 +4678,18 @@ function findQuestionGoodFridayEnglishNaturalnessIssue(question) {
   return QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionWorkersDayHolidayEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_WORKERS_DAY_HOLIDAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -7500,6 +7518,7 @@ let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionUmeaDemonymSwedishNaturalnessValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
+let questionWorkersDayHolidayEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -15997,6 +16016,8 @@ if (Array.isArray(questions)) {
         findQuestionUmeaDemonymSwedishNaturalnessIssue(question);
       const goodFridayEnglishNaturalnessIssue =
         findQuestionGoodFridayEnglishNaturalnessIssue(question);
+      const workersDayHolidayEnglishNaturalnessIssue =
+        findQuestionWorkersDayHolidayEnglishNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -16042,6 +16063,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses Good Friday remembers English wording`);
       } else {
         questionGoodFridayEnglishNaturalnessValidated += 1;
+      }
+      if (workersDayHolidayEnglishNaturalnessIssue) {
+        fail(`${label} uses lower-case workers' day holiday English wording`);
+      } else {
+        questionWorkersDayHolidayEnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16510,6 +16536,7 @@ console.log(
       questionEuCooperationEnglishNaturalnessValidated,
       questionUmeaDemonymSwedishNaturalnessValidated,
       questionGoodFridayEnglishNaturalnessValidated,
+      questionWorkersDayHolidayEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
