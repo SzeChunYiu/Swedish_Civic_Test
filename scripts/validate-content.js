@@ -967,8 +967,8 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
   { routeName: 'home', sv: 'Hem', en: 'Home' },
   { routeName: 'learn', sv: 'Lär dig', en: 'Learn' },
   { routeName: 'practice', sv: 'Öva', en: 'Practice' },
-  { routeName: 'exam', sv: 'Prov', en: 'Exam' },
-  { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes' },
+  { routeName: 'exam', sv: 'Övningsprov', en: 'Exam' },
+  { routeName: 'mistakes', sv: 'Repetition', en: 'Mistakes' },
   { routeName: 'profile', sv: 'Profil', en: 'Profile' },
 ];
 const EXPECTED_TAB_NAVIGATION_RULES = [
@@ -6906,6 +6906,10 @@ function validateTabNavigationParity() {
 
   if (tabLayout.includes('⏷')) {
     reject('tab layout must not include visible placeholder tab glyphs');
+  }
+
+  if (/exam:\s*'Prov'/.test(tabLayout)) {
+    reject('tab layout must not expose bare Swedish exam tab copy');
   }
 
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
