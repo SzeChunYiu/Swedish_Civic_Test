@@ -120,10 +120,11 @@ test('getHighlightsForChapter: does not return corrupt in-memory entries', () =>
 });
 
 test('addHighlight: rejects invalid ranges, ids and oversized notes before writing state', () => {
-  const { useHighlightsStore, MAX_HIGHLIGHT_NOTE_LENGTH } = loadTs(
+  const { useHighlightsStore, MAX_HIGHLIGHT_NOTE_LENGTH, MAX_HIGHLIGHT_SPAN } = loadTs(
     'lib/storage/highlightsStore.ts',
   );
   const store = useHighlightsStore();
+  store.clearAll();
 
   assert.throws(
     () =>
@@ -135,6 +136,72 @@ test('addHighlight: rejects invalid ranges, ids and oversized notes before writi
         color: 'yellow',
       }),
     /Invalid highlight range/,
+  );
+  assert.throws(
+    () =>
+      store.addHighlight({
+        chapterId: 'ch01',
+        blockId: ' ',
+        startOffset: 1,
+        endOffset: 2,
+        color: 'yellow',
+      }),
+    /Invalid highlight range/,
+  );
+  assert.throws(
+    () =>
+      store.addHighlight({
+        chapterId: 'ch01',
+        blockId: 'intro',
+        startOffset: 4,
+        endOffset: 4,
+        color: 'yellow',
+      }),
+    /Invalid highlight range/,
+  );
+  assert.throws(
+    () =>
+      store.addHighlight({
+        chapterId: 'ch01',
+        blockId: 'intro',
+        startOffset: 0,
+        endOffset: MAX_HIGHLIGHT_SPAN + 1,
+        color: 'yellow',
+      }),
+    /Invalid highlight range/,
+  );
+  assert.throws(
+    () =>
+      store.addHighlight({
+        chapterId: 'ch01',
+        blockId: 'intro',
+        startOffset: Number.NaN,
+        endOffset: 4,
+        color: 'yellow',
+      }),
+    /Invalid highlight range/,
+  );
+  assert.throws(
+    () =>
+      store.addHighlight({
+        chapterId: 'ch01',
+        blockId: 'intro',
+        startOffset: 1,
+        endOffset: -4,
+        color: 'yellow',
+      }),
+    /Invalid highlight range/,
+  );
+  assert.throws(
+    () =>
+      store.addHighlight({
+        chapterId: 'ch01',
+        blockId: 'intro',
+        startOffset: 1,
+        endOffset: 4,
+        color: 'orange',
+      }),
+    /Invalid highlight color/,
   );
   assert.throws(
     () =>
@@ -172,6 +239,8 @@ test('addHighlight: rejects invalid ranges, ids and oversized notes before writi
   );
 
   const before = getHighlightCount(store);
+  assert.equal(before, 0);
+  assert.deepEqual(store.byChapter, {});
   const created = store.addHighlight({
     chapterId: 'ch01',
     blockId: 'intro',
@@ -183,6 +252,50 @@ test('addHighlight: rejects invalid ranges, ids and oversized notes before writi
 
   assert.equal(created.note, 'source note');
   assert.equal(getHighlightCount(store), before + 1);
+});
+
+test('updateHighlight: rejects invalid runtime patches without corrupting existing state', () => {
+  const { useHighlightsStore, getHighlightsForChapter, MAX_HIGHLIGHT_NOTE_LENGTH } = loadTs(
+    'lib/storage/highlightsStore.ts',
+  );
+  const store = useHighlightsStore();
+  store.clearAll();
+  const created = store.addHighlight({
+    chapterId: 'ch02',
+    blockId: 'rights',
+    startOffset: 3,
+    endOffset: 15,
+    color: 'yellow',
+    note: 'first note',
+  });
+
+  assert.ok(created);
+  const before = getHighlightsForChapter(store, 'ch02')[0];
+
+  assert.throws(
+    () => store.updateHighlight(created.id, { color: 'purple' }),
+    /Invalid highlight color/,
+  );
+  assert.deepEqual(getHighlightsForChapter(store, 'ch02')[0], before);
+
+  assert.throws(
+    () => store.updateHighlight(created.id, { note: 'x'.repeat(MAX_HIGHLIGHT_NOTE_LENGTH + 1) }),
+    /Highlight note is too long/,
+  );
+  assert.deepEqual(getHighlightsForChapter(store, 'ch02')[0], before);
+
+  store.updateHighlight(' ', { color: 'green' });
+  assert.deepEqual(getHighlightsForChapter(store, 'ch02')[0], before);
+
+  store.updateHighlight(created.id, { color: 'blue', note: '  trimmed patch  ' });
+  const updated = getHighlightsForChapter(store, 'ch02')[0];
+  assert.equal(updated.color, 'blue');
+  assert.equal(updated.note, 'trimmed patch');
+
+  store.updateHighlight(created.id, { note: '   ' });
+  const noteCleared = getHighlightsForChapter(store, 'ch02')[0];
+  assert.equal(noteCleared.color, 'blue');
+  assert.equal(noteCleared.note, undefined);
 });
 
 test('isColorAllowed: keeps yellow free and multi-color Pro contract intact', () => {
