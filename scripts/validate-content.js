@@ -860,6 +860,8 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
+  { name: 'persistenceWarning', type: 'StoragePersistenceWarning | null', optional: false },
+  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
@@ -2892,6 +2894,8 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'answerDates', type: 'string[]', optional: false },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
   { name: 'streakFreezeState', type: 'StreakFreezeState', optional: false },
+  { name: 'persistenceWarning', type: 'StoragePersistenceWarning | null', optional: false },
+  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
@@ -9740,16 +9744,13 @@ function validateSettingsStoreSchemaParity() {
       'dailyGoalAnswers: readDailyGoalAnswers()',
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
+    ['writeSetting(languageKey, language);', 'setLanguage must persist through languageKey'],
     [
-      'settingsStorage?.set(languageKey, language);',
-      'setLanguage must persist through languageKey',
-    ],
-    [
-      'settingsStorage?.set(audioEnabledKey, audioEnabled);',
+      'writeSetting(audioEnabledKey, audioEnabled);',
       'setAudioEnabled must persist through audioEnabledKey',
     ],
     [
-      'settingsStorage?.set(dailyGoalKey, safeGoal);',
+      'writeSetting(dailyGoalKey, safeGoal);',
       'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
     ],
   ];
@@ -9910,7 +9911,7 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('audioEnabled: readAudioEnabled()')) {
     reject('SettingsState must initialize audioEnabled from persisted storage');
   }
-  if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
+  if (!normalizedSettingsStore.includes('writeSetting(audioEnabledKey, audioEnabled);')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
 

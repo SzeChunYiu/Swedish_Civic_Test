@@ -2,6 +2,8 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import { createStoragePersistenceWarning, type StoragePersistenceWarning } from './persistence';
+
 export type AppLanguage = 'sv' | 'en';
 
 const languageKey = 'language';
@@ -43,12 +45,26 @@ function readHasSeenAboutTheTest(): boolean {
   return storedValue ?? false;
 }
 
+function writeSetting(
+  key: string,
+  value: string | number | boolean,
+): StoragePersistenceWarning | null {
+  try {
+    settingsStorage?.set(key, value);
+    return null;
+  } catch (error) {
+    return createStoragePersistenceWarning('settings', key, error);
+  }
+}
+
 type SettingsState = {
   language: AppLanguage;
   audioEnabled: boolean;
   dailyGoalAnswers: number;
   includeSupplementaryQuestions: boolean;
   hasSeenAboutTheTest: boolean;
+  persistenceWarning: StoragePersistenceWarning | null;
+  clearPersistenceWarning: () => void;
   setLanguage: (language: AppLanguage) => void;
   setAudioEnabled: (enabled: boolean) => void;
   setDailyGoalAnswers: (answerCount: number) => void;
@@ -62,25 +78,27 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   dailyGoalAnswers: readDailyGoalAnswers(),
   includeSupplementaryQuestions: readIncludeSupplementary(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
+  persistenceWarning: null,
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
   setLanguage: (language) => {
-    settingsStorage?.set(languageKey, language);
-    set({ language });
+    const persistenceWarning = writeSetting(languageKey, language);
+    set({ language, persistenceWarning });
   },
   setAudioEnabled: (audioEnabled) => {
-    settingsStorage?.set(audioEnabledKey, audioEnabled);
-    set({ audioEnabled });
+    const persistenceWarning = writeSetting(audioEnabledKey, audioEnabled);
+    set({ audioEnabled, persistenceWarning });
   },
   setDailyGoalAnswers: (dailyGoalAnswers) => {
     const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));
-    settingsStorage?.set(dailyGoalKey, safeGoal);
-    set({ dailyGoalAnswers: safeGoal });
+    const persistenceWarning = writeSetting(dailyGoalKey, safeGoal);
+    set({ dailyGoalAnswers: safeGoal, persistenceWarning });
   },
   setIncludeSupplementaryQuestions: (include) => {
-    settingsStorage?.set(includeSupplementaryKey, include);
-    set({ includeSupplementaryQuestions: include });
+    const persistenceWarning = writeSetting(includeSupplementaryKey, include);
+    set({ includeSupplementaryQuestions: include, persistenceWarning });
   },
   markAboutTheTestSeen: () => {
-    settingsStorage?.set(hasSeenAboutTheTestKey, true);
-    set({ hasSeenAboutTheTest: true });
+    const persistenceWarning = writeSetting(hasSeenAboutTheTestKey, true);
+    set({ hasSeenAboutTheTest: true, persistenceWarning });
   },
 }));

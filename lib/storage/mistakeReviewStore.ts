@@ -2,6 +2,8 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import { createStoragePersistenceWarning, type StoragePersistenceWarning } from './persistence';
+
 export type MistakeAnswerReview = {
   answeredAt: string;
   questionId: string;
@@ -69,11 +71,18 @@ function readMistakeReview(): PersistedMistakeReview {
   }
 }
 
-function writeMistakeReview(review: PersistedMistakeReview): void {
-  mistakeReviewStorage?.set(mistakeReviewStateKey, JSON.stringify(review));
+function writeMistakeReview(review: PersistedMistakeReview): StoragePersistenceWarning | null {
+  try {
+    mistakeReviewStorage?.set(mistakeReviewStateKey, JSON.stringify(review));
+    return null;
+  } catch (error) {
+    return createStoragePersistenceWarning('mistake-review', mistakeReviewStateKey, error);
+  }
 }
 
 type MistakeReviewState = PersistedMistakeReview & {
+  persistenceWarning: StoragePersistenceWarning | null;
+  clearPersistenceWarning: () => void;
   clearWrongAnswerReviews: () => void;
   recordWrongAnswerReview: (review: {
     questionId: string;
@@ -86,9 +95,11 @@ const initialMistakeReview = readMistakeReview();
 
 export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   ...initialMistakeReview,
+  persistenceWarning: null,
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
   clearWrongAnswerReviews: () => {
-    writeMistakeReview(emptyMistakeReview);
-    set(emptyMistakeReview);
+    const persistenceWarning = writeMistakeReview(emptyMistakeReview);
+    set({ ...emptyMistakeReview, persistenceWarning });
   },
   recordWrongAnswerReview: ({ questionId, selectedOptionTextEn, selectedOptionTextSv }) =>
     set((state) => {
@@ -103,8 +114,8 @@ export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
           },
         },
       };
-      writeMistakeReview(nextReview);
+      const persistenceWarning = writeMistakeReview(nextReview);
 
-      return nextReview;
+      return { ...nextReview, persistenceWarning };
     }),
 }));
