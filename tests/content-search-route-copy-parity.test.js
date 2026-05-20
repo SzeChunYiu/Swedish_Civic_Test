@@ -6,9 +6,14 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
+const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
 
 function readSearchRouteSource() {
   return fs.readFileSync(searchRoutePath, 'utf8');
+}
+
+function readGlossarySearchSource() {
+  return fs.readFileSync(glossarySearchPath, 'utf8');
 }
 
 function assertSearchRouteQuestionResults(source) {
@@ -23,7 +28,7 @@ function assertSearchRouteQuestionResults(source) {
     [/query: trimmedQuery,/, 'trimmed query passed to question search'],
     [/questions,/, 'question bank passed to question search'],
     [
-      /copy\.filteredSummary\(filteredTerms\.length, termsWithChapters\.length, questionResults\.length\)/,
+      /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, questionResults\.length\)/,
       'live summary includes question count',
     ],
     [/const title = getQuestionSearchTitle\(result\.question, language\);/, 'localized title use'],
@@ -47,6 +52,56 @@ function assertSearchRouteQuestionResults(source) {
   for (const [pattern, label] of requiredRules) {
     assert.match(source, pattern, `Search route missing ${label}`);
   }
+}
+
+function assertSearchRouteGlossarySearchParity(source) {
+  const requiredRules = [
+    [
+      /import \{ searchGlossary \} from '\.\.\/lib\/learning\/glossarySearch';/,
+      'shared glossary search import',
+    ],
+    [
+      /searchGlossary\(trimmedQuery, language, glossaryTerms\.length\)\.map\(\(term\) => \(\{/,
+      'shared glossary search call with full result limit',
+    ],
+    [
+      /chapterName: language === 'en' \? term\.chapterNameEn : term\.chapterNameSv,/,
+      'localized shared glossary chapter label',
+    ],
+    [/copy\.allTermsSummary\(glossaryTerms\.length\)/, 'total glossary count summary'],
+    [/href=\{`\/chapter\/\$\{term\.chapterId\}`\}/, 'glossary chapter link'],
+  ];
+
+  for (const [pattern, label] of requiredRules) {
+    assert.match(source, pattern, `Search route missing ${label}`);
+  }
+
+  assert.doesNotMatch(
+    source,
+    /function normalizeSearchText/,
+    'Search route must not use a route-local glossary normalizer',
+  );
+  assert.doesNotMatch(
+    source,
+    /glossaryTermMatchesQuery/,
+    'Search route must not fork glossary filtering away from searchGlossary()',
+  );
+}
+
+function assertSharedGlossaryPunctuationNormalizer(source) {
+  assert.match(
+    source,
+    /export function normalizeGlossarySearchText\(value: string\)/,
+    'shared glossary normalizer must be exported for route parity',
+  );
+  assert.ok(
+    source.includes(".replace(/[^a-z0-9\\s-]/g, ' ')"),
+    'shared glossary normalizer must replace punctuation with spaces',
+  );
+  assert.ok(
+    source.includes(".replace(/\\s+/g, ' ')"),
+    'shared glossary normalizer must collapse punctuation-created whitespace',
+  );
 }
 
 function assertSearchRouteQueryHydration(source) {
@@ -92,8 +147,12 @@ function assertSearchRouteQueryHydration(source) {
 }
 
 test('Search route hydrates and resyncs q or query URL params around typing', () => {
-  assertSearchRouteQueryHydration(readSearchRouteSource());
-  assertSearchRouteQuestionResults(readSearchRouteSource());
+  const source = readSearchRouteSource();
+
+  assertSearchRouteQueryHydration(source);
+  assertSearchRouteQuestionResults(source);
+  assertSearchRouteGlossarySearchParity(source);
+  assertSharedGlossaryPunctuationNormalizer(readGlossarySearchSource());
 });
 
 test('validate-content reports Search route query hydration parity', () => {
@@ -147,6 +206,27 @@ test('Search route hydration rejects dropping the query fallback param', () => {
   );
 
   assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);
+});
+
+test('Search route glossary results reject route-local punctuation normalization drift', () => {
+  const mutatedSource = readSearchRouteSource().replace(
+    'searchGlossary(trimmedQuery, language, glossaryTerms.length).map((term) => ({',
+    'glossaryTerms.map((term) => ({',
+  );
+
+  assert.throws(
+    () => assertSearchRouteGlossarySearchParity(mutatedSource),
+    /shared glossary search call/,
+  );
+});
+
+test('Shared glossary normalizer rejects dropping punctuation stripping', () => {
+  const mutatedSource = readGlossarySearchSource().replace(".replace(/[^a-z0-9\\s-]/g, ' ')", '');
+
+  assert.throws(
+    () => assertSharedGlossaryPunctuationNormalizer(mutatedSource),
+    /replace punctuation/,
+  );
 });
 
 test('Search route question results reject dropping routed quiz links', () => {

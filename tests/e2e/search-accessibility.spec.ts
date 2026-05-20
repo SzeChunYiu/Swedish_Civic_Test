@@ -11,16 +11,20 @@ const copy = {
     filteredSummary: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
     initialSummary: /\d+ samhällsbegrepp i referensen/,
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    punctuatedQuery: 'kommun,',
     questionLink: /Öppna övningsfrågan:/,
     query: 'riksdag',
+    termName: 'Kommun',
   },
   en: {
     clear: 'Clear the search field',
     filteredSummary: /\d+ of \d+ terms and \d+ practice questions match/,
     initialSummary: /\d+ civic reference terms/,
     inputName: 'Search civic terms and practice questions',
+    punctuatedQuery: 'riksdag?',
     questionLink: /Open practice question:/,
     query: 'municipality',
+    termName: 'Riksdag',
   },
 } as const;
 
@@ -62,6 +66,13 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
 
     await page.getByRole('button', { name: t.clear }).click();
     await expect(liveSummary).toHaveText(t.initialSummary);
+
+    await page.getByRole('textbox', { name: t.inputName }).fill(t.punctuatedQuery);
+    await expect(liveSummary).toHaveText(t.filteredSummary);
+    await expect(page.getByText(t.termName, { exact: true }).first()).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
+    ).toBeVisible();
 
     expect(consoleErrors).toEqual([]);
   });

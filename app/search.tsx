@@ -8,6 +8,7 @@ import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { glossaryTerms } from '../data/glossary';
 import { questions } from '../data/questions';
+import { searchGlossary } from '../lib/learning/glossarySearch';
 import {
   getQuestionSearchChapterName,
   getQuestionSearchExcerpt,
@@ -16,7 +17,6 @@ import {
 } from '../lib/search/questionSearch';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
-import type { GlossaryTerm } from '../types/content';
 
 type SearchRouteParams = {
   q?: string | string[];
@@ -36,23 +36,15 @@ export default function SearchScreen() {
     previousRouteQueryRef.current = routeQuery;
     setQuery(routeQuery);
   }, [routeQuery]);
-  const termsWithChapters = useMemo(
-    () =>
-      glossaryTerms.map((term) => ({
-        term,
-        chapter: chapters.find((chapter) => chapter.id === term.chapterId),
-      })),
-    [],
-  );
   const trimmedQuery = query.trim();
-  const filteredTerms = useMemo(() => {
-    const normalizedQuery = normalizeSearchText(trimmedQuery);
-    if (!normalizedQuery) return termsWithChapters;
-
-    return termsWithChapters.filter(({ chapter, term }) =>
-      glossaryTermMatchesQuery(term, chapter, normalizedQuery),
-    );
-  }, [termsWithChapters, trimmedQuery]);
+  const filteredTerms = useMemo(
+    () =>
+      searchGlossary(trimmedQuery, language, glossaryTerms.length).map((term) => ({
+        term,
+        chapterName: language === 'en' ? term.chapterNameEn : term.chapterNameSv,
+      })),
+    [language, trimmedQuery],
+  );
   const questionResults = useMemo(() => {
     if (!trimmedQuery) return [];
 
@@ -65,8 +57,8 @@ export default function SearchScreen() {
   }, [trimmedQuery]);
   const resultSummary =
     trimmedQuery.length > 0
-      ? copy.filteredSummary(filteredTerms.length, termsWithChapters.length, questionResults.length)
-      : copy.allTermsSummary(termsWithChapters.length);
+      ? copy.filteredSummary(filteredTerms.length, glossaryTerms.length, questionResults.length)
+      : copy.allTermsSummary(glossaryTerms.length);
   const searchDescriptionId = 'search-route-glossary-description';
 
   return (
@@ -113,15 +105,10 @@ export default function SearchScreen() {
 
       <View style={styles.termList}>
         {filteredTerms.length > 0 ? (
-          filteredTerms.map(({ chapter, term }) => {
+          filteredTerms.map(({ chapterName, term }) => {
             const primaryTerm = language === 'en' ? term.termEn : term.termSv;
             const secondaryTerm = language === 'en' ? term.termSv : term.termEn;
             const explanation = language === 'en' ? term.explanationEn : term.explanationSv;
-            const chapterName = chapter
-              ? language === 'en'
-                ? chapter.nameEn
-                : chapter.nameSv
-              : undefined;
             const termSummary = copy.termAccessibilityLabel({
               chapterName,
               explanation,
@@ -404,14 +391,6 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
   },
 };
 
-function normalizeSearchText(value: string) {
-  return value
-    .toLocaleLowerCase('sv')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim();
-}
-
 function getFirstSearchParamValue(value: string | string[] | undefined) {
   const firstValue = Array.isArray(value) ? value[0] : value;
 
@@ -420,26 +399,6 @@ function getFirstSearchParamValue(value: string | string[] | undefined) {
 
 function getRouteSearchQuery(params: SearchRouteParams) {
   return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);
-}
-
-function glossaryTermMatchesQuery(
-  term: GlossaryTerm,
-  chapter: (typeof chapters)[number] | undefined,
-  normalizedQuery: string,
-) {
-  const searchableText = [
-    term.termSv,
-    term.termEn,
-    term.explanationSv,
-    term.explanationEn,
-    chapter?.nameSv,
-    chapter?.nameEn,
-  ]
-    .filter(Boolean)
-    .map((value) => normalizeSearchText(String(value)))
-    .join(' ');
-
-  return searchableText.includes(normalizedQuery);
 }
 
 const styles = StyleSheet.create({
