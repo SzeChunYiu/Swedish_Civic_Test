@@ -29,6 +29,17 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type BenchmarkProduct = (typeof uxBenchmarks)[number]['product'];
 
+type GuidedPathStageCopy = {
+  accessibilityLabel: (title: string, chapterRange: string, progressLabel: string, status: string) => string;
+  chapterRange: string;
+  cta: (isCompleted: boolean) => string;
+  ctaAccessibilityLabel: (title: string, isCompleted: boolean) => string;
+  description: string;
+  levelLabel: string;
+  progressLabel: (completedChapters: number, totalChapters: number) => string;
+  title: string;
+};
+
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
