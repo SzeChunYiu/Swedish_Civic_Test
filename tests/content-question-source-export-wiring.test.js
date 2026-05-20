@@ -69,12 +69,16 @@ function assertQuestionSourceExportWiring(source) {
   );
   assert.ok(
     source.includes(
-      `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
+      `const localizedAdditionalQuestions: PracticeQuestion[] = additionalQuestions.map(
+  applyQuestionLocalizationPilot,
+);
+
+export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]);`,
     ),
-    'sourceQuestions export must publish baseQuestions followed by additionalQuestions',
+    'sourceQuestions export must publish baseQuestions followed by localized additionalQuestions',
   );
   assert.ok(
     source.includes(
@@ -134,16 +138,16 @@ test('question source export wiring guard rejects reordered authored partitions'
   const source = fs.readFileSync(path.join(repoRoot, 'data/questions.ts'), 'utf8').replace(
     `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]);`,
     `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
   ...baseQuestions,
 ]);`,
   );
 
   assert.throws(
     () => assertQuestionSourceExportWiring(source),
-    /sourceQuestions export must publish baseQuestions followed by additionalQuestions/,
+    /sourceQuestions export must publish baseQuestions followed by localized additionalQuestions/,
   );
 });

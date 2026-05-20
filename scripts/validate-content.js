@@ -7152,6 +7152,8 @@ const localizedAdditionalQuestions = questionModule.localizedAdditionalQuestions
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
+const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -15070,6 +15072,11 @@ function expectedPublishedSourceField(question, field) {
   return question[field];
 }
 
+function expectedPublishedSourceQuestion(question) {
+  if (typeof applyQuestionLocalizationPilot !== 'function') return question;
+  return applyQuestionLocalizationPilot(question);
+}
+
 function validateAuthoredSourceParity() {
   if (
     !Array.isArray(baseQuestions) ||
@@ -15094,6 +15101,7 @@ function validateAuthoredSourceParity() {
   );
 
   const authoredQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
+  const expectedPublishedSourceQuestions = authoredQuestions;
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
     fail(
       `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
@@ -15140,6 +15148,7 @@ function validateAuthoredSourceParity() {
     }
 
     const publishedQuestion = sourceQuestions[index];
+    const expectedSourceQuestion = expectedPublishedSourceQuestions[index] ?? question;
     if (!publishedQuestion) return;
 
     let publicationParityIsValid = true;
@@ -15148,7 +15157,7 @@ function validateAuthoredSourceParity() {
       fail(`${label} published source reviewStatus is ${publishedQuestion.reviewStatus}`);
     }
     for (const field of PUBLISHED_SOURCE_PARITY_FIELDS) {
-      const expectedValue = expectedPublishedSourceField(question, field);
+      const expectedValue = expectedPublishedSourceField(expectedSourceQuestion, field);
       if (JSON.stringify(publishedQuestion[field]) !== JSON.stringify(expectedValue)) {
         publicationParityIsValid = false;
         fail(`${label} published source ${field} does not match authored source`);
