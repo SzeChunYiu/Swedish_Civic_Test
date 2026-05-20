@@ -49,6 +49,8 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /Mock exam access could not be checked on this device/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
+  assert.match(source, /rewardPreviewButton: 'Slutför förhandsvisning'/);
+  assert.match(source, /rewardPreviewButton: 'Complete sponsor preview'/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
     source,
