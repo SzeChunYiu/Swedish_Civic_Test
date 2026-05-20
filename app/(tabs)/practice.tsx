@@ -23,7 +23,10 @@ import {
   getCompletedQuestionIdsForQuestionBank,
   getPracticeQuestionForSession,
 } from '../../lib/quiz/practiceFlow';
-import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
+import {
+  getPracticeInterstitialShowKey,
+  usePracticeSessionStore,
+} from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -183,6 +186,7 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
@@ -351,7 +355,7 @@ export default function Screen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <PracticeInterstitialAd showKey={`${question.id}:${selectedOptionId ?? ''}`} />
+          <PracticeInterstitialAd showKey={practiceInterstitialShowKey} />
           <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Button
