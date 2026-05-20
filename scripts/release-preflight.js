@@ -10,19 +10,10 @@ const skipExternalChecks = /^(1|true|yes)$/i.test(
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const appAdsUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
-  : [supportUrl, privacyUrl, appAdsUrl];
-const publicUrlCheckArgs = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
-  ? ['scripts/check-public-urls.js', ...publicUrls]
-  : [
-      'scripts/check-public-urls.js',
-      supportUrl,
-      privacyUrl,
-      '--expect-app-ads-file',
-      appAdsUrl,
-      appAdsPath,
-    ];
+  : [supportUrl, privacyUrl];
 
 const evidenceRequirements = {
   'eas-build-artifacts': [
@@ -46,7 +37,7 @@ const evidenceRequirements = {
   'store-records': [
     ['App Store Connect record', /App Store Connect|Apple/i],
     ['Google Play Console record', /Google Play/i],
-    ['bundle/package identifier', /com\.billyyiu\.swedishcivictest/i],
+    ['bundle/package identifier', /com\.billyyiu\.almostswedish/i],
     ['Support URL entered in store records', /Support URL/i],
     ['Privacy Policy URL entered in store records', /Privacy Policy URL/i],
   ],
@@ -143,10 +134,21 @@ const v11ScopeSurfacePaths = [
   'lib/monetization/proLifetimePurchase.ts',
 ];
 
-const removeAdsDeviceQaPath = 'reports/release-ads-iap-device-qa.md';
-const removeAdsStep3Command =
-  'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
+const removeAdsDeviceQaPath =
+  process.env.RELEASE_PREFLIGHT_DEVICE_QA_PATH || 'reports/release-ads-iap-device-qa.md';
+const removeAdsStep3StructuralGate =
+  'Remove Ads structural gate: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
 const releaseScopeOverrideId = 'release-scope-v11';
+const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
+const removeAdsDeviceQaRequiredChecks = [
+  'admob-test-ads-study-screens',
+  'remove-ads-purchase-hides-ads',
+  'entitlement-persists-after-relaunch',
+  'restore-purchase-restores-entitlement',
+  'att-status-documented',
+  'ump-consent-documented',
+  'mock-exam-shows-no-ads',
+];
 
 const expectedPublicUrlEvidenceRequirements = {
   'store-records': [
@@ -156,6 +158,7 @@ const expectedPublicUrlEvidenceRequirements = {
   'public-urls': [
     ['expected Support URL', supportUrl],
     ['expected Privacy Policy URL', privacyUrl],
+    ['expected app-ads.txt URL', appAdsUrl],
   ],
 };
 
@@ -165,6 +168,10 @@ function exists(path) {
 
 function readFileIfExists(filePath) {
   return exists(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function listFiles(root) {
@@ -181,51 +188,6 @@ function anyRepoFileMatches(roots, pattern) {
   return roots.some((root) =>
     listFiles(root).some((filePath) => pattern.test(readFileIfExists(filePath))),
   );
-}
-
-function removeAdsSourceWiringFindings() {
-  const findings = [];
-  const purchasesSource = readFileIfExists('lib/monetization/purchases.ts');
-  const premiumBannerSource = readFileIfExists('components/monetization/PremiumBanner.tsx');
-
-  if (!purchasesSource) {
-    findings.push('lib/monetization/purchases.ts is missing');
-    return findings;
-  }
-
-  if (!/export const REMOVE_ADS_PRODUCT_ID\s*=/.test(purchasesSource)) {
-    findings.push('purchases.ts must export REMOVE_ADS_PRODUCT_ID');
-  }
-  if (!/export const REMOVE_ADS_PRICE_LABEL\s*=\s*['"]29 SEK['"]/.test(purchasesSource)) {
-    findings.push('purchases.ts must export REMOVE_ADS_PRICE_LABEL as 29 SEK');
-  }
-  if (
-    !/export async function buyRemoveAds\b/.test(purchasesSource) ||
-    !/requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/.test(purchasesSource)
-  ) {
-    findings.push('buyRemoveAds must request REMOVE_ADS_PRODUCT_ID');
-  }
-  if (
-    !/export async function restoreRemoveAdsPurchase\b/.test(purchasesSource) ||
-    !/restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/.test(purchasesSource)
-  ) {
-    findings.push('restoreRemoveAdsPurchase must restore REMOVE_ADS_PRODUCT_ID');
-  }
-  if (
-    !premiumBannerSource ||
-    !/REMOVE_ADS_PRICE_LABEL/.test(premiumBannerSource) ||
-    !/buyRemoveAds/.test(premiumBannerSource) ||
-    !/restoreRemoveAdsPurchase/.test(premiumBannerSource)
-  ) {
-    findings.push(
-      'PremiumBanner must wire REMOVE_ADS_PRICE_LABEL, buyRemoveAds, and restoreRemoveAdsPurchase',
-    );
-  }
-  if (!anyRepoFileMatches(['app'], /<PremiumBanner\b/)) {
-    findings.push('an app screen must render the Remove Ads PremiumBanner paywall');
-  }
-
-  return findings;
 }
 
 function listV11ScopeSurfaces() {
@@ -258,18 +220,7 @@ function removeAdsV1AcceptanceFindings() {
   if (/REAL_ADS_ENABLED_FOR_V1\s*=\s*false/.test(adsSource)) {
     findings.push('GOAL step 1 is red: REAL_ADS_ENABLED_FOR_V1 is still hardcoded false.');
   }
-  if (!purchasesSource) {
-    findings.push('GOAL step 3 is red: lib/monetization/purchases.ts is missing.');
-  } else if (!/restore/i.test(purchasesSource)) {
-    findings.push('GOAL step 3 is red: purchases.ts does not mention restore.');
-  }
-  if (!anyRepoFileMatches(['app', 'components', 'lib'], /remove.?ads/i)) {
-    findings.push('GOAL step 3 is red: remove-ads wiring is not visible in app/components/lib.');
-  }
-  const step3Result = spawnSync('sh', ['-c', removeAdsStep3Command], { encoding: 'utf8' });
-  if (step3Result.status !== 0) {
-    findings.push(`GOAL step 3 exact command is red: ${removeAdsStep3Command}`);
-  }
+  findings.push(...removeAdsStep3StructuralFindings(purchasesSource));
   if (!exists('publishing/public-site/app-ads.txt')) {
     findings.push('GOAL step 4 is red: publishing/public-site/app-ads.txt is missing.');
   }
@@ -316,18 +267,63 @@ function removeAdsV1AcceptanceFindings() {
   if (!exists(removeAdsDeviceQaPath)) {
     findings.push(`Manual device-QA gate is red: ${removeAdsDeviceQaPath} is missing.`);
   } else {
-    const deviceQa = readFileIfExists(removeAdsDeviceQaPath);
-    const blockedTerms = blockedEvidencePatterns
-      .filter(([pattern]) => pattern.test(deviceQa))
-      .map(([, label]) => label);
-    if (blockedTerms.length > 0) {
+    const errors = validateRemoveAdsDeviceQaReport(removeAdsDeviceQaPath);
+    if (errors.length > 0) {
       findings.push(
-        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} still contains ${blockedTerms.join(
-          ', ',
+        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} is incomplete: ${errors.join(
+          '; ',
         )}.`,
       );
     }
   }
+
+  return findings;
+}
+
+function removeAdsStep3StructuralFindings(purchasesSource) {
+  const findings = [];
+
+  if (!purchasesSource) {
+    return ['GOAL step 3 structural gate is red: lib/monetization/purchases.ts is missing.'];
+  }
+
+  const normalizedPurchasesSource = purchasesSource.replace(/\s+/g, ' ');
+  const step3Checks = [
+    [
+      /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
+        purchasesSource,
+      ),
+      'Remove Ads product id must be an exported reverse-DNS removeads identifier',
+    ],
+    [
+      /export\s+const\s+REMOVE_ADS_PRICE_LABEL\s*=\s*['"]29 SEK['"]/.test(purchasesSource),
+      'Remove Ads price label must stay 29 SEK',
+    ],
+    [
+      normalizedPurchasesSource.includes(
+        'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+      ),
+      'buyRemoveAds must request REMOVE_ADS_PRODUCT_ID',
+    ],
+    [
+      normalizedPurchasesSource.includes(
+        'const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
+      ),
+      'restoreRemoveAdsPurchase must restore REMOVE_ADS_PRODUCT_ID',
+    ],
+    [
+      /export\s+async\s+function\s+restoreRemoveAdsPurchase\b/.test(purchasesSource),
+      'restoreRemoveAdsPurchase must remain exported',
+    ],
+    [
+      anyRepoFileMatches(['app', 'components', 'lib'], /remove[-_\s]?ads/i),
+      'Remove Ads wiring must be visible in app/components/lib',
+    ],
+  ];
+
+  step3Checks.forEach(([isValid, message]) => {
+    if (!isValid) findings.push(`GOAL step 3 structural gate is red: ${message}.`);
+  });
 
   return findings;
 }
@@ -405,7 +401,7 @@ function releaseScopeOverrideGate(manualEvidence) {
     `v1.1 runtime/test surfaces are present before v1.0 Remove Ads acceptance is closed: ${v11Surfaces.join(
       ', ',
     )}. Remove Ads findings: ${removeAdsFindings.join(' ')}`,
-    `Close v1.0 Remove Ads acceptance first (${removeAdsStep3Command}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
+    `Close v1.0 Remove Ads acceptance first (${removeAdsStep3StructuralGate}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
   );
 }
 
@@ -619,6 +615,185 @@ function validateDeviceAudioEvidence(evidencePath, expectedPlatform) {
   return errors;
 }
 
+function artifactPathExists(reference, baseDir) {
+  if (/^https:\/\//i.test(reference)) return true;
+  const artifactPath = path.isAbsolute(reference)
+    ? reference
+    : /^(?:reports|publishing|content|assets)\//.test(reference)
+      ? path.resolve(reference)
+      : path.resolve(baseDir, reference);
+  return exists(artifactPath);
+}
+
+function validateProofReferences(values, baseDir, label) {
+  const errors = [];
+  if (!Array.isArray(values) || values.length === 0) {
+    return [`proof.${label} must include at least one local path or HTTPS URL`];
+  }
+
+  values.forEach((value, index) => {
+    const reference = String(value || '').trim();
+    if (!reference) {
+      errors.push(`proof.${label}[${index}] is blank`);
+    } else if (!/^https:\/\//i.test(reference) && !/^[./\w-]/.test(reference)) {
+      errors.push(`proof.${label}[${index}] must be a local path or HTTPS URL`);
+    } else if (!artifactPathExists(reference, baseDir)) {
+      errors.push(`proof.${label}[${index}] does not exist: ${reference}`);
+    }
+  });
+
+  return errors;
+}
+
+function validateRemoveAdsDeviceQaArtifact(artifactPath, expectedPlatform) {
+  let artifact;
+  try {
+    artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
+  } catch (error) {
+    return [`could not parse ${artifactPath}: ${error.message}`];
+  }
+
+  const errors = [];
+  const platform = String(artifact.platform || '').toLowerCase();
+  if (platform !== expectedPlatform) {
+    errors.push(`platform must be ${expectedPlatform}`);
+  }
+  if (artifact.status !== 'passed') {
+    errors.push('status must be passed');
+  }
+  if (!artifact.device || !String(artifact.device).trim()) {
+    errors.push('device is required');
+  }
+  if (!artifact.osVersion || !String(artifact.osVersion).trim()) {
+    errors.push('osVersion is required');
+  }
+  if (!artifact.reviewer || !String(artifact.reviewer).trim()) {
+    errors.push('reviewer is required');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(artifact.reviewedAt || '')) {
+    errors.push('reviewedAt must be an ISO UTC timestamp');
+  }
+
+  const build = artifact.build || {};
+  if (!build.id || !String(build.id).trim()) {
+    errors.push('build.id is required');
+  }
+  if (!/^https:\/\//i.test(build.url || '')) {
+    errors.push('build.url must be an HTTPS URL');
+  }
+  if (!build.version || !String(build.version).trim()) {
+    errors.push('build.version is required');
+  }
+
+  const checks = Array.isArray(artifact.checks) ? artifact.checks : [];
+  if (checks.length === 0) {
+    errors.push('checks array is required');
+  }
+  const passedChecks = new Set(
+    checks
+      .filter((check) => check && check.result === 'passed')
+      .map((check) => String(check.id || '')),
+  );
+  for (const checkId of removeAdsDeviceQaRequiredChecks) {
+    if (!passedChecks.has(checkId)) {
+      errors.push(`missing passed check ${checkId}`);
+    }
+  }
+  checks.forEach((check, index) => {
+    if (!check?.id || !String(check.id).trim()) {
+      errors.push(`checks[${index}].id is required`);
+    }
+    if (!/^(passed|failed|not_applicable)$/i.test(check?.result || '')) {
+      errors.push(`checks[${index}].result must be passed, failed, or not_applicable`);
+    }
+    if (check?.result !== 'passed') {
+      errors.push(`${check?.id || `checks[${index}]`} result must be passed`);
+    }
+  });
+
+  const proof = artifact.proof || {};
+  const baseDir = path.dirname(artifactPath);
+  errors.push(...validateProofReferences(proof.screenshots, baseDir, 'screenshots'));
+  errors.push(...validateProofReferences(proof.logs, baseDir, 'logs'));
+
+  return errors;
+}
+
+function extractRemoveAdsDeviceQaArtifactPaths(markdown) {
+  const matches = markdown.match(/\breports\/release-device-qa\/[^\s),;\]]+\.json\b/g) || [];
+  return [...new Set(matches.map((item) => item.replace(/[.)\]]+$/g, '')))];
+}
+
+function validateRemoveAdsDeviceQaReport(reportPath) {
+  let markdown;
+  try {
+    markdown = fs.readFileSync(reportPath, 'utf8');
+  } catch (error) {
+    return [`could not read ${reportPath}: ${error.message}`];
+  }
+
+  const errors = [];
+  const blockedTerms = [
+    ...blockedEvidencePatterns,
+    [/^\s*done\s*$/im, 'generic "done" evidence'],
+    [/- \[[ \t]\]/, 'unchecked manual checklist item'],
+  ]
+    .filter(([pattern]) => pattern.test(markdown))
+    .map(([, label]) => label);
+  if (blockedTerms.length > 0) {
+    errors.push(
+      `report still contains blocker, placeholder, or prose-only language: ${blockedTerms.join(
+        ', ',
+      )}`,
+    );
+  }
+
+  const artifactPaths = extractRemoveAdsDeviceQaArtifactPaths(markdown);
+  if (artifactPaths.length === 0) {
+    errors.push(
+      `report must link per-platform JSON artifacts under ${removeAdsDeviceQaArtifactRoot}`,
+    );
+  }
+
+  const linkedPlatforms = new Set();
+  for (const artifactPath of artifactPaths) {
+    if (!exists(artifactPath)) {
+      errors.push(`linked JSON artifact does not exist: ${artifactPath}`);
+      continue;
+    }
+
+    let parsedPlatform = '';
+    try {
+      parsedPlatform = String(JSON.parse(fs.readFileSync(artifactPath, 'utf8')).platform || '')
+        .toLowerCase()
+        .trim();
+    } catch {
+      parsedPlatform = /ios/i.test(artifactPath)
+        ? 'ios'
+        : /android/i.test(artifactPath)
+          ? 'android'
+          : '';
+    }
+    if (parsedPlatform) linkedPlatforms.add(parsedPlatform);
+    const expectedPlatform =
+      parsedPlatform === 'ios' || parsedPlatform === 'android'
+        ? parsedPlatform
+        : /ios/i.test(artifactPath)
+          ? 'ios'
+          : 'android';
+    const artifactErrors = validateRemoveAdsDeviceQaArtifact(artifactPath, expectedPlatform);
+    errors.push(...artifactErrors.map((error) => `${artifactPath}: ${error}`));
+  }
+
+  for (const platform of ['ios', 'android']) {
+    if (!linkedPlatforms.has(platform)) {
+      errors.push(`report must link a ${platform} JSON artifact`);
+    }
+  }
+
+  return errors;
+}
+
 function validateStoreRecordEvidence(evidencePath) {
   let evidence;
   try {
@@ -631,8 +806,8 @@ function validateStoreRecordEvidence(evidencePath) {
   if (evidence.status !== 'ready') {
     errors.push('status must be ready');
   }
-  if (evidence.bundleIdentifier !== 'com.billyyiu.swedishcivictest') {
-    errors.push('bundleIdentifier must be com.billyyiu.swedishcivictest');
+  if (evidence.bundleIdentifier !== 'com.billyyiu.almostswedish') {
+    errors.push('bundleIdentifier must be com.billyyiu.almostswedish');
   }
   if (!/^https:\/\/appstoreconnect\.apple\.com\//i.test(evidence.appStoreConnectUrl || '')) {
     errors.push('appStoreConnectUrl must be an App Store Connect URL');
@@ -742,8 +917,8 @@ function validateStoreCredentialEvidence(evidencePath) {
   if (!/^SHA256:[0-9a-f]{64}$/i.test(android.serviceAccountKeyFingerprint || '')) {
     errors.push('android.serviceAccountKeyFingerprint must be a SHA256 fingerprint');
   }
-  if (android.packageName !== 'com.billyyiu.swedishcivictest') {
-    errors.push('android.packageName must be com.billyyiu.swedishcivictest');
+  if (android.packageName !== 'com.billyyiu.almostswedish') {
+    errors.push('android.packageName must be com.billyyiu.almostswedish');
   }
   if (!android.credentialsSource || !String(android.credentialsSource).trim()) {
     errors.push('android.credentialsSource is required');
@@ -1158,9 +1333,15 @@ function commandSucceeds(command, args) {
   const result = spawnSync(command, args, { encoding: 'utf8' });
   return {
     ok: result.status === 0,
-    stdout: result.stdout.trim(),
-    stderr: result.stderr.trim(),
+    stdout: result.stdout.trimEnd(),
+    stderr: result.stderr.trimEnd(),
   };
+}
+
+function commandEvidence(result, fallback = '') {
+  const streams = [result.stderr, result.stdout].filter(Boolean);
+  const combined = [...new Set(streams)].join('\n');
+  return combined || fallback;
 }
 
 function skippedExternalCheck(command, args) {
@@ -1371,15 +1552,16 @@ function publicUrlsGate(manualEvidence) {
   const manualGate = evidenceGate(
     manualEvidence,
     'public-urls',
-    'Public support and privacy URLs',
-    'Static pages exist locally, but no hosted HTTPS URL evidence is recorded.',
-    'Host the static pages, verify public HTTPS access, and enter URLs in both store records.',
+    'Public support, privacy, and app-ads URLs',
+    'Static pages/files exist locally, but no hosted HTTPS URL evidence is recorded.',
+    'Host the static pages and app-ads file, verify public HTTPS access, and enter support/privacy URLs in both store records.',
     {
       requiredArtifactMissing:
         exists('publishing/public-site/support/index.html') &&
-        exists('publishing/public-site/privacy/index.html')
+        exists('publishing/public-site/privacy/index.html') &&
+        exists('publishing/public-site/app-ads.txt')
           ? null
-          : 'Local static support/privacy pages are missing from publishing/public-site.',
+          : 'Local static support/privacy/app-ads files are missing from publishing/public-site.',
     },
   );
 
@@ -1400,8 +1582,10 @@ function publicUrlsGate(manualEvidence) {
   const liveCheck = commandSucceeds(process.execPath, [
     'scripts/check-public-urls.js',
     ...publicUrls,
+    '--expect-app-ads-file',
+    appAdsUrl,
+    'publishing/public-site/app-ads.txt',
   ]);
-  const liveCheck = commandSucceeds(process.execPath, publicUrlCheckArgs);
   if (liveCheck.ok) {
     return gate(
       manualGate.id,
@@ -1419,7 +1603,7 @@ function publicUrlsGate(manualEvidence) {
     `Recorded public URL evidence exists, but live URL check failed: ${
       liveCheck.stderr || liveCheck.stdout || 'no checker output'
     }`,
-    'Restore public support/privacy/app-ads URLs or update the recorded URLs and rerun `npm run release:preflight`.',
+    'Restore public support/privacy URLs or update the recorded URLs and rerun `npm run release:preflight`.',
   );
 }
 
@@ -1450,35 +1634,35 @@ function buildReport() {
       'expo-doctor',
       'Expo Doctor native dependency checks',
       expoDoctor.ok ? 'READY' : 'BLOCKED',
-      expoDoctor.ok ? expoDoctor.stdout : expoDoctor.stderr || expoDoctor.stdout,
+      expoDoctor.ok ? expoDoctor.stdout : commandEvidence(expoDoctor),
       'Run `npm exec -- expo-doctor` and fix any Expo/native dependency findings.',
     ),
     gate(
       'web-export',
       'Web production export smoke',
       webExport.ok ? 'READY' : 'BLOCKED',
-      webExport.ok ? webExport.stdout : webExport.stderr || webExport.stdout,
+      webExport.ok ? webExport.stdout : commandEvidence(webExport),
       'Run `npm run release:web-export-smoke` and fix any Expo web export errors.',
     ),
     gate(
       'native-prebuild',
       'Android/iOS native prebuild smoke',
       nativePrebuild.ok ? 'READY' : 'BLOCKED',
-      nativePrebuild.ok ? nativePrebuild.stdout : nativePrebuild.stderr || nativePrebuild.stdout,
+      nativePrebuild.ok ? nativePrebuild.stdout : commandEvidence(nativePrebuild),
       'Run `npm run release:native-prebuild-smoke` and fix any Expo native prebuild warnings or errors.',
     ),
     gate(
       'eas-cli',
       'Pinned npx EAS CLI',
       easVersion.ok ? 'READY' : 'BLOCKED',
-      easVersion.ok ? easVersion.stdout : easVersion.stderr || easVersion.stdout,
+      easVersion.ok ? easVersion.stdout : commandEvidence(easVersion),
       'Run `npx --yes eas-cli@18.13.0 --version`.',
     ),
     gate(
       'eas-auth',
       'Expo/EAS authentication',
       easWhoami.ok ? 'READY' : 'BLOCKED',
-      easWhoami.ok ? easWhoami.stdout : easWhoami.stderr || easWhoami.stdout || 'Not logged in',
+      easWhoami.ok ? easWhoami.stdout : commandEvidence(easWhoami, 'Not logged in'),
       'Log in to Expo/EAS or provide an approved Expo token, then rerun `npx --yes eas-cli@18.13.0 whoami`.',
     ),
     evidenceGate(

@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('mock exam access TypeScript schema stays in parity with validator expectations', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -24,7 +23,10 @@ test('mock exam access TypeScript schema stays in parity with validator expectat
   assert.equal(summary.mockExamAccessTypeInterfacesValidated, 6);
   assert.equal(summary.mockExamAccessTypeSchemaParityValidated, true);
   assert.match(rewardedExamSource, /export type MockExamAccessReason =/);
+  assert.match(rewardedExamSource, /\| 'access_read_failed'/);
+  assert.match(rewardedExamSource, /accessReadFailed\?: boolean;/);
   assert.match(rewardedExamSource, /export type MockExamAccessDecision = \{/);
+  assert.match(rewardedExamSource, /completedMockExamSessionIdsByDate: Record<string, string\[]>;/);
   assert.match(rewardedExamSource, /placement: typeof REWARDED_EXTRA_EXAM_PLACEMENT;/);
   assert.match(rewardedExamSource, /export interface MockExamAccessStorage/);
   assert.match(rewardedExamSource, /getItemAsync\(key: string\): Promise<string \| null>;/);
