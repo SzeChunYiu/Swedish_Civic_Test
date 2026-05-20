@@ -1397,7 +1397,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch10',
     { chapter: 'Sveriges moderna historia', section: 'Den svenska modellen', pageApprox: 35 },
     'Vad blev Saltsjöbadsavtalet från 1938 viktigt för?',
-    'What did the 1938 Saltsjöbaden Agreement become important for?',
+    'What was the 1938 Saltsjöbaden Agreement important for?',
     [
       [
         'Samarbetet mellan fackföreningar och arbetsgivare',
@@ -1409,7 +1409,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal.',
-    'The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It became important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.',
+    'The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.',
     ['saltsjobaden', 'swedish-model', 'labour-market'],
   ),
   single(

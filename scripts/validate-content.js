@@ -255,6 +255,10 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
+const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
+  /\bbec(?:o|a)me important for\b/i,
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4311,6 +4315,20 @@ function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('saltsjobaden')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -5925,6 +5943,9 @@ function civicStatementEn(source, option) {
   match = q.match(/^What did (.+?) become important for$/i);
   if (match)
     return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
+  match = q.match(/^What was (.+?) important for$/i);
+  if (match)
+    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
     return `The goal of ${match[1]} during ${match[2]} was to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -7162,6 +7183,7 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
+let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16442,6 +16464,8 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
+      const saltsjobadenAgreementEnglishNaturalnessIssue =
+        findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
@@ -16486,6 +16510,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal common-to-do English wording`);
       } else {
         questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
+      }
+      if (saltsjobadenAgreementEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
+      } else {
+        questionSaltsjobadenAgreementEnglishNaturalnessValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -16959,6 +16988,7 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
+      questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
