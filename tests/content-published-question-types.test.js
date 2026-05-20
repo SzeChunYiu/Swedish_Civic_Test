@@ -964,6 +964,55 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
+test('published question schema rejects generated true/false bare answer phrases', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const bareAnswerPhraseResiduals = {",
+        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
+        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
+        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
+        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
+        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
+        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  bareAnswerPhraseResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...bareAnswerPhraseResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 6);
+});
+
 test('published question schema rejects generated true/false statement-about-statement stems', () => {
   const result = spawnSync(
     process.execPath,

@@ -765,6 +765,30 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'En anledning till att källkritik behövs när man använder medier är att allt som publiceras alltid är korrekt.',
       'One reason source criticism is needed when using media is that everything that is published is always correct.',
     ],
+    [generatedQuestionId(sourceQuestions, 'q157', 'trueStatement')]: [
+      'Primärvården omfattar vårdcentraler, barnavårdscentraler och mödravårdscentraler.',
+      'Primary care includes health centres, child health centres, and maternity clinics.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q157', 'falseStatement')]: [
+      'Primärvården omfattar domstolar, åklagare och kriminalvård.',
+      'Primary care includes courts, prosecutors, and prison and probation services.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q158', 'trueStatement')]: [
+      'Kommunen ansvarar för att ordna förskolor, fritidshem, grundskolor och gymnasieskolor.',
+      'The municipality is responsible for arranging preschools, after-school centres, compulsory schools, and upper-secondary schools.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q158', 'falseStatement')]: [
+      'Kommunen ansvarar för att betala sjukförsäkring och statliga pensioner.',
+      'The municipality is responsible for paying sickness insurance and state pensions.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q159', 'trueStatement')]: [
+      'Kommunen kan erbjuda äldre personer vård och service hemma eller boende som är anpassat för äldre personer för att klara vardagen.',
+      'The municipality can offer older people care and services at home or housing adapted for older people to manage everyday life.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q159', 'falseStatement')]: [
+      'Kommunen kan erbjuda äldre personer automatiskt studiestöd och plats på universitet för att klara vardagen.',
+      'The municipality can offer older people automatic study support and a university place to manage everyday life.',
+    ],
   };
 
   for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {

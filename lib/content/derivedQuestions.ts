@@ -1219,6 +1219,18 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad finansierar staten inom (.+)$/i);
   if (match) return `Staten finansierar ${lowerFirst(answer)}`;
 
+  match = q.match(/^Vad ingår i (.+)$/i);
+  if (match) return `${upperFirst(match[1])} omfattar ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket ansvar har (.+?) för (.+)$/i);
+  if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
+
+  match = q.match(/^Vilken hjälp kan (.+?) få av (.+?) för att (.+)$/i);
+  if (match)
+    return `${upperFirst(match[2])} kan erbjuda ${lowerFirst(match[1])} ${lowerFirst(
+      answer,
+    )} för att ${match[3]}`;
+
   match = q.match(/^Vilket ansvar har (.+?) inom (.+)$/i);
   if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
 
@@ -1663,6 +1675,18 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What does the state finance within (.+)$/i);
   if (match) return `The state finances ${lowerFirst(answer)}`;
+
+  match = q.match(/^What is included in (.+)$/i);
+  if (match) return `${upperFirst(match[1])} includes ${lowerFirst(answer)}`;
+
+  match = q.match(/^What responsibility does (.+?) have for (.+)$/i);
+  if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
+
+  match = q.match(/^What help can (.+?) receive from (.+?) to (.+)$/i);
+  if (match)
+    return `${upperFirst(match[2])} can offer ${lowerFirst(match[1])} ${lowerFirst(
+      answer,
+    )} to ${match[3]}`;
 
   match = q.match(/^What responsibility do (.+?) have within (.+)$/i);
   if (match) return `${upperFirst(match[1])} are responsible for ${englishGerundPhrase(answer)}`;
