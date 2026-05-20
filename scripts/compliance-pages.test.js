@@ -72,3 +72,29 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Legal and sources/);
   assert.match(complianceLinks, /Support/);
 });
+
+test('static marketing copy avoids unsupported real-exam parity claims', () => {
+  const staticApp = read('site/app.js');
+  const phrasePattern = (...tokens) => new RegExp(tokens.join('[\\s\\S]{0,24}'), 'i');
+  const forbidden = [
+    ['real', 'timing'],
+    ['real', 'format'],
+    ['look', 'and', 'feel', 'like', 'the', 'real', 'thing'],
+    ['ready', 'for', 'the', 'real', 'thing'],
+    ['riktig', 'tidsbegränsning'],
+    ['riktig', 'timing'],
+    ['riktigt', 'format'],
+    ['riktig', 'tid'],
+    ['känns', 'som', 'det', 'riktiga'],
+    ['redo', 'för', 'det', 'riktiga'],
+  ];
+
+  for (const tokens of forbidden) {
+    assert.doesNotMatch(staticApp, phrasePattern(...tokens), tokens.join(' '));
+  }
+
+  assert.match(staticApp, /It is still unofficial study practice/);
+  assert.match(staticApp, /Det är fortfarande inofficiell övning/);
+  assert.match(staticApp, /Timed practice rounds with review cards/);
+  assert.match(staticApp, /Tidsatta övningspass med genomgång efteråt/);
+});
