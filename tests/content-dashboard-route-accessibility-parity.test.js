@@ -172,7 +172,7 @@ test('dashboard accessibility parity rejects an unlabelled heatmap ScrollView', 
       assertDashboardAccessibilitySeparation({
         ...sources,
         activity: sources.activity.replace(
-          '          accessibilityLabel={accessibilityLabel}\n          accessibilityRole="summary"\n          aria-label={accessibilityLabel}\n',
+          /\s+accessibilityLabel=\{accessibilityLabel\}\n\s+accessibilityRole="summary"\n\s+aria-label=\{accessibilityLabel\}\n/,
           '',
         ),
       }),

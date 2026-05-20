@@ -10,7 +10,7 @@ type AdBannerCopy = {
   testStatus: string;
 };
 
-type NativeAdCardCopy = {
+type NativeAdCardStatusCopy = {
   accessibilityLabel: string;
   ctaAccessibilityLabel: (callToAction: string) => string;
   ctaHint: string;
@@ -19,6 +19,8 @@ type NativeAdCardCopy = {
   meta: string;
   title: string;
 };
+
+type NativeAdCardCopy = NativeAdCardStatusCopy & Record<'live' | 'test', NativeAdCardStatusCopy>;
 
 export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
   sv: {
@@ -59,21 +61,68 @@ export const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy> = {
   sv: {
     accessibilityLabel:
       'Inbyggd testannons: Annons i resultatvyn. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
-    ctaAccessibilityLabel: (callToAction) => `${callToAction}. Sponsrad annonsknapp.`,
+    ctaAccessibilityLabel: (callToAction) => `Annonsåtgärd: ${callToAction}`,
     ctaHint: 'Öppnar annonsörens erbjudande.',
     eyebrow: 'Inbyggd testannons',
     hint: 'Annonsförhandsvisning. Döljs när Ta bort annonser är aktivt.',
     meta: 'Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov.',
     title: 'Annons i resultatvyn',
+    live: {
+      accessibilityLabel:
+        'Annons: Annons i resultatvyn. AdMob-placering aktiv. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
+      ctaAccessibilityLabel: (callToAction) => `Annonsåtgärd: ${callToAction}`,
+      ctaHint: 'Öppnar annonsörens erbjudande.',
+      eyebrow: 'Annons',
+      hint: 'Annons. Döljs när Ta bort annonser är aktivt.',
+      meta: 'AdMob-placering aktiv. Visas inte i tidsatta prov.',
+      title: 'Annons i resultatvyn',
+    },
+    test: {
+      accessibilityLabel:
+        'Inbyggd testannons: Annons i resultatvyn. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
+      ctaAccessibilityLabel: (callToAction) => `Annonsåtgärd: ${callToAction}`,
+      ctaHint: 'Öppnar annonsörens erbjudande.',
+      eyebrow: 'Inbyggd testannons',
+      hint: 'Annonsförhandsvisning. Döljs när Ta bort annonser är aktivt.',
+      meta: 'Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov.',
+      title: 'Annons i resultatvyn',
+    },
   },
   en: {
     accessibilityLabel:
-      'Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. Hidden after Remove Ads is active.',
-    ctaAccessibilityLabel: (callToAction) => `${callToAction}. Sponsored ad button.`,
+      'Test native ad: Results ad. AdMob test placement preview. Kept out of timed exams. Hidden after Remove Ads is active.',
+    ctaAccessibilityLabel: (callToAction) => `Ad action: ${callToAction}`,
     ctaHint: 'Opens the advertiser offer.',
     eyebrow: 'Test native ad',
-    hint: 'Sponsored ad preview. Hidden after Remove Ads is active.',
-    meta: 'AdMob test placement preview. Keep out of timed exams.',
-    title: 'Sponsored study placement',
+    hint: 'Ad preview. Hidden after Remove Ads is active.',
+    meta: 'AdMob test placement preview. Kept out of timed exams.',
+    title: 'Results ad',
+    live: {
+      accessibilityLabel:
+        'Ad: Results ad. AdMob placement active. Kept out of timed exams. Hidden after Remove Ads is active.',
+      ctaAccessibilityLabel: (callToAction) => `Ad action: ${callToAction}`,
+      ctaHint: 'Opens the advertiser offer.',
+      eyebrow: 'Ad',
+      hint: 'Ad. Hidden after Remove Ads is active.',
+      meta: 'AdMob placement active. Kept out of timed exams.',
+      title: 'Results ad',
+    },
+    test: {
+      accessibilityLabel:
+        'Test native ad: Results ad. AdMob test placement preview. Kept out of timed exams. Hidden after Remove Ads is active.',
+      ctaAccessibilityLabel: (callToAction) => `Ad action: ${callToAction}`,
+      ctaHint: 'Opens the advertiser offer.',
+      eyebrow: 'Test native ad',
+      hint: 'Ad preview. Hidden after Remove Ads is active.',
+      meta: 'AdMob test placement preview. Kept out of timed exams.',
+      title: 'Results ad',
+    },
   },
 };
+
+export function getNativeAdCardCopy(
+  language: AppLanguage,
+  status: 'live' | 'test' = 'test',
+): NativeAdCardStatusCopy {
+  return nativeAdCardCopy[language][status];
+}

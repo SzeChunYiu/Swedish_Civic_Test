@@ -208,18 +208,18 @@ export default function DashboardScreen() {
   const proEntitlements = useMemo(createDashboardProEntitlements, []);
   const advancedAnalyticsUnlocked =
     hasProEntitlement(proEntitlements) && proEntitlements.predictedPassProbability;
+  const summaryAccessibilityLabel = copy.summaryAccessibilityLabel(
+    summary.questionsAnsweredThisWeek,
+    summary.chaptersWithAnyAnswer,
+    summary.unresolvedMistakes,
+  );
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
-      <Card
-        accessibilityLabel={copy.summaryAccessibilityLabel(
-          summary.questionsAnsweredThisWeek,
-          summary.chaptersWithAnyAnswer,
-          summary.unresolvedMistakes,
-        )}
-        accessibilityRole="summary"
-        style={styles.summaryCard}
-      >
+      <Text accessibilityRole="summary" style={styles.accessibilitySummary}>
+        {summaryAccessibilityLabel}
+      </Text>
+      <Card style={styles.summaryCard}>
         <Badge tone="blue">{copy.eyebrow}</Badge>
         <Text style={styles.summaryText}>
           {copy.summaryLine(
@@ -257,6 +257,14 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
+  accessibilitySummary: {
+    height: space[0],
+    left: space[0],
+    opacity: 0,
+    position: 'absolute',
+    top: space[0],
+    width: space[0],
+  },
   summaryCard: {
     gap: space[1],
   },
