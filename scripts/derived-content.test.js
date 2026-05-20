@@ -63,6 +63,35 @@ function civicStatementPromptPatterns(source, functionName, nextFunctionName) {
   ].map((match) => match[1]);
 }
 
+function sourceRecallHandlerFindings(source, svNextFunctionName, enNextFunctionName) {
+  const findings = [];
+  const svSlice = extractFunctionSlice(source, 'civicStatementSv', svNextFunctionName);
+  const enSlice = extractFunctionSlice(source, 'civicStatementEn', enNextFunctionName);
+  const activeCivicStatementSource = `${svSlice}\n${enSlice}`;
+  const bannedActivePatterns = [
+    /\bnämns som exempel\b/i,
+    /\bmentioned as (?:an example|examples)\b/i,
+    /\bVilken händelse från\b/i,
+    /\bWhich event from\b/i,
+    /\bVad nämns som exempel på\b/i,
+    /\bWhat is mentioned as an example of\b/i,
+  ];
+
+  if (/function swedishMentionedExample\b/.test(source)) {
+    findings.push('swedishMentionedExample helper still exists');
+  }
+  if (/function englishMentionedExample\b/.test(source)) {
+    findings.push('englishMentionedExample helper still exists');
+  }
+  for (const pattern of bannedActivePatterns) {
+    if (pattern.test(activeCivicStatementSource)) {
+      findings.push(`active civic statement handler still matches ${pattern}`);
+    }
+  }
+
+  return findings;
+}
+
 test('validate-content mirrors production civic statement prompt patterns', () => {
   const productionSource = fs.readFileSync(
     path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
@@ -98,6 +127,26 @@ test('validate-content mirrors production civic statement prompt patterns', () =
   assert.ok(enProductionPatterns.length > 100, 'English mirror should cover source shapes');
   assert.deepEqual(svValidatorPatterns, svProductionPatterns);
   assert.deepEqual(enValidatorPatterns, enProductionPatterns);
+});
+
+test('derived civic statement handlers do not support source-recall prompts', () => {
+  const productionSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
+    'utf8',
+  );
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.deepEqual(
+    sourceRecallHandlerFindings(productionSource, 'civicStatementEn', 'buildSingleChoiceVariant'),
+    [],
+  );
+  assert.deepEqual(
+    sourceRecallHandlerFindings(validatorSource, 'civicStatementEn', 'correctOption'),
+    [],
+  );
 });
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
