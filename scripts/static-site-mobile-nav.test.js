@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 const test = require('node:test');
-const { chromium } = require('@playwright/test');
+const { launchStaticChromium } = require('./static-browser-support');
 
 const repoRoot = path.resolve(__dirname, '..');
 const siteRoot = path.join(repoRoot, 'site');
@@ -57,13 +57,6 @@ function createStaticServer() {
   });
 }
 
-function chromeExecutablePath() {
-  if (process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH) {
-    return process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
-  }
-  return fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined;
-}
-
 function assertNoHorizontalOverflow(snapshot, label) {
   assert.ok(
     snapshot.documentScrollWidth <= snapshot.documentClientWidth,
@@ -83,11 +76,11 @@ function assertReachableBox(box, label) {
   assert.ok(box.right <= 390, `${label} should fit inside the 390px viewport`);
 }
 
-test('static mobile topbar reaches key routes and settings without horizontal overflow', async () => {
+test('static mobile topbar reaches key routes and settings without horizontal overflow', async (t) => {
+  const browser = await launchStaticChromium(t, 'static mobile navigation checks');
+  if (!browser) return;
+
   const server = await createStaticServer();
-  const browser = await chromium.launch({
-    executablePath: chromeExecutablePath(),
-  });
 
   try {
     const page = await browser.newPage({ viewport: { width: 390, height: 840 } });

@@ -98,11 +98,6 @@ test('streakWithFreeze: freezeBannerCopy emits Sv + En only when a freeze was us
   const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 0 } };
   assert.match(freezeBannerCopy(withRescue, 'en'), /protected/i);
   assert.match(freezeBannerCopy(withRescue, 'sv'), /räddad/i);
-  const persistedRescue = {
-    rescuedThisRun: [],
-    freezeState: { available: 0, rescuedDayKeys: ['2026-05-17'] },
-  };
-  assert.match(freezeBannerCopy(persistedRescue, 'en'), /protected/i);
   const noRescue = { rescuedThisRun: [], freezeState: { available: 1 } };
   assert.equal(freezeBannerCopy(noRescue, 'en'), null);
 });

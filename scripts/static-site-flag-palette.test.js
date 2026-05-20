@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 const test = require('node:test');
-const { chromium } = require('@playwright/test');
+const { launchStaticChromium } = require('./static-browser-support');
 
 const repoRoot = path.resolve(__dirname, '..');
 const siteRoot = path.join(repoRoot, 'site');
@@ -55,19 +55,11 @@ function createStaticServer() {
   });
 }
 
-function chromeExecutablePath() {
-  if (process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH) {
-    return process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
-  }
-  return fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined;
-}
+test('static Swedish flag surfaces keep official colors across palettes and themes', async (t) => {
+  const browser = await launchStaticChromium(t, 'static flag palette checks');
+  if (!browser) return;
 
-test('static Swedish flag surfaces keep official colors across palettes and themes', async () => {
   const server = await createStaticServer();
-  const browser = await chromium.launch({
-    executablePath: chromeExecutablePath(),
-  });
-
   try {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.goto(server.url, { waitUntil: 'domcontentloaded' });
