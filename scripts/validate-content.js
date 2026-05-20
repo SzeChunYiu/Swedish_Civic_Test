@@ -7317,6 +7317,8 @@ let examReviewItemsValidated = 0;
 let examReviewSourceParityValidated = false;
 let examChapterBreakdownItemsValidated = 0;
 let examChapterBreakdownParityValidated = false;
+let examScoringRuntimeCasesValidated = 0;
+let examScoringRuntimeParityValidated = false;
 let examGeneratorTypeAliasesValidated = 0;
 let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
@@ -11590,6 +11592,126 @@ function validateExamChapterBreakdownParity(config) {
     breakdownItems.length === expectedByChapter.size
   ) {
     examChapterBreakdownParityValidated = true;
+  }
+}
+
+function validateExamScoringRuntimeParity() {
+  if (typeof scoreExam !== 'function') return;
+
+  const validQuestion = { id: 'runtime-q1', chapterId: 'ch01', correctOptionId: 'a' };
+  const emptyResult = {
+    correctCount: 0,
+    totalCount: 0,
+    percent: 0,
+    chapterBreakdown: [],
+  };
+  const unansweredResult = {
+    correctCount: 0,
+    totalCount: 1,
+    percent: 0,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 0, totalCount: 1 }],
+  };
+  const correctResult = {
+    correctCount: 1,
+    totalCount: 1,
+    percent: 100,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 1, totalCount: 1 }],
+  };
+  const cases = [
+    {
+      label: 'non-array question input',
+      run: () => scoreExam(null, { 'runtime-q1': 'a' }),
+      expected: emptyResult,
+    },
+    {
+      label: 'null answer map',
+      run: () => scoreExam([validQuestion], null),
+      expected: unansweredResult,
+    },
+    {
+      label: 'array answer map',
+      run: () => scoreExam([validQuestion], ['a']),
+      expected: unansweredResult,
+    },
+    {
+      label: 'number answer value',
+      run: () => scoreExam([validQuestion], { 'runtime-q1': 1 }),
+      expected: unansweredResult,
+    },
+    {
+      label: 'object answer value',
+      run: () => scoreExam([validQuestion], { 'runtime-q1': { toString: () => 'a' } }),
+      expected: unansweredResult,
+    },
+    {
+      label: 'malformed question rows',
+      run: () =>
+        scoreExam(
+          [
+            null,
+            { id: 'missing-chapter', correctOptionId: 'a' },
+            { id: 'blank-chapter', chapterId: '', correctOptionId: 'a' },
+            { chapterId: 'ch01', correctOptionId: 'a' },
+            { id: 'missing-correct', chapterId: 'ch01' },
+          ],
+          {
+            'missing-chapter': 'a',
+            'blank-chapter': 'a',
+            'missing-correct': 'a',
+          },
+        ),
+      expected: emptyResult,
+    },
+    {
+      label: 'valid string answer value',
+      run: () => scoreExam([validQuestion], { 'runtime-q1': 'a' }),
+      expected: correctResult,
+    },
+  ];
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function resultMatches(actual, expected) {
+    return JSON.stringify(actual) === JSON.stringify(expected);
+  }
+
+  cases.forEach(({ label, run, expected }) => {
+    let caseIsValid = true;
+    let actual;
+
+    try {
+      actual = run();
+    } catch (error) {
+      reject(`scoreExam ${label} threw ${error.name}: ${error.message}`);
+      return;
+    }
+
+    if (!resultMatches(actual, expected)) {
+      caseIsValid = false;
+      reject(
+        `scoreExam ${label} returned ${JSON.stringify(actual)}, expected ${JSON.stringify(
+          expected,
+        )}`,
+      );
+    }
+
+    const invalidChapter = actual.chapterBreakdown?.find(
+      (item) => typeof item.chapterId !== 'string' || item.chapterId.length === 0,
+    );
+    if (invalidChapter) {
+      caseIsValid = false;
+      reject(`scoreExam ${label} published an invalid chapter id in chapterBreakdown`);
+    }
+
+    if (caseIsValid) examScoringRuntimeCasesValidated += 1;
+  });
+
+  if (valid && examScoringRuntimeCasesValidated === cases.length) {
+    examScoringRuntimeParityValidated = true;
   }
 }
 
@@ -17489,6 +17611,7 @@ validateCelebrationBurstAccessibilityParity();
 validateCelebrationBurstReachability();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
+validateExamScoringRuntimeParity();
 validateExamGeneratorTypeSchemaParity();
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
@@ -17673,6 +17796,8 @@ console.log(
       examReviewSourceParityValidated,
       examChapterBreakdownItemsValidated,
       examChapterBreakdownParityValidated,
+      examScoringRuntimeCasesValidated,
+      examScoringRuntimeParityValidated,
       examGeneratorTypeAliasesValidated,
       examGeneratorTypeInterfacesValidated,
       examGeneratorTypeSchemaParityValidated,
