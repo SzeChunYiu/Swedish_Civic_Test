@@ -137,6 +137,40 @@ test('question-bank CSV exposes derived question provenance with no blank cells'
 });
 
 test('question-bank CSV export check rejects generated rows collapsing to UHR', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/provenance.ts')) {
+    const source = String(contents);
+    const mutated = source.replace(
+      "if (tags.includes('published-variant')) return 'derived';",
+      "if (tags.includes('published-variant')) return 'uhr';",
+    );
+    if (mutated === source) {
+      throw new Error('published-variant provenance mutation target not found');
+    }
+    return mutated;
+  }
+  return contents;
+};
+process.argv.push('--check');
+require('./scripts/export-question-bank.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /published-variant|provenance|derived|uhr/i);
+});
+
 test('question-bank CSV exposes UHR source metadata with no blank cells', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
