@@ -25,6 +25,8 @@ type AboutTheTestCopy = {
   backHomeAccessibilityLabel: string;
   openPractice: string;
   openPracticeAccessibilityLabel: string;
+  openRequirements: string;
+  openRequirementsAccessibilityLabel: string;
 };
 
 const officialTestSourceNotes = [
@@ -82,6 +84,8 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     backHomeAccessibilityLabel: 'Tillbaka till startsidan',
     openPractice: 'Börja öva',
     openPracticeAccessibilityLabel: 'Öppna övningsläget',
+    openRequirements: 'Se kravguiden',
+    openRequirementsAccessibilityLabel: 'Öppna guiden för medborgarskapskrav',
   },
   en: {
     eyebrow: 'About the test',
@@ -109,6 +113,8 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     backHomeAccessibilityLabel: 'Return to the home screen',
     openPractice: 'Start practising',
     openPracticeAccessibilityLabel: 'Open practice mode',
+    openRequirements: 'View requirements guide',
+    openRequirementsAccessibilityLabel: 'Open the citizenship requirements guide',
   },
 };
 
@@ -155,10 +161,18 @@ export default function Screen() {
 
       <View style={styles.actions}>
         <Link
+          accessibilityLabel={copy.openRequirementsAccessibilityLabel}
+          accessibilityRole="link"
+          href="/citizenship-requirements"
+          style={styles.primaryLink}
+        >
+          {copy.openRequirements}
+        </Link>
+        <Link
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
           accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
+          style={styles.secondaryLink}
         >
           {copy.openPractice}
         </Link>
