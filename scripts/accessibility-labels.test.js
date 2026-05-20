@@ -195,6 +195,12 @@ test('Dashboard summary text is separate from interactive links, buttons, and sc
     activitySource,
     /<ScrollView[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*accessibilityRole="summary"[\s\S]*aria-label=\{accessibilityLabel\}/,
   );
+  assert.match(activitySource, /accessibilityLabel=\{copy\.dayLabel\(bin\.date, bin\.count\)\}/);
+  assert.match(dashboardSource, /dayLabel: \(date, answers\) => `\$\{date\}: \$\{answers\} svar`/);
+  assert.match(
+    dashboardSource,
+    /dayLabel: \(date, answers\) => `\$\{date\}: \$\{answers\} answers`/,
+  );
   assert.doesNotMatch(
     activitySource,
     /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/,

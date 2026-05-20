@@ -29,6 +29,7 @@ const XP_DAYS = 30;
 
 type DashboardCopy = {
   activity: {
+    dayLabel: (date: string, answers: number) => string;
     emptyState: string;
     summary: (totalAnswers: number, activeDays: number, maxDayCount: number) => string;
     subtitle: string;
@@ -65,6 +66,7 @@ type DashboardCopy = {
 const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   sv: {
     activity: {
+      dayLabel: (date, answers) => `${date}: ${answers} svar`,
       emptyState: 'Svara på några frågor så byggs din aktivitetskarta här.',
       summary: (totalAnswers, activeDays, maxDayCount) =>
         `${totalAnswers} svar under perioden. ${activeDays} aktiva dagar. Högsta dag: ${maxDayCount} svar.`,
@@ -103,6 +105,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   },
   en: {
     activity: {
+      dayLabel: (date, answers) => `${date}: ${answers} answers`,
       emptyState: 'Answer a few questions and your activity map will build here.',
       summary: (totalAnswers, activeDays, maxDayCount) =>
         `${totalAnswers} answers in this period. ${activeDays} active days. Highest day: ${maxDayCount} answers.`,

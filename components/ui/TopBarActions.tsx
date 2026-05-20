@@ -115,6 +115,7 @@ function TopBarAudioSwitch({
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="switch"
       accessibilityState={{ checked: audioEnabled }}
+      aria-checked={audioEnabled}
       hitSlop={space[1]}
       onPress={onToggle}
       onPressIn={() => setIsPressed(true)}
