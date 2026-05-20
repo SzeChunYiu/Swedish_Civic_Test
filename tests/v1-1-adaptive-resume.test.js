@@ -153,6 +153,34 @@ test('explainAdaptivePick: bucket counts roll up correctly', () => {
   assert.equal(counts['unseen'], 2);
 });
 
+test('explainAdaptivePick: invalid and future answer dates do not count as recently wrong', () => {
+  const { explainAdaptivePick } = loadTs('lib/learning/adaptivePractice.ts');
+  const counts = explainAdaptivePick({
+    progress: progressFromAnswers([
+      {
+        questionId: 'bad-date',
+        selectedOptionIds: [],
+        isCorrect: false,
+        answeredAt: 'not-a-date',
+        timeSpentSeconds: 5,
+      },
+      {
+        questionId: 'future-date',
+        selectedOptionIds: [],
+        isCorrect: false,
+        answeredAt: '2099-01-01T00:00:00.000Z',
+        timeSpentSeconds: 5,
+      },
+    ]),
+    bank: bank(['bad-date', 'future-date']),
+    size: 2,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(counts['recently-wrong'], 0);
+  assert.equal(counts.unseen, 2);
+});
+
 // ----- resume
 
 test('resumeWhereLeftOff: returns null candidate when no answers', () => {
@@ -220,6 +248,42 @@ test('resumeWhereLeftOff: ignores answers older than maxAgeDays', () => {
     maxAgeDays: 60,
   });
   assert.equal(result.chapterId, null);
+});
+
+test('resumeWhereLeftOff: ignores invalid and future answer dates', () => {
+  const { resumeWhereLeftOff } = loadTs('lib/learning/resumeWhereLeftOff.ts');
+  const answers = [
+    {
+      questionId: 'bad-date',
+      selectedOptionIds: [],
+      isCorrect: false,
+      answeredAt: 'not-a-date',
+      timeSpentSeconds: 5,
+    },
+    {
+      questionId: 'future-date',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2099-01-01T00:00:00.000Z',
+      timeSpentSeconds: 5,
+    },
+    {
+      questionId: 'valid',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-05-18T10:00:00.000Z',
+      timeSpentSeconds: 5,
+    },
+  ];
+  const result = resumeWhereLeftOff({
+    progress: progressFromAnswers(answers),
+    questionChapterIndex: { 'bad-date': 'c1', 'future-date': 'c1', valid: 'c1' },
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.chapterId, 'c1');
+  assert.equal(result.lastQuestionId, 'valid');
+  assert.equal(result.questionsAnsweredInChapter, 1);
 });
 
 test('resumeBannerCopy: bilingual messages', () => {

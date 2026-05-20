@@ -10,6 +10,7 @@
 // Pure function — independent of dashboardStats so this ships safely even
 // when called from contexts where dashboardStats may or may not be wired.
 
+import { validAnswerTimestampMs } from './answerDates';
 import type { UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -57,14 +58,21 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
 
   const buckets = new Map<
     string,
-    { correct: number; total: number; questionIds: Set<string>; lastAnsweredAt: string | null }
+    { correct: number; total: number; questionIds: Set<string>; lastAnsweredAtMs: number | null }
   >();
   for (const chapter of input.chapters) {
-    buckets.set(chapter.id, { correct: 0, total: 0, questionIds: new Set(), lastAnsweredAt: null });
+    buckets.set(chapter.id, {
+      correct: 0,
+      total: 0,
+      questionIds: new Set(),
+      lastAnsweredAtMs: null,
+    });
   }
 
   for (const session of input.progress.sessions ?? []) {
     for (const answer of session.answers) {
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs === null) continue;
       const chapterId = input.questionChapterIndex[answer.questionId];
       if (!chapterId) continue;
       const bucket = buckets.get(chapterId);
@@ -72,8 +80,8 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
       bucket.total += 1;
       if (answer.isCorrect) bucket.correct += 1;
       bucket.questionIds.add(answer.questionId);
-      if (!bucket.lastAnsweredAt || answer.answeredAt > bucket.lastAnsweredAt) {
-        bucket.lastAnsweredAt = answer.answeredAt;
+      if (bucket.lastAnsweredAtMs === null || answeredAtMs > bucket.lastAnsweredAtMs) {
+        bucket.lastAnsweredAtMs = answeredAtMs;
       }
     }
   }
@@ -90,8 +98,8 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
 
     // Staleness: 0 when last answered within recency window, ramps to 1 by 90d idle.
     let stalenessBoost = 0;
-    if (bucket.lastAnsweredAt) {
-      const last = new Date(bucket.lastAnsweredAt);
+    if (bucket.lastAnsweredAtMs !== null) {
+      const last = new Date(bucket.lastAnsweredAtMs);
       if (last < recencyCutoff) {
         const daysIdle = (now.getTime() - last.getTime()) / DAY_MS;
         stalenessBoost = Math.min(1, (daysIdle - recencyDays) / 60);

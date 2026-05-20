@@ -6,6 +6,7 @@
 //
 // Pure function — no I/O. Deterministic given (progress, now).
 
+import { validAnswerTimestampMs } from './answerDates';
 import type { UserProgress } from '../../types/progress';
 
 export interface ResumeCandidate {
@@ -33,18 +34,21 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export function resumeWhereLeftOff(input: ResumeInput): ResumeCandidate {
   const now = input.now ?? new Date();
   const maxAge = input.maxAgeDays ?? 60;
-  const cutoffIso = new Date(now.getTime() - maxAge * DAY_MS).toISOString();
+  const cutoffMs = now.getTime() - maxAge * DAY_MS;
 
   let bestChapterId: string | null = null;
   let bestLastAt: string | null = null;
+  let bestLastAtMs: number | null = null;
   let bestQuestionId: string | null = null;
 
   for (const session of input.progress.sessions ?? []) {
     for (const answer of session.answers) {
-      if (answer.answeredAt < cutoffIso) continue;
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs === null || answeredAtMs < cutoffMs) continue;
       const chapterId = input.questionChapterIndex[answer.questionId];
       if (!chapterId) continue;
-      if (!bestLastAt || answer.answeredAt > bestLastAt) {
+      if (bestLastAtMs === null || answeredAtMs > bestLastAtMs) {
+        bestLastAtMs = answeredAtMs;
         bestLastAt = answer.answeredAt;
         bestChapterId = chapterId;
         bestQuestionId = answer.questionId;
@@ -57,6 +61,7 @@ export function resumeWhereLeftOff(input: ResumeInput): ResumeCandidate {
     const seen = new Set<string>();
     for (const session of input.progress.sessions ?? []) {
       for (const answer of session.answers) {
+        if (validAnswerTimestampMs(answer.answeredAt, now) === null) continue;
         if (input.questionChapterIndex[answer.questionId] === bestChapterId) {
           seen.add(answer.questionId);
         }

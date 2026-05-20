@@ -586,7 +586,9 @@ test('timeOfDayPattern: 24 hourly bins, accuracy per hour', () => {
       ],
     },
   ];
-  const bins = timeOfDayPattern(progressWithSessions(sessions));
+  const bins = timeOfDayPattern(progressWithSessions(sessions), {
+    now: new Date('2026-05-20T00:00:00.000Z'),
+  });
   assert.equal(bins.length, 24);
   const totalAnswers = bins.reduce((n, b) => n + b.answers, 0);
   assert.equal(totalAnswers, 3);

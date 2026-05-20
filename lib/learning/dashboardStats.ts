@@ -4,10 +4,19 @@
 // The UI lane in `app/dashboard.tsx` + `components/dashboard/*` consumes
 // these to render victory-native charts.
 
+import { validAnswerDate, validAnswerTimestampMs } from './answerDates';
 import { getLocalDateKey } from './streaks';
 import type { QuizAnswer, QuizSession, UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+export const MAX_DASHBOARD_DAYS_BACK = 53 * 7;
+const DEFAULT_DAILY_ACTIVITY_DAYS_BACK = MAX_DASHBOARD_DAYS_BACK;
+const DEFAULT_RECENT_DAYS_BACK = 30;
+
+function normalizeDashboardDaysBack(daysBack: number, fallback: number): number {
+  if (!Number.isFinite(daysBack)) return fallback;
+  return Math.min(MAX_DASHBOARD_DAYS_BACK, Math.max(1, Math.floor(daysBack)));
+}
 
 // ----------------------------------------------------------- daily activity
 
@@ -24,22 +33,23 @@ export interface DailyActivityBin {
  */
 export function dailyActivityHistogram(
   progress: UserProgress,
-  options: { daysBack: number; now?: Date } = { daysBack: 53 * 7 },
+  options: { daysBack: number; now?: Date } = { daysBack: DEFAULT_DAILY_ACTIVITY_DAYS_BACK },
 ): DailyActivityBin[] {
   const now = options.now ?? new Date();
+  const daysBack = normalizeDashboardDaysBack(options.daysBack, DEFAULT_DAILY_ACTIVITY_DAYS_BACK);
   const counts = new Map<string, number>();
 
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {
-      const date = new Date(answer.answeredAt);
-      if (Number.isNaN(date.getTime())) continue;
+      const date = validAnswerDate(answer.answeredAt, now);
+      if (!date) continue;
       const key = getLocalDateKey(date);
       counts.set(key, (counts.get(key) ?? 0) + 1);
     }
   }
 
   const bins: DailyActivityBin[] = [];
-  for (let offset = options.daysBack - 1; offset >= 0; offset -= 1) {
+  for (let offset = daysBack - 1; offset >= 0; offset -= 1) {
     const d = new Date(now.getTime() - offset * DAY_MS);
     const key = getLocalDateKey(d);
     bins.push({ date: key, count: counts.get(key) ?? 0 });
@@ -67,13 +77,19 @@ export function perChapterProgress(
   progress: UserProgress,
   chapters: ReadonlyArray<{ id: string; questionCount: number }>,
   questionChapterIndex: Record<string, string>,
+  options: { now?: Date } = {},
 ): ChapterProgressBar[] {
-  const perChapter = new Map<string, {
-    correct: number;
-    total: number;
-    questionIds: Set<string>;
-    lastAnsweredAt: string | null;
-  }>();
+  const now = options.now ?? new Date();
+  const perChapter = new Map<
+    string,
+    {
+      correct: number;
+      total: number;
+      questionIds: Set<string>;
+      lastAnsweredAt: string | null;
+      lastAnsweredAtMs: number | null;
+    }
+  >();
 
   for (const chapter of chapters) {
     perChapter.set(chapter.id, {
@@ -81,11 +97,14 @@ export function perChapterProgress(
       total: 0,
       questionIds: new Set(),
       lastAnsweredAt: null,
+      lastAnsweredAtMs: null,
     });
   }
 
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs === null) continue;
       const chapterId = questionChapterIndex[answer.questionId];
       if (!chapterId) continue;
       const bucket = perChapter.get(chapterId);
@@ -93,7 +112,8 @@ export function perChapterProgress(
       bucket.total += 1;
       if (answer.isCorrect) bucket.correct += 1;
       bucket.questionIds.add(answer.questionId);
-      if (!bucket.lastAnsweredAt || answer.answeredAt > bucket.lastAnsweredAt) {
+      if (bucket.lastAnsweredAtMs === null || answeredAtMs > bucket.lastAnsweredAtMs) {
+        bucket.lastAnsweredAtMs = answeredAtMs;
         bucket.lastAnsweredAt = answer.answeredAt;
       }
     }
@@ -104,8 +124,7 @@ export function perChapterProgress(
     return {
       chapterId: chapter.id,
       accuracy: bucket.total === 0 ? null : bucket.correct / bucket.total,
-      coverage:
-        chapter.questionCount === 0 ? 0 : bucket.questionIds.size / chapter.questionCount,
+      coverage: chapter.questionCount === 0 ? 0 : bucket.questionIds.size / chapter.questionCount,
       answers: bucket.total,
       uniqueQuestionsAnswered: bucket.questionIds.size,
       lastAnsweredAt: bucket.lastAnsweredAt,
@@ -123,27 +142,37 @@ export interface MockHistoryEntry {
   durationMs: number | null;
 }
 
-export function mockHistory(progress: UserProgress): MockHistoryEntry[] {
+export function mockHistory(
+  progress: UserProgress,
+  options: { now?: Date } = {},
+): MockHistoryEntry[] {
+  const now = options.now ?? new Date();
   const out: MockHistoryEntry[] = [];
   for (const session of progress.sessions ?? []) {
     if (session.mode !== 'exam') continue;
     if (!session.completedAt) continue;
+    const completedAtMs = validAnswerTimestampMs(session.completedAt, now);
+    if (completedAtMs === null) continue;
+    const startedAtMs = validAnswerTimestampMs(session.startedAt, now);
     out.push({
+      completedAtMs,
       sessionId: session.id,
-      score: typeof session.score === 'number' ? session.score : null,
+      score:
+        typeof session.score === 'number' && Number.isFinite(session.score) ? session.score : null,
       completedAt: session.completedAt,
       durationMs:
-        session.startedAt && session.completedAt
-          ? new Date(session.completedAt).getTime() - new Date(session.startedAt).getTime()
-          : null,
+        startedAtMs === null || startedAtMs > completedAtMs ? null : completedAtMs - startedAtMs,
     });
   }
-  return out.sort((a, b) => a.completedAt.localeCompare(b.completedAt));
+  return out.sort(
+    (a, b) =>
+      validAnswerTimestampMs(a.completedAt, now)! - validAnswerTimestampMs(b.completedAt, now)!,
+  );
 }
 
-export function bestMockScore(progress: UserProgress): number | null {
+export function bestMockScore(progress: UserProgress, options: { now?: Date } = {}): number | null {
   let best: number | null = null;
-  for (const entry of mockHistory(progress)) {
+  for (const entry of mockHistory(progress, options)) {
     if (entry.score === null) continue;
     best = best === null ? entry.score : Math.max(best, entry.score);
   }
@@ -161,7 +190,11 @@ export interface TimeOfDayBin {
   accuracy: number | null;
 }
 
-export function timeOfDayPattern(progress: UserProgress): TimeOfDayBin[] {
+export function timeOfDayPattern(
+  progress: UserProgress,
+  options: { now?: Date } = {},
+): TimeOfDayBin[] {
+  const now = options.now ?? new Date();
   const buckets: { answers: number; correct: number }[] = Array.from({ length: 24 }, () => ({
     answers: 0,
     correct: 0,
@@ -169,8 +202,8 @@ export function timeOfDayPattern(progress: UserProgress): TimeOfDayBin[] {
 
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {
-      const d = new Date(answer.answeredAt);
-      if (Number.isNaN(d.getTime())) continue;
+      const d = validAnswerDate(answer.answeredAt, now);
+      if (!d) continue;
       const hour = d.getHours();
       buckets[hour].answers += 1;
       if (answer.isCorrect) buckets[hour].correct += 1;
@@ -199,27 +232,32 @@ export interface MistakeConvergencePoint {
  */
 export function mistakeConvergence(
   progress: UserProgress,
-  options: { daysBack: number; now?: Date } = { daysBack: 30 },
+  options: { daysBack: number; now?: Date } = { daysBack: DEFAULT_RECENT_DAYS_BACK },
 ): MistakeConvergencePoint[] {
   const now = options.now ?? new Date();
-  const allAnswers: QuizAnswer[] = [];
+  const allAnswers: { answer: QuizAnswer; answeredAtMs: number }[] = [];
   for (const session of progress.sessions ?? []) {
-    allAnswers.push(...session.answers);
+    for (const answer of session.answers) {
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs !== null) {
+        allAnswers.push({ answer, answeredAtMs });
+      }
+    }
   }
-  allAnswers.sort((a, b) => a.answeredAt.localeCompare(b.answeredAt));
+  allAnswers.sort((a, b) => a.answeredAtMs - b.answeredAtMs);
 
   const points: MistakeConvergencePoint[] = [];
-  for (let offset = options.daysBack - 1; offset >= 0; offset -= 1) {
+  for (let offset = daysBack - 1; offset >= 0; offset -= 1) {
     const cutoff = new Date(now.getTime() - offset * DAY_MS);
     cutoff.setHours(23, 59, 59, 999);
-    const cutoffIso = cutoff.toISOString();
+    const cutoffMs = cutoff.getTime();
 
     const wrongAt = new Set<string>();
     const correctAt = new Set<string>();
-    for (const a of allAnswers) {
-      if (a.answeredAt > cutoffIso) break;
-      if (a.isCorrect) correctAt.add(a.questionId);
-      else wrongAt.add(a.questionId);
+    for (const { answer, answeredAtMs } of allAnswers) {
+      if (answeredAtMs > cutoffMs) break;
+      if (answer.isCorrect) correctAt.add(answer.questionId);
+      else wrongAt.add(answer.questionId);
     }
     let unresolved = 0;
     for (const qid of wrongAt) if (!correctAt.has(qid)) unresolved += 1;
@@ -242,23 +280,25 @@ export interface XpDayPoint {
 
 export function xpSparkline(
   progress: UserProgress,
-  options: { daysBack: number; now?: Date } = { daysBack: 30 },
+  options: { daysBack: number; now?: Date } = { daysBack: DEFAULT_RECENT_DAYS_BACK },
 ): XpDayPoint[] {
   const now = options.now ?? new Date();
+  const daysBack = normalizeDashboardDaysBack(options.daysBack, DEFAULT_RECENT_DAYS_BACK);
   const correctByDay = new Map<string, number>();
 
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs === null) continue;
       if (!answer.isCorrect) continue;
-      const d = new Date(answer.answeredAt);
-      if (Number.isNaN(d.getTime())) continue;
+      const d = new Date(answeredAtMs);
       const key = getLocalDateKey(d);
       correctByDay.set(key, (correctByDay.get(key) ?? 0) + 1);
     }
   }
 
   const out: XpDayPoint[] = [];
-  for (let offset = options.daysBack - 1; offset >= 0; offset -= 1) {
+  for (let offset = daysBack - 1; offset >= 0; offset -= 1) {
     const d = new Date(now.getTime() - offset * DAY_MS);
     const key = getLocalDateKey(d);
     out.push({ date: key, xp: (correctByDay.get(key) ?? 0) * 10 });
@@ -289,7 +329,9 @@ export function dashboardSummary(
 
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {
-      if (answer.answeredAt >= weekStart.toISOString()) questionsThisWeek += 1;
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs === null) continue;
+      if (answeredAtMs >= weekStart.getTime()) questionsThisWeek += 1;
       if (answer.isCorrect) correctIds.add(answer.questionId);
       else wrongIds.add(answer.questionId);
       const chapterId = questionChapterIndex[answer.questionId];
@@ -302,7 +344,7 @@ export function dashboardSummary(
 
   return {
     questionsAnsweredThisWeek: questionsThisWeek,
-    bestMockScore: bestMockScore(progress),
+    bestMockScore: bestMockScore(progress, { now }),
     unresolvedMistakes: unresolved,
     chaptersWithAnyAnswer: chaptersTouched.size,
   };
