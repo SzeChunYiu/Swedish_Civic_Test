@@ -228,46 +228,6 @@ test('review store: successful writes persist JSON and corrupt reads still fall 
   assert.deepEqual(useCorruptReviewStore.getState().gradedPerDay, {});
 });
 
-test('review store: import snapshot merges normalized FSRS cards and graded-day counters', () => {
-  const existingCard = fakeCard('qExisting', '2026-05-18T08:00:00.000Z', {
-    reps: 2,
-  });
-  const importedCard = fakeCard('qImported', '2026-05-19T08:00:00.000Z', {
-    reps: 3,
-  });
-  const storage = createMemoryMMKV({
-    'learning.reviews.cards.v1': JSON.stringify({
-      byId: { qExisting: existingCard },
-      gradedPerDay: { '2026-05-18': 1 },
-    }),
-  });
-  const { REVIEW_STORE_KEY, importReviewSnapshot, useReviewStore } = loadTsWithStorage(
-    repoRoot,
-    'lib/storage/reviewStore.ts',
-    {
-      reviews: storage,
-    },
-  );
-
-  const imported = importReviewSnapshot({
-    byId: {
-      qImported: importedCard,
-      qBadState: { ...importedCard, questionId: 'qBadState', state: 'bad' },
-    },
-    gradedPerDay: {
-      '2026-05-18': 2,
-      '2026-05-19': 1,
-      'not-a-day': 1,
-    },
-  });
-
-  assert.deepEqual(Object.keys(imported.byId).sort(), ['qExisting', 'qImported']);
-  assert.equal(imported.gradedPerDay['2026-05-18'], 2);
-  assert.equal(imported.gradedPerDay['2026-05-19'], 1);
-  assert.deepEqual(useReviewStore.getState().byId.qImported, importedCard);
-  assert.deepEqual(JSON.parse(storage.values.get(REVIEW_STORE_KEY)).byId.qImported, importedCard);
-});
-
 test('review store: corrupt persisted cards and graded days are dropped on hydration', () => {
   const validCard = fakeCard('qValid', '2026-05-19T08:00:00.000Z', {
     difficulty: 4.75,

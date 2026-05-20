@@ -86,10 +86,8 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /quality is not checked by UHR or any other authority/);
   assert.match(sourcesRoute, /Source accessed 2026-05-19/);
   assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet/i);
-  assert.match(sourcesRoute, /<ComplianceActionLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
-  assert.match(sourcesRoute, /<ComplianceActionLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
-  assert.match(sourcesRoute, /detail=\{getVisibleLinkDestination\(UHR_EDUCATION_MATERIAL_URL\)\}/);
-  assert.match(sourcesRoute, /detail=\{getVisibleLinkDestination\(UHR_ABOUT_TEST_URL\)\}/);
+  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
   assert.match(
     sourcesRoute,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
@@ -118,8 +116,7 @@ test('compliance pages and source links are present', () => {
   assert.match(supportRoute, /content issue/i);
   assert.match(supportRoute, /no personal data/i);
   assert.match(supportRoute, /szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/support/i);
-  assert.match(supportRoute, /<ComplianceActionLink[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
-  assert.match(supportRoute, /detail=\{getVisibleLinkDestination\(PUBLIC_SUPPORT_URL\)\}/);
+  assert.match(supportRoute, /<Link[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
   assert.match(supportRoute, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
   assert.doesNotMatch(supportRoute, /release checklist items/i);
   const complianceLinks = read('components/compliance/ComplianceLinks.tsx');

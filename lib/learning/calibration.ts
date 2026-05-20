@@ -11,18 +11,12 @@
 
 export type ConfidenceRating = 1 | 2 | 3 | 4 | 5;
 
-export const CONFIDENCE_RATINGS = [1, 2, 3, 4, 5] as const;
-
 export interface ConfidenceAnswerEvent {
   questionId: string;
   isCorrect: boolean;
   answeredAt: string;
   confidenceRating: ConfidenceRating;
 }
-
-export type ConfidenceAnswerEventInput = Omit<ConfidenceAnswerEvent, 'confidenceRating'> & {
-  confidenceRating: unknown;
-};
 
 export interface CalibrationBucket {
   rating: ConfidenceRating;
@@ -58,22 +52,10 @@ function expectedFor(rating: ConfidenceRating): number {
   return rating * 0.2;
 }
 
-export function isConfidenceRating(value: unknown): value is ConfidenceRating {
-  return (
-    typeof value === 'number' &&
-    Number.isInteger(value) &&
-    CONFIDENCE_RATINGS.includes(value as ConfidenceRating)
-  );
-}
-
-export function normalizeConfidenceRating(value: unknown): ConfidenceRating | null {
-  return isConfidenceRating(value) ? value : null;
-}
-
 export function generateCalibration(
-  events: ReadonlyArray<ConfidenceAnswerEventInput>,
+  events: ReadonlyArray<ConfidenceAnswerEvent>,
 ): CalibrationSummary {
-  const buckets: CalibrationBucket[] = CONFIDENCE_RATINGS.map((rating) => ({
+  const buckets: CalibrationBucket[] = ([1, 2, 3, 4, 5] as ConfidenceRating[]).map((rating) => ({
     rating,
     count: 0,
     actualAccuracy: null,
@@ -84,12 +66,9 @@ export function generateCalibration(
   const correctByRating: Record<ConfidenceRating, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
 
   for (const event of events) {
-    const rating = normalizeConfidenceRating(event.confidenceRating);
-    if (rating === null) continue;
-
-    const bucket = buckets[rating - 1];
+    const bucket = buckets[event.confidenceRating - 1];
     bucket.count += 1;
-    if (event.isCorrect) correctByRating[rating] += 1;
+    if (event.isCorrect) correctByRating[event.confidenceRating] += 1;
   }
 
   let totalRatedAnswers = 0;
@@ -124,10 +103,9 @@ export function generateCalibration(
 // When a confidence rating is recorded, override the legacy isCorrect-only
 // grade map. Returns 1..4 matching ReviewGrade in spacedRepetition.ts.
 
-export function gradeFromConfidence(isCorrect: boolean, rating: unknown): 1 | 2 | 3 | 4 {
+export function gradeFromConfidence(isCorrect: boolean, rating: ConfidenceRating): 1 | 2 | 3 | 4 {
   if (!isCorrect) return 1; // always 'again'
-  const normalizedRating = normalizeConfidenceRating(rating);
-  if (normalizedRating === null || normalizedRating <= 3) return 3; // good
+  if (rating <= 3) return 3; // good
   return 4; // easy — confidence 4 or 5 AND correct
 }
 
@@ -139,9 +117,8 @@ export function gradeFromConfidence(isCorrect: boolean, rating: unknown): 1 | 2 
  *   confidence 4   → +1
  *   confidence 5   → +2 (calibration penalty for "I'm sure" + wrong)
  */
-export function lapsePenaltyForWrong(rating: unknown): number {
-  const normalizedRating = normalizeConfidenceRating(rating);
-  if (normalizedRating === null || normalizedRating <= 2) return 0;
-  if (normalizedRating <= 4) return 1;
+export function lapsePenaltyForWrong(rating: ConfidenceRating): number {
+  if (rating <= 2) return 0;
+  if (rating <= 4) return 1;
   return 2;
 }
