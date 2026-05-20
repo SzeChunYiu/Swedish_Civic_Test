@@ -22,6 +22,12 @@ const BANNED = [
   /(?:the\s+)?UHR\s+(?:material|section)/i,
   /st(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR/i,
   /best matches (?:the\s+)?UHR section/i,
+  /n(?:ä|a)mns\s+som\s+exempel/i,
+  /mentioned\s+as\s+examples?/i,
+  /n(?:ä|a)mns\s+som\s+en\s+anledning/i,
+  /mentioned\s+as\s+a\s+reason/i,
+  /n(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l/i,
+  /mentioned\s+as\s+(?:historical\s+)?reasons/i,
 ];
 
 function parseCsv(text) {
@@ -99,6 +105,36 @@ test('source-citation stem gate rejects source-authority phrase drift in exporte
     .replace(
       '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
       '"q001","ch01","single_choice","Vilken plats beskriver UHR-materialet?","Which place does the UHR material describe?",',
+    );
+
+  const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);
+
+  assert.equal(offenders.length, 2);
+  assert.match(offenders.join('\n'), /q001 \[questionSv\]/);
+  assert.match(offenders.join('\n'), /q001 \[questionEn\]/);
+});
+
+test('source-citation stem gate rejects plural source-recall reasons in exported CSV', () => {
+  const dirtyExport = fs
+    .readFileSync(CSV, 'utf8')
+    .replace(
+      '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
+      '"q001","ch01","single_choice","Vilka datum nämns som historiska skäl till nationaldagen?","Which dates are mentioned as historical reasons for National Day?",',
+    );
+
+  const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);
+
+  assert.equal(offenders.length, 2);
+  assert.match(offenders.join('\n'), /q001 \[questionSv\]/);
+  assert.match(offenders.join('\n'), /q001 \[questionEn\]/);
+});
+
+test('source-citation stem gate rejects source-recall example wording in exported CSV', () => {
+  const dirtyExport = fs
+    .readFileSync(CSV, 'utf8')
+    .replace(
+      '"q001","ch01","single_choice","Var ligger Sverige?","Where is Sweden located?",',
+      '"q001","ch01","single_choice","Vilka öar nämns som exempel i Sverige?","Which islands are mentioned as examples in Sweden?",',
     );
 
   const offenders = collectStemAuthorityConnectiveOffenders(dirtyExport);
