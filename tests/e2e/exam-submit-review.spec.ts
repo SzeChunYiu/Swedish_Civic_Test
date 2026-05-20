@@ -60,7 +60,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
 
   await submit.click();
 
-  await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();
+  await expect(page.getByText('Resultat från övningsprov', { exact: true })).toBeVisible();
   await expect(page.getByText('Övningsresultat')).toBeVisible();
   await expect(page.getByText(new RegExp(`/${totalQuestions} rätt`))).toBeVisible();
   await expect(page.getByText('Kapitelöversikt')).toBeVisible();
@@ -111,7 +111,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await submit.click();
 
-  await expect(page.getByText('Exam result', { exact: true })).toBeVisible();
+  await expect(page.getByText('Result from mock exam', { exact: true })).toBeVisible();
   await expect(page.getByText('Mock exam result')).toBeVisible();
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
   await expect(page.getByText('Chapter breakdown')).toBeVisible();
