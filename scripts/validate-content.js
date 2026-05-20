@@ -293,6 +293,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /\bbetyder att politikerna måste (?:inte|alltid) följa resultatet\b/i,
+  /^Att köpa sex i Sverige är (?:olagligt|alltid lagligt) att köpa sex\b/i,
   /^Many people voting\b/i,
   /^Fewer people taking\b/i,
   /^People with [^.?!]*\bliving closer\b/i,
@@ -4733,6 +4735,24 @@ function replaceLeadingSwedishSubject(subject, value) {
     .replace(/^Den\s+/i, `${normalizedSubject} `)
     .replace(/^Det är\s+/i, `${normalizedSubject} är `);
 }
+function referendumAdvisoryStatementSv(answer) {
+  if (/(?:måste inte|behöver inte)\s+följa resultatet/i.test(answer)) {
+    return 'Rådgivande folkomröstningar i Sverige betyder att politiker inte behöver följa resultatet';
+  }
+  if (/(?:måste alltid följa|är skyldiga att följa)\s+resultatet/i.test(answer)) {
+    return 'Rådgivande folkomröstningar i Sverige betyder att politiker är skyldiga att följa resultatet';
+  }
+  return `Att folkomröstningar i Sverige är rådgivande betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+}
+function sexPurchaseLawStatementSv(answer) {
+  if (/olagligt att köpa sex,\s*men personen som säljer straffas inte/i.test(answer)) {
+    return 'I Sverige är det olagligt att köpa sex, men personen som säljer sex straffas inte';
+  }
+  if (/alltid lagligt att köpa sex/i.test(answer)) {
+    return 'I Sverige är det alltid lagligt att köpa sex';
+  }
+  return replaceLeadingSwedishSubject('att köpa sex i Sverige', answer);
+}
 function replaceLeadingEnglishSubject(subject, value) {
   const normalizedSubject = upperFirst(subject.trim());
   return value
@@ -5188,6 +5208,8 @@ function civicStatementSv(source, option) {
   if (match) return `Man måste ha fyllt ${lowerFirst(answer)} för att ${match[1]}`;
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
+  match = q.match(/^Vad betyder det att folkomröstningar i Sverige är rådgivande$/i);
+  if (match) return referendumAdvisoryStatementSv(answer);
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
@@ -5250,6 +5272,8 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} i Sverige är ${lowerFirst(answer)}`;
   match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
   if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
+  match = q.match(/^Vad gäller för att köpa sex i Sverige$/i);
+  if (match) return sexPurchaseLawStatementSv(answer);
   match = q.match(/^Vad gäller för (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Hur stor del av (.+?) (jobbar .+)$/i);

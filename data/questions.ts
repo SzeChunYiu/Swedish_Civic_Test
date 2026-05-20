@@ -592,12 +592,12 @@ export const baseQuestions: PracticeQuestion[] = [
     options: [
       {
         id: 'a',
-        textSv: 'Politikerna måste inte följa resultatet',
+        textSv: 'Politikerna behöver inte följa resultatet',
         textEn: 'Politicians do not have to follow the result',
       },
       {
         id: 'b',
-        textSv: 'Politikerna måste alltid följa resultatet',
+        textSv: 'Politikerna är skyldiga att följa resultatet',
         textEn: 'Politicians must always follow the result',
       },
       {
@@ -613,7 +613,7 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt.',
+      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt.',
     explanationEn:
       'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.',
     uhrReference: {
