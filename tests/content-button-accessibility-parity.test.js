@@ -20,7 +20,7 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
 
-  assert.equal(summary.buttonAccessibilityRulesValidated, 14);
+  assert.equal(summary.buttonAccessibilityRulesValidated, 20);
   assert.equal(summary.buttonAccessibilityParityValidated, true);
   assert.match(source, /accessibilityRole = 'button'/);
   assert.match(source, /const mergedAccessibilityState =/);

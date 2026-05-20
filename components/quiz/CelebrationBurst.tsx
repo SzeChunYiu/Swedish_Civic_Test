@@ -61,15 +61,12 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
     }
 
     progress.setValue(0);
-    const timing = Animated.timing(progress, {
+    Animated.timing(progress, {
       toValue: 1,
       duration: motion.duration.slow * 2,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
-    });
-
-    timing.start();
-    return () => timing.stop();
+    }).start();
   }, [active, progress, reducedMotionEnabled]);
 
   if (!active) return null;

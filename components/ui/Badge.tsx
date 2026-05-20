@@ -1,11 +1,16 @@
 import { StyleSheet, Text } from 'react-native';
+import type { StyleProp, TextStyle } from 'react-native';
 import type { PropsWithChildren } from 'react';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type BadgeTone = 'blue' | 'green' | 'orange' | 'warm';
-type BadgeProps = PropsWithChildren<{ accessibilityLabel?: string; tone?: BadgeTone }>;
+export interface BadgeProps extends PropsWithChildren {
+  accessibilityLabel?: string;
+  style?: StyleProp<TextStyle>;
+  tone?: BadgeTone;
+}
 
-export function Badge({ accessibilityLabel, children, tone = 'blue' }: BadgeProps) {
+export function Badge({ accessibilityLabel, children, style, tone = 'blue' }: BadgeProps) {
   const badgeAccessibilityLabel =
     accessibilityLabel ??
     (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
@@ -14,7 +19,7 @@ export function Badge({ accessibilityLabel, children, tone = 'blue' }: BadgeProp
     <Text
       aria-label={badgeAccessibilityLabel}
       accessibilityLabel={badgeAccessibilityLabel}
-      style={[styles.badge, styles[tone]]}
+      style={[styles.badge, styles[tone], style]}
     >
       {children}
     </Text>

@@ -20,7 +20,7 @@ test('shared Card mirrors labelled grouped surfaces to native and web accessibil
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Card.tsx'), 'utf8');
 
-  assert.equal(summary.cardAccessibilityRulesValidated, 14);
+  assert.equal(summary.cardAccessibilityRulesValidated, 16);
   assert.equal(summary.cardAccessibilityParityValidated, true);
   assert.match(source, /const groupedForAccessibility =/);
   assert.match(source, /accessible \?\? Boolean\(accessibilityLabel \|\| accessibilityRole\)/);
@@ -29,7 +29,7 @@ test('shared Card mirrors labelled grouped surfaces to native and web accessibil
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
   assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
+  assert.match(source, /accessibilityRole=\{resolvedAccessibilityRole\}/);
   assert.match(source, /nativeID=\{cardAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);
 });

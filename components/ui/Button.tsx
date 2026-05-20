@@ -1,13 +1,19 @@
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import { useId, type PropsWithChildren } from 'react';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 
-type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
-type ButtonProps = PropsWithChildren<
-  Omit<PressableProps, 'style'> & { style?: StyleProp<ViewStyle>; variant?: ButtonVariant }
->;
+export type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
 
+export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>> {
+  style?: StyleProp<ViewStyle>;
+  variant?: ButtonVariant;
+}
+
+/**
+ * Defaults: `variant="primary"`, `accessibilityRole="button"`, and
+ * `hitSlop=space[0.5]` for a token-sized touch target.
+ */
 export function Button({
   accessibilityHint,
   accessibilityLabel,
@@ -83,9 +89,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: colors.border,
     borderRadius: radius.button,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     justifyContent: 'center',
-    minHeight: 44,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1.25],
   },
@@ -126,6 +132,7 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.86,
+    transform: [{ scale: motion.pressedScale }],
   },
   label: {
     fontSize: typography.navButton.fontSize,
