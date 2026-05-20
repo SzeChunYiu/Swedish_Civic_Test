@@ -51,6 +51,12 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   ].forEach((parts) => assert.doesNotMatch(source, new RegExp(parts.join(''))));
   assert.match(source, /accessibilityLabel=\{copy\.emptyPracticeAccessibilityLabel\}/);
   assert.match(source, /useMistakeReviewStore/);
+  assert.match(source, /type AnswerReviewBlockProps = \{/);
+  assert.match(source, /function AnswerReviewBlock\(\{/);
+  assert.match(source, /const bookmarkedReviewQuestions = questions\.filter\(/);
+  assert.match(source, /\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\) === 0/);
+  assert.match(source, /\{bookmarkedReviewQuestions\.map\(\(question\) => \{/);
+  assert.match(source, /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} \/>/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.answerReviewAccessibilityLabel\(/);
@@ -177,6 +183,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /mistakes route must read stored wrong-answer review text/,
+  );
+});
+
+test('mistakes route copy parity rejects bookmarked cards without answer review', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
+        'null',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /bookmarked review cards must show the localized correct answer/,
   );
 });
 
