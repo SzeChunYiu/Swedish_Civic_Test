@@ -1586,8 +1586,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta frågepass',
-    'Starta frågepass för ${chapterTitle}',
+    'Starta kapitelövning',
+    'Starta kapitelövning för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
