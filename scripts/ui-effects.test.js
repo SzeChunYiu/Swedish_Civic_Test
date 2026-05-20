@@ -732,16 +732,25 @@ test('celebration burst keeps decorative particles out of the accessibility tree
 
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
+  const staleSwedishReviewCopy = new RegExp(
+    [
+      ['Sparad för', 'fokuserad', 'repetition'].join(' '),
+      ['Fel', 'logg'].join(''),
+      ['Fel', 'svar', 'att repetera'].join(' '),
+      ['repetitionsantal', 'på samma plats'].join(' '),
+    ].join('|'),
+  );
 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
   assert.match(source, /bookmarkedQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad för fokuserad repetition/);
+  assert.match(source, /Sparad till senare övning/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
+  assert.doesNotMatch(source, staleSwedishReviewCopy);
 });
 
 test('mistakes screen exposes page and review section headings as headers', () => {
@@ -783,6 +792,7 @@ test('mistakes screen teaches with explanations before source references', () =>
   assert.match(source, /question\.explanationEn/);
   assert.match(source, /question\.explanationSv/);
   assert.match(source, /language=\{language\}/);
+  assert.match(source, /Gå igenom frågor du har missat, se förklaringen/);
   assert.match(source, /question, explanation, source reference/);
   assert.match(source, /<ExplanationPanel[\s\S]*<UHRReferenceCard/);
 });
@@ -801,7 +811,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.match(source, /question\.correctOptionId/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
-  assert.match(source, /Ditt senaste felaktiga svar/);
+  assert.match(source, /Ditt senaste svar/);
   assert.match(source, /Your latest wrong answer/);
   assert.match(source, /Rätt svar/);
   assert.match(source, /Correct answer/);

@@ -73,7 +73,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
   assert.equal(summary.mistakesRouteHeaderParityValidated, true);
-  assert.equal(summary.mistakesRouteCopyLabelsValidated, 30);
+  assert.equal(summary.mistakesRouteCopyLabelsValidated, 31);
   assert.equal(summary.mistakesRouteCopyParityValidated, true);
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);

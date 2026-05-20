@@ -773,19 +773,20 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad för fokuserad repetition',
+    'Sparad till senare övning',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
     'Svara fel på en övningsfråga så visas den här.',
     'Inga misstag ännu',
-    'Fellogg',
-    'Fel svar att repetera',
-    'Ditt senaste felaktiga svar',
-    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+    'Öva igen',
+    'Frågor att öva på',
+    'Ditt senaste svar',
+    'Gå igenom frågor du har missat, se förklaringen och hitta källan på samma ställe.',
     'Misstag',
-    'Fel svar: ${count}',
+    'Missad 1 gång',
+    'Missad ${count} gånger',
   ],
   en: [
     'Smart review',
@@ -805,6 +806,18 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
+const FORBIDDEN_MISTAKES_ROUTE_SV_COPY = [
+  ['Sparad för', 'fokuserad', 'repetition'].join(' '),
+  ['Fel', 'logg'].join(''),
+  ['Fel', 'svar', 'att repetera'].join(' '),
+  ['Ditt senaste', 'felaktiga svar'].join(' '),
+  [
+    ['Gå igenom', 'fel', 'svar', 'med fråga'].join(' '),
+    ['förklaring, källreferens och repetitionsantal', 'på samma plats.'].join(' '),
+  ].join(', '),
+  ['repetitionsantal', 'på samma plats'].join(' '),
+  [['Fel', 'svar'].join(' '), '${count}'].join(': '),
+];
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -7971,6 +7984,12 @@ function validateMistakesRouteCopyParity() {
 
   EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!mistakesRoute.includes(snippet)) reject(message);
+  });
+
+  FORBIDDEN_MISTAKES_ROUTE_SV_COPY.forEach((label) => {
+    if (mistakesRoute.includes(label)) {
+      reject(`mistakes route keeps stale Swedish review copy ${JSON.stringify(label)}`);
+    }
   });
 
   const seenLabels = new Set();

@@ -41,24 +41,23 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
       selectedWrongAnswer
-        ? `Svar att repetera. Ditt senaste felaktiga svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
-        : `Svar att repetera. Rätt svar: ${correctAnswer}.`,
+        ? `Fråga att öva på. Ditt senaste svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
+        : `Fråga att öva på. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad för fokuserad repetition',
+    bookmarkedMeta: 'Sparad till senare övning',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
     emptyText: 'Svara fel på en övningsfråga så visas den här.',
     emptyTitle: 'Inga misstag ännu',
-    mistakeBadge: 'Fellogg',
-    mistakeTitle: 'Fel svar att repetera',
-    selectedWrongAnswerLabel: 'Ditt senaste felaktiga svar',
-    subtitle:
-      'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+    mistakeBadge: 'Öva igen',
+    mistakeTitle: 'Frågor att öva på',
+    selectedWrongAnswerLabel: 'Ditt senaste svar',
+    subtitle: 'Gå igenom frågor du har missat, se förklaringen och hitta källan på samma ställe.',
     title: 'Misstag',
-    wrongAnswers: (count) => `Fel svar: ${count}`,
+    wrongAnswers: (count) => (count === 1 ? 'Missad 1 gång' : `Missad ${count} gånger`),
   },
   en: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
