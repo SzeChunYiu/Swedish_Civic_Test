@@ -1257,7 +1257,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
-  assert.match(paywallSource, /Provläget är redan annonsfritt/);
+  assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
+  assert.match(paywallSource, /Tidsatta övningsprov i appen är redan annonsfria/);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
@@ -1273,6 +1274,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(
     homeSource,
     /\{entitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>[\s\S]*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+  );
+  assert.match(
+    homeSource,
+    /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
@@ -1294,10 +1299,20 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
   assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
   assert.doesNotMatch(pricingWedgeSource, /29 kr/);
   assert.doesNotMatch(paywallSource, /29 kr/);
+  assert.doesNotMatch(
+    pricingWedgeSource,
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
+  );
+  assert.doesNotMatch(
+    paywallSource,
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
+  );
 });
 
 test('ad placements hydrate persisted remove-ads entitlements by default', () => {

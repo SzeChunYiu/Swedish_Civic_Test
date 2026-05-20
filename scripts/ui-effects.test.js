@@ -403,8 +403,8 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   assert.match(practiceSource, /Question \$\{questionNumber\}/);
   assert.match(routedQuizSource, /type QuizSessionCopy =/);
   assert.match(routedQuizSource, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy>/);
-  assert.match(routedQuizSource, /Det finns inga quizfrågor ännu\./);
-  assert.match(routedQuizSource, /Quizpass \$\{currentSessionId\}/);
+  assert.match(routedQuizSource, /Det finns inga övningsfrågor ännu\./);
+  assert.match(routedQuizSource, /Frågepass \$\{currentSessionId\}/);
   assert.match(routedQuizSource, /\{copy\.emptyTitle\}/);
   assert.match(routedQuizSource, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
   assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -439,7 +439,7 @@ test('routed quiz shell copy follows Swedish and English settings language', () 
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Besvara frågan och gå sedan igenom den källbaserade återkopplingen\./);
   assert.match(source, /Poäng/);
-  assert.match(source, /Försök igen med den här quizfrågan/);
+  assert.match(source, /Försök igen med den här frågan/);
   assert.match(source, /Back to Practice/);
   assert.match(source, /Answer the routed question, then review the source-backed feedback\./);
   assert.match(source, /\{copy\.scoreLabel\}: \{score\.correct\}\/\{score\.total\}/);
@@ -728,7 +728,7 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /bookmarkedQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad till senare övning/);
+  assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
@@ -892,6 +892,12 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Ta bort annonser/);
   assert.match(source, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(source, /Återställ köp av Ta bort annonser/);
+  assert.match(source, /tidsatta övningsprov i appen redan är annonsfria/);
+  assert.match(source, /Tidsatta övningsprov i appen är redan annonsfria/);
+  assert.doesNotMatch(
+    source,
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
+  );
   assert.match(source, /Köpet bekräftades, men annonsfri status kunde inte sparas/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
   assert.match(source, /Remove Ads/);

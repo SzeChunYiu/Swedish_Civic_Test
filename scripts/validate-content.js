@@ -1077,6 +1077,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 6;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -6674,6 +6675,8 @@ let purchaseTypeInterfacesValidated = 0;
 let purchaseTypeSchemaParityValidated = false;
 let removeAdsPurchaseRuntimeCasesValidated = 0;
 let removeAdsPurchaseRuntimeParityValidated = false;
+let removeAdsSwedishExamCopyCasesValidated = 0;
+let removeAdsSwedishExamCopyParityValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
@@ -11419,6 +11422,83 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 }
 
+function validateRemoveAdsSwedishExamCopyParity() {
+  let valid = true;
+  const sourceFiles = [
+    'components/monetization/PremiumBanner.tsx',
+    'components/monetization/PricingWedge.tsx',
+  ];
+  const sources = new Map();
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  sourceFiles.forEach((file) => {
+    try {
+      sources.set(file, fs.readFileSync(path.join(repoRoot, file), 'utf8'));
+    } catch (error) {
+      reject(`${file} could not be read: ${error.message}`);
+    }
+  });
+
+  if (sources.size !== sourceFiles.length) return;
+
+  const premiumBannerSource = sources.get('components/monetization/PremiumBanner.tsx');
+  const pricingWedgeSource = sources.get('components/monetization/PricingWedge.tsx');
+  const combinedSource = `${premiumBannerSource}\n${pricingWedgeSource}`;
+  const bareExamAdFreeClaimPattern =
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i;
+  const copyCases = [
+    [
+      /tidsatta övningsprov i appen redan är annonsfria/.test(premiumBannerSource),
+      'PremiumBanner Swedish body must clarify that app practice exams, not the official exam, stay ad-free',
+    ],
+    [
+      /Tidsatta övningsprov i appen är redan annonsfria/.test(premiumBannerSource),
+      'PremiumBanner Swedish purchase hint must clarify that app practice exams stay ad-free',
+    ],
+    [
+      /tidsatta övningsprov är alltid annonsfria/.test(pricingWedgeSource),
+      'PricingWedge Swedish pitch must keep the timed practice-exam qualifier',
+    ],
+    [
+      !/prov förblir annonsfria/i.test(combinedSource),
+      'Remove Ads Swedish copy must not say bare "prov förblir annonsfria"',
+    ],
+    [
+      !/provet är alltid annonsfritt/i.test(combinedSource),
+      'Remove Ads Swedish copy must not say bare "provet är alltid annonsfritt"',
+    ],
+    [
+      !bareExamAdFreeClaimPattern.test(combinedSource),
+      'Remove Ads Swedish copy must qualify ad-free exam claims as övningsprov or app provläge',
+    ],
+    [
+      /while exams stay ad-free/.test(premiumBannerSource) &&
+        /Exam mode is already ad-free/.test(premiumBannerSource),
+      'PremiumBanner English Remove Ads exam copy must stay unchanged',
+    ],
+  ];
+
+  copyCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+
+    removeAdsSwedishExamCopyCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    removeAdsSwedishExamCopyCasesValidated === EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES
+  ) {
+    removeAdsSwedishExamCopyParityValidated = true;
+  }
+}
+
 function validateAdConsentTypeSchemaParity() {
   let valid = true;
   let consentSource = '';
@@ -14696,6 +14776,7 @@ validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
 validateRemoveAdsPurchaseRuntimeParity();
+validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
@@ -14877,6 +14958,8 @@ console.log(
       purchaseTypeSchemaParityValidated,
       removeAdsPurchaseRuntimeCasesValidated,
       removeAdsPurchaseRuntimeParityValidated,
+      removeAdsSwedishExamCopyCasesValidated,
+      removeAdsSwedishExamCopyParityValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,
