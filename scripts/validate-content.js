@@ -27,7 +27,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 144;
+const EXPECTED_SOURCE_QUESTIONS = 154;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -168,13 +168,6 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
-const QUESTION_GENERATED_STATEMENT_CHOICE_STEM_PATTERNS = [
-  /\bVilket påstående är korrekt\b/i,
-  /\bVilket påstående stämmer\b/i,
-  /\bWhich statement is correct\b/i,
-  /\bWhich statement best matches\b/i,
-  /\bWhich statement about\b/i,
-];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
   /\bIt is true that\s+(?:The|In|Approximately)\b/i,
@@ -287,23 +280,14 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
   /^\s*Vilket svar är korrekt\?/i,
   /^\s*Which answer is correct\?/i,
-  /\bVilket påstående är korrekt\b/i,
-  /\bVilket påstående stämmer\b/i,
-  /\bWhich statement is correct\b/i,
-  /\bWhich statement best matches\b/i,
-  /\bWhich statement about\b/i,
 ];
 const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bPåståendet är sant\b/i,
   /\balternativet\s+Sant\b/i,
   /\bmedan\s+Falskt\b/i,
-  /\bpåståendet som motsvarar den uppgiften\b/i,
-  /\bmotsatsen inte stämmer\b/i,
   /\bThat makes True correct\b/i,
   /\bTrue is correct\b/i,
   /\bwhile False\b/i,
-  /\bstatement that matches that fact\b/i,
-  /\bopposite statement is not\b/i,
 ];
 const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
   /\bPåståendet är sant\b/i,
@@ -1712,100 +1696,6 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding settings link must expose localized accessibility copy',
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
-];
-const EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE = '2026-05-19';
-const EXPECTED_ABOUT_THE_TEST_SOURCE_URLS = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
-];
-const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
-  sv: [
-    'Om provet',
-    'Vad är medborgarskapsprovet i samhällskunskap?',
-    'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
-    'Vad är det?',
-    'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
-    'Vem ska göra det?',
-    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
-    'Vad är känt om första provet?',
-    'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
-    'Vilket material bygger appen på?',
-    'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
-    'Är appen officiell?',
-    'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
-    'Källäge kontrollerat',
-    'Lägesbilden är kontrollerad ${officialTestSourceNotes[0].retrievedDate} mot UHR:s sidor om provet, anmälan, frågor och svar, utbildningsmaterial samt Migrationsverkets nyhet om reglerna från 6 juni 2026.',
-    'Tillbaka till start',
-    'Tillbaka till startsidan',
-    'Börja öva',
-    'Öppna övningsläget',
-  ],
-  en: [
-    'About the test',
-    'What is the Swedish civic test?',
-    'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
-    'What is it?',
-    'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
-    'Who takes it?',
-    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
-    'What is known about the first test?',
-    'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
-    'What material does this app use?',
-    "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
-    'Is this app official?',
-    'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
-    'Source status checked',
-    "This status was checked on ${officialTestSourceNotes[0].retrievedDate} against UHR's pages about the test, registration, FAQ, study material, and Migrationsverket's news about the rules from 6 June 2026.",
-    'Back to home',
-    'Return to the home screen',
-    'Start practising',
-    'Open practice mode',
-  ],
-};
-const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS = [
-  [
-    'useSettingsStore, type AppLanguage',
-    'about-the-test route must import AppLanguage from settings',
-  ],
-  ['type AboutTheTestCopy = {', 'about-the-test route must define a typed copy contract'],
-  ['const officialTestSourceNotes = [', 'about-the-test route must carry official source metadata'],
-  [
-    'const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {',
-    'about-the-test route copy must cover every AppLanguage value',
-  ],
-  [
-    'const language = useSettingsStore((state) => state.language);',
-    'about-the-test route must read language from settings store',
-  ],
-  [
-    'const copy = aboutTheTestCopy[language];',
-    'about-the-test route must select copy from settings language',
-  ],
-  ['title: copy.sectionSourceTitle', 'about-the-test route must render source-status copy'],
-  ['body: copy.sectionSourceBody', 'about-the-test route must render source-status body'],
-  [
-    'accessibilityLabel={copy.openPracticeAccessibilityLabel}',
-    'about-the-test practice link must expose localized accessibility copy',
-  ],
-  [
-    'accessibilityLabel={copy.backHomeAccessibilityLabel}',
-    'about-the-test home link must expose localized accessibility copy',
-  ],
-];
-const ABOUT_THE_TEST_UNSUPPORTED_LOGISTICS_PATTERNS = [
-  /\bEtt kort\s+prov\b/i,
-  /\bshort\s+test\b/i,
-  /\bdigitalt\s+prov\b/i,
-  /\bdigital\s+exam\b/i,
-  /\bFlervalsfr[aå]gor\b/i,
-  /\bMultiple-choice\s+questions\b/i,
-  new RegExp(String.raw`\bdator i en\s+provlokal\b`, 'i'),
-  new RegExp(String.raw`\bcomputer at a\s+test centre\b`, 'i'),
-  new RegExp(String.raw`\ball citizenship applicants\s+must pass\b`, 'i'),
-  new RegExp(String.raw`\balla som ansöker om svenskt medborgarskap\s+ska klara\b`, 'i'),
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -3834,14 +3724,8 @@ function findQuestionNestedMetaStem(question) {
 
 function findQuestionJudgementMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
-  const legacyIssue = QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
-  if (legacyIssue) return legacyIssue;
 
-  if (question.type !== 'single_choice' || !question.tags?.includes('published-variant')) {
-    return null;
-  }
-
-  return QUESTION_GENERATED_STATEMENT_CHOICE_STEM_PATTERNS.find((pattern) => pattern.test(text));
+  return QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
@@ -4569,32 +4453,22 @@ function falseStatementExplanationEn(source) {
 }
 
 function trueFalseSingleChoiceExplanationSv(source) {
-  if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationSv(source);
-  return source.explanationSv;
+  return `${ensureSentence(
+    trueFalseSourceStatementSv(source, true),
+  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
 }
 
 function trueFalseSingleChoiceExplanationEn(source) {
-  if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationEn(source);
-  return source.explanationEn;
+  return `${ensureSentence(
+    trueFalseSourceStatementEn(source, true),
+  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
 }
 
 function statementTopicSv(source) {
   const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
 
-  if (
-    /^Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat\b/i.test(
-      statement,
-    )
-  ) {
-    return 'Sveriges klimat';
-  }
-
   if (/^År 2000 blev Svenska kyrkan\b/i.test(statement)) {
     return 'Svenska kyrkan och staten år 2000';
-  }
-
-  if (/^Sverige brukar delas in i\b/i.test(statement)) {
-    return 'Sveriges landsdelar';
   }
 
   const match = statement.match(
@@ -4613,20 +4487,8 @@ function statementTopicSv(source) {
 function statementTopicEn(source) {
   const statement = stripFinalPunctuation(stripTrueFalsePromptEn(source.questionEn));
 
-  if (
-    /^The Gulf Stream and the North Atlantic Current help make Sweden's climate mild\b/i.test(
-      statement,
-    )
-  ) {
-    return "Sweden's climate";
-  }
-
   if (/^In 2000, the Church of Sweden became\b/i.test(statement)) {
     return 'the Church of Sweden and the state in 2000';
-  }
-
-  if (/^Sweden is usually divided into\b/i.test(statement)) {
-    return "Sweden's major parts";
   }
 
   const match = statement.match(
@@ -4652,37 +4514,15 @@ function trueFalseStatementOptions(source) {
     },
     {
       id: 'both-statements',
-      textSv: 'Båda beskrivningarna är korrekta',
-      textEn: 'Both descriptions are correct',
+      textSv: 'Båda påståendena är korrekta',
+      textEn: 'Both statements are correct',
     },
     {
       id: 'neither-statement',
-      textSv: 'Ingen av beskrivningarna är korrekt',
-      textEn: 'Neither description is correct',
+      textSv: 'Inget av påståendena är korrekt',
+      textEn: 'Neither statement is correct',
     },
   ];
-}
-
-function naturalSingleChoiceSourceQuestionSv(question) {
-  const q = stripFinalPunctuation(question);
-  let match = q.match(/^Vilket påstående stämmer om (.+)$/i);
-  if (match) return `Vad stämmer om ${match[1]}?`;
-
-  match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
-  if (match) return `Vad stämmer om ${match[1]}?`;
-
-  return question;
-}
-
-function naturalSingleChoiceSourceQuestionEn(question) {
-  const q = stripFinalPunctuation(question);
-  let match = q.match(/^Which statement is correct about (.+)$/i);
-  if (match) return `What is true about ${lowerLeadingEnglishArticle(match[1])}?`;
-
-  match = q.match(/^Which statement about (.+?) is correct$/i);
-  if (match) return `What is true about ${lowerLeadingEnglishArticle(match[1])}?`;
-
-  return question;
 }
 
 function generatedTrueFalseStatementSv(source, option, variantIsTrue) {
@@ -4695,27 +4535,27 @@ function generatedTrueFalseStatementEn(source, option, variantIsTrue) {
 }
 function judgementPromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Vad stämmer om ${statementTopicSv(source)}?`;
+    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
-  return `Välj rätt alternativ: ${naturalSingleChoiceSourceQuestionSv(source.questionSv)}`;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `What is true about ${statementTopicEn(source)}?`;
+    return `Which statement best matches ${statementTopicEn(source)}?`;
   }
-  return `Choose the correct option: ${naturalSingleChoiceSourceQuestionEn(source.questionEn)}`;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Vilken uppgift om ${statementTopicSv(source)} är korrekt?`;
+    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  return `Vilket svar stämmer bäst? ${naturalSingleChoiceSourceQuestionSv(source.questionSv)}`;
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `Which fact about ${statementTopicEn(source)} is correct?`;
+    return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  return `Which answer best matches? ${naturalSingleChoiceSourceQuestionEn(source.questionEn)}`;
+  return `Which answer best matches? ${source.questionEn}`;
 }
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
@@ -6145,15 +5985,12 @@ const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
-const webHtmlShell = loadText('app/+html.tsx');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
-let webHtmlBrandMetadataFieldsValidated = 0;
-let webHtmlBrandMetadataParityValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let tabNavigationRulesValidated = 0;
@@ -6216,10 +6053,6 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
-let aboutTheTestRouteCopyLabelsValidated = 0;
-let aboutTheTestRouteCopyParityValidated = false;
-let aboutTheTestOfficialSourceUrlsValidated = 0;
-let aboutTheTestOfficialSourceRetrievedDateValidated = '';
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -6656,67 +6489,6 @@ function validateAppConfigSchema() {
 
   if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
     appConfigSchemaValidated = true;
-  }
-}
-
-function validateWebHtmlBrandMetadata() {
-  let valid = true;
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  const appName = appConfig?.expo?.name;
-  if (typeof appName !== 'string' || appName.length === 0) {
-    reject('app.json expo.name must be available before validating web title metadata');
-    return;
-  }
-
-  const escapedAppName = escapeRegExp(appName);
-  const titleDeclarationPattern = new RegExp(
-    `const\\s+webDocumentTitle\\s*=\\s*['"]${escapedAppName}['"]`,
-  );
-  const requiredSnippets = [
-    [titleDeclarationPattern, 'app/+html.tsx webDocumentTitle must match app.json expo.name'],
-    [/<title>\{webDocumentTitle\}<\/title>/, 'app/+html.tsx must render the document title'],
-    [
-      /<meta\s+content=\{webDocumentTitle\}\s+name=["']application-name["']\s*\/>/,
-      'app/+html.tsx must expose application-name brand metadata',
-    ],
-    [
-      /<meta\s+content=\{webDocumentTitle\}\s+name=["']apple-mobile-web-app-title["']\s*\/>/,
-      'app/+html.tsx must expose Apple web app title metadata',
-    ],
-    [
-      /<meta\s+content=\{webDocumentDescription\}\s+name=["']description["']\s*\/>/,
-      'app/+html.tsx must keep standard description metadata',
-    ],
-    [
-      /<meta\s+content=\{webDocumentTitle\}\s+property=["']og:title["']\s*\/>/,
-      'app/+html.tsx must expose Open Graph title metadata',
-    ],
-    [
-      /<meta\s+content=\{webDocumentDescription\}\s+property=["']og:description["']\s*\/>/,
-      'app/+html.tsx must expose Open Graph description metadata',
-    ],
-  ];
-
-  for (const [pattern, message] of requiredSnippets) {
-    if (pattern.test(webHtmlShell)) {
-      webHtmlBrandMetadataFieldsValidated += 1;
-    } else {
-      reject(message);
-    }
-  }
-
-  const staleBrowserTitle = ['Sweden', 'Citizenship', 'Test', 'Prep'].join(' ');
-  if (webHtmlShell.includes(staleBrowserTitle)) {
-    reject('app/+html.tsx must not use the stale browser-title brand');
-  }
-
-  if (valid && webHtmlBrandMetadataFieldsValidated === requiredSnippets.length) {
-    webHtmlBrandMetadataParityValidated = true;
   }
 }
 
@@ -8696,97 +8468,6 @@ function validateOnboardingRouteCopyParity() {
   );
   if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
     onboardingRouteCopyParityValidated = true;
-  }
-}
-
-function validateAboutTheTestRouteCopyParity() {
-  let valid = true;
-  let aboutRoute = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    aboutRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
-  } catch (error) {
-    reject(`about-the-test route copy source could not be read: ${error.message}`);
-    return;
-  }
-
-  EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
-    if (!aboutRoute.includes(snippet)) reject(message);
-  });
-
-  const sourceMetadataBlock =
-    aboutRoute.match(/const officialTestSourceNotes = \[[\s\S]*?\] as const;/)?.[0] ?? '';
-  if (!sourceMetadataBlock) {
-    reject('about-the-test route must keep official source metadata parseable');
-  }
-
-  EXPECTED_ABOUT_THE_TEST_SOURCE_URLS.forEach((url) => {
-    if (!sourceMetadataBlock.includes(url)) {
-      reject(`about-the-test route official source metadata missing ${url}`);
-      return;
-    }
-    aboutTheTestOfficialSourceUrlsValidated += 1;
-  });
-
-  const retrievedDateMatches = Array.from(
-    sourceMetadataBlock.matchAll(/retrievedDate: '([^']+)'/g),
-    (match) => match[1],
-  );
-  if (
-    retrievedDateMatches.length !== EXPECTED_ABOUT_THE_TEST_SOURCE_URLS.length ||
-    retrievedDateMatches.some(
-      (retrievedDate) => retrievedDate !== EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE,
-    )
-  ) {
-    reject(
-      `about-the-test route official source metadata must use retrievedDate ${EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE} for every source`,
-    );
-  } else {
-    aboutTheTestOfficialSourceRetrievedDateValidated = EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE;
-  }
-
-  ABOUT_THE_TEST_UNSUPPORTED_LOGISTICS_PATTERNS.forEach((pattern) => {
-    if (pattern.test(aboutRoute)) {
-      reject(
-        `about-the-test route must not make unsupported logistics claim matching ${pattern.source}`,
-      );
-    }
-  });
-
-  const seenLabels = new Set();
-  Object.entries(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
-    labels.forEach((label) => {
-      let labelIsValid = true;
-      if (!textIsTrimmedSingleSpaced(label)) {
-        labelIsValid = false;
-        reject(`about-the-test route ${language} copy ${JSON.stringify(label)} must be normalized`);
-      }
-      if (!aboutRoute.includes(label)) {
-        labelIsValid = false;
-        reject(`about-the-test route is missing ${language} copy ${JSON.stringify(label)}`);
-      }
-
-      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
-      if (seenLabels.has(normalizedLabel)) {
-        labelIsValid = false;
-        reject(`about-the-test route duplicates ${language} copy ${JSON.stringify(label)}`);
-      }
-      if (normalizedLabel) seenLabels.add(normalizedLabel);
-      if (labelIsValid) aboutTheTestRouteCopyLabelsValidated += 1;
-    });
-  });
-
-  const expectedLabelCount = Object.values(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS).reduce(
-    (count, labels) => count + labels.length,
-    0,
-  );
-  if (valid && aboutTheTestRouteCopyLabelsValidated === expectedLabelCount) {
-    aboutTheTestRouteCopyParityValidated = true;
   }
 }
 
@@ -14008,7 +13689,6 @@ validateMockExamConfig(
     : 0,
 );
 validateAppConfigSchema();
-validateWebHtmlBrandMetadata();
 validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
@@ -14041,7 +13721,6 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
-validateAboutTheTestRouteCopyParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -14119,8 +13798,6 @@ console.log(
       chapterExactSchemaKeysValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
-      webHtmlBrandMetadataFieldsValidated,
-      webHtmlBrandMetadataParityValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       tabNavigationRulesValidated,
@@ -14189,10 +13866,6 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
-      aboutTheTestRouteCopyLabelsValidated,
-      aboutTheTestRouteCopyParityValidated,
-      aboutTheTestOfficialSourceUrlsValidated,
-      aboutTheTestOfficialSourceRetrievedDateValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
