@@ -243,6 +243,22 @@ const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
     /\bage 13 option refers to\b/i,
   ],
 };
+const STATIC_SWEDISH_GRAMMAR_TONE_REJECTIONS = [
+  {
+    label: 'ungrammatical legal-explanation phrase',
+    pattern: phrasePattern('ingen ', 'juridiska'),
+  },
+  { label: 'cutesy study-habit size phrase', pattern: phrasePattern('fika', '-stor') },
+  { label: 'joke liability phrase', pattern: phrasePattern('fika', '-skador') },
+];
+const STATIC_SWEDISH_GRAMMAR_TONE_REQUIRED_COPY = [
+  { label: 'legal-explanation replacement', pattern: /inget juridiskt kr[aå]ngel/i },
+  { label: 'study-habit replacement', pattern: /en kort studievana/i },
+  {
+    label: 'neutral liability replacement',
+    pattern: /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/i,
+  },
+];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -7207,6 +7223,7 @@ let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
+let staticSwedishGrammarToneNaturalnessValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -10229,6 +10246,39 @@ function validateLegalRouteHeaderParity() {
   );
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
+  }
+}
+
+function validateStaticSwedishGrammarToneNaturalness() {
+  let valid = true;
+  let staticAppSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    staticAppSource = loadText('site/app.js');
+  } catch (error) {
+    reject(`site/app.js could not be read for static Swedish grammar/tone copy: ${error.message}`);
+    return;
+  }
+
+  STATIC_SWEDISH_GRAMMAR_TONE_REJECTIONS.forEach(({ label, pattern }) => {
+    if (pattern.test(staticAppSource)) {
+      reject(`site/app.js still contains ${label}`);
+    }
+  });
+
+  STATIC_SWEDISH_GRAMMAR_TONE_REQUIRED_COPY.forEach(({ label, pattern }) => {
+    if (!pattern.test(staticAppSource)) {
+      reject(`site/app.js missing static Swedish grammar/tone copy: ${label}`);
+    }
+  });
+
+  if (valid) {
+    staticSwedishGrammarToneNaturalnessValidated = true;
   }
 }
 
@@ -16847,6 +16897,7 @@ validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateLegalRouteHeaderParity();
 validateLegalSwedishEnglishTokenGuard();
+validateStaticSwedishGrammarToneNaturalness();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -17004,6 +17055,7 @@ console.log(
       swedishPrivacyStreakCopyNaturalnessValidated,
       legalSwedishEnglishTokenGuardValidated,
       legalSwedishEnglishTokenGuardParityValidated,
+      staticSwedishGrammarToneNaturalnessValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
