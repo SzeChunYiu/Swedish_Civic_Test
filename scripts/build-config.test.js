@@ -939,10 +939,46 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
   assert.match(workflow, /npm run validate/);
+  assert.match(workflow, /EXPO_PUBLIC_REAL_ADS_ENABLED:\s*['"]true['"]/);
+  assert.match(
+    workflow,
+    /EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000001['"]/,
+  );
+  assert.match(
+    workflow,
+    /EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000002['"]/,
+  );
+  assert.match(
+    workflow,
+    /EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000003['"]/,
+  );
+  assert.match(
+    workflow,
+    /EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000004['"]/,
+  );
+  assert.match(workflow, /npm run build:web:export -- --clear/);
+  assert.match(workflow, /node scripts\/prepare-web-export\.js --check dist-web/);
+  assert.match(
+    workflow,
+    /npm run test:e2e -- tests\/e2e\/web-ad-real-fallback\.spec\.ts --workers=1/,
+  );
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
+  const validateIndex = workflow.indexOf('npm run validate');
+  const exportIndex = workflow.indexOf('npm run build:web:export -- --clear');
+  const webAdSmokeIndex = workflow.indexOf(
+    'npm run test:e2e -- tests/e2e/web-ad-real-fallback.spec.ts --workers=1',
+  );
+  const evidenceUploadIndex = workflow.indexOf('name: Upload release evidence index');
+  assert.ok(validateIndex >= 0, 'release validation workflow must run npm run validate');
+  assert.ok(exportIndex > validateIndex, 'real-enabled web export must run after validation');
+  assert.ok(webAdSmokeIndex > exportIndex, 'web ad fallback smoke must run after export');
+  assert.ok(
+    evidenceUploadIndex > webAdSmokeIndex,
+    'web ad fallback smoke must run before release evidence upload',
+  );
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 

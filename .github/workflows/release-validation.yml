@@ -40,6 +40,21 @@ jobs:
       - name: Run full local validation suite
         run: npm run validate
 
+      - name: Build real-enabled web ad fallback export
+        env:
+          EXPO_PUBLIC_REAL_ADS_ENABLED: 'true'
+          EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/1000000001'
+          EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/1000000002'
+          EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID: 'ca-app-pub-1234567890123456/1000000003'
+          EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: 'ca-app-pub-1234567890123456/1000000004'
+        run: |
+          rm -rf dist-web
+          npm run build:web:export -- --clear
+          node scripts/prepare-web-export.js --check dist-web
+
+      - name: Run real-enabled web ad fallback smoke
+        run: npm run test:e2e -- tests/e2e/web-ad-real-fallback.spec.ts --workers=1
+
       - name: Verify release ownership guard
         run: npm run test:ownership
 
