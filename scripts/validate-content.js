@@ -6883,6 +6883,48 @@ function trueFalseOptionLabelsMatchConvention(question) {
   return jsonEqual(legacyLabels, TRUE_FALSE_OPTIONS);
 }
 
+function validateChapterLocalizedTextMap(chapter, label, fieldName, svField, enField, reject) {
+  let valid = true;
+
+  function rejectMap(message) {
+    valid = false;
+    reject(message);
+  }
+
+  const localizedText = chapter[fieldName];
+  if (!isObjectRecord(localizedText)) {
+    rejectMap(`${label} ${fieldName} must be a localized text map`);
+    return false;
+  }
+
+  for (const [locale, sourceField] of [
+    ['sv', svField],
+    ['en', enField],
+  ]) {
+    const value = localizedText[locale];
+    if (!hasText(value)) {
+      rejectMap(`${label} ${fieldName}.${locale} missing localized text`);
+      continue;
+    }
+    if (!textIsTrimmedSingleSpaced(value)) {
+      rejectMap(`${label} ${fieldName}.${locale} must be trimmed and single-spaced`);
+    }
+    if (value !== chapter[sourceField]) {
+      rejectMap(`${label} ${fieldName}.${locale} must match ${sourceField}`);
+    }
+  }
+
+  Object.entries(localizedText).forEach(([locale, value]) => {
+    if (!hasText(value)) {
+      rejectMap(`${label} ${fieldName}.${locale} must be non-empty localized text`);
+    } else if (!textIsTrimmedSingleSpaced(value)) {
+      rejectMap(`${label} ${fieldName}.${locale} must be trimmed and single-spaced`);
+    }
+  });
+
+  return valid;
+}
+
 function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn) {
   const expectedId = `ch${String(index + 1).padStart(2, '0')}`;
   const label = hasText(chapter?.id) ? chapter.id : `chapter[${index}]`;
@@ -6934,6 +6976,22 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
 
   if (!Number.isInteger(chapter.questionCount) || chapter.questionCount < 1) {
     reject(`${label} has invalid questionCount`);
+  }
+
+  if (validateChapterLocalizedTextMap(chapter, label, 'nameText', 'nameSv', 'nameEn', reject)) {
+    chapterLocalizedTextMapsValidated += 1;
+  }
+  if (
+    validateChapterLocalizedTextMap(
+      chapter,
+      label,
+      'descriptionText',
+      'descriptionSv',
+      'descriptionEn',
+      reject,
+    )
+  ) {
+    chapterLocalizedTextMapsValidated += 1;
   }
 
   return valid;
@@ -7187,6 +7245,7 @@ const getQuestionProvenance = provenanceModule.getQuestionProvenance;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
+let chapterLocalizedTextMapsValidated = 0;
 let validationScriptSyntaxChecksValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
@@ -15034,8 +15093,6 @@ function validateAuthoredSourceParity() {
   });
 }
 
-validateAuthoredSourceParity();
-
 function validateGenerationParity() {
   if (
     !Array.isArray(questions) ||
@@ -15078,14 +15135,50 @@ function validateGenerationParity() {
   if (failures.length === 0) generationParityValidated = true;
 }
 
-validateGenerationParity();
-
 function countQuestionsByChapter(questionsToCount) {
   return questionsToCount.reduce((counts, question) => {
     counts.set(question.chapterId, (counts.get(question.chapterId) || 0) + 1);
     return counts;
   }, new Map());
 }
+
+function validateChapterMetadataSchemas() {
+  if (!Array.isArray(chapters)) return;
+
+  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
+  const seenChapterIds = new Set();
+  const seenNamesSv = new Set();
+  const seenNamesEn = new Set();
+  chapters.forEach((chapter, index) => {
+    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
+      chapterSchemasValidated += 1;
+      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
+        chapterExactSchemaKeysValidated += 1;
+      }
+      if (chapterTextFieldsAreNormalized(chapter)) {
+        chapterTextFieldsNormalizedValidated += 1;
+      }
+    }
+  });
+}
+
+if (process.argv.includes('--focus-chapter-localized-text')) {
+  validateStaticValidationSyntaxGate();
+  exitWithValidationFailures();
+  validateChapterMetadataSchemas();
+  exitWithValidationFailures();
+  printValidationSummary({
+    chapters: Array.isArray(chapters) ? chapters.length : 0,
+    chapterSchemasValidated,
+    chapterTextFieldsNormalizedValidated,
+    chapterExactSchemaKeysValidated,
+    chapterLocalizedTextMapsValidated,
+  });
+  process.exit(0);
+}
+
+validateAuthoredSourceParity();
+validateGenerationParity();
 
 function validateChapterGenerationParity() {
   if (
@@ -15680,24 +15773,7 @@ if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
 validateStaticHeadMetadataParity();
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
-
-if (Array.isArray(chapters)) {
-  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
-  const seenChapterIds = new Set();
-  const seenNamesSv = new Set();
-  const seenNamesEn = new Set();
-  chapters.forEach((chapter, index) => {
-    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
-      chapterSchemasValidated += 1;
-      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
-        chapterExactSchemaKeysValidated += 1;
-      }
-      if (chapterTextFieldsAreNormalized(chapter)) {
-        chapterTextFieldsNormalizedValidated += 1;
-      }
-    }
-  });
-}
+validateChapterMetadataSchemas();
 
 if (Array.isArray(questions)) {
   if (questions.length !== EXPECTED_PUBLISHED_QUESTIONS) {
@@ -16042,6 +16118,7 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       chapterExactSchemaKeysValidated,
+      chapterLocalizedTextMapsValidated,
       validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
