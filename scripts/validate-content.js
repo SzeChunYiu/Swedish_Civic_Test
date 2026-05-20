@@ -6650,6 +6650,11 @@ const normalizeConfidenceRating = calibrationModule.normalizeConfidenceRating;
 const generateCalibration = calibrationModule.generateCalibration;
 const gradeFromConfidence = calibrationModule.gradeFromConfidence;
 const lapsePenaltyForWrong = calibrationModule.lapsePenaltyForWrong;
+const dailyChallengeModule = loadTs('lib/learning/dailyChallenge.ts');
+const buildDailyChallenge = dailyChallengeModule.buildDailyChallenge;
+const isDailyChallengeCompleted = dailyChallengeModule.isDailyChallengeCompleted;
+const seedForDailyChallengeDay = dailyChallengeModule.seedForDay;
+const DAILY_CHALLENGE_QUESTIONS = dailyChallengeModule.DAILY_CHALLENGE_QUESTIONS;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -6891,6 +6896,8 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let confidenceRatingBoundaryCasesValidated = 0;
 let confidenceRatingBoundaryParityValidated = false;
+let dailyChallengeInputGuardCasesValidated = 0;
+let dailyChallengeInputGuardParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -7099,6 +7106,14 @@ if (typeof calculateChapterMastery !== 'function') {
   fail('calculateChapterMastery export is not a function');
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
+if (typeof buildDailyChallenge !== 'function') fail('buildDailyChallenge export is not a function');
+if (typeof isDailyChallengeCompleted !== 'function') {
+  fail('isDailyChallengeCompleted export is not a function');
+}
+if (typeof seedForDailyChallengeDay !== 'function') fail('seedForDay export is not a function');
+if (typeof DAILY_CHALLENGE_QUESTIONS !== 'number') {
+  fail('DAILY_CHALLENGE_QUESTIONS export is not a number');
+}
 if (!isObjectRecord(colors)) fail('theme colors export is not an object');
 if (!isObjectRecord(motion)) fail('theme motion export is not an object');
 if (!isObjectRecord(radius)) fail('theme radius export is not an object');
@@ -14338,6 +14353,177 @@ function validateConfidenceRatingBoundaryParity() {
   }
 }
 
+function validateDailyChallengeInputGuard() {
+  if (
+    typeof buildDailyChallenge !== 'function' ||
+    typeof isDailyChallengeCompleted !== 'function' ||
+    typeof seedForDailyChallengeDay !== 'function' ||
+    typeof DAILY_CHALLENGE_QUESTIONS !== 'number'
+  ) {
+    return;
+  }
+
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function countCase(passed, message) {
+    if (!passed) {
+      reject(message);
+      return;
+    }
+    dailyChallengeInputGuardCasesValidated += 1;
+  }
+
+  const validBank = Array.from({ length: 12 }, (_, index) => ({
+    id: `q${index}`,
+    difficulty: index % 3 === 0 ? 'medium' : index % 3 === 1 ? 'easy' : 'hard',
+    chapterId: `ch${index % 4}`,
+  }));
+
+  let invalidClockChallenge;
+  try {
+    invalidClockChallenge = buildDailyChallenge({
+      bank: validBank,
+      now: new Date('invalid-date'),
+      seedOverride: Number.POSITIVE_INFINITY,
+    });
+  } catch (error) {
+    reject(`buildDailyChallenge must not throw for invalid now/seedOverride: ${error.message}`);
+  }
+
+  if (invalidClockChallenge) {
+    countCase(
+      /^\d{4}-\d{2}-\d{2}$/.test(invalidClockChallenge.dayKey) &&
+        Number.isFinite(invalidClockChallenge.seed) &&
+        invalidClockChallenge.seed === seedForDailyChallengeDay(invalidClockChallenge.dayKey),
+      'daily challenge invalid now/non-finite seed must fall back to a finite day seed',
+    );
+  }
+
+  let normalizedSeedChallenge;
+  try {
+    normalizedSeedChallenge = buildDailyChallenge({
+      bank: validBank,
+      now: new Date('2026-05-20T12:00:00.000Z'),
+      seedOverride: -1.5,
+    });
+  } catch (error) {
+    reject(`buildDailyChallenge must not throw for finite seedOverride: ${error.message}`);
+  }
+
+  if (normalizedSeedChallenge) {
+    countCase(
+      normalizedSeedChallenge.seed === 4294967295 &&
+        normalizedSeedChallenge.questionIds.length === DAILY_CHALLENGE_QUESTIONS,
+      'daily challenge finite seedOverride must normalize to unsigned 32-bit seed and keep five picks',
+    );
+  }
+
+  let malformedBankChallenge;
+  try {
+    malformedBankChallenge = buildDailyChallenge({
+      bank: [
+        { id: 'a', difficulty: 'medium', chapterId: ' ch01 ' },
+        null,
+        { id: '' },
+        { id: 'a', difficulty: 'hard' },
+        { id: ' b ', difficulty: 'not-real' },
+        { id: 'c', difficulty: 'medium' },
+      ],
+      now: new Date('2026-05-20T12:00:00.000Z'),
+      seedOverride: Number.NaN,
+    });
+  } catch (error) {
+    reject(`buildDailyChallenge must not throw for malformed bank rows: ${error.message}`);
+  }
+
+  if (malformedBankChallenge) {
+    const pickedIds = malformedBankChallenge.questionIds;
+    countCase(
+      pickedIds.length === new Set(pickedIds).size &&
+        pickedIds.length === 3 &&
+        pickedIds.includes('a') &&
+        pickedIds.includes('b') &&
+        pickedIds.includes('c') &&
+        !pickedIds.includes(''),
+      'daily challenge bank normalization must drop malformed, blank, and duplicate question ids',
+    );
+  }
+
+  let nonArrayBankChallenge;
+  try {
+    nonArrayBankChallenge = buildDailyChallenge({
+      bank: null,
+      now: new Date('2026-05-20T12:00:00.000Z'),
+    });
+  } catch (error) {
+    reject(`buildDailyChallenge must not throw for non-array bank: ${error.message}`);
+  }
+
+  if (nonArrayBankChallenge) {
+    countCase(
+      Array.isArray(nonArrayBankChallenge.questionIds) &&
+        nonArrayBankChallenge.questionIds.length === 0,
+      'daily challenge non-array bank must fail closed to an empty challenge',
+    );
+  }
+
+  let completionCaseIsValid = true;
+  try {
+    const now = new Date('2026-05-20T12:00:00.000Z');
+    if (isDailyChallengeCompleted([null, 123, {}, '2026-05-20junk', 'not-a-day'], now)) {
+      completionCaseIsValid = false;
+    }
+    if (!isDailyChallengeCompleted(['2026-05-20T08:00:00.000Z'], now)) {
+      completionCaseIsValid = false;
+    }
+    if (isDailyChallengeCompleted(null, now)) {
+      completionCaseIsValid = false;
+    }
+  } catch (error) {
+    completionCaseIsValid = false;
+    reject(`isDailyChallengeCompleted must not throw for malformed keys: ${error.message}`);
+  }
+  countCase(
+    completionCaseIsValid,
+    'daily challenge completion check must ignore malformed keys and accept valid day/ISO keys',
+  );
+
+  let dailyChallengeSource = '';
+  try {
+    dailyChallengeSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/learning/dailyChallenge.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/learning/dailyChallenge.ts could not be read: ${error.message}`);
+  }
+
+  const requiredSourceSnippets = [
+    ['resolveChallengeDate(input?.now)', 'daily challenge must normalize the input clock'],
+    ['resolveChallengeSeed(input?.seedOverride, dayKey)', 'daily challenge must normalize seeds'],
+    ['normalizeChallengeBank(input?.bank)', 'daily challenge must normalize the question bank'],
+    ['extractStoredDayKey(dayKey) === today', 'daily challenge completion must parse stored keys'],
+  ];
+
+  requiredSourceSnippets.forEach(([snippet, message]) => {
+    if (!dailyChallengeSource.includes(snippet)) {
+      reject(message);
+      return;
+    }
+    dailyChallengeInputGuardCasesValidated += 1;
+  });
+
+  const expectedCases = 5 + requiredSourceSnippets.length;
+  if (valid && dailyChallengeInputGuardCasesValidated === expectedCases) {
+    dailyChallengeInputGuardParityValidated = true;
+  }
+}
+
 function validateStreakRules() {
   if (typeof calculateStreak !== 'function') return;
 
@@ -16021,6 +16207,7 @@ validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateConfidenceRatingBoundaryParity();
+validateDailyChallengeInputGuard();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -16256,6 +16443,8 @@ console.log(
       spacedRepetitionRuntimeParityValidated,
       confidenceRatingBoundaryCasesValidated,
       confidenceRatingBoundaryParityValidated,
+      dailyChallengeInputGuardCasesValidated,
+      dailyChallengeInputGuardParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,

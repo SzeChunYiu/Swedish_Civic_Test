@@ -102,3 +102,66 @@ test('buildDailyChallenge: small bank still produces some output', () => {
   assert.ok(c.questionIds.length <= 5);
   assert.ok(c.questionIds.length >= 1);
 });
+
+test('buildDailyChallenge: invalid date and seed inputs fall back without leaking NaN', () => {
+  const { buildDailyChallenge, seedForDay } = loadTs('lib/learning/dailyChallenge.ts');
+  const c = buildDailyChallenge({
+    bank: bigBank(),
+    now: new Date('not-a-real-date'),
+    seedOverride: Number.POSITIVE_INFINITY,
+  });
+
+  assert.match(c.dayKey, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(c.seed, seedForDay(c.dayKey));
+  assert.equal(Number.isFinite(c.seed), true);
+  assert.equal(c.questionIds.length, 5);
+});
+
+test('buildDailyChallenge: finite seed overrides are normalized to unsigned integers', () => {
+  const { buildDailyChallenge } = loadTs('lib/learning/dailyChallenge.ts');
+  const c = buildDailyChallenge({
+    bank: bigBank(),
+    now: new Date('2026-05-19T12:00:00.000Z'),
+    seedOverride: -1.9,
+  });
+
+  assert.equal(c.seed, 4294967295);
+  assert.equal(c.questionIds.length, 5);
+});
+
+test('buildDailyChallenge: malformed, blank, and duplicate bank rows are ignored', () => {
+  const { buildDailyChallenge } = loadTs('lib/learning/dailyChallenge.ts');
+  const c = buildDailyChallenge({
+    bank: [
+      { id: 'a', difficulty: 'medium', chapterId: ' ch01 ' },
+      null,
+      { id: '' },
+      { id: '   ' },
+      { id: 'a', difficulty: 'hard' },
+      { id: ' b ', difficulty: 'not-real', chapterId: '' },
+      { id: 'c', difficulty: 'medium' },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+    seedOverride: 7,
+  });
+
+  assert.equal(c.questionIds.length, new Set(c.questionIds).size);
+  assert.equal(c.questionIds.includes(''), false);
+  assert.equal(c.questionIds.includes('a'), true);
+  assert.equal(c.questionIds.includes('b'), true);
+  assert.equal(c.questionIds.includes('c'), true);
+  assert.equal(c.questionIds.length, 3);
+});
+
+test('isDailyChallengeCompleted: malformed stored keys and invalid clocks fail closed', () => {
+  const { isDailyChallengeCompleted } = loadTs('lib/learning/dailyChallenge.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  assert.equal(
+    isDailyChallengeCompleted([null, 123, {}, '2026-05-19junk', 'not-a-day', '2026-99-99'], now),
+    false,
+  );
+  assert.equal(isDailyChallengeCompleted(['2026-05-19T08:00:00.000Z'], now), true);
+  assert.equal(isDailyChallengeCompleted(['2026-05-19'], new Date('invalid')), false);
+  assert.equal(isDailyChallengeCompleted(null, now), false);
+});

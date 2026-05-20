@@ -1299,3 +1299,12 @@ Verification: clean SETUP worktree from current `origin/main`; linked shared ign
 PR: pending from `task/setup/search-result-summary-live-region-1779254600` at handoff commit time.
 Blocked? no for this Search accessibility atom; the earlier unclaimed example-describes P0 cleanup remains blocked until the claimed q026 direct-prompt branch reaches current main.
 Next suggested validator action: inspect Search result summary live-region props and rerun the focused source/browser checks plus content validation before accepting `SEARCH-RESULT-SUMMARY-LIVE-REGION-1`.
+
+## Iteration 266 - 2026-05-20
+
+Task completed: DAILY-CHALLENGE-INPUT-GUARD-1 - hardened daily-challenge input handling for invalid clocks, non-finite seeds, malformed or duplicate bank rows, and malformed completion keys, with content-validator summary coverage.
+Artifacts changed: `lib/learning/dailyChallenge.ts`, `tests/v1-1-daily-challenge.test.js`, `scripts/validate-content.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from claim commit `a613567e` before final task commit; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/v1-1-daily-challenge.test.js scripts/learning.test.js tests/content-home-route-header-parity.test.js --test-name-pattern "daily|Daily|challenge|Challenge|seed|date|completed|home|Home|finite|invalid"` exit 0 with 34/34 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content -- --json` exit 0 with `dailyChallengeInputGuardCasesValidated:9` and `dailyChallengeInputGuardParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier write/check exit 0; `git diff --check` exit 0.
+PR: pending from `task/setup/daily-challenge-input-4104887` at handoff commit time.
+Blocked? no for this daily-challenge input guard; no Vercel CLI was run.
+Next suggested validator action: inspect the daily-challenge normalization helpers and rerun the focused daily challenge tests plus content validation before accepting `DAILY-CHALLENGE-INPUT-GUARD-1`.
