@@ -3783,13 +3783,18 @@ const STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED = [
   'kort övning',
   'realistisk tidskänsla',
 ];
-const STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_FORBIDDEN = [
+const STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN = [
   /gör ett\s+quiz/i,
   /quizfrågor/i,
   /quizpass/i,
   /quizet/i,
+  /provexempel/i,
 ];
-const STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED = ['gör en övning'];
+const STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED = [
+  'gör en övning',
+  'Starta övningsprov',
+  'gör ett övningsprov',
+];
 
 function validateStaticSiteSwedishStudyTerms() {
   const source = loadText('site/app.js');
@@ -3832,9 +3837,9 @@ function validateStaticEbookSwedishStudyTerms() {
   let forbiddenTermsValidated = 0;
   let requiredTermsValidated = 0;
 
-  STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_FORBIDDEN.forEach((pattern) => {
+  STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN.forEach((pattern) => {
     if (pattern.test(source)) {
-      fail(`static ebook Swedish copy contains stale quiz loanword phrase: ${pattern}`);
+      fail(`static ebook Swedish copy contains stale study term: ${pattern}`);
       return;
     }
     forbiddenTermsValidated += 1;
@@ -6599,7 +6604,7 @@ staticEbookOutcomeClaimParityValidated =
     ebookStudyTermValidation.requiredTermsValidated;
   staticEbookSwedishStudyTermNaturalnessValidated =
     ebookStudyTermValidation.forbiddenTermsValidated ===
-      STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_FORBIDDEN.length &&
+      STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN.length &&
     ebookStudyTermValidation.requiredTermsValidated ===
       STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED.length;
 }
