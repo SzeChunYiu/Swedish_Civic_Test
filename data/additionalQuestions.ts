@@ -401,7 +401,7 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
       ['Hur kollektivavtal tecknas', 'How collective agreements are signed'],
       ['När kommunala skolor ska öppna', 'When municipal schools should open'],
-      ['Vilka varor som har moms', 'Which goods have VAT'],
+      ['När moms betalas på varor och tjänster', 'When VAT is paid on goods and services'],
     ],
     0,
     'Successionsordningen är en av Sveriges grundlagar och reglerar tronföljden. Den bestämmer vem som ska bli kung eller drottning efter den nuvarande monarken, så alternativen om arbetsmarknad, skola och skatt hör inte hit.',
