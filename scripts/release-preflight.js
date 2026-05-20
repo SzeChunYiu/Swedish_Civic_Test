@@ -134,10 +134,9 @@ const v11ScopeSurfacePaths = [
   'lib/monetization/proLifetimePurchase.ts',
 ];
 
-const removeAdsDeviceQaPath =
-  process.env.RELEASE_PREFLIGHT_DEVICE_QA_PATH || 'reports/release-ads-iap-device-qa.md';
-const removeAdsStep3StructuralGate =
-  'Remove Ads structural gate: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
+const removeAdsDeviceQaPath = 'reports/release-ads-iap-device-qa.md';
+const removeAdsStep3Predicate =
+  'Remove Ads source predicate: purchases.ts exports REMOVE_ADS_* constants and buy/restore functions; app/components surface the 29 SEK paywall';
 const releaseScopeOverrideId = 'release-scope-v11';
 const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
 const removeAdsDeviceQaRequiredChecks = [
@@ -190,6 +189,51 @@ function anyRepoFileMatches(roots, pattern) {
   );
 }
 
+function removeAdsSourceWiringFindings() {
+  const findings = [];
+  const purchasesSource = readFileIfExists('lib/monetization/purchases.ts');
+  const premiumBannerSource = readFileIfExists('components/monetization/PremiumBanner.tsx');
+
+  if (!purchasesSource) {
+    findings.push('lib/monetization/purchases.ts is missing');
+    return findings;
+  }
+
+  if (!/export const REMOVE_ADS_PRODUCT_ID\s*=/.test(purchasesSource)) {
+    findings.push('purchases.ts must export REMOVE_ADS_PRODUCT_ID');
+  }
+  if (!/export const REMOVE_ADS_PRICE_LABEL\s*=\s*['"]29 SEK['"]/.test(purchasesSource)) {
+    findings.push('purchases.ts must export REMOVE_ADS_PRICE_LABEL as 29 SEK');
+  }
+  if (
+    !/export async function buyRemoveAds\b/.test(purchasesSource) ||
+    !/requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/.test(purchasesSource)
+  ) {
+    findings.push('buyRemoveAds must request REMOVE_ADS_PRODUCT_ID');
+  }
+  if (
+    !/export async function restoreRemoveAdsPurchase\b/.test(purchasesSource) ||
+    !/restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/.test(purchasesSource)
+  ) {
+    findings.push('restoreRemoveAdsPurchase must restore REMOVE_ADS_PRODUCT_ID');
+  }
+  if (
+    !premiumBannerSource ||
+    !/REMOVE_ADS_PRICE_LABEL/.test(premiumBannerSource) ||
+    !/buyRemoveAds/.test(premiumBannerSource) ||
+    !/restoreRemoveAdsPurchase/.test(premiumBannerSource)
+  ) {
+    findings.push(
+      'PremiumBanner must wire REMOVE_ADS_PRICE_LABEL, buyRemoveAds, and restoreRemoveAdsPurchase',
+    );
+  }
+  if (!anyRepoFileMatches(['app'], /<PremiumBanner\b/)) {
+    findings.push('an app screen must render the Remove Ads PremiumBanner paywall');
+  }
+
+  return findings;
+}
+
 function listV11ScopeSurfaces() {
   const explicitSurfaces = v11ScopeSurfacePaths.filter((surfacePath) => exists(surfacePath));
   const testSurfaces = exists('tests')
@@ -220,7 +264,10 @@ function removeAdsV1AcceptanceFindings() {
   if (/REAL_ADS_ENABLED_FOR_V1\s*=\s*false/.test(adsSource)) {
     findings.push('GOAL step 1 is red: REAL_ADS_ENABLED_FOR_V1 is still hardcoded false.');
   }
-  findings.push(...removeAdsStep3StructuralFindings(purchasesSource));
+  const sourceWiringFindings = removeAdsSourceWiringFindings();
+  for (const finding of sourceWiringFindings) {
+    findings.push(`GOAL step 3 is red: ${finding}.`);
+  }
   if (!exists('publishing/public-site/app-ads.txt')) {
     findings.push('GOAL step 4 is red: publishing/public-site/app-ads.txt is missing.');
   }
@@ -401,7 +448,7 @@ function releaseScopeOverrideGate(manualEvidence) {
     `v1.1 runtime/test surfaces are present before v1.0 Remove Ads acceptance is closed: ${v11Surfaces.join(
       ', ',
     )}. Remove Ads findings: ${removeAdsFindings.join(' ')}`,
-    `Close v1.0 Remove Ads acceptance first (${removeAdsStep3StructuralGate}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
+    `Close v1.0 Remove Ads acceptance first (${removeAdsStep3Predicate}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
   );
 }
 
