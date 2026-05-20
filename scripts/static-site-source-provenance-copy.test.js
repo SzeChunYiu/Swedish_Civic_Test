@@ -98,6 +98,22 @@ function staticFallbackI18nValues(indexHtml, keyPrefix) {
   return values;
 }
 
+function staticFallbackI18nValuesForKeys(indexHtml, keys) {
+  const expectedKeys = new Set(keys);
+  const values = new Map();
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
+
+  let match;
+  while ((match = elementPattern.exec(indexHtml))) {
+    const [, , key, rawValue] = match;
+    if (!expectedKeys.has(key)) continue;
+    assert.equal(values.has(key), false, `${key} no-JS fallback should appear exactly once`);
+    values.set(key, normalizeInlineHtml(rawValue));
+  }
+
+  return values;
+}
+
 function staticFaqSection(indexHtml) {
   const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
   assert.ok(faqMatch, 'static FAQ fallback section should be present');
@@ -215,19 +231,50 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
   }
 });
 
-test('static Home body no-JS fallback mirrors the English dictionary', () => {
+test('static Home hero and footer no-JS fallbacks mirror the English dictionary', () => {
   const indexHtml = read('site/index.html');
   const appSource = read('site/app.js');
+  const englishTranslations = englishTranslationMap(appSource);
+  const fallbackKeys = [
+    'hero.eyebrow',
+    'hero.h1a',
+    'hero.h1c',
+    'hero.lede',
+    'hero.cta1',
+    'hero.cta2',
+    'footer.t1',
+    'footer.t2',
+    'footer.honest.p',
+    'footer.h.study',
+    'footer.h.legal',
+    'footer.h.about',
+    'footer.about.p',
+    'footer.h.fika',
+    'footer.fika.p',
+    'footer.copyright',
+    'footer.fika',
+  ];
+  const staticFallbacks = staticFallbackI18nValuesForKeys(indexHtml, fallbackKeys);
 
-  assert.equal(assertStaticHomeBodyFallbackParitySource(indexHtml, appSource), 33);
-  assert.throws(
-    () =>
-      assertStaticHomeBodyFallbackParitySource(
-        indexHtml.replace('No textbooks.', 'No stale textbooks.'),
-        appSource,
-      ),
-    /demo\.h1 Home no-JS fallback should match the English site\/app\.js dictionary/,
+  assert.deepEqual(
+    Array.from(staticFallbacks.keys()).sort(),
+    fallbackKeys.slice().sort(),
+    'static no-JS Home hero/footer fallback keys should be present exactly once',
   );
+
+  for (const key of fallbackKeys) {
+    const expectedValue = englishTranslations.get(key);
+    assert.notEqual(
+      expectedValue,
+      undefined,
+      `${key} should exist in the English site/app.js dictionary`,
+    );
+    assert.equal(
+      staticFallbacks.get(key),
+      normalizeInlineHtml(expectedValue),
+      `${key} no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
 });
 
 test('static ebook intro copy rejects unsupported author credential claims', () => {
