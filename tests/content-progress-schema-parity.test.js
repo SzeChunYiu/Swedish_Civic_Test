@@ -148,6 +148,7 @@ function progressSnapshot(state) {
     totalXp: state.totalXp,
     answerDates: state.answerDates,
     answerHistory: state.answerHistory,
+    dailyChallengeCompletions: state.dailyChallengeCompletions,
     mockExamSessions: state.mockExamSessions,
     streakFreezeState: state.streakFreezeState,
   };
@@ -221,6 +222,37 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /const serializedProgress = JSON\.stringify\(progress\);/);
   assert.match(progressStore, /progressStorage\?\.set\(progressStateKey, serializedProgress\);/);
   assert.match(progressStore, /return normalizeProgress\(JSON\.parse\(serializedProgress\)\);/);
+});
+
+test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fields', () => {
+  const progressTypes = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
+  const progressStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+  const expectedFields = [
+    'dayKey: string;',
+    'questionIds: string[];',
+    'correctCount: number;',
+    'totalCount: number;',
+    'score: number;',
+    'timeSpentSeconds: number;',
+    'completedAt: string;',
+  ];
+
+  assert.match(progressTypes, /export interface DailyChallengeCompletion \{/);
+  assert.match(progressStore, /export type DailyChallengeProgress = \{/);
+  for (const field of expectedFields) {
+    assert.match(progressTypes, new RegExp(field.replace('[]', '\\[\\]')));
+    assert.match(progressStore, new RegExp(field.replace('[]', '\\[\\]')));
+  }
+  assert.match(
+    progressTypes,
+    /dailyChallengeCompletions: Record<string, DailyChallengeCompletion>;/,
+  );
+  assert.match(progressStore, /dailyChallengeCompletions: Record<string, DailyChallengeProgress>;/);
+  assert.match(progressStore, /function normalizeDailyChallengeProgress\(value: unknown\)/);
+  assert.match(progressStore, /recordDailyChallengeCompletion: \(completion\) =>/);
 });
 
 test('progress hydration normalizes unsafe persisted numeric fields', () => {
