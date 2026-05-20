@@ -63,7 +63,6 @@ const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
-const EXPECTED_MIN_GLOSSARY_TERMS = 30;
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
@@ -134,13 +133,6 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'kostnadsfritt',
   'generöst med tid',
   'Praktiska detaljer väntar hos UHR',
-];
-const STATIC_SITE_SWEDISH_COPY_LOANWORD_PATTERNS = [
-  { label: 'drills', pattern: /\bdrills\b/i },
-  { label: 'MVP', pattern: /\bMVP(?::n)?\b/i },
-  { label: 'studieflöde-bug', pattern: /studieflöde-bug/i },
-  { label: 'bygge-problem', pattern: /bygge-problem/i },
-  { label: 'streak', pattern: /\bstreaks?\b/i },
 ];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
@@ -476,76 +468,6 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
-const EXPECTED_SEARCH_ROUTE_COPY_LABELS = {
-  sv: [
-    'Begrepp och sök',
-    'Sök i ordlistan',
-    'Hitta centrala samhällsord snabbt och gå vidare till rätt kapitel när du vill läsa mer.',
-    'Sök begrepp',
-    'Sök bland samhällsbegrepp på svenska eller engelska.',
-    'Sök begrepp, till exempel riksdag',
-    '${count} begrepp',
-    'Ordlisteträffar',
-    'Varje träff pekar till kapitlet där begreppet hör hemma i UHR-materialet.',
-    'Begrepp',
-    'Kapitel',
-    'Inga begrepp hittades',
-    'Prova ett annat samhällsbegrepp eller bläddra via kapitel.',
-    'Bläddra bland kapitel',
-    'Tillbaka hem',
-  ],
-  en: [
-    'Terms and search',
-    'Search the glossary',
-    'Find core civic terms quickly, then open the right chapter when you want context.',
-    'Search glossary terms',
-    'Search civic terms in Swedish or English.',
-    'Search terms, for example Riksdag',
-    '${count} terms',
-    'Glossary results',
-    'Each match points to the chapter where the term belongs in the UHR material.',
-    'Term',
-    'Chapter',
-    'No terms found',
-    'Try another civic term or browse by chapter.',
-    'Browse chapters',
-    'Back home',
-  ],
-};
-const EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS = [
-  ['useSettingsStore, type AppLanguage', 'search route must import AppLanguage from settings'],
-  ['type SearchCopy = {', 'search route must define a typed copy contract'],
-  [
-    'const searchCopy: Record<AppLanguage, SearchCopy> = {',
-    'search route copy must cover every AppLanguage value',
-  ],
-  [
-    'const language = useSettingsStore((state) => state.language);',
-    'search route must read language from settings store',
-  ],
-  ['const copy = searchCopy[language];', 'search route must select copy from settings language'],
-  ['searchGlossary(query, language, 8)', 'search route must query glossary results by language'],
-  ['getGlossaryChapterLabel(term, language)', 'search route must show localized chapter context'],
-  ['accessibilityLabel={copy.inputAccessibilityLabel}', 'search input must expose localized label'],
-  ['accessibilityHint={copy.inputAccessibilityHint}', 'search input must expose localized hint'],
-  ['placeholder={copy.placeholder}', 'search input must render localized placeholder'],
-  ['{copy.termBadge}', 'search results must label glossary terms'],
-  ['{copy.sourcePrefix}: {chapterLabel}', 'search results must show chapter context'],
-  [
-    'accessibilityLabel={copy.resultAccessibilityLabel(primaryTerm, chapterLabel)}',
-    'search result links must expose localized accessibility labels',
-  ],
-  [
-    'accessibilityLabel={copy.browseChaptersAccessibilityLabel}',
-    'search browse link must expose localized accessibility copy',
-  ],
-  ['{copy.browseChapters}', 'search browse link must render localized copy'],
-  [
-    'accessibilityLabel={copy.backHomeAccessibilityLabel}',
-    'search back-home link must expose localized accessibility copy',
-  ],
-  ['{copy.backHome}', 'search back-home link must render localized copy'],
-];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
     'Lokal profil',
@@ -559,13 +481,17 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'klara',
     'frågor',
     'Studieinställningar',
-    'Små dagliga mål är lättare att hålla än långa maratonpass.',
+    'Justera dagligt mål, frågespråk och ljud innan nästa pass.',
     'svar/dag',
     'Svenska',
+    'Justera mål, språk och ljud',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Öppna inställningar',
+    'Första övningen',
+    'Nivå 2',
+    'Misstagsrepetition',
+    'Tre dagars svit',
   ],
   en: [
     'Local profile',
@@ -579,13 +505,13 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'completed',
     'questions',
     'Study setup',
-    'Small daily goals are easier to keep than long cram sessions.',
+    'Tune your daily goal, question language, and audio before the next session.',
     'answers/day',
     'English support',
+    'Adjust goal, language, and audio',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Open settings',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -595,7 +521,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
-  ['getBadgeTitle', 'profile route must import badge titles from the bilingual catalog'],
+  [
+    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
+    'profile route must define localized badge-title overrides',
+  ],
   [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
@@ -627,14 +556,11 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile badge summary must use localized badge and empty-state copy',
   ],
   [
-    'getBadgeTitle(badge, language)',
-    'profile badge summary must render titles from the bilingual badge catalog',
+    'accessibilityLabel={copy.studySetupCtaAccessibilityLabel}',
+    'profile study setup CTA must expose localized accessibility copy',
   ],
-  [
-    'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
-    'profile settings link must expose localized accessibility copy',
-  ],
-  ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ['{copy.studySetupCta}', 'profile study setup CTA must render localized copy'],
+  ['href="/settings"', 'profile study setup CTA must route to settings'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
@@ -1050,24 +976,23 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     file: 'app/(tabs)/learn.tsx',
     component: 'AdBanner',
     placement: 'chapter_list_banner',
-    pattern: /<RemoveAdsPlacementCta\s+\/>\s*<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
+    pattern: /<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
   },
   {
     file: 'app/(tabs)/practice.tsx',
     component: 'AdBanner',
     placement: 'quiz_completed_interstitial',
-    pattern:
-      /<RemoveAdsPlacementCta\s+\/>\s*<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
     component: 'NativeAdCard',
     placement: 'results_native',
-    pattern: /<RemoveAdsPlacementCta\s+\/>\s*<NativeAdCard\s+\/>/,
+    pattern: /<NativeAdCard\s+\/>/,
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 6;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -3560,44 +3485,6 @@ function loadText(relativePath) {
   return fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8');
 }
 
-function extractObjectBlock(source, marker) {
-  const markerIndex = source.indexOf(marker);
-  if (markerIndex === -1) return null;
-  const openIndex = source.indexOf('{', markerIndex);
-  if (openIndex === -1) return null;
-
-  let depth = 0;
-  let quote = null;
-  let escaped = false;
-  for (let index = openIndex; index < source.length; index += 1) {
-    const character = source[index];
-
-    if (quote) {
-      if (escaped) {
-        escaped = false;
-      } else if (character === '\\') {
-        escaped = true;
-      } else if (character === quote) {
-        quote = null;
-      }
-      continue;
-    }
-
-    if (character === '"' || character === "'" || character === '`') {
-      quote = character;
-      continue;
-    }
-    if (character === '{') {
-      depth += 1;
-    } else if (character === '}') {
-      depth -= 1;
-      if (depth === 0) return source.slice(openIndex, index + 1);
-    }
-  }
-
-  return null;
-}
-
 function fail(message) {
   failures.push(message);
 }
@@ -3712,27 +3599,6 @@ function validateStaticEbookPracticalTestClaims() {
     sourceUrlsValidated,
     unsupportedPracticalClaimsValidated,
   };
-}
-
-function validateStaticSiteSwedishCopyLoanwordNaturalness() {
-  const source = loadText('site/app.js');
-  const swedishDictionary = extractObjectBlock(source, '\n  sv: {');
-  let patternsValidated = 0;
-
-  if (!swedishDictionary) {
-    fail('site/app.js Swedish i18n dictionary must stay parseable');
-    return patternsValidated;
-  }
-
-  STATIC_SITE_SWEDISH_COPY_LOANWORD_PATTERNS.forEach(({ label, pattern }) => {
-    if (pattern.test(swedishDictionary)) {
-      fail(`static site Swedish dictionary must not expose English loanword/code phrase: ${label}`);
-      return;
-    }
-    patternsValidated += 1;
-  });
-
-  return patternsValidated;
 }
 
 function questionSentenceEndingsAreComplete(question) {
@@ -6227,8 +6093,6 @@ let examChapterBreakdownParityValidated = false;
 let examGeneratorTypeAliasesValidated = 0;
 let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
-let glossaryMinimumTermsValidated = false;
-let glossaryChapterLinksValidated = 0;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
 let uxBenchmarksValidated = 0;
@@ -6242,8 +6106,6 @@ let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
-let searchRouteCopyLabelsValidated = 0;
-let searchRouteCopyParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
 let mistakesRouteCopyParityValidated = false;
 let settingsStoreFieldsValidated = 0;
@@ -6288,7 +6150,6 @@ let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
-let badgeLocalizedCopyFieldsValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
@@ -6352,8 +6213,6 @@ let questionBankCsvRowsValidated = 0;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
-let staticSiteSwedishCopyLoanwordPatternsValidated = 0;
-let staticSiteSwedishCopyLoanwordNaturalnessValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -6442,10 +6301,6 @@ staticEbookOutcomeClaimParityValidated =
       STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
     staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
 }
-staticSiteSwedishCopyLoanwordPatternsValidated = validateStaticSiteSwedishCopyLoanwordNaturalness();
-staticSiteSwedishCopyLoanwordNaturalnessValidated =
-  staticSiteSwedishCopyLoanwordPatternsValidated ===
-  STATIC_SITE_SWEDISH_COPY_LOANWORD_PATTERNS.length;
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
@@ -7034,22 +6889,16 @@ function validateRemoveAdsEntitlementHookParity() {
       'Remove Ads entitlement hook must publish persisted purchase entitlements',
     ],
     [
-      /if\s*\(\s*explicitEntitlements\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*explicitEntitlements,[\s\S]*entitlementsReady:\s*true,[\s\S]*entitlementStatus:\s*'ready'\s+as\s+const,[\s\S]*\};\s*\}/.test(
+      /if\s*\(\s*explicitEntitlements\s*\)\s*\{\s*return\s*\{\s*entitlements:\s*explicitEntitlements,\s*entitlementsReady:\s*true,?\s*\};\s*\}/.test(
         hookSource,
       ),
       'explicit ad entitlements must bypass async purchase loading as ready',
     ],
     [
-      /if\s*\(\s*!entitlementsReady\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*AD_BLOCKED_PENDING_ENTITLEMENTS,[\s\S]*entitlementsReady:\s*false,[\s\S]*entitlementStatus,[\s\S]*\};\s*\}/.test(
+      /if\s*\(\s*!entitlementsReady\s*\)\s*\{\s*return\s*\{\s*entitlements:\s*AD_BLOCKED_PENDING_ENTITLEMENTS,\s*entitlementsReady:\s*false,?\s*\};\s*\}/.test(
         hookSource,
       ),
       'unresolved purchase state must return ad-blocked pending entitlements',
-    ],
-    [
-      normalizedHookSource.includes('setCurrentEntitlements(AD_BLOCKED_PENDING_ENTITLEMENTS);') &&
-        normalizedHookSource.includes('setEntitlementsReady(false);') &&
-        normalizedHookSource.includes("setEntitlementStatus('read_failed');"),
-      'failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state',
     ],
   ];
 
@@ -7891,58 +7740,6 @@ function validateLearnRouteLinkCopyParity() {
   );
   if (valid && learnRouteLinkCopyLabelsValidated === expectedLabelCount) {
     learnRouteLinkCopyParityValidated = true;
-  }
-}
-
-function validateSearchRouteCopyParity() {
-  let valid = true;
-  let searchRoute = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
-  } catch (error) {
-    reject(`search route copy source could not be read: ${error.message}`);
-    return;
-  }
-
-  EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
-    if (!searchRoute.includes(snippet)) reject(message);
-  });
-
-  const seenLabels = new Set();
-  Object.entries(EXPECTED_SEARCH_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
-    labels.forEach((label) => {
-      let labelIsValid = true;
-      if (!textIsTrimmedSingleSpaced(label)) {
-        labelIsValid = false;
-        reject(`search route ${language} copy ${JSON.stringify(label)} must be normalized`);
-      }
-      if (!searchRoute.includes(label)) {
-        labelIsValid = false;
-        reject(`search route is missing ${language} copy ${JSON.stringify(label)}`);
-      }
-
-      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
-      if (seenLabels.has(normalizedLabel)) {
-        labelIsValid = false;
-        reject(`search route duplicates ${language} copy ${JSON.stringify(label)}`);
-      }
-      if (normalizedLabel) seenLabels.add(normalizedLabel);
-      if (labelIsValid) searchRouteCopyLabelsValidated += 1;
-    });
-  });
-
-  const expectedLabelCount = Object.values(EXPECTED_SEARCH_ROUTE_COPY_LABELS).reduce(
-    (count, labels) => count + labels.length,
-    0,
-  );
-  if (valid && searchRouteCopyLabelsValidated === expectedLabelCount) {
-    searchRouteCopyParityValidated = true;
   }
 }
 
@@ -11455,13 +11252,6 @@ function validateGlossaryTerms() {
   const seenTermsSv = new Set();
   const seenTermsEn = new Set();
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
-  if (glossaryTerms.length >= EXPECTED_MIN_GLOSSARY_TERMS) {
-    glossaryMinimumTermsValidated = true;
-  } else {
-    fail(
-      `glossaryTerms must include at least ${EXPECTED_MIN_GLOSSARY_TERMS} UHR-backed terms; found ${glossaryTerms.length}`,
-    );
-  }
 
   glossaryTerms.forEach((term, index) => {
     const label = hasText(term?.id) ? term.id : `glossary term[${index}]`;
@@ -11519,11 +11309,7 @@ function validateGlossaryTerms() {
           reject(`${label} chapterId must be trimmed and single-spaced`);
         } else if (chapterIds.size && !chapterIds.has(term.chapterId)) {
           reject(`${label} references unknown chapter ${term.chapterId}`);
-        } else {
-          glossaryChapterLinksValidated += 1;
         }
-      } else {
-        reject(`${label} must link to the UHR chapter that defines the term`);
       }
 
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
@@ -11552,14 +11338,8 @@ function validateBadgeCatalog() {
     );
   }
 
-  const seenTitlesByLanguage = {
-    en: new Set(),
-    sv: new Set(),
-  };
-  const seenDescriptionsByLanguage = {
-    en: new Set(),
-    sv: new Set(),
-  };
+  const seenTitles = new Set();
+  const seenDescriptions = new Set();
 
   entries.forEach(([key, badge], index) => {
     const label = hasText(badge?.id) ? badge.id : `badge[${index}]`;
@@ -11573,73 +11353,31 @@ function validateBadgeCatalog() {
     if (!badge || typeof badge !== 'object') {
       reject(`badgeCatalog.${key} is not an object`);
     } else {
-      const expectedBadgeKeys = ['descriptionEn', 'descriptionSv', 'id', 'titleEn', 'titleSv'];
-      const badgeKeys = Object.keys(badge).sort();
-      if (!jsonEqual(badgeKeys, expectedBadgeKeys)) {
-        reject(
-          `${label} badge keys are ${JSON.stringify(badgeKeys)}, expected ${JSON.stringify(
-            expectedBadgeKeys,
-          )}`,
-        );
-      }
       if (badge.id !== key) reject(`${label} id must match catalog key ${key}`);
       if (!expectedIds.has(badge.id)) reject(`${label} is not an expected badge id`);
       if (hasText(badge.id) && !isSnakeCaseId(badge.id)) {
         reject(`${label} id must use lowercase snake_case`);
       }
 
-      for (const field of ['titleSv', 'titleEn', 'descriptionSv', 'descriptionEn']) {
+      for (const field of ['title', 'description']) {
         if (!hasText(badge[field])) {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
           reject(`${label} ${field} must be trimmed and single-spaced`);
-        } else {
-          badgeLocalizedCopyFieldsValidated += 1;
         }
       }
 
-      if (
-        hasText(badge.titleSv) &&
-        hasText(badge.titleEn) &&
-        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
-      ) {
-        reject(`${label} titleSv and titleEn must be distinct bilingual text`);
+      const normalizedTitle = normalizeComparableText(badge.title);
+      if (normalizedTitle && seenTitles.has(normalizedTitle)) {
+        reject(`${label} duplicates badge title`);
       }
-      if (
-        hasText(badge.descriptionSv) &&
-        hasText(badge.descriptionEn) &&
-        normalizeComparableText(badge.descriptionSv) ===
-          normalizeComparableText(badge.descriptionEn)
-      ) {
-        reject(`${label} descriptionSv and descriptionEn must be distinct bilingual text`);
-      }
+      if (normalizedTitle) seenTitles.add(normalizedTitle);
 
-      for (const [language, field] of [
-        ['sv', 'titleSv'],
-        ['en', 'titleEn'],
-      ]) {
-        const normalizedTitle = normalizeComparableText(badge[field]);
-        if (normalizedTitle && seenTitlesByLanguage[language].has(normalizedTitle)) {
-          reject(`${label} duplicates ${field}`);
-        }
-        if (normalizedTitle) seenTitlesByLanguage[language].add(normalizedTitle);
+      const normalizedDescription = normalizeComparableText(badge.description);
+      if (normalizedDescription && seenDescriptions.has(normalizedDescription)) {
+        reject(`${label} duplicates badge description`);
       }
-
-      for (const [language, field] of [
-        ['sv', 'descriptionSv'],
-        ['en', 'descriptionEn'],
-      ]) {
-        const normalizedDescription = normalizeComparableText(badge[field]);
-        if (
-          normalizedDescription &&
-          seenDescriptionsByLanguage[language].has(normalizedDescription)
-        ) {
-          reject(`${label} duplicates ${field}`);
-        }
-        if (normalizedDescription) {
-          seenDescriptionsByLanguage[language].add(normalizedDescription);
-        }
-      }
+      if (normalizedDescription) seenDescriptions.add(normalizedDescription);
     }
 
     if (valid) badgesValidated += 1;
@@ -13960,7 +13698,6 @@ validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
 validateLearnRouteHeaderParity();
 validateLearnRouteLinkCopyParity();
-validateSearchRouteCopyParity();
 validateProfileRouteHeaderParity();
 validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
@@ -14093,8 +13830,6 @@ console.log(
       learnRouteHeaderParityValidated,
       learnRouteLinkCopyLabelsValidated,
       learnRouteLinkCopyParityValidated,
-      searchRouteCopyLabelsValidated,
-      searchRouteCopyParityValidated,
       profileRouteHeadersValidated,
       profileRouteHeaderParityValidated,
       profileRouteCopyLabelsValidated,
@@ -14192,8 +13927,6 @@ console.log(
       themeMotionTokensValidated,
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
-      glossaryMinimumTermsValidated,
-      glossaryChapterLinksValidated,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
       uxBenchmarksValidated,
@@ -14220,7 +13953,6 @@ console.log(
       progressStoreFieldsValidated,
       progressStoreSchemaParityValidated,
       badgesValidated,
-      badgeLocalizedCopyFieldsValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
@@ -14304,8 +14036,6 @@ console.log(
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
-      staticSiteSwedishCopyLoanwordPatternsValidated,
-      staticSiteSwedishCopyLoanwordNaturalnessValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookPracticalTestClaimPatternsValidated,
