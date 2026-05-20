@@ -1,6 +1,6 @@
 import type { PremiumEntitlements } from '../../types/monetization';
 import { getLocalDateKey } from '../learning/streaks';
-import { REAL_ADS_ENABLED, shouldShowAd } from './ads';
+import { REAL_ADS_ENABLED, shouldShowAd, type AdRuntimePlatform } from './ads';
 import type { AdConsentDecision } from './consent';
 
 export const REWARDED_EXTRA_EXAM_PLACEMENT = 'rewarded_extra_exam' as const;
@@ -21,6 +21,7 @@ export type MockExamAccessState = {
   consentDecision?: Pick<AdConsentDecision, 'adServingAllowed'>;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled' | 'unlimitedMockExams'>;
   freeMockExamLimit: number;
+  platform?: AdRuntimePlatform;
   rewardedExtraExamCredits?: number;
 };
 
@@ -427,6 +428,7 @@ export function getMockExamAccessDecision({
   consentDecision,
   entitlements,
   freeMockExamLimit,
+  platform,
   rewardedExtraExamCredits,
 }: MockExamAccessState): MockExamAccessDecision {
   const completedExams = toNonNegativeInteger(completedMockExamsToday);
@@ -475,13 +477,19 @@ export function getMockExamAccessDecision({
     };
   }
 
-  const placementAvailableAfterConsent = shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, {
-    adServingAllowed: true,
-  });
+  const placementAvailableAfterConsent = shouldShowAd(
+    REWARDED_EXTRA_EXAM_PLACEMENT,
+    entitlements,
+    {
+      adServingAllowed: true,
+    },
+    platform,
+  );
   const canOfferRewardedAd = shouldShowAd(
     REWARDED_EXTRA_EXAM_PLACEMENT,
     entitlements,
     consentDecision,
+    platform,
   );
   const reason: MockExamAccessReason = canOfferRewardedAd
     ? 'rewarded_ad_available'
