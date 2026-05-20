@@ -19,7 +19,6 @@ function loadTs(relativePath) {
 
 test('mastery runtime parity validates scoring and weak-chapter rules', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
