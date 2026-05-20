@@ -59,6 +59,30 @@ test('static mock exam copy avoids unsupported official pass-line claims', () =>
   assert.doesNotMatch(practiceSource, new RegExp('godk' + '[aä]nt', 'i'));
 });
 
+test('sources route cites the current UHR authority-boundary page', () => {
+  const sourcesRoute = read('app/sources.tsx');
+
+  assert.match(sourcesRoute, /const UHR_AUTHORITY_BOUNDARY_SOURCE = \{/);
+  assert.match(sourcesRoute, /retrievedDate:\s*'2026-05-20'/);
+  assert.match(
+    sourcesRoute,
+    /url:\s*'https:\/\/www\.uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet\/'/,
+  );
+  assert.match(sourcesRoute, /UHR inte står bakom dessa/);
+  assert.match(sourcesRoute, /quality is not controlled by UHR or any other authority/);
+  assert.match(sourcesRoute, /Källa hämtad \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
+  assert.match(sourcesRoute, /Source accessed \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
+  assert.match(
+    sourcesRoute,
+    /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/,
+  );
+  assert.doesNotMatch(sourcesRoute, /UHR\s+varnar|UHR\s+warns/i);
+  assert.doesNotMatch(
+    sourcesRoute,
+    /kvalitets(?:granskad|granskade|kontrollerad|kontrollerade)\s+av\s+UHR|quality-(?:controlled|checked|reviewed)\s+by\s+UHR/i,
+  );
+});
+
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
@@ -104,16 +128,26 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Källor/);
   assert.match(sourcesRoute, /Primärt studiematerial/);
   assert.match(sourcesRoute, /Varje övningsfråga visar en källrad med UHR:s kapitel/);
-  assert.match(sourcesRoute, /UHR står inte bakom dem/);
-  assert.match(sourcesRoute, /Källa hämtad 2026-05-19/);
+  assert.match(sourcesRoute, /const UHR_AUTHORITY_BOUNDARY_SOURCE = \{/);
+  assert.match(sourcesRoute, /retrievedDate:\s*'2026-05-20'/);
+  assert.match(sourcesRoute, /title:\s*'UHR: Om medborgarskapsprovet'/);
+  assert.match(
+    sourcesRoute,
+    /url:\s*'https:\/\/www\.uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet\/'/,
+  );
+  assert.match(sourcesRoute, /UHR inte står bakom dessa/);
+  assert.match(sourcesRoute, /Källa hämtad \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
   assert.match(sourcesRoute, /Sources/);
   assert.match(sourcesRoute, /Primary study material/);
   assert.match(sourcesRoute, /Every practice question shows a source line with the UHR chapter/);
-  assert.match(sourcesRoute, /quality is not checked by UHR or any other authority/);
-  assert.match(sourcesRoute, /Source accessed 2026-05-19/);
+  assert.match(sourcesRoute, /quality is not controlled by UHR or any other authority/);
+  assert.match(sourcesRoute, /Source accessed \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
   assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet/i);
   assert.match(sourcesRoute, /<LegalExternalLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
-  assert.match(sourcesRoute, /<LegalExternalLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
+  assert.match(
+    sourcesRoute,
+    /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/,
+  );
   assert.match(
     sourcesRoute,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
@@ -127,7 +161,10 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Öppna UHR:s sida Om medborgarskapsprovet/);
   assert.match(sourcesRoute, /Open UHR About the citizenship test page/);
   assert.doesNotMatch(sourcesRoute, /UHR\s+varnar|UHR\s+warns/i);
-  assert.doesNotMatch(sourcesRoute, /kvalitetsgranskade\s+av\s+UHR|quality-controlled\s+by\s+UHR/i);
+  assert.doesNotMatch(
+    sourcesRoute,
+    /kvalitets(?:granskad|granskade|kontrollerad|kontrollerade)\s+av\s+UHR|quality-(?:controlled|checked|reviewed)\s+by\s+UHR/i,
+  );
   assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
   assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
   assert.doesNotMatch(sourcesRoute, /spreadsheet-friendly|kalkylbladsvänliga/);
