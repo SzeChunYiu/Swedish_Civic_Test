@@ -3571,6 +3571,68 @@ test('published question schema guards targetless generated why-reason stems', (
   assert.match(validatorSource, /\/\^One reason is\\b\//);
 });
 
+test('published question schema reports focused generated why-reason guard coverage', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-generated-why-reason-stems'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const match = result.stdout.match(/\{\s*"generatedWhyReasonTargetStemsValidated"[\s\S]*\}/);
+  assert.ok(match, 'focused generated why-reason validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.ok(summary.generatedWhyReasonTargetStemsValidated > 0);
+  assert.equal(summary.generatedWhyReasonTargetStemParityValidated, true);
+});
+
+test('published question schema rejects targetless generated why-reason stems in focused mode', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const targetlessWhyReasonResiduals = {",
+        "  [generatedFixtureId('q032', 1)]: { questionSv: 'En anledning är att valet är hemligt och ingen annan ska se vilket val de gör.', questionEn: 'One reason is the vote is secret and no one else should see their choice.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  targetlessWhyReasonResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...targetlessWhyReasonResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('scripts/validate-content.js', '--focus-generated-why-reason-stems');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /contains a targetless generated why-reason stem/,
+  );
+});
+
 test('published question schema rejects residual q306-q355 true/false wording', () => {
   const result = spawnSync(
     process.execPath,

@@ -12,6 +12,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'generatedWhyReasonStems',
+    flags: ['--focus-generated-why-reason-stems'],
+    summaryKeys: [
+      'generatedWhyReasonTargetStemsValidated',
+      'generatedWhyReasonTargetStemParityValidated',
+    ],
+  },
+  {
     id: 'staticV11ReadinessCopy',
     flags: ['--focus-static-v11-readiness-copy'],
     summaryKeys: [
