@@ -122,7 +122,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('theme token schema rejects nonzero letter spacing', () => {
+test('theme token schema rejects unbounded letter spacing', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -135,7 +135,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/theme/typography.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('letterSpacing: 0,', 'letterSpacing: -0.4,');
+      .replace('letterSpacing: -0.8,', 'letterSpacing: -4.8,');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -148,6 +148,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /theme typography\.displayHero\.letterSpacing must be 0 when defined/,
+    /theme typography\.displayHero\.letterSpacing must be a bounded number/,
   );
 });

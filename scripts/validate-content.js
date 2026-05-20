@@ -3655,6 +3655,28 @@ const EXPECTED_THEME_MOTION_DURATIONS = {
   slow: 320,
 };
 const EXPECTED_THEME_MOTION_EASING = ['standard', 'press'];
+const EXPECTED_THEME_CONTRAST_PAIRS = [
+  ['text', 'canvas'],
+  ['text', 'surface'],
+  ['text', 'surfaceWarm'],
+  ['textSoft', 'surface'],
+  ['textSecondary', 'surface'],
+  ['textDisclaimer', 'surface'],
+  ['textMuted', 'surface'],
+  ['textPlaceholder', 'surface'],
+  ['warmDark', 'surfaceWarm'],
+  ['accent', 'surface'],
+  ['accentActive', 'surface'],
+  ['badgeBlueText', 'badgeBlueBg'],
+  ['success', 'successSoft'],
+  ['warning', 'warningSoft'],
+  ['teal', 'surface'],
+  ['navy', 'surface'],
+  ['purple', 'surface'],
+  ['pink', 'surface'],
+  ['brown', 'surface'],
+  ['swedishBlue', 'surface'],
+];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -7271,6 +7293,40 @@ function isColorToken(value) {
   );
 }
 
+function parseColorTokenRgb(value) {
+  if (typeof value !== 'string') return null;
+  const hex = value.match(/^#([0-9a-fA-F]{6})$/);
+  if (hex) {
+    return [0, 2, 4].map((index) => parseInt(hex[1].slice(index, index + 2), 16) / 255);
+  }
+  const rgb = value.match(/^rgba?\(([^)]+)\)$/);
+  if (!rgb) return null;
+  const channels = rgb[1]
+    .split(',')
+    .slice(0, 3)
+    .map((channel) => Number(channel.trim()));
+  if (channels.length !== 3 || channels.some((channel) => !Number.isFinite(channel))) return null;
+  return channels.map((channel) => channel / 255);
+}
+
+function relativeLuminance(colorToken) {
+  const rgb = parseColorTokenRgb(colorToken);
+  if (!rgb) return null;
+  const [red, green, blue] = rgb.map((channel) =>
+    channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(foreground, background) {
+  const foregroundLuminance = relativeLuminance(foreground);
+  const backgroundLuminance = relativeLuminance(background);
+  if (foregroundLuminance === null || backgroundLuminance === null) return null;
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function extractStringConstantFromTs(source, constantName) {
   const sourceFile = ts.createSourceFile('source.tsx', source, ts.ScriptTarget.Latest, true);
   let value;
@@ -7935,6 +7991,7 @@ const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
+const darkColors = themeModule.darkColors;
 const motion = themeModule.motion;
 const radius = themeModule.radius;
 const shadows = themeModule.shadows;
@@ -8163,6 +8220,11 @@ let mockExamAccessTypeUnionsValidated = 0;
 let mockExamAccessTypeInterfacesValidated = 0;
 let mockExamAccessTypeSchemaParityValidated = false;
 let themeColorTokensValidated = 0;
+let themeDarkColorTokensValidated = 0;
+let themeContrastPairsValidated = 0;
+let themeContrastPairsAAValidated = false;
+let themeDarkContrastPairsValidated = 0;
+let themeDarkContrastPairsAAValidated = false;
 let themeSpaceTokensValidated = 0;
 let themeRadiusTokensValidated = 0;
 let themeTypographyTokensValidated = 0;
@@ -14915,6 +14977,52 @@ function validateThemeTokenSchema() {
       themeColorTokensValidated += 1;
     }
   }
+  validateNoExtraKeys(darkColors, EXPECTED_THEME_COLOR_TOKENS, 'theme darkColors');
+  if (isObjectRecord(darkColors)) {
+    for (const token of EXPECTED_THEME_COLOR_TOKENS) {
+      if (!Object.prototype.hasOwnProperty.call(darkColors, token)) {
+        reject(`theme darkColors missing ${token}`);
+        continue;
+      }
+      if (!isColorToken(darkColors[token])) {
+        reject(`theme darkColors.${token} must be a hex or rgb/rgba color token`);
+        continue;
+      }
+      themeDarkColorTokensValidated += 1;
+    }
+  }
+
+  function validateContrastPairs(palette, label) {
+    let validPairs = 0;
+    const contrastLabel = label ? `${label} contrast` : 'contrast';
+    for (const [foregroundToken, backgroundToken] of EXPECTED_THEME_CONTRAST_PAIRS) {
+      const foreground = palette?.[foregroundToken];
+      const background = palette?.[backgroundToken];
+      const ratio = contrastRatio(foreground, background);
+      if (ratio === null) {
+        reject(`theme ${contrastLabel} ${foregroundToken} on ${backgroundToken} could not be read`);
+        continue;
+      }
+      if (ratio < 4.5) {
+        reject(
+          `theme ${contrastLabel} ${foregroundToken} on ${backgroundToken} ratio ${ratio.toFixed(
+            2,
+          )}:1 below 4.5:1`,
+        );
+        continue;
+      }
+      validPairs += 1;
+    }
+    return validPairs;
+  }
+  if (isObjectRecord(colors)) themeContrastPairsValidated = validateContrastPairs(colors, '');
+  if (isObjectRecord(darkColors)) {
+    themeDarkContrastPairsValidated = validateContrastPairs(darkColors, 'dark');
+  }
+  themeContrastPairsAAValidated =
+    themeContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS.length;
+  themeDarkContrastPairsAAValidated =
+    themeDarkContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS.length;
 
   validateNoExtraKeys(space, Object.keys(EXPECTED_THEME_SPACE_VALUES), 'theme space');
   if (isObjectRecord(space)) {
@@ -15073,6 +15181,9 @@ function validateThemeTokenSchema() {
   if (
     valid &&
     themeColorTokensValidated === EXPECTED_THEME_COLOR_TOKENS.length &&
+    themeDarkColorTokensValidated === EXPECTED_THEME_COLOR_TOKENS.length &&
+    themeContrastPairsAAValidated &&
+    themeDarkContrastPairsAAValidated &&
     themeSpaceTokensValidated === Object.keys(EXPECTED_THEME_SPACE_VALUES).length &&
     themeRadiusTokensValidated === Object.keys(EXPECTED_THEME_RADIUS_VALUES).length &&
     themeTypographyTokensValidated === EXPECTED_THEME_TYPOGRAPHY_TOKENS.length &&
@@ -18683,6 +18794,11 @@ console.log(
       mockExamAccessTypeInterfacesValidated,
       mockExamAccessTypeSchemaParityValidated,
       themeColorTokensValidated,
+      themeDarkColorTokensValidated,
+      themeContrastPairsValidated,
+      themeContrastPairsAAValidated,
+      themeDarkContrastPairsValidated,
+      themeDarkContrastPairsAAValidated,
       themeSpaceTokensValidated,
       themeRadiusTokensValidated,
       themeTypographyTokensValidated,
