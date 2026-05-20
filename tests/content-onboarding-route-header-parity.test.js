@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -29,7 +28,15 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = onboardingCopy\[language\];/);
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
+  assert.match(
+    source,
+    /Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor\./,
+  );
   assert.match(source, /Prepare calmly for the civic test/);
+  assert.match(
+    source,
+    /The full question bank stays free; Remove Ads only changes ads, not question access\./,
+  );
   assert.match(
     source,
     /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
@@ -37,6 +44,97 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /accessibilityLabel=\{copy\.startStudyingAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.adjustSettingsAccessibilityLabel\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
+});
+
+test('about-the-test marks the first-run guide as seen after mount', () => {
+  const summary = parseValidationSummary();
+  const source = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
+  const seenEffectPattern =
+    /useEffect\(\(\) => \{\s*if \(!hasSeenAboutTheTest\) \{\s*markAboutTheTestSeen\(\);\s*\}\s*\}, \[hasSeenAboutTheTest, markAboutTheTestSeen\]\);/;
+
+  assert.equal(summary.aboutTheTestSeenEffectRulesValidated, 6);
+  assert.equal(summary.aboutTheTestSeenEffectParityValidated, true);
+  assert.match(source, /import \{ useEffect \} from 'react';/);
+  assert.match(
+    source,
+    /const hasSeenAboutTheTest = useSettingsStore\(\(state\) => state\.hasSeenAboutTheTest\);/,
+  );
+  assert.match(
+    source,
+    /const markAboutTheTestSeen = useSettingsStore\(\(state\) => state\.markAboutTheTestSeen\);/,
+  );
+  assert.match(source, seenEffectPattern);
+  assert.doesNotMatch(source, /useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/);
+  assert.doesNotMatch(source.replace(seenEffectPattern, ''), /markAboutTheTestSeen\(\);/);
+});
+
+test('about-the-test seen-effect parity rejects removing the mount effect', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const seenEffect = 'useEffect(() => {\\n    if (!hasSeenAboutTheTest) {\\n      markAboutTheTestSeen();\\n    }\\n  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(seenEffect, 'const seenEffectWasRemovedForTest = true;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route missing effect-scoped seen marker for first-run seen effect/,
+  );
+});
+
+test('about-the-test seen-effect parity rejects render-time settings writes', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const seenEffect = 'useEffect(() => {\\n    if (!hasSeenAboutTheTest) {\\n      markAboutTheTestSeen();\\n    }\\n  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        seenEffect,
+        'if (!useSettingsStore.getState().hasSeenAboutTheTest) {\\n    markAboutTheTestSeen();\\n  }',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore\.getState\(\) during render/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route must call markAboutTheTestSeen\(\) only inside useEffect/,
+  );
 });
 
 test('onboarding route header parity rejects a dropped title header role', () => {
@@ -130,27 +228,4 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /onboarding route is missing sv copy/);
-});
-
-test('first-run about modal hides backdrop from assistive technology', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
-    'utf8',
-  );
-
-  assert.match(source, /accessibilityViewIsModal/);
-  assert.match(
-    source,
-    /<Pressable\s+accessible=\{false\}\s+accessibilityElementsHidden\s+importantForAccessibility="no"[\s\S]*styles\.backdropDismissTarget/,
-  );
-  assert.match(source, /onPress=\{markSeen\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
-  assert.equal(
-    (source.match(/accessibilityLabel=\{copy\.skipAccessibilityLabel\}/g) || []).length,
-    1,
-  );
-  assert.doesNotMatch(
-    source,
-    /<Pressable\s+accessibilityLabel=\{copy\.skipAccessibilityLabel\}\s+accessibilityRole="button"[\s\S]*styles\.backdrop/,
-  );
 });

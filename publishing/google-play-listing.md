@@ -1,8 +1,8 @@
-# Google Play listing — Sweden Citizenship Test Prep
+# Google Play listing — Almost Swedish
 
 ## App name
 
-Sweden Citizenship Test Prep
+Almost Swedish
 
 ## Short description
 
@@ -10,7 +10,7 @@ UHR-based Swedish civic practice with mock exams and progress tracking.
 
 ## Full description
 
-Sweden Citizenship Test Prep helps you study Swedish civic knowledge in small daily sessions.
+Almost Swedish helps you study Swedish civic knowledge in small daily sessions.
 
 Features:
 
