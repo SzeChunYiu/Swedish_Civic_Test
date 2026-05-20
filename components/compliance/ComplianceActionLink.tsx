@@ -6,6 +6,8 @@ import { Platform, StyleSheet, Text } from 'react-native';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type ComplianceActionLinkHref = ComponentProps<typeof Link>['href'];
+type ComplianceActionLinkRel = ComponentProps<typeof Link>['rel'];
+type ComplianceActionLinkTarget = ComponentProps<typeof Link>['target'];
 type ComplianceActionLinkVariant = 'primary' | 'secondary';
 
 const complianceActionLinkClassName = 'compliance-action-link';
@@ -16,10 +18,13 @@ const complianceActionLinkStyleElementId = 'compliance-action-link-style';
  * as link text, and a token-sized 48px link target with pressed feedback.
  */
 export interface ComplianceActionLinkProps {
+  accessibilityHint?: string;
   accessibilityLabel: string;
   detail?: string;
   href: ComplianceActionLinkHref;
   label: string;
+  rel?: ComplianceActionLinkRel;
+  target?: ComplianceActionLinkTarget;
   variant?: ComplianceActionLinkVariant;
 }
 
@@ -74,16 +79,23 @@ function useComplianceActionLinkWebStyles() {
 }
 
 export function ComplianceActionLink({
+  accessibilityHint,
   accessibilityLabel,
   detail,
   href,
   label,
+  rel,
+  target,
   variant = 'secondary',
 }: ComplianceActionLinkProps) {
   useComplianceActionLinkWebStyles();
 
   const [isPressed, setIsPressed] = useState(false);
   const clearPressedState = () => setIsPressed(false);
+  const isExternalWebLink =
+    Platform.OS === 'web' && typeof href === 'string' && /^https?:\/\//.test(href);
+  const resolvedRel = rel ?? (isExternalWebLink ? 'noreferrer' : undefined);
+  const resolvedTarget = target ?? (isExternalWebLink ? '_blank' : undefined);
   const linkInteractionHandlers = {
     onPressIn: () => setIsPressed(true),
     onPressOut: clearPressedState,
@@ -99,15 +111,18 @@ export function ComplianceActionLink({
     <Link
       {...linkInteractionHandlers}
       {...webClassName}
+      accessibilityHint={accessibilityHint}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       href={href}
+      rel={resolvedRel}
       style={[
         styles.link,
         styles[variant],
         detail ? styles.linkWithDetail : null,
         isPressed ? styles[`${variant}Pressed`] : null,
       ]}
+      target={resolvedTarget}
     >
       <Text
         style={[styles.label, variant === 'primary' ? styles.primaryLabel : styles.secondaryLabel]}

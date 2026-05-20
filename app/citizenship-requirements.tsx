@@ -1,7 +1,11 @@
 import { Link } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import {
+  ComplianceActionLink,
+  getVisibleLinkDestination,
+} from '../components/compliance/ComplianceActionLink';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
@@ -41,6 +45,7 @@ type CitizenshipRequirementsCopy = {
   sourceListSubtitle: string;
   sourceDateLabel: string;
   retrievedLabel: string;
+  openSourceAccessibilityLabel: (publisher: string, title: string) => string;
   openSourceHint: string;
   backAbout: string;
   backAboutAccessibilityLabel: string;
@@ -80,6 +85,7 @@ const copyByLanguage: Record<AppLanguage, CitizenshipRequirementsCopy> = {
       'Källorna öppnas utanför appen. Kontrollera alltid myndighetssidorna om ditt ärende är nära ett beslut.',
     sourceDateLabel: 'Källdatum',
     retrievedLabel: 'Kontrollerad',
+    openSourceAccessibilityLabel: (publisher, title) => `Öppna källa: ${publisher}, ${title}`,
     openSourceHint: 'Öppna källan i webbläsaren',
     backAbout: 'Om provet',
     backAboutAccessibilityLabel: 'Gå tillbaka till sidan om medborgarskapsprovet',
@@ -117,6 +123,7 @@ const copyByLanguage: Record<AppLanguage, CitizenshipRequirementsCopy> = {
       'Sources open outside the app. Always check the authority pages when your case is close to a decision.',
     sourceDateLabel: 'Source date',
     retrievedLabel: 'Checked',
+    openSourceAccessibilityLabel: (publisher, title) => `Open source: ${publisher}, ${title}`,
     openSourceHint: 'Open the source in the browser',
     backAbout: 'About the test',
     backAboutAccessibilityLabel: 'Go back to the page about the citizenship test',
@@ -164,6 +171,16 @@ function buildSummary(
     hiddenMissingCount > 0 ? ` + ${hiddenMissingCount} ${copy.summaryMoreSuffix}` : '';
 
   return `${copy.summaryProgressPrefix} ${checkedCount} ${copy.summaryProgressSuffix} ${copy.summaryNextPrefix} ${visibleMissingTitles}${moreText}. ${copy.summaryBoundary}`;
+}
+
+function formatSourceMeta(
+  copy: CitizenshipRequirementsCopy,
+  source: (typeof citizenshipRequirementSources)[number],
+) {
+  const sourceDateText =
+    'sourceDate' in source ? `${copy.sourceDateLabel} ${source.sourceDate} · ` : '';
+
+  return `${source.publisher} · ${sourceDateText}${copy.retrievedLabel} ${source.retrievedDate}`;
 }
 
 export default function CitizenshipRequirementsScreen() {
@@ -275,25 +292,21 @@ export default function CitizenshipRequirementsScreen() {
         <Text style={styles.sourcesSubtitle}>{copy.sourceListSubtitle}</Text>
         <View style={styles.sourceList}>
           {citizenshipRequirementSources.map((source) => (
-            <Pressable
-              key={source.id}
-              accessibilityHint={copy.openSourceHint}
-              accessibilityLabel={`${source.publisher}: ${source.title[language]}`}
-              accessibilityRole="link"
-              onPress={() => {
-                void Linking.openURL(source.url);
-              }}
-              style={({ pressed }) => [styles.sourceRow, pressed ? styles.sourceRowPressed : null]}
-            >
-              <Text style={styles.sourceTitle}>{source.title[language]}</Text>
-              <Text style={styles.sourceMeta}>
-                {source.publisher}
-                {'sourceDate' in source ? ` · ${copy.sourceDateLabel} ${source.sourceDate}` : ''}
-                {' · '}
-                {copy.retrievedLabel} {source.retrievedDate}
-              </Text>
-              <Text style={styles.sourceUrl}>{source.url}</Text>
-            </Pressable>
+            <View key={source.id} style={styles.sourceEntry}>
+              <ComplianceActionLink
+                accessibilityHint={copy.openSourceHint}
+                accessibilityLabel={copy.openSourceAccessibilityLabel(
+                  source.publisher,
+                  source.title[language],
+                )}
+                detail={getVisibleLinkDestination(source.url)}
+                href={source.url}
+                label={source.title[language]}
+                rel="noreferrer"
+                target="_blank"
+              />
+              <Text style={styles.sourceMeta}>{formatSourceMeta(copy, source)}</Text>
+            </View>
           ))}
         </View>
       </Card>
@@ -446,32 +459,17 @@ const styles = StyleSheet.create({
   sourceList: {
     gap: space[1],
   },
-  sourceRow: {
+  sourceEntry: {
     borderColor: colors.border,
     borderRadius: radius.small,
     borderWidth: StyleSheet.hairlineWidth,
-    gap: space[0.5],
-    minHeight: space[6],
+    gap: space[0.75],
     padding: space[1.25],
-  },
-  sourceRowPressed: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  sourceTitle: {
-    color: colors.text,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-    lineHeight: typography.bodySemibold.lineHeight,
   },
   sourceMeta: {
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
-  },
-  sourceUrl: {
-    color: colors.accent,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.finePrint.lineHeight,
   },
   actions: {
     flexDirection: 'row',

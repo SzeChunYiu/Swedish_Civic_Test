@@ -363,6 +363,56 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('compliance action links keep token-sized targets and feedback', () => {
+  const actionLinkSource = read('components/compliance/ComplianceActionLink.tsx');
+  const legalPageSource = read('components/compliance/LegalPage.tsx');
+  const complianceLinksSource = read('components/compliance/ComplianceLinks.tsx');
+  const sourcesSource = read('app/sources.tsx');
+  const supportSource = read('app/support.tsx');
+  const aboutSource = read('app/about-the-test.tsx');
+  const citizenshipRequirementsSource = read('app/citizenship-requirements.tsx');
+
+  assert.match(actionLinkSource, /export interface ComplianceActionLinkProps/);
+  assert.match(actionLinkSource, /export function ComplianceActionLink/);
+  assert.match(actionLinkSource, /accessibilityHint\?: string/);
+  assert.match(actionLinkSource, /rel\?: ComplianceActionLinkRel/);
+  assert.match(actionLinkSource, /target\?: ComplianceActionLinkTarget/);
+  assert.match(actionLinkSource, /const complianceActionLinkClassName = 'compliance-action-link';/);
+  assert.match(actionLinkSource, /document\.getElementById\(complianceActionLinkStyleElementId\)/);
+  assert.match(actionLinkSource, /document\.head\.appendChild\(styleElement\);/);
+  assert.match(actionLinkSource, /\.\$\{complianceActionLinkClassName\}:hover,/);
+  assert.match(actionLinkSource, /\.\$\{complianceActionLinkClassName\}:focus-visible/);
+  assert.match(actionLinkSource, /transform: scale\(\$\{motion\.hoverScale\}\);/);
+  assert.match(actionLinkSource, /transform: scale\(\$\{motion\.pressedScale\}\);/);
+  assert.match(actionLinkSource, /onPressIn: \(\) => setIsPressed\(true\)/);
+  assert.match(actionLinkSource, /onPressOut: clearPressedState/);
+  assert.match(actionLinkSource, /const isExternalWebLink =/);
+  assert.match(actionLinkSource, /resolvedRel = rel \?\? \(isExternalWebLink \? 'noreferrer'/);
+  assert.match(actionLinkSource, /resolvedTarget = target \?\? \(isExternalWebLink \? '_blank'/);
+  assert.match(
+    actionLinkSource,
+    /<Link[\s\S]*accessibilityHint=\{accessibilityHint\}[\s\S]*accessibilityRole="link"[\s\S]*href=\{href\}[\s\S]*rel=\{resolvedRel\}[\s\S]*target=\{resolvedTarget\}/,
+  );
+  assert.match(actionLinkSource, /display: 'flex'/);
+  assert.match(actionLinkSource, /minHeight: space\[6\]/);
+  assert.match(actionLinkSource, /backgroundColor: colors\.focusSoft/);
+  assert.match(actionLinkSource, /borderColor: colors\.focus/);
+  assert.match(actionLinkSource, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(actionLinkSource, /export function getVisibleLinkDestination/);
+  assert.match(legalPageSource, /<ComplianceActionLink[\s\S]*label=\{resolvedBackLabel\}/);
+  assert.match(complianceLinksSource, /<ComplianceActionLink[\s\S]*label=\{link\.label\}/);
+  assert.match(sourcesSource, /<ComplianceActionLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesSource, /<ComplianceActionLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
+  assert.match(supportSource, /<ComplianceActionLink[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
+  assert.match(aboutSource, /<ComplianceActionLink[\s\S]*variant="primary"/);
+  assert.match(
+    citizenshipRequirementsSource,
+    /<ComplianceActionLink[\s\S]*accessibilityHint=\{copy\.openSourceHint\}[\s\S]*href=\{source\.url\}/,
+  );
+  assert.doesNotMatch(citizenshipRequirementsSource, /Linking\.openURL\(source\.url\)/);
+  assert.doesNotMatch(actionLinkSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings route exposes page and section titles as headers', () => {
   const source = read('app/settings.tsx');
   const sectionHeaderMatches = source.match(

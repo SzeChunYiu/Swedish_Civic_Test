@@ -129,13 +129,24 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /citizenshipRequirementAreas\.map/);
   assert.match(routeSource, /useSettingsStore/);
   assert.match(routeSource, /QuestionDisclaimer/);
+  assert.match(routeSource, /ComplianceActionLink/);
+  assert.match(routeSource, /getVisibleLinkDestination/);
   assert.match(routeSource, /accessibilityRole="checkbox"/);
   assert.match(routeSource, /accessibilityState=\{\{\s*checked\s*\}\}/);
   assert.match(routeSource, /aria-checked=\{checked\}/);
   assert.match(routeSource, /buildSummary\(/);
+  assert.match(routeSource, /formatSourceMeta\(/);
   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
+  assert.match(routeSource, /openSourceAccessibilityLabel: \(publisher, title\) =>/);
+  assert.match(routeSource, /accessibilityHint=\{copy\.openSourceHint\}/);
+  assert.match(routeSource, /accessibilityLabel=\{copy\.openSourceAccessibilityLabel\(/);
+  assert.match(routeSource, /detail=\{getVisibleLinkDestination\(source\.url\)\}/);
+  assert.match(routeSource, /href=\{source\.url\}/);
+  assert.match(routeSource, /rel="noreferrer"/);
+  assert.match(routeSource, /target="_blank"/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
+  assert.doesNotMatch(routeSource, /Linking\.openURL\(source\.url\)/);
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
 });
 
