@@ -92,6 +92,39 @@ function readHasSeenAboutTheTest(): boolean {
   return storedValue ?? false;
 }
 
+export type ImportableSettings = Partial<{
+  language: AppLanguage;
+  audioEnabled: boolean;
+  dailyGoalAnswers: number;
+  includeSupplementaryQuestions: boolean;
+  hasSeenAboutTheTest: boolean;
+}>;
+
+export function normalizeImportedSettings(value: unknown): ImportableSettings {
+  if (!value || typeof value !== 'object') return {};
+
+  const candidate = value as Record<string, unknown>;
+  const settings: ImportableSettings = {};
+  if (candidate.language === 'sv' || candidate.language === 'en') {
+    settings.language = candidate.language;
+  }
+  if (typeof candidate.audioEnabled === 'boolean') {
+    settings.audioEnabled = candidate.audioEnabled;
+  }
+  if (typeof candidate.dailyGoalAnswers === 'number') {
+    const safeGoal = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);
+    if (safeGoal === candidate.dailyGoalAnswers) settings.dailyGoalAnswers = safeGoal;
+  }
+  if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
+    settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;
+  }
+  if (typeof candidate.hasSeenAboutTheTest === 'boolean') {
+    settings.hasSeenAboutTheTest = candidate.hasSeenAboutTheTest;
+  }
+
+  return settings;
+}
+
 type SettingsState = {
   language: AppLanguage;
   audioEnabled: boolean;
@@ -135,3 +168,25 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ hasSeenAboutTheTest: true });
   },
 }));
+
+export function importSettingsSnapshot(value: unknown): ImportableSettings {
+  const importedSettings = normalizeImportedSettings(value);
+  if (importedSettings.language !== undefined) {
+    settingsStorage?.set(languageKey, importedSettings.language);
+  }
+  if (importedSettings.audioEnabled !== undefined) {
+    settingsStorage?.set(audioEnabledKey, importedSettings.audioEnabled);
+  }
+  if (importedSettings.dailyGoalAnswers !== undefined) {
+    settingsStorage?.set(dailyGoalKey, importedSettings.dailyGoalAnswers);
+  }
+  if (importedSettings.includeSupplementaryQuestions !== undefined) {
+    settingsStorage?.set(includeSupplementaryKey, importedSettings.includeSupplementaryQuestions);
+  }
+  if (importedSettings.hasSeenAboutTheTest !== undefined) {
+    settingsStorage?.set(hasSeenAboutTheTestKey, importedSettings.hasSeenAboutTheTest);
+  }
+
+  useSettingsStore.setState(importedSettings);
+  return importedSettings;
+}
