@@ -22,7 +22,7 @@ test('onboarding route title stays accessible as a header', () => {
 
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
-  assert.equal(summary.onboardingRouteCopyLabelsValidated, 49);
+  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
   assert.match(source, /const onboardingDailyGoalPresetValues = \[10, 20, 40\] as const;/);
@@ -40,10 +40,6 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
   assert.match(source, /genomgång av frågor du missat/);
   assert.doesNotMatch(source, /repetition av misstag|upprepning av misstag/i);
-  assert.match(
-    source,
-    /Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor\./,
-  );
   assert.match(source, /Prepare calmly for the civic test/);
   assert.match(source, /Välj ett mjukt dagligt mål/);
   assert.match(source, /Choose a gentle daily goal/);

@@ -8049,6 +8049,8 @@ let aboutTheTestRouteCopyLabelsValidated = 0;
 let aboutTheTestRouteCopyParityValidated = false;
 let aboutTheTestOfficialSourceUrlsValidated = 0;
 let aboutTheTestOfficialSourceRetrievedDateValidated = '';
+let aboutTheTestSeenEffectRulesValidated = 0;
+let aboutTheTestSeenEffectParityValidated = false;
 let citizenshipRequirementsLimitedSeatCopyValidated = 0;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
@@ -8774,6 +8776,7 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
 
 if (process.argv.includes('--focus-about-the-test-route-copy')) {
   validateAboutTheTestRouteCopyParity();
+  validateAboutTheTestSeenEffectParity();
   validateCitizenshipRequirementsLimitedSeatParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8781,6 +8784,8 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
+    aboutTheTestSeenEffectRulesValidated,
+    aboutTheTestSeenEffectParityValidated,
     citizenshipRequirementsLimitedSeatCopyValidated,
   });
   process.exit(0);
@@ -10532,6 +10537,79 @@ function validateAboutTheTestRouteCopyParity() {
     aboutTheTestOfficialSourceUrlsValidated === EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length
   ) {
     aboutTheTestRouteCopyParityValidated = true;
+  }
+}
+
+function validateAboutTheTestSeenEffectParity() {
+  let valid = true;
+  let aboutRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    aboutRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/about-the-test.tsx could not be read for seen-effect parity: ${error.message}`);
+    return;
+  }
+
+  const expectedEffect =
+    'useEffect(() => {\n' +
+    '    if (!hasSeenAboutTheTest) {\n' +
+    '      markAboutTheTestSeen();\n' +
+    '    }\n' +
+    '  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
+  const expectedRules = [
+    {
+      pattern: /import \{ useEffect \} from 'react';/,
+      message: 'about-the-test route must import useEffect for first-run seen effect',
+    },
+    {
+      pattern:
+        /const hasSeenAboutTheTest = useSettingsStore\(\(state\) => state\.hasSeenAboutTheTest\);/,
+      message:
+        'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    },
+    {
+      pattern:
+        /const markAboutTheTestSeen = useSettingsStore\(\(state\) => state\.markAboutTheTestSeen\);/,
+      message: 'about-the-test route must subscribe to markAboutTheTestSeen from settings store',
+    },
+  ];
+
+  expectedRules.forEach(({ pattern, message }) => {
+    if (!pattern.test(aboutRoute)) {
+      reject(message);
+      return;
+    }
+    aboutTheTestSeenEffectRulesValidated += 1;
+  });
+
+  if (!aboutRoute.includes(expectedEffect)) {
+    reject('about-the-test route missing effect-scoped seen marker for first-run seen effect');
+  } else {
+    aboutTheTestSeenEffectRulesValidated += 1;
+  }
+
+  if (/useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/.test(aboutRoute)) {
+    reject(
+      'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    );
+  } else {
+    aboutTheTestSeenEffectRulesValidated += 1;
+  }
+
+  if (/markAboutTheTestSeen\(\);/.test(aboutRoute.replace(expectedEffect, ''))) {
+    reject('about-the-test route must call markAboutTheTestSeen() only inside useEffect');
+  } else {
+    aboutTheTestSeenEffectRulesValidated += 1;
+  }
+
+  if (valid && aboutTheTestSeenEffectRulesValidated === 6) {
+    aboutTheTestSeenEffectParityValidated = true;
   }
 }
 
@@ -18497,6 +18575,7 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateAboutTheTestRouteCopyParity();
+validateAboutTheTestSeenEffectParity();
 validateCitizenshipRequirementsLimitedSeatParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
@@ -18638,6 +18717,8 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
+      aboutTheTestSeenEffectRulesValidated,
+      aboutTheTestSeenEffectParityValidated,
       citizenshipRequirementsLimitedSeatCopyValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,

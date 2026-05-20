@@ -96,9 +96,9 @@ export function FirstRunAboutTheTestModal({
       accessibilityLabel={copy.title}
     >
       <Pressable
-        accessibilityLabel={copy.skipAccessibilityLabel}
-        accessibilityRole="button"
+        accessible={false}
         hitSlop={space[1]}
+        importantForAccessibility="no"
         onPress={markSeen}
         style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
       >
