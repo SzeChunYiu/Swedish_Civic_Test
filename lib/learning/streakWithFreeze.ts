@@ -60,6 +60,12 @@ function startOfWeek(date: Date): Date {
   return d;
 }
 
+function dateFromLocalDateKey(dayKey: string): Date {
+  const [year, month, day] = dayKey.split('-').map(Number);
+  if (!year || !month || !day) return new Date(Number.NaN);
+  return new Date(year, month - 1, day);
+}
+
 function previousDayKey(dayKey: string): string {
   const d = new Date(`${dayKey}T00:00:00.000Z`);
   return new Date(d.getTime() - DAY_MS).toISOString().slice(0, 10);
@@ -69,23 +75,33 @@ function previousDayKey(dayKey: string): string {
  * Refill the freeze stockpile if at least one week has passed since the last
  * earn. Pure — returns a new state, does not mutate.
  */
-export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
-  const currentWeekStartKey = getLocalDateKey(startOfWeek(now));
-  if (currentWeekStartKey <= state.lastEarnedAt) return state;
-
-  // Use noon UTC anchors so DST shifts don't change the rounded week count.
-  const lastNoon = new Date(`${state.lastEarnedAt}T12:00:00.000Z`).getTime();
-  const currentNoon = new Date(`${currentWeekStartKey}T12:00:00.000Z`).getTime();
-  const weeksSince = Math.max(1, Math.round((currentNoon - lastNoon) / (7 * DAY_MS)));
+export function refillFreezes(
+  state: StreakFreezeState,
+  now: Date = new Date(),
+): StreakFreezeState {
+  const currentWeekStart = startOfWeek(now);
+  const lastEarnedDate = startOfWeek(dateFromLocalDateKey(state.lastEarnedAt));
+  if (Number.isNaN(lastEarnedDate.getTime())) {
+    return {
+      ...state,
+      lastEarnedAt: getLocalDateKey(currentWeekStart),
+    };
+  }
+  const weeksSince = Math.floor(
+    (currentWeekStart.getTime() - lastEarnedDate.getTime()) / (7 * DAY_MS),
+  );
+  if (weeksSince <= 0) return state;
 
   const earned = Math.min(weeksSince * FREEZES_PER_WEEK, MAX_STOCKPILE - state.available);
   if (earned <= 0) {
-    return { ...state, lastEarnedAt: currentWeekStartKey };
+    // Still advance lastEarnedAt to the current week so we don't keep computing
+    // huge weeksSince counts.
+    return { ...state, lastEarnedAt: getLocalDateKey(currentWeekStart) };
   }
   return {
     ...state,
     available: state.available + earned,
-    lastEarnedAt: currentWeekStartKey,
+    lastEarnedAt: getLocalDateKey(currentWeekStart),
     lifetimeEarned: state.lifetimeEarned + earned,
   };
 }
@@ -117,7 +133,9 @@ export interface StreakWithFreezeResult {
  *
  * Pure function — returns new state, does not mutate.
  */
-export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakWithFreezeResult {
+export function calculateStreakWithFreeze(
+  input: StreakWithFreezeInput,
+): StreakWithFreezeResult {
   const refilled = refillFreezes(input.freezeState, input.now ?? new Date());
   const today = input.today ?? getLocalDateKey(input.now ?? new Date());
   const activeSet = new Set(input.activeDayKeys.map((d) => d.slice(0, 10)));
@@ -168,9 +186,8 @@ export function freezeBannerCopy(
   result: StreakWithFreezeResult,
   language: 'sv' | 'en',
 ): string | null {
-  const rescuedDayCount = result.freezeState.rescuedDayKeys?.length ?? 0;
-  if (result.rescuedThisRun.length === 0 && rescuedDayCount === 0) return null;
+  if (result.rescuedThisRun.length === 0) return null;
   return language === 'sv'
-    ? `Sviten är räddad — ${result.freezeState.available} svitskydd kvar.`
+    ? `Sviten är räddad — svitskyddet har räddat dagen. Du har ${result.freezeState.available} svitskydd kvar.`
     : `Streak protected — ${result.freezeState.available} freezes left.`;
 }
