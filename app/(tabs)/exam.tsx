@@ -1,10 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
+import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { ResultSummary } from '../../components/ResultSummary';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -24,10 +27,10 @@ import {
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
 import {
-  getQuestionDisplayText,
-  getQuestionOptionText,
-  getQuestionSourceCitation,
-} from '../../lib/quiz/questionText';
+  buildCompletedExamQuizSession,
+  buildExamDiagnostic,
+} from '../../lib/learning/examDiagnostic';
+import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -43,6 +46,8 @@ type ExamRouteCopy = {
   chapterBreakdownTitle: string;
   checkingAccess: string;
   completionStoreFailure: string;
+  completionRetryAccessibilityLabel: string;
+  completionRetryLabel: string;
   correctAnswerLabel: string;
   correctBadge: string;
   correctCount: (correctCount: number, totalCount: number) => string;
@@ -51,11 +56,6 @@ type ExamRouteCopy = {
   heroSubtitle: (durationMinutes: number, questionCount: number) => string;
   mockExamTitle: string;
   nextExamTitle: string;
-  officialDetailsNote: string;
-  practiceLineReachedBadge: string;
-  practiceLineReviewBadge: string;
-  practiceLineStatus: (percent: number, thresholdPercent: number) => string;
-  practiceLineSummary: (thresholdPercent: number) => string;
   progressTitle: string;
   questionNumber: (questionNumber: number) => string;
   questionReviewTitle: string;
@@ -65,6 +65,7 @@ type ExamRouteCopy = {
   reviewBadge: string;
   rewardedAdStatus: Record<RewardedExtraExamAdStatus, string>;
   savedBadge: string;
+  saveFailedBadge: string;
   savingBadge: string;
   savingCompletion: string;
   selectedAnswerLabel: string;
@@ -82,66 +83,64 @@ type ExamRouteCopy = {
 const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   sv: {
     accessStatus: {
+      access_read_failed:
+        'Det gick inte att läsa lokal åtkomst för övningsprov. Försök igen om en stund.',
       ads_unavailable: 'Extra övningsprov är inte tillgängliga just nu.',
-      consent_required: 'Annonsmedgivande krävs innan ett extra prov kan låsas upp.',
+      consent_required: 'Annonsmedgivande krävs innan ett extra övningsprov kan låsas upp.',
       free_exam_available: 'Dagens kostnadsfria övningsprov är tillgängligt.',
       premium_unlimited_mock_exams: 'Obegränsade övningsprov är aktiva.',
       remove_ads_active: 'Dagens kostnadsfria övningsprov är använt. Belöningsannonser är dolda.',
       rewarded_ad_available:
-        'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
+        'Dagens kostnadsfria övningsprov är använt. Extra övningsprov är tillgängligt.',
       rewarded_exam_credit: 'Extra övningsprov är upplåst.',
     },
-    accessTitle: 'Provåtkomst',
+    accessTitle: 'Åtkomst till övningsprov',
     activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
+      `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} besvarade`,
     chapterBreakdownTitle: 'Kapitelöversikt',
     checkingAccess: 'Kontrollerar provåtkomst.',
     completionStoreFailure: 'Provresultatet kunde inte sparas på den här enheten.',
+    completionRetryAccessibilityLabel: 'Försök spara övningsprovresultatet igen',
+    completionRetryLabel: 'Försök spara igen',
     correctAnswerLabel: 'Rätt svar',
     correctBadge: 'Rätt',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
-    examResultTitle: 'Provresultat',
+    examResultTitle: 'Resultat från övningsprov',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
     heroSubtitle: (durationMinutes, questionCount) =>
-      `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
+      `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet`,
     mockExamTitle: 'Övningsprov',
-    nextExamTitle: 'Nästa prov',
-    officialDetailsNote:
-      'UHR har inte publicerat exakt antal frågor, provtid eller godkändgräns för det officiella provet.',
-    practiceLineReachedBadge: 'Övningsnivå nådd',
-    practiceLineReviewBadge: 'Fortsätt öva',
-    practiceLineStatus: (percent, thresholdPercent) =>
-      `${percent} % rätt · appens övningsgräns är ${thresholdPercent} %`,
-    practiceLineSummary: (thresholdPercent) =>
-      `Övningsgräns ${thresholdPercent} % i den här simuleringen`,
+    nextExamTitle: 'Nästa övningsprov',
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
     resultBadge: 'Övningsresultat',
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
-    resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    resultSubtitle:
+      'Förklaringar och genomgång visas först efter att övningsprovet har skickats in.',
     reviewBadge: 'Granska',
     rewardedAdStatus: {
       closed_without_reward: 'Det extra övningsprovet kräver att belöningsannonsen slutförs.',
       earned_reward: 'Extra övningsprov upplåst.',
       failed_to_load: 'Belöningsannonsen kunde inte laddas just nu.',
       show_failed: 'Belöningsannonsen kunde inte visas just nu.',
-      timed_out: 'Belöningsannonsen hann löpa ut innan det extra provet låstes upp.',
+      timed_out: 'Belöningsannonsen hann löpa ut innan det extra övningsprovet låstes upp.',
       unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
     },
     savedBadge: 'Sparat',
+    saveFailedBadge: 'Sparfel',
     savingBadge: 'Sparar',
     savingCompletion: 'Sparar dagens övningsprov.',
     selectedAnswerLabel: 'Valt svar',
-    startExtraExam: 'Lås upp extra prov',
+    startExtraExam: 'Lås upp extra övningsprov',
     startMockExam: 'Starta övningsprov',
-    startUnlockedExtraExam: 'Starta upplåst extra prov',
-    submitAccessibilityLabel: 'Skicka övningsprov',
-    submitLabel: 'Skicka prov',
+    startUnlockedExtraExam: 'Starta upplåst extra övningsprov',
+    submitAccessibilityLabel: 'Skicka in övningsprovet',
+    submitLabel: 'Skicka övningsprov',
     timedSimulationBadge: 'Tidsatt simulering',
     timeExpiredBadge: 'Tiden gick ut',
     timeExpiredResultNote: ' Obesvarade frågor räknas som fel och markeras som inte besvarade.',
@@ -149,72 +148,67 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   },
   en: {
     accessStatus: {
+      access_read_failed:
+        'Mock exam access could not be checked on this device. Try again in a moment.',
       ads_unavailable: 'Extra mock exams are unavailable right now.',
-      consent_required: 'Ad consent is needed before an extra exam can be unlocked.',
+      consent_required: 'Ad consent is needed before an extra mock exam can be unlocked.',
       free_exam_available: 'Daily free mock exam available.',
       premium_unlimited_mock_exams: 'Unlimited mock exams active.',
       remove_ads_active: 'Daily free mock exam used. Rewarded ads are hidden.',
-      rewarded_ad_available: 'Daily free mock exam used. Extra exam available.',
+      rewarded_ad_available: 'Daily free mock exam used. Extra mock exam available.',
       rewarded_exam_credit: 'Extra mock exam unlocked.',
     },
-    accessTitle: 'Exam access',
+    accessTitle: 'Mock exam access',
     activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
+      `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during mock exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} answered`,
     chapterBreakdownTitle: 'Chapter breakdown',
     checkingAccess: 'Checking mock exam access.',
     completionStoreFailure: 'Mock exam completion could not be stored on this device.',
+    completionRetryAccessibilityLabel: 'Retry saving mock exam result',
+    completionRetryLabel: 'Retry saving result',
     correctAnswerLabel: 'Correct answer',
     correctBadge: 'Correct',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
-    examResultTitle: 'Exam result',
+    examResultTitle: 'Mock exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
     heroSubtitle: (durationMinutes, questionCount) =>
-      `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
+      `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during mock exam`,
     mockExamTitle: 'Mock exam',
-    nextExamTitle: 'Next exam',
-    officialDetailsNote:
-      "UHR has not published the official test's exact question count, time limit, or pass line.",
-    practiceLineReachedBadge: 'Practice line reached',
-    practiceLineReviewBadge: 'Keep practicing',
-    practiceLineStatus: (percent, thresholdPercent) =>
-      `${percent}% correct · app practice line is ${thresholdPercent}%`,
-    practiceLineSummary: (thresholdPercent) =>
-      `Practice line ${thresholdPercent}% in this simulation`,
+    nextExamTitle: 'Next mock exam',
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
-    resultBadge: 'Mock exam result',
+    resultBadge: 'Mock exam score',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
-    resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
+    resultSubtitle: 'Explanations and review are shown only after the mock exam is submitted.',
     reviewBadge: 'Review',
     rewardedAdStatus: {
       closed_without_reward: 'Extra mock exam unlock needs a completed rewarded ad.',
       earned_reward: 'Extra mock exam unlocked.',
       failed_to_load: 'Rewarded ad could not load right now.',
       show_failed: 'Rewarded ad could not be shown right now.',
-      timed_out: 'Rewarded ad timed out before the extra exam unlocked.',
+      timed_out: 'Rewarded ad timed out before the extra mock exam unlocked.',
       unavailable: 'Rewarded ad is unavailable on this device right now.',
     },
     savedBadge: 'Saved',
+    saveFailedBadge: 'Save failed',
     savingBadge: 'Saving',
     savingCompletion: "Saving today's mock exam completion.",
     selectedAnswerLabel: 'Selected answer',
-    startExtraExam: 'Unlock extra exam',
+    startExtraExam: 'Unlock extra mock exam',
     startMockExam: 'Start mock exam',
-    startUnlockedExtraExam: 'Start unlocked extra exam',
-    submitAccessibilityLabel: 'Submit mock exam',
-    submitLabel: 'Submit exam',
+    startUnlockedExtraExam: 'Start unlocked extra mock exam',
+    submitAccessibilityLabel: 'Submit the mock exam',
+    submitLabel: 'Submit mock exam',
     timedSimulationBadge: 'Timed simulation',
     timeExpiredBadge: 'Time expired',
     timeExpiredResultNote: ' Unanswered questions count as incorrect and are marked Not answered.',
     unlockFailure: 'Extra mock exam could not be unlocked right now.',
   },
 };
-
-const PRACTICE_PASS_THRESHOLD_PERCENT = 75;
 
 function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage): string {
   return examRouteCopy[language].accessStatus[reason];
@@ -236,16 +230,27 @@ export default function Screen() {
     [examSessionId],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answerTimingsSeconds, setAnswerTimingsSeconds] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submittedAt, setSubmittedAt] = useState<string | null>(null);
   const [examUnlocked, setExamUnlocked] = useState(false);
+  const [examStartedAt, setExamStartedAt] = useState<string | null>(null);
   const [completionRecorded, setCompletionRecorded] = useState(false);
+  const [completionRetrying, setCompletionRetrying] = useState(false);
+  const [completionSaveFailed, setCompletionSaveFailed] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
+  const examStartedAtMsRef = useRef<number | null>(null);
+  const lastQuestionAnsweredAtMsRef = useRef<number | null>(null);
+  const reviewCardRefs = useRef<Record<string, { focus?: () => void } | null>>({});
+  const reviewCardYByQuestionIdRef = useRef<Record<string, number>>({});
+  const scrollViewRef = useRef<ScrollView | null>(null);
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
+  const completionPersistenceAttemptedRef = useRef(false);
   const copy = examRouteCopy[language];
   const {
     accessDecision,
@@ -259,42 +264,71 @@ export default function Screen() {
   const accessLoading = !accessReady || !entitlementsReady;
 
   useEffect(() => {
-    if (submitted || remainingSeconds <= 0) return undefined;
+    if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;
 
     const interval = setInterval(() => {
       setRemainingSeconds((current) => Math.max(0, current - 1));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [remainingSeconds, submitted]);
+  }, [examUnlocked, remainingSeconds, submitted]);
 
   useEffect(() => {
     if (
       shouldAutoSubmitExam({
+        examActive: examUnlocked,
         remainingSeconds,
         submitted,
         questionCount: examQuestions.length,
       })
     ) {
+      setSubmittedAt((current) => current ?? new Date().toISOString());
       setSubmitted(true);
     }
-  }, [examQuestions.length, remainingSeconds, submitted]);
-
-  useEffect(() => {
-    if (examUnlocked || submitted || accessLoading) return;
-    if (accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit') {
-      setExamUnlocked(true);
-    }
-  }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
+  }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
   const resultCorrectCount = result?.correctCount ?? 0;
   const resultTotalCount = result?.totalCount ?? 0;
-  const practiceLineReached = Boolean(result && result.percent >= PRACTICE_PASS_THRESHOLD_PERCENT);
   const chapterBreakdown = result
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
+  const completedExamSession = useMemo(() => {
+    if (!submitted || !submittedAt) return null;
+
+    return buildCompletedExamQuizSession({
+      answerTimingsSeconds,
+      answers,
+      completedAt: submittedAt,
+      questions: examQuestions,
+      score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
+      sessionId: examSessionId,
+      startedAt: examStartedAt ?? submittedAt,
+    });
+  }, [
+    answerTimingsSeconds,
+    answers,
+    examQuestions,
+    examSessionId,
+    examStartedAt,
+    resultCorrectCount,
+    resultTotalCount,
+    submitted,
+    submittedAt,
+  ]);
+  const completedExamDiagnostic = useMemo(() => {
+    if (!completedExamSession) return null;
+
+    const questionChapterIndex = Object.fromEntries(
+      examQuestions.map((question) => [question.id, question.chapterId]),
+    );
+
+    return buildExamDiagnostic({
+      questionChapterIndex,
+      session: completedExamSession,
+    });
+  }, [completedExamSession, examQuestions]);
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
@@ -313,14 +347,72 @@ export default function Screen() {
   const accessStatusText = accessLoading
     ? copy.checkingAccess
     : getAccessStatusText(accessDecision.reason, language);
+  const completionBadgeLabel = completionRecorded
+    ? copy.savedBadge
+    : completionSaveFailed
+      ? copy.saveFailedBadge
+      : copy.savingBadge;
 
   const resetExamAttempt = useCallback(() => {
+    completionPersistenceAttemptedRef.current = false;
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
+    setAnswerTimingsSeconds({});
     setSubmitted(false);
+    setSubmittedAt(null);
+    setExamStartedAt(startedAt.toISOString());
     setCompletionRecorded(false);
+    setCompletionRetrying(false);
+    setCompletionSaveFailed(false);
+    setAccessStatusMessage(null);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
+  }, []);
+
+  const handleSelectAnswer = useCallback(
+    (questionId: string, optionId: string) => {
+      const answeredAtMs = Date.now();
+      const startedAtMs = examStartedAtMsRef.current ?? answeredAtMs;
+      const previousAnswerAtMs = lastQuestionAnsweredAtMsRef.current ?? startedAtMs;
+
+      examStartedAtMsRef.current = startedAtMs;
+
+      if (!answerTimingsSeconds[questionId]) {
+        const elapsedSeconds = Math.max(
+          1,
+          Math.min(
+            defaultMockExamConfig.durationMinutes * 60,
+            Math.ceil((answeredAtMs - previousAnswerAtMs) / 1000),
+          ),
+        );
+
+        lastQuestionAnsweredAtMsRef.current = answeredAtMs;
+        setAnswerTimingsSeconds((current) => ({ ...current, [questionId]: elapsedSeconds }));
+      }
+
+      setAnswers((current) => ({ ...current, [questionId]: optionId }));
+    },
+    [answerTimingsSeconds],
+  );
+
+  const handleSubmitExam = useCallback(() => {
+    setSubmittedAt((current) => current ?? new Date().toISOString());
+    setSubmitted(true);
+  }, []);
+
+  const handleSelectHeatmapQuestion = useCallback((questionId: string) => {
+    const reviewY = reviewCardYByQuestionIdRef.current[questionId];
+    if (typeof reviewY === 'number') {
+      scrollViewRef.current?.scrollTo({
+        animated: true,
+        y: Math.max(0, reviewY - space[2]),
+      });
+    }
+
+    const reviewCard = reviewCardRefs.current[questionId];
+    if (reviewCard && typeof reviewCard.focus === 'function') {
+      setTimeout(() => reviewCard.focus?.(), 250);
+    }
   }, []);
 
   const handleStartAccessibleExam = useCallback(async () => {
@@ -369,24 +461,36 @@ export default function Screen() {
   ]);
 
   useEffect(() => {
-    if (!submitted || completionRecorded) return undefined;
+    if (!submitted || completionRecorded || completionPersistenceAttemptedRef.current) {
+      return undefined;
+    }
 
     let isMounted = true;
+    completionPersistenceAttemptedRef.current = true;
     recordMockExamSession({
+      answers: completedExamSession.answers.map((answer) => ({
+        questionId: answer.questionId,
+        isCorrect: answer.isCorrect,
+        timeSpentSeconds: answer.timeSpentSeconds,
+      })),
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: new Date().toISOString(),
+      completedAt: completedExamSession.completedAt,
       correctCount: resultCorrectCount,
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion()
+    void recordExamCompletion(examSessionId)
       .then(() => {
-        if (isMounted) setCompletionRecorded(true);
+        if (!isMounted) return;
+        setCompletionRecorded(true);
+        setCompletionSaveFailed(false);
+        setAccessStatusMessage(null);
       })
       .catch(() => {
         if (!isMounted) return;
-        setCompletionRecorded(true);
+        setCompletionRecorded(false);
+        setCompletionSaveFailed(true);
         setAccessStatusMessage(copy.completionStoreFailure);
       });
 
@@ -395,6 +499,7 @@ export default function Screen() {
     };
   }, [
     completionRecorded,
+    completedExamSession,
     copy.completionStoreFailure,
     examSessionId,
     recordExamCompletion,
@@ -403,6 +508,25 @@ export default function Screen() {
     resultTotalCount,
     submitted,
   ]);
+
+  const handleRetryCompletionSave = useCallback(async () => {
+    if (completionRecorded || completionRetrying) return;
+
+    setCompletionRetrying(true);
+    setAccessStatusMessage(null);
+
+    try {
+      await recordExamCompletion();
+      setCompletionRecorded(true);
+      setCompletionSaveFailed(false);
+    } catch {
+      setCompletionRecorded(false);
+      setCompletionSaveFailed(true);
+      setAccessStatusMessage(copy.completionStoreFailure);
+    } finally {
+      setCompletionRetrying(false);
+    }
+  }, [completionRecorded, completionRetrying, copy.completionStoreFailure, recordExamCompletion]);
 
   if (!result && !examUnlocked) {
     return (
@@ -443,13 +567,13 @@ export default function Screen() {
 
   if (result) {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.hero}>
-          <Badge
-            tone={
-              result.percent >= PRACTICE_PASS_THRESHOLD_PERCENT && !endedByTime ? 'green' : 'orange'
-            }
-          >
+          <Badge tone={endedByTime ? 'orange' : 'blue'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
           </Badge>
           <Text accessibilityRole="header" style={styles.title}>
@@ -461,39 +585,56 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <View style={styles.resultCard}>
-          <Text style={styles.metric}>{result.percent}%</Text>
-          <Text style={styles.subtitle}>
-            {copy.correctCount(result.correctCount, result.totalCount)}
-          </Text>
-          <View style={styles.resultStatusRow}>
-            <Badge tone={practiceLineReached ? 'green' : 'orange'}>
-              {practiceLineReached ? copy.practiceLineReachedBadge : copy.practiceLineReviewBadge}
-            </Badge>
-            <Text style={styles.resultStatusText}>
-              {copy.practiceLineStatus(result.percent, PRACTICE_PASS_THRESHOLD_PERCENT)}
-            </Text>
-          </View>
-          <Text style={styles.resultNote}>
-            {copy.practiceLineSummary(PRACTICE_PASS_THRESHOLD_PERCENT)}
-          </Text>
-          <Text style={styles.resultNote}>{copy.officialDetailsNote}</Text>
-          <Text style={styles.resultNote}>{copy.resultNote}</Text>
-        </View>
+        <ResultSummary
+          correctCount={result.correctCount}
+          languageOverride={language}
+          metricLabel={copy.correctCount(result.correctCount, result.totalCount)}
+          status={endedByTime ? 'review' : undefined}
+          subtitle={copy.resultNote}
+          totalCount={result.totalCount}
+        />
+        {completedExamSession && completedExamDiagnostic ? (
+          <MockExamTimeHeatmap
+            answers={completedExamSession.answers}
+            language={language}
+            medianMs={completedExamDiagnostic.medianMs}
+            onSelectQuestion={handleSelectHeatmapQuestion}
+          />
+        ) : null}
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
               {copy.nextExamTitle}
             </Text>
-            <Badge tone={accessDecision.canStartExam ? 'green' : 'warm'}>
-              {completionRecorded ? copy.savedBadge : copy.savingBadge}
+            <Badge
+              tone={
+                completionRecorded ? (accessDecision.canStartExam ? 'green' : 'warm') : 'orange'
+              }
+            >
+              {completionBadgeLabel}
             </Badge>
           </View>
-          <Text style={styles.subtitle}>
-            {completionRecorded ? accessStatusText : copy.savingCompletion}
-          </Text>
+          {!completionSaveFailed ? (
+            <Text style={styles.subtitle}>
+              {completionRecorded ? accessStatusText : copy.savingCompletion}
+            </Text>
+          ) : null}
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
+          ) : null}
+          {completionSaveFailed ? (
+            <Button
+              aria-disabled={completionRetrying}
+              accessibilityLabel={copy.completionRetryAccessibilityLabel}
+              accessibilityRole="button"
+              accessibilityState={{ busy: completionRetrying, disabled: completionRetrying }}
+              disabled={completionRetrying}
+              onPress={handleRetryCompletionSave}
+              style={styles.actionButton}
+              variant="danger"
+            >
+              {copy.completionRetryLabel}
+            </Button>
           ) : null}
           <Button
             aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
@@ -532,7 +673,18 @@ export default function Screen() {
           {copy.questionReviewTitle}
         </Text>
         {reviewItems.map((item, index) => (
-          <View key={item.questionId} style={styles.reviewCard}>
+          <View
+            key={item.questionId}
+            onLayout={(event) => {
+              reviewCardYByQuestionIdRef.current[item.questionId] = event.nativeEvent.layout.y;
+            }}
+            ref={(node) => {
+              reviewCardRefs.current[item.questionId] = node as unknown as {
+                focus?: () => void;
+              } | null;
+            }}
+            style={styles.reviewCard}
+          >
             <View style={styles.reviewHeader}>
               <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
               <Badge tone={item.isCorrect ? 'green' : 'orange'}>
@@ -563,7 +715,6 @@ export default function Screen() {
             <ExplanationPanel
               explanationEn={item.explanationEn}
               explanationSv={item.explanationSv}
-              explanationText={item.explanationText}
               language={language}
             />
             <UHRReferenceCard language={language} reference={item.uhrReference} />
@@ -612,23 +763,20 @@ export default function Screen() {
           <View style={styles.options}>
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
-              const optionText = getQuestionOptionText(option, language);
+              const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <Pressable
+                <OptionCard
                   key={option.id}
+                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
-                  onPress={() =>
-                    setAnswers((current) => ({ ...current, [question.id]: option.id }))
-                  }
-                  style={[styles.option, isSelected ? styles.optionSelected : null]}
-                >
-                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
-                    {optionText}
-                  </Text>
-                </Pressable>
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected, selected: isSelected }}
+                  label={optionText}
+                  languageOverride={language}
+                  onPress={() => handleSelectAnswer(question.id, option.id)}
+                  state={isSelected ? 'selected' : 'idle'}
+                />
               );
             })}
           </View>
@@ -641,7 +789,7 @@ export default function Screen() {
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSubmit }}
         disabled={!canSubmit}
-        onPress={() => setSubmitted(true)}
+        onPress={handleSubmitExam}
         style={styles.actionButton}
       >
         {copy.submitLabel}
@@ -728,54 +876,8 @@ const styles = StyleSheet.create({
   options: {
     gap: space[1],
   },
-  option: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space[1.5],
-  },
-  optionSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  optionText: {
-    color: colors.textSoft,
-    fontSize: typography.navButton.fontSize,
-  },
-  optionTextSelected: {
-    color: colors.badgeBlueText,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
   actionButton: {
     minHeight: space[5] + space[0.5],
-  },
-  resultCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    gap: space[1],
-    padding: space[2],
-  },
-  metric: {
-    color: colors.text,
-    fontSize: typography.subHeadingLarge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  resultNote: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  resultStatusRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  resultStatusText: {
-    color: colors.text,
-    flex: 1,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
   },
   breakdownRow: {
     alignItems: 'center',
