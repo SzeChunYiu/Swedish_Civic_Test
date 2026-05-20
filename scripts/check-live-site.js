@@ -11,6 +11,51 @@ const {
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
 const LOCAL_SITE_QUESTIONS_PATH = path.join(__dirname, '..', 'site', 'questions.js');
+const PERMISSIONS_POLICY_VALUE = [
+  'accelerometer=()',
+  'autoplay=()',
+  'bluetooth=()',
+  'camera=()',
+  'display-capture=()',
+  'encrypted-media=()',
+  'fullscreen=()',
+  'geolocation=()',
+  'gyroscope=()',
+  'hid=()',
+  'idle-detection=()',
+  'local-fonts=()',
+  'magnetometer=()',
+  'microphone=()',
+  'midi=()',
+  'payment=()',
+  'publickey-credentials-get=()',
+  'screen-wake-lock=()',
+  'serial=()',
+  'usb=()',
+  'xr-spatial-tracking=()',
+].join(', ');
+const REQUIRED_SECURITY_HEADERS = [
+  {
+    key: 'x-content-type-options',
+    name: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'referrer-policy',
+    name: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'x-frame-options',
+    name: 'X-Frame-Options',
+    value: 'DENY',
+  },
+  {
+    key: 'permissions-policy',
+    name: 'Permissions-Policy',
+    value: PERMISSIONS_POLICY_VALUE,
+  },
+];
 
 function normalizeBaseUrl(input) {
   const raw = String(input || process.env.SITE_LIVE_URL || '').trim();
@@ -23,7 +68,7 @@ function normalizeBaseUrl(input) {
   return url.toString().replace(/\/$/, '');
 }
 
-async function fetchText(baseUrl, assetPath) {
+async function fetchAsset(baseUrl, assetPath) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
   const url = `${baseUrl}/${assetPath.replace(/^\//, '')}`;
@@ -33,10 +78,14 @@ async function fetchText(baseUrl, assetPath) {
     if (!response.ok) {
       throw new Error(`${url} returned HTTP ${response.status}`);
     }
-    return await response.text();
+    return { headers: response.headers, text: await response.text(), url };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchText(baseUrl, assetPath) {
+  return (await fetchAsset(baseUrl, assetPath)).text;
 }
 
 function readStaticQuestionCount(source) {
@@ -106,21 +155,59 @@ function containsAll(source, needles) {
   return needles.every((needle) => source.includes(needle));
 }
 
+function normalizeHeaderValue(value) {
+  return String(value ?? '')
+    .trim()
+    .replace(/\s*,\s*/g, ', ')
+    .replace(/\s+/g, ' ');
+}
+
+function findRequiredSecurityHeaderIssues(headers) {
+  return REQUIRED_SECURITY_HEADERS.flatMap((expected) => {
+    const actual = headers.get(expected.key);
+    if (!actual) {
+      return [`missing ${expected.name}`];
+    }
+
+    const normalizedActual = normalizeHeaderValue(actual).toLowerCase();
+    const normalizedExpected = normalizeHeaderValue(expected.value).toLowerCase();
+    if (normalizedActual !== normalizedExpected) {
+      return [
+        `${expected.name} expected "${expected.value}", found "${normalizeHeaderValue(actual)}"`,
+      ];
+    }
+
+    return [];
+  });
+}
+
 async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [index, styles, practice, ebook, questions] = await Promise.all([
-    fetchText(baseUrl, 'index.html'),
-    fetchText(baseUrl, 'styles.css'),
-    fetchText(baseUrl, 'practice.js'),
-    fetchText(baseUrl, 'ebook.js'),
-    fetchText(baseUrl, 'questions.js'),
+  const [indexAsset, stylesAsset, practiceAsset, ebookAsset, questionsAsset] = await Promise.all([
+    fetchAsset(baseUrl, 'index.html'),
+    fetchAsset(baseUrl, 'styles.css'),
+    fetchAsset(baseUrl, 'practice.js'),
+    fetchAsset(baseUrl, 'ebook.js'),
+    fetchAsset(baseUrl, 'questions.js'),
   ]);
+  const index = indexAsset.text;
+  const styles = stylesAsset.text;
+  const practice = practiceAsset.text;
+  const ebook = ebookAsset.text;
+  const questions = questionsAsset.text;
 
   const questionCount = readStaticQuestionCount(questions);
   const questionBankHash = hashStaticQuestionBank(questions);
   const checks = [];
+
+  const staticSecurityHeaderIssues = findRequiredSecurityHeaderIssues(indexAsset.headers);
+  checks.push(
+    staticSecurityHeaderIssues.length === 0
+      ? pass('static security headers')
+      : fail('static security headers', staticSecurityHeaderIssues.join('; ')),
+  );
 
   checks.push(
     questionCount === requiredQuestionCount
@@ -220,9 +307,12 @@ if (require.main === module) {
 
 module.exports = {
   checkLiveSite,
+  fetchText,
+  findRequiredSecurityHeaderIssues,
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  REQUIRED_SECURITY_HEADERS,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 };

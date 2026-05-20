@@ -42,9 +42,32 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
   assert.match(source, /entitlementsReady/);
   assert.match(source, /\{entitlementsReady \? \(\s*<PremiumBanner/);
+  assert.match(source, /import \{ ProPaywall \}/);
+  assert.match(source, /<ProPaywall/);
+  assert.match(source, /alreadyAdFree=\{monetizationEntitlements\.adsDisabled\}/);
+  assert.match(source, /onEntitlementsChange=\{\(nextEntitlements\) =>/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Ändra mål, språk och ljud/);
   assert.match(source, /Edit goal, language, and audio/);
+});
+
+test('profile route keeps Pro comparison separate from the Remove Ads purchase flow', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  const proPaywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+    'utf8',
+  );
+  const premiumBannerIndex = source.indexOf('<PremiumBanner');
+  const proPaywallIndex = source.indexOf('<ProPaywall');
+
+  assert.ok(premiumBannerIndex >= 0, 'Profile should still render the Remove Ads banner');
+  assert.ok(proPaywallIndex > premiumBannerIndex, 'Pro comparison should follow Remove Ads');
+  assert.match(source, /runtimeOptions=\{purchaseRuntime\}/);
+  assert.match(proPaywallSource, /buyProLifetime/);
+  assert.match(proPaywallSource, /restoreProLifetime/);
+  assert.doesNotMatch(proPaywallSource, /buyRemoveAds|restoreRemoveAdsPurchase/);
+  assert.match(proPaywallSource, /Remove Ads for 29 SEK remains separate/);
+  assert.match(proPaywallSource, /Pro ändrar inte den vägen/);
 });
 
 test('profile premium banner has distinct paid-state copy and recovery action', () => {
