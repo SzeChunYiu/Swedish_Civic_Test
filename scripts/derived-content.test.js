@@ -580,7 +580,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is that so|have they|har de/i,
+    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is\b|En anledning är\b|have they|har de/i,
   );
   assert.doesNotMatch(text, /are The/);
   assert.ok(
@@ -632,53 +632,85 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   const sourceQ002 = sourceQuestions.find((question) => question.id === 'q002');
   assert.ok(sourceQ002, 'q002 source question should exist');
   const expectedRows = {
-    q161: [
+    [generatedQuestionId(sourceQuestions, 'q002', 'falseStatement')]: [
       'Sveriges nordligaste del ligger inte norr om polcirkeln.',
       "Sweden's northernmost part does not lie north of the Arctic Circle.",
     ],
-    q177: [
+    [generatedQuestionId(sourceQuestions, 'q006', 'falseStatement')]: [
       'Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat.',
       "The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
     ],
-    q245: [
+    [generatedQuestionId(sourceQuestions, 'q023', 'falseStatement')]: [
       'Riksdagen väljer inte statsminister.',
       'The Riksdag does not choose the prime minister.',
     ],
-    q265: [
+    [generatedQuestionId(sourceQuestions, 'q028', 'falseStatement')]: [
       'Oppositionen ska inte granska regeringens arbete och föreslå annan politik.',
       'The opposition should not scrutinize the government’s work and propose alternative policies.',
     ],
-    q276: [
+    [generatedQuestionId(sourceQuestions, 'q031', 'trueStatement')]: [
       'Politiker i Sverige behöver inte följa resultatet av en folkomröstning.',
       'Politicians in Sweden do not have to follow the result of a referendum.',
     ],
-    q277: [
+    [generatedQuestionId(sourceQuestions, 'q031', 'falseStatement')]: [
       'Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning.',
       'Politicians in Sweden are required to follow the result of a referendum.',
     ],
-    q341: [
+    [generatedQuestionId(sourceQuestions, 'q047', 'falseStatement')]: [
       'Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym.',
       'A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.',
     ],
-    q349: [
+    [generatedQuestionId(sourceQuestions, 'q049', 'falseStatement')]: [
       'Public service-företag ska inte vara oberoende av politiska och andra intressen.',
       'Public service companies should not be independent of political and other interests.',
     ],
-    q449: [
+    [generatedQuestionId(sourceQuestions, 'q074', 'falseStatement')]: [
       'Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',
       'Swedish municipalities do not have to offer older people support and help.',
     ],
-    q517: [
+    [generatedQuestionId(sourceQuestions, 'q091', 'falseStatement')]: [
       'Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret.',
       'Swedish total defence does not include both military defence and civil defence.',
     ],
-    q529: [
+    [generatedQuestionId(sourceQuestions, 'q094', 'falseStatement')]: [
       'År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt.',
       'In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.',
     ],
-    q725: [
+    [generatedQuestionId(sourceQuestions, 'q143', 'falseStatement')]: [
       'Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
       'Sweden is not usually divided into Götaland, Svealand, and Norrland.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q147', 'trueStatement')]: [
+      'Demokratin blir starkare när många röstar, engagerar sig och skaffar kunskap om samhällsfrågor.',
+      'Democracy becomes stronger when many people vote, get involved, and learn about social issues.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q147', 'falseStatement')]: [
+      'Demokratin blir starkare när färre människor deltar i val.',
+      'Democracy becomes stronger when fewer people take part in elections.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q148', 'trueStatement')]: [
+      'En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det kan skapa konflikter och skrämma människor från demokratisk debatt.',
+      'One reason false information and hate can be a threat to democracy is that it can create conflicts and scare people away from democratic debate.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q148', 'falseStatement')]: [
+      'En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det gör att alla automatiskt får mer kunskap.',
+      'One reason false information and hate can be a threat to democracy is that it automatically gives everyone more knowledge.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q149', 'trueStatement')]: [
+      'Integration i ett demokratiskt samhälle är att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga.',
+      'Integration in a democratic society means people with different backgrounds and economic situations live closer to one another and feel included.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q149', 'falseStatement')]: [
+      'Integration i ett demokratiskt samhälle är att människor lever helt åtskilda efter inkomst eller etnisk bakgrund.',
+      'Integration in a democratic society means people live completely separated by income or ethnic background.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q154', 'trueStatement')]: [
+      'En anledning till att källkritik behövs när man använder medier är att falska uppgifter kan spridas snabbt och påverka människors åsikter.',
+      "One reason source criticism is needed when using media is that false information can spread quickly and affect people's opinions.",
+    ],
+    [generatedQuestionId(sourceQuestions, 'q154', 'falseStatement')]: [
+      'En anledning till att källkritik behövs när man använder medier är att allt som publiceras alltid är korrekt.',
+      'One reason source criticism is needed when using media is that everything that is published is always correct.',
     ],
   };
 
@@ -700,15 +732,15 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   const sourceQ002FalseStatementId = generatedQuestionId(sourceQuestions, 'q002', 'falseStatement');
 
   assert.equal(
-    byId.get('q161')?.explanationSv,
+    byId.get(sourceQ002FalseStatementId)?.explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
-    byId.get('q161')?.explanationEn,
+    byId.get(sourceQ002FalseStatementId)?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(byId.get('q160')?.explanationSv, sourceQ002.explanationSv);
-  assert.equal(byId.get('q160')?.explanationEn, sourceQ002.explanationEn);
+  assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationSv, sourceQ002.explanationSv);
+  assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationEn, sourceQ002.explanationEn);
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
@@ -783,9 +815,6 @@ test('generated residual scan includes true/false rows beyond the old q720 ceili
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions, sourceQuestions, generatedPublishedQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
-  const generatedIdShift = sourceQuestions.length - 149;
-  const shiftGeneratedId = (id) =>
-    `q${String(Number(id.replace(/^q/, '')) + generatedIdShift).padStart(3, '0')}`;
 
   const expectedRows = {
     [generatedQuestionId(sourceQuestions, 'q016', 'trueStatement')]: [
@@ -801,11 +830,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'One reason voters vote behind a screen at the polling station is that votes are counted faster.',
     ],
     [generatedQuestionId(sourceQuestions, 'q044', 'trueStatement')]: [
-      'Från 15 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
+      'Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.',
     ],
     [generatedQuestionId(sourceQuestions, 'q044', 'falseStatement')]: [
-      'Från 13 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
+      'Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.',
     ],
     [generatedQuestionId(sourceQuestions, 'q046', 'trueStatement')]: [
@@ -821,12 +850,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'The United Nations was created after the Second World War to decide Swedish municipal taxes.',
     ],
     [generatedQuestionId(sourceQuestions, 'q052', 'trueStatement')]: [
-      'FN:s förklaring om de mänskliga rättigheterna presenterades 1948 och innehåller 30 artiklar.',
-      'The UN Universal Declaration of Human Rights was presented in 1948 and contains 30 articles.',
+      'FN:s förklaring om de mänskliga rättigheterna presenterades 1948.',
+      'The UN Universal Declaration of Human Rights was presented in 1948.',
     ],
     [generatedQuestionId(sourceQuestions, 'q052', 'falseStatement')]: [
-      'FN:s förklaring om de mänskliga rättigheterna presenterades 1918 och gäller bara Europa.',
-      'The UN Universal Declaration of Human Rights was presented in 1918 and applies only to Europe.',
+      'FN:s förklaring om de mänskliga rättigheterna presenterades 1918.',
+      'The UN Universal Declaration of Human Rights was presented in 1918.',
     ],
     [generatedQuestionId(sourceQuestions, 'q054', 'trueStatement')]: [
       'Våld i nära relationer och hedersrelaterat våld och förtryck i Sverige är brottsligt enligt svensk lag.',
@@ -1016,18 +1045,17 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Julen firar traditionellt vårens ankomst inom kristendomen.',
       'Christmas traditionally celebrates the arrival of spring in Christianity.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q148', 'trueStatement')]: [
-      'Falsk information och hat kan hota demokratin eftersom sådant kan skapa konflikter och skrämma människor från demokratisk debatt.',
-      'False information and hate can threaten democracy because they can create conflicts and scare people away from democratic debate.',
+    [generatedQuestionId(sourceQuestions, 'q160', 'trueStatement')]: [
+      'FN:s förklaring om de mänskliga rättigheterna innehåller 30 artiklar.',
+      'The UN Universal Declaration of Human Rights contains 30 articles.',
     ],
-    [generatedQuestionId(sourceQuestions, 'q148', 'falseStatement')]: [
-      'Falsk information och hat ger automatiskt alla mer kunskap.',
-      'False information and hate automatically give everyone more knowledge.',
+    [generatedQuestionId(sourceQuestions, 'q160', 'falseStatement')]: [
+      'FN:s förklaring om de mänskliga rättigheterna innehåller 20 artiklar.',
+      'The UN Universal Declaration of Human Rights contains 20 articles.',
     ],
   };
 
-  for (const [baseId, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    const id = shiftGeneratedId(baseId);
+  for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
     assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
     assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
   }
@@ -1042,7 +1070,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|One reason is(?: that)? It|En anledning är(?: att)? Det|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is\b|En anledning är\b|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that|^Many people voting|^Fewer people taking|^People with [^.?!]* living closer|^People living completely separated/im,
   );
   assert.doesNotMatch(
     residualText,
