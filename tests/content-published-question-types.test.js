@@ -30,6 +30,8 @@ const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
 const authoredWayToPromptPattern = /\b(?:Vilket är ett sätt att|Which is a way to)\b/i;
+const q026OldMunicipalResponsibilitiesPromptPattern =
+  /\b(?:Vilket exempel beskriver kommunernas ansvar|Which example describes municipal responsibilities)\b/i;
 const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
 const sourceRecallPromptPattern =
@@ -947,6 +949,112 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q070 combines tax liability and VAT purchase taxation in one learner-facing item/,
+  );
+});
+
+test('municipal responsibilities source and generated prompts ask directly about services', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const textForQuestion = (question) =>
+    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en]
+      .concat((question.opts || []).flatMap((option) => [option.sv, option.en]))
+      .join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) =>
+      q026OldMunicipalResponsibilitiesPromptPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) =>
+      q026OldMunicipalResponsibilitiesPromptPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q026OldMunicipalResponsibilitiesPromptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const q026 = generatedSiteBank.find((question) => question.id === 'q026');
+  const q026SectionPractice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'singleChoice'),
+  );
+  const q026Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'judgement'),
+  );
+  const q026True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'trueStatement'),
+  );
+  const q026False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'falseStatement'),
+  );
+
+  assert.ok(q026, 'q026 should be published in the site bank');
+  assert.equal(q026.q.sv, 'Vilka vardagstjänster ansvarar kommuner för?');
+  assert.equal(q026.q.en, 'Which everyday services are municipalities responsible for?');
+  assert.ok(q026SectionPractice, 'q026 section-practice generated variant should be published');
+  assert.match(q026SectionPractice.q.sv, /Vilka vardagstjänster ansvarar kommuner för/);
+  assert.match(
+    q026SectionPractice.q.en,
+    /Which everyday services are municipalities responsible for/,
+  );
+  assert.ok(q026Judgement, 'q026 judgement generated variant should be published');
+  assert.match(q026Judgement.q.sv, /Vilka vardagstjänster ansvarar kommuner för/);
+  assert.match(q026Judgement.q.en, /Which everyday services are municipalities responsible for/);
+  assert.equal(
+    q026True?.q.sv,
+    'Kommuner ansvarar för vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning.',
+  );
+  assert.equal(
+    q026True?.q.en,
+    'Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.',
+  );
+  assert.equal(q026False?.q.sv, 'Kommuner ansvarar för att skicka ambassadörer till andra länder.');
+  assert.equal(
+    q026False?.q.en,
+    'Municipalities are responsible for sending ambassadors to other countries.',
+  );
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('municipal responsibilities prompt guard rejects the old answer-key phrasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vilka vardagstjänster ansvarar kommuner för?',
+        'Vilket exempel beskriver kommunernas ansvar?',
+      )
+      .replace(
+        'Which everyday services are municipalities responsible for?',
+        'Which example describes municipal responsibilities?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q026 source prompt asks about the answer instead of the civic concept/,
   );
 });
 
