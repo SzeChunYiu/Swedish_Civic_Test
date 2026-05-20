@@ -1,6 +1,6 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
 import { isUhrQuestion } from '../content/provenance';
-import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
+import { hashString, shuffleQuestionOptionsForSession } from './answerOptionShuffle';
 
 export type ExamOptions = {
   questionCount?: number;
@@ -73,6 +73,19 @@ function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
   );
 }
 
+function rotateBucketForSession(
+  bucket: PracticeQuestion[],
+  chapterId: string,
+  sessionId: string,
+): PracticeQuestion[] {
+  if (bucket.length < 2) return bucket;
+
+  const offset = hashString(`${sessionId}:${chapterId}:question-rotation`) % bucket.length;
+  if (offset === 0) return bucket;
+
+  return [...bucket.slice(offset), ...bucket.slice(0, offset)];
+}
+
 export function generateExam(
   questions: PracticeQuestion[] = [],
   { questionCount = 20, sessionId = 'mock-exam' }: ExamOptions = {},
@@ -86,13 +99,16 @@ export function generateExam(
     chapterBuckets.set(question.chapterId, bucket);
   }
 
+  const sessionBuckets = [...chapterBuckets.entries()].map(([chapterId, bucket]) =>
+    rotateBucketForSession(bucket, chapterId, sessionId),
+  );
   const selected: PracticeQuestion[] = [];
   let round = 0;
 
   while (selected.length < targetCount) {
     let addedQuestionThisRound = false;
 
-    for (const bucket of chapterBuckets.values()) {
+    for (const bucket of sessionBuckets) {
       const question = bucket[round];
       if (!question) continue;
 
