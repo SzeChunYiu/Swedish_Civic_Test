@@ -1290,3 +1290,12 @@ Verification: clean SETUP worktree rebased onto current `origin/main` `e7dceace`
 PR: pending from `task/audio-feedback-e2e-1779243568` at handoff commit time.
 Blocked? no for this rendered audio-feedback guard; no Vercel CLI was run.
 Next suggested validator action: inspect the Playwright speech stub and feedback-control assertions, then rerun the focused exported-web build/e2e, audio parity tests, and content validation before accepting `AUDIO-FEEDBACK-E2E-GUARD-1`.
+
+## Iteration 265 - 2026-05-20
+
+Task completed: SEARCH-RESULT-SUMMARY-LIVE-REGION-1 - made the Search result count a polite live region on native/web and added source plus exported-web guards for Swedish and English count changes.
+Artifacts changed: `app/search.tsx`, `scripts/validate-content.js`, `tests/content-search-route-accessibility-parity.test.js`, `tests/e2e/search-accessibility.spec.ts`, `codex-tasks/claims.txt`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main`; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-search-route-accessibility-parity.test.js tests/content-search-route-copy-parity.test.js scripts/ui-effects.test.js --test-name-pattern 'search|Search|glossary|Glossary|accessibility|result|summary|live'` exit 0 with 77/77 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `searchRouteCopyParityValidated:true` and 795 questions; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 E2E_PORT=4189 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/search-accessibility.spec.ts --workers=1` exit 0 with 2/2 passing.
+PR: pending from `task/setup/search-result-summary-live-region-1779254600` at handoff commit time.
+Blocked? no for this Search accessibility atom; the earlier unclaimed example-describes P0 cleanup remains blocked until the claimed q026 direct-prompt branch reaches current main.
+Next suggested validator action: inspect Search result summary live-region props and rerun the focused source/browser checks plus content validation before accepting `SEARCH-RESULT-SUMMARY-LIVE-REGION-1`.
