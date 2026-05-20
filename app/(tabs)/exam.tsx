@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { ResultSummary } from '../../components/ResultSummary';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -26,6 +28,7 @@ import {
 import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
+import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -52,6 +55,9 @@ type ExamRouteCopy = {
   resultBadge: string;
   resultNote: string;
   resultSubtitle: string;
+  rewardPreviewAction: string;
+  rewardPreviewBody: string;
+  rewardPreviewTitle: string;
   reviewBadge: string;
   rewardedAdStatus: Record<RewardedExtraExamAdStatus, string>;
   savedBadge: string;
@@ -106,6 +112,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    rewardPreviewAction: 'Slutför förhandsvisning',
+    rewardPreviewBody:
+      'På webben låser du upp ett extra övningsprov genom att slutföra den här förhandsvisningen. Det är en annonsförhandsvisning, inte ett officiellt eller betalt prov.',
+    rewardPreviewTitle: 'Förhandsvisning för extra prov',
     reviewBadge: 'Granska',
     rewardedAdStatus: {
       closed_without_reward: 'Det extra övningsprovet kräver att belöningsannonsen slutförs.',
@@ -163,6 +173,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
+    rewardPreviewAction: 'Complete preview',
+    rewardPreviewBody:
+      'On web, an extra mock exam unlocks only after this preview is completed. It is an ad preview, not an official or paid exam.',
+    rewardPreviewTitle: 'Extra exam preview',
     reviewBadge: 'Review',
     rewardedAdStatus: {
       closed_without_reward: 'Extra mock exam unlock needs a completed rewarded ad.',
@@ -216,6 +230,7 @@ export default function Screen() {
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
+  const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
   const {
@@ -259,6 +274,8 @@ export default function Screen() {
   }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
+  const resultCorrectCount = result?.correctCount ?? 0;
+  const resultTotalCount = result?.totalCount ?? 0;
   const chapterBreakdown = result
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
@@ -268,8 +285,11 @@ export default function Screen() {
   const endedByTime = Boolean(result && remainingSeconds <= 0);
   const shouldAttemptRewardedAd =
     accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
+  const usesWebRewardPreview = Platform.OS === 'web' && shouldAttemptRewardedAd;
   const startAccessibleExamLabel = shouldAttemptRewardedAd
-    ? copy.startExtraExam
+    ? usesWebRewardPreview
+      ? copy.rewardPreviewAction
+      : copy.startExtraExam
     : accessDecision.reason === 'rewarded_exam_credit'
       ? copy.startUnlockedExtraExam
       : copy.startMockExam;
@@ -301,7 +321,10 @@ export default function Screen() {
       if (accessDecision.reason === 'rewarded_exam_credit') {
         await consumeRewardedExamCredit();
       } else if (shouldAttemptRewardedAd) {
-        const rewardedAdResult = await showRewardedExtraExamAd({ entitlements });
+        const rewardedAdResult = await showRewardedExtraExamAd({
+          confirmReward: usesWebRewardPreview ? () => true : undefined,
+          entitlements,
+        });
 
         if (rewardedAdResult.status !== 'earned_reward') {
           setAccessStatusMessage(getRewardedAdStatusText(rewardedAdResult.status, language));
@@ -334,13 +357,22 @@ export default function Screen() {
     resetExamAttempt,
     shouldAttemptRewardedAd,
     startingAccessibleExam,
+    usesWebRewardPreview,
   ]);
 
   useEffect(() => {
     if (!submitted || completionRecorded) return undefined;
 
     let isMounted = true;
-    void recordExamCompletion()
+    recordMockExamSession({
+      sessionId: examSessionId,
+      score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
+      completedAt: new Date().toISOString(),
+      correctCount: resultCorrectCount,
+      totalCount: resultTotalCount,
+    });
+
+    void recordExamCompletion(examSessionId)
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -353,7 +385,16 @@ export default function Screen() {
     return () => {
       isMounted = false;
     };
-  }, [completionRecorded, copy.completionStoreFailure, recordExamCompletion, submitted]);
+  }, [
+    completionRecorded,
+    copy.completionStoreFailure,
+    examSessionId,
+    recordExamCompletion,
+    recordMockExamSession,
+    resultCorrectCount,
+    resultTotalCount,
+    submitted,
+  ]);
 
   if (!result && !examUnlocked) {
     return (
@@ -373,6 +414,14 @@ export default function Screen() {
             {copy.accessTitle}
           </Text>
           <Text style={styles.subtitle}>{accessStatusText}</Text>
+          {usesWebRewardPreview ? (
+            <View style={styles.rewardPreviewCard}>
+              <Text accessibilityRole="header" style={styles.rewardPreviewTitle}>
+                {copy.rewardPreviewTitle}
+              </Text>
+              <Text style={styles.rewardPreviewBody}>{copy.rewardPreviewBody}</Text>
+            </View>
+          ) : null}
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
@@ -396,7 +445,7 @@ export default function Screen() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
+          <Badge tone={endedByTime ? 'orange' : 'blue'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
           </Badge>
           <Text accessibilityRole="header" style={styles.title}>
@@ -408,13 +457,14 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <View style={styles.resultCard}>
-          <Text style={styles.metric}>{result.percent}%</Text>
-          <Text style={styles.subtitle}>
-            {copy.correctCount(result.correctCount, result.totalCount)}
-          </Text>
-          <Text style={styles.resultNote}>{copy.resultNote}</Text>
-        </View>
+        <ResultSummary
+          correctCount={result.correctCount}
+          languageOverride={language}
+          metricLabel={copy.correctCount(result.correctCount, result.totalCount)}
+          status={endedByTime ? 'review' : undefined}
+          subtitle={copy.resultNote}
+          totalCount={result.totalCount}
+        />
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -427,6 +477,14 @@ export default function Screen() {
           <Text style={styles.subtitle}>
             {completionRecorded ? accessStatusText : copy.savingCompletion}
           </Text>
+          {completionRecorded && usesWebRewardPreview ? (
+            <View style={styles.rewardPreviewCard}>
+              <Text accessibilityRole="header" style={styles.rewardPreviewTitle}>
+                {copy.rewardPreviewTitle}
+              </Text>
+              <Text style={styles.rewardPreviewBody}>{copy.rewardPreviewBody}</Text>
+            </View>
+          ) : null}
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
@@ -548,21 +606,20 @@ export default function Screen() {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <Pressable
+                <OptionCard
                   key={option.id}
+                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected, selected: isSelected }}
+                  label={optionText}
+                  languageOverride={language}
                   onPress={() =>
                     setAnswers((current) => ({ ...current, [question.id]: option.id }))
                   }
-                  style={[styles.option, isSelected ? styles.optionSelected : null]}
-                >
-                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
-                    {optionText}
-                  </Text>
-                </Pressable>
+                  state={isSelected ? 'selected' : 'idle'}
+                />
               );
             })}
           </View>
@@ -635,6 +692,25 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
+  rewardPreviewCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[0.5],
+    padding: space[1.5],
+  },
+  rewardPreviewTitle: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.body.lineHeight,
+  },
+  rewardPreviewBody: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
   questionCard: {
     borderColor: colors.border,
     borderRadius: radius.card,
@@ -662,42 +738,8 @@ const styles = StyleSheet.create({
   options: {
     gap: space[1],
   },
-  option: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space[1.5],
-  },
-  optionSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  optionText: {
-    color: colors.textSoft,
-    fontSize: typography.navButton.fontSize,
-  },
-  optionTextSelected: {
-    color: colors.badgeBlueText,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
   actionButton: {
     minHeight: space[5] + space[0.5],
-  },
-  resultCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    padding: space[2],
-  },
-  metric: {
-    color: colors.text,
-    fontSize: typography.subHeadingLarge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  resultNote: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[1],
   },
   breakdownRow: {
     alignItems: 'center',

@@ -1420,6 +1420,9 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Rätt',
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    'Slutför förhandsvisning',
+    'På webben låser du upp ett extra övningsprov genom att slutföra den här förhandsvisningen. Det är en annonsförhandsvisning, inte ett officiellt eller betalt prov.',
+    'Förhandsvisning för extra prov',
     'Nästa prov',
     'Sparat',
     'Sparar',
@@ -1450,6 +1453,9 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Correct',
     'Submitted results are final. Start another mock exam for a fresh attempt.',
     'Explanations and review are shown only after the exam is submitted.',
+    'Complete preview',
+    'On web, an extra mock exam unlocks only after this preview is completed. It is an ad preview, not an official or paid exam.',
+    'Extra exam preview',
     'Next exam',
     'Saved',
     'Saving',
@@ -4007,6 +4013,7 @@ const EXPECTED_REWARDED_AD_INTERFACES = [
   {
     name: 'RewardedExtraExamAdOptions',
     fields: [
+      { name: 'confirmReward', type: 'RewardedExtraExamConfirmation', optional: true },
       { name: 'confirmReward', type: 'RewardedExtraExamRewardConfirmation', optional: true },
       { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: true },
       { name: 'requestNonPersonalizedAdsOnly', type: 'boolean', optional: true },
