@@ -106,6 +106,7 @@ function contentMutationFixtureFiles() {
 
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -1428,465 +1429,6 @@ require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects generated true/false answer-scaffold stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Det är korrekt att Svaret är genom att kontrollera information.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'It is correct that the answer is checking information.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects generated true/false describes-that stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Det är korrekt att Det att Sverige är en konstitutionell monarki betyder att statschefen saknar politisk makt.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'That the head of state lacks political power describes that Sweden is a constitutional monarchy.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects residual generated true/false option-fragment stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Alla som har rätt att rösta har en röst var ingår i fria val i en demokrati.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'Everyone who has the right to vote has one vote each is part of free elections in a democracy.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects residual generated true/false applies-to stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Man måste vara svensk medborgare och ha fyllt 18 år gäller för att rösta i Sveriges riksdagsval.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'You must be a Swedish citizen and at least 18 years old applies to voting in Sweden’s Riksdag election.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects residual generated true/false definition splices', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'De genomför beslut och måste följa lagar och regeringens instruktioner beskriver statliga myndigheter.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'They implement decisions and must follow laws and government instructions describes government agencies.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects residual generated true/false list and meaning splices', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Allemansrätten innebär att den ger alla möjlighet att vara i naturen.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'The right of public access means it gives everyone the opportunity to be in nature.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects residual generated true/false fragment-only stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Genom att allmänna handlingar kan begäras ut.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'By allowing public documents to be requested.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects generated true/false English gerund fragments', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
-    return String(contents).replace(
-      marker,
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const gerundFragmentResiduals = {",
-        "  [generatedFixtureId('q147', 1)]: { questionEn: 'Many people voting, getting involved, and learning about social issues.' },",
-        "  [generatedFixtureId('q147', 2)]: { questionEn: 'Fewer people taking part in elections.' },",
-        "  [generatedFixtureId('q149', 1)]: { questionEn: 'People with different backgrounds and economic situations living closer to one another and feeling included.' },",
-        "  [generatedFixtureId('q149', 2)]: { questionEn: 'People living completely separated by income or ethnic background.' },",
-        "};",
-        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  gerundFragmentResiduals[question.id]",
-        "    ? {",
-        "        ...question,",
-        "        ...gerundFragmentResiduals[question.id],",
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
-});
-
-test('published question schema rejects generated true/false bare answer phrases', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
-    return String(contents).replace(
-      marker,
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const bareAnswerPhraseResiduals = {",
-        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
-        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
-        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
-        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
-        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
-        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
-        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
-        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
-        "};",
-        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  bareAnswerPhraseResiduals[question.id]",
-        "    ? {",
-        "        ...question,",
-        "        ...bareAnswerPhraseResiduals[question.id],",
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
-});
-
-test('published question schema rejects generated true/false statement-about-statement stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'The statement is true: Sweden is in the Nordic region.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects generated true/false negative meta-stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Det är inte sant att Sveriges nordligaste del ligger norr om polcirkeln.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'It is not true that Sweden is in northern Europe.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
-test('published question schema rejects false-answer explanations that say True is correct', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
-    return String(contents).replace(
-      marker,
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  question.id === generatedFixtureId('q002', 2)",
         "    ? {",
         "        ...question,",
         "        explanationSv:",
@@ -2051,7 +1593,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects residual q256-q305 reason-target wording', () => {
+test('published question schema rejects residual q261-q310 reason-target wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2073,10 +1615,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q032', 2)]: { questionSv: 'En anledning är att rösterna ska räknas snabbare.', questionEn: 'One reason is votes are counted faster.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  q256Residuals[question.id]",
+        "  q261Residuals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...q256Residuals[question.id],",
+        "        ...q261Residuals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -2096,7 +1638,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
-test('published question schema rejects residual q306-q355 true/false wording', () => {
+test('published question schema rejects residual q311-q360 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2139,7 +1681,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects residual q356-q405 true/false wording', () => {
+test('published question schema rejects residual q361-q410 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2182,7 +1724,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects residual q406-q455 true/false wording', () => {
+test('published question schema rejects residual q411-q460 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2225,7 +1767,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects residual q456-q505 true/false wording', () => {
+test('published question schema rejects residual q461-q510 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2251,10 +1793,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q088', 2)]: { questionSv: 'Europarådet arbetar för endast jordbrukspolitik.', questionEn: 'The Council of Europe works for only agricultural policy.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  q456Residuals[question.id]",
+        "  q461Residuals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...q456Residuals[question.id],",
+        "        ...q461Residuals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -2274,7 +1816,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 6);
 });
 
-test('published question schema rejects residual q506-q555 true/false wording', () => {
+test('published question schema rejects residual q511-q560 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2301,10 +1843,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q100', 2)]: { questionEn: 'Lucia celebration is largely about welcominging spring with large bonfires.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  q506Residuals[question.id]",
+        "  q511Residuals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...q506Residuals[question.id],",
+        "        ...q511Residuals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -2324,7 +1866,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 7);
 });
 
-test('published question schema rejects residual q556-q605 true/false wording', () => {
+test('published question schema rejects residual q561-q610 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2348,10 +1890,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q114', 2)]: { questionEn: \\"By the building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.\\" },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  q556Residuals[question.id]",
+        "  q561Residuals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...q556Residuals[question.id],",
+        "        ...q561Residuals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -2371,7 +1913,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
-test('published question schema rejects residual q606-q655 true/false wording', () => {
+test('published question schema rejects residual q611-q660 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2396,10 +1938,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q120', 2)]: { questionSv: 'Judar fick rätt att bli Sveriges största religiösa grupp.', questionEn: 'Jews gained the right to become Sweden’s largest religious group.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  q606Residuals[question.id]",
+        "  q611Residuals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...q606Residuals[question.id],",
+        "        ...q611Residuals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -2419,7 +1961,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 5);
 });
 
-test('published question schema rejects residual q656-q705 proper-noun lowercasing', () => {
+test('published question schema rejects residual q661-q710 proper-noun lowercasing', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2440,10 +1982,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q139', 1)]: { questionSv: 'Julen firar traditionellt jesu födelse inom kristendomen.', questionEn: \\"Christmas traditionally celebrates jesus' birth in Christianity.\\" },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  q656Residuals[question.id]",
+        "  q661Residuals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...q656Residuals[question.id],",
+        "        ...q661Residuals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -2463,7 +2005,7 @@ require('./scripts/validate-content.js');
   assert.match(output, /contains a generated true\/false grammar-splice stem/);
 });
 
-test('published question schema rejects residual q656-q705 holiday wording', () => {
+test('published question schema rejects residual q661-q710 holiday wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2486,10 +2028,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q132', 2)]: { questionSv: 'Barn tänder stora brasor på kvällen med en adventskalender hemma.', questionEn: 'Children often light large bonfires in the evening with an Advent calendar at home.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  q656Residuals[question.id]",
+        "  q661Residuals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...q656Residuals[question.id],",
+        "        ...q661Residuals[question.id],",
         "      }",
         "    : question,",
         ");",
