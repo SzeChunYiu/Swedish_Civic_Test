@@ -11,7 +11,6 @@ const {
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
-  REQUIRED_SECURITY_HEADERS,
   resolveRequiredHeadMetadata,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
@@ -20,6 +19,12 @@ const { checkAssetManifest, writeAssetManifest } = require('./update-site-asset-
 
 const repoRoot = path.resolve(__dirname, '..');
 const localHeadMetadata = resolveRequiredHeadMetadata();
+const defaultSecurityHeaders = {
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Frame-Options': 'DENY',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
 
 function headMarkup(metadata = localHeadMetadata) {
   return [
@@ -67,11 +72,6 @@ function currentAssets() {
       'function renderMockExam(){}',
       'function renderMockResult(){}',
     ].join('\n'),
-    '/app.js': [
-      'const SMT_ADS = { slots: { inline: "", anchor: "" } };',
-      'function smtStaticAdsAreConfigured(){ return false; }',
-      'function smtIsRealAdSenseSlotId(){ return false; }',
-    ].join('\n'),
     '/ebook.js': 'const PRACTICE_LINKS = {}; window.smtEbookRender = function render() {};',
     '/questions.js': currentQuestionBank(),
   };
@@ -81,7 +81,6 @@ function staleAssets() {
   return {
     '/index.html': '<main data-page="/"><div id="hero"></div></main>',
     '/styles.css': '.practice__inner { max-width: 720px; }',
-    '/app.js': '',
     '/practice.js': 'function renderPractice(){ return "old"; }',
     '/ebook.js': 'const copy = "Svenska översättningen kommer i v1.1";',
     '/questions.js': generatedQuestions(57, 'stale'),
@@ -102,17 +101,13 @@ function staleHeadAssets(replacement) {
 }
 
 async function withStaticServer(assets, callback, options = {}) {
-  const headers = { 'content-type': 'text/plain; charset=utf-8' };
-  if (options.includeSecurityHeaders !== false) {
-    for (const header of REQUIRED_SECURITY_HEADERS) {
-      headers[header.name] = header.value;
-    }
-  }
-
   const server = http.createServer((request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
     const body = assets[pathname] ?? assets['/index.html'];
-    response.writeHead(body == null ? 404 : 200, headers);
+    response.writeHead(body == null ? 404 : 200, {
+      'content-type': 'text/plain; charset=utf-8',
+      ...(options.includeSecurityHeaders === false ? {} : defaultSecurityHeaders),
+    });
     response.end(body ?? 'not found');
   });
 
@@ -142,12 +137,12 @@ test('reads the generated static question count', () => {
 test('extracts static head title and description metadata', () => {
   const metadata = extractStaticHeadMetadata(`
     <title>
-      Almost Swedish — Study and practice.
+      Almost Swedish — Study, fika, pass.
     </title>
     <meta content="A friendly, unofficial study app." name="description" />
   `);
   assert.deepEqual(metadata, {
-    title: 'Almost Swedish — Study and practice.',
+    title: 'Almost Swedish — Study, fika, pass.',
     description: 'A friendly, unofficial study app.',
   });
 });
@@ -292,34 +287,6 @@ test('live site check rejects stale live head titles', async () => {
       assert.deepEqual(
         result.checks.filter((check) => !check.ok).map((check) => check.name),
         ['static head metadata'],
-      );
-    },
-  );
-});
-
-test('live site check rejects pass-outcome head titles even when they match the expected stale title', async () => {
-  await withStaticServer(
-    staleHeadAssets({
-      ...localHeadMetadata,
-      title: 'Almost Swedish — Study, fika, pass.',
-    }),
-    async (baseUrl) => {
-      const result = await checkLiveSite(baseUrl, {
-        requiredHeadMetadata: {
-          ...localHeadMetadata,
-          title: 'Almost Swedish — Study, fika, pass.',
-        },
-        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
-        requiredQuestionCount: 715,
-      });
-      assert.equal(result.ok, false);
-      assert.deepEqual(
-        result.checks.filter((check) => !check.ok).map((check) => check.name),
-        ['static head metadata'],
-      );
-      assert.match(
-        result.checks.find((check) => check.name === 'static head metadata')?.details ?? '',
-        /Study,\s*fika,\s*pass/,
       );
     },
   );

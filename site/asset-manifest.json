@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 70278,
-      "sha256": "1726e88a1b49abd649c7f79db04f36d1d3e2b768ee955e49cf8d239034baa7b1"
+      "bytes": 72018,
+      "sha256": "16f70dba74116e7d6bc9285e1477a1eca34568fae4282196e565a6f54d065abd"
     },
     "buddies.js": {
       "bytes": 31765,
@@ -32,8 +32,8 @@
       "sha256": "f588186e346fe061cb1b9d25f169aae4f9cae7783366790428baf562d15cb893"
     },
     "i18n-extras.js": {
-      "bytes": 50238,
-      "sha256": "85a17e2f130234e84f8d5faceb6566e8f330c38c63cae3d920a8b1e4a8a7ebeb"
+      "bytes": 50406,
+      "sha256": "aeeafd2c57f6805f707ddbdc42a6d2268a2278fc5b8ffc8efc440d65d64c3ee9"
     },
     "icon.png": {
       "bytes": 362794,
