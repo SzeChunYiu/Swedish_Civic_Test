@@ -33903,8 +33903,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "One reason false information and hate can be a threat to democracy is ...",
-      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är ..."
+      "en": "Why can false information and hate be a threat to democracy ...?",
+      "sv": "Varför kan falsk information och hat vara ett hot mot demokratin ...?"
     },
     "opts": [
       {
@@ -33952,8 +33952,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One reason false information and hate can be a threat to democracy is that it can create conflicts and scare people away from democratic debate.",
-      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det kan skapa konflikter och skrämma människor från demokratisk debatt."
+      "en": "False information and hate can threaten democracy because they can create conflicts and scare people away from democratic debate.",
+      "sv": "Falsk information och hat kan hota demokratin eftersom sådant kan skapa konflikter och skrämma människor från demokratisk debatt."
     },
     "opts": [
       {
@@ -33993,8 +33993,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One reason false information and hate can be a threat to democracy is that it automatically gives everyone more knowledge.",
-      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det gör att alla automatiskt får mer kunskap."
+      "en": "False information and hate automatically give everyone more knowledge.",
+      "sv": "Falsk information och hat ger automatiskt alla mer kunskap."
     },
     "opts": [
       {
