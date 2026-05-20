@@ -9,6 +9,7 @@ const ts = require('typescript');
 
 const {
   createMemoryMMKV,
+  createThrowingGetMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
@@ -181,6 +182,22 @@ test('review store: throwing MMKV writes keep graded card in memory and record w
   assert.equal(state.persistenceWarning.storageId, 'reviews');
   assert.equal(state.persistenceWarning.key, 'learning.reviews.cards.v1');
   assert.match(state.persistenceWarning.errorMessage, /disk full/);
+});
+
+test('review store: throwing MMKV reads fall back to empty state and record warning', () => {
+  const storage = createThrowingGetMMKV('review read failed');
+  const { useReviewStore } = loadTsWithStorage(repoRoot, 'lib/storage/reviewStore.ts', {
+    reviews: storage,
+  });
+  const state = useReviewStore.getState();
+
+  assert.deepEqual(state.byId, {});
+  assert.deepEqual(state.gradedPerDay, {});
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'reviews');
+  assert.equal(state.persistenceWarning.key, 'learning.reviews.cards.v1');
+  assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
 test('review store: successful writes persist JSON and corrupt reads still fall back', () => {
