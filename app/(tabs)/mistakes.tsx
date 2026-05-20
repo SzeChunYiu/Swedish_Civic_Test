@@ -64,22 +64,22 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
       selectedWrongAnswer
-        ? `Fråga att öva igen. Ditt senaste felaktiga svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
+        ? `Fråga att öva igen. Ditt senaste svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
         : `Fråga att öva igen. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad för fokuserad repetition',
+    bookmarkedMeta: 'Sparad till senare övning',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
-    emptyText: 'Svara fel på en övningsfråga så visas den här.',
+    emptyText: 'När du missar en övningsfråga visas den här.',
     emptyTitle: 'Inga misstag ännu',
-    mistakeBadge: 'Fellogg',
-    mistakeTitle: 'Fel svar att repetera',
-    selectedWrongAnswerLabel: 'Ditt senaste felaktiga svar',
+    mistakeBadge: 'Missade frågor',
+    mistakeTitle: 'Frågor att öva på',
+    selectedWrongAnswerLabel: 'Ditt senaste svar',
     subtitle:
-      'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+      'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och ditt senaste svar.',
     title: 'Misstag',
     wrongAnswers: (count) => `Fel svar: ${count}`,
   },
