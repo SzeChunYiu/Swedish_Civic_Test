@@ -15069,12 +15069,19 @@ function expectedPublishedSourceField(question, field) {
   if (question.type === 'true_false' && field === 'questionEn') {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
   }
+  if (field === 'options') {
+    return normalizePublishedSourceOptions(question.options);
+  }
   return question[field];
 }
 
-function expectedPublishedSourceQuestion(question) {
-  if (typeof applyQuestionLocalizationPilot !== 'function') return question;
-  return applyQuestionLocalizationPilot(question);
+function normalizePublishedSourceOptions(options) {
+  if (!Array.isArray(options)) return options;
+  return options.map((option) => ({
+    id: option.id,
+    textSv: option.textSv,
+    textEn: option.textEn,
+  }));
 }
 
 function validateAuthoredSourceParity() {
@@ -15158,7 +15165,11 @@ function validateAuthoredSourceParity() {
     }
     for (const field of PUBLISHED_SOURCE_PARITY_FIELDS) {
       const expectedValue = expectedPublishedSourceField(expectedSourceQuestion, field);
-      if (JSON.stringify(publishedQuestion[field]) !== JSON.stringify(expectedValue)) {
+      const actualValue =
+        field === 'options'
+          ? normalizePublishedSourceOptions(publishedQuestion[field])
+          : publishedQuestion[field];
+      if (JSON.stringify(actualValue) !== JSON.stringify(expectedValue)) {
         publicationParityIsValid = false;
         fail(`${label} published source ${field} does not match authored source`);
       }

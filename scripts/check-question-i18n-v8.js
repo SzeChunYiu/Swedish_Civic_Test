@@ -47,12 +47,306 @@ const QUESTION_LOCALIZATION_PILOT_IDS = loadTs(
   'data/questionLocalizations.ts',
   'QUESTION_LOCALIZATION_PILOT_IDS',
 );
+const QUESTION_LOCALIZATION_REVIEW_STATUS = loadTs(
+  'data/questionLocalizations.ts',
+  'QUESTION_LOCALIZATION_REVIEW_STATUS',
+);
+const questionLocalizationPilot = loadTs(
+  'data/questionLocalizations.ts',
+  'questionLocalizationPilot',
+);
 const REQUIRED_LOCALES = [...localeCodes];
+const REQUIRED_REVIEW_LOCALES = REQUIRED_LOCALES.filter((locale) => !['sv', 'en'].includes(locale));
+
+const PROTECTED_TERM_RULES = [
+  { source: /\bRiksdagen?\b/, canonical: 'Riksdag' },
+  { source: /\bSkatteverket\b/, canonical: 'Skatteverket' },
+  { source: /\bMigrationsverket\b/, canonical: 'Migrationsverket' },
+  { source: /\bAllemansrätten\b/, canonical: 'Allemansrätten' },
+  { source: /\bSverige i fokus\b/, canonical: 'Sverige i fokus' },
+  { source: /\bTreriksröset\b/, canonical: 'Treriksröset' },
+  { source: /\bSmygehuk\b/, canonical: 'Smygehuk' },
+  { source: /\bKebnekaise\b/, canonical: 'Kebnekaise' },
+];
+
+const TRUE_FALSE_LABELS = {
+  true: {
+    sv: 'Sant',
+    en: 'True',
+    'zh-Hant': '正確',
+    'zh-Hans': '正确',
+    ar: 'صحيح',
+    ckb: 'ڕاستە',
+    fa: 'درست',
+    pl: 'Prawda',
+    so: 'Sax',
+    ti: 'ትኽክል',
+    tr: 'Doğru',
+    uk: 'Правда',
+  },
+  false: {
+    sv: 'Falskt',
+    en: 'False',
+    'zh-Hant': '錯誤',
+    'zh-Hans': '错误',
+    ar: 'خطأ',
+    ckb: 'هەڵەیە',
+    fa: 'نادرست',
+    pl: 'Fałsz',
+    so: 'Khalad',
+    ti: 'ጌጋ',
+    tr: 'Yanlış',
+    uk: 'Неправда',
+  },
+};
 
 function checkLocalizedMap(map, path, errors) {
   for (const locale of REQUIRED_LOCALES) {
     if (!map || typeof map[locale] !== 'string' || map[locale].trim() === '') {
       errors.push(`${path}.${locale} missing`);
+    }
+  }
+}
+
+function checkTargetLocalizedMap(map, path, errors) {
+  for (const locale of REQUIRED_REVIEW_LOCALES) {
+    if (!map || typeof map[locale] !== 'string' || map[locale].trim() === '') {
+      errors.push(`${path}.${locale} missing`);
+    }
+  }
+}
+
+function questionSourceText(question) {
+  return [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function questionLocalizedText(question) {
+  return [
+    question.questionText,
+    question.explanationText,
+    ...(question.options || []).map((option) => option.text),
+  ]
+    .filter(Boolean)
+    .flatMap((map) => REQUIRED_REVIEW_LOCALES.map((locale) => map[locale] || ''))
+    .join(' ');
+}
+
+function normalizeLocalizedDigits(value) {
+  return String(value).replace(/[٠-٩۰-۹]/g, (digit) => {
+    const codePoint = digit.codePointAt(0);
+    if (codePoint >= 0x0660 && codePoint <= 0x0669) {
+      return String(codePoint - 0x0660);
+    }
+    return String(codePoint - 0x06f0);
+  });
+}
+
+function isAsciiDigit(char) {
+  return char >= '0' && char <= '9';
+}
+
+function isSpaceGroupSeparator(char) {
+  return char === ' ' || char === '\u00a0' || char === '\u202f';
+}
+
+function isPunctuationGroupSeparator(char) {
+  return char === ',' || char === '.' || char === '\u066c';
+}
+
+function readDigits(text, startIndex) {
+  let index = startIndex;
+  while (index < text.length && isAsciiDigit(text[index])) index += 1;
+  return { digits: text.slice(startIndex, index), nextIndex: index };
+}
+
+function readGroupedDigits(text, separatorIndex) {
+  const separator = text[separatorIndex];
+  let digitStart = separatorIndex + 1;
+
+  if (isPunctuationGroupSeparator(separator)) {
+    if (!isAsciiDigit(text[digitStart])) return null;
+  } else if (isSpaceGroupSeparator(separator)) {
+    while (digitStart < text.length && isSpaceGroupSeparator(text[digitStart])) {
+      digitStart += 1;
+    }
+  } else {
+    return null;
+  }
+
+  const groupEnd = digitStart + 3;
+  if (groupEnd > text.length) return null;
+  const group = text.slice(digitStart, groupEnd);
+  if (!/^\d{3}$/.test(group)) return null;
+  if (isAsciiDigit(text[groupEnd])) return null;
+
+  return { digits: group, nextIndex: groupEnd };
+}
+
+function isDecimalToken(text, startIndex, firstGroupEnd) {
+  const previous = text[startIndex - 1];
+  const previousPrevious = text[startIndex - 2];
+  if ((previous === ',' || previous === '.') && isAsciiDigit(previousPrevious)) return true;
+
+  const separator = text[firstGroupEnd];
+  if (separator !== ',' && separator !== '.') return false;
+  if (!isAsciiDigit(text[firstGroupEnd + 1])) return false;
+  return !readGroupedDigits(text, firstGroupEnd);
+}
+
+function sourceTokenCanShiftByLocale(text, tokenEndIndex) {
+  const tail = text.slice(tokenEndIndex);
+  const trimmedTail = tail.trimStart().toLowerCase();
+
+  if (trimmedTail.startsWith('-talet') || trimmedTail.startsWith('-talets')) return true;
+  if (/^(s|st|nd|rd|th)\b/.test(trimmedTail)) return true;
+  if (/^(million|miljon|miljoner)\b/.test(trimmedTail)) return true;
+  if (
+    /^(january|february|march|april|may|june|july|august|september|october|november|december)\b/.test(
+      trimmedTail,
+    )
+  ) {
+    return true;
+  }
+  if (
+    /^(januari|februari|mars|april|maj|juni|juli|augusti|september|oktober|november|december)\b/.test(
+      trimmedTail,
+    )
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function scaledNumericFact(text, tokenEndIndex, token) {
+  const trimmedTail = text.slice(tokenEndIndex).trimStart().toLowerCase();
+  if (/^(thousand|tusen)\b/.test(trimmedTail) || /^(ألف|الف|هزار|هەزار)/.test(trimmedTail)) {
+    return String(Number(token) * 1000);
+  }
+  if (/^(万|萬)/.test(trimmedTail)) {
+    return String(Number(token) * 10000);
+  }
+  return null;
+}
+
+function extractNumericFacts(text, options = {}) {
+  const normalizedText = normalizeLocalizedDigits(text || '');
+  const facts = new Set();
+
+  for (let index = 0; index < normalizedText.length; index += 1) {
+    if (!isAsciiDigit(normalizedText[index])) continue;
+
+    const firstGroup = readDigits(normalizedText, index);
+    const isDecimal = isDecimalToken(normalizedText, index, firstGroup.nextIndex);
+    let token = firstGroup.digits;
+    let nextIndex = firstGroup.nextIndex;
+
+    while (nextIndex < normalizedText.length) {
+      const groupedDigits = readGroupedDigits(normalizedText, nextIndex);
+      if (!groupedDigits) break;
+      token += groupedDigits.digits;
+      nextIndex = groupedDigits.nextIndex;
+    }
+
+    if (!isDecimal && !(options.source && sourceTokenCanShiftByLocale(normalizedText, nextIndex))) {
+      facts.add(token);
+      if (options.includeScaledFacts) {
+        const scaledFact = scaledNumericFact(normalizedText, nextIndex, token);
+        if (scaledFact) facts.add(scaledFact);
+      }
+    }
+    index = nextIndex - 1;
+  }
+
+  return facts;
+}
+
+function extractSourceNumericFacts(values) {
+  const facts = new Set();
+  for (const value of values.filter(Boolean)) {
+    for (const fact of extractNumericFacts(value, { source: true })) {
+      facts.add(fact);
+    }
+  }
+  return facts;
+}
+
+function localizedSegmentTextByLocale(map, locale) {
+  return map?.[locale] || '';
+}
+
+function checkNumericFacts(question, errors) {
+  const reported = new Set();
+  const segments = [
+    {
+      source: [question.questionSv, question.questionEn],
+      target: question.questionText,
+    },
+    {
+      source: [question.explanationSv, question.explanationEn],
+      target: question.explanationText,
+    },
+    ...(question.options || []).map((option) => ({
+      source: [option.textSv, option.textEn],
+      target: option.text,
+    })),
+  ];
+
+  for (const segment of segments) {
+    const sourceFacts = extractSourceNumericFacts(segment.source);
+    for (const fact of sourceFacts) {
+      const isMissingInAnyLocale = REQUIRED_REVIEW_LOCALES.some((locale) => {
+        const localizedFacts = extractNumericFacts(
+          localizedSegmentTextByLocale(segment.target, locale),
+          { includeScaledFacts: true },
+        );
+        return !localizedFacts.has(fact);
+      });
+
+      if (isMissingInAnyLocale && !reported.has(fact)) {
+        errors.push(`${question.id}.numericFact.${fact} missing from localized text`);
+        reported.add(fact);
+      }
+    }
+  }
+}
+
+function checkProtectedTerms(question, errors) {
+  const sourceText = questionSourceText(question);
+  const localizedText = questionLocalizedText(question);
+  for (const { source, canonical } of PROTECTED_TERM_RULES) {
+    if (source.test(sourceText) && !localizedText.includes(canonical)) {
+      errors.push(`${question.id}.protectedTerm.${canonical} missing from localized text`);
+    }
+  }
+}
+
+function checkTrueFalseLabels(question, errors) {
+  if (question.type !== 'true_false') return;
+
+  for (const optionId of ['true', 'false']) {
+    const option = (question.options || []).find((candidate) => candidate.id === optionId);
+    if (!option) {
+      errors.push(`${question.id}.options.${optionId} missing true/false option`);
+      continue;
+    }
+    const localizedText = Object.assign(
+      { sv: option.textSv, en: option.textEn },
+      option.text || {},
+    );
+    for (const locale of REQUIRED_LOCALES) {
+      const expected = TRUE_FALSE_LABELS[optionId][locale];
+      if (localizedText[locale] !== expected) {
+        errors.push(`${question.id}.options.${optionId}.text.${locale} must be ${expected}`);
+      }
     }
   }
 }
@@ -90,6 +384,109 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
       );
     }
     if (!optionIds.has(q.correctOptionId)) errors.push(`${q.id}.correctOptionId not in options`);
+    checkTrueFalseLabels(q, errors);
+    checkProtectedTerms(q, errors);
+    checkNumericFacts(q, errors);
+  }
+
+  return errors;
+}
+
+function checkLocalizationSourceShape(
+  questions,
+  localizations = questionLocalizationPilot,
+  ids = QUESTION_LOCALIZATION_PILOT_IDS,
+) {
+  const errors = [];
+  const questionById = new Map(questions.map((question) => [question.id, question]));
+  const expectedIdSet = new Set(ids);
+
+  for (const localizationId of Object.keys(localizations || {})) {
+    if (!expectedIdSet.has(localizationId)) {
+      errors.push(`${localizationId}.localization stale question id not in pilot ids`);
+    }
+  }
+
+  for (const id of ids) {
+    const question = questionById.get(id);
+    const localization = localizations?.[id];
+    if (!question) {
+      errors.push(`${id}.source missing for localization shape check`);
+      continue;
+    }
+    if (!localization || typeof localization !== 'object') {
+      errors.push(`${id}.localization missing`);
+      continue;
+    }
+
+    checkTargetLocalizedMap(localization.questionText, `${id}.localization.questionText`, errors);
+    checkTargetLocalizedMap(
+      localization.explanationText,
+      `${id}.localization.explanationText`,
+      errors,
+    );
+
+    const sourceOptionIds = new Set((question.options || []).map((option) => option.id));
+    const localizedOptionIds = new Set(Object.keys(localization.options || {}));
+
+    for (const sourceOptionId of sourceOptionIds) {
+      if (!localizedOptionIds.has(sourceOptionId)) {
+        errors.push(`${id}.localization.options.${sourceOptionId} missing source option id`);
+      } else {
+        checkTargetLocalizedMap(
+          localization.options[sourceOptionId],
+          `${id}.localization.options.${sourceOptionId}.text`,
+          errors,
+        );
+      }
+    }
+
+    for (const localizedOptionId of localizedOptionIds) {
+      if (!sourceOptionIds.has(localizedOptionId)) {
+        errors.push(
+          `${id}.localization.options.${localizedOptionId} stale option id not in source`,
+        );
+      }
+    }
+
+    if (!sourceOptionIds.has(question.correctOptionId)) {
+      errors.push(`${id}.source.correctOptionId not in options`);
+    }
+  }
+
+  return errors;
+}
+
+function checkReviewMetadata(
+  reviewStatus = QUESTION_LOCALIZATION_REVIEW_STATUS,
+  ids = QUESTION_LOCALIZATION_PILOT_IDS,
+  locales = REQUIRED_REVIEW_LOCALES,
+) {
+  const errors = [];
+
+  for (const id of ids) {
+    const perQuestion = reviewStatus?.[id];
+    if (!perQuestion || typeof perQuestion !== 'object') {
+      errors.push(`${id}.review missing`);
+      continue;
+    }
+
+    for (const locale of locales) {
+      const metadata = perQuestion[locale];
+      if (!metadata || typeof metadata !== 'object') {
+        errors.push(`${id}.review.${locale} missing`);
+        continue;
+      }
+      if (metadata.status !== 'machine_assisted') {
+        errors.push(`${id}.review.${locale}.status must be machine_assisted before native review`);
+      }
+      if (metadata.nativeReviewStatus !== 'pending_native_review') {
+        errors.push(`${id}.review.${locale}.nativeReviewStatus must be pending_native_review`);
+      }
+      if (metadata.source !== 'question_localization_v8') {
+        errors.push(`${id}.review.${locale}.source must be question_localization_v8`);
+      }
+    }
   }
 
   return errors;
@@ -97,7 +494,11 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
 
 if (require.main === module) {
   const questions = loadTs('data/questions.ts', 'questions');
-  const errors = checkQuestions(questions);
+  const errors = [
+    ...checkLocalizationSourceShape(questions),
+    ...checkQuestions(questions),
+    ...checkReviewMetadata(),
+  ];
   if (errors.length > 0) {
     console.error(errors.join('\n'));
     process.exit(1);
@@ -107,4 +508,10 @@ if (require.main === module) {
   );
 }
 
-module.exports = { checkQuestions, REQUIRED_LOCALES };
+module.exports = {
+  checkQuestions,
+  checkLocalizationSourceShape,
+  checkReviewMetadata,
+  REQUIRED_LOCALES,
+  REQUIRED_REVIEW_LOCALES,
+};
