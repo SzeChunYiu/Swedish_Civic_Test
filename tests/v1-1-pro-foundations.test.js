@@ -338,6 +338,30 @@ test('tierComparison: every row has all three cells present', () => {
   }
 });
 
+test('tierComparison: native table hides ebook-only benefits until a native ebook route exists', () => {
+  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const nativeEbookRouteExists = fs.existsSync(path.join(repoRoot, 'app/ebook.tsx'));
+  if (nativeEbookRouteExists) return;
+
+  const rowIds = TIER_ROWS.map((row) => row.id);
+  const rowLabels = TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
+  const rowFlags = TIER_ROWS.map((row) => row.flag).filter(Boolean);
+
+  assert.equal(
+    fs.existsSync(path.join(repoRoot, 'lib/storage/highlightsStore.ts')),
+    true,
+    'the local highlight store can remain as a tested primitive while the native reader is absent',
+  );
+  assert.equal(rowIds.includes('highlights'), false);
+  assert.equal(rowIds.includes('notesExport'), false);
+  assert.equal(rowFlags.includes('multiColorHighlights'), false);
+  assert.equal(rowFlags.includes('notesExport'), false);
+  assert.doesNotMatch(
+    rowLabels,
+    /Markeringar i e-bok|Ebook highlights|Exportera anteckningar|Notes export/,
+  );
+});
+
 test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', () => {
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
