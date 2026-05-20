@@ -616,7 +616,82 @@ test('mockHistory + bestMockScore: returns only exam-mode completed sessions', (
   ];
   const history = mockHistory(progressWithSessions(sessions));
   assert.equal(history.length, 2);
+  assert.deepEqual(
+    history.map((entry) => ({ durationMs: entry.durationMs, sessionId: entry.sessionId })),
+    [
+      { durationMs: 60 * 60 * 1000, sessionId: 'e1' },
+      { durationMs: 60 * 60 * 1000, sessionId: 'e2' },
+    ],
+  );
   assert.equal(bestMockScore(progressWithSessions(sessions)), 0.85);
+});
+
+test('mockHistory + bestMockScore: ignore invalid completions and null invalid durations', () => {
+  const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
+  const sessions = [
+    {
+      id: 'valid',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T09:00:00.000Z',
+      completedAt: '2026-05-19T09:30:00.000Z',
+      score: 0.7,
+    },
+    {
+      id: 'invalid-start',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: 'not-a-date',
+      completedAt: '2026-05-19T10:00:00.000Z',
+      score: 0.75,
+    },
+    {
+      id: 'backwards',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T12:00:00.000Z',
+      completedAt: '2026-05-19T11:00:00.000Z',
+      score: 0.8,
+    },
+    {
+      id: 'invalid-completed',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T09:00:00.000Z',
+      completedAt: 'not-a-date',
+      score: 0.99,
+    },
+    {
+      id: 'nan-score',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T11:30:00.000Z',
+      completedAt: '2026-05-19T12:00:00.000Z',
+      score: Number.NaN,
+    },
+  ];
+  const progress = progressWithSessions(sessions);
+  const history = mockHistory(progress);
+
+  assert.deepEqual(
+    history.map((entry) => ({
+      durationMs: entry.durationMs,
+      score: entry.score,
+      sessionId: entry.sessionId,
+    })),
+    [
+      { durationMs: 30 * 60 * 1000, score: 0.7, sessionId: 'valid' },
+      { durationMs: null, score: 0.75, sessionId: 'invalid-start' },
+      { durationMs: null, score: 0.8, sessionId: 'backwards' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'nan-score' },
+    ],
+  );
+  assert.equal(bestMockScore(progress), 0.8);
 });
 
 test('timeOfDayPattern: 24 hourly bins, accuracy per hour', () => {
