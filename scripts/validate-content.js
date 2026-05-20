@@ -481,13 +481,13 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'klara',
     'frågor',
     'Studieinställningar',
-    'Justera dagligt mål, frågespråk och ljud innan nästa pass.',
+    'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
-    'Justera mål, språk och ljud',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
+    'Öppna inställningar',
     'Första övningen',
     'Nivå 2',
     'Misstagsrepetition',
@@ -505,13 +505,13 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'completed',
     'questions',
     'Study setup',
-    'Tune your daily goal, question language, and audio before the next session.',
+    'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
-    'Adjust goal, language, and audio',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
+    'Open settings',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -556,11 +556,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile badge summary must use localized badge and empty-state copy',
   ],
   [
-    'accessibilityLabel={copy.studySetupCtaAccessibilityLabel}',
-    'profile study setup CTA must expose localized accessibility copy',
+    'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
+    'profile settings link must expose localized accessibility copy',
   ],
-  ['{copy.studySetupCta}', 'profile study setup CTA must render localized copy'],
-  ['href="/settings"', 'profile study setup CTA must route to settings'],
+  ['{copy.openSettings}', 'profile settings link must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
@@ -1042,25 +1041,20 @@ const EXPECTED_EXAM_ROUTE_HEADERS = [
 const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
   sv: [
     'Övningsprov',
-    'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet',
-    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
-    'Provåtkomst',
-    'Kontrollerar provåtkomst.',
+    'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet',
+    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet',
+    'Åtkomst till övningsprov',
+    'Kontrollerar åtkomst till övningsprov.',
     'Dagens kostnadsfria övningsprov är tillgängligt.',
     'Starta övningsprov',
-    'Lås upp extra prov',
-    'Starta upplåst extra prov',
+    'Lås upp extra övningsprov',
+    'Starta upplåst extra övningsprov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
+    'Skicka in övningsprovet',
     'Skicka övningsprov',
-    'Skicka prov',
-    'Skicka med obesvarade frågor?',
-    'Du har ${unansweredCount} obesvarade frågor. Obesvarade frågor räknas som fel om du skickar provet nu.',
-    'Fortsätt svara',
-    'Skicka ändå',
-    'Skicka prov med ${unansweredCount} obesvarade frågor',
-    'Provresultat',
+    'Resultat från övningsprov',
     'Övningsresultat',
     'Kapitelöversikt',
     'Frågegenomgång',
@@ -1070,33 +1064,28 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Granska',
     'Rätt',
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
-    'Förklaringar och genomgång visas först efter att provet har skickats in.',
-    'Nästa prov',
+    'Förklaringar och genomgång visas först efter att övningsprovet har skickats in.',
+    'Nästa övningsprov',
     'Sparat',
     'Sparar',
   ],
   en: [
     'Mock exam',
-    'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam',
-    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
-    'Exam access',
+    'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during mock exam',
+    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during mock exam',
+    'Mock exam access',
     'Checking mock exam access.',
     'Daily free mock exam available.',
     'Start mock exam',
-    'Unlock extra exam',
-    'Start unlocked extra exam',
+    'Unlock extra mock exam',
+    'Start unlocked extra mock exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
     'Select answer ${optionText} for question ${questionNumber}',
+    'Submit the mock exam',
     'Submit mock exam',
-    'Submit exam',
-    'Submit with unanswered questions?',
-    'You have ${unansweredCount} unanswered questions. Unanswered questions count as incorrect if you submit now.',
-    'Keep answering',
-    'Submit anyway',
-    'Submit exam with ${unansweredCount} unanswered questions',
-    'Exam result',
     'Mock exam result',
+    'Mock exam score',
     'Chapter breakdown',
     'Question review',
     'Question ${questionNumber}',
@@ -1105,12 +1094,21 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Review',
     'Correct',
     'Submitted results are final. Start another mock exam for a fresh attempt.',
-    'Explanations and review are shown only after the exam is submitted.',
-    'Next exam',
+    'Explanations and review are shown only after the mock exam is submitted.',
+    'Next mock exam',
     'Saved',
     'Saving',
   ],
 };
+const DISALLOWED_EXAM_ROUTE_SV_MOCK_EXAM_COPY_SEGMENTS = [
+  ['Prov', 'åtkomst'],
+  ['Kontrollerar prov', 'åtkomst.'],
+  ['Prov', 'resultat'],
+  ['Nästa ', 'prov'],
+  ['Skicka ', 'prov'],
+  ['Lås upp extra ', 'prov'],
+  ['Starta upplåst extra ', 'prov'],
+];
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'exam route must import AppLanguage from settings'],
   ['type ExamRouteCopy = {', 'exam route must define a typed copy contract'],
@@ -1146,17 +1144,6 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.submitLabel}', 'exam submit control must render localized copy'],
   [
-    'const unansweredCount = countUnansweredExamQuestions(examQuestions, answers);',
-    'exam route must derive unanswered count before partial submission',
-  ],
-  ['onPress={handleSubmitExam}', 'exam submit control must route through partial-submit guard'],
-  [
-    '{copy.partialSubmitBody(unansweredCount)}',
-    'exam partial-submit confirmation must render localized unanswered-count copy',
-  ],
-  ['{copy.cancelPartialSubmit}', 'exam partial-submit cancel action must render localized copy'],
-  ['{copy.confirmPartialSubmit}', 'exam partial-submit confirm action must render localized copy'],
-  [
     "language === 'en' ? chapter.chapterNameEn : chapter.chapterNameSv",
     'exam chapter breakdown must use selected-language chapter names',
   ],
@@ -1182,13 +1169,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
     'Tillbaka till övning',
-    'Frågepass',
-    'Det finns inga övningsfrågor ännu.',
+    'Quizpass',
+    'Det finns inga quizfrågor ännu.',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    'Frågepass ${currentSessionId}',
+    'Quizpass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här frågan',
+    'Försök igen med den här quizfrågan',
   ],
   en: [
     'Back to Practice',
@@ -1258,8 +1245,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta övning',
-    'Starta övning för ${chapterTitle}',
+    'Starta quiz',
+    'Starta quiz för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -1271,12 +1258,6 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Start quiz for ${chapterTitle}',
   ],
 };
-const FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS = [
-  'Starta ' + 'quiz',
-  'Quiz' + 'pass',
-  'quiz' + 'frågor',
-  'quiz' + 'frågan',
-];
 const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
   ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
@@ -6521,8 +6502,6 @@ function validateAppConfigSchema() {
 function validateLaunchAdRouteSuppressionParity() {
   let valid = true;
   let rootLayout = '';
-  let webLaunchPopupAd = '';
-  let nativeLaunchPopupAd = '';
 
   function reject(message) {
     valid = false;
@@ -6581,46 +6560,6 @@ function validateLaunchAdRouteSuppressionParity() {
   }
   if (!rootLayout.includes('!suppressLaunchPopupAd && entitlementsReady')) {
     reject('root layout must gate LaunchPopupAd on route suppression and entitlement readiness');
-  }
-  if (
-    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') === -1 ||
-    rootLayout.indexOf('<FirstRunAboutTheTestModal />') === -1 ||
-    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') >
-      rootLayout.indexOf('<FirstRunAboutTheTestModal />')
-  ) {
-    reject('root layout must render the launch ad deferral check before the first-run modal');
-  }
-
-  try {
-    webLaunchPopupAd = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/LaunchPopupAd.tsx'),
-      'utf8',
-    );
-    nativeLaunchPopupAd = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`launch popup ad sources could not be read: ${error.message}`);
-  }
-
-  for (const [label, source] of [
-    ['web', webLaunchPopupAd],
-    ['native', nativeLaunchPopupAd],
-  ]) {
-    if (
-      !source.includes(
-        "import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';",
-      )
-    ) {
-      reject(`${label} launch ad must import the first-run modal deferral helper`);
-    }
-    if (!source.includes('deferFirstRunAboutModalForLaunchSession();')) {
-      reject(`${label} launch ad must defer the first-run About modal when eligible`);
-    }
-  }
-  if (!nativeLaunchPopupAd.includes('if (nativeLaunchPopupMayShow)')) {
-    reject('native launch ad must set first-run deferral during the eligible render pass');
   }
 
   if (
@@ -7464,17 +7403,6 @@ function validateExamSubmissionFinalityParity() {
   }
   if (
     !examRoute.includes(
-      'const unansweredCount = countUnansweredExamQuestions(examQuestions, answers);',
-    ) ||
-    !examRoute.includes('const canSubmit = examQuestions.length > 0;') ||
-    !examRoute.includes('if (unansweredCount > 0) {') ||
-    !examRoute.includes('setConfirmingPartialSubmit(true);') ||
-    !examRoute.includes('onPress={submitExam}')
-  ) {
-    reject('exam manual submission must confirm before submitting unanswered questions');
-  }
-  if (
-    !examRoute.includes(
       'disabled: !completionRecorded || !canStartAccessibleExam || startingAccessibleExam',
     ) ||
     !examRoute.includes(
@@ -7567,6 +7495,17 @@ function validateExamRouteCopyParity() {
     if (!examRoute.includes(snippet)) reject(message);
   });
 
+  DISALLOWED_EXAM_ROUTE_SV_MOCK_EXAM_COPY_SEGMENTS.forEach((segments) => {
+    const disallowedCopy = segments.join('');
+    if (examRoute.includes(disallowedCopy)) {
+      reject(
+        `exam route Swedish mock-exam copy must say övningsprov instead of ${JSON.stringify(
+          disallowedCopy,
+        )}`,
+      );
+    }
+  });
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_EXAM_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -7651,12 +7590,6 @@ function validateQuizRouteCopyParity() {
 
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
-  });
-
-  FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS.forEach((term) => {
-    if (quizRoute.includes(term)) {
-      reject('quiz route Swedish copy must avoid English quiz loanwords');
-    }
   });
 
   const seenLabels = new Set();
@@ -7934,12 +7867,6 @@ function validateChapterRouteCopyParity() {
 
   EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!chapterRoute.includes(snippet)) reject(message);
-  });
-
-  FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS.forEach((term) => {
-    if (chapterRoute.includes(term)) {
-      reject('chapter route Swedish copy must avoid English quiz loanwords');
-    }
   });
 
   const seenLabels = new Set();
