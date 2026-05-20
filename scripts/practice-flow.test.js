@@ -101,6 +101,76 @@ test('practice session separates retry from next-question advancement', () => {
   assert.notEqual(getPracticeInterstitialShowKey('q2', 'practice-session-1'), firstFeedbackShowKey);
 });
 
+test('practice scope selects all, chapter, and ten-question mixed quick rounds', () => {
+  const { getQuestionsForPracticeScope } = loadTs('lib/quiz/practiceFlow.ts');
+  const questions = [
+    { id: 'q-scope-1a', chapterId: 'ch01' },
+    { id: 'q-scope-1b', chapterId: 'ch01' },
+    { id: 'q-scope-1c', chapterId: 'ch01' },
+    { id: 'q-scope-2a', chapterId: 'ch02' },
+    { id: 'q-scope-2b', chapterId: 'ch02' },
+    { id: 'q-scope-3a', chapterId: 'ch03' },
+    { id: 'q-scope-3b', chapterId: 'ch03' },
+    { id: 'q-scope-4a', chapterId: 'ch04' },
+    { id: 'q-scope-5a', chapterId: 'ch05' },
+    { id: 'q-scope-6a', chapterId: 'ch06' },
+    { id: 'q-scope-7a', chapterId: 'ch07' },
+  ];
+
+  assert.deepEqual(
+    getQuestionsForPracticeScope(questions, ['q-scope-1a'], { type: 'all' }, 10).map(
+      (question) => question.id,
+    ),
+    questions.map((question) => question.id),
+  );
+  assert.deepEqual(
+    getQuestionsForPracticeScope(questions, [], { type: 'chapter', chapterId: 'ch02' }, 10).map(
+      (question) => question.id,
+    ),
+    ['q-scope-2a', 'q-scope-2b'],
+  );
+  assert.deepEqual(
+    getQuestionsForPracticeScope(
+      questions,
+      ['q-scope-1a', 'q-scope-2a'],
+      { type: 'quick' },
+      10,
+    ).map((question) => question.id),
+    [
+      'q-scope-1b',
+      'q-scope-2b',
+      'q-scope-3a',
+      'q-scope-4a',
+      'q-scope-5a',
+      'q-scope-6a',
+      'q-scope-7a',
+      'q-scope-1c',
+      'q-scope-3b',
+      'q-scope-1a',
+    ],
+  );
+});
+
+test('practice quick round fills from answered questions when unanswered is sparse', () => {
+  const { getQuestionsForPracticeScope } = loadTs('lib/quiz/practiceFlow.ts');
+  const questions = [
+    { id: 'q-scope-1a', chapterId: 'ch01' },
+    { id: 'q-scope-1b', chapterId: 'ch01' },
+    { id: 'q-scope-2a', chapterId: 'ch02' },
+    { id: 'q-scope-3a', chapterId: 'ch03' },
+  ];
+
+  assert.deepEqual(
+    getQuestionsForPracticeScope(
+      questions,
+      ['q-scope-1a', 'q-scope-2a', 'q-scope-3a'],
+      { type: 'quick' },
+      3,
+    ).map((question) => question.id),
+    ['q-scope-1b', 'q-scope-1a', 'q-scope-2a'],
+  );
+});
+
 test('chapter quiz session id resolves to the first question in that chapter', () => {
   const { getChapterQuizSessionId, getFirstQuestionForChapter } = loadTs(
     'lib/quiz/practiceFlow.ts',
