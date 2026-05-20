@@ -816,12 +816,12 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'One reason false information and hate can be a threat to democracy is that it automatically gives everyone more knowledge.',
     ],
     [generatedQuestionId(sourceQuestions, 'q149', 'trueStatement')]: [
-      'Integration i ett demokratiskt samhälle är att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga.',
-      'Integration in a democratic society means people with different backgrounds and economic situations live closer to one another and feel included.',
+      'Integration i ett demokratiskt samhälle betyder att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga.',
+      'Integration in a democratic society means that people with different backgrounds and economic situations live closer to one another and feel included.',
     ],
     [generatedQuestionId(sourceQuestions, 'q149', 'falseStatement')]: [
-      'Integration i ett demokratiskt samhälle är att människor lever helt åtskilda efter inkomst eller etnisk bakgrund.',
-      'Integration in a democratic society means people live completely separated by income or ethnic background.',
+      'Integration i ett demokratiskt samhälle betyder att människor lever helt åtskilda efter inkomst eller etnisk bakgrund.',
+      'Integration in a democratic society means that people live completely separated by income or ethnic background.',
     ],
     [generatedQuestionId(sourceQuestions, 'q153', 'trueStatement')]: [
       'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier.',

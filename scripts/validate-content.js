@@ -288,6 +288,8 @@ const QUESTION_NESTED_META_STEM_PATTERNS = [
 const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
+  /\bVilket påstående beskriver\b/i,
+  /\bWhich statement describes\b/i,
 ];
 const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
   /\bVilket svar beskriver\b/i,
@@ -5094,6 +5096,19 @@ function describesStatementEn(subject, answer) {
   }
   return replaceLeadingEnglishSubject(subject, answer);
 }
+function swedenTwoHundredYearsAgoStatementSv(answer) {
+  const normalized = answer.trim();
+  let match = normalized.match(/^Sverige var (.+)$/i);
+  if (match) return `För tvåhundra år sedan var Sverige ${lowerFirst(match[1])}`;
+  match = normalized.match(/^Sverige saknade (.+)$/i);
+  if (match) return `För tvåhundra år sedan saknade Sverige ${lowerFirst(match[1])}`;
+  return `För tvåhundra år sedan ${lowerFirst(normalized)}`;
+}
+function swedenTwoHundredYearsAgoStatementEn(answer) {
+  const normalized = answer.trim();
+  if (/^Sweden\b/i.test(normalized)) return `Two hundred years ago, ${normalized}`;
+  return `Two hundred years ago, ${lowerFirst(normalized)}`;
+}
 function importantRolesStatementSv(subject, context, answer) {
   if (/^Att\s+/i.test(answer)) {
     return `I ${context} har ${lowerFirst(subject)} viktiga uppgifter: att ${lowerLeadingSwedishClauseStart(
@@ -5573,6 +5588,8 @@ function civicStatementSv(source, option) {
     return `I ${match[2]} har ${match[1]} rätt att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad är en uppgift för (.+)$/i);
   if (match) return `En uppgift för ${match[1]} är ${swedishPurposeClause(answer)}`;
+  match = q.match(/^Hur såg Sverige ut för tvåhundra år sedan$/i);
+  if (match) return swedenTwoHundredYearsAgoStatementSv(answer);
   match = q.match(/^Vilket påstående beskriver (.+)$/i);
   if (match) return describesStatementSv(match[1], answer);
   match = q.match(/^Vilket påstående stämmer om (.+)$/i);
@@ -5890,6 +5907,8 @@ function civicStatementEn(source, option) {
   if (match) return `One task of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What is one role of (.+)$/i);
   if (match) return `One role of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^What was Sweden like two hundred years ago$/i);
+  if (match) return swedenTwoHundredYearsAgoStatementEn(answer);
   match = q.match(/^What right do (.+?) have in (.+)$/i);
   if (match)
     return `In ${match[2]}, ${match[1]} have the right to ${lowerFirst(stripLeadingPurposeEn(answer))}`;

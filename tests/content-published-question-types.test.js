@@ -27,6 +27,18 @@ const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
+const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
+const authoredWayToPromptPattern = /\b(?:Vilket är ett sätt att|Which is a way to)\b/i;
+const q036OldListPromptPattern =
+  /\b(?:Vilken lista innehåller|Which list contains|Listan med\b[^.?!]*\binnehåller|The list with\b[^.?!]*\bcontains)\b/i;
+const q026OldMunicipalResponsibilitiesPromptPattern =
+  /\b(?:Vilket exempel beskriver kommunernas ansvar|Which example describes municipal responsibilities)\b/i;
+const q140OldChristmasPromptPattern =
+  /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
+const sourceRecallPromptPattern =
+  /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
+const authoredStatementDescribesPromptPattern =
+  /\b(?:Vilket påstående beskriver (?:statliga myndigheter|rättssäkerhet i Sverige|polisens uppgift i Sverige|Sverige för tvåhundra år sedan|integration i ett demokratiskt samhälle)|Which statement describes (?:government agencies|legal certainty in Sweden|the role of the police in Sweden|Sweden two hundred years ago|integration in a democratic society))\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -650,6 +662,106 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q045 source prompt asks about the answer instead of the civic concept/,
+  );
+});
+
+test('authored statement-describes prompts ask direct civic questions in exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => authoredStatementDescribesPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => authoredStatementDescribesPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const fileOffenders = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ]
+    .filter((relativePath) =>
+      authoredStatementDescribesPromptPattern.test(
+        fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+      ),
+    )
+    .sort();
+  const expectedPrompts = new Map([
+    [
+      'q024',
+      [
+        'Vad är en uppgift för statliga myndigheter i Sverige?',
+        'What is one task of government agencies in Sweden?',
+      ],
+    ],
+    ['q041', ['Vad betyder rättssäkerhet i Sverige?', 'What does legal certainty in Sweden mean?']],
+    [
+      'q043',
+      ['Vilken uppgift har polisen i Sverige?', 'What is one role of the police in Sweden?'],
+    ],
+    [
+      'q075',
+      ['Hur såg Sverige ut för tvåhundra år sedan?', 'What was Sweden like two hundred years ago?'],
+    ],
+    [
+      'q149',
+      [
+        'Vad betyder integration i ett demokratiskt samhälle?',
+        'What does integration in a democratic society mean?',
+      ],
+    ],
+  ]);
+
+  for (const [id, [questionSv, questionEn]] of expectedPrompts) {
+    const generated = generatedSiteBank.find((question) => question.id === id);
+    const actual = actualSiteBank.find((question) => question.id === id);
+    assert.ok(generated, `${id} should be in the generated site bank`);
+    assert.ok(actual, `${id} should be in the static site bank`);
+    assert.equal(generated.q.sv, questionSv);
+    assert.equal(generated.q.en, questionEn);
+    assert.equal(actual.q.sv, questionSv);
+    assert.equal(actual.q.en, questionEn);
+  }
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(fileOffenders, []);
+});
+
+test('authored statement-describes source guard rejects answer-key wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vad är en uppgift för statliga myndigheter i Sverige?',
+        'Vilket påstående beskriver statliga myndigheter?',
+      )
+      .replace(
+        'What is one task of government agencies in Sweden?',
+        'Which statement describes government agencies?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q024 source prompt asks about the answer instead of the civic concept/,
   );
 });
 

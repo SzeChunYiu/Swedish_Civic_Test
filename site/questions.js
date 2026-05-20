@@ -1052,25 +1052,25 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which statement describes government agencies?",
-      "sv": "Vilket påstående beskriver statliga myndigheter?"
+      "en": "What is one task of government agencies in Sweden?",
+      "sv": "Vad är en uppgift för statliga myndigheter i Sverige?"
     },
     "opts": [
       {
-        "en": "They replace courts in criminal cases",
-        "sv": "De ersätter domstolarna i brottmål"
+        "en": "To replace courts in criminal cases",
+        "sv": "Att ersätta domstolarna i brottmål"
       },
       {
-        "en": "They implement decisions and must follow laws and government instructions",
-        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
+        "en": "To implement decisions and follow laws and government instructions",
+        "sv": "Att genomföra beslut och följa lagar och regeringens instruktioner"
       },
       {
-        "en": "They decide who becomes king or queen",
-        "sv": "De beslutar vem som blir kung eller drottning"
+        "en": "To decide who becomes king or queen",
+        "sv": "Att besluta vem som blir kung eller drottning"
       },
       {
-        "en": "They write parties’ election platforms",
-        "sv": "De skriver partiernas valprogram"
+        "en": "To write parties’ election platforms",
+        "sv": "Att skriva partiernas valprogram"
       }
     ],
     "answer": 1,
@@ -1818,25 +1818,25 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which statement describes legal certainty in Sweden?",
-      "sv": "Vilket påstående beskriver rättssäkerhet i Sverige?"
+      "en": "What does legal certainty in Sweden mean?",
+      "sv": "Vad betyder rättssäkerhet i Sverige?"
     },
     "opts": [
       {
-        "en": "Courts are independent, and everyone has the right to defend themselves and appeal a judgment",
-        "sv": "Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom"
+        "en": "That courts are independent and everyone has the right to defend themselves and appeal a judgment",
+        "sv": "Att domstolarna är oberoende och att alla har rätt att försvara sig och överklaga en dom"
       },
       {
-        "en": "The government or Riksdag can decide how courts should judge cases",
-        "sv": "Regering eller riksdag kan bestämma hur domstolar ska döma"
+        "en": "That the government or Riksdag can decide how courts should judge cases",
+        "sv": "Att regering eller riksdag kan bestämma hur domstolar ska döma"
       },
       {
-        "en": "A person can be sentenced without evidence and facts being reviewed",
-        "sv": "En person kan dömas utan att bevis och fakta granskas"
+        "en": "That a person can be sentenced without evidence and facts being reviewed",
+        "sv": "Att en person kan dömas utan att bevis och fakta granskas"
       },
       {
-        "en": "Legal certainty means that some people are above the law",
-        "sv": "Rättssäkerhet betyder att vissa personer står över lagen"
+        "en": "That some people are above the law",
+        "sv": "Att vissa personer står över lagen"
       }
     ],
     "answer": 0,
@@ -1910,8 +1910,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which statement describes the role of the police in Sweden?",
-      "sv": "Vilket påstående beskriver polisens uppgift i Sverige?"
+      "en": "What is one role of the police in Sweden?",
+      "sv": "Vilken uppgift har polisen i Sverige?"
     },
     "opts": [
       {
@@ -3362,25 +3362,25 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which statement describes Sweden two hundred years ago?",
-      "sv": "Vilket påstående beskriver Sverige för tvåhundra år sedan?"
+      "en": "What was Sweden like two hundred years ago?",
+      "sv": "Hur såg Sverige ut för tvåhundra år sedan?"
     },
     "opts": [
       {
-        "en": "As a typical agricultural country where almost everyone lived in the countryside",
-        "sv": "Som ett typiskt jordbruksland där nästan alla bodde på landet"
+        "en": "Sweden was a typical agricultural country where almost everyone lived in the countryside",
+        "sv": "Sverige var ett typiskt jordbruksland där nästan alla bodde på landet"
       },
       {
-        "en": "As a high-tech information society",
-        "sv": "Som ett högteknologiskt informationssamhälle"
+        "en": "Sweden was a high-tech information society",
+        "sv": "Sverige var ett högteknologiskt informationssamhälle"
       },
       {
-        "en": "As a country without countryside",
-        "sv": "Som ett land utan landsbygd"
+        "en": "Sweden had no countryside",
+        "sv": "Sverige saknade landsbygd"
       },
       {
-        "en": "As a country without cities",
-        "sv": "Som ett land utan städer"
+        "en": "Sweden had no cities",
+        "sv": "Sverige saknade städer"
       }
     ],
     "answer": 0,
@@ -6800,24 +6800,24 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which statement describes integration in a democratic society?",
-      "sv": "Vilket påstående beskriver integration i ett demokratiskt samhälle?"
+      "en": "What does integration in a democratic society mean?",
+      "sv": "Vad betyder integration i ett demokratiskt samhälle?"
     },
     "opts": [
       {
-        "en": "People with different backgrounds and economic situations living closer to one another and feeling included",
+        "en": "That people with different backgrounds and economic situations live closer to one another and feel included",
         "sv": "Att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga"
       },
       {
-        "en": "People living completely separated by income or ethnic background",
+        "en": "That people live completely separated by income or ethnic background",
         "sv": "Att människor lever helt åtskilda efter inkomst eller etnisk bakgrund"
       },
       {
-        "en": "Public services being available only in some areas",
+        "en": "That public services are available only in some areas",
         "sv": "Att samhällsservice bara finns i vissa områden"
       },
       {
-        "en": "Political engagement always decreasing",
+        "en": "That political engagement always decreases",
         "sv": "Att politiskt engagemang alltid minskar"
       }
     ],
@@ -11378,25 +11378,25 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes government agencies?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver statliga myndigheter?"
+      "en": "One task of government agencies in Sweden is ...",
+      "sv": "En uppgift för statliga myndigheter i Sverige är ..."
     },
     "opts": [
       {
-        "en": "They replace courts in criminal cases",
-        "sv": "De ersätter domstolarna i brottmål"
+        "en": "To replace courts in criminal cases",
+        "sv": "Att ersätta domstolarna i brottmål"
       },
       {
-        "en": "They implement decisions and must follow laws and government instructions",
-        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
+        "en": "To implement decisions and follow laws and government instructions",
+        "sv": "Att genomföra beslut och följa lagar och regeringens instruktioner"
       },
       {
-        "en": "They decide who becomes king or queen",
-        "sv": "De beslutar vem som blir kung eller drottning"
+        "en": "To decide who becomes king or queen",
+        "sv": "Att besluta vem som blir kung eller drottning"
       },
       {
-        "en": "They write parties’ election platforms",
-        "sv": "De skriver partiernas valprogram"
+        "en": "To write parties’ election platforms",
+        "sv": "Att skriva partiernas valprogram"
       }
     ],
     "answer": 1,
@@ -11426,8 +11426,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Government agencies implement decisions and must follow laws and government instructions.",
-      "sv": "Statliga myndigheter genomför beslut och måste följa lagar och regeringens instruktioner."
+      "en": "One task of government agencies in Sweden is to implement decisions and follow laws and government instructions.",
+      "sv": "En uppgift för statliga myndigheter i Sverige är att genomföra beslut och följa lagar och regeringens instruktioner."
     },
     "opts": [
       {
@@ -11466,8 +11466,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Government agencies replace courts in criminal cases.",
-      "sv": "Statliga myndigheter ersätter domstolarna i brottmål."
+      "en": "One task of government agencies in Sweden is to replace courts in criminal cases.",
+      "sv": "En uppgift för statliga myndigheter i Sverige är att ersätta domstolarna i brottmål."
     },
     "opts": [
       {
@@ -11506,25 +11506,25 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes government agencies?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver statliga myndigheter?"
+      "en": "Choose the correct option: What is one task of government agencies in Sweden?",
+      "sv": "Välj rätt alternativ: Vad är en uppgift för statliga myndigheter i Sverige?"
     },
     "opts": [
       {
-        "en": "They replace courts in criminal cases",
-        "sv": "De ersätter domstolarna i brottmål"
+        "en": "To replace courts in criminal cases",
+        "sv": "Att ersätta domstolarna i brottmål"
       },
       {
-        "en": "They implement decisions and must follow laws and government instructions",
-        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
+        "en": "To implement decisions and follow laws and government instructions",
+        "sv": "Att genomföra beslut och följa lagar och regeringens instruktioner"
       },
       {
-        "en": "They decide who becomes king or queen",
-        "sv": "De beslutar vem som blir kung eller drottning"
+        "en": "To decide who becomes king or queen",
+        "sv": "Att besluta vem som blir kung eller drottning"
       },
       {
-        "en": "They write parties’ election platforms",
-        "sv": "De skriver partiernas valprogram"
+        "en": "To write parties’ election platforms",
+        "sv": "Att skriva partiernas valprogram"
       }
     ],
     "answer": 1,
@@ -14370,25 +14370,25 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes legal certainty in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver rättssäkerhet i Sverige?"
+      "en": "Legal certainty in Sweden means ...",
+      "sv": "Rättssäkerhet i Sverige betyder ..."
     },
     "opts": [
       {
-        "en": "Courts are independent, and everyone has the right to defend themselves and appeal a judgment",
-        "sv": "Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom"
+        "en": "That courts are independent and everyone has the right to defend themselves and appeal a judgment",
+        "sv": "Att domstolarna är oberoende och att alla har rätt att försvara sig och överklaga en dom"
       },
       {
-        "en": "The government or Riksdag can decide how courts should judge cases",
-        "sv": "Regering eller riksdag kan bestämma hur domstolar ska döma"
+        "en": "That the government or Riksdag can decide how courts should judge cases",
+        "sv": "Att regering eller riksdag kan bestämma hur domstolar ska döma"
       },
       {
-        "en": "A person can be sentenced without evidence and facts being reviewed",
-        "sv": "En person kan dömas utan att bevis och fakta granskas"
+        "en": "That a person can be sentenced without evidence and facts being reviewed",
+        "sv": "Att en person kan dömas utan att bevis och fakta granskas"
       },
       {
-        "en": "Legal certainty means that some people are above the law",
-        "sv": "Rättssäkerhet betyder att vissa personer står över lagen"
+        "en": "That some people are above the law",
+        "sv": "Att vissa personer står över lagen"
       }
     ],
     "answer": 0,
@@ -14418,8 +14418,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "Courts are independent, and everyone has the right to defend themselves and appeal a judgment.",
-      "sv": "Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom."
+      "en": "Legal certainty in Sweden means that courts are independent and everyone has the right to defend themselves and appeal a judgment.",
+      "sv": "Rättssäkerhet i Sverige betyder att domstolarna är oberoende och att alla har rätt att försvara sig och överklaga en dom."
     },
     "opts": [
       {
@@ -14458,8 +14458,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "The government or Riksdag can decide how courts should judge cases.",
-      "sv": "Regering eller riksdag kan bestämma hur domstolar ska döma."
+      "en": "Legal certainty in Sweden means that the government or Riksdag can decide how courts should judge cases.",
+      "sv": "Rättssäkerhet i Sverige betyder att regering eller riksdag kan bestämma hur domstolar ska döma."
     },
     "opts": [
       {
@@ -14498,25 +14498,25 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes legal certainty in Sweden?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver rättssäkerhet i Sverige?"
+      "en": "Choose the correct option: What does legal certainty in Sweden mean?",
+      "sv": "Välj rätt alternativ: Vad betyder rättssäkerhet i Sverige?"
     },
     "opts": [
       {
-        "en": "Courts are independent, and everyone has the right to defend themselves and appeal a judgment",
-        "sv": "Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom"
+        "en": "That courts are independent and everyone has the right to defend themselves and appeal a judgment",
+        "sv": "Att domstolarna är oberoende och att alla har rätt att försvara sig och överklaga en dom"
       },
       {
-        "en": "The government or Riksdag can decide how courts should judge cases",
-        "sv": "Regering eller riksdag kan bestämma hur domstolar ska döma"
+        "en": "That the government or Riksdag can decide how courts should judge cases",
+        "sv": "Att regering eller riksdag kan bestämma hur domstolar ska döma"
       },
       {
-        "en": "A person can be sentenced without evidence and facts being reviewed",
-        "sv": "En person kan dömas utan att bevis och fakta granskas"
+        "en": "That a person can be sentenced without evidence and facts being reviewed",
+        "sv": "Att en person kan dömas utan att bevis och fakta granskas"
       },
       {
-        "en": "Legal certainty means that some people are above the law",
-        "sv": "Rättssäkerhet betyder att vissa personer står över lagen"
+        "en": "That some people are above the law",
+        "sv": "Att vissa personer står över lagen"
       }
     ],
     "answer": 0,
@@ -14722,8 +14722,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes the role of the police in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver polisens uppgift i Sverige?"
+      "en": "One role of the police in Sweden is ...",
+      "sv": "Polisen i Sverige har uppgiften ..."
     },
     "opts": [
       {
@@ -14770,8 +14770,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "The role of the police in Sweden is to maintain law and order and prevent and investigate crimes.",
-      "sv": "Polisens uppgift i Sverige är att upprätthålla lag och ordning samt förebygga och utreda brott."
+      "en": "One role of the police in Sweden is to maintain law and order and prevent and investigate crimes.",
+      "sv": "Polisen i Sverige har uppgiften att upprätthålla lag och ordning samt förebygga och utreda brott."
     },
     "opts": [
       {
@@ -14810,8 +14810,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "The role of the police in Sweden is to decide the state budget.",
-      "sv": "Polisens uppgift i Sverige är att besluta statens budget."
+      "en": "One role of the police in Sweden is to decide the state budget.",
+      "sv": "Polisen i Sverige har uppgiften att besluta statens budget."
     },
     "opts": [
       {
@@ -14850,8 +14850,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes the role of the police in Sweden?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver polisens uppgift i Sverige?"
+      "en": "Choose the correct option: What is one role of the police in Sweden?",
+      "sv": "Välj rätt alternativ: Vilken uppgift har polisen i Sverige?"
     },
     "opts": [
       {
@@ -20370,25 +20370,25 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes Sweden two hundred years ago?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver Sverige för tvåhundra år sedan?"
+      "en": "Two hundred years ago, ...",
+      "sv": "Hur såg Sverige ut för tvåhundra år sedan ...?"
     },
     "opts": [
       {
-        "en": "As a typical agricultural country where almost everyone lived in the countryside",
-        "sv": "Som ett typiskt jordbruksland där nästan alla bodde på landet"
+        "en": "Sweden was a typical agricultural country where almost everyone lived in the countryside",
+        "sv": "Sverige var ett typiskt jordbruksland där nästan alla bodde på landet"
       },
       {
-        "en": "As a high-tech information society",
-        "sv": "Som ett högteknologiskt informationssamhälle"
+        "en": "Sweden was a high-tech information society",
+        "sv": "Sverige var ett högteknologiskt informationssamhälle"
       },
       {
-        "en": "As a country without countryside",
-        "sv": "Som ett land utan landsbygd"
+        "en": "Sweden had no countryside",
+        "sv": "Sverige saknade landsbygd"
       },
       {
-        "en": "As a country without cities",
-        "sv": "Som ett land utan städer"
+        "en": "Sweden had no cities",
+        "sv": "Sverige saknade städer"
       }
     ],
     "answer": 0,
@@ -20498,25 +20498,25 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes Sweden two hundred years ago?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver Sverige för tvåhundra år sedan?"
+      "en": "Choose the correct option: What was Sweden like two hundred years ago?",
+      "sv": "Välj rätt alternativ: Hur såg Sverige ut för tvåhundra år sedan?"
     },
     "opts": [
       {
-        "en": "As a typical agricultural country where almost everyone lived in the countryside",
-        "sv": "Som ett typiskt jordbruksland där nästan alla bodde på landet"
+        "en": "Sweden was a typical agricultural country where almost everyone lived in the countryside",
+        "sv": "Sverige var ett typiskt jordbruksland där nästan alla bodde på landet"
       },
       {
-        "en": "As a high-tech information society",
-        "sv": "Som ett högteknologiskt informationssamhälle"
+        "en": "Sweden was a high-tech information society",
+        "sv": "Sverige var ett högteknologiskt informationssamhälle"
       },
       {
-        "en": "As a country without countryside",
-        "sv": "Som ett land utan landsbygd"
+        "en": "Sweden had no countryside",
+        "sv": "Sverige saknade landsbygd"
       },
       {
-        "en": "As a country without cities",
-        "sv": "Som ett land utan städer"
+        "en": "Sweden had no cities",
+        "sv": "Sverige saknade städer"
       }
     ],
     "answer": 0,
@@ -33626,24 +33626,24 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes integration in a democratic society?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver integration i ett demokratiskt samhälle?"
+      "en": "Integration in a democratic society means ...",
+      "sv": "Integration i ett demokratiskt samhälle betyder ..."
     },
     "opts": [
       {
-        "en": "People with different backgrounds and economic situations living closer to one another and feeling included",
+        "en": "That people with different backgrounds and economic situations live closer to one another and feel included",
         "sv": "Att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga"
       },
       {
-        "en": "People living completely separated by income or ethnic background",
+        "en": "That people live completely separated by income or ethnic background",
         "sv": "Att människor lever helt åtskilda efter inkomst eller etnisk bakgrund"
       },
       {
-        "en": "Public services being available only in some areas",
+        "en": "That public services are available only in some areas",
         "sv": "Att samhällsservice bara finns i vissa områden"
       },
       {
-        "en": "Political engagement always decreasing",
+        "en": "That political engagement always decreases",
         "sv": "Att politiskt engagemang alltid minskar"
       }
     ],
@@ -33675,8 +33675,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Integration in a democratic society means people with different backgrounds and economic situations live closer to one another and feel included.",
-      "sv": "Integration i ett demokratiskt samhälle är att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga."
+      "en": "Integration in a democratic society means that people with different backgrounds and economic situations live closer to one another and feel included.",
+      "sv": "Integration i ett demokratiskt samhälle betyder att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga."
     },
     "opts": [
       {
@@ -33716,8 +33716,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Integration in a democratic society means people live completely separated by income or ethnic background.",
-      "sv": "Integration i ett demokratiskt samhälle är att människor lever helt åtskilda efter inkomst eller etnisk bakgrund."
+      "en": "Integration in a democratic society means that people live completely separated by income or ethnic background.",
+      "sv": "Integration i ett demokratiskt samhälle betyder att människor lever helt åtskilda efter inkomst eller etnisk bakgrund."
     },
     "opts": [
       {
@@ -33757,24 +33757,24 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes integration in a democratic society?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver integration i ett demokratiskt samhälle?"
+      "en": "Choose the correct option: What does integration in a democratic society mean?",
+      "sv": "Välj rätt alternativ: Vad betyder integration i ett demokratiskt samhälle?"
     },
     "opts": [
       {
-        "en": "People with different backgrounds and economic situations living closer to one another and feeling included",
+        "en": "That people with different backgrounds and economic situations live closer to one another and feel included",
         "sv": "Att människor med olika bakgrund och ekonomiska villkor lever närmare varandra och känner sig delaktiga"
       },
       {
-        "en": "People living completely separated by income or ethnic background",
+        "en": "That people live completely separated by income or ethnic background",
         "sv": "Att människor lever helt åtskilda efter inkomst eller etnisk bakgrund"
       },
       {
-        "en": "Public services being available only in some areas",
+        "en": "That public services are available only in some areas",
         "sv": "Att samhällsservice bara finns i vissa områden"
       },
       {
-        "en": "Political engagement always decreasing",
+        "en": "That political engagement always decreases",
         "sv": "Att politiskt engagemang alltid minskar"
       }
     ],
