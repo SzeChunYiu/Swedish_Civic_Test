@@ -110,6 +110,16 @@ export const expoRouterRootStackScreens = [
     purpose: 'Search route registered in the root stack',
   },
   {
+    name: 'dashboard',
+    file: 'app/dashboard.tsx',
+    purpose: 'Progress dashboard route registered in the root stack',
+  },
+  {
+    name: 'citizenship-requirements',
+    file: 'app/citizenship-requirements.tsx',
+    purpose: 'Citizenship requirements guide route registered in the root stack',
+  },
+  {
     name: '+not-found',
     file: 'app/+not-found.tsx',
     purpose: 'Unknown-route recovery screen registered in the root stack',
@@ -197,6 +207,8 @@ export const expoRouterRootLayoutGlobalPlacements = [
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
   '/about-the-test',
+  '/citizenship-requirements',
+  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -241,12 +253,32 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/about-the-test',
   },
   {
+    input: '/citizenship-requirements',
+    expectedPath: '/citizenship-requirements',
+  },
+  {
+    input: '/dashboard',
+    expectedPath: '/dashboard',
+  },
+  {
+    input: '/dashboard?from=home',
+    expectedPath: '/dashboard?from=home',
+  },
+  {
     input: 'almost-swedish://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
   },
   {
     input: 'almost-swedish://app/about-the-test',
     expectedPath: '/about-the-test',
+  },
+  {
+    input: 'almost-swedish://app/citizenship-requirements',
+    expectedPath: '/citizenship-requirements',
+  },
+  {
+    input: 'almost-swedish://app/search?q=riksdag',
+    expectedPath: '/search?q=riksdag',
   },
   {
     input: 'almost-swedish://quiz/q001',
