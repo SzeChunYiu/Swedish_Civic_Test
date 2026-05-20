@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const { validateStaticHeadMetadata } = require('./check-live-site');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -82,6 +83,15 @@ test('static source claims match the shipped question-bank source titles', () =>
   assert.match(surface, /UHR/i);
   assert.match(surface, /current question bank|nuvarande fr[aå]gebanken/i);
   assert.match(surface, /Primary source\s+1|Prim[aä]r k[aä]lla\s+1/i);
+});
+
+test('static head metadata does not make pass or passport outcome claims', () => {
+  const result = validateStaticHeadMetadata(read('site/index.html'));
+
+  assert.equal(result.ok, true, result.details);
+  assert.match(result.title, /^Almost Swedish\b/);
+  assert.doesNotMatch(result.surface, /Study,\s*fika,\s*pass/i);
+  assert.doesNotMatch(result.surface, /\b(?:pass the test|earn the passport|get the passport)\b/i);
 });
 
 test('static source provenance copy rejects unshipped external source families', () => {
