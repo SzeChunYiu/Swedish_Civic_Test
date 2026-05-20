@@ -69,8 +69,18 @@ test('provenance badge exposes readable tokenized provenance labels', () => {
   assert.match(source, /const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy>/);
   assert.match(source, /UHR-källa/);
   assert.match(source, /UHR source/);
-  assert.match(source, /accessibilityRole="text"/);
-  assert.match(source, /accessibilityLabel=\{`\$\{copy\.accessibilityPrefix\}: \$\{label\}`\}/);
+  assert.match(source, /const pointerPressStarted = useRef\(false\);/);
+  assert.match(source, /getProvenanceDescription\(provenance, language\)/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /aria-expanded=\{sourceNoteVisible\}/);
+  assert.match(source, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
+  assert.match(source, /onFocus=\{showSourceNote\}/);
+  assert.match(source, /onPress=\{toggleSourceNote\}/);
+  assert.match(source, /onPressIn=\{beginPointerPress\}/);
+  assert.match(source, /onPressOut=\{endPointerPress\}/);
+  assert.match(source, /hitSlop=\{space\[1\]\}/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /borderRadius: radius\.pill/);
   assert.match(source, /textTransform: 'uppercase'/);
   assert.match(source, /backgroundColor: colors\.badgeBlueBg/);
@@ -107,7 +117,9 @@ test('button derives an accessibility label from plain text children by default'
     source,
     /pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null/,
   );
-  assert.match(source, /minHeight: 44/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(source, /borderWidth: space\.hairline/);
   assert.match(source, /borderRadius: radius\.button/);
   assert.match(source, /backgroundColor: colors\.accentActive/);
   assert.match(source, /nativeID=\{buttonAccessibilityHintId\}/);
@@ -340,7 +352,7 @@ test('card scaffold groups labelled surfaces for accessibility', () => {
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
   assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
+  assert.match(source, /accessibilityRole=\{resolvedAccessibilityRole\}/);
   assert.match(source, /nativeID=\{cardAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -565,10 +577,7 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(helperSource, /stripSourceAuthorityPhrasing/);
   assert.match(helperSource, /Enligt UHR-materialet/);
   assert.match(helperSource, /According to the UHR material/);
-  assert.match(
-    source,
-    /<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
-  );
+  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<QuestionSourceCitation/);
   assert.match(
     source,
@@ -674,8 +683,14 @@ test('quiz feedback cards expose accessible summaries', () => {
     /const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy>/,
   );
   assert.match(explanationSource, /Förklaring saknas för den här frågan\./);
-  assert.match(explanationSource, /getQuestionExplanationText\(/);
-  assert.match(explanationSource, /\{ explanationEn, explanationSv, explanationText \}/);
+  assert.match(
+    explanationSource,
+    /const localizedExplanation = explanationText\?\.\[language\] \?\? explanationText\?\.sv;/,
+  );
+  assert.match(
+    explanationSource,
+    /language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\)\)/,
+  );
   assert.match(explanationSource, /const panelAccessibilityLabel =/);
   assert.match(explanationSource, /`\$\{copy\.accessibilityLabelPrefix\}: \$\{explanation\}`/);
   assert.match(explanationSource, /<Card accessibilityLabel=\{panelAccessibilityLabel\}>/);
@@ -692,8 +707,9 @@ test('quiz feedback cards expose accessible summaries', () => {
   assert.match(referenceSource, /const referenceAccessibilityLabel =/);
   assert.match(
     referenceSource,
-    /`\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{pageLabel\}`/,
+    /pageLabel\s*\?\s*`\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{pageLabel\}`/,
   );
+  assert.match(referenceSource, /<SourceCitation/);
   assert.match(referenceSource, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
   assert.match(referenceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(referenceSource, /\{copy\.title\}/);
@@ -742,7 +758,7 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /bookmarkedReviewQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad för att öva igen/);
+  assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
@@ -805,7 +821,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.match(source, /question\.correctOptionId/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
-  assert.match(source, /Ditt senaste svar/);
+  assert.match(source, /Ditt senaste felaktiga svar/);
   assert.match(source, /Your latest wrong answer/);
   assert.match(source, /Rätt svar/);
   assert.match(source, /Correct answer/);
