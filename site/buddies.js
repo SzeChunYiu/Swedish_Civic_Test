@@ -1,4 +1,4 @@
-/* Sveriges Medborgartest — Study Buddies (10 of them)
+/* Almost Swedish — Study Buddies (10 of them)
    Each buddy has SVG art, personality tips, "Did you know" facts about Sweden,
    and "pet me" reactions. Buddies change seasonally if user hasn't picked one.
 */
@@ -57,15 +57,15 @@
       tips: {
         en: [
           "Pace yourself. I've been carved from one piece of wood since the 1700s — and even *I* take breaks.",
-          "Pass the test. Earn the passport. Tell people I helped.",
-          "When two answers sound right, the shorter one usually isn't.",
+          "Study the material. Practice with sources. Tell people I helped.",
+          "Read the whole question, then answer the fact it actually asks for. Tiny horse rule.",
           "My hometown is Mora. Lots of horses, not many beaches.",
           "Tap an option, even if you're guessing. Wrong answers come back later.",
         ],
         sv: [
           "Ta det lugnt. Jag har varit en träklump sedan 1700-talet — *jag* tar paus.",
-          "Klara provet. Få passet. Säg att jag hjälpte.",
-          "När två svar verkar rätt — det kortare är oftast fel.",
+          "Plugga materialet. Öva med källor. Säg att jag höll dig sällskap.",
+          "Läs hela frågan och svara på just den fakta som efterfrågas. Liten hästregel.",
           "Min hemstad är Mora. Mycket hästar, få sandstränder.",
         ],
       },
@@ -183,7 +183,7 @@
           "The hint is in the question. Read it twice. I'll wait.",
           "Leave gröt out for me and I'll deliver the right answer in your sleep. Probably.",
           "Sweden has FOUR basic laws. Not three. Even I had to memorise that.",
-          "I once switched two answer letters on someone's mock exam. Joking. Mostly.",
+          "I only rearrange porridge bowls. Read twice, pick calmly, and trust the shuffled options.",
           "If something feels too easy, it usually is.",
         ],
         sv: [
@@ -602,15 +602,26 @@
 
   // ---------- Wire up ----------
 
+  function activateBuddyFigure() {
+    const bubble = document.getElementById("dala-bubble");
+    if (bubble && !bubble.hidden) hideMessage();
+    else if (Math.random() < 0.4) petReaction();
+    else showRandomTip();
+  }
+
   document.addEventListener("click", (e) => {
     if (e.target.closest("#dala-figure")) {
-      const bubble = document.getElementById("dala-bubble");
-      if (bubble && !bubble.hidden) hideMessage();
-      else if (Math.random() < 0.4) petReaction();
-      else showRandomTip();
+      activateBuddyFigure();
       return;
     }
     if (e.target.closest("#dala-bubble-close")) { hideMessage(); return; }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!e.target.closest("#dala-figure")) return;
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    activateBuddyFigure();
   });
 
   window.addEventListener("hashchange", () => setTimeout(pageNudge, 400));

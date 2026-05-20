@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -20,7 +19,7 @@ test('settings route title and preference sections stay accessible as headers', 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteHeadersValidated, 4);
+  assert.equal(summary.settingsRouteHeadersValidated, 5);
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
   assert.match(source, /const copy = settingsCopy\[language\]/);
   assert.match(
