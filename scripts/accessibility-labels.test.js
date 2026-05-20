@@ -141,3 +141,22 @@ test('NativeAdCard native summary and CTA are separate accessibility elements', 
   assert.match(copySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);
   assert.doesNotMatch(copySource, new RegExp(['Sponsrad', 'studieplacering'].join('\\s+'), 'i'));
 });
+
+test('MockExamConfigPanel summary header is separate from interactive controls', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'components', 'MockExamConfigPanel.tsx'), 'utf8');
+
+  assert.match(source, /const resolvedPanelAccessibilityLabel =/);
+  assert.match(source, /accessibilityRole="none"/);
+  assert.match(source, /accessible=\{false\}/);
+  assert.match(
+    source,
+    /<View\s+accessible\s+accessibilityLabel=\{resolvedPanelAccessibilityLabel\}\s+accessibilityRole=\{accessibilityRole\}\s+style=\{styles\.header\}/,
+  );
+  assert.match(source, /accessibilityRole="adjustable"/);
+  assert.match(source, /accessibilityRole="checkbox"/);
+  assert.doesNotMatch(
+    source,
+    /<View\s+accessibilityLabel=\{resolvedChaptersLabel\}\s+accessibilityRole="summary"\s+style=\{styles\.chips\}/,
+  );
+  assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
+});
