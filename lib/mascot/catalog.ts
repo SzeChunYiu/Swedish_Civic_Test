@@ -11,6 +11,7 @@
 export type MascotId =
   | 'dala-horse'
   | 'kanelbulle'
+  | 'skoglimpa'
   | 'moose'
   | 'tomte'
   | 'salmon'
@@ -44,6 +45,11 @@ export interface MascotDescriptor {
   affinity?: string[];
 }
 
+export const FAVORITE_COMPANION_IDS = [
+  'kanelbulle',
+  'skoglimpa',
+] as const satisfies readonly MascotId[];
+
 export const MASCOT_CATALOG: readonly MascotDescriptor[] = [
   {
     id: 'dala-horse',
@@ -60,6 +66,14 @@ export const MASCOT_CATALOG: readonly MascotDescriptor[] = [
     anchorSv: 'Fika och vardagskultur.',
     anchorEn: 'Fika and everyday culture.',
     affinity: ['everyday-culture'],
+  },
+  {
+    id: 'skoglimpa',
+    labelSv: 'Skoglimpa',
+    labelEn: 'Swedish rye loaf',
+    anchorSv: 'Mörkt rågbröd och svensk vardagsmat.',
+    anchorEn: 'Dark rye bread and everyday Swedish food.',
+    affinity: ['everyday-culture', 'food'],
   },
   {
     id: 'moose',
@@ -128,7 +142,7 @@ export const MASCOT_CATALOG: readonly MascotDescriptor[] = [
 ];
 
 /** Default companion if the user has not yet picked one. */
-export const DEFAULT_COMPANION_ID: MascotId = 'dala-horse';
+export const DEFAULT_COMPANION_ID: MascotId = 'kanelbulle';
 
 export function getMascot(id: string): MascotDescriptor | null {
   return MASCOT_CATALOG.find((m) => m.id === id) ?? null;
@@ -136,6 +150,16 @@ export function getMascot(id: string): MascotDescriptor | null {
 
 export function isMascotId(value: unknown): value is MascotId {
   return typeof value === 'string' && MASCOT_CATALOG.some((m) => m.id === value);
+}
+
+export function getCompanionPickerMascots(): readonly MascotDescriptor[] {
+  const favoriteMascots = FAVORITE_COMPANION_IDS.map((id) => getMascot(id)).filter(
+    (mascot): mascot is MascotDescriptor => mascot !== null,
+  );
+  const favorites = new Set<MascotId>(FAVORITE_COMPANION_IDS);
+  const remainingMascots = MASCOT_CATALOG.filter((mascot) => !favorites.has(mascot.id));
+
+  return [...favoriteMascots, ...remainingMascots];
 }
 
 /** Asset path for a given mascot + expression. Caller passes to <SvgUri>. */

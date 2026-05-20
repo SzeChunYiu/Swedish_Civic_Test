@@ -22,12 +22,13 @@ function loadTs(rel) {
   return require(path.join(repoRoot, rel));
 }
 
-test('MASCOT_CATALOG: exactly 10 entries with stable Sv labels', () => {
+test('MASCOT_CATALOG: exactly 11 entries with stable Sv labels', () => {
   const { MASCOT_CATALOG } = loadTs('lib/mascot/catalog.ts');
-  assert.equal(MASCOT_CATALOG.length, 10);
+  assert.equal(MASCOT_CATALOG.length, 11);
   const expectedIds = [
     'dala-horse',
     'kanelbulle',
+    'skoglimpa',
     'moose',
     'tomte',
     'salmon',
@@ -61,17 +62,51 @@ test('MASCOT_EXPRESSIONS: five expressions in canonical order', () => {
 test('isMascotId: validates known + rejects unknown', () => {
   const { isMascotId } = loadTs('lib/mascot/catalog.ts');
   assert.equal(isMascotId('dala-horse'), true);
+  assert.equal(isMascotId('skoglimpa'), true);
   assert.equal(isMascotId('lucia'), true);
   assert.equal(isMascotId('not-a-mascot'), false);
   assert.equal(isMascotId(123), false);
 });
 
 test('mascotAssetPath: constructs canonical path', () => {
-  const { mascotAssetPath } = loadTs('lib/mascot/catalog.ts');
+  const { MASCOT_EXPRESSIONS, mascotAssetPath } = loadTs('lib/mascot/catalog.ts');
   assert.equal(mascotAssetPath('lucia', 'celebrate'), 'assets/mascot/lucia/celebrate.svg');
+  for (const expression of MASCOT_EXPRESSIONS) {
+    assert.equal(
+      mascotAssetPath('skoglimpa', expression),
+      `assets/mascot/skoglimpa/${expression}.svg`,
+    );
+  }
 });
 
-test('DEFAULT_COMPANION_ID: is a valid mascot id', () => {
+test('DEFAULT_COMPANION_ID: Kanelbulle is the valid default companion', () => {
   const { DEFAULT_COMPANION_ID, isMascotId } = loadTs('lib/mascot/catalog.ts');
+  assert.equal(DEFAULT_COMPANION_ID, 'kanelbulle');
   assert.equal(isMascotId(DEFAULT_COMPANION_ID), true);
+});
+
+test('favorite companion ordering starts the picker with Kanelbulle and Skoglimpa', () => {
+  const { FAVORITE_COMPANION_IDS, MASCOT_CATALOG, getCompanionPickerMascots } =
+    loadTs('lib/mascot/catalog.ts');
+  assert.deepEqual([...FAVORITE_COMPANION_IDS], ['kanelbulle', 'skoglimpa']);
+  assert.deepEqual(
+    getCompanionPickerMascots()
+      .slice(0, 2)
+      .map((mascot) => mascot.id),
+    ['kanelbulle', 'skoglimpa'],
+  );
+  assert.deepEqual(
+    new Set(getCompanionPickerMascots().map((mascot) => mascot.id)),
+    new Set(MASCOT_CATALOG.map((mascot) => mascot.id)),
+  );
+});
+
+test('Skoglimpa carries bilingual labels and cultural anchors', () => {
+  const { getMascot } = loadTs('lib/mascot/catalog.ts');
+  const skoglimpa = getMascot('skoglimpa');
+  assert.ok(skoglimpa);
+  assert.equal(skoglimpa.labelSv, 'Skoglimpa');
+  assert.equal(skoglimpa.labelEn, 'Swedish rye loaf');
+  assert.match(skoglimpa.anchorSv, /rågbröd/);
+  assert.match(skoglimpa.anchorEn, /rye bread/);
 });
