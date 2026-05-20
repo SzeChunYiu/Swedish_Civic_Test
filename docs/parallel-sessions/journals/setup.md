@@ -1264,3 +1264,12 @@ Verification: clean SETUP worktree rebased onto current `origin/main` `9e023246`
 PR: pending from `setup/static-sv-mock-exam-browser-guard-1779236573` at handoff commit time.
 Blocked? no for this static browser wording/reachability guard; no Vercel CLI was run.
 Next suggested validator action: inspect the rendered static browser guard and rerun the focused e2e, content validation, and grouped static source/mobile-nav checks before accepting `STATIC-SV-MOCK-EXAM-TERM-BROWSER-GUARD-1`.
+
+## Iteration 261 - 2026-05-20
+
+Task completed: NATIVE-EBOOK-HIGHLIGHTS-SURFACE-1 bounded SETUP cleanup - stopped the native Pro tier table from advertising ebook highlights and notes export while the native app has no ebook route, keeping the tested local highlight store primitive for a future real reader surface.
+Artifacts changed: `lib/monetization/tierComparison.ts`, `tests/v1-1-pro-foundations.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `1260753b`; `node --test tests/v1-1-highlights-store.test.js tests/v1-1-effective-entitlements.test.js tests/content-learn-route-copy-parity.test.js tests/content-profile-route-copy-parity.test.js scripts/ui-effects.test.js tests/v1-1-pro-foundations.test.js` exit 0 with 129/129 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; repo format check plus targeted Prettier for changed files exit 0; `git diff --check` exit 0.
+PR: pending from `setup/native-ebook-pro-promise-1779237259` at handoff commit time.
+Blocked? no for this bounded native Pro promise cleanup; the full native ebook reader/highlight surface remains a future product task.
+Next suggested validator action: inspect the tier comparison rows and rerun the focused Pro/highlight/profile checks before accepting `NATIVE-EBOOK-HIGHLIGHTS-SURFACE-1`.
