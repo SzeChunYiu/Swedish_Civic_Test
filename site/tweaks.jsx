@@ -49,10 +49,10 @@ const SMT_PALETTES = {
 };
 
 const SMT_SLOGANS = {
-  midsommar: { a: "Study the material.", b: "Practice with sources.", c: "Chat at midsommar." },
-  abba:      { a: "Take a chance.",      b: "Mamma mia, study.",      c: "Review like a dancing queen." },
-  fika:      { a: "Sip the coffee.",     b: "Open the app.",          c: "Practice with pulla." },
-  serious:   { a: "Study Sweden's",      b: "civic material.",        c: "On your phone." },
+  midsommar: { a: "Study the facts.", b: "Build confidence.", c: "Arrive prepared." },
+  abba:      { a: "Take a chance.", b: "Mamma mia, study.", c: "Recall like a dancing queen." },
+  fika:      { a: "Sip the coffee.", b: "Open the app.",     c: "Study with pulla." },
+  serious:   { a: "Study Sweden's", b: "civic test.",        c: "On your phone." },
 };
 
 function applyPalette(name) {
