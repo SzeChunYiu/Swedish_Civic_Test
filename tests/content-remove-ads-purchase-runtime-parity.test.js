@@ -11,6 +11,7 @@ function parseValidationSummary() {
     process.execPath,
     ['scripts/validate-content.js', '--focus-remove-ads-purchase-runtime-parity'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
