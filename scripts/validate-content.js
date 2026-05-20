@@ -12665,6 +12665,10 @@ function validateProgressStoreSchemaParity() {
       'const persistedProgress = writeProgress(nextProgress);',
       'progress mutations must persist and canonicalize nextProgress',
     ],
+    [
+      "if (typeof isCorrect !== 'boolean') return state;",
+      'recordAnswer must fail closed on non-boolean runtime answer flags',
+    ],
     ['return persistedProgress;', 'progress mutations must return persisted readback state'],
     [
       'const persistedProgress = writeProgress(emptyProgress);',
