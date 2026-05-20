@@ -36,8 +36,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -120,8 +120,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -167,8 +167,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -438,8 +438,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -485,8 +485,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -531,8 +531,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -623,8 +623,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -761,8 +761,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -899,8 +899,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -991,8 +991,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1075,8 +1075,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1121,8 +1121,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1167,8 +1167,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1213,8 +1213,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1297,8 +1297,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3255,8 +3255,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3278,8 +3278,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer gives examples of municipal welfare?",
-      "sv": "Vilket svar ger exempel på kommunal välfärd?"
+      "en": "Which services are examples of municipal welfare?",
+      "sv": "Vilka verksamheter är exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -3708,8 +3708,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3800,8 +3800,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3846,8 +3846,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3938,8 +3938,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4030,8 +4030,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4160,8 +4160,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4206,8 +4206,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4290,8 +4290,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4336,8 +4336,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4382,8 +4382,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6504,8 +6504,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7124,7 +7124,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -7147,7 +7147,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -7335,8 +7335,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7375,8 +7375,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7415,8 +7415,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7463,8 +7463,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7686,8 +7686,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7727,8 +7727,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7768,8 +7768,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7817,8 +7817,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7866,8 +7866,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7906,8 +7906,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7946,8 +7946,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7994,8 +7994,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8933,8 +8933,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8974,8 +8974,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9015,8 +9015,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9064,8 +9064,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9113,8 +9113,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9153,8 +9153,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9193,8 +9193,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9241,8 +9241,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9289,8 +9289,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9329,8 +9329,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9369,8 +9369,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9417,8 +9417,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9641,8 +9641,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9681,8 +9681,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9721,8 +9721,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9769,8 +9769,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10169,8 +10169,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10209,8 +10209,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10249,8 +10249,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10297,8 +10297,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10697,8 +10697,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10737,8 +10737,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10777,8 +10777,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10825,8 +10825,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11049,8 +11049,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11089,8 +11089,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11129,8 +11129,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11177,8 +11177,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11401,8 +11401,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11441,8 +11441,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11481,8 +11481,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11529,8 +11529,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11577,8 +11577,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11617,8 +11617,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11657,8 +11657,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11705,8 +11705,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11753,8 +11753,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11793,8 +11793,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11833,8 +11833,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11881,8 +11881,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11929,8 +11929,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11969,8 +11969,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12009,8 +12009,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12057,8 +12057,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12281,8 +12281,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12321,8 +12321,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12361,8 +12361,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12409,8 +12409,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19865,8 +19865,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19905,8 +19905,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19945,8 +19945,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19993,8 +19993,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20018,8 +20018,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer gives examples of municipal welfare?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar ger exempel på kommunal välfärd?"
+      "en": "Which answer best matches? Which services are examples of municipal welfare?",
+      "sv": "Vilket svar stämmer bäst? Vilka verksamheter är exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -20146,8 +20146,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which answer gives examples of municipal welfare?",
-      "sv": "Välj rätt alternativ: Vilket svar ger exempel på kommunal välfärd?"
+      "en": "Choose the correct option: Which services are examples of municipal welfare?",
+      "sv": "Välj rätt alternativ: Vilka verksamheter är exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -21629,8 +21629,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21669,8 +21669,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21709,8 +21709,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21757,8 +21757,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21981,8 +21981,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22021,8 +22021,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22061,8 +22061,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22109,8 +22109,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22157,8 +22157,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22197,8 +22197,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22237,8 +22237,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22285,8 +22285,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22509,8 +22509,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22549,8 +22549,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22589,8 +22589,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22637,8 +22637,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22861,8 +22861,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22901,8 +22901,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22941,8 +22941,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22989,8 +22989,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23389,8 +23389,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23429,8 +23429,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23469,8 +23469,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23517,8 +23517,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23565,8 +23565,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23605,8 +23605,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23645,8 +23645,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23693,8 +23693,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23917,8 +23917,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23957,8 +23957,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23997,8 +23997,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24045,8 +24045,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24093,8 +24093,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24133,8 +24133,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24173,8 +24173,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24221,8 +24221,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24269,8 +24269,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24309,8 +24309,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24349,8 +24349,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24397,8 +24397,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32397,8 +32397,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32438,8 +32438,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32479,8 +32479,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32528,8 +32528,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34866,7 +34866,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Which answer best matches? Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Vilket svar stämmer bäst? Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -34889,7 +34889,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34930,7 +34930,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34971,7 +34971,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34997,7 +34997,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Choose the correct option: Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Välj rätt alternativ: Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -35020,7 +35020,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -35095,8 +35095,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Health centres, child health centres, and maternity clinics.",
-      "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler."
+      "en": "Primary care includes health centres, child health centres, and maternity clinics.",
+      "sv": "Primärvården omfattar vårdcentraler, barnavårdscentraler och mödravårdscentraler."
     },
     "opts": [
       {
@@ -35136,8 +35136,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Courts, prosecutors, and prison and probation services.",
-      "sv": "Domstolar, åklagare och kriminalvård."
+      "en": "Primary care includes courts, prosecutors, and prison and probation services.",
+      "sv": "Primärvården omfattar domstolar, åklagare och kriminalvård."
     },
     "opts": [
       {
@@ -35275,8 +35275,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.",
-      "sv": "Ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
+      "en": "The municipality is responsible for arranging preschools, after-school centres, compulsory schools, and upper-secondary schools.",
+      "sv": "Kommunen ansvarar för att ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
     },
     "opts": [
       {
@@ -35316,8 +35316,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Pay sickness insurance and state pensions.",
-      "sv": "Betala sjukförsäkring och statliga pensioner."
+      "en": "The municipality is responsible for paying sickness insurance and state pensions.",
+      "sv": "Kommunen ansvarar för att betala sjukförsäkring och statliga pensioner."
     },
     "opts": [
       {
@@ -35455,8 +35455,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Care and services at home or housing adapted for older people.",
-      "sv": "Vård och service hemma eller boende som är anpassat för äldre personer."
+      "en": "The municipality can offer older people care and services at home or housing adapted for older people to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer vård och service hemma eller boende som är anpassat för äldre personer för att klara vardagen."
     },
     "opts": [
       {
@@ -35496,8 +35496,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Automatic study support and a university place.",
-      "sv": "Automatiskt studiestöd och plats på universitet."
+      "en": "The municipality can offer older people automatic study support and a university place to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer automatiskt studiestöd och plats på universitet för att klara vardagen."
     },
     "opts": [
       {

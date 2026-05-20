@@ -1206,6 +1206,14 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'A-kassan är en myndighet som kontrollerar arbetsmiljöer.',
       'A-kassan is a government agency that inspects work environments.',
     ],
+    [generatedQuestionId(sourceQuestions, 'q073', 'trueStatement')]: [
+      'Barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst är exempel på kommunal välfärd.',
+      'Childcare, schools and education, elderly care, and social services are examples of municipal welfare.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q073', 'falseStatement')]: [
+      'Pensioner, sjukförsäkring, föräldraförsäkring och studiestöd är exempel på kommunal välfärd.',
+      'Pensions, sickness insurance, parental insurance, and study support are examples of municipal welfare.',
+    ],
     [generatedQuestionId(sourceQuestions, 'q076', 'trueStatement')]: [
       'Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg.',
       'Sweden’s population grew during the 19th century because of better farming methods and medical advances.',
