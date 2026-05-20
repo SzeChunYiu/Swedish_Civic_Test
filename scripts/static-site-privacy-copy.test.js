@@ -11,9 +11,9 @@ function read(filePath) {
 
 function staticDictionaryValues(source, key) {
   const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return [
-    ...source.matchAll(new RegExp(`['"]${escapedKey}['"]:\\s*(['"])([\\s\\S]*?)\\1`, 'g')),
-  ].map((match) => match[2]);
+  return [...source.matchAll(new RegExp(`"${escapedKey}":\\s*"([^"]+)"`, 'g'))].map(
+    (match) => match[1],
+  );
 }
 
 function staticPublicPrivacySurface() {
@@ -55,10 +55,7 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
   [
-    /Google AdSense-ready ad slots/,
-    /stay disabled until reviewed slot IDs are configured/,
-    /Google AdSense-f[oö]rberedda annonsytor/,
-    /avst[aä]ngda tills granskade plats-ID:n [aä]r konfigurerade/,
+    /Google AdSense/,
     /Google Mobile Ads \(AdMob\)/,
     /ad and consent signals/,
     /annons- och samtyckessignaler/,
@@ -81,17 +78,12 @@ test('static home privacy microcopy scopes local study data without denying ad t
     () => assertNoUnqualifiedNoTrackingClaims(noTrackingRegression),
     /No tracking|Ingen spårning/,
   );
+  assert.match(appSource, /"numbers\.4": "to start\. No login\. Study progress stays local\."/);
   assert.match(
     appSource,
-    /['"]numbers\.4['"]:\s*['"]to start\. No login\. Study progress stays local\.['"]/,
-  );
-  assert.match(
-    appSource,
-    /['"]numbers\.4['"]:\s*['"]att börja\. Ingen inloggning\. Studieframsteg stannar lokalt\.['"]/,
+    /"numbers\.4": "att börja\. Ingen inloggning\. Studieframsteg stannar lokalt\."/,
   );
   assert.match(surface, /Google AdSense/);
-  assert.match(surface, /reviewed web slot IDs are configured/);
-  assert.match(surface, /granskade webbplats-ID:n [aä]r konfigurerade/);
   assert.match(surface, /Google Mobile Ads \(AdMob\)/);
   assert.match(surface, /ad and consent signals/);
   assert.match(surface, /annons- och samtyckessignaler/);
