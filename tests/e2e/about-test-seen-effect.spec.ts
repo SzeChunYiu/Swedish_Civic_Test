@@ -1,12 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import {
-  closeLaunchAdIfPresent,
-  dismissLanguagePickerIfPresent,
-  seedSettingsLanguage,
-  type AppLanguage,
-} from './browserLaunch';
+import { dismissBlockingModals, seedSettingsLanguage, type AppLanguage } from './browserLaunch';
 
 const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 
@@ -36,8 +31,7 @@ test('about-the-test route marks the first-run guide as seen after render', asyn
   await seedFreshSettings(page, 'en');
 
   await page.goto('/about-the-test', { waitUntil: 'networkidle' });
-  await dismissLanguagePickerIfPresent(page);
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
 
   await expect(
     page.getByRole('heading', { name: 'What is the Swedish civic test?' }).last(),
@@ -48,8 +42,7 @@ test('about-the-test route marks the first-run guide as seen after render', asyn
   );
 
   await page.goto('/home', { waitUntil: 'networkidle' });
-  await dismissLanguagePickerIfPresent(page);
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
 
   await expect(page.getByRole('button', { name: 'Skip the guide' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Open the about-the-test guide' })).toHaveCount(0);

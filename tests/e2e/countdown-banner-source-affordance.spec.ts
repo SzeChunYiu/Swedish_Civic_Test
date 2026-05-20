@@ -13,7 +13,7 @@ const expectedSources = [
   },
   {
     label: 'UHR',
-    url: CITIZENSHIP_TIMELINE_SOURCE_URLS.civicKnowledgeTestStart,
+    url: CITIZENSHIP_TIMELINE_SOURCE_URLS.civicKnowledgeTestFirstSitting,
   },
   {
     label: 'Regeringen',
