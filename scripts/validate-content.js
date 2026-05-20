@@ -1042,20 +1042,20 @@ const EXPECTED_EXAM_ROUTE_HEADERS = [
 const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
   sv: [
     'Övningsprov',
-    'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet',
-    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
-    'Provåtkomst',
-    'Kontrollerar provåtkomst.',
+    'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet',
+    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under övningsprovet',
+    'Åtkomst till övningsprov',
+    'Kontrollerar åtkomst till övningsprov.',
     'Dagens kostnadsfria övningsprov är tillgängligt.',
     'Starta övningsprov',
-    'Lås upp extra prov',
-    'Starta upplåst extra prov',
+    'Lås upp extra övningsprov',
+    'Starta upplåst extra övningsprov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
     'Skicka övningsprov',
-    'Skicka prov',
-    'Provresultat',
+    'Skicka in övningsprovet',
+    'Resultat från övningsprov',
     'Övningsresultat',
     'Kapitelöversikt',
     'Frågegenomgång',
@@ -1065,28 +1065,29 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Granska',
     'Rätt',
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
-    'Förklaringar och genomgång visas först efter att provet har skickats in.',
-    'Nästa prov',
+    'Förklaringar och genomgång visas först efter att övningsprovet har skickats in.',
+    'Nästa övningsprov',
+    'Tidsatt simulering',
     'Sparat',
     'Sparar',
   ],
   en: [
     'Mock exam',
-    'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam',
-    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
-    'Exam access',
+    'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during mock exam',
+    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during mock exam',
+    'Mock exam access',
     'Checking mock exam access.',
     'Daily free mock exam available.',
     'Start mock exam',
-    'Unlock extra exam',
-    'Start unlocked extra exam',
+    'Unlock extra mock exam',
+    'Start unlocked extra mock exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
     'Select answer ${optionText} for question ${questionNumber}',
     'Submit mock exam',
-    'Submit exam',
-    'Exam result',
+    'Submit the mock exam',
     'Mock exam result',
+    'Mock exam score',
     'Chapter breakdown',
     'Question review',
     'Question ${questionNumber}',
@@ -1095,10 +1096,30 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Review',
     'Correct',
     'Submitted results are final. Start another mock exam for a fresh attempt.',
-    'Explanations and review are shown only after the exam is submitted.',
-    'Next exam',
+    'Explanations and review are shown only after the mock exam is submitted.',
+    'Next mock exam',
+    'Timed simulation',
     'Saved',
     'Saving',
+  ],
+};
+const FORBIDDEN_EXAM_ROUTE_COPY_LABELS = {
+  sv: [
+    ['Provåtkomst', 'exam Swedish access title must say övningsprov'],
+    ['Kontrollerar provåtkomst.', 'exam Swedish access status must say övningsprov'],
+    ['Lås upp extra prov', 'exam Swedish unlock label must say övningsprov'],
+    ['Starta upplåst extra prov', 'exam Swedish unlocked start label must say övningsprov'],
+    ['Skicka prov', 'exam Swedish submit label must say övningsprov'],
+    ['Provresultat', 'exam Swedish result title must say övningsprov'],
+    ['Nästa prov', 'exam Swedish next-exam label must say övningsprov'],
+  ],
+  en: [
+    ['Exam access', 'exam English access title must say mock exam'],
+    ['Unlock extra exam', 'exam English unlock label must say mock exam'],
+    ['Start unlocked extra exam', 'exam English unlocked start label must say mock exam'],
+    ['Submit exam', 'exam English submit label must say mock exam'],
+    ['Exam result', 'exam English result title must say mock exam'],
+    ['Next exam', 'exam English next-exam label must say mock exam'],
   ],
 };
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
@@ -7508,6 +7529,13 @@ function validateExamRouteCopyParity() {
       }
       if (normalizedLabel) seenLabels.add(normalizedLabel);
       if (labelIsValid) examRouteCopyLabelsValidated += 1;
+    });
+  });
+  Object.values(FORBIDDEN_EXAM_ROUTE_COPY_LABELS).forEach((forbiddenLabels) => {
+    forbiddenLabels.forEach(([label, message]) => {
+      if (examRoute.includes(label)) {
+        reject(`${message}: ${JSON.stringify(label)}`);
+      }
     });
   });
 
