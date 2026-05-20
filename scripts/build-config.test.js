@@ -4,11 +4,36 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const { REQUIRED_SECURITY_HEADERS } = require('./check-live-site');
+const { webDocumentMetadata } = require('../lib/scaffold/webDocumentMetadata');
 
 const repoRoot = path.resolve(__dirname, '..');
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
+}
+
+function readThemeCanvasColor() {
+  const themeSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/colors.ts'), 'utf8');
+  const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
+  assert.notEqual(match, null, 'colors.canvas should stay parseable for web export checks');
+  return match[1];
+}
+
+function copyPublicWebManifest(outputDir) {
+  const manifest = readJson('public/manifest.webmanifest');
+  fs.copyFileSync(
+    path.join(repoRoot, 'public/manifest.webmanifest'),
+    path.join(outputDir, 'manifest.webmanifest'),
+  );
+
+  for (const icon of manifest.icons) {
+    const iconDestination = path.join(outputDir, icon.src);
+    fs.mkdirSync(path.dirname(iconDestination), { recursive: true });
+    fs.copyFileSync(path.join(repoRoot, 'public', icon.src), iconDestination);
+  }
+
+  return manifest;
 }
 
 test('EAS build and submit profiles are configured for internal and production releases', () => {
@@ -1063,6 +1088,22 @@ test('E2E specs centralize blocking modal cleanup helpers', () => {
   }
 });
 
+test('Playwright exported-web server port is configurable per worker', () => {
+  const config = fs.readFileSync(path.join(repoRoot, 'playwright.config.ts'), 'utf8');
+  const staticServer = fs.readFileSync(path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'), 'utf8');
+
+  assert.match(config, /const DEFAULT_E2E_PORT = 4173/);
+  assert.match(config, /process\.env\.E2E_PORT \?\? DEFAULT_E2E_PORT/);
+  assert.match(config, /const e2eBaseUrl = `http:\/\/127\.0\.0\.1:\$\{e2ePort\}`/);
+  assert.match(config, /baseURL: e2eBaseUrl/);
+  assert.match(config, /url: e2eBaseUrl/);
+  assert.match(config, /env: \{ PORT: String\(e2ePort\) \}/);
+  assert.doesNotMatch(config, /baseURL:\s*['"]http:\/\/127\.0\.0\.1:4173['"]/);
+  assert.doesNotMatch(config, /url:\s*['"]http:\/\/127\.0\.0\.1:4173['"]/);
+  assert.doesNotMatch(config, /command:\s*['"][^'"]*4173/);
+  assert.match(staticServer, /process\.env\.PORT \|\| 4173/);
+});
+
 test('manual external blocker loop workflow runs redacted evidence loop and uploads report', () => {
   const workflowPath = path.join(repoRoot, '.github/workflows/external-blocker-loop.yml');
   assert.equal(fs.existsSync(workflowPath), true);
@@ -1476,6 +1517,10 @@ test('web export script is available for local production bundle smoke', () => {
     pkg.scripts['release:web-export-smoke'],
     'rm -rf dist-web && npm run build:web:export',
   );
+  assert.equal(vercelConfig.outputDirectory, 'site');
+  assert.equal(vercelConfig.framework, null);
+  assert.equal(vercelConfig.cleanUrls, true);
+  assert.deepEqual(vercelConfig.git, { deploymentEnabled: false });
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
   assert.match(workflow, /npm run build:web:export/);
@@ -1484,13 +1529,43 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
+  assert.equal(fs.existsSync(path.join(repoRoot, 'public/manifest.webmanifest')), true);
+});
+
+test('Vercel static-site config ships host-level security headers without changing deploy path', () => {
+  const vercelConfig = readJson('vercel.json');
+  const headerRule = vercelConfig.headers?.find((rule) => rule.source === '/(.*)');
+  assert.ok(headerRule, 'vercel.json must apply response headers to the static site');
+  assert.equal(vercelConfig.outputDirectory, 'site');
+  assert.equal(vercelConfig.cleanUrls, true);
+  assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
+  assert.deepEqual(vercelConfig.git, { deploymentEnabled: false });
+
+  const actualHeaders = new Map(
+    (headerRule.headers ?? []).map((header) => [String(header.key).toLowerCase(), header.value]),
+  );
+  for (const expectedHeader of REQUIRED_SECURITY_HEADERS) {
+    assert.equal(
+      actualHeaders.get(expectedHeader.key),
+      expectedHeader.value,
+      `${expectedHeader.name} must stay configured in vercel.json`,
+    );
+  }
+  // TODO(static-csp): add a tested report-only CSP after static fonts and inline scripts are removed.
+  assert.equal(actualHeaders.has('content-security-policy'), false);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
+  const {
+    WEB_EXPORT_FRESHNESS_MARKER,
+    assertWebExportFreshness,
+  } = require('./prepare-web-export.js');
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-postbuild-'));
   const outputDir = path.join(tmpDir, 'dist-web');
   const bundleDir = path.join(outputDir, '_expo/static/js/web');
+  const canvasColor = readThemeCanvasColor();
   fs.mkdirSync(bundleDir, { recursive: true });
+  const manifest = copyPublicWebManifest(outputDir);
   fs.writeFileSync(
     path.join(outputDir, 'index.html'),
     [
@@ -1521,6 +1596,9 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   const index = fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8');
   const fallback = fs.readFileSync(path.join(outputDir, '404.html'), 'utf8');
   const bundle = fs.readFileSync(path.join(bundleDir, 'entry-test.js'), 'utf8');
+  const freshnessMarker = JSON.parse(
+    fs.readFileSync(path.join(outputDir, WEB_EXPORT_FRESHNESS_MARKER), 'utf8'),
+  );
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(index, /data-web-export-loader="true"/);
@@ -1531,9 +1609,54 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.doesNotMatch(index, /href="\/assets\//);
   assert.match(index, /href="_expo\/static\/js\/web\/entry-test\.js"/);
   assert.match(index, /href="assets\/favicon\.png"/);
+  assert.match(index, new RegExp(`<meta name="theme-color" content="${canvasColor}" />`));
+  assert.match(index, new RegExp(`<title>${webDocumentMetadata.title}</title>`));
+  assert.equal(index.includes('<title>Export</title>'), false);
+  assert.match(
+    index,
+    new RegExp(`<meta name="application-name" content="${webDocumentMetadata.applicationName}" />`),
+  );
+  assert.match(
+    index,
+    new RegExp(
+      `<meta name="apple-mobile-web-app-title" content="${webDocumentMetadata.appleMobileWebAppTitle}" />`,
+    ),
+  );
+  assert.match(
+    index,
+    new RegExp(`<meta name="description" content="${webDocumentMetadata.description}" />`),
+  );
+  assert.match(
+    index,
+    new RegExp(
+      `<meta property="og:site_name" content="${webDocumentMetadata.openGraphSiteName}" />`,
+    ),
+  );
+  assert.match(
+    index,
+    new RegExp(`<meta property="og:title" content="${webDocumentMetadata.openGraphTitle}" />`),
+  );
+  assert.match(
+    index,
+    new RegExp(
+      `<meta property="og:description" content="${webDocumentMetadata.openGraphDescription}" />`,
+    ),
+  );
+  assert.match(index, /<link rel="manifest" href="manifest\.webmanifest" \/>/);
+  assert.match(index, new RegExp(`<body style="background-color:${canvasColor}">`));
+  assert.equal(
+    JSON.parse(fs.readFileSync(path.join(outputDir, 'manifest.webmanifest'), 'utf8')).display,
+    'standalone',
+  );
   assert.equal(fallback, index);
   assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
   assert.match(bundle, /uri:"assets\/icon\.png"/);
+  assert.equal(manifest.name, readJson('app.json').expo.name);
+  assert.match(freshnessMarker.sourceHash, /^[a-f0-9]{64}$/);
+  assert.equal(freshnessMarker.sourceInputs.includes('app'), true);
+  assert.equal(freshnessMarker.sourceInputs.includes('components'), true);
+  assert.equal(freshnessMarker.sourceInputs.includes('tests/e2e'), true);
+  assert.doesNotThrow(() => assertWebExportFreshness(outputDir, { repoRoot }));
 
   const checkResult = spawnSync(
     process.execPath,
@@ -1546,6 +1669,37 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
+test('dist-web e2e server rejects missing or stale freshness markers before serving', () => {
+  const { assertDistWebReady } = require('../tests/e2e/serve-dist-web.cjs');
+  const {
+    webExportFreshnessMarkerPath,
+    writeWebExportFreshnessMarker,
+  } = require('./prepare-web-export.js');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dist-web-freshness-'));
+  const outputDir = path.join(tmpDir, 'dist-web');
+  fs.mkdirSync(outputDir, { recursive: true });
+  fs.writeFileSync(path.join(outputDir, 'index.html'), '<!doctype html><title>dist-web</title>\n');
+
+  const marker = writeWebExportFreshnessMarker(outputDir, { repoRoot });
+  const markerPath = webExportFreshnessMarkerPath(outputDir);
+  assert.doesNotThrow(() => assertDistWebReady(outputDir, repoRoot));
+
+  fs.writeFileSync(
+    markerPath,
+    `${JSON.stringify({ ...marker, sourceHash: '0'.repeat(64) }, null, 2)}\n`,
+  );
+  assert.throws(
+    () => assertDistWebReady(outputDir, repoRoot),
+    /dist-web is stale[\s\S]*npm run build:web:export/,
+  );
+
+  fs.rmSync(markerPath);
+  assert.throws(
+    () => assertDistWebReady(outputDir, repoRoot),
+    /web-export-freshness\.json[\s\S]*npm run build:web:export/,
+  );
+});
+
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
   const pkg = readJson('package.json');
   const workflow = fs.readFileSync(
@@ -1555,6 +1709,8 @@ test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live 
   const runCommands = workflow.match(/run: \|\n([\s\S]*)/)?.[1] ?? '';
 
   assert.equal(pkg.scripts['test:site-live'], 'node scripts/check-live-site.js');
+  assert.match(workflow, /schedule:\s*\n\s+- cron: ['"]\*\/30 \* \* \* \*['"]/);
+  assert.doesNotMatch(workflow, /cron: ['"]\*\/15 \* \* \* \*['"]/);
   assert.match(workflow, /branches:\s*\n\s+- main/);
   assert.match(workflow, /paths:\s*\n(?:\s+- ['"].+['"]\n)+/);
   assert.match(workflow, /['"]site\/\*\*['"]/);
