@@ -404,6 +404,41 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('compliance action links keep token-sized targets and feedback', () => {
+  const actionLinkSource = read('components/compliance/ComplianceActionLink.tsx');
+  const legalPageSource = read('components/compliance/LegalPage.tsx');
+  const complianceLinksSource = read('components/compliance/ComplianceLinks.tsx');
+  const sourcesSource = read('app/sources.tsx');
+  const supportSource = read('app/support.tsx');
+  const aboutSource = read('app/about-the-test.tsx');
+
+  assert.match(actionLinkSource, /export interface ComplianceActionLinkProps/);
+  assert.match(actionLinkSource, /export function ComplianceActionLink/);
+  assert.match(actionLinkSource, /const complianceActionLinkClassName = 'compliance-action-link';/);
+  assert.match(actionLinkSource, /document\.getElementById\(complianceActionLinkStyleElementId\)/);
+  assert.match(actionLinkSource, /document\.head\.appendChild\(styleElement\);/);
+  assert.match(actionLinkSource, /\.\$\{complianceActionLinkClassName\}:hover,/);
+  assert.match(actionLinkSource, /\.\$\{complianceActionLinkClassName\}:focus-visible/);
+  assert.match(actionLinkSource, /transform: scale\(\$\{motion\.hoverScale\}\);/);
+  assert.match(actionLinkSource, /transform: scale\(\$\{motion\.pressedScale\}\);/);
+  assert.match(actionLinkSource, /onPressIn: \(\) => setIsPressed\(true\)/);
+  assert.match(actionLinkSource, /onPressOut: clearPressedState/);
+  assert.match(actionLinkSource, /<Link[\s\S]*accessibilityRole="link"[\s\S]*href=\{href\}/);
+  assert.match(actionLinkSource, /display: 'flex'/);
+  assert.match(actionLinkSource, /minHeight: space\[6\]/);
+  assert.match(actionLinkSource, /backgroundColor: colors\.focusSoft/);
+  assert.match(actionLinkSource, /borderColor: colors\.focus/);
+  assert.match(actionLinkSource, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(actionLinkSource, /export function getVisibleLinkDestination/);
+  assert.match(legalPageSource, /<ComplianceActionLink[\s\S]*label=\{resolvedBackLabel\}/);
+  assert.match(complianceLinksSource, /<ComplianceActionLink[\s\S]*label=\{link\.label\}/);
+  assert.match(sourcesSource, /<ComplianceActionLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesSource, /<ComplianceActionLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
+  assert.match(supportSource, /<ComplianceActionLink[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
+  assert.match(aboutSource, /<ComplianceActionLink[\s\S]*variant="primary"/);
+  assert.doesNotMatch(actionLinkSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings route exposes page and section titles as headers', () => {
   const source = read('app/settings.tsx');
   const sectionHeaderMatches = source.match(
@@ -519,6 +554,26 @@ test('mock exam config controls are not nested inside labelled summary container
     source,
     /<View\s+accessibilityLabel=\{resolvedChaptersLabel\}\s+accessibilityRole="summary"\s+style=\{styles\.chips\}/,
   );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('mock exam time heatmap keeps its summary separate from jump buttons', () => {
+  const source = read('components/MockExamTimeHeatmap.tsx');
+  const surfaceOpening = source.match(/<Surface[\s\S]*?>/)?.[0] ?? '';
+
+  assert.match(source, /const summaryAccessibilityLabel =/);
+  assert.match(source, /<Surface[\s\S]*accessible=\{false\}[\s\S]*accessibilityRole="none"/);
+  assert.match(
+    source,
+    /<Text\s+accessibilityRole="summary"\s+style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
+  );
+  assert.match(source, /accessibilityLabel=\{copy\.questionLabel\(/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /onPress=\{\(\) => onSelectQuestion\?\.\(answer\.questionId\)\}/);
+  assert.match(source, /Nära median/);
+  assert.match(source, /Near median/);
+  assert.doesNotMatch(surfaceOpening, /accessibilityLabel=/);
+  assert.doesNotMatch(surfaceOpening, /accessibilityRole="summary"/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1652,6 +1707,20 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   );
   assert.match(activity, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(activity, /accessibilityRole="summary"/);
+  assert.match(activity, /copy\.legend\.title/);
+  assert.match(activity, /copy\.legend\.low/);
+  assert.match(activity, /copy\.legend\.high/);
+  assert.match(activity, /style=\{\[styles\.legendSwatch, styles\[item\.style\]\]\}/);
+  assert.match(
+    activity,
+    /legendSwatch:\s*\{[\s\S]*height: space\[[^\]]+\][\s\S]*width: space\[[^\]]+\]/,
+  );
+  assert.match(dashboard, /title: 'Aktivitetsskala'/);
+  assert.match(dashboard, /low: 'Låg aktivitet'/);
+  assert.match(dashboard, /high: 'Hög aktivitet'/);
+  assert.match(dashboard, /title: 'Activity scale'/);
+  assert.match(dashboard, /low: 'Low activity'/);
+  assert.match(dashboard, /high: 'High activity'/);
   assert.doesNotMatch(activity, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(
     chapters,
@@ -1669,6 +1738,47 @@ test('free dashboard surface is routed, localized, and accessible', () => {
     `${dashboard}\n${activity}\n${chapters}\n${sparkline}`,
     /#[0-9a-fA-F]{6}|rgba?\(/,
   );
+});
+
+test('home action links keep token targets and interaction feedback', () => {
+  const source = read('app/(tabs)/home.tsx');
+  const homeActionLinks = source.match(/<HomeActionLink/g) ?? [];
+  const targetStyles = ['readinessLink', 'primaryLink', 'secondaryLink', 'feedbackLink'];
+
+  assert.equal(homeActionLinks.length, 4);
+  assert.match(source, /const homeActionLinkClassName = 'home-action-link';/);
+  assert.match(source, /function useHomeActionLinkWebStyles\(\)/);
+  assert.match(
+    source,
+    /if \(Platform\.OS !== 'web' \|\| typeof document === 'undefined'\) return;/,
+  );
+  assert.match(source, /\$\{homeActionLinkClassName\}:hover,/);
+  assert.match(source, /transform: scale\(\$\{motion\.hoverScale\}\);/);
+  assert.match(source, /transform: scale\(\$\{motion\.pressedScale\}\);/);
+  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
+  assert.match(
+    source,
+    /style=\{\[styles\.homeActionLink, style, isPressed \? styles\.homeActionLinkPressed : null\]\}/,
+  );
+  assert.match(source, /homeActionLink:\s*\{[\s\S]*?minHeight: space\[6\]/);
+  assert.match(
+    source,
+    /homeActionLinkPressed:\s*\{[\s\S]*?transform: \[\{ scale: motion\.pressedScale \}\]/,
+  );
+
+  for (const styleName of targetStyles) {
+    const styleStart = source.indexOf(`${styleName}: {`);
+    assert.ok(styleStart >= 0, `${styleName} style should exist`);
+    const styleBlock = source.slice(styleStart, source.indexOf('  },', styleStart) + 4);
+    assert.match(
+      styleBlock,
+      /minHeight: space\[6\]/,
+      `${styleName} should keep a token-sized minimum target`,
+    );
+  }
+
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('launch popup ad has native app-open implementation and safe web preview', () => {
