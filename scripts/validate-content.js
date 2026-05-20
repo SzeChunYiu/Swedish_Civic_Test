@@ -7805,6 +7805,8 @@ function validateAdPlacementRouteParity() {
     : [];
   let webBannerSource = '';
   let nativeBannerSource = '';
+  let launchPopupNativeSource = '';
+  let useMockExamAccessSource = '';
 
   try {
     webBannerSource = fs.readFileSync(
@@ -7815,8 +7817,16 @@ function validateAdPlacementRouteParity() {
       path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
       'utf8',
     );
+    launchPopupNativeSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+      'utf8',
+    );
+    useMockExamAccessSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+      'utf8',
+    );
   } catch (error) {
-    reject(`AdBanner sources could not be read for banner placement parity: ${error.message}`);
+    reject(`ad placement sources could not be read for placement parity: ${error.message}`);
     return;
   }
 
@@ -7840,6 +7850,32 @@ function validateAdPlacementRouteParity() {
     }
 
     if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
+  }
+
+  if (!webBannerSource.includes('shouldShowAd(placement, resolvedEntitlements)')) {
+    reject('web AdBanner must keep the generic shouldShowAd fallback without a native platform');
+  }
+  if (/shouldShowAd\(\s*placement[\s\S]*Platform\.OS/.test(webBannerSource)) {
+    reject('web AdBanner must not pass Platform.OS into the generic web fallback');
+  }
+  if (!nativeBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+    reject('native AdBanner must resolve its banner unit by Platform.OS');
+  }
+  if (
+    !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+      nativeBannerSource,
+    )
+  ) {
+    reject('native AdBanner must pass Platform.OS into consent-aware shouldShowAd');
+  }
+  if (!launchPopupNativeSource.includes("getPlatformAdUnitId('app_open_launch', Platform.OS)")) {
+    reject('LaunchPopupAd native placement must resolve app_open_launch by Platform.OS');
+  }
+  if (!/shouldShowLaunchPopupAd\(\{[\s\S]*platform: Platform\.OS/.test(launchPopupNativeSource)) {
+    reject('LaunchPopupAd native placement must pass Platform.OS into shouldShowLaunchPopupAd');
+  }
+  if (!/getMockExamAccessDecision\(\{[\s\S]*platform: Platform\.OS/.test(useMockExamAccessSource)) {
+    reject('useMockExamAccess must pass Platform.OS into rewarded ad availability decisions');
   }
 
   let bannerUsageIsValid = true;
@@ -7940,7 +7976,7 @@ function validateAdPlacementRouteParity() {
 
     if (spec.component === 'NativeAdCard') {
       const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
       );
       const nativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
@@ -8079,7 +8115,7 @@ function validateAdPlacementRouteParity() {
 
     if (spec.component === 'PracticeInterstitialAd') {
       const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
       );
       const practiceInterstitialSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),

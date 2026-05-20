@@ -30,6 +30,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
     'utf8',
   );
+  const launchPopupNativeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+    'utf8',
+  );
   const nativeAdCardSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
@@ -46,6 +50,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
     'utf8',
   );
+  const useMockExamAccessSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
   const removeAdsPlacementCtaSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
@@ -60,8 +68,21 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adCopySvRewardedPracticeExamNaturalnessValidated, true);
   assert.match(webBannerSource, /placement\?: BannerAdPlacement;/);
   assert.doesNotMatch(webBannerSource, /\bAdPlacement\b/);
+  assert.match(webBannerSource, /shouldShowAd\(placement, resolvedEntitlements\)/);
+  assert.doesNotMatch(webBannerSource, /shouldShowAd\(\s*placement[\s\S]*Platform\.OS/);
   assert.match(nativeBannerSource, /placement\?: BannerAdPlacement;/);
   assert.doesNotMatch(nativeBannerSource, /\bAdPlacement\b/);
+  assert.match(nativeBannerSource, /getPlatformAdUnitId\(placement, Platform\.OS\)/);
+  assert.match(
+    nativeBannerSource,
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.match(launchPopupNativeSource, /getPlatformAdUnitId\('app_open_launch', Platform\.OS\)/);
+  assert.match(launchPopupNativeSource, /shouldShowLaunchPopupAd\(\{[\s\S]*platform: Platform\.OS/);
+  assert.match(
+    useMockExamAccessSource,
+    /getMockExamAccessDecision\(\{[\s\S]*platform: Platform\.OS/,
+  );
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
     homeSource,
@@ -520,6 +541,128 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /NativeAdCard native placement must gate results_native through consent-aware shouldShowAd/,
+  );
+});
+
+test('ad placement route parity rejects native banner platform fallback drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace(/Platform\\.OS/g, "'web'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native AdBanner must resolve its banner unit by Platform\.OS|native AdBanner must pass Platform\.OS into consent-aware shouldShowAd/,
+  );
+});
+
+test('ad placement route parity rejects web banner native platform drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'shouldShowAd(placement, resolvedEntitlements)',
+        'shouldShowAd(placement, resolvedEntitlements, undefined, Platform.OS)',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /web AdBanner must keep the generic shouldShowAd fallback without a native platform|web AdBanner must not pass Platform\.OS into the generic web fallback/,
+  );
+});
+
+test('ad placement route parity rejects native launch popup platform drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/LaunchPopupAd.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("getPlatformAdUnitId('app_open_launch', Platform.OS)", "getPlatformAdUnitId('app_open_launch', 'web')")
+      .replace('platform: Platform.OS,', "platform: 'web',");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /LaunchPopupAd native placement must resolve app_open_launch by Platform\.OS|LaunchPopupAd native placement must pass Platform\.OS into shouldShowLaunchPopupAd/,
+  );
+});
+
+test('ad placement route parity rejects mock exam rewarded access platform drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useMockExamAccess.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('platform: Platform.OS,', "platform: 'web',");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /useMockExamAccess must pass Platform\.OS into rewarded ad availability decisions/,
   );
 });
 
