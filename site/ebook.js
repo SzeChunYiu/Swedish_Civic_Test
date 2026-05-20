@@ -74,12 +74,12 @@
 
   function ebookSourceNote(lang, sourceKeys) {
     const notes = sourceKeys.map((key) => EBOOK_FACTBOX_SOURCE_NOTES[key]).filter(Boolean);
-    const label = lang === 'sv' ? 'Källor hämtade' : 'Sources accessed';
+    const label = tr({ sv: 'Källor hämtade', en: 'Sources accessed', 'zh-Hans': '已获取来源', 'zh-Hant': '已取得來源', ar: 'المصادر التي تمّ الوصول إليها', ckb: 'سەرچاوەکانی دەستگەیشتوو', fa: 'منابع مشاهده‌شده', pl: 'Pobrane źródła', so: 'Ilaha la helay', ti: 'ዝተረኽቡ ምንጪታት', tr: 'Erişilen kaynaklar', uk: 'Отримані джерела' });
     return `<p class="ebook__source-note">${label}: ${notes.map(sourceLink).join(' · ')}</p>`;
   }
 
   function ebookFactBox(lang, heading, facts, sourceKeys = ['uhrStudyMaterial']) {
-    const resolvedHeading = heading || (lang === 'sv' ? 'Fakta att repetera' : 'Facts to review');
+    const resolvedHeading = heading || (tr({ sv: 'Fakta att repetera', en: 'Facts to review', 'zh-Hans': '需复习的知识点', 'zh-Hant': '需複習的知識點', ar: 'حقائق للمراجعة', ckb: 'ڕاستییەکان بۆ پێداچوونەوە', fa: 'نکته‌هایی برای مرور', pl: 'Fakty do powtórzenia', so: 'Xaqiiqooyinka dib loo eegayo', ti: 'ዝድገሙ ሓቅታት', tr: 'Tekrar edilecek bilgiler', uk: 'Факти для повторення' }));
     return `
       <div class="ebook__factbox">
         <h4>${resolvedHeading}</h4>
@@ -665,6 +665,9 @@
       return 'en';
     }
   }
+  function tr(map) {
+    return (map && (map[getLang()] || map.en)) || '';
+  }
   function getActiveChapter() {
     const hash = (location.hash || '#/').replace(/^#/, '');
     const m = hash.match(/[?&]c=([^&]+)/);
@@ -708,11 +711,9 @@
     const bodyHtml = ch.body
       ? ch.body[lang] || ch.body.en
       : `<div class="ebook__stub">
-          <h3>${sv ? 'Kapitlet kunde inte öppnas' : 'Chapter could not be opened'}</h3>
+          <h3>${tr({ sv: 'Kapitlet kunde inte öppnas', en: 'Chapter could not be opened', 'zh-Hans': '无法打开该章节', 'zh-Hant': '無法開啟該章節', ar: 'تعذّر فتح الفصل', ckb: 'بەشەکە نەکرایەوە', fa: 'فصل باز نشد', pl: 'Nie udało się otworzyć rozdziału', so: 'Cutubka lama furi karin', ti: 'እቲ ምዕራፍ ክኽፈት ኣይከኣለን', tr: 'Bölüm açılamadı', uk: 'Не вдалося відкрити розділ' })}</h3>
           <p>${
-            sv
-              ? 'Välj ett kapitel i listan eller gå tillbaka till introduktionen.'
-              : 'Choose a chapter from the list or return to the introduction.'
+            tr({ sv: 'Välj ett kapitel i listan eller gå tillbaka till introduktionen.', en: 'Choose a chapter from the list or return to the introduction.', 'zh-Hans': '请从列表中选择一个章节，或返回简介。', 'zh-Hant': '請從列表中選擇一個章節，或返回簡介。', ar: 'اختر فصلًا من القائمة أو ارجع إلى المقدمة.', ckb: 'بەشێک لە لیستەکە هەڵبژێرە یان بگەڕێوە بۆ پێشەکی.', fa: 'یک فصل را از فهرست انتخاب کنید یا به مقدمه بازگردید.', pl: 'Wybierz rozdział z listy lub wróć do wprowadzenia.', so: 'Liiska ka dooro cutub ama ku noqo hordhaca.', ti: 'ካብ ዝርዝር ምዕራፍ ምረጽ ወይ ናብ መእተዊ ተመለስ።', tr: 'Listeden bir bölüm seçin veya girişe geri dönün.', uk: 'Виберіть розділ зі списку або поверніться до вступу.' })
           }</p>
         </div>`;
 
@@ -723,32 +724,30 @@
     const progressLabel =
       id === 'intro' ? (sv ? 'Guide' : 'Guide') : `${idx} / ${ORDER.length - 1}`;
     const actions = `
-      <aside class="ebook__study-actions" aria-label="${sv ? 'Nästa steg' : 'Next study steps'}">
+      <aside class="ebook__study-actions" aria-label="${tr({ sv: 'Nästa steg', en: 'Next study steps', 'zh-Hans': '下一步', 'zh-Hant': '下一步', ar: 'خطوات الدراسة التالية', ckb: 'هەنگاوەکانی دواتری خوێندن', fa: 'گام‌های بعدی مطالعه', pl: 'Następne kroki', so: 'Tallaabooyinka xiga', ti: 'ዝቕጽሉ ስጉምትታት', tr: 'Sonraki adımlar', uk: 'Наступні кроки' })}">
         <div>
           <span class="ebook__progress">${progressLabel}</span>
           <p>${
-            sv
-              ? 'Gör kapitlet aktivt: öva direkt, kontrollera källor eller gör ett övningsprov när du har läst klart.'
-              : 'Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading.'
+            tr({ sv: 'Gör kapitlet aktivt: öva direkt, kontrollera källor eller gör ett övningsprov när du har läst klart.', en: 'Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading.', 'zh-Hans': '让本章动起来：立即练习、查看来源，或在读完后做一次模拟考试。', 'zh-Hant': '讓本章動起來：立即練習、查看來源，或在讀完後做一次模擬考試。', ar: 'فعّل الفصل: تدرّب عليه الآن، أو تحقّق من المصادر، أو أجرِ اختبارًا تجريبيًا بعد أن تنتهي من القراءة.', ckb: 'بەشەکە چالاک بکە: ئێستا لەسەری مەشق بکە، سەرچاوەکان بپشکنە، یان دوای تەواوکردنی خوێندنەوە تاقیکردنەوەیەکی ئەزموونی ئەنجام بدە.', fa: 'فصل را فعال کنید: همین حالا روی آن تمرین کنید، منابع را بررسی کنید، یا پس از پایان خواندن یک آزمون آزمایشی بدهید.', pl: 'Wykorzystaj rozdział w praktyce: poćwicz od razu, sprawdź źródła lub zrób egzamin próbny, gdy skończysz czytać.', so: 'Cutubka firfircoon ka dhig: isla markiiba tababar, hubi ilaha, ama samee imtixaan tijaabo ah marka aad akhrinta dhammayso.', ti: 'ነቲ ምዕራፍ ንጡፍ ግበሮ፦ ብኡንብኡ ተለማመድ፣ ንምንጪታት ኣረጋግጽ፣ ወይ ምንባብ ምስ ወዳእካ ናይ ልምምድ ፈተና ግበር።', tr: 'Bölümü etkin kullanın: hemen alıştırma yapın, kaynakları kontrol edin veya okumayı bitirdiğinizde bir deneme sınavı yapın.', uk: 'Зробіть розділ активним: потренуйтеся одразу, перевірте джерела або пройдіть пробний іспит, коли дочитаєте.' })
           }</p>
         </div>
         <div class="ebook__study-links">
           <a class="btn btn--gold btn--sm" href="${practice.href}">${practice[lang]} →</a>
-          <a class="btn btn--ghost btn--sm" href="#/mock">${sv ? 'Övningsprov' : 'Mock exam'}</a>
-          <a class="btn btn--ghost btn--sm" href="#/sources">${sv ? 'Källor' : 'Sources'}</a>
+          <a class="btn btn--ghost btn--sm" href="#/mock">${tr({ sv: 'Övningsprov', en: 'Mock exam', 'zh-Hans': '模拟考试', 'zh-Hant': '模擬考試', ar: 'اختبار تجريبي', ckb: 'تاقیکردنەوەی ئەزموونی', fa: 'آزمون آزمایشی', pl: 'Egzamin próbny', so: 'Imtixaan tijaabo ah', ti: 'ናይ ልምምድ ፈተና', tr: 'Deneme sınavı', uk: 'Пробний іспит' })}</a>
+          <a class="btn btn--ghost btn--sm" href="#/sources">${tr({ sv: 'Källor', en: 'Sources', 'zh-Hans': '来源', 'zh-Hant': '來源', ar: 'المصادر', ckb: 'سەرچاوەکان', fa: 'منابع', pl: 'Źródła', so: 'Ilaha', ti: 'ምንጪታት', tr: 'Kaynaklar', uk: 'Джерела' })}</a>
         </div>
       </aside>
     `;
     const notes = `
-      <section class="ebook__notes" aria-label="${sv ? 'Dina markeringar' : 'Your highlights'}">
-        <h2>${sv ? 'Markeringar i kapitlet' : 'Chapter highlights'}</h2>
+      <section class="ebook__notes" aria-label="${tr({ sv: 'Dina markeringar', en: 'Your highlights', 'zh-Hans': '你的标注', 'zh-Hant': '你的標註', ar: 'تظليلاتك', ckb: 'نیشانەکردنەکانت', fa: 'هایلایت‌های شما', pl: 'Twoje zaznaczenia', so: 'Calaamadahaaga', ti: 'ምልክታትካ', tr: 'İşaretlemeleriniz', uk: 'Ваші виділення' })}">
+        <h2>${tr({ sv: 'Markeringar i kapitlet', en: 'Chapter highlights', 'zh-Hans': '本章标注', 'zh-Hant': '本章標註', ar: 'تظليلات الفصل', ckb: 'نیشانەکردنەکانی بەش', fa: 'هایلایت‌های فصل', pl: 'Zaznaczenia w rozdziale', so: 'Calaamadaha cutubka', ti: 'ምልክታት ኣብ ምዕራፍ', tr: 'Bölümdeki işaretlemeler', uk: 'Виділення в розділі' })}</h2>
         <div id="eb-notes-list"></div>
       </section>
     `;
     const pager = `
       <nav class="ebook__pager">
-        ${prev ? `<a href="#/ebook?c=${prev}"><span class="lbl">${sv ? 'Förra' : 'Previous'}</span><span>${CHAPTERS[prev].kicker[lang] || CHAPTERS[prev].kicker.en}</span></a>` : `<span></span>`}
-        ${next ? `<a href="#/ebook?c=${next}" class="next"><span class="lbl">${sv ? 'Nästa' : 'Next'}</span><span>${CHAPTERS[next].kicker[lang] || CHAPTERS[next].kicker.en}</span></a>` : `<span></span>`}
+        ${prev ? `<a href="#/ebook?c=${prev}"><span class="lbl">${tr({ sv: 'Förra', en: 'Previous', 'zh-Hans': '上一章', 'zh-Hant': '上一章', ar: 'السابق', ckb: 'پێشتر', fa: 'قبلی', pl: 'Poprzednie', so: 'Hore', ti: 'ዝሓለፈ', tr: 'Önceki', uk: 'Попереднє' })}</span><span>${CHAPTERS[prev].kicker[lang] || CHAPTERS[prev].kicker.en}</span></a>` : `<span></span>`}
+        ${next ? `<a href="#/ebook?c=${next}" class="next"><span class="lbl">${tr({ sv: 'Nästa', en: 'Next', 'zh-Hans': '下一章', 'zh-Hant': '下一章', ar: 'التالي', ckb: 'دواتر', fa: 'بعدی', pl: 'Następne', so: 'Xiga', ti: 'ዝቕጽል', tr: 'Sonraki', uk: 'Наступне' })}</span><span>${CHAPTERS[next].kicker[lang] || CHAPTERS[next].kicker.en}</span></a>` : `<span></span>`}
       </nav>
     `;
 
