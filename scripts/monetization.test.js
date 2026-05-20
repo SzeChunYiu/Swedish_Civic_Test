@@ -1018,6 +1018,89 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
   );
 });
 
+test('effective entitlement resolver normalizes malformed entitlement flags to strict booleans', () => {
+  const { unionEntitlements } = loadTs('lib/monetization/premium.ts');
+  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
+  const freeEntitlements = {
+    adsDisabled: false,
+    unlimitedMockExams: false,
+    fullMistakeReview: false,
+    spacedRepetition: false,
+    nativeLangExplanations: false,
+    customStudyPlan: false,
+    notesExport: false,
+    predictedPassProbability: false,
+    confidenceSlider: false,
+    multiColorHighlights: false,
+  };
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  assert.deepEqual(
+    unionEntitlements(freeEntitlements, {
+      adsDisabled: 1,
+      unlimitedMockExams: 'yes',
+      fullMistakeReview: {},
+      spacedRepetition: 'true',
+      nativeLangExplanations: [],
+      customStudyPlan: null,
+      notesExport: undefined,
+      predictedPassProbability: Number.POSITIVE_INFINITY,
+      confidenceSlider: 'false',
+      multiColorHighlights: new Boolean(true),
+    }),
+    freeEntitlements,
+  );
+
+  const malformedRemoveAds = resolveEffectiveEntitlement({
+    removeAds: {
+      adsDisabled: 'yes',
+      unlimitedMockExams: true,
+      fullMistakeReview: true,
+    },
+    now,
+  });
+  assert.equal(malformedRemoveAds.primarySource, 'free');
+  assert.deepEqual(malformedRemoveAds.entitlements, freeEntitlements);
+
+  const validRemoveAdsWithMalformedExtras = resolveEffectiveEntitlement({
+    removeAds: {
+      adsDisabled: true,
+      unlimitedMockExams: 'yes',
+      fullMistakeReview: 1,
+    },
+    now,
+  });
+  assert.equal(validRemoveAdsWithMalformedExtras.primarySource, 'remove-ads');
+  assert.equal(validRemoveAdsWithMalformedExtras.entitlements.adsDisabled, true);
+  assert.equal(validRemoveAdsWithMalformedExtras.entitlements.unlimitedMockExams, false);
+  assert.equal(validRemoveAdsWithMalformedExtras.entitlements.fullMistakeReview, false);
+
+  const malformedProLifetime = resolveEffectiveEntitlement({
+    proLifetime: {
+      adsDisabled: 'yes',
+      unlimitedMockExams: 'yes',
+      fullMistakeReview: 1,
+      spacedRepetition: true,
+      nativeLangExplanations: 'yes',
+      customStudyPlan: true,
+      notesExport: {},
+      predictedPassProbability: [],
+      confidenceSlider: false,
+      multiColorHighlights: Number.POSITIVE_INFINITY,
+    },
+    now,
+  });
+  assert.equal(malformedProLifetime.primarySource, 'pro-lifetime');
+  assert.equal(malformedProLifetime.entitlements.adsDisabled, false);
+  assert.equal(malformedProLifetime.entitlements.unlimitedMockExams, false);
+  assert.equal(malformedProLifetime.entitlements.fullMistakeReview, false);
+  assert.equal(malformedProLifetime.entitlements.spacedRepetition, true);
+  assert.equal(malformedProLifetime.entitlements.customStudyPlan, true);
+  Object.values(malformedProLifetime.entitlements).forEach((value) =>
+    assert.equal(typeof value, 'boolean'),
+  );
+});
+
 test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async () => {
   const purchaseExports = loadTs('lib/monetization/purchases.ts');
   const {

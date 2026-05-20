@@ -75,6 +75,93 @@ test('resolveEffectiveEntitlement: Remove-Ads only does NOT grant Pro flags', ()
   assert.equal(r.entitlements.unlimitedMockExams, false);
 });
 
+test('unionEntitlements: malformed truthy flags do not become active entitlement booleans', () => {
+  const { unionEntitlements } = loadTs('lib/monetization/premium.ts');
+  const r = unionEntitlements(NO_PRO_SNAP, {
+    adsDisabled: 1,
+    unlimitedMockExams: 'yes',
+    fullMistakeReview: {},
+    spacedRepetition: 'true',
+    nativeLangExplanations: [],
+    customStudyPlan: null,
+    notesExport: undefined,
+    predictedPassProbability: Number.POSITIVE_INFINITY,
+    confidenceSlider: 'false',
+    multiColorHighlights: new Boolean(true),
+  });
+
+  assert.deepEqual(r, NO_PRO_SNAP);
+  Object.values(r).forEach((value) => assert.equal(typeof value, 'boolean'));
+});
+
+test('resolveEffectiveEntitlement: malformed Remove Ads snapshots fail closed', () => {
+  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
+  const r = resolveEffectiveEntitlement({
+    removeAds: {
+      adsDisabled: 'yes',
+      unlimitedMockExams: true,
+      fullMistakeReview: true,
+    },
+    now: NOW,
+  });
+
+  assert.equal(r.primarySource, 'free');
+  assert.deepEqual(r.activeSources, []);
+  assert.deepEqual(r.entitlements, NO_PRO_SNAP);
+  Object.values(r.entitlements).forEach((value) => assert.equal(typeof value, 'boolean'));
+});
+
+test('resolveEffectiveEntitlement: Remove Ads contributes only strict boolean flags', () => {
+  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
+  const r = resolveEffectiveEntitlement({
+    removeAds: {
+      adsDisabled: true,
+      unlimitedMockExams: 'yes',
+      fullMistakeReview: 1,
+    },
+    now: NOW,
+  });
+
+  assert.equal(r.primarySource, 'remove-ads');
+  assert.equal(r.entitlements.adsDisabled, true);
+  assert.equal(r.entitlements.unlimitedMockExams, false);
+  assert.equal(r.entitlements.fullMistakeReview, false);
+  assert.equal(r.entitlements.spacedRepetition, false);
+  Object.values(r.entitlements).forEach((value) => assert.equal(typeof value, 'boolean'));
+});
+
+test('resolveEffectiveEntitlement: Pro Lifetime contributes only strict boolean feature flags', () => {
+  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
+  const r = resolveEffectiveEntitlement({
+    proLifetime: {
+      adsDisabled: 'yes',
+      unlimitedMockExams: 'yes',
+      fullMistakeReview: 1,
+      spacedRepetition: true,
+      nativeLangExplanations: 'yes',
+      customStudyPlan: true,
+      notesExport: {},
+      predictedPassProbability: [],
+      confidenceSlider: false,
+      multiColorHighlights: Number.POSITIVE_INFINITY,
+    },
+    now: NOW,
+  });
+
+  assert.equal(r.primarySource, 'pro-lifetime');
+  assert.equal(r.entitlements.adsDisabled, false);
+  assert.equal(r.entitlements.unlimitedMockExams, false);
+  assert.equal(r.entitlements.fullMistakeReview, false);
+  assert.equal(r.entitlements.spacedRepetition, true);
+  assert.equal(r.entitlements.nativeLangExplanations, false);
+  assert.equal(r.entitlements.customStudyPlan, true);
+  assert.equal(r.entitlements.notesExport, false);
+  assert.equal(r.entitlements.predictedPassProbability, false);
+  assert.equal(r.entitlements.confidenceSlider, false);
+  assert.equal(r.entitlements.multiColorHighlights, false);
+  Object.values(r.entitlements).forEach((value) => assert.equal(typeof value, 'boolean'));
+});
+
 test('resolveEffectiveEntitlement: unexpired referral grant promotes to Pro temporarily', () => {
   const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
   const future = new Date(NOW.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString();

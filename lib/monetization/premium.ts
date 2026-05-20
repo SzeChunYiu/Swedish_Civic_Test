@@ -60,6 +60,10 @@ export function hasProEntitlement(entitlements: ProTierEntitlements): boolean {
   );
 }
 
+function isStrictEntitlementFlag(value: unknown): boolean {
+  return value === true;
+}
+
 // Merge two Pro-tier entitlement records by OR-ing every flag. Used when
 // combining the IAP-derived entitlement with an unexpired referral grant.
 export function unionEntitlements(
@@ -67,16 +71,28 @@ export function unionEntitlements(
   b: ProTierEntitlements,
 ): ProTierEntitlements {
   return {
-    adsDisabled: a.adsDisabled || b.adsDisabled,
-    unlimitedMockExams: a.unlimitedMockExams || b.unlimitedMockExams,
-    fullMistakeReview: a.fullMistakeReview || b.fullMistakeReview,
-    spacedRepetition: Boolean(a.spacedRepetition || b.spacedRepetition),
-    nativeLangExplanations: Boolean(a.nativeLangExplanations || b.nativeLangExplanations),
-    customStudyPlan: Boolean(a.customStudyPlan || b.customStudyPlan),
-    notesExport: Boolean(a.notesExport || b.notesExport),
-    predictedPassProbability: Boolean(a.predictedPassProbability || b.predictedPassProbability),
-    confidenceSlider: Boolean(a.confidenceSlider || b.confidenceSlider),
-    multiColorHighlights: Boolean(a.multiColorHighlights || b.multiColorHighlights),
+    adsDisabled: isStrictEntitlementFlag(a.adsDisabled) || isStrictEntitlementFlag(b.adsDisabled),
+    unlimitedMockExams:
+      isStrictEntitlementFlag(a.unlimitedMockExams) ||
+      isStrictEntitlementFlag(b.unlimitedMockExams),
+    fullMistakeReview:
+      isStrictEntitlementFlag(a.fullMistakeReview) || isStrictEntitlementFlag(b.fullMistakeReview),
+    spacedRepetition:
+      isStrictEntitlementFlag(a.spacedRepetition) || isStrictEntitlementFlag(b.spacedRepetition),
+    nativeLangExplanations:
+      isStrictEntitlementFlag(a.nativeLangExplanations) ||
+      isStrictEntitlementFlag(b.nativeLangExplanations),
+    customStudyPlan:
+      isStrictEntitlementFlag(a.customStudyPlan) || isStrictEntitlementFlag(b.customStudyPlan),
+    notesExport: isStrictEntitlementFlag(a.notesExport) || isStrictEntitlementFlag(b.notesExport),
+    predictedPassProbability:
+      isStrictEntitlementFlag(a.predictedPassProbability) ||
+      isStrictEntitlementFlag(b.predictedPassProbability),
+    confidenceSlider:
+      isStrictEntitlementFlag(a.confidenceSlider) || isStrictEntitlementFlag(b.confidenceSlider),
+    multiColorHighlights:
+      isStrictEntitlementFlag(a.multiColorHighlights) ||
+      isStrictEntitlementFlag(b.multiColorHighlights),
   };
 }
 
