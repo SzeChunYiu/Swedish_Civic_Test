@@ -32,6 +32,7 @@ test('exam generator TypeScript schema stays in parity with validator expectatio
   assert.match(examGeneratorSource, /explanationEn: string;/);
   assert.match(examGeneratorSource, /uhrReference: PracticeQuestion\['uhrReference'\];/);
   assert.match(examGeneratorSource, /export type ExamAutoSubmitState = \{/);
+  assert.match(examGeneratorSource, /examActive: boolean;/);
 });
 
 test('exam generator schema parity rejects review item optionality drift', () => {

@@ -34,7 +34,6 @@ export function PracticeInterstitialAd({
         'quiz_completed_interstitial',
         resolvedEntitlements,
         mobileAdsConsent.decision.consentDecision,
-        Platform.OS,
       )
     ) {
       return undefined;

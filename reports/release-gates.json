@@ -16,7 +16,7 @@
     },
     "store-records": {
       "status": "BLOCKED",
-      "evidence": "No App Store Connect or Google Play Console app record evidence is recorded. AdMob is deferred because real ads are disabled for v1.0."
+      "evidence": "No App Store Connect, Google Play Console, and final AdMob app record evidence is recorded for the ad-supported v1.0 release. Required evidence must include concrete iOS/Android AdMob app IDs, adMob.realAdsEnabled: true, app-ads.txt review, and the 29 SEK Remove Ads non-consumable product review."
     },
     "store-credentials": {
       "status": "BLOCKED",
@@ -24,11 +24,11 @@
     },
     "store-policy-questionnaires": {
       "status": "READY",
-      "evidence": "Apple age rating/export compliance/content rights/no-official-affiliation review completed against publishing/app-store-listing.md; Google Play content rating/target audience/ads declaration/no-government-affiliation review completed against publishing/google-play-listing.md, publishing/google-play-data-safety.md, and reports/2026-05-15-v1-ads-deferred.md. Local policy evidence recorded in reports/store-policy-questionnaires/store-policy-questionnaires.json; real ads remain disabled for v1.0 and no real-money gambling or official-government affiliation claims are present."
+      "evidence": "Apple age rating/export compliance/content rights/no-official-affiliation review completed against publishing/app-store-listing.md and publishing/privacy-labels.md; Google Play content rating/target audience/ads declaration/no-government-affiliation review completed against publishing/google-play-listing.md and publishing/google-play-data-safety.md for the ad-supported Google Mobile Ads posture. Local policy evidence recorded in reports/store-policy-questionnaires/store-policy-questionnaires.json; the 29 SEK Remove Ads non-consumable, ATT/UMP consent disclosures, no real-money gambling, and no official-government affiliation claims were reviewed."
     },
     "privacy-review": {
       "status": "BLOCKED",
-      "evidence": "No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded. The review must include the Google Mobile Ads SDK test configuration and REAL_ADS_ENABLED_FOR_V1=false posture."
+      "evidence": "No final Apple privacy labels / Google Play Data safety review against the generated binary is recorded. The review must include ad-supported Google Mobile Ads with EXPO_PUBLIC_REAL_ADS_ENABLED=true, concrete real AdMob app/unit IDs, app-ads.txt, the 29 SEK Remove Ads non-consumable, and ATT/UMP consent disclosures."
     },
     "release-owner-approval": {
       "status": "BLOCKED",
@@ -36,7 +36,7 @@
     },
     "public-urls": {
       "status": "READY",
-      "evidence": "Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/ and Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/ returned HTTP 200 from SzeChunYiu GitHub Pages on 2026-05-16. They still need to be entered in the Apple/Google store records."
+      "evidence": "Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/, Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/, and app-ads.txt URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt are hosted as the SzeChunYiu GitHub Pages public-site bundle. Support/privacy returned HTTP 200 on 2026-05-16; app-ads.txt was published to public-site commit d68694f95618abe3097ae4c6e4c14bee6115a24a and returned HTTP 200 on 2026-05-19 with exact seller line google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0. Support/privacy still need to be entered in the Apple/Google store records."
     },
     "device-screenshots": {
       "status": "BLOCKED",
