@@ -3,7 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 // Ebook highlight + optional margin note. See
 // swedish_citizenship_app_project_plan/15_ebook_highlights.md.
@@ -33,7 +33,8 @@ export interface Highlight {
 }
 
 const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';
-const highlightsStorageId = 'ebook-highlights';
+export const MAX_HIGHLIGHT_SPAN = 5000;
+export const MAX_HIGHLIGHT_NOTE_LENGTH = 1000;
 
 let highlightsStorage: MMKV | null = null;
 
@@ -43,7 +44,7 @@ try {
   highlightsStorage = null;
 }
 
-interface PersistedHighlights {
+export interface PersistedHighlights {
   // indexed by chapterId for fast per-chapter reads
   byChapter: Record<string, Highlight[]>;
 }
@@ -54,64 +55,115 @@ function isHighlightColor(value: unknown): value is HighlightColor {
   return value === 'yellow' || value === 'green' || value === 'blue' || value === 'pink';
 }
 
-function normalize(value: unknown): PersistedHighlights {
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0 && value === value.trim();
+}
+
+function isFiniteNonNegativeInteger(value: unknown): value is number {
+  return (
+    typeof value === 'number' && Number.isFinite(value) && Number.isInteger(value) && value >= 0
+  );
+}
+
+function isValidIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string' || value.trim() !== value) return false;
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) {
+    return false;
+  }
+  return Number.isFinite(Date.parse(value));
+}
+
+function normalizeNote(value: unknown, mode: 'hydrate' | 'write'): string | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string') {
+    if (mode === 'write') throw new Error('Highlight note must be a string.');
+    return undefined;
+  }
+  const note = value.trim();
+  if (note.length === 0) return undefined;
+  if (note.length > MAX_HIGHLIGHT_NOTE_LENGTH) {
+    if (mode === 'write') throw new Error('Highlight note is too long.');
+    return undefined;
+  }
+  return note;
+}
+
+function normalizeHighlight(
+  value: unknown,
+  chapterKey: string,
+  mode: 'hydrate' | 'write',
+): Highlight | null {
+  if (!value || typeof value !== 'object') return null;
+  const h = value as Partial<Highlight>;
+  if (
+    !isNonEmptyString(chapterKey) ||
+    !isNonEmptyString(h.id) ||
+    !isNonEmptyString(h.chapterId) ||
+    h.chapterId !== chapterKey ||
+    !isNonEmptyString(h.blockId) ||
+    !isFiniteNonNegativeInteger(h.startOffset) ||
+    !isFiniteNonNegativeInteger(h.endOffset) ||
+    h.startOffset >= h.endOffset ||
+    h.endOffset - h.startOffset > MAX_HIGHLIGHT_SPAN ||
+    !isHighlightColor(h.color) ||
+    !isValidIsoTimestamp(h.createdAt) ||
+    !isValidIsoTimestamp(h.updatedAt ?? h.createdAt)
+  ) {
+    return null;
+  }
+
+  const note = normalizeNote(h.note, mode);
+  return {
+    id: h.id,
+    chapterId: h.chapterId,
+    blockId: h.blockId,
+    startOffset: h.startOffset,
+    endOffset: h.endOffset,
+    color: h.color,
+    ...(note ? { note } : {}),
+    createdAt: h.createdAt,
+    updatedAt: h.updatedAt ?? h.createdAt,
+  };
+}
+
+export function normalizeHighlightsState(value: unknown): PersistedHighlights {
   if (!value || typeof value !== 'object') return EMPTY;
   const candidate = value as Partial<PersistedHighlights>;
   const byChapter: Record<string, Highlight[]> = {};
 
   if (candidate.byChapter && typeof candidate.byChapter === 'object') {
     for (const [chapterId, list] of Object.entries(candidate.byChapter)) {
+      if (!isNonEmptyString(chapterId)) continue;
       if (!Array.isArray(list)) continue;
       const cleaned: Highlight[] = [];
       for (const item of list) {
-        if (!item || typeof item !== 'object') continue;
-        const h = item as Partial<Highlight>;
-        if (
-          typeof h.id !== 'string' ||
-          typeof h.blockId !== 'string' ||
-          typeof h.startOffset !== 'number' ||
-          typeof h.endOffset !== 'number' ||
-          !isHighlightColor(h.color) ||
-          typeof h.createdAt !== 'string'
-        ) {
-          continue;
-        }
-        cleaned.push({
-          id: h.id,
-          chapterId,
-          blockId: h.blockId,
-          startOffset: h.startOffset,
-          endOffset: h.endOffset,
-          color: h.color,
-          note: typeof h.note === 'string' ? h.note : undefined,
-          createdAt: h.createdAt,
-          updatedAt: typeof h.updatedAt === 'string' ? h.updatedAt : h.createdAt,
-        });
+        const highlight = normalizeHighlight(item, chapterId, 'hydrate');
+        if (highlight) cleaned.push(highlight);
       }
-      byChapter[chapterId] = cleaned;
+      if (cleaned.length > 0) byChapter[chapterId] = cleaned;
     }
   }
 
   return { byChapter };
 }
 
-function read(): PersistedHighlights {
-  const raw = highlightsStorage?.getString(HIGHLIGHTS_STATE_KEY);
-  if (!raw) return EMPTY;
+function read(): {
+  state: PersistedHighlights;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(highlightsStorage, highlightsStorageId, HIGHLIGHTS_STATE_KEY, () =>
+    highlightsStorage?.getString(HIGHLIGHTS_STATE_KEY),
+  );
+  if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
   try {
-    return normalize(JSON.parse(raw));
+    return normalizeHighlightsState(JSON.parse(raw));
   } catch {
-    return EMPTY;
+    return { state: EMPTY, persistenceWarning: result.warning };
   }
 }
 
-function write(state: PersistedHighlights): RecoverablePersistenceWarning | null {
-  return writeRecoverably(
-    highlightsStorage,
-    highlightsStorageId,
-    HIGHLIGHTS_STATE_KEY,
-    JSON.stringify(state),
-  );
+function write(state: PersistedHighlights): void {
+  highlightsStorage?.set(HIGHLIGHTS_STATE_KEY, JSON.stringify(normalizeHighlightsState(state)));
 }
 
 function genId(): string {
@@ -127,9 +179,26 @@ export interface AddHighlightInput {
   note?: string;
 }
 
+function createHighlight(input: AddHighlightInput, now: string): Highlight {
+  const candidate: Highlight = {
+    id: genId(),
+    chapterId: input.chapterId,
+    blockId: input.blockId,
+    startOffset: input.startOffset,
+    endOffset: input.endOffset,
+    color: input.color,
+    ...(input.note !== undefined ? { note: input.note } : {}),
+    createdAt: now,
+    updatedAt: now,
+  };
+  const highlight = normalizeHighlight(candidate, input.chapterId, 'write');
+  if (!highlight) throw new Error('Invalid highlight range.');
+  return highlight;
+}
+
 interface HighlightsState extends PersistedHighlights {
   persistenceWarning: RecoverablePersistenceWarning | null;
-  addHighlight: (input: AddHighlightInput) => Highlight;
+  addHighlight: (input: AddHighlightInput) => Highlight | null;
   updateHighlight: (id: string, patch: Partial<Pick<Highlight, 'color' | 'note'>>) => void;
   removeHighlight: (id: string) => void;
   clearChapter: (chapterId: string) => void;
@@ -140,25 +209,17 @@ interface HighlightsState extends PersistedHighlights {
 const initial = read();
 
 export const useHighlightsStore = create<HighlightsState>((set, get) => ({
-  ...initial,
-  persistenceWarning: null,
+  ...initial.state,
+  persistenceWarning: initial.persistenceWarning,
   addHighlight: (input) => {
+    const normalizedInput = normalizeAddHighlightInput(input);
+    if (!normalizedInput) return null;
     const now = new Date().toISOString();
-    const highlight: Highlight = {
-      id: genId(),
-      chapterId: input.chapterId,
-      blockId: input.blockId,
-      startOffset: input.startOffset,
-      endOffset: input.endOffset,
-      color: input.color,
-      note: input.note,
-      createdAt: now,
-      updatedAt: now,
-    };
+    const highlight = createHighlight(input, now);
     set((state) => {
-      const existing = state.byChapter[input.chapterId] ?? [];
+      const existing = state.byChapter[normalizedInput.chapterId] ?? [];
       const next = {
-        byChapter: { ...state.byChapter, [input.chapterId]: [...existing, highlight] },
+        byChapter: { ...state.byChapter, [normalizedInput.chapterId]: [...existing, highlight] },
       };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
@@ -166,6 +227,11 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     return highlight;
   },
   updateHighlight: (id, patch) => {
+    if (patch.color !== undefined && !isHighlightColor(patch.color)) {
+      throw new Error('Invalid highlight color.');
+    }
+    const normalizedNote =
+      patch.note !== undefined ? normalizeNote(patch.note, 'write') : undefined;
     set((state) => {
       const byChapter: Record<string, Highlight[]> = {};
       let touched = false;
@@ -176,7 +242,7 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
           return {
             ...h,
             color: patch.color ?? h.color,
-            note: patch.note !== undefined ? patch.note : h.note,
+            note: patch.note !== undefined ? normalizedNote : h.note,
             updatedAt: new Date().toISOString(),
           };
         });
@@ -217,7 +283,12 @@ export function getHighlightsForChapter(
   state: Pick<HighlightsState, 'byChapter'>,
   chapterId: string,
 ): Highlight[] {
-  return state.byChapter[chapterId] ?? [];
+  if (!isNonEmptyString(chapterId)) return [];
+  const list = state.byChapter[chapterId];
+  if (!Array.isArray(list)) return [];
+  return list
+    .map((item) => normalizeHighlight(item, chapterId, 'hydrate'))
+    .filter((item): item is Highlight => item !== null);
 }
 
 export function getHighlightsForBlock(
