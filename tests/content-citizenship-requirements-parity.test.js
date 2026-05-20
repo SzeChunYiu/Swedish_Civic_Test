@@ -102,6 +102,19 @@ test('citizenship requirements data covers seven sourced bilingual planning area
   assert.match(areas.find((area) => area.id === 'selfSupport').summary.sv, /250 200 kronor/);
   assert.match(areas.find((area) => area.id === 'selfSupport').summary.en, /SEK 250,200/);
   assert.match(areas.find((area) => area.id === 'civicKnowledge').summary.sv, /15 augusti 2026/);
+  assert.match(
+    areas.find((area) => area.id === 'civicKnowledge').detail.sv,
+    /Antalet platser är begränsat/,
+  );
+  assert.match(
+    areas.find((area) => area.id === 'civicKnowledge').detail.sv,
+    /när platserna är fyllda går det inte längre att anmäla sig/,
+  );
+  assert.match(areas.find((area) => area.id === 'civicKnowledge').detail.en, /Seats are limited/);
+  assert.match(
+    areas.find((area) => area.id === 'civicKnowledge').detail.en,
+    /when the seats are filled, registration closes/,
+  );
   assert.match(areas.find((area) => area.id === 'swedishLanguage').detail.en, /1 October 2027/);
 });
 
