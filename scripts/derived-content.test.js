@@ -324,6 +324,48 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
       reviewStatus: 'reviewed',
       tags: ['elections'],
     },
+    {
+      id: 'q034',
+      chapterId: 'ch04',
+      type: 'single_choice',
+      questionSv: 'Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
+      questionEn:
+        'What happens in a proportional election if a party receives 20 percent of the votes?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Partiet får 20 procent av platserna',
+          textEn: 'The party receives 20 percent of the seats',
+        },
+        {
+          id: 'b',
+          textSv: 'Partiet får alla platser',
+          textEn: 'The party receives all seats',
+        },
+        {
+          id: 'c',
+          textSv: 'Partiet får inga platser oavsett röstandel',
+          textEn: 'The party receives no seats regardless of vote share',
+        },
+        {
+          id: 'd',
+          textSv: 'Partiet får platser först om regeringen godkänner det',
+          textEn: 'The party receives seats only if the government approves it',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'I proportionella val får partier platser utifrån sin andel av rösterna.',
+      explanationEn:
+        'In proportional elections, parties receive seats based on their share of the votes.',
+      uhrReference: {
+        chapter: 'Politiska val och partier',
+        section: 'Proportionella val',
+        pageApprox: 15,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['proportional-elections'],
+    },
   ];
 
   const derived = derivePublishedQuestions(sources, 201);
@@ -351,6 +393,22 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
   assert.equal(
     derived[9].questionEn,
     'A party must receive at least 4 percent of the votes to enter the Riksdag.',
+  );
+  assert.equal(
+    derived[13].questionSv,
+    'I ett proportionellt val får ett parti som får 20 procent av rösterna 20 procent av platserna.',
+  );
+  assert.equal(
+    derived[13].questionEn,
+    'In a proportional election, a party that receives 20 percent of the votes receives 20 percent of the seats.',
+  );
+  assert.equal(
+    derived[14].questionSv,
+    'I ett proportionellt val får ett parti som får 20 procent av rösterna alla platser.',
+  );
+  assert.equal(
+    derived[14].questionEn,
+    'In a proportional election, a party that receives 20 percent of the votes receives all seats.',
   );
 });
 
