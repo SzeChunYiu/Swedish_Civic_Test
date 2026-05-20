@@ -1,30 +1,27 @@
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text } from 'react-native';
 
-import { colors, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type SocialProofLanguage = 'sv' | 'en';
 
 const copy = {
   sv: {
-    body: 'Öva med frågor som visar källor och tydliga gränser för appens roll.',
-    linkAccessibilityLabel: 'Öppna källor och transparens',
-    linkLabel: 'Källor och transparens',
-    summaryAccessibilityLabel:
-      'Öva med frågor som visar källor och tydliga gränser för appens roll. Källor och transparens.',
+    accessibilityLabel: 'Öppna källor och transparens',
+    body: 'Se UHR-källor och oberoende appstatus',
+    label: 'Källor och transparens',
   },
   en: {
-    body: 'Practice with questions that show sources and clear limits for the app role.',
-    linkAccessibilityLabel: 'Open sources and transparency',
-    linkLabel: 'Sources and transparency',
-    summaryAccessibilityLabel:
-      'Practice with questions that show sources and clear limits for the app role. Sources and transparency.',
+    accessibilityLabel: 'Open sources and transparency',
+    body: 'Review UHR sources and independent-app status',
+    label: 'Sources and transparency',
   },
 } as const;
 
 /**
- * Defaults: localized source-trust body and source-page link for the supplied
- * app language, with an optional row label override for assistive tech.
+ * Defaults: localized source-transparency link for the supplied app language,
+ * with a 48px token target and pressed/focus feedback.
  */
 export interface SocialProofRowProps {
   accessibilityLabel?: string;
@@ -33,42 +30,79 @@ export interface SocialProofRowProps {
 
 export function SocialProofRow({ accessibilityLabel, language }: SocialProofRowProps) {
   const t = copy[language];
-  const rowAccessibilityLabel = accessibilityLabel ?? t.summaryAccessibilityLabel;
+  const rowAccessibilityLabel = accessibilityLabel ?? t.accessibilityLabel;
+  const [isFocused, setIsFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  const interactionHandlers = {
+    onBlur: () => {
+      setIsFocused(false);
+      setIsPressed(false);
+    },
+    onFocus: () => setIsFocused(true),
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => {
+      setIsHovered(false);
+      setIsPressed(false);
+    },
+  };
 
   return (
-    <View aria-label={rowAccessibilityLabel} style={styles.row}>
+    <Link
+      {...interactionHandlers}
+      aria-label={rowAccessibilityLabel}
+      accessibilityLabel={rowAccessibilityLabel}
+      accessibilityRole="link"
+      href="/sources"
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      style={[
+        styles.row,
+        isFocused || isHovered ? styles.rowInteractive : null,
+        isPressed ? styles.rowPressed : null,
+      ]}
+    >
+      <Text style={styles.label}>{t.label}</Text>
+      <Text style={styles.dot}>·</Text>
       <Text style={styles.body}>{t.body}</Text>
-      <Link
-        accessibilityLabel={t.linkAccessibilityLabel}
-        accessibilityRole="link"
-        href="/sources"
-        style={styles.link}
-      >
-        {t.linkLabel}
-      </Link>
-    </View>
+    </Link>
   );
 }
 
 const styles = StyleSheet.create({
   row: {
     alignItems: 'center',
+    borderRadius: radius.pill,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[0.75],
+    minHeight: space[6],
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.75],
+    textDecorationLine: 'none',
+  },
+  rowInteractive: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.hoverScale }],
+  },
+  rowPressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  label: {
+    color: colors.text,
+    fontFamily: typography.bodySemibold.fontFamily,
+    fontSize: typography.bodySemibold.fontSize,
+    fontWeight: typography.bodySemibold.fontWeight,
+  },
+  dot: {
+    color: colors.textMuted,
+    fontFamily: typography.body.fontFamily,
+    fontSize: typography.body.fontSize,
   },
   body: {
     color: colors.textMuted,
     fontFamily: typography.bodyTight.fontFamily,
     fontSize: typography.bodyTight.fontSize,
-  },
-  link: {
-    color: colors.accent,
-    fontFamily: typography.bodySemibold.fontFamily,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-    minHeight: space[6],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
 });

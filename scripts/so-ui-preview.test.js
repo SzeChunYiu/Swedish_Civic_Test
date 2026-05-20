@@ -25,6 +25,12 @@ test('Somali preview uses public-information study wording from the style guide'
     'Markan jawaabtu ma saxna.',
     'Sharaxaadda jawaabta',
     'Ilaha macluumaadka',
+    'Imtixaan tijaabo',
+    'Natiijada imtixaanka tijaabada ah',
+    'Dib-u-eeg khaladaadka',
+    'Weli khaladaad ma jiraan',
+    'Dulmarka horumarka',
+    'Jidka waxbarashada',
     'Noocan luqadeed weli waa la diyaarinayaa.',
   ]) {
     assert.match(source, new RegExp(phrase.replace(/[{}]/g, '\\$&')));
@@ -56,6 +62,48 @@ test('Somali preview avoids outcome promises and keeps local privacy wording', (
   assert.match(source, /tixraaca UHR/);
 });
 
+test('Somali preview covers mock exam, mistakes, dashboard, and learning surfaces', () => {
+  const source = read(previewPath);
+  for (const phrase of [
+    'Imtixaan tijaabo',
+    'Bilow imtixaanka tijaabada ah',
+    'Natiijada imtixaanka tijaabada ah',
+    'Dib-u-eeg khaladaadka',
+    'Weli khaladaad ma jiraan',
+    'Dulmarka horumarka',
+    'Su’aalaha la dhammaystiray',
+    'Jidka waxbarashada',
+    'Eeg cutubkan',
+  ]) {
+    assert.match(source, new RegExp(phrase.replace(/[{}]/g, '\$&')));
+  }
+
+  for (const forbidden of ['pass rate', 'guaranteed', 'dammaanad', 'baasaboor']) {
+    assert.doesNotMatch(source, new RegExp(forbidden));
+  }
+});
+
+test('Somali preview covers compliance, onboarding, about, support, sources, and search surfaces', () => {
+  const source = read(previewPath);
+  for (const phrase of [
+    'Macluumaad sharci iyo ilo',
+    'Siyaasadda asturnaanta',
+    'Ka saar xayeysiiska',
+    'Soo dhowow',
+    'Ku saabsan imtixaanka',
+    'Taageero iyo jawaab-celin',
+    'Ilaha waxbarashada',
+    'Raadi ereyo iyo cutubyo',
+    'Ma aha qalab rasmi ah',
+  ]) {
+    assert.match(source, new RegExp(phrase.replace(/[{}]/g, '\$&')));
+  }
+
+  for (const forbidden of ['Hel baasaboorka', 'Imtixaanka uga gud', 'muwaadinimo ayaad helaysaa']) {
+    assert.doesNotMatch(source, new RegExp(forbidden));
+  }
+});
+
 test('Somali preview does not enable runtime release', () => {
   const settingsStore = read(settingsStorePath);
   const locales = read(localesPath);
@@ -65,6 +113,6 @@ test('Somali preview does not enable runtime release', () => {
   assert.match(locales, /code: 'so',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales.so.appAvailable, false);
   assert.equal(readiness.locales.so.uiStrings, 'not_started');
-  assert.equal(readiness.locales.so.questionContent, 'not_started');
+  assert.equal(readiness.locales.so.questionContent, 'pilot_q001_q169_machine_assisted');
   assert.equal(readiness.locales.so.releaseGate, 'blocked');
 });

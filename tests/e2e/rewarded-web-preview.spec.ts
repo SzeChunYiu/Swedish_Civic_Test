@@ -20,27 +20,30 @@ const copy: Record<
     previewTitle: string;
     status: string;
     timeLeft: RegExp;
+    unlockButton: string;
   }
 > = {
   sv: {
     activeCount: `0/${totalQuestions} besvarade`,
     heading: 'Övningsprov',
     previewBody:
-      'Slutför den korta annonsförhandsvisningen för att låsa upp ett extra övningsprov. Inga annonser visas under själva provet.',
+      'Slutför den korta förhandsvisningen innan du låser upp ett extra övningsprov. Det här är inte ett riktigt prov och ger ingen officiell fördel.',
     previewButton: 'Slutför förhandsvisning',
     previewTitle: 'Sponsrad förhandsvisning',
     status: 'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
     timeLeft: /^Tid kvar/,
+    unlockButton: 'Lås upp extra prov',
   },
   en: {
     activeCount: `0/${totalQuestions} answered`,
     heading: 'Mock exam',
     previewBody:
-      'Complete the short ad preview to unlock one extra mock exam. No ads appear during the exam itself.',
+      'Complete the short preview before unlocking an extra mock exam. This is not a real exam and does not provide any official advantage.',
     previewButton: 'Complete sponsor preview',
     previewTitle: 'Sponsored preview',
     status: 'Daily free mock exam used. Extra exam available.',
     timeLeft: /^Time left/,
+    unlockButton: 'Unlock extra exam',
   },
 };
 
@@ -143,6 +146,11 @@ for (const language of ['sv', 'en'] as const) {
     const completionButton = page.getByRole('button', { name: t.previewButton });
     await expectReachableTarget(completionButton);
     await completionButton.click();
+    await expect(completionButton).toBeDisabled();
+
+    const unlockButton = page.getByRole('button', { name: t.unlockButton });
+    await expectReachableTarget(unlockButton);
+    await unlockButton.click();
 
     await expect(page.getByText(t.activeCount)).toBeVisible();
     await expect(page.getByText(t.timeLeft)).toBeVisible();

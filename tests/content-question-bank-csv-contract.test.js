@@ -12,16 +12,28 @@ function parseExportedCsvLine(line) {
   );
 }
 
+function runQuestionBankCsvValidation() {
+  return execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-bank-csv'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+}
+
 test('question-bank CSV keeps its public row contract', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = runQuestionBankCsvValidation();
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 21);
+  assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
+  assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
 });
 
 test('question-bank CSV has unique public header names', () => {
@@ -55,6 +67,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-question-bank-csv');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -86,6 +99,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-question-bank-csv');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -118,6 +132,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-question-bank-csv');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -132,10 +147,7 @@ require('./scripts/validate-content.js');
 });
 
 test('question-bank CSV exposes derived question provenance with no blank cells', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = runQuestionBankCsvValidation();
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -216,10 +228,7 @@ require('./scripts/export-question-bank.js');
 });
 
 test('question-bank CSV exposes UHR source metadata with no blank cells', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = runQuestionBankCsvValidation();
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -273,6 +282,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-question-bank-csv');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -312,6 +322,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-question-bank-csv');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -338,12 +349,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/content/question-bank.csv')) {
     return String(contents).replace(
-      'Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.',
+      'Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.',
       'The exported explanation drifted from the source question.',
     );
   }
   return contents;
 };
+process.argv.push('--focus-question-bank-csv');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -376,6 +388,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-question-bank-csv');
 require('./scripts/validate-content.js');
 `,
     ],

@@ -50,6 +50,7 @@ function firstWrongOptionId(question) {
 
 test('default mock exam review rows preserve answers, explanations, and UHR sources', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

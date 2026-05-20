@@ -1314,6 +1314,42 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   assert.match(scopeGate.nextAction, /test -f reports\/release-ads-iap-device-qa\.md/);
 });
 
+test('release preflight detects classifier-discovered v1.1 runtime surfaces', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-v11-dynamic-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const scanRoot = path.join(tmpDir, 'scan-root');
+  const futureComponentPath = path.join(scanRoot, 'components', 'FutureStudyPlanner.tsx');
+
+  fs.mkdirSync(path.dirname(futureComponentPath), { recursive: true });
+  fs.writeFileSync(
+    futureComponentPath,
+    [
+      'export function FutureStudyPlanner() {',
+      "  return 'v1.1 adaptive study planner';",
+      '}',
+      '',
+    ].join('\n'),
+  );
+  writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      RELEASE_PREFLIGHT_V11_SCOPE_ROOTS: scanRoot,
+    },
+  });
+
+  const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+  assert.equal(scopeGate.status, 'BLOCKED');
+  assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
+  assert.match(scopeGate.evidence, /FutureStudyPlanner\.tsx/);
+  assert.match(scopeGate.nextAction, /explicit operator approval/i);
+});
+
 test('release preflight blocks Remove Ads step 3 structural drift without the brittle GOAL grep', () => {
   const cases = [
     {
