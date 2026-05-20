@@ -45,6 +45,18 @@ test('npm test keeps selector routing in the project dispatcher', () => {
   assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
 });
 
+test('question report link parity runs through its focused validator path', () => {
+  const pkg = readPackageJson();
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-report-link-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(pkg.scripts['test:content'], /tests\/content-question-report-link-parity\.test\.js/);
+  assert.match(source, /--focus-question-report-link-parity/);
+  assert.match(source, /process\.argv\.push\('--focus-question-report-link-parity'\)/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -135,6 +147,28 @@ test('answer feedback focused content validation runs only its parity summary', 
   assert.equal(summary.answerFeedbackRuntimeParityValidated, true);
   assert.equal(
     Object.prototype.hasOwnProperty.call(summary, 'questionCardAccessibilityParityValidated'),
+    false,
+  );
+});
+
+test('exam submission finality focused validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused exam submission validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.examSubmissionFinalityParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'progressQuestionSchemaParityValidated'),
     false,
   );
 });

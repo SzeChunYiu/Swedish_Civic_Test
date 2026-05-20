@@ -1,5 +1,8 @@
+import { Link } from 'expo-router';
+import { StyleSheet } from 'react-native';
 import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
+import { colors, radius, space, typography } from '../lib/theme';
 
 const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const UHR_AUTHORITY_BOUNDARY_SOURCE = {
@@ -78,12 +81,18 @@ export default function Screen() {
         title={copy.sections.primaryStudyMaterial.title}
         body={copy.sections.primaryStudyMaterial.body}
       >
-        <LegalExternalLink
+        <Link
           accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}
-          destination={UHR_EDUCATION_MATERIAL_URL}
+          accessibilityRole="link"
           href={UHR_EDUCATION_MATERIAL_URL}
-          label={copy.openEducationMaterialAccessibilityLabel}
-        />
+          rel="noreferrer"
+          style={styles.externalLink}
+          target="_blank"
+        >
+          {copy.openEducationMaterialAccessibilityLabel}
+          {'\n'}
+          {UHR_EDUCATION_MATERIAL_URL}
+        </Link>
       </LegalSection>
       <LegalSection title={copy.sections.questionReferences.title}>
         {copy.sections.questionReferences.body}
@@ -102,3 +111,22 @@ export default function Screen() {
     </LegalPage>
   );
 }
+
+const styles = StyleSheet.create({
+  externalLink: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.bodyTight.lineHeight,
+    minHeight: space[6],
+    minWidth: space[6],
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+    width: '100%',
+  },
+});
