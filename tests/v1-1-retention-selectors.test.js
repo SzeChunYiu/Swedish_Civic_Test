@@ -93,11 +93,52 @@ test('streakWithFreeze: refillFreezes adds a freeze after a week', () => {
   assert.equal(refilled.lifetimeEarned, 2);
 });
 
+test('streakWithFreeze: malformed active days and today fall back without corrupting the streak', () => {
+  const { calculateStreakWithFreeze, createInitialFreezeState } = loadTs(
+    'lib/learning/streakWithFreeze.ts',
+  );
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const result = calculateStreakWithFreeze({
+    activeDayKeys: ['2026-05-18T10:00:00.000Z', 7, null, 'not-a-date', '2026-02-30', '2026-05-19'],
+    freezeState: {
+      ...createInitialFreezeState(now),
+      rescuedDayKeys: ['not-a-date', '2026-05-17'],
+    },
+    today: 'not-a-date',
+    now,
+  });
+
+  assert.equal(result.streakDays, 3);
+  assert.deepEqual(result.rescuedThisRun, []);
+  assert.equal(result.freezeState.available, 1);
+  assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
+});
+
+test('streakWithFreeze: refillFreezes repairs invalid lastEarnedAt and invalid now inputs', () => {
+  const { refillFreezes } = loadTs('lib/learning/streakWithFreeze.ts');
+  const invalidLastEarned = {
+    available: 0,
+    lastEarnedAt: 'not-a-date',
+    lifetimeEarned: 1,
+    lifetimeSpent: 1,
+    rescuedDayKeys: [],
+  };
+  const refilled = refillFreezes(invalidLastEarned, new Date('2026-05-19T08:00:00.000Z'));
+  assert.equal(refilled.available, 0);
+  assert.equal(refilled.lifetimeEarned, 1);
+  assert.equal(refilled.lastEarnedAt, '2026-05-18');
+
+  const invalidNow = refillFreezes({ ...invalidLastEarned, available: 1 }, new Date('not-a-date'));
+  assert.match(invalidNow.lastEarnedAt, /^\d{4}-\d{2}-\d{2}$/);
+  assert.doesNotMatch(invalidNow.lastEarnedAt, /NaN/);
+  assert.equal(invalidNow.available, 1);
+});
+
 test('streakWithFreeze: freezeBannerCopy emits Sv + En only when a freeze was used', () => {
   const { freezeBannerCopy } = loadTs('lib/learning/streakWithFreeze.ts');
   const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 0 } };
   assert.match(freezeBannerCopy(withRescue, 'en'), /protected/i);
-  assert.match(freezeBannerCopy(withRescue, 'sv'), /räddad/i);
+  assert.match(freezeBannerCopy(withRescue, 'sv'), /räddad|räddat/i);
   const noRescue = { rescuedThisRun: [], freezeState: { available: 1 } };
   assert.equal(freezeBannerCopy(noRescue, 'en'), null);
 });

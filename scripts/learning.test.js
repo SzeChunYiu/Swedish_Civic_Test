@@ -90,6 +90,39 @@ test('streak logic counts consecutive unique answer dates through today', () => 
   assert.equal(calculateStreak(['2026-05-14', '2026-05-14', '2026-05-15'], '2026-05-15'), 2);
 });
 
+test('streakWithFreeze ignores malformed date inputs without corrupting freeze state', () => {
+  const { calculateStreakWithFreeze, refillFreezes } = loadAllTs(
+    'lib/learning/streakWithFreeze.ts',
+  );
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const freezeState = {
+    available: 1,
+    lastEarnedAt: 'not-a-date',
+    lifetimeEarned: 1,
+    lifetimeSpent: 0,
+    rescuedDayKeys: ['bad-key', '2026-05-17'],
+  };
+
+  const repaired = refillFreezes(freezeState, now);
+  assert.equal(repaired.lastEarnedAt, '2026-05-18');
+  assert.equal(repaired.available, 1);
+
+  const result = calculateStreakWithFreeze({
+    activeDayKeys: ['2026-05-19', '2026-05-18T08:00:00.000Z', 7, '2026-02-30'],
+    freezeState,
+    today: 'not-a-date',
+    now,
+  });
+
+  assert.equal(result.streakDays, 3);
+  assert.deepEqual(result.rescuedThisRun, []);
+  assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
+  assert.doesNotMatch(
+    refillFreezes(freezeState, new Date('not-a-date')).lastEarnedAt,
+    /NaN|not-a-date/,
+  );
+});
+
 test('daily goal counts question answers for the requested local day only', () => {
   const { countAnswersForLocalDate } = loadAllTs('lib/learning/streaks.ts');
 
