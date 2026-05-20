@@ -518,6 +518,23 @@ test('dailyActivityHistogram: returns contiguous bins ending today', () => {
   assert.equal(bins[0].count, 0);
 });
 
+test('dashboard day-window selectors normalize invalid daysBack inputs', () => {
+  const { MAX_DASHBOARD_DAYS_BACK, dailyActivityHistogram, mistakeConvergence, xpSparkline } =
+    loadTs('lib/learning/dashboardStats.ts');
+  const progress = progressWithSessions([]);
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  assert.equal(dailyActivityHistogram(progress, { daysBack: 0, now }).length, 1);
+  assert.equal(mistakeConvergence(progress, { daysBack: -3, now }).length, 1);
+  assert.equal(xpSparkline(progress, { daysBack: 2.9, now }).length, 2);
+  assert.equal(xpSparkline(progress, { daysBack: Number.NaN, now }).length, 30);
+  assert.equal(dailyActivityHistogram(progress, { daysBack: Infinity, now }).length, 53 * 7);
+  assert.equal(
+    mistakeConvergence(progress, { daysBack: MAX_DASHBOARD_DAYS_BACK + 100, now }).length,
+    MAX_DASHBOARD_DAYS_BACK,
+  );
+});
+
 test('perChapterProgress: accuracy + coverage computed per chapter', () => {
   const { perChapterProgress } = loadTs('lib/learning/dashboardStats.ts');
   const chapters = [
