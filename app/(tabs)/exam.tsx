@@ -585,7 +585,7 @@ export default function Screen() {
         contentContainerStyle={styles.content}
       >
         <View style={styles.hero}>
-          <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
+          <Badge tone={endedByTime ? 'orange' : 'blue'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
           </Badge>
           <Text accessibilityRole="header" style={styles.title}>
@@ -600,7 +600,6 @@ export default function Screen() {
         <ResultSummary
           correctCount={result.correctCount}
           languageOverride={language}
-          status={result.percent >= 75 && !endedByTime ? 'strong' : 'review'}
           subtitle={copy.resultNote}
           totalCount={result.totalCount}
         />
