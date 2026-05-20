@@ -4,25 +4,58 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const {
+  findStaticHeadMetadataDescriptionIssues,
+  formatUnsupportedStaticOutcomeSlogans,
+  findUnsupportedStaticTeamCredentialClaimsInSource,
+  formatUnsupportedStaticTeamCredentialClaims,
+} = require('./static-outcome-copy-guard');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
 const LOCAL_SITE_QUESTIONS_PATH = path.join(__dirname, '..', 'site', 'questions.js');
-const STATIC_HEAD_METADATA_OUTCOME_PATTERNS = [
+const PERMISSIONS_POLICY_VALUE = [
+  'accelerometer=()',
+  'autoplay=()',
+  'bluetooth=()',
+  'camera=()',
+  'display-capture=()',
+  'encrypted-media=()',
+  'fullscreen=()',
+  'geolocation=()',
+  'gyroscope=()',
+  'hid=()',
+  'idle-detection=()',
+  'local-fonts=()',
+  'magnetometer=()',
+  'microphone=()',
+  'midi=()',
+  'payment=()',
+  'publickey-credentials-get=()',
+  'screen-wake-lock=()',
+  'serial=()',
+  'usb=()',
+  'xr-spatial-tracking=()',
+].join(', ');
+const REQUIRED_SECURITY_HEADERS = [
   {
-    label: 'Study, fika, pass',
-    pattern: /\bstudy\s*,\s*fika\s*,\s*pass\.?\b/i,
+    key: 'x-content-type-options',
+    name: 'X-Content-Type-Options',
+    value: 'nosniff',
   },
   {
-    label: 'pass-outcome wording',
-    pattern: /\b(?:pass(?:\s+the\s+(?:test|exam))?|passed|passing)\b/i,
+    key: 'referrer-policy',
+    name: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
   },
   {
-    label: 'passport-outcome wording',
-    pattern: /\b(?:earn|get|få|ta)\s+(?:the\s+)?(?:passport|passet)\b/i,
+    key: 'x-frame-options',
+    name: 'X-Frame-Options',
+    value: 'DENY',
   },
   {
-    label: 'guaranteed result wording',
-    pattern: /\bguarantee(?:d|s)?\b[\s\S]{0,80}\bpass\b/i,
+    key: 'permissions-policy',
+    name: 'Permissions-Policy',
+    value: PERMISSIONS_POLICY_VALUE,
   },
 ];
 
@@ -37,7 +70,7 @@ function normalizeBaseUrl(input) {
   return url.toString().replace(/\/$/, '');
 }
 
-async function fetchText(baseUrl, assetPath) {
+async function fetchAsset(baseUrl, assetPath) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
   const url = `${baseUrl}/${assetPath.replace(/^\//, '')}`;
@@ -47,10 +80,14 @@ async function fetchText(baseUrl, assetPath) {
     if (!response.ok) {
       throw new Error(`${url} returned HTTP ${response.status}`);
     }
-    return await response.text();
+    return { headers: response.headers, text: await response.text(), url };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchText(baseUrl, assetPath) {
+  return (await fetchAsset(baseUrl, assetPath)).text;
 }
 
 function readStaticQuestionCount(source) {
@@ -120,89 +157,99 @@ function containsAll(source, needles) {
   return needles.every((needle) => source.includes(needle));
 }
 
-function decodeHtmlText(value) {
-  return String(value)
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
+function findStaticAdSenseSlotConfigIssues(indexSource, appSource) {
+  const surface = `${indexSource}\n${appSource}`;
+  const issues = [];
+  const staleSetupPatterns = [
+    /Replace ca-pub-XXX/i,
+    /data-ad-slot value with your AdSense IDs/i,
+    /data-ad-slot=["'](?:0{8,}|000000000[0-9])["']/i,
+    /Your AdSense slot will render here/i,
+    /AdSense-yta visas här/i,
+    /Anchor ad slot/i,
+    /AdSense 广告将显示在此处/,
+    /AdSense 廣告將顯示在此處/,
+    /ستظهر إعلانات AdSense هنا/,
+    /AdSense halkan ayey ka soo bixi doontaa/i,
+  ];
 
-function extractStaticHeadMetadata(indexHtml) {
-  const head = String(indexHtml).match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? '';
-  const title = decodeHtmlText(
-    head.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.replace(/<[^>]+>/g, '') ?? '',
-  );
-  const descriptions = Array.from(
-    head.matchAll(/<meta\b[^>]*name=["']description["'][^>]*content=["']([^"']*)["'][^>]*>/gi),
-    (match) => decodeHtmlText(match[1]),
-  );
-
-  return {
-    head,
-    title,
-    descriptions,
-    surface: [title, ...descriptions].filter(Boolean).join('\n'),
-  };
-}
-
-function validateStaticHeadMetadata(indexHtml) {
-  const metadata = extractStaticHeadMetadata(indexHtml);
-  const failures = [];
-  let titleValidated = false;
-  let outcomeClaimPatternsValidated = 0;
-
-  if (!metadata.title) {
-    failures.push('missing <title>');
-  } else {
-    const titleFailures = [];
-    if (!/^Almost Swedish\b/.test(metadata.title)) {
-      titleFailures.push('title must start with Almost Swedish');
-    }
-    if (!/\b(?:study|practice|studera|öva|träna)\b/i.test(metadata.title)) {
-      titleFailures.push('title must describe study or practice');
-    }
-    failures.push(...titleFailures);
-    titleValidated = titleFailures.length === 0;
-  }
-
-  for (const { label, pattern } of STATIC_HEAD_METADATA_OUTCOME_PATTERNS) {
-    if (pattern.test(metadata.surface)) {
-      failures.push(`metadata contains ${label}`);
-    } else {
-      outcomeClaimPatternsValidated += 1;
+  for (const pattern of staleSetupPatterns) {
+    if (pattern.test(surface)) {
+      issues.push(`stale static AdSense setup or render copy: ${pattern.source}`);
     }
   }
 
-  return {
-    ...metadata,
-    ok: failures.length === 0,
-    details: failures.join('; '),
-    failures,
-    outcomeClaimPatternsTotal: STATIC_HEAD_METADATA_OUTCOME_PATTERNS.length,
-    outcomeClaimPatternsValidated,
-    titleValidated,
-  };
+  if (/ca-pub-[0-9]{16}/.test(surface)) {
+    if (!/slots:\s*{[\s\S]*inline:[\s\S]*anchor:/m.test(appSource)) {
+      issues.push('static AdSense publisher is present without an explicit slot config');
+    }
+    if (!/function\s+smtStaticAdsAreConfigured\s*\(/.test(appSource)) {
+      issues.push('static AdSense publisher is present without a fail-closed config gate');
+    }
+    if (!/function\s+smtIsRealAdSenseSlotId\s*\(/.test(appSource)) {
+      issues.push('static AdSense publisher is present without reviewed slot-id validation');
+    }
+  }
+
+  return issues;
+}
+
+function normalizeHeaderValue(value) {
+  return String(value ?? '')
+    .trim()
+    .replace(/\s*,\s*/g, ', ')
+    .replace(/\s+/g, ' ');
+}
+
+function findRequiredSecurityHeaderIssues(headers) {
+  return REQUIRED_SECURITY_HEADERS.flatMap((expected) => {
+    const actual = headers.get(expected.key);
+    if (!actual) {
+      return [`missing ${expected.name}`];
+    }
+
+    const normalizedActual = normalizeHeaderValue(actual).toLowerCase();
+    const normalizedExpected = normalizeHeaderValue(expected.value).toLowerCase();
+    if (normalizedActual !== normalizedExpected) {
+      return [
+        `${expected.name} expected "${expected.value}", found "${normalizeHeaderValue(actual)}"`,
+      ];
+    }
+
+    return [];
+  });
 }
 
 async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [index, styles, practice, ebook, questions] = await Promise.all([
-    fetchText(baseUrl, 'index.html'),
-    fetchText(baseUrl, 'styles.css'),
-    fetchText(baseUrl, 'practice.js'),
-    fetchText(baseUrl, 'ebook.js'),
-    fetchText(baseUrl, 'questions.js'),
-  ]);
+  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, questionsAsset] =
+    await Promise.all([
+      fetchAsset(baseUrl, 'index.html'),
+      fetchAsset(baseUrl, 'styles.css'),
+      fetchAsset(baseUrl, 'app.js'),
+      fetchAsset(baseUrl, 'practice.js'),
+      fetchAsset(baseUrl, 'ebook.js'),
+      fetchAsset(baseUrl, 'questions.js'),
+    ]);
+  const index = indexAsset.text;
+  const styles = stylesAsset.text;
+  const app = appAsset.text;
+  const practice = practiceAsset.text;
+  const ebook = ebookAsset.text;
+  const questions = questionsAsset.text;
 
   const questionCount = readStaticQuestionCount(questions);
   const questionBankHash = hashStaticQuestionBank(questions);
   const checks = [];
+
+  const staticSecurityHeaderIssues = findRequiredSecurityHeaderIssues(indexAsset.headers);
+  checks.push(
+    staticSecurityHeaderIssues.length === 0
+      ? pass('static security headers')
+      : fail('static security headers', staticSecurityHeaderIssues.join('; ')),
+  );
 
   checks.push(
     questionCount === requiredQuestionCount
@@ -234,11 +281,24 @@ async function checkLiveSite(inputUrl, options = {}) {
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
   );
 
-  const staticHeadMetadata = validateStaticHeadMetadata(index);
+  const staticHeadMetadataDescriptionIssues = findStaticHeadMetadataDescriptionIssues(
+    index,
+    'index.html',
+  );
   checks.push(
-    staticHeadMetadata.ok
-      ? pass('static head metadata copy', staticHeadMetadata.title)
-      : fail('static head metadata copy', staticHeadMetadata.details),
+    staticHeadMetadataDescriptionIssues.length === 0
+      ? pass('static head metadata description')
+      : fail(
+          'static head metadata description',
+          formatUnsupportedStaticOutcomeSlogans(staticHeadMetadataDescriptionIssues),
+        ),
+  );
+
+  const staticAdSenseIssues = findStaticAdSenseSlotConfigIssues(index, app);
+  checks.push(
+    staticAdSenseIssues.length === 0
+      ? pass('static AdSense slot config')
+      : fail('static AdSense slot config', staticAdSenseIssues.join('; ')),
   );
 
   checks.push(
@@ -272,6 +332,19 @@ async function checkLiveSite(inputUrl, options = {}) {
       : pass('ebook placeholder copy'),
   );
 
+  const footerCredentialOffenders = findUnsupportedStaticTeamCredentialClaimsInSource(
+    index,
+    'index.html',
+  );
+  checks.push(
+    footerCredentialOffenders.length === 0
+      ? pass('static footer credential claims')
+      : fail(
+          'static footer credential claims',
+          formatUnsupportedStaticTeamCredentialClaims(footerCredentialOffenders),
+        ),
+  );
+
   return { baseUrl, ok: checks.every((check) => check.ok), checks };
 }
 
@@ -296,11 +369,13 @@ if (require.main === module) {
 
 module.exports = {
   checkLiveSite,
+  fetchText,
+  findRequiredSecurityHeaderIssues,
+  findStaticAdSenseSlotConfigIssues,
   hashStaticQuestionBank,
-  extractStaticHeadMetadata,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  REQUIRED_SECURITY_HEADERS,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
-  validateStaticHeadMetadata,
 };

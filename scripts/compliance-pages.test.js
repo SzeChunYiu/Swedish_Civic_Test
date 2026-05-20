@@ -5,6 +5,7 @@ const test = require('node:test');
 const {
   assertNoUnsupportedStaticOutcomeSlogans,
   assertStaticHeadMetadataDescriptionSource,
+  assertNoUnsupportedStaticTeamCredentialClaims,
 } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -13,25 +14,28 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-const staticOutcomeClaimPatterns = [
-  { label: 'English pass-the-test hero claim', pattern: /Pass the test/i },
-  { label: 'English passport outcome claim', pattern: /Earn the passport/i },
-  { label: 'English pass-big slogan', pattern: /Pass big/i },
-  { label: 'English seasonal pass slogan', pattern: /Pass like a dancing queen|Pass with pulla/i },
-  { label: 'English metadata pass slogan', pattern: /Study,\s*fika,\s*pass/i },
-  { label: 'Swedish pass-the-test hero claim', pattern: /Klara provet/i },
-  { label: 'Swedish passport outcome claim', pattern: /Få passet/i },
-  { label: 'Swedish pass-big slogan', pattern: /Klara stort/i },
-];
-
-function staticMarketingSurface() {
-  return [
-    read('site/app.js'),
-    read('site/index.html'),
-    read('site/tweaks.jsx'),
-    read('site/buddies.js'),
-  ].join('\n');
+function readAppName() {
+  return JSON.parse(read('app.json')).expo.name;
 }
+test('static mock exam copy avoids unsupported official pass-line claims', () => {
+  const practiceSource = read('site/practice.js');
+  const forbiddenFragments = [
+    '75' + '%',
+    ['passing', 'line'].join(' '),
+    'godk' + 'änt-gräns',
+    '75' + '% next time',
+  ];
+
+  for (const fragment of forbiddenFragments) {
+    assert.doesNotMatch(practiceSource, new RegExp(fragment.replace(/\s+/g, '\\s+'), 'i'));
+  }
+
+  assert.doesNotMatch(practiceSource, /\bpct\s*>=\s*75\b/);
+  assert.doesNotMatch(practiceSource, /\bm\.pct\s*>=\s*75\b/);
+  assert.doesNotMatch(practiceSource, new RegExp(['you', 'passed'].join('\\s+'), 'i'));
+  assert.doesNotMatch(practiceSource, new RegExp('underk' + '[aä]nt', 'i'));
+  assert.doesNotMatch(practiceSource, new RegExp('godk' + '[aä]nt', 'i'));
+});
 
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
@@ -128,16 +132,101 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Support/);
 });
 
-test('static marketing copy avoids pass and passport outcome claims', () => {
-  const surface = staticMarketingSurface();
+test('static site brand copy matches app identity', () => {
+  const appName = readAppName();
+  const staleBrand = /Sveriges Medborgartest|Sweden Citizenship Test Prep/;
+  const staticFiles = fs
+    .readdirSync(path.join(repoRoot, 'site'))
+    .filter((fileName) => /\.(?:html|js|jsx|css)$/.test(fileName));
 
-  for (const { label, pattern } of staticOutcomeClaimPatterns) {
-    assert.doesNotMatch(surface, pattern, label);
+  for (const fileName of staticFiles) {
+    const body = read(path.join('site', fileName));
+    assert.doesNotMatch(body, staleBrand, `site/${fileName} should not use the old brand`);
   }
 
-  assert.match(surface, /Study the basics\./);
-  assert.match(surface, /Practice with sources\./);
-  assert.match(surface, /Studera grunderna\./);
-  assert.match(surface, /Öva med källor\./);
-  assert.match(surface, /Almost Swedish — Swedish civics practice/);
+  for (const filePath of [
+    'site/index.html',
+    'site/app.js',
+    'site/ebook.js',
+    'site/practice.js',
+    'site/settings.js',
+    'site/questions.js',
+    'scripts/export-site-question-bank.js',
+  ]) {
+    assert.match(read(filePath), new RegExp(appName), `${filePath} should use ${appName}`);
+  }
+
+  assert.match(
+    read('site/questions.js'),
+    new RegExp(`^/\\* ${appName} - generated static question bank\\.`),
+  );
+test('static learner-facing slogans avoid pass and passport outcome promises', () => {
+  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+  assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
+  assert.match(read('site/index.html'), /data-i18n="footer\.t1">Study the material\./);
+  assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
+  assert.match(read('site/app.js'), /"hero\.h1a": "Study the material\."/);
+  assert.match(read('site/app.js'), /"hero\.h1b": "Practice with sources\."/);
+  assert.match(read('site/app.js'), /"hero\.h1a": "Plugga materialet\."/);
+  assert.match(read('site/app.js'), /"hero\.h1b": "Öva med källor\."/);
+});
+
+test('static head metadata description is neutral and non-empty', () => {
+  const indexHtml = read('site/index.html');
+
+  assert.equal(assertStaticHeadMetadataDescriptionSource(indexHtml), 1);
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(/<meta\s+name="description"[\s\S]*?\/>\n/, ''),
+      ),
+    /missing static meta description/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(/(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/, '$1$2'),
+      ),
+    /blank static meta description/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(
+          /(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/,
+          '$1Pass the test.$2',
+        ),
+      ),
+    /static meta description English pass-the-test slogan/,
+  );
+});
+
+test('static Swedish mock exam copy stays clearly unofficial practice wording', () => {
+  const practice = read('site/practice.js');
+
+  assert.match(practice, /['"]Övningsprov['"]/);
+  assert.match(practice, /['"]Bygg ditt övningsprov\.['"]/);
+  assert.match(practice, /['"]Starta övningsprov['"]/);
+  assert.doesNotMatch(practice, /Skarp tentamen|Bygg din tentamen|Starta tentamen|\btentamen\b/i);
+  assert.match(practice, /['"]Mock exam['"]/);
+});
+
+test('static Swedish legal and study copy keeps adult grammar and tone', () => {
+  const staticApp = read('site/app.js');
+  const staleFragments = [
+    ['ingen', 'juridiska'].join(' '),
+    ['fika', 'stor'].join('-'),
+    ['fika', 'skador'].join('-'),
+  ];
+
+  staleFragments.forEach((fragment) => {
+    assert.doesNotMatch(staticApp, new RegExp(fragment, 'i'));
+  });
+
+  assert.match(staticApp, /inget juridiskt kr[aå]ngel/);
+  assert.match(staticApp, /en kort studievana/);
+  assert.match(
+    staticApp,
+    /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
+  );
 });

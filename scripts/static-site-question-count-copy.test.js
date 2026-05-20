@@ -121,8 +121,8 @@ test('static site count-sensitive copy uses non-numeric current-bank wording', (
   [
     /Source-backed questions/,
     /K.llst.dda fr.gor/,
-    /Free to start, study, and take mock exams/,
-    /Gratis att b.rja, plugga och g.ra .vningsprov/,
+    /Free to start, study, and practice with mock exams/,
+    /Gratis att b.rja, plugga och .va med .vningsprov/,
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 

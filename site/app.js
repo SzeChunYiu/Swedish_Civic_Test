@@ -97,9 +97,9 @@ const i18n = window.i18n = {
     "nav.cta": "Get the app ↗",
 
     "hero.eyebrow": "Unofficial · Free MVP · Source-backed questions",
-    "hero.h1a": "Study the basics.",
+    "hero.h1a": "Study the material.",
     "hero.h1b": "Practice with sources.",
-    "hero.h1c": "Keep it lagom.",
+    "hero.h1c": "Feel calmer on exam day.",
     "hero.lede": "A friendly, unofficial study app for Sweden's medborgarskapsprov. Bite-sized chapters, smart practice, and a mock exam that feels less scary than small talk with your neighbour.",
     "hero.cta1": "Start studying — it's free",
     "hero.cta2": "Try a question",
@@ -190,7 +190,7 @@ const i18n = window.i18n = {
     "chap.10.m1": "33 questions",
     "chap.10.m2": "~8 min",
     "chap.11.t": "Migration, residence & citizenship",
-    "chap.11.d": "The practical path to citizenship. Routes, requirements, the difference between PUT, medborgarskap, and \"just visiting\".",
+    "chap.11.d": "The actual path to a passport. Routes, requirements, the difference between PUT, medborgarskap, and \"just visiting\".",
     "chap.11.m1": "35 questions",
     "chap.11.m2": "~9 min",
     "chap.12.t": "Mock exam & survival guide",
@@ -201,7 +201,7 @@ const i18n = window.i18n = {
 
     "how.eyebrow": "How it works",
     "how.h1": "Study lagom.",
-    "how.h2": "Practice steady.",
+    "how.h2": "Study smart.",
     "how.deck": "Three modes, one app. Use them in any order — most people end up cycling through all three the week before the exam.",
     "how.s1.t": "Learn — short chapters",
     "how.s1.p": "Read a 5-minute explainer, then a tiny quiz. Like having a patient Swedish friend who actually finishes their sentences.",
@@ -215,7 +215,7 @@ const i18n = window.i18n = {
     "faq.h2": "over coffee.",
     "faq.1.q": "Is this the official Swedish citizenship test?",
     "faq.1.a": "No, and we say so on every page. We're independent — not affiliated with UHR, Skolverket, Migrationsverket, or anyone who actually decides who becomes a citizen. We make a study tool. They run the exam.",
-    "faq.2.q": "Will it really help me study?",
+    "faq.2.q": "Will it really help me pass?",
     "faq.2.a": "It'll help you <em>study</em>. The rest depends on you, the official source material, and how much fika you take. We pull questions from the public bank and explain each one in plain language.",
     "faq.3.q": "Do I need an account?",
     "faq.3.a": "No. The MVP needs zero registration. No email, no phone number, no awkward profile photo from 2017. Progress lives on your device.",
@@ -346,9 +346,7 @@ const i18n = window.i18n = {
     "sources.s5.p2": "See a question that disagrees with its cited source? <a href=\"#/support\">Tell us</a> — corrections are usually live within a week.",
 
     "footer.brag1": "Study lagom.",
-    "footer.brag2": "Practice steady.",
-    "footer.t1": "Study the basics.",
-    "footer.t2": "Keep it lagom.",
+    "footer.brag2": "Study smart.",
     "footer.h.app": "The app",
     "footer.app.1": "Why it exists",
     "footer.app.2": "Try a question",
@@ -356,7 +354,7 @@ const i18n = window.i18n = {
     "footer.app.4": "Mock exam",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Fine print",
-    "footer.about.p": "An independent study tool, built by people who've taken the test themselves. Free to start, study, and take mock exams.",
+    "footer.about.p": "An independent study tool built from public source material, clear explanations, and careful review. Free to start, study, and practice with mock exams.",
     "footer.h.honest": "Honest disclaimer",
     "footer.honest.p": "Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. We just really like helping people study.",
     "footer.copyright": "© 2026 Almost Swedish. Made with kanelbullar in Stockholm.",
@@ -393,9 +391,9 @@ const i18n = window.i18n = {
     "nav.cta": "Hämta appen ↗",
 
     "hero.eyebrow": "Inofficiell · Gratis MVP · Källstödda frågor",
-    "hero.h1a": "Studera grunderna.",
+    "hero.h1a": "Plugga materialet.",
     "hero.h1b": "Öva med källor.",
-    "hero.h1c": "Håll det lagom.",
+    "hero.h1c": "Känn dig lugnare på provdagen.",
     "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett provexempel som känns mindre läskigt än småprat med grannen.",
     "hero.cta1": "Börja plugga — det är gratis",
     "hero.cta2": "Testa en fråga",
@@ -486,7 +484,7 @@ const i18n = window.i18n = {
     "chap.10.m1": "33 frågor",
     "chap.10.m2": "~8 min",
     "chap.11.t": "Migration, uppehållstillstånd & medborgarskap",
-    "chap.11.d": "Den praktiska vägen till medborgarskap. Vägar, krav, skillnaden mellan PUT, medborgarskap och \"bara på besök\".",
+    "chap.11.d": "Den faktiska vägen till passet. Vägar, krav, skillnaden mellan PUT, medborgarskap och \"bara på besök\".",
     "chap.11.m1": "35 frågor",
     "chap.11.m2": "~9 min",
     "chap.12.t": "Provexempel & överlevnadsguide",
@@ -497,7 +495,7 @@ const i18n = window.i18n = {
 
     "how.eyebrow": "Så funkar det",
     "how.h1": "Plugga lagom.",
-    "how.h2": "Öva stadigt.",
+    "how.h2": "Plugga smart.",
     "how.deck": "Tre lägen, en app. Använd i valfri ordning — de flesta cyklar genom alla tre veckan innan provet.",
     "how.s1.t": "Lär — korta kapitel",
     "how.s1.p": "Läs en 5-minuters förklaring, gör sedan ett litet quiz. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
@@ -511,7 +509,7 @@ const i18n = window.i18n = {
     "faq.h2": "över kaffe.",
     "faq.1.q": "Är det här det officiella medborgarskapsprovet?",
     "faq.1.a": "Nej, och vi säger det på varje sida. Vi är fristående — inte kopplade till UHR, Skolverket, Migrationsverket eller någon som faktiskt avgör vem som blir medborgare. Vi gör ett studiematerial. De håller i provet.",
-    "faq.2.q": "Hjälper det mig verkligen att plugga?",
+    "faq.2.q": "Hjälper det mig verkligen att klara provet?",
     "faq.2.a": "Det hjälper dig att <em>plugga</em>. Resten beror på dig, det officiella materialet och hur många fikapauser du tar. Vi hämtar frågor från den offentliga banken och förklarar varje en på enkel svenska.",
     "faq.3.q": "Behöver jag ett konto?",
     "faq.3.a": "Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.",
@@ -642,9 +640,7 @@ const i18n = window.i18n = {
     "sources.s5.p2": "Ser du en fråga som inte stämmer med sin källa? <a href=\"#/support\">Berätta för oss</a> — rättelser är oftast live inom en vecka.",
 
     "footer.brag1": "Plugga lagom.",
-    "footer.brag2": "Öva stadigt.",
-    "footer.t1": "Studera grunderna.",
-    "footer.t2": "Håll det lagom.",
+    "footer.brag2": "Plugga smart.",
     "footer.h.app": "Appen",
     "footer.app.1": "Varför den finns",
     "footer.app.2": "Testa en fråga",
@@ -652,7 +648,7 @@ const i18n = window.i18n = {
     "footer.app.4": "Provexempel",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Finstilta",
-    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.",
+    "footer.about.p": "Ett fristående studieverktyg byggt utifrån offentligt källmaterial, tydliga förklaringar och noggrann granskning. Gratis att börja, plugga och öva med övningsprov.",
     "footer.h.honest": "Ärlig friskrivning",
     "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
     "footer.copyright": "© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.",
@@ -677,44 +673,21 @@ const i18n = window.i18n = {
   }
 };
 
-const SMT_RTL_LANGUAGES = new Set(["ar"]);
-
-function smtNormalizeLanguage(lang) {
-  return i18n[lang] ? lang : "en";
-}
-
-function smtLanguageDirection(lang) {
-  return SMT_RTL_LANGUAGES.has(lang) ? "rtl" : "ltr";
-}
-
-function smtApplyLanguageDirection(lang) {
-  const dir = smtLanguageDirection(lang);
-  document.documentElement.lang = lang;
-  document.documentElement.dir = dir;
-  document.documentElement.setAttribute("lang", lang);
-  document.documentElement.setAttribute("dir", dir);
-  return dir;
-}
-
 function applyLang(lang) {
-  const nextLang = smtNormalizeLanguage(lang);
-  smtApplyLanguageDirection(nextLang);
+  document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
-    const value = (i18n[nextLang] && i18n[nextLang][key]);
+    const value = (i18n[lang] && i18n[lang][key]);
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
   });
   document.querySelectorAll(".lang button[data-lang]").forEach((b) => {
-    b.classList.toggle("is-on", b.dataset.lang === nextLang);
+    b.classList.toggle("is-on", b.dataset.lang === lang);
   });
-  try { localStorage.setItem("smt_lang", nextLang); } catch {}
+  try { localStorage.setItem("smt_lang", lang); } catch {}
 }
 window.applyLang = applyLang;
-window.smtNormalizeLanguage = smtNormalizeLanguage;
-window.smtLanguageDirection = smtLanguageDirection;
-window.smtApplyLanguageDirection = smtApplyLanguageDirection;
 
 function smtEmitLanguageChange(lang) {
   if (typeof window.dispatchEvent !== "function") return;
@@ -725,7 +698,7 @@ function smtEmitLanguageChange(lang) {
 }
 
 function smtSetLanguage(lang) {
-  const nextLang = smtNormalizeLanguage(lang);
+  const nextLang = i18n[lang] ? lang : "en";
   applyLang(nextLang);
   smtEmitLanguageChange(nextLang);
 }

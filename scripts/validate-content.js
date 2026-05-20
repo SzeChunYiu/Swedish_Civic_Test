@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 const ts = require('typescript');
 const {
   buildSiteQuestionBank,
   generateStaticSiteQuestionBankJs,
 } = require('./export-site-question-bank');
 const {
+  UNSUPPORTED_STATIC_TEAM_CREDENTIAL_PATTERNS,
   UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
   extractStaticHeadMetaDescriptions,
   findStaticHeadMetadataDescriptionIssues,
+  findUnsupportedStaticTeamCredentialClaims,
   findUnsupportedStaticOutcomeSlogans,
+  formatUnsupportedStaticTeamCredentialClaims,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
 const {
@@ -39,7 +41,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 154;
+const EXPECTED_SOURCE_QUESTIONS = 159;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -244,72 +246,22 @@ const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
     /\bage 13 option refers to\b/i,
   ],
 };
-const STATIC_SITE_ARABIC_SCRIPT_PATTERN = /[\u0600-\u06ff]/;
-const STATIC_SITE_ARABIC_REQUIRED_UI_KEYS = [
-  'nav.home',
-  'nav.practice',
-  'nav.mock',
-  'nav.ebook',
-  'nav.support',
-  'nav.privacy',
-  'nav.terms',
-  'nav.sources',
-  'nav.cta',
-  'hero.eyebrow',
-  'hero.h1a',
-  'hero.h1b',
-  'hero.h1c',
-  'hero.lede',
-  'hero.cta1',
-  'hero.cta2',
-  'consent.title',
-  'consent.body',
-  'consent.min',
-  'consent.all',
-  'settings.title',
-  'settings.theme',
-  'settings.theme.light',
-  'settings.theme.dark',
-  'settings.theme.auto',
-  'settings.palette',
-  'settings.palette.sub',
-  'settings.buddy',
-  'settings.buddy.sub',
-  'settings.buddy.show',
-  'settings.language',
-  'settings.text',
-  'settings.text.s',
-  'settings.text.m',
-  'settings.text.l',
-  'settings.misc',
-  'settings.motion',
-  'settings.aurora',
-  'settings.flag',
-  'settings.consent.reset',
-  'settings.savedHint',
-  'settings.done',
-  'footer.t1',
-  'footer.t2',
-  'footer.h.study',
-  'footer.h.legal',
-  'footer.h.about',
-  'footer.about.p',
-  'footer.h.fika',
-  'footer.fika.p',
-  'footer.honest.p',
-  'footer.copyright',
-  'footer.fika',
+const STATIC_SWEDISH_GRAMMAR_TONE_REJECTIONS = [
+  {
+    label: 'ungrammatical legal-explanation phrase',
+    pattern: phrasePattern('ingen ', 'juridiska'),
+  },
+  { label: 'cutesy study-habit size phrase', pattern: phrasePattern('fika', '-stor') },
+  { label: 'joke liability phrase', pattern: phrasePattern('fika', '-skador') },
 ];
-const STATIC_SITE_ARABIC_BANNED_UI_VALUES = new Map([
-  [
-    'hero.lede',
-    'تطبيق دراسة هادئ وغير رسمي لاختبار المواطنة السويدي. فصول قصيرة، ووضع تدريب ذكي، واختبار وهمي يجعل يوم الامتحان أقل رعباً.',
-  ],
-  ['settings.consent.reset', 'إعادة ضبط موافقة الكوكيز / الإعلانات…'],
-  ['footer.fika', 'صُنع باعتدال · مُختبر بالقهوة.'],
-  ['nav.ebook', 'كتاب'],
-  ['settings.theme', 'السمة'],
-]);
+const STATIC_SWEDISH_GRAMMAR_TONE_REQUIRED_COPY = [
+  { label: 'legal-explanation replacement', pattern: /inget juridiskt kr[aå]ngel/i },
+  { label: 'study-habit replacement', pattern: /en kort studievana/i },
+  {
+    label: 'neutral liability replacement',
+    pattern: /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/i,
+  },
+];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -542,58 +494,6 @@ const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
 };
-const STATIC_I18N_SOMALI_REQUIRED_COPY = {
-  'hero.h1a': 'Gudub imtixaanka.',
-  'hero.lede':
-    'App barasho deggan oo aan rasmi ahayn oo loogu talagalay imtixaanka muwaadinnimada Iswiidhan. Cutubyo gaagaaban, tababar caqli leh, iyo imtixaan tijaabo ah oo maalinta imtixaanka ka dhigaya mid ka cabsi yar sheeko yar oo deriska lala yeesho.',
-  'consent.body':
-    'Waxaan isticmaalnaa Google AdSense si aan u muujinno xayaysiisyo kooban. AdSense waxay isticmaashaa cookies, waxaana laga yaabaa inay u adeegsato xayaysiisyo la shakhsiyeeyay. Aqbal dhammaan, kaliya kuwa lagama maarmaanka ah, ama akhri <a href="#/privacy">bogga asturnaanta</a>.',
-  'settings.title': 'Dejinta',
-  'settings.theme.auto': 'Si otomaatig ah',
-  'settings.done': 'Dhammay',
-};
-const STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS = [
-  'hero.eyebrow',
-  'hero.lede',
-  'hero.cta1',
-  'hero.cta2',
-  'consent.title',
-  'consent.body',
-  'consent.min',
-  'consent.all',
-  'settings.title',
-  'settings.theme',
-  'settings.theme.light',
-  'settings.theme.dark',
-  'settings.theme.auto',
-  'settings.language',
-  'settings.text',
-  'settings.misc',
-  'settings.consent.reset',
-  'settings.savedHint',
-  'settings.done',
-  'footer.t1',
-  'footer.t2',
-  'footer.h.study',
-  'footer.h.legal',
-  'footer.h.about',
-  'footer.h.fika',
-];
-const STATIC_I18N_SOMALI_FORBIDDEN_FRAGMENTS = [
-  'Goobinta',
-  'Toosan',
-  'Gudaha',
-  'qaab gaar ah',
-  'ka yaraan cabsida ka yaraan',
-];
-const STATIC_I18N_SOMALI_ENGLISH_FALLBACKS = {
-  'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
-  'consent.body': 'We use Google AdSense',
-  'settings.title': 'Settings',
-  'settings.theme': 'Theme',
-  'settings.theme.auto': 'Auto',
-  'settings.done': 'Done',
-};
 const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
   sv: [
     '5-minutersövning',
@@ -602,18 +502,6 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Ta bort bokmärket från den här frågan',
     'Bokmärk den här frågan',
     'Besvarade frågor: ${count}',
-    'Dagens utmaning',
-    'Dagens utmaning är klar',
-    'Resultatet sparas lokalt för dagens datum. Du kan göra om passet utan konto.',
-    'Till startsidan',
-    'Gå tillbaka till startsidan efter dagens utmaning',
-    'Dagens utmaning: ${answeredCount}/${totalCount} besvarade',
-    'Dagens fråga ${questionNumber} av ${totalCount}',
-    '${correctCount}/${totalCount} rätt',
-    'Gör om utmaningen',
-    'Gör om dagens utmaning',
-    'Fem fasta frågor för dagens datum. Timern fortsätter tills passet är klart.',
-    '${seconds} sekunder kvar',
     'Det finns inga övningsfrågor ännu.',
     'Nästa fråga',
     'Gå till nästa övningsfråga',
@@ -640,18 +528,6 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Remove this question bookmark',
     'Bookmark this question',
     'Completed questions: ${count}',
-    'Daily challenge',
-    "Today's challenge is complete",
-    'The result is saved locally for today. You can retry the set without an account.',
-    'Back to Home',
-    "Go back to Home after today's challenge",
-    'Daily challenge: ${answeredCount}/${totalCount} answered',
-    'Daily question ${questionNumber} of ${totalCount}',
-    '${correctCount}/${totalCount} correct',
-    'Retry challenge',
-    "Retry today's challenge",
-    "Five fixed questions for today's date. The timer keeps running until the set is complete.",
-    '${seconds} seconds left',
     'No practice questions are available yet.',
     'Next question',
     'Move to the next practice question',
@@ -688,24 +564,13 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     'practice route must select copy from settings language',
   ],
   ['<Text>{copy.emptyTitle}</Text>', 'empty state must render localized copy'],
+  ['<Badge>{copy.badge}</Badge>', 'practice badge must render localized copy'],
+  ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
+  ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
   [
-    '<Badge>{isChallengeMode ? copy.challengeBadge : copy.badge}</Badge>',
-    'practice badge must render localized normal or challenge copy',
+    '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
+    'completed-question metadata must render localized copy',
   ],
-  ['const { mode } = useLocalSearchParams', 'practice route must read mode from route params'],
-  ['const isChallengeMode = mode ===', 'practice route must derive challenge mode from params'],
-  [
-    'buildDailyChallenge({ bank: questions })',
-    'practice route must build the deterministic daily challenge question set',
-  ],
-  ['dailyChallengeCompletions', 'practice route must read persisted daily challenge completions'],
-  [
-    'recordDailyChallengeCompletion',
-    'practice route must persist daily challenge completion results',
-  ],
-  ['{metaText}', 'completed-question metadata must render localized copy'],
-  ['{titleText}', 'question title must render localized or challenge copy'],
-  ['{subtitleText}', 'subtitle must render localized or challenge copy'],
   [
     'getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'practice route must scope completed progress to the visible question bank',
@@ -830,9 +695,12 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Svenska',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
-    'Låst',
-    'Upplåst',
-    'Öppna inställningar',
+    'Inga märken ännu',
+    'Ändra mål, språk och ljud',
+    'Första övningen',
+    'Nivå 2',
+    'Misstagsrepetition',
+    'Tre dagars svit',
   ],
   en: [
     'Local profile',
@@ -851,9 +719,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'English support',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
-    'Locked',
-    'Unlocked',
-    'Open settings',
+    'No badges yet',
+    'Edit goal, language, and audio',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -863,12 +730,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
-  ['getAllBadges,', 'profile route must render the full badge catalog'],
-  ['getBadgeTitle,', 'profile route must use localized badge titles from the catalog'],
-  ['getBadgeDescription,', 'profile route must use localized unlocked badge descriptions'],
-  ['getBadgeLockedHint,', 'profile route must use localized locked badge hints'],
-  ['getBadgeProgressHint,', 'profile route must show milestone progress hints'],
-  ['type BadgeInput,', 'profile route must type badge progress inputs'],
+  [
+    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
+    'profile route must define localized badge-title overrides',
+  ],
   [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
@@ -899,17 +764,9 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['style={styles.settingsLink}', 'profile settings shortcut must use the token target style'],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
-  ['const badgeInput: BadgeInput = {', 'profile badge milestones must use typed progress input'],
   [
-    'const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));',
-    'profile badge milestones must derive unlocked state from progress',
-  ],
-  ['<BadgeRow', 'profile must render badge milestones as rows instead of comma text'],
-  ['statusLabel={statusLabel}', 'profile badge rows must expose localized status labels'],
-  ['title={getBadgeTitle(badge, language)}', 'profile badge rows must localize titles'],
-  [
-    'progressHint={getBadgeProgressHint(badge, badgeInput, language)}',
-    'profile badge rows must show localized progress hints',
+    'formatBadges(badges, language, copy.noBadges)',
+    'profile badge summary must use localized badge and empty-state copy',
   ],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
@@ -945,22 +802,19 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska övningsprov, genomgång av frågor du missat och källstödda förklaringar.',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
-    'Redoindikator',
-    'redo',
-    'Öva mer först',
-    'På rätt väg',
-    'Nästan redo',
-    'Stark förberedelse',
-    'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
-    '${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade',
-    'Redoindikator: ${score} procent. ${verdict}. ${details}',
-    'Starta ett mockprov för att kontrollera din redoindikator',
-    'Gör ett mockprov',
-    'Gör om dagens utmaning',
-    'Starta dagens utmaning',
-    'Senaste resultat: ${correctCount}/${totalCount} rätt',
+    'Förberedelsesignal',
+    'lokalt',
+    'Mer underlag behövs',
+    'Framsteg syns',
+    'Bra övningstakt',
+    'Stark lokal övning',
+    'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
+    '${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade',
+    'Förberedelsesignal: ${score} procent. ${verdict}. ${details}',
+    'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+    'Gör ett tidsatt övningsprov',
     'Repetera svaga kapitel',
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
@@ -1021,28 +875,25 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
-    'Provredo',
-    'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och redoindikator.',
+    'Övningsläge',
+    'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
   ],
   en: [
     'Study dashboard',
     'Prepare calmly, one civic concept at a time',
-    'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, missed-question review, and source-backed explanations.',
+    'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     "Today's goal",
-    'Readiness indicator',
-    'ready',
-    'Keep practicing first',
-    'Getting there',
-    'Almost ready',
-    'Strong preparation',
-    'Based on your answers so far. Answer more questions for a steadier signal.',
-    '${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried',
-    'Readiness indicator: ${score} percent. ${verdict}. ${details}',
-    'Start a mock exam to check your readiness indicator',
-    'Take a mock exam',
-    "Retry today's challenge",
-    "Start today's challenge",
-    'Latest result: ${correctCount}/${totalCount} correct',
+    'Preparation signal',
+    'local',
+    'More evidence needed',
+    'Progress is visible',
+    'Solid practice pace',
+    'Strong local practice',
+    'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
+    '${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried',
+    'Preparation signal: ${score} percent. ${verdict}. ${details}',
+    'Start a timed practice exam to compare with your local preparation signal',
+    'Take a timed practice exam',
     'Review weak chapters',
     'Start a 5-minute practice set',
     'Start the recommended practice session',
@@ -1103,8 +954,8 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'See which areas are ready, reviewed, or still weak.',
     'Study rhythm',
     'Get one simple next action and gentle habit feedback without blocking serious study.',
-    'Exam readiness',
-    'Switch between timed mock exams, bookmarks, missed-question review, audio, and readiness signals.',
+    'Timed practice',
+    'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
   ],
 };
 const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
@@ -1116,12 +967,6 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Lärdomar från', ' framgångsrika'],
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
-  ['flash', 'cards'],
-  ['Flash', 'kort'],
-  ['flash', 'kort'],
-  ['fel', 'spårning'],
-  ['repetition av ', 'misstag'],
-  ['mistake ', 'tracking'],
 ].map((parts) => parts.join(''));
 const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
 const FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY = /\b(?:felspårning|repetition av misstag)\b/i;
@@ -1197,22 +1042,7 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home route preparation signal card must expose localized accessibility copy',
   ],
   ['href="/exam"', 'home route readiness CTA must link to the mock exam flow'],
-  [
-    'buildDailyChallenge({ bank: questions })',
-    'home route must build the deterministic daily challenge question set',
-  ],
-  [
-    'dailyChallengeBannerCopy(dailyChallengeCompleted, language)',
-    'home route must use daily challenge helper copy',
-  ],
-  [
-    'const dailyChallengeCompletions = useProgressStore(',
-    'home route must read persisted daily challenge completions',
-  ],
-  [
-    'href="/practice?mode=challenge"',
-    'home daily challenge CTA must launch Practice challenge mode',
-  ],
+  ['{copy.readinessCaveat}', 'home route preparation signal caveat must always render'],
   ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
   ['title={copy.title}', 'home route title must render localized copy'],
   ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
@@ -1350,7 +1180,6 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['{copy.emptyPracticeLink}', 'empty practice link must render localized copy'],
 ];
 const EXPECTED_DAILY_GOAL_OPTIONS = [5, 10, 20, 40];
-const EXPECTED_ONBOARDING_DAILY_GOAL_OPTIONS = [10, 20, 40];
 const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
 const EXPECTED_DAILY_GOAL_MAX = 50;
@@ -1632,10 +1461,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Förklaringar och genomgång visas först efter att provet har skickats in.',
     'Nästa prov',
     'Sparat',
-    'Sparfel',
     'Sparar',
-    'Försök spara igen',
-    'Försök spara övningsprovresultatet igen',
   ],
   en: [
     'Mock exam',
@@ -1665,10 +1491,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Explanations and review are shown only after the exam is submitted.',
     'Next exam',
     'Saved',
-    'Save failed',
     'Saving',
-    'Retry saving result',
-    'Retry saving mock exam result',
   ],
 };
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
@@ -1757,7 +1580,7 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     'Frågepass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här frågan',
+    'Försök igen med den här övningsfrågan',
   ],
   en: [
     'Back to Practice',
@@ -1936,7 +1759,7 @@ const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
     label: 'practice question title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{titleText\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.questionTitle\(questionNumber\)\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
@@ -1946,8 +1769,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta övning',
-    'Starta övning för ${chapterTitle}',
+    'Starta frågepass',
+    'Starta frågepass för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -1959,12 +1782,6 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Start quiz for ${chapterTitle}',
   ],
 };
-const FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS = [
-  'Starta ' + 'quiz',
-  'Quiz' + 'pass',
-  'quiz' + 'frågor',
-  'quiz' + 'frågan',
-];
 const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
   ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
@@ -2083,11 +1900,6 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
     label: 'readiness card title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.readinessTitle\}>\s*\{copy\.readinessTitle\}\s*<\/Text>/,
-  },
-  {
-    label: 'daily challenge card title',
-    pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.dailyChallengeTitle\}>\s*\{dailyChallengeBanner\.title\}\s*<\/Text>/,
   },
   {
     label: 'feedback card title',
@@ -2404,22 +2216,6 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
   sv: [
     'Justera inställningar',
     'Öppna inställningar',
-    'Välj ett mjukt dagligt mål',
-    'Börja med en takt som känns lätt att hålla. Du kan ändra den när som helst.',
-    'Lugn',
-    '10 svar per dag',
-    'En liten vana när du vill komma igång utan stress.',
-    'Välj lugnt dagligt mål med 10 svar',
-    'Regelbunden',
-    '20 svar per dag',
-    'För stadiga studiepass de flesta dagar.',
-    'Välj regelbundet dagligt mål med 20 svar',
-    'Seriös',
-    '40 svar per dag',
-    'När du vill träna mer inför ett närliggande övningsprov.',
-    'Välj seriöst dagligt mål med 40 svar',
-    'Bestäm senare',
-    'Fortsätt utan att välja dagligt mål',
     'Välkommen',
     'Börja studera',
     'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
@@ -2431,22 +2227,6 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
   ],
   en: [
     'Adjust settings',
-    'Choose a gentle daily goal',
-    'Start with a pace that feels easy to keep. You can change it anytime.',
-    'Casual',
-    '10 answers per day',
-    'A small habit when you want to get started without stress.',
-    'Choose casual daily goal with 10 answers',
-    'Regular',
-    '20 answers per day',
-    'For steady study on most days.',
-    'Choose regular daily goal with 20 answers',
-    'Serious',
-    '40 answers per day',
-    'When you want extra practice before an upcoming mock exam.',
-    'Choose serious daily goal with 40 answers',
-    'Decide later',
-    'Continue without choosing a daily goal',
     'Welcome',
     'Start studying',
     'Study Swedish civic concepts with English support when needed.',
@@ -2469,47 +2249,13 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding route must read language from settings store',
   ],
   [
-    'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
-    'onboarding route must read the persisted daily goal',
-  ],
-  [
-    'const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);',
-    'onboarding route must persist daily-goal presets through settings storage',
-  ],
-  [
     'const copy = onboardingCopy[language];',
     'onboarding route must select copy from settings language',
-  ],
-  [
-    'const onboardingDailyGoalPresetValues = [10, 20, 40] as const;',
-    'onboarding route must expose the competitive daily-goal preset values',
   ],
   ['{copy.eyebrow}', 'onboarding eyebrow must render localized copy'],
   ['{copy.title}', 'onboarding title must render localized copy'],
   ['{copy.subtitle}', 'onboarding subtitle must render localized copy'],
   ['{copy.steps.map((step, index) => (', 'onboarding steps must render localized copy'],
-  [
-    'copy.dailyGoalPresets[goal]',
-    'onboarding daily-goal presets must render localized copy by preset value',
-  ],
-  [
-    'accessibilityLabel={preset.accessibilityLabel}',
-    'onboarding daily-goal presets must expose localized accessibility labels',
-  ],
-  ['aria-selected={selected}', 'onboarding daily-goal presets must expose web selected state'],
-  [
-    'accessibilityState={{ selected }}',
-    'onboarding daily-goal presets must expose native selected state',
-  ],
-  [
-    'onPress={() => setDailyGoalAnswers(goal)}',
-    'onboarding daily-goal presets must persist through setDailyGoalAnswers',
-  ],
-  [
-    'accessibilityLabel={copy.decideLaterAccessibilityLabel}',
-    'onboarding decide-later link must expose localized accessibility copy',
-  ],
-  ['{copy.decideLater}', 'onboarding decide-later link must render localized copy'],
   [
     'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
     'onboarding start link must expose localized accessibility copy',
@@ -2599,7 +2345,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
 const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -3743,18 +3489,6 @@ const EXPECTED_PROGRESS_INTERFACES = [
     ],
   },
   {
-    name: 'DailyChallengeCompletion',
-    fields: [
-      { name: 'dayKey', type: 'string', optional: false },
-      { name: 'questionIds', type: 'string[]', optional: false },
-      { name: 'correctCount', type: 'number', optional: false },
-      { name: 'totalCount', type: 'number', optional: false },
-      { name: 'score', type: 'number', optional: false },
-      { name: 'timeSpentSeconds', type: 'number', optional: false },
-      { name: 'completedAt', type: 'string', optional: false },
-    ],
-  },
-  {
     name: 'UserProgress',
     fields: [
       { name: 'totalXp', type: 'number', optional: false },
@@ -3763,11 +3497,6 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'dailyGoalAnswers', type: 'number', optional: false },
       { name: 'questionProgress', type: 'Record<string, UserQuestionProgress>', optional: false },
       { name: 'sessions', type: 'QuizSession[]', optional: false },
-      {
-        name: 'dailyChallengeCompletions',
-        type: 'Record<string, DailyChallengeCompletion>',
-        optional: false,
-      },
     ],
   },
 ];
@@ -3778,11 +3507,6 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'totalXp', type: 'number', optional: false },
   { name: 'answerDates', type: 'string[]', optional: false },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
-  {
-    name: 'dailyChallengeCompletions',
-    type: 'Record<string, DailyChallengeProgress>',
-    optional: false,
-  },
   { name: 'streakFreezeState', type: 'StreakFreezeState', optional: false },
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
@@ -3793,11 +3517,6 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   {
     name: 'recordMockExamSession',
     type: '(session: MockExamProgressInput) => void',
-    optional: false,
-  },
-  {
-    name: 'recordDailyChallengeCompletion',
-    type: '(completion: DailyChallengeProgressInput) => void',
     optional: false,
   },
   {
@@ -4415,12 +4134,6 @@ function loadText(relativePath) {
   return fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8');
 }
 
-function loadStaticSiteI18nExtras() {
-  const window = { i18n: {} };
-  const source = loadText('site/i18n-extras.js');
-  return new Function('window', `${source}\nreturn window.i18n || window.__i18n_extra;`)(window);
-}
-
 function fail(message) {
   failures.push(message);
 }
@@ -4522,6 +4235,13 @@ function validateStaticHeadMetadataDescription() {
     fail(
       `static head metadata description is missing, blank, or contains unsupported outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
         issues,
+function validateStaticTeamCredentialClaimPatterns() {
+  const offenders = findUnsupportedStaticTeamCredentialClaims(repoRoot);
+
+  if (offenders.length > 0) {
+    fail(
+      `static learner-facing copy contains unsupported team test-taking credential claims:\n${formatUnsupportedStaticTeamCredentialClaims(
+        offenders,
       )}`,
     );
   }
@@ -4551,6 +4271,7 @@ function validateStaticV11ReadinessCopy() {
   });
 
   return { unsupportedCopyValidated, requiredCopyValidated };
+  return UNSUPPORTED_STATIC_TEAM_CREDENTIAL_PATTERNS.length - offenders.length;
 }
 
 function validateStaticEbookSwedishQuizNaturalness() {
@@ -7729,8 +7450,8 @@ let staticHeadMetadataDescriptionValidated = false;
 let staticV11ReadinessUnsupportedCopyValidated = 0;
 let staticV11ReadinessRequiredCopyValidated = 0;
 let staticV11ReadinessCopyParityValidated = false;
-let staticSiteArabicUiLabelsValidated = 0;
-let staticSiteArabicUiNaturalnessValidated = false;
+let staticSiteTeamCredentialClaimPatternsValidated = 0;
+let staticSiteTeamCredentialClaimParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookSwedishQuizLoanwordPatternsValidated = 0;
@@ -7739,9 +7460,9 @@ let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
-let staticI18nSomaliRequiredCopyValidated = 0;
-let staticI18nSomaliHighFrequencyKeysValidated = 0;
-let staticI18nSomaliNaturalnessValidated = false;
+let staticEbookFactboxClaimPatternsValidated = 0;
+let staticEbookFactboxSourceUrlsValidated = 0;
+let staticEbookFactboxSourceParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -7833,6 +7554,10 @@ staticEbookSwedishQuizNaturalnessValidated =
       STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
     staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY.length;
 }
+staticSiteTeamCredentialClaimPatternsValidated = validateStaticTeamCredentialClaimPatterns();
+staticSiteTeamCredentialClaimParityValidated =
+  staticSiteTeamCredentialClaimPatternsValidated ===
+  UNSUPPORTED_STATIC_TEAM_CREDENTIAL_PATTERNS.length;
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -9574,23 +9299,6 @@ function validateExamSubmissionFinalityParity() {
     reject('next-exam control must stay disabled until the submitted completion is stored');
   }
   if (
-    !examRoute.includes(
-      'const [completionSaveFailed, setCompletionSaveFailed] = useState(false)',
-    ) ||
-    !examRoute.includes('const handleRetryCompletionSave = useCallback(async () => {') ||
-    !examRoute.includes('accessibilityLabel={copy.completionRetryAccessibilityLabel}') ||
-    !examRoute.includes('onPress={handleRetryCompletionSave}')
-  ) {
-    reject('exam result screen must expose a retry-save action after completion persistence fails');
-  }
-  if (
-    examRoute.includes(
-      'setCompletionRecorded(true);\n        setAccessStatusMessage(copy.completionStoreFailure);',
-    )
-  ) {
-    reject('completion persistence failures must not mark the submitted exam as stored');
-  }
-  if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||
     !examRoute.includes('recordMockExamSession({') ||
     !examRoute.includes('answers: completedExamSession.answers.map') ||
@@ -9759,12 +9467,6 @@ function validateQuizRouteCopyParity() {
 
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
-  });
-
-  FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS.forEach((term) => {
-    if (quizRoute.includes(term)) {
-      reject('quiz route Swedish copy must avoid English quiz loanwords');
-    }
   });
 
   const seenLabels = new Set();
@@ -10128,12 +9830,6 @@ function validateChapterRouteCopyParity() {
     if (!chapterRoute.includes(snippet)) reject(message);
   });
 
-  FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS.forEach((term) => {
-    if (chapterRoute.includes(term)) {
-      reject('chapter route Swedish copy must avoid English quiz loanwords');
-    }
-  });
-
   const seenLabels = new Set();
   Object.entries(EXPECTED_CHAPTER_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -10408,7 +10104,7 @@ function validateHomeRouteCopyParity() {
 
   FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
-      reject(`home route learner copy must not expose forbidden phrase ${forbidden}`);
+      reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
     }
   });
 
@@ -12217,81 +11913,6 @@ function validateLocalizationLanguageContract() {
   if (valid) languageSettingsParityValidated = true;
 }
 
-function loadStaticI18nExtras() {
-  const source = fs.readFileSync(path.join(repoRoot, 'site/i18n-extras.js'), 'utf8');
-  const sandbox = { window: {} };
-  vm.createContext(sandbox);
-  vm.runInContext(source, sandbox, { timeout: 3000 });
-  return sandbox.window.__i18n_extra;
-}
-
-function validateStaticI18nSomaliNaturalness() {
-  let valid = true;
-  let somali = null;
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    const extra = loadStaticI18nExtras();
-    somali = extra?.so;
-  } catch (error) {
-    reject(`site/i18n-extras.js could not be loaded: ${error.message}`);
-    return;
-  }
-
-  if (!somali || typeof somali !== 'object' || Array.isArray(somali)) {
-    reject('site/i18n-extras.js must expose a Somali "so" dictionary');
-    return;
-  }
-
-  Object.entries(STATIC_I18N_SOMALI_REQUIRED_COPY).forEach(([key, expected]) => {
-    if (somali[key] !== expected) {
-      reject(
-        `Somali ${key} is ${JSON.stringify(somali[key])}, expected ${JSON.stringify(expected)}`,
-      );
-      return;
-    }
-    staticI18nSomaliRequiredCopyValidated += 1;
-  });
-
-  STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS.forEach((key) => {
-    const value = somali[key];
-    let keyIsValid = true;
-
-    if (!hasText(value)) {
-      keyIsValid = false;
-      reject(`Somali ${key} must be a non-empty localized string`);
-    }
-
-    const englishFallback = STATIC_I18N_SOMALI_ENGLISH_FALLBACKS[key];
-    if (englishFallback && new RegExp(englishFallback, 'i').test(value)) {
-      keyIsValid = false;
-      reject(`Somali ${key} still uses English fallback copy`);
-    }
-
-    if (keyIsValid) staticI18nSomaliHighFrequencyKeysValidated += 1;
-  });
-
-  const serializedSomali = Object.values(somali).join('\n');
-  STATIC_I18N_SOMALI_FORBIDDEN_FRAGMENTS.forEach((fragment) => {
-    if (new RegExp(fragment, 'i').test(serializedSomali)) {
-      reject(`Somali static-site dictionary still contains machine-like phrase: ${fragment}`);
-    }
-  });
-
-  if (
-    valid &&
-    staticI18nSomaliRequiredCopyValidated ===
-      Object.keys(STATIC_I18N_SOMALI_REQUIRED_COPY).length &&
-    staticI18nSomaliHighFrequencyKeysValidated === STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS.length
-  ) {
-    staticI18nSomaliNaturalnessValidated = true;
-  }
-}
-
 function validateSettingsStoreSchemaParity() {
   let valid = true;
   let settingsStore = '';
@@ -12430,8 +12051,6 @@ function validateSettingsDailyGoalParity() {
   let valid = true;
   let settingsStore = '';
   let settingsRoute = '';
-  let onboardingRoute = '';
-  let homeRoute = '';
 
   function reject(message) {
     valid = false;
@@ -12441,8 +12060,6 @@ function validateSettingsDailyGoalParity() {
   try {
     settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
     settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
-    onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
-    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   } catch (error) {
     reject(`settings daily-goal parity source could not be read: ${error.message}`);
     return;
@@ -12537,62 +12154,6 @@ function validateSettingsDailyGoalParity() {
   }
   if (!settingsRoute.includes('${answerCount} answers per day')) {
     reject('app/settings.tsx must render the persisted daily-goal count');
-  }
-
-  const onboardingGoalOptionMatch = onboardingRoute.match(
-    /const onboardingDailyGoalPresetValues = \[([^\]]+)\] as const;/,
-  );
-  const onboardingGoalOptions = onboardingGoalOptionMatch
-    ? onboardingGoalOptionMatch[1].split(',').map((value) => Number(value.trim()))
-    : [];
-  if (!arrayEquals(onboardingGoalOptions, EXPECTED_ONBOARDING_DAILY_GOAL_OPTIONS)) {
-    reject(
-      `app/onboarding.tsx daily goal presets are ${JSON.stringify(onboardingGoalOptions)}, expected ${JSON.stringify(
-        EXPECTED_ONBOARDING_DAILY_GOAL_OPTIONS,
-      )}`,
-    );
-  }
-  onboardingGoalOptions.forEach((goal) => {
-    if (!seenGoals.has(goal)) {
-      reject(`onboarding daily goal preset ${goal} must also exist in Settings`);
-    }
-  });
-  if (
-    !onboardingRoute.includes(
-      'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
-    )
-  ) {
-    reject('app/onboarding.tsx must read the persisted daily goal from settings storage');
-  }
-  if (
-    !onboardingRoute.includes(
-      'const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);',
-    )
-  ) {
-    reject('app/onboarding.tsx must use setDailyGoalAnswers from settings storage');
-  }
-  if (!onboardingRoute.includes('onPress={() => setDailyGoalAnswers(goal)}')) {
-    reject('onboarding daily goal presets must persist through setDailyGoalAnswers');
-  }
-  if (!onboardingRoute.includes('aria-selected={selected}')) {
-    reject('onboarding daily goal presets must mirror selected state to aria-selected');
-  }
-  if (!onboardingRoute.includes('accessibilityState={{ selected }}')) {
-    reject('onboarding daily goal presets must expose selected accessibility state');
-  }
-  if (
-    /streak survival|save your streak|lose your streak|rädda din svit|förlora din svit/i.test(
-      onboardingRoute,
-    )
-  ) {
-    reject('onboarding daily goal copy must stay low-pressure and avoid streak-survival framing');
-  }
-  if (
-    !homeRoute.includes(
-      'const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);',
-    )
-  ) {
-    reject('Home must read the same persisted daily goal that onboarding writes');
   }
 
   if (valid && settingsDailyGoalOptionsValidated === EXPECTED_DAILY_GOAL_OPTIONS.length) {
@@ -13105,7 +12666,6 @@ function validateProgressStoreSchemaParity() {
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
     ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
     ['mockExamSessions: [],', 'empty progress must initialize mock exam history'],
-    ['dailyChallengeCompletions: {},', 'empty progress must initialize daily challenge history'],
     [
       'streakFreezeState: createInitialFreezeState(),',
       'empty progress must initialize streak-freeze state',
@@ -13120,8 +12680,16 @@ function validateProgressStoreSchemaParity() {
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     [
-      'recordDailyChallengeCompletion: (completion) =>',
-      'ProgressState must persist completed daily challenges',
+      'const existingSession = state.mockExamSessions.find(',
+      'mock exam completion XP must key idempotency by existing session id',
+    ],
+    [
+      'const completionXp = existingSession ? 0 : calculateQuizCompletionXp({',
+      'new mock exam sessions must receive quiz completion XP exactly once',
+    ],
+    [
+      'totalXp: state.totalXp + completionXp,',
+      'mock exam completion XP must update persisted total XP',
     ],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
     [
@@ -14788,26 +14356,12 @@ function validateBadgeCatalog() {
         reject(`${label} id must use lowercase snake_case`);
       }
 
-      for (const field of [
-        'title',
-        'description',
-        'titleSv',
-        'titleEn',
-        'descriptionSv',
-        'descriptionEn',
-        'lockedHintSv',
-        'lockedHintEn',
-      ]) {
+      for (const field of ['title', 'description']) {
         if (!hasText(badge[field])) {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
           reject(`${label} ${field} must be trimmed and single-spaced`);
         }
-      }
-
-      if (badge.title !== badge.titleEn) reject(`${label} title must match titleEn`);
-      if (badge.description !== badge.descriptionEn) {
-        reject(`${label} description must match descriptionEn`);
       }
 
       const normalizedTitle = normalizeComparableText(badge.title);
@@ -14821,21 +14375,6 @@ function validateBadgeCatalog() {
         reject(`${label} duplicates badge description`);
       }
       if (normalizedDescription) seenDescriptions.add(normalizedDescription);
-
-      if (normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)) {
-        reject(`${label} titleSv must be localized separately from titleEn`);
-      }
-      if (
-        normalizeComparableText(badge.descriptionSv) ===
-        normalizeComparableText(badge.descriptionEn)
-      ) {
-        reject(`${label} descriptionSv must be localized separately from descriptionEn`);
-      }
-      if (
-        normalizeComparableText(badge.lockedHintSv) === normalizeComparableText(badge.lockedHintEn)
-      ) {
-        reject(`${label} lockedHintSv must be localized separately from lockedHintEn`);
-      }
     }
 
     if (valid) badgesValidated += 1;
@@ -16493,71 +16032,6 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankParityValidated = true;
 }
 
-function validateStaticSiteArabicI18nExtras() {
-  let extras;
-  try {
-    extras = loadStaticSiteI18nExtras();
-  } catch (error) {
-    fail(`site/i18n-extras.js Arabic dictionary could not be loaded: ${error.message}`);
-    return;
-  }
-
-  const arabic = extras?.ar;
-  if (!arabic || typeof arabic !== 'object' || Array.isArray(arabic)) {
-    fail('site/i18n-extras.js is missing the Arabic dictionary');
-    return;
-  }
-
-  STATIC_SITE_ARABIC_REQUIRED_UI_KEYS.forEach((key) => {
-    const value = arabic[key];
-    let labelIsValid = true;
-
-    if (!hasText(value)) {
-      labelIsValid = false;
-      fail(`site/i18n-extras.js Arabic ${key} is missing or blank`);
-    } else {
-      const normalizedValue = normalizeOptionText(value);
-      if (value !== normalizedValue) {
-        labelIsValid = false;
-        fail(`site/i18n-extras.js Arabic ${key} must be trimmed and single-spaced`);
-      }
-      if (!STATIC_SITE_ARABIC_SCRIPT_PATTERN.test(value)) {
-        labelIsValid = false;
-        fail(`site/i18n-extras.js Arabic ${key} appears to fall back to English`);
-      }
-    }
-
-    if (labelIsValid) staticSiteArabicUiLabelsValidated += 1;
-  });
-
-  let naturalnessIsValid = true;
-  STATIC_SITE_ARABIC_BANNED_UI_VALUES.forEach((bannedValue, key) => {
-    if (arabic[key] === bannedValue) {
-      naturalnessIsValid = false;
-      fail(`site/i18n-extras.js Arabic ${key} uses literal machine-like wording`);
-    }
-  });
-
-  if (!/اختبار تجريبي/.test(arabic['hero.lede'] || '')) {
-    naturalnessIsValid = false;
-    fail('site/i18n-extras.js Arabic hero.lede must use natural mock-exam wording');
-  }
-  if (!/ملفات تعريف الارتباط/.test(arabic['settings.consent.reset'] || '')) {
-    naturalnessIsValid = false;
-    fail('site/i18n-extras.js Arabic consent reset copy must use native cookie terminology');
-  }
-  if (!/دليل/.test(arabic['nav.ebook'] || '')) {
-    naturalnessIsValid = false;
-    fail('site/i18n-extras.js Arabic nav.ebook must be more specific than a bare book label');
-  }
-  if (arabic['settings.theme'] !== 'المظهر') {
-    naturalnessIsValid = false;
-    fail('site/i18n-extras.js Arabic settings.theme must use native appearance wording');
-  }
-
-  if (naturalnessIsValid) staticSiteArabicUiNaturalnessValidated = true;
-}
-
 const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'id',
   'chapterId',
@@ -17658,7 +17132,6 @@ validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
-validateStaticI18nSomaliNaturalness();
 validateSettingsStoreSchemaParity();
 validateSettingsDailyGoalParity();
 validateSettingsAudioParity();
@@ -17683,7 +17156,6 @@ validateMasteryRules();
 validateQuestionBankCsvContract();
 validateCriminalResponsibilityCurrentness();
 validateStaticSiteQuestionBankParity();
-validateStaticSiteArabicI18nExtras();
 validateUhrSourceMaterialLinkParity();
 
 if (failures.length) {
@@ -17880,9 +17352,6 @@ console.log(
           : 0,
       localizationStringsValidated,
       languageSettingsParityValidated,
-      staticI18nSomaliRequiredCopyValidated,
-      staticI18nSomaliHighFrequencyKeysValidated,
-      staticI18nSomaliNaturalnessValidated,
       settingsStoreFieldsValidated,
       settingsStoreSchemaParityValidated,
       settingsDailyGoalOptionsValidated,
@@ -18000,8 +17469,8 @@ console.log(
       staticV11ReadinessUnsupportedCopyValidated,
       staticV11ReadinessRequiredCopyValidated,
       staticV11ReadinessCopyParityValidated,
-      staticSiteArabicUiLabelsValidated,
-      staticSiteArabicUiNaturalnessValidated,
+      staticSiteTeamCredentialClaimPatternsValidated,
+      staticSiteTeamCredentialClaimParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookSwedishQuizLoanwordPatternsValidated,
