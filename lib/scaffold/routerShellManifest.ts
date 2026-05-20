@@ -309,11 +309,18 @@ export const expoRouterNativeIntentRuntimeSamples = [
 
 export const expoRouterNativeIntentConfigFiles = ['app.json', 'app/+native-intent.ts'] as const;
 
-export const expoRouterWebDocumentMetaDescriptions =
-  webDocumentMetaDescriptions satisfies readonly ExpoRouterWebDocumentMetaDescription[];
-
-export const expoRouterWebDocumentMetadata =
-  webDocumentMetadata satisfies ExpoRouterWebDocumentMetadata;
+export const expoRouterWebDocumentMetaDescriptions = [
+  {
+    language: 'sv',
+    description:
+      'Öva på svensk samhällskunskap med quiz som fungerar offline, lokalt sparade framsteg och källhänvisningar.',
+  },
+  {
+    language: 'en',
+    description:
+      'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
+  },
+] as const satisfies readonly ExpoRouterWebDocumentMetaDescription[];
 
 export const expoRouterStandaloneRoutes = [
   {

@@ -5,13 +5,11 @@ const path = require('node:path');
 const { webDocumentMetadata } = require('../lib/scaffold/webDocumentMetadata');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
-const REQUIRED_ROUTE_CONTEXT_KEYS = [
-  './_layout.tsx',
-  './(tabs)/home.tsx',
-  './(tabs)/practice.tsx',
-  './(tabs)/mistakes.tsx',
-  './about-the-test.tsx',
-];
+const ROUTER_SHELL_MANIFEST_PATH = path.join(
+  __dirname,
+  '..',
+  'lib/scaffold/routerShellManifest.ts',
+);
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -434,6 +432,50 @@ function toRelativeBundlePath(bundlePath) {
   return bundlePath.replace(/^\/+/, '');
 }
 
+function escapeRegExp(literal) {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function escapeHtmlAttribute(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function extractManifestString(source, fieldName) {
+  const match = source.match(new RegExp(`${escapeRegExp(fieldName)}:\\s*['"]([^'"]+)['"]`));
+
+  if (!match) {
+    throw new Error(`Could not find ${fieldName} in router shell manifest`);
+  }
+
+  return match[1];
+}
+
+function extractMetaDescriptionForLanguage(source, language) {
+  const match = source.match(
+    new RegExp(
+      `language:\\s*['"]${escapeRegExp(language)}['"][\\s\\S]*?description:\\s*['"]([^'"]+)['"]`,
+    ),
+  );
+
+  if (!match) {
+    throw new Error(`Could not find ${language} web meta description in router shell manifest`);
+  }
+
+  return match[1];
+}
+
+function readWebDocumentMetadata() {
+  const manifest = fs.readFileSync(ROUTER_SHELL_MANIFEST_PATH, 'utf8');
+  const language = extractManifestString(manifest, 'webLanguage');
+  const description = extractMetaDescriptionForLanguage(manifest, language);
+
+  return { description, language };
+}
+
 function createRuntimeLoader(bundlePath) {
   const relativeBundlePath = toRelativeBundlePath(bundlePath);
   return [
@@ -453,17 +495,42 @@ function createRuntimeLoader(bundlePath) {
 }
 
 function rewriteHtml(html) {
-  const withRuntimeLoader = html.includes(HTML_LOADER_MARKER)
-    ? html
-    : html.replace(
-        /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
-        (_match, bundlePath) => createRuntimeLoader(bundlePath),
-      );
-  return ensureWebInstallMarkup(rewriteRootRelativeHtmlAssetPaths(withRuntimeLoader));
+  const metadata = readWebDocumentMetadata();
+  if (html.includes(HTML_LOADER_MARKER)) {
+    return upsertWebDocumentMetadata(html, metadata);
+  }
+
+  const withRuntimeLoader = html.replace(
+    /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
+    (_match, bundlePath) => createRuntimeLoader(bundlePath),
+  );
+
+  return upsertWebDocumentMetadata(withRuntimeLoader, metadata);
 }
 
-function rewriteRootRelativeHtmlAssetPaths(source) {
-  return source.replace(/\b(src|href)=(["'])\/(_expo|assets)\//g, '$1=$2$3/');
+function upsertHtmlLanguage(html, language) {
+  return html.replace(/<html\b([^>]*)>/i, (_match, rawAttributes) => {
+    const attributes = rawAttributes ?? '';
+    const nextAttributes = /\slang=(["'])[^"']*\1/i.test(attributes)
+      ? attributes.replace(/\slang=(["'])[^"']*\1/i, ` lang="${language}"`)
+      : `${attributes} lang="${language}"`;
+
+    return `<html${nextAttributes}>`;
+  });
+}
+
+function upsertMetaDescription(html, description) {
+  const tag = `<meta name="description" content="${escapeHtmlAttribute(description)}" />`;
+
+  if (/<meta\b[^>]*\bname=(["'])description\1[^>]*>/i.test(html)) {
+    return html.replace(/<meta\b[^>]*\bname=(["'])description\1[^>]*>/i, tag);
+  }
+
+  return html.replace(/<\/head>/i, `    ${tag}\n  </head>`);
+}
+
+function upsertWebDocumentMetadata(html, metadata) {
+  return upsertMetaDescription(upsertHtmlLanguage(html, metadata.language), metadata.description);
 }
 
 function rewriteRootRelativeBundlePaths(source) {
@@ -477,7 +544,7 @@ function prepare(outputDir) {
 
   const originalIndex = fs.readFileSync(indexPath, 'utf8');
   const preparedIndex = rewriteHtml(originalIndex);
-  if (preparedIndex === originalIndex && !preparedIndex.includes(HTML_LOADER_MARKER)) {
+  if (!preparedIndex.includes(HTML_LOADER_MARKER)) {
     throw new Error('Could not find Expo web bundle script in index.html');
   }
 
@@ -513,7 +580,25 @@ function check(outputDir) {
   if (/\b(?:src|href)=["']\/(?:_expo|assets)\//.test(index)) {
     throw new Error('index.html still contains root-relative exported asset URLs');
   }
-  assertWebInstallShell(outputDir, index);
+  const metadata = readWebDocumentMetadata();
+  if (!new RegExp(`<html\\b[^>]*\\blang="${escapeRegExp(metadata.language)}"`).test(index)) {
+    throw new Error(`index.html must declare lang="${metadata.language}"`);
+  }
+  if (
+    !index.includes(
+      `<meta name="description" content="${escapeHtmlAttribute(metadata.description)}" />`,
+    )
+  ) {
+    throw new Error('index.html is missing the localized web meta description');
+  }
+  if (
+    metadata.language === 'sv' &&
+    /<meta\b[^>]*\bname=(["'])description\1[^>]*\bcontent=(["'])Practice Swedish civic knowledge/i.test(
+      index,
+    )
+  ) {
+    throw new Error('index.html pairs lang="sv" with an English meta description');
+  }
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
   const jsSources = [];
@@ -564,13 +649,11 @@ module.exports = {
   WEB_EXPORT_FRESHNESS_VERSION,
   assertWebDocumentMetadata,
   check,
-  ensureWebDocumentMetadata,
+  readWebDocumentMetadata,
   prepare,
   REQUIRED_ROUTE_CONTEXT_KEYS,
   rewriteHtml,
   rewriteRootRelativeHtmlAssetPaths,
   rewriteRootRelativeBundlePaths,
-  assertWebManifestContract,
-  webExportFreshnessMarkerPath,
-  writeWebExportFreshnessMarker,
+  upsertWebDocumentMetadata,
 };
