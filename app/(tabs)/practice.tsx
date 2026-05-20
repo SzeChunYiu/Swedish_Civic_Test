@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
 import { Badge } from '../../components/ui/Badge';
-import { AdBanner } from '../../components/monetization/AdBanner';
+import { AdInterstitial } from '../../components/monetization/AdInterstitial';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
@@ -291,7 +291,7 @@ export default function Screen() {
             language={language}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <AdBanner placement="quiz_completed_interstitial" />
+          <AdInterstitial triggerKey={question.id} />
           <View style={styles.feedbackActions}>
             <Button
               accessibilityLabel={copy.nextQuestionAccessibilityLabel}

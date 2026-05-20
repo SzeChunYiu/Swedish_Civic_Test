@@ -33,12 +33,28 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRouteParityValidated, true);
   assert.match(
     homeSource,
-    /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+    /monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled/,
+  );
+  assert.match(homeSource, /\{monetizationEntitlementsReady \? \(\s*<PremiumBanner/);
+  assert.match(homeSource, /<AdBanner placement="home_banner" \/>/);
+  assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
+  assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
+  assert.match(practiceSource, /<AdInterstitial triggerKey=\{question\.id\} \/>/);
+  assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(removeAdsPlacementCtaSource, /restoreRemoveAdsPurchase/);
+  assert.match(
+    removeAdsPlacementCtaSource,
+    /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/,
+  );
+  assert.match(
+    mistakesSource,
+    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
   );
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.doesNotMatch(practiceSource, /<AdBanner\s+placement="quiz_completed_interstitial"/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
@@ -102,7 +118,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('ad placement route parity rejects a missing Remove Ads placement CTA', () => {
+test('ad placement route parity rejects routing practice interstitials through banners', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -112,10 +128,17 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/learn.tsx')) {
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('<RemoveAdsPlacementCta placement="chapter_list_banner" />', '');
+      .replace(
+        '<AdInterstitial triggerKey={question.id} />',
+        '<AdBanner placement="quiz_completed_interstitial" />',
+      )
+      .replace(
+        "import { AdInterstitial } from '../../components/monetization/AdInterstitial';",
+        "import { AdBanner } from '../../components/monetization/AdBanner';",
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -128,7 +151,37 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /app\/\(tabs\)\/learn\.tsx must render RemoveAdsPlacementCta next to chapter_list_banner/,
+    /app\/\(tabs\)\/practice\.tsx must import AdInterstitial from the monetization components/,
+  );
+});
+
+test('ad placement route parity rejects native interstitial banner fallback drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdInterstitial.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('InterstitialAd.createForAdRequest', 'BannerAd.createForAdRequest');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdInterstitial native placement must use the Google Mobile Ads interstitial API/,
   );
 });
 
