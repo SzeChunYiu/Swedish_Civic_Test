@@ -182,6 +182,7 @@ const unsupportedEbookFactboxPatterns = [
   /\b9%\s+lake/i,
   /35\s*000\s+km\s+of\s+coastline/i,
   /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /world's oldest central bank/i,
   /historically commits\s+~?1%\s+of\s+GNI/i,
   /Citizenship test starts:\s*6 June 2026/i,
 ];

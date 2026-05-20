@@ -304,10 +304,10 @@ test('static ebook renders every chapter with Swedish and English body parity', 
         assert.match(swedishHtml, /Kapitel 12 · [OÖ]vningsprov/);
         assert.match(swedishHtml, /Starta [oö]vningsprov/);
       } else {
-        assert.match(englishHtml, /Facts you'll see on the test/);
+        assert.match(englishHtml, /Facts to review|Current citizenship notes/);
         assert.match(swedishHtml, /Det viktigaste/);
         assert.match(swedishHtml, /Plugga smart/);
-        assert.match(swedishHtml, /Fakta att kunna/);
+        assert.match(swedishHtml, /Fakta att repetera/);
       }
     }
 

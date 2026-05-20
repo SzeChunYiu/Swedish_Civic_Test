@@ -158,6 +158,32 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'generöst med tid',
   'Praktiska detaljer väntar hos UHR',
 ];
+const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+];
+const STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS = [
+  /Facts you'll see on the test/i,
+  /what you'll see on the test/i,
+  /\b69%\s+is\s+forest/i,
+  /\b9%\s+lake/i,
+  /35\s*000\s+km\s+of\s+coastline/i,
+  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /world's oldest central bank/i,
+  /historically commits\s+~?1%\s+of\s+GNI/i,
+  /Citizenship test starts:\s*6 June 2026/i,
+];
+const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
+  'EBOOK_FACTBOX_SOURCE_NOTES',
+  "retrievedDate: '2026-05-19'",
+  'Facts to review',
+  'Fakta att repetera',
+  'Sources accessed',
+  'Källor hämtade',
+];
+
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   ids: ['q044', 'q332', 'q333', 'q334', 'q335'],
   sourceId: 'q044',
@@ -3803,6 +3829,43 @@ function validateStaticEbookPracticalTestClaims() {
   };
 }
 
+function validateStaticEbookFactboxProvenance() {
+  const source = loadText('site/ebook.js');
+  let unsupportedFactboxClaimsValidated = 0;
+  let sourceUrlsValidated = 0;
+  let requiredCopyValidated = 0;
+
+  STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static ebook contains unsupported factbox or current prose claim: ${pattern}`);
+      return;
+    }
+    unsupportedFactboxClaimsValidated += 1;
+  });
+
+  STATIC_EBOOK_FACTBOX_SOURCE_URLS.forEach((url) => {
+    if (!source.includes(url)) {
+      fail(`static ebook factbox source metadata missing ${url}`);
+      return;
+    }
+    sourceUrlsValidated += 1;
+  });
+
+  STATIC_EBOOK_FACTBOX_REQUIRED_COPY.forEach((text) => {
+    if (!source.includes(text)) {
+      fail(`static ebook factbox provenance copy missing ${text}`);
+      return;
+    }
+    requiredCopyValidated += 1;
+  });
+
+  return {
+    requiredCopyValidated,
+    sourceUrlsValidated,
+    unsupportedFactboxClaimsValidated,
+  };
+}
+
 const STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN = [
   /Spaced repetition/i,
   /\bquiz\b/i,
@@ -6826,6 +6889,10 @@ let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
+let staticEbookFactboxClaimPatternsValidated = 0;
+let staticEbookFactboxRequiredCopyValidated = 0;
+let staticEbookFactboxSourceUrlsValidated = 0;
+let staticEbookFactboxProvenanceValidated = false;
 let staticValidationSyntaxFilesValidated = 0;
 let staticValidationImportChecksValidated = 0;
 let staticValidationSyntaxGateValidated = false;
@@ -6949,6 +7016,17 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookPracticalTestRequiredCopyValidated ===
       STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
     staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
+}
+{
+  const factboxValidation = validateStaticEbookFactboxProvenance();
+  staticEbookFactboxClaimPatternsValidated =
+    factboxValidation.unsupportedFactboxClaimsValidated;
+  staticEbookFactboxRequiredCopyValidated = factboxValidation.requiredCopyValidated;
+  staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
+  staticEbookFactboxProvenanceValidated =
+    staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
+    staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
+    staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
@@ -15234,6 +15312,10 @@ console.log(
       staticEbookPracticalTestRequiredCopyValidated,
       staticEbookPracticalTestSourceUrlsValidated,
       staticEbookPracticalTestCurrentnessValidated,
+      staticEbookFactboxClaimPatternsValidated,
+      staticEbookFactboxRequiredCopyValidated,
+      staticEbookFactboxSourceUrlsValidated,
+      staticEbookFactboxProvenanceValidated,
       staticValidationSyntaxFilesValidated,
       staticValidationImportChecksValidated,
       staticValidationSyntaxGateValidated,

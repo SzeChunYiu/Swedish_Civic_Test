@@ -6,6 +6,29 @@
 (function () {
   'use strict';
 
+  const EBOOK_FACTBOX_SOURCE_NOTES = Object.freeze({
+    uhrStudyMaterial: {
+      label: 'UHR public study material',
+      url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+      retrievedDate: '2026-05-19',
+    },
+    scbLandUse: {
+      label: 'SCB land and water area statistics',
+      url: 'https://www.scb.se/mi0803-en',
+      retrievedDate: '2026-05-19',
+    },
+    riksbankHistory: {
+      label: 'Riksbank historical timeline',
+      url: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+      retrievedDate: '2026-05-19',
+    },
+    governmentNato: {
+      label: 'Government Offices NATO membership notice',
+      url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+      retrievedDate: '2026-05-19',
+    },
+  });
+
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
     {
       label: 'UHR: Om medborgarskapsprovet',
@@ -39,20 +62,49 @@
     },
   ]);
 
+  function sourceLink(note) {
+    return `<a href="${note.url}">${note.label}</a> (${note.retrievedDate})`;
+  }
+
   function officialTestSourceLinks() {
     return OFFICIAL_TEST_SOURCE_NOTES.map(
       (source) => `<a href="${source.url}">${source.label}</a>`,
     ).join(' · ');
   }
 
-  function svStudyBrief(points, facts, practiceHint) {
+  function ebookSourceNote(lang, sourceKeys) {
+    const notes = sourceKeys.map((key) => EBOOK_FACTBOX_SOURCE_NOTES[key]).filter(Boolean);
+    const label = lang === 'sv' ? 'Källor hämtade' : 'Sources accessed';
+    return `<p class="ebook__source-note">${label}: ${notes.map(sourceLink).join(' · ')}</p>`;
+  }
+
+  function ebookFactBox(lang, heading, facts, sourceKeys = ['uhrStudyMaterial']) {
+    const resolvedHeading = heading || (lang === 'sv' ? 'Fakta att repetera' : 'Facts to review');
+    return `
+      <div class="ebook__factbox">
+        <h4>${resolvedHeading}</h4>
+        <p>${facts}</p>
+        ${ebookSourceNote(lang, sourceKeys)}
+      </div>
+    `;
+  }
+
+  function renderEbookProvenanceBadge(lang) {
+    if (lang === 'sv') {
+      return '<p class="ebook__provenance-badge" aria-label="Källtyp: Redaktionell. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Redaktionell</span> · Egen studieguide; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>';
+    }
+    return '<p class="ebook__provenance-badge" aria-label="Provenance: Editorial. Original study guide; verify facts through the Sources page and UHR material."><span>Editorial</span> · Original study guide; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>';
+  }
+
+  function svStudyBrief(points, facts, practiceHint, afterPracticeHtml = '') {
     const items = points.map((point) => `<li>${point}</li>`).join('');
     return `
       <h2>Det viktigaste</h2>
       <ul>${items}</ul>
       <h2>Plugga smart</h2>
       <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
-      <div class="ebook__factbox"><h4>Fakta att kunna</h4><p>${facts}</p></div>
+      ${afterPracticeHtml}
+      ${ebookFactBox('sv', 'Fakta att repetera', facts)}
     `;
   }
 
@@ -74,12 +126,12 @@
           <h2>How to use it</h2>
           <ul>
             <li>Each chapter is ~10 minutes to read.</li>
-            <li>End-of-chapter <em>facts to remember</em> are what you'll see on the test.</li>
+            <li>End-of-chapter <em>facts to remember</em> are review anchors for civic-study topics.</li>
             <li>Use the <a href="#/practice">Practice</a> tab to drill the same material with feedback.</li>
             <li>If you forget something, that's normal. The practice quiz brings it back.</li>
           </ul>
           <blockquote><p>You don't need to remember everything. You need to remember the right things. That's what we're here for.</p></blockquote>
-          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in short windows and use practice results to decide what to repeat next.</p></div>
+          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Short, repeated sessions make it easier to notice what needs review before you open the practice questions.</p></div>
         `,
         sv: `
           <h2>Vad den här boken är</h2>
@@ -128,7 +180,7 @@
             <li>2003 — votes against adopting the euro.</li>
             <li>2024 — joins NATO, ending more than 200 years of military non-alignment.</li>
           </ul>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>National day: June 6 · Joined EU: 1995 · Joined NATO: 2024 · Longest period of peace: continuous since 1814.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'National day: June 6 · Joined EU: 1995 · Joined NATO: 2024 · Long peace period: commonly described as continuous since 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
         sv: svStudyBrief(
           [
@@ -173,7 +225,7 @@
           </ul>
           <h2>Voting</h2>
           <p>You vote in three separate elections on the same day: Riksdag, region, and kommun. You also vote in EU elections every five years. Swedish citizens vote in all four; permanent residents vote in regional and municipal elections after three years.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Riksdag size: 349 · Threshold: 4% · Election interval: 4 years · Number of regions: 21 · Number of municipalities: 290.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'Riksdag size: 349 · Threshold: 4% · Election interval: 4 years · Number of regions: 21 · Number of municipalities: 290.')}
         `,
         sv: svStudyBrief(
           [
@@ -216,7 +268,7 @@
           <p>Almost any document held by a public authority is, by default, public. Anyone can ask to see it, including journalists, foreign citizens, and your nosy neighbour. Exceptions exist (national security, personal data), but the default is openness — globally rare.</p>
           <h2>What it means in daily life</h2>
           <p>Your employer can't ask about your religion. Your landlord can't refuse you for your ethnicity. You can criticise the government on television, in writing, online — even meanly — without legal consequence. (Defamation, threats, and incitement remain crimes.)</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Number of basic laws: 4 · Oldest: Tryckfrihetsförordningen (1766) · Inheritance rule: oldest child regardless of gender (since 1980).</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'Number of basic laws: 4 · Oldest: Tryckfrihetsförordningen (1766) · Inheritance rule: oldest child regardless of gender (since 1980).')}
         `,
         sv: svStudyBrief(
           [
@@ -249,7 +301,7 @@
           <p>Skatteverket — the Swedish Tax Agency — is also the population registry. Your <em>personnummer</em> (personal number) ties you to taxes, healthcare, schools, and your address. Move? Tell them within a week.</p>
           <h2>The welfare state</h2>
           <p>For your taxes you get: tax-funded healthcare (with small fees), schools and university (free for citizens and permanent residents), parental leave (480 days per child, split between parents), unemployment benefit (via your a-kassa), sickness benefit, and a basic state pension.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.')}
         `,
         sv: svStudyBrief(
           [
@@ -283,7 +335,7 @@
           <p>Cooking, cleaning, childcare, and household admin are not gendered tasks in Sweden — at least not officially. Surveys show this is the country with the most equal time spent on housework. (Statistics, like teenagers, lie a little.)</p>
           <h2>Women and work</h2>
           <p>Women's labour-force participation is among the world's highest (~80%). The gender pay gap is real (~10–12%) but shrinking. Maternal mortality is among the world's lowest.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.')}
         `,
         sv: svStudyBrief(
           [
@@ -317,7 +369,7 @@
           <p>The municipality runs eldercare — home help (<em>hemtjänst</em>), special accommodation, and emergency alarms. The principle is the right to live independently for as long as possible; the practice is uneven by municipality.</p>
           <h2>Social services</h2>
           <p>Socialtjänsten supports anyone unable to support themselves — financial assistance (försörjningsstöd), child welfare, addiction support, family help. They also have legal obligations to intervene where a child is at risk.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.')}
         `,
         sv: svStudyBrief(
           [
@@ -345,12 +397,12 @@
           <p>Almost any land in Sweden — forest, field, shore — is open to walking, picking berries, swimming, foraging, camping (one night), and quiet enjoyment. It is a custom, not a written law, but it is taken seriously.</p>
           <p>The catch: <em>"Inte störa, inte förstöra"</em> — do not disturb, do not destroy. You may not enter private gardens or pitch a tent in someone's view. You may not light fires when there's a fire ban. You may not take downed wood for sale, or pick protected species.</p>
           <h2>Geography</h2>
-          <p>Sweden is the fifth-largest country in Europe. 69% is forest, 9% lake, the rest a mix of mountain, agricultural land, and 35 000 km of coastline (including islands). The longest river is Klarälven–Göta älv (about 720 km). The largest lake is Vänern.</p>
+          <p>Sweden is the fifth-largest country in Europe. Its geography mixes forest, lakes, mountains, agricultural land, and a long coastline. The longest river is Klarälven–Göta älv (about 720 km). The largest lake is Vänern.</p>
           <h2>Climate and seasons</h2>
           <p>Four full seasons, dramatic in the north. Winter is dark; summer has midnight sun above the Arctic Circle. Climate change is making winters warmer and summers wetter; the government has committed to net-zero emissions by 2045.</p>
           <h2>Recycling and the everyday environment</h2>
           <p>Sweden recycles obsessively. Glass, metal, paper, plastic, food waste, batteries, and electronics all go to dedicated bins, often at the local <em>återvinningscentral</em>. Bottle and can returns (<em>pant</em>) come back as a small cash refund.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Allemansrätten — the right of public access · Net-zero target year: 2045 · Largest lake: Vänern · Coastline incl. islands: ~35 000 km.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'Allemansrätten — the right of public access · Net-zero target year: 2045 · Largest lake: Vänern · Landscape themes: forests, lakes, mountains, and a long coastline.', ['uhrStudyMaterial', 'scbLandUse'])}
         `,
         sv: svStudyBrief(
           [
@@ -387,7 +439,7 @@
           <p>June 6 — Sveriges nationaldag — marks Gustav Vasa's election in 1523 and the constitutional revision of 1809. A public holiday only since 2005, and still settling into the role.</p>
           <h2>New traditions</h2>
           <p>Sweden has long absorbed new traditions through migration: Eid al-Fitr (Muslim), Nouruz (Persian New Year), Newroz (Kurdish New Year, also 21 March), Diwali, and others. These are increasingly part of public life — celebrated in schools, workplaces, and city squares.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.')}
         `,
         sv: svStudyBrief(
           [
@@ -412,7 +464,7 @@
       body: {
         en: `
           <h2>The Swedish krona (SEK)</h2>
-          <p>Sweden voted against adopting the euro in 2003 and uses the krona (kr). The Riksbank — Sweden's central bank, founded 1668, the world's oldest — sets monetary policy and prints the cash that almost nobody uses.</p>
+          <p>Sweden voted against adopting the euro in 2003 and uses the krona (kr). The Riksbank — Sweden's central bank, founded in 1668 — sets monetary policy and prints the cash that almost nobody uses.</p>
           <h2>Cards and apps</h2>
           <p>Cash is rare. Most shops accept only card. Person-to-person payment runs through <em>Swish</em> — a mobile payment app built jointly by the banks. You enter a phone number, the amount, a note, and tap.</p>
           <h2>BankID</h2>
@@ -421,7 +473,7 @@
           <p>To open a Swedish bank account you typically need a personnummer or coordination number, an ID, and proof of residence. Major banks: Swedbank, Handelsbanken, SEB, Nordea. Online-only options include Avanza and Nordnet.</p>
           <h2>Pension</h2>
           <p>Three layers: state pension (allmän pension), occupational pension via your employer (tjänstepension), and any private savings. The state pension covers the basics; the rest matters more than people expect.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Currency: Swedish krona (SEK) · Riksbank: world's oldest central bank (1668) · Voted against euro: 2003 · Payment app: Swish · Digital ID: BankID.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'Currency: Swedish krona (SEK) · Riksbank founded: 1668 · Voted against euro: 2003 · Payment app: Swish · Digital ID: BankID.', ['uhrStudyMaterial', 'riksbankHistory'])}
         `,
         sv: svStudyBrief(
           [
@@ -452,10 +504,10 @@
           <h2>NATO</h2>
           <p>Sweden was militarily non-aligned for over 200 years, neutral through both World Wars and the Cold War. After Russia's invasion of Ukraine, Sweden applied to join NATO in May 2022 and formally joined on 7 March 2024.</p>
           <h2>The United Nations and aid</h2>
-          <p>Sweden joined the UN in 1946. It is among the world's largest donors of development aid per capita, and historically commits ~1% of GNI to international assistance. Dag Hammarskjöld, UN Secretary-General 1953–1961, was Swedish.</p>
+          <p>Sweden joined the UN in 1946. It has a long record of international assistance and peace diplomacy. Dag Hammarskjöld, UN Secretary-General 1953–1961, was Swedish.</p>
           <h2>Defence</h2>
           <p>Conscription (<em>värnplikt</em>) was reactivated in 2017 and applies to both men and women born 1999 onwards. Not everyone is called up — selection is based on tests and motivation. Service is typically 9–12 months.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Joined EU: 1995 · Voted against euro: 2003 · Joined NATO: 2024 · UN member since: 1946 · Conscription reactivated: 2017.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'Joined EU: 1995 · Voted against euro: 2003 · Joined NATO: 2024 · UN member since: 1946 · Conscription reactivated: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
         sv: svStudyBrief(
           [
@@ -498,7 +550,7 @@
           </ul>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          <div class="ebook__factbox"><h4>Current citizenship notes</h4><p>New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.</p></div>
+          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.')}
         `,
         sv: svStudyBrief(
           [
@@ -538,7 +590,7 @@
           <div class="ebook__factbox"><h4>Current source notes</h4><p>Sources accessed 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         sv: `
-          <h2>Aktuell officiell lägesbild</h2>
+          <h2>Aktuell officiell status</h2>
           <p>Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket.</p>
           <p>Antalet platser är begränsat. Augustiprovet är kostnadsfritt, och UHR beskriver att deltagarna får generöst med tid.</p>
           <h2>Praktiska detaljer väntar hos UHR</h2>
@@ -587,7 +639,7 @@
           </ul>
           <h2>New traditions</h2>
           <p>Migration has added more visible traditions to Swedish public life. Eid al-Fitr, Nouruz, Newroz, Diwali, and other celebrations may appear in schools, workplaces, neighbourhoods, and city events. The important pattern is simple: traditions can travel and adapt.</p>
-          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>National Day: June 6 · Walpurgis Night: April 30 · Midsummer Eve: Friday between June 19 and 25 · Lucia: December 13 · Christmas Eve: December 24.</p></div>
+          ${ebookFactBox('en', 'Facts to review', 'National Day: June 6 · Walpurgis Night: April 30 · Midsummer Eve: Friday between June 19 and 25 · Lucia: December 13 · Christmas Eve: December 24.')}
         `,
         sv: svStudyBrief(
           [
@@ -704,6 +756,7 @@
       <div class="ebook__crumb">${ch.kicker[lang] || ch.kicker.en}</div>
       ${titleHtml}
       ${ledeHtml}
+      ${renderEbookProvenanceBadge(lang)}
       ${bodyHtml}
       ${actions}
       ${notes}
