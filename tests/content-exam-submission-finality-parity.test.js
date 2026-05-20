@@ -19,6 +19,11 @@ test('exam submission finality stays aligned with the result route', () => {
   assert.equal(summary.examSubmissionFinalityParityValidated, true);
   assert.match(examRoute, /Submitted results are final/);
   assert.match(examRoute, /disabled: !completionRecorded/);
+  assert.match(examRoute, /<MockExamTimeHeatmap/);
+  assert.match(examRoute, /answers=\{completedExamSession\.answers\}/);
+  assert.match(examRoute, /onSelectQuestion=\{handleSelectHeatmapQuestion\}/);
+  assert.match(examRoute, /completedAt: completedExamSession\.completedAt/);
+  assert.match(examRoute, /answers: completedExamSession\.answers\.map/);
   assert.doesNotMatch(examRoute, /Back to exam answers|Back to answers/);
   assert.doesNotMatch(examRoute, /onPress=\{\(\) => setSubmitted\(false\)\}/);
 });

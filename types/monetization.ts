@@ -6,6 +6,8 @@ export type AdPlacement =
   | 'rewarded_extra_exam'
   | 'app_open_launch';
 
+export type BannerAdPlacement = 'home_banner' | 'chapter_list_banner';
+
 export interface AdUnitConfig {
   placement: AdPlacement;
   iosUnitId?: string;

@@ -8,12 +8,13 @@ async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await page
-    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
+    .getByRole('radio', {
+      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
+    })
     .click();
-  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
+  await expect(
+    page.getByRole('radio', { name: 'Set question language to English support' }),
+  ).toHaveAttribute('aria-checked', 'true');
 }
 
 async function expectStableTarget(locator: Locator, name: string) {
@@ -87,9 +88,9 @@ test('practice header controls keep English labels, states, and mobile targets',
   await expect(sources).toHaveAttribute('aria-expanded', 'false');
   await sources.click();
 
-  const closeSources = page.getByRole('button', { name: 'Close about-the-sources' });
+  const closeSources = page.getByRole('button', { name: 'Close source details' });
   await expect(closeSources).toHaveAttribute('aria-expanded', 'true');
-  await expectStableTarget(closeSources, 'Close about-the-sources control');
+  await expectStableTarget(closeSources, 'Close source details control');
 
   await expect(page.getByText('UHR source', { exact: true }).first()).toBeVisible();
   await expect(
