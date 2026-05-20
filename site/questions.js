@@ -2083,30 +2083,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which three levels share political responsibility in Sweden?",
-      "sv": "Vilka tre nivåer delar det politiska ansvaret i Sverige?"
+      "sv": "Vilka tre nivåer delar det politiska ansvaret i Sverige?",
+      "zh-Hant": "在瑞典，哪三個層級共同分擔政治責任？",
+      "zh-Hans": "在瑞典，哪三个层级共同分担政治责任？",
+      "ar": "ما المستويات الثلاثة التي تتقاسم المسؤولية السياسية في السويد؟",
+      "ckb": "لە سویددا کام سێ ئاستە بەرپرسیارێتی سیاسی هاوبەش دەکەن؟",
+      "fa": "در سوئد کدام سه سطح مسئولیت سیاسی را تقسیم می‌کنند؟",
+      "pl": "Które trzy poziomy dzielą odpowiedzialność polityczną w Szwecji?",
+      "so": "Saddexdee heer ayaa wadaaga mas’uuliyadda siyaasadeed ee Iswiidhan?",
+      "ti": "ኣብ ሽወደን ፖለቲካዊ ሓላፍነት ዝካፈሉ ሰለስተ ደረጃታት ኣየኖት እዮም?",
+      "tr": "İsveç’te siyasi sorumluluğu hangi üç düzey paylaşır?",
+      "uk": "Які три рівні поділяють політичну відповідальність у Швеції?"
     },
     "opts": [
       {
         "en": "The state, regions, and municipalities",
-        "sv": "Stat, regioner och kommuner"
+        "sv": "Stat, regioner och kommuner",
+        "zh-Hant": "國家、區域和市鎮",
+        "zh-Hans": "国家、区域和市镇",
+        "ar": "الدولة والأقاليم والبلديات",
+        "ckb": "دەوڵەت، هەرێمەکان و شارەوانییەکان",
+        "fa": "دولت، منطقه‌ها و کمون‌ها",
+        "pl": "Państwo, regiony i gminy",
+        "so": "Dowladda, gobollada iyo degmooyinka",
+        "ti": "መንግስቲ፣ ክልላትን ምምሕዳራት ከባቢን",
+        "tr": "Devlet, bölgeler ve belediyeler",
+        "uk": "Держава, регіони та комуни"
       },
       {
         "en": "The king, church, and nobility",
-        "sv": "Kung, kyrka och adel"
+        "sv": "Kung, kyrka och adel",
+        "zh-Hant": "國王、教會和貴族",
+        "zh-Hans": "国王、教会和贵族",
+        "ar": "الملك والكنيسة والنبلاء",
+        "ckb": "پاشا، کڵێسا و ئەشراف",
+        "fa": "پادشاه، کلیسا و اشراف",
+        "pl": "Król, kościół i szlachta",
+        "so": "Boqorka, kaniisadda iyo dadka sharafka leh",
+        "ti": "ንጉስ፣ ቤተክርስቲያንን ልዑላንን",
+        "tr": "Kral, kilise ve soylular",
+        "uk": "Король, церква і шляхта"
       },
       {
         "en": "Police, court, and prison",
-        "sv": "Polis, domstol och fängelse"
+        "sv": "Polis, domstol och fängelse",
+        "zh-Hant": "警察、法院和監獄",
+        "zh-Hans": "警察、法院和监狱",
+        "ar": "الشرطة والمحكمة والسجن",
+        "ckb": "پۆلیس، دادگا و زیندان",
+        "fa": "پلیس، دادگاه و زندان",
+        "pl": "Policja, sąd i więzienie",
+        "so": "Booliska, maxkamadda iyo xabsiga",
+        "ti": "ፖሊስ፣ ቤት ፍርድን ቤት ማእሰርትን",
+        "tr": "Polis, mahkeme ve cezaevi",
+        "uk": "Поліція, суд і в’язниця"
       },
       {
         "en": "Banks, companies, and households",
-        "sv": "Banker, företag och hushåll"
+        "sv": "Banker, företag och hushåll",
+        "zh-Hant": "銀行、公司和家庭",
+        "zh-Hans": "银行、公司和家庭",
+        "ar": "البنوك والشركات والأسر",
+        "ckb": "بانک، کۆمپانیا و خێزانەکان",
+        "fa": "بانک‌ها، شرکت‌ها و خانوارها",
+        "pl": "Banki, firmy i gospodarstwa domowe",
+        "so": "Bangiyada, shirkadaha iyo qoysaska",
+        "ti": "ባንክታት፣ ኩባንያታትን ስድራቤታትን",
+        "tr": "Bankalar, şirketler ve haneler",
+        "uk": "Банки, компанії та домогосподарства"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Political responsibility in Sweden is divided between national, regional, and municipal levels. In practice, that means the state, regions, and municipalities. EU decisions can also affect Sweden.",
-      "sv": "Det politiska ansvaret i Sverige delas mellan nationell, regional och kommunal nivå. I praktiken betyder det staten, regionerna och kommunerna. EU-beslut kan också påverka Sverige."
+      "sv": "Det politiska ansvaret i Sverige delas mellan nationell, regional och kommunal nivå. I praktiken betyder det staten, regionerna och kommunerna. EU-beslut kan också påverka Sverige.",
+      "zh-Hant": "瑞典的政治責任分為國家、區域和市鎮層級。實際上就是國家、區域和市鎮。歐盟決定也可能影響瑞典。",
+      "zh-Hans": "瑞典的政治责任分为国家、区域和市镇层级。实际上就是国家、区域和市镇。欧盟决定也可能影响瑞典。",
+      "ar": "تنقسم المسؤولية السياسية في السويد بين المستوى الوطني والإقليمي والبلدي. عمليًا يعني ذلك الدولة والأقاليم والبلديات. كما يمكن أن تؤثر قرارات الاتحاد الأوروبي في السويد.",
+      "ckb": "بەرپرسیارێتی سیاسی لە سوید لەنێوان ئاستی نیشتیمانی، هەرێمی و شارەوانیدا دابەش دەبێت. بە کردەوە ئەمە واتە دەوڵەت، هەرێمەکان و شارەوانییەکان. بڕیارەکانی یەکێتیی ئەوروپا دەتوانن کاریگەری لەسەر سوید هەبێت.",
+      "fa": "مسئولیت سیاسی در سوئد میان سطح ملی، منطقه‌ای و کمونی تقسیم می‌شود. در عمل یعنی دولت، منطقه‌ها و کمون‌ها. تصمیم‌های اتحادیه اروپا نیز می‌تواند بر سوئد اثر بگذارد.",
+      "pl": "Odpowiedzialność polityczna w Szwecji jest podzielona między poziom krajowy, regionalny i gminny. W praktyce oznacza to państwo, regiony i gminy. Decyzje UE również mogą wpływać na Szwecję.",
+      "so": "Mas’uuliyadda siyaasadeed ee Iswiidhan waxay u qaybsantaa heer qaran, heer gobol iyo heer degmo. Ficil ahaan taasi waxay ka dhigan tahay dowladda, gobollada iyo degmooyinka. Go’aamada Midowga Yurub sidoo kale way saameyn karaan Iswiidhan.",
+      "ti": "ኣብ ሽወደን ፖለቲካዊ ሓላፍነት ኣብ ሃገራዊ፣ ክልላዊን ናይ ከባቢ ምምሕዳርን ደረጃ ይካፈል። ብተግባር እዚ መንግስቲ፣ ክልላትን ምምሕዳራት ከባቢን ማለት እዩ። ውሳነታት ሕብረት ኤውሮጳ እውን ንሽወደን ክጸልዉ ይኽእሉ።",
+      "tr": "İsveç’te siyasi sorumluluk ulusal, bölgesel ve belediye düzeyleri arasında bölünür. Uygulamada bu, devlet, bölgeler ve belediyeler demektir. AB kararları da İsveç’i etkileyebilir.",
+      "uk": "Політична відповідальність у Швеції поділена між національним, регіональним і комунальним рівнями. На практиці це держава, регіони та комуни. Рішення ЄС також можуть впливати на Швецію."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2129,30 +2189,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which of the following tasks belongs to the Riksdag?",
-      "sv": "Vilken av följande uppgifter har riksdagen?"
+      "sv": "Vilken av följande uppgifter har riksdagen?",
+      "zh-Hant": "以下哪一項是國會的任務？",
+      "zh-Hans": "以下哪一项是国会的任务？",
+      "ar": "أي من المهام التالية من مهام البرلمان السويدي؟",
+      "ckb": "کامەی خوارەوە ئەرکی ڕیکسداگە؟",
+      "fa": "کدام یک از وظایف زیر مربوط به ریکسداگ است؟",
+      "pl": "Które z poniższych zadań należy do Riksdagu?",
+      "so": "Hawlahan soo socda kee baa ka tirsan Riksdag-ka?",
+      "ti": "ካብዞም ዝስዕቡ ዕማማት ናይ ሪክስዳግ ኣየናይ እዩ?",
+      "tr": "Aşağıdaki görevlerden hangisi Riksdag’a aittir?",
+      "uk": "Яке з наведених завдань належить до повноважень Риксдагу?"
     },
     "opts": [
       {
         "en": "To manage regional public transport",
-        "sv": "Att sköta regionernas kollektivtrafik"
+        "sv": "Att sköta regionernas kollektivtrafik",
+        "zh-Hant": "管理區域公共交通",
+        "zh-Hans": "管理区域公共交通",
+        "ar": "إدارة النقل العام الإقليمي",
+        "ckb": "بەڕێوەبردنی گواستنەوەی گشتی هەرێمی",
+        "fa": "اداره حمل‌ونقل عمومی منطقه‌ای",
+        "pl": "Zarządzanie regionalnym transportem publicznym",
+        "so": "Maamulka gaadiidka dadweynaha ee gobollada",
+        "ti": "ክልላዊ መጓዓዝያ ህዝቢ ምምሕዳር",
+        "tr": "Bölgesel toplu taşımayı yönetmek",
+        "uk": "Керувати регіональним громадським транспортом"
       },
       {
         "en": "To be Sweden's head of state",
-        "sv": "Att vara Sveriges statschef"
+        "sv": "Att vara Sveriges statschef",
+        "zh-Hant": "擔任瑞典國家元首",
+        "zh-Hans": "担任瑞典国家元首",
+        "ar": "أن يكون رئيس دولة السويد",
+        "ckb": "بوون بە سەرۆکی دەوڵەتی سوید",
+        "fa": "رئیس کشور سوئد بودن",
+        "pl": "Pełnienie funkcji głowy państwa Szwecji",
+        "so": "Inuu noqdo madaxa qaranka Iswiidhan",
+        "ti": "ርእሰ ሃገር ሽወደን ምዃን",
+        "tr": "İsveç’in devlet başkanı olmak",
+        "uk": "Бути главою держави Швеції"
       },
       {
         "en": "To decide laws and how the state's money should be used",
-        "sv": "Att besluta om lagar och hur statens pengar ska användas"
+        "sv": "Att besluta om lagar och hur statens pengar ska användas",
+        "zh-Hant": "決定法律以及國家資金如何使用",
+        "zh-Hans": "决定法律以及国家资金如何使用",
+        "ar": "إقرار القوانين وكيفية استخدام أموال الدولة",
+        "ckb": "بڕیاردان لەسەر یاساکان و چۆن پارەی دەوڵەت بەکاربهێنرێت",
+        "fa": "تصمیم‌گیری درباره قانون‌ها و نحوه استفاده از پول دولت",
+        "pl": "Decydowanie o ustawach i o tym, jak używa się pieniędzy państwa",
+        "so": "Go’aaminta sharciyada iyo sida lacagta dowladda loo isticmaalo",
+        "ti": "ብዛዕባ ሕግታትን ገንዘብ መንግስቲ ከመይ ከምዝጥቀመሉን ምውሳን",
+        "tr": "Yasalar ve devlet parasının nasıl kullanılacağı hakkında karar vermek",
+        "uk": "Ухвалювати закони й вирішувати, як використовуються державні кошти"
       },
       {
         "en": "To investigate crimes alone",
-        "sv": "Att ensam utreda brott"
+        "sv": "Att ensam utreda brott",
+        "zh-Hant": "單獨調查犯罪",
+        "zh-Hans": "单独调查犯罪",
+        "ar": "التحقيق في الجرائم وحده",
+        "ckb": "بە تەنها تاوانەکان لێکۆڵینەوە بکات",
+        "fa": "به‌تنهایی درباره جرم‌ها تحقیق کردن",
+        "pl": "Samodzielne prowadzenie dochodzeń w sprawach przestępstw",
+        "so": "Inuu kaligiis baaro dembiyada",
+        "ti": "በይኑ ገበናት ምምርማር",
+        "tr": "Suçları tek başına soruşturmak",
+        "uk": "Самостійно розслідувати злочини"
       }
     ],
     "answer": 2,
     "why": {
       "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället.",
+      "zh-Hant": "國會議員決定法律、國家預算以及國家資金如何使用。因此，關於法律和國家資金的選項是正確的；公共交通、國家元首和犯罪調查屬於社會的其他部分。",
+      "zh-Hans": "国会议员决定法律、国家预算以及国家资金如何使用。因此，关于法律和国家资金的选项是正确的；公共交通、国家元首和犯罪调查属于社会的其他部分。",
+      "ar": "يقرر أعضاء البرلمان القوانين وميزانية الدولة وكيفية استخدام أموال الدولة. لذلك فالخيار المتعلق بالقوانين وأموال الدولة صحيح؛ أما النقل العام ورئيس الدولة والتحقيقات الجنائية فتتبع أجزاء أخرى من المجتمع.",
+      "ckb": "ئەندامانی ڕیکسداگ بڕیار لەسەر یاساکان، بودجەی دەوڵەت و چۆنیەتی بەکارهێنانی پارەی دەوڵەت دەدەن. بۆیە هەڵبژاردەی پەیوەندیدار بە یاسا و پارەی دەوڵەت ڕاستە؛ گواستنەوەی گشتی، سەرۆکی دەوڵەت و لێکۆڵینەوەی تاوان بە بەشەکانی تری کۆمەڵگەوە پەیوەستن.",
+      "fa": "اعضای ریکسداگ درباره قانون‌ها، بودجه دولت و چگونگی استفاده از پول دولت تصمیم می‌گیرند. بنابراین گزینه مربوط به قانون‌ها و پول دولت درست است؛ حمل‌ونقل عمومی، رئیس کشور و تحقیقات جنایی به بخش‌های دیگر جامعه مربوط می‌شوند.",
+      "pl": "Członkowie Riksdagu decydują o ustawach, budżecie państwa i o tym, jak używa się pieniędzy państwa. Dlatego odpowiedź o ustawach i pieniądzach państwa jest poprawna; transport publiczny, głowa państwa i dochodzenia karne należą do innych części społeczeństwa.",
+      "so": "Xubnaha Riksdag-ka waxay go’aamiyaan sharciyada, miisaaniyadda dowladda iyo sida lacagta dowladda loo isticmaalo. Sidaa darteed xulashada ku saabsan sharciyada iyo lacagta dowladda waa sax; gaadiidka dadweynaha, madaxa qaranka iyo baarista dembiyada waxay ka tirsan yihiin qaybo kale oo bulshada ah.",
+      "ti": "ኣባላት ሪክስዳግ ብዛዕባ ሕግታት፣ ባጀት መንግስቲን ገንዘብ መንግስቲ ከመይ ከምዝጥቀመሉን ይውስኑ። ስለዚ እቲ ብዛዕባ ሕግታትን ገንዘብ መንግስቲን ዝብል ምርጫ ትኽክል እዩ፤ መጓዓዝያ ህዝቢ፣ ርእሰ ሃገርን ምርመራ ገበንን ናብ ካልኦት ክፋላት ሕብረተሰብ ይምልከቱ።",
+      "tr": "Riksdag üyeleri yasalar, devlet bütçesi ve devlet parasının nasıl kullanılacağı hakkında karar verir. Bu yüzden yasalar ve devlet parasıyla ilgili seçenek doğrudur; toplu taşıma, devlet başkanı ve suç soruşturmaları toplumun başka bölümlerine aittir.",
+      "uk": "Члени Риксдагу ухвалюють закони, державний бюджет і рішення про використання державних коштів. Тому варіант про закони й державні кошти правильний; громадський транспорт, глава держави та кримінальні розслідування належать до інших частин суспільства."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2175,22 +2295,62 @@
     "type": "true_false",
     "q": {
       "en": "The Riksdag chooses the prime minister.",
-      "sv": "Riksdagen väljer statsminister."
+      "sv": "Riksdagen väljer statsminister.",
+      "zh-Hant": "國會選出首相。",
+      "zh-Hans": "国会选出首相。",
+      "ar": "ينتخب البرلمان السويدي رئيس الوزراء.",
+      "ckb": "ڕیکسداگ سەرۆک وەزیران هەڵدەبژێرێت.",
+      "fa": "ریکسداگ نخست‌وزیر را انتخاب می‌کند.",
+      "pl": "Riksdag wybiera premiera.",
+      "so": "Riksdag-ku wuxuu doortaa ra’iisul wasaaraha.",
+      "ti": "ሪክስዳግ ንቀዳማይ ሚኒስተር ይመርጽ።",
+      "tr": "Riksdag başbakanı seçer.",
+      "uk": "Риксдаг обирає прем’єр-міністра."
     },
     "opts": [
       {
         "en": "True",
-        "sv": "Sant"
+        "sv": "Sant",
+        "zh-Hant": "正確",
+        "zh-Hans": "正确",
+        "ar": "صحيح",
+        "ckb": "ڕاستە",
+        "fa": "درست",
+        "pl": "Prawda",
+        "so": "Sax",
+        "ti": "ትኽክል",
+        "tr": "Doğru",
+        "uk": "Правда"
       },
       {
         "en": "False",
-        "sv": "Falskt"
+        "sv": "Falskt",
+        "zh-Hant": "錯誤",
+        "zh-Hans": "错误",
+        "ar": "خطأ",
+        "ckb": "هەڵەیە",
+        "fa": "نادرست",
+        "pl": "Fałsz",
+        "so": "Khalad",
+        "ti": "ጌጋ",
+        "tr": "Yanlış",
+        "uk": "Неправда"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
-      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
+      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen.",
+      "zh-Hant": "國會選出首相，首相受命組成政府。之後首相選擇政府部長。",
+      "zh-Hans": "国会选出首相，首相受命组成政府。之后首相选择政府部长。",
+      "ar": "ينتخب البرلمان رئيس الوزراء، الذي يكلف بتشكيل الحكومة. ثم يختار رئيس الوزراء وزراء الحكومة.",
+      "ckb": "ڕیکسداگ سەرۆک وەزیران هەڵدەبژێرێت و ئەرکی پێدەدرێت حکومەت پێکبهێنێت. پاشان سەرۆک وەزیران وەزیرەکانی حکومەت هەڵدەبژێرێت.",
+      "fa": "ریکسداگ نخست‌وزیر را انتخاب می‌کند و به او مأموریت تشکیل دولت داده می‌شود. سپس نخست‌وزیر وزیران دولت را انتخاب می‌کند.",
+      "pl": "Riksdag wybiera premiera, któremu powierza się utworzenie rządu. Następnie premier wybiera ministrów rządu.",
+      "so": "Riksdag-ku wuxuu doortaa ra’iisul wasaaraha, kaas oo loo xilsaaro inuu soo dhiso dowladda. Ra’iisul wasaaraha ayaa markaas doorta wasiirrada dowladda.",
+      "ti": "ሪክስዳግ ንቀዳማይ ሚኒስተር ይመርጽ፣ ንሱ ድማ መንግስቲ ንምቕማጥ ሓላፍነት ይወሃቦ። ቀዳማይ ሚኒስተር ድማ ሚኒስተራት መንግስቲ ይመርጽ።",
+      "tr": "Riksdag başbakanı seçer ve başbakana hükümeti kurma görevi verilir. Başbakan daha sonra hükümet bakanlarını seçer.",
+      "uk": "Риксдаг обирає прем’єр-міністра, якому доручають сформувати уряд. Потім прем’єр-міністр обирає міністрів уряду."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2213,30 +2373,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes government agencies?",
-      "sv": "Vilket påstående beskriver statliga myndigheter?"
+      "sv": "Vilket påstående beskriver statliga myndigheter?",
+      "zh-Hant": "哪一個說法描述了國家機關？",
+      "zh-Hans": "哪一个说法描述了国家机关？",
+      "ar": "أي عبارة تصف السلطات الحكومية؟",
+      "ckb": "کام دەربڕین دامەزراوە حکومییەکان وەسف دەکات؟",
+      "fa": "کدام عبارت سازمان‌های دولتی را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje urzędy państwowe?",
+      "so": "Weedhdee ayaa sharraxaysa hay’adaha dowladda?",
+      "ti": "ኣየናይ ሓሳብ ንትካላት መንግስቲ ይገልጽ?",
+      "tr": "Hangi ifade kamu kurumlarını açıklar?",
+      "uk": "Яке твердження описує державні органи?"
     },
     "opts": [
       {
         "en": "They replace courts in criminal cases",
-        "sv": "De ersätter domstolarna i brottmål"
+        "sv": "De ersätter domstolarna i brottmål",
+        "zh-Hant": "它們在刑事案件中取代法院",
+        "zh-Hans": "它们在刑事案件中取代法院",
+        "ar": "إنها تحل محل المحاكم في القضايا الجنائية",
+        "ckb": "لە دۆسیەی تاواندا جێگای دادگاکان دەگرنەوە",
+        "fa": "آن‌ها در پرونده‌های کیفری جای دادگاه‌ها را می‌گیرند",
+        "pl": "Zastępują sądy w sprawach karnych",
+        "so": "Waxay beddelaan maxkamadaha kiisaska dembiyada",
+        "ti": "ኣብ ጉዳያት ገበን ንቤት ፍርዲ ይትክኡ",
+        "tr": "Ceza davalarında mahkemelerin yerini alırlar",
+        "uk": "Вони замінюють суди у кримінальних справах"
       },
       {
         "en": "They implement decisions and must follow laws and government instructions",
-        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
+        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner",
+        "zh-Hant": "它們執行決定，並且必須遵守法律和政府指示",
+        "zh-Hans": "它们执行决定，并且必须遵守法律和政府指示",
+        "ar": "إنها تنفذ القرارات ويجب أن تتبع القوانين وتعليمات الحكومة",
+        "ckb": "بڕیارەکان جێبەجێ دەکەن و دەبێ یاساکان و ڕێنماییەکانی حکومەت پەیڕەو بکەن",
+        "fa": "آن‌ها تصمیم‌ها را اجرا می‌کنند و باید از قانون‌ها و دستورهای دولت پیروی کنند",
+        "pl": "Wykonują decyzje i muszą przestrzegać prawa oraz instrukcji rządu",
+        "so": "Waxay fuliyaan go’aamada waana inay raacaan sharciyada iyo tilmaamaha dowladda",
+        "ti": "ውሳነታት ይፍጽሙ፣ ሕግታትን መምርሒታት መንግስትን ድማ ክኽተሉ ኣለዎም",
+        "tr": "Kararları uygularlar ve yasalara ve hükümet talimatlarına uymak zorundadırlar",
+        "uk": "Вони виконують рішення та мають дотримуватися законів і вказівок уряду"
       },
       {
         "en": "They decide who becomes king or queen",
-        "sv": "De beslutar vem som blir kung eller drottning"
+        "sv": "De beslutar vem som blir kung eller drottning",
+        "zh-Hant": "它們決定誰成為國王或女王",
+        "zh-Hans": "它们决定谁成为国王或女王",
+        "ar": "إنها تقرر من يصبح ملكًا أو ملكة",
+        "ckb": "بڕیار دەدەن کێ دەبێتە پاشا یان شاژن",
+        "fa": "آن‌ها تصمیم می‌گیرند چه کسی پادشاه یا ملکه شود",
+        "pl": "Decydują, kto zostaje królem lub królową",
+        "so": "Waxay go’aamiyaan cidda noqonaysa boqor ama boqorad",
+        "ti": "መን ንጉስ ወይ ንግስቲ ከምዝኸውን ይውስኑ",
+        "tr": "Kimin kral veya kraliçe olacağına karar verirler",
+        "uk": "Вони вирішують, хто стане королем або королевою"
       },
       {
         "en": "They write parties’ election platforms",
-        "sv": "De skriver partiernas valprogram"
+        "sv": "De skriver partiernas valprogram",
+        "zh-Hant": "它們撰寫各政黨的選舉綱領",
+        "zh-Hans": "它们撰写各政党的选举纲领",
+        "ar": "إنها تكتب البرامج الانتخابية للأحزاب",
+        "ckb": "بەرنامەی هەڵبژاردنی پارتەکان دەنووسن",
+        "fa": "آن‌ها برنامه‌های انتخاباتی حزب‌ها را می‌نویسند",
+        "pl": "Piszą programy wyborcze partii",
+        "so": "Waxay qoraan barnaamijyada doorashada ee xisbiyada",
+        "ti": "መደባት ምርጫ ፓርቲታት ይጽሕፉ",
+        "tr": "Partilerin seçim programlarını yazarlar",
+        "uk": "Вони пишуть виборчі програми партій"
       }
     ],
     "answer": 1,
     "why": {
       "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt.",
+      "zh-Hant": "政府透過國家機關治理國家。機關在實際上執行決定，並且必須遵守法律和政府指示，所以關於決定和規則的選項是正確的。",
+      "zh-Hans": "政府通过国家机关治理国家。机关在实际中执行决定，并且必须遵守法律和政府指示，所以关于决定和规则的选项是正确的。",
+      "ar": "تدير الحكومة البلاد بمساعدة السلطات الحكومية. تنفذ هذه السلطات القرارات عمليًا ويجب أن تتبع القانون وتعليمات الحكومة، لذلك فالخيار المتعلق بالقرارات والقواعد صحيح.",
+      "ckb": "حکومەت بە یارمەتی دامەزراوە حکومییەکان وڵات بەڕێوە دەبات. ئەم دامەزراوانە بڕیارەکان بە کردەوە جێبەجێ دەکەن و دەبێ یاسا و ڕێنماییەکانی حکومەت پەیڕەو بکەن، بۆیە هەڵبژاردەی پەیوەندیدار بە بڕیار و ڕێساکان ڕاستە.",
+      "fa": "دولت با کمک سازمان‌های دولتی کشور را اداره می‌کند. این سازمان‌ها تصمیم‌ها را در عمل اجرا می‌کنند و باید از قانون و دستورهای دولت پیروی کنند، بنابراین گزینه مربوط به تصمیم‌ها و قواعد درست است.",
+      "pl": "Rząd kieruje krajem z pomocą urzędów państwowych. Urzędy w praktyce wykonują decyzje i muszą przestrzegać prawa oraz instrukcji rządu, więc odpowiedź o decyzjach i regułach jest poprawna.",
+      "so": "Dowladdu waxay dalka ku maamushaa hay’adaha dowladda. Hay’aduhu go’aamada ayay ficil ahaan u fuliyaan, waana inay raacaan sharciga iyo tilmaamaha dowladda; sidaas awgeed xulashada ku saabsan go’aamada iyo xeerarka waa sax.",
+      "ti": "መንግስቲ ብሓገዝ ትካላት መንግስቲ ንሃገር ይመርሕ። ትካላት መንግስቲ ውሳነታት ብተግባር ይፍጽሙ፣ ሕግን መምርሒታት መንግስትን ክኽተሉ ድማ ኣለዎም፣ ስለዚ እቲ ብዛዕባ ውሳነታትን ሕግታትን ዝብል ምርጫ ትኽክል እዩ።",
+      "tr": "Hükümet ülkeyi kamu kurumlarının yardımıyla yönetir. Kurumlar kararları uygulamada hayata geçirir ve yasalara ve hükümetin talimatlarına uymak zorundadır; bu yüzden kararlar ve kurallarla ilgili seçenek doğrudur.",
+      "uk": "Уряд керує країною за допомогою державних органів. Органи виконують рішення на практиці й мають дотримуватися закону та вказівок уряду, тому варіант про рішення і правила правильний."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2259,30 +2479,90 @@
     "type": "single_choice",
     "q": {
       "en": "What is the foremost task of Sweden's regions?",
-      "sv": "Vilken är regionernas främsta uppgift i Sverige?"
+      "sv": "Vilken är regionernas främsta uppgift i Sverige?",
+      "zh-Hant": "瑞典區域的主要任務是什麼？",
+      "zh-Hans": "瑞典区域的主要任务是什么？",
+      "ar": "ما المهمة الرئيسية للأقاليم في السويد؟",
+      "ckb": "سەرەکیترین ئەرکی هەرێمەکان لە سوید چییە؟",
+      "fa": "مهم‌ترین وظیفه منطقه‌ها در سوئد چیست؟",
+      "pl": "Jakie jest najważniejsze zadanie regionów w Szwecji?",
+      "so": "Waa maxay hawsha ugu weyn ee gobollada Iswiidhan?",
+      "ti": "ቀንዲ ዕማም ክልላት ሽወደን እንታይ እዩ?",
+      "tr": "İsveç’te bölgelerin başlıca görevi nedir?",
+      "uk": "Яке головне завдання регіонів у Швеції?"
     },
     "opts": [
       {
         "en": "To be responsible for health care",
-        "sv": "Att ansvara för hälso- och sjukvården"
+        "sv": "Att ansvara för hälso- och sjukvården",
+        "zh-Hant": "負責醫療和健康照護",
+        "zh-Hans": "负责医疗和健康照护",
+        "ar": "تحمل مسؤولية الرعاية الصحية",
+        "ckb": "بەرپرسیاربوون لە چاودێری تەندروستی",
+        "fa": "مسئولیت مراقبت‌های سلامت و درمان",
+        "pl": "Odpowiedzialność za opiekę zdrowotną",
+        "so": "Inay masuul ka noqdaan daryeelka caafimaadka",
+        "ti": "ንክንክን ጥዕና ሓላፍነት ምውሳድ",
+        "tr": "Sağlık hizmetlerinden sorumlu olmak",
+        "uk": "Відповідати за охорону здоров’я"
       },
       {
         "en": "To judge criminal cases",
-        "sv": "Att döma i brottmål"
+        "sv": "Att döma i brottmål",
+        "zh-Hant": "審判刑事案件",
+        "zh-Hans": "审判刑事案件",
+        "ar": "الحكم في القضايا الجنائية",
+        "ckb": "دادوەری کردن لە دۆسیەی تاواندا",
+        "fa": "قضاوت در پرونده‌های کیفری",
+        "pl": "Orzekanie w sprawach karnych",
+        "so": "Xukun ka gaarista kiisaska dembiyada",
+        "ti": "ኣብ ጉዳያት ገበን ፍርዲ ምሃብ",
+        "tr": "Ceza davalarında hüküm vermek",
+        "uk": "Судити кримінальні справи"
       },
       {
         "en": "To decide constitutional laws",
-        "sv": "Att besluta om grundlagar"
+        "sv": "Att besluta om grundlagar",
+        "zh-Hant": "決定憲法",
+        "zh-Hans": "决定宪法",
+        "ar": "إقرار القوانين الدستورية",
+        "ckb": "بڕیاردان لەسەر یاسا بنەڕەتییەکان",
+        "fa": "تصمیم‌گیری درباره قوانین اساسی",
+        "pl": "Decydowanie o ustawach konstytucyjnych",
+        "so": "Go’aaminta sharciyada dastuuriga ah",
+        "ti": "ብዛዕባ ሕግታት መሰረታዊ ሕጊ ምውሳን",
+        "tr": "Anayasa yasaları hakkında karar vermek",
+        "uk": "Ухвалювати конституційні закони"
       },
       {
         "en": "To appoint the prime minister",
-        "sv": "Att utse statsminister"
+        "sv": "Att utse statsminister",
+        "zh-Hant": "任命首相",
+        "zh-Hans": "任命首相",
+        "ar": "تعيين رئيس الوزراء",
+        "ckb": "دیاریکردنی سەرۆک وەزیران",
+        "fa": "منصوب کردن نخست‌وزیر",
+        "pl": "Powoływanie premiera",
+        "so": "Magacaabista ra’iisul wasaaraha",
+        "ti": "ቀዳማይ ሚኒስተር ምምዛዝ",
+        "tr": "Başbakanı atamak",
+        "uk": "Призначати прем’єр-міністра"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället.",
+      "zh-Hant": "瑞典分為 21 個區域。區域的主要任務是醫療和健康照護，但它們也確保有公共交通，並負責省級博物館。因此醫療和健康照護是正確的；法院、憲法和首相屬於社會的其他部分。",
+      "zh-Hans": "瑞典分为 21 个区域。区域的主要任务是医疗和健康照护，但它们也确保有公共交通，并负责省级博物馆。因此医疗和健康照护是正确的；法院、宪法和首相属于社会的其他部分。",
+      "ar": "تنقسم السويد إلى 21 إقليمًا. المهمة الرئيسية للأقاليم هي الرعاية الصحية، لكنها تضمن أيضًا وجود النقل العام وتتحمل مسؤولية متاحف المقاطعات. لذلك فالرعاية الصحية صحيحة؛ أما المحاكم والقوانين الدستورية ورئيس الوزراء فتتبع أجزاء أخرى من المجتمع.",
+      "ckb": "سوید دابەش بووە بە ٢١ هەرێم. سەرەکیترین ئەرکی هەرێمەکان چاودێری تەندروستییە، بەڵام هەروەها دڵنیا دەبن لە بوونی گواستنەوەی گشتی و بەرپرسی مۆزەخانەکانی پارێزگان. بۆیە چاودێری تەندروستی ڕاستە؛ دادگاکان، یاسا بنەڕەتییەکان و سەرۆک وەزیران بە بەشەکانی تری کۆمەڵگەوە پەیوەستن.",
+      "fa": "سوئد به ۲۱ منطقه تقسیم شده است. مهم‌ترین مسئولیت منطقه‌ها مراقبت سلامت و درمان است، اما آن‌ها همچنین فراهم بودن حمل‌ونقل عمومی را تضمین می‌کنند و مسئول موزه‌های استانی هستند. بنابراین سلامت و درمان درست است؛ دادگاه‌ها، قوانین اساسی و نخست‌وزیر به بخش‌های دیگر جامعه مربوط می‌شوند.",
+      "pl": "Szwecja dzieli się na 21 regionów. Głównym zadaniem regionów jest opieka zdrowotna, ale dbają one też o dostępność transportu publicznego i odpowiadają za muzea länów. Dlatego opieka zdrowotna jest poprawna; sądy, ustawy konstytucyjne i premier należą do innych części społeczeństwa.",
+      "so": "Iswiidhan waxay u qaybsan tahay 21 gobol. Masuuliyadda ugu weyn ee gobolladu waa daryeelka caafimaadka, laakiin waxay sidoo kale hubiyaan in gaadiid dadweyne jiro waxayna masuul ka yihiin matxafyada gobolka. Sidaas awgeed daryeelka caafimaadka waa sax; maxkamadaha, sharciyada dastuuriga ah iyo ra’iisul wasaaraha waxay ka tirsan yihiin qaybo kale.",
+      "ti": "ሽወደን ናብ 21 ክልላት ተኸፊላ ኣላ። ቀንዲ ሓላፍነት ክልላት ክንክን ጥዕና እዩ፣ ግን መጓዓዝያ ህዝቢ ከምዘሎ እውን የረጋግጹ፣ ንሙዚየማት ክልል ድማ ሓላፍነት ይወስዱ። ስለዚ ክንክን ጥዕና ትኽክል እዩ፤ ቤት ፍርድታት፣ ሕግታት መሰረታዊ ሕጊን ቀዳማይ ሚኒስተርን ናብ ካልኦት ክፋላት ሕብረተሰብ ይምልከቱ።",
+      "tr": "İsveç 21 bölgeye ayrılmıştır. Bölgelerin ana sorumluluğu sağlık hizmetleridir; ayrıca toplu taşımanın bulunmasını sağlarlar ve il müzelerinden sorumludurlar. Bu yüzden sağlık hizmetleri doğrudur; mahkemeler, anayasa yasaları ve başbakan toplumun başka bölümlerine aittir.",
+      "uk": "Швеція поділена на 21 регіон. Головна відповідальність регіонів — охорона здоров’я, але вони також забезпечують громадський транспорт і відповідають за музеї ленів. Тому охорона здоров’я правильна; суди, конституційні закони й прем’єр-міністр належать до інших частин суспільства."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2305,30 +2585,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which everyday services are municipalities responsible for?",
-      "sv": "Vilka vardagstjänster ansvarar kommuner för?"
+      "sv": "Vilka vardagstjänster ansvarar kommuner för?",
+      "zh-Hant": "市鎮負責哪些日常服務？",
+      "zh-Hans": "市镇负责哪些日常服务？",
+      "ar": "ما الخدمات اليومية التي تتحمل البلديات مسؤوليتها؟",
+      "ckb": "شارەوانییەکان بەرپرسی کام خزمەتگوزارییە ڕۆژانەن؟",
+      "fa": "کمون‌ها مسئول کدام خدمات روزمره هستند؟",
+      "pl": "Za jakie codzienne usługi odpowiadają gminy?",
+      "so": "Adeegyada maalinlaha ah ee degmooyinku masuulka ka yihiin waa kuwee?",
+      "ti": "ምምሕዳራት ከባቢ ንኣየኖት ናይ ዕለት ተዕለት ኣገልግሎታት ሓላፍነት ይወስዱ?",
+      "tr": "Belediyeler hangi günlük hizmetlerden sorumludur?",
+      "uk": "За які повсякденні послуги відповідають комуни?"
     },
     "opts": [
       {
         "en": "Water and sewage, care services, snow removal, park maintenance, and adult education",
-        "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning"
+        "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning",
+        "zh-Hant": "自來水和排水、照護、除雪、公園維護和成人教育",
+        "zh-Hans": "自来水和排水、照护、除雪、公园维护和成人教育",
+        "ar": "المياه والصرف الصحي والرعاية وإزالة الثلوج وصيانة الحدائق وتعليم البالغين",
+        "ckb": "ئاو و ئاوەڕۆ، چاودێری، لابردنی بەفر، چاودێری پارک و پەروەردەی گەورەسالان",
+        "fa": "آب و فاضلاب، مراقبت، برف‌روبی، نگهداری پارک و آموزش بزرگسالان",
+        "pl": "Woda i kanalizacja, opieka, odśnieżanie, utrzymanie parków i edukacja dorosłych",
+        "so": "Biyo iyo bulaacad, daryeel, ka saarista barafka, dayactirka jardiinooyinka iyo waxbarashada dadka waaweyn",
+        "ti": "ማይን ፈሳሲ ርስሓትን፣ ክንክን፣ በረድ ምእላይ፣ ፓርክ ምክንኻንን ትምህርቲ ዓበይትን",
+        "tr": "Su ve kanalizasyon, bakım hizmetleri, kar temizleme, park bakımı ve yetişkin eğitimi",
+        "uk": "Вода й каналізація, догляд, прибирання снігу, утримання парків і освіта дорослих"
       },
       {
         "en": "Sending ambassadors to other countries",
-        "sv": "Att skicka ambassadörer till andra länder"
+        "sv": "Att skicka ambassadörer till andra länder",
+        "zh-Hant": "派遣大使到其他國家",
+        "zh-Hans": "派遣大使到其他国家",
+        "ar": "إرسال سفراء إلى دول أخرى",
+        "ckb": "ناردنی باڵیۆز بۆ وڵاتانی تر",
+        "fa": "فرستادن سفیر به کشورهای دیگر",
+        "pl": "Wysyłanie ambasadorów do innych krajów",
+        "so": "In safiiro loo diro dalal kale",
+        "ti": "ኣምባሳደራት ናብ ካልኦት ሃገራት ምልኣኽ",
+        "tr": "Başka ülkelere büyükelçi göndermek",
+        "uk": "Надсилати послів до інших країн"
       },
       {
         "en": "Deciding EU laws",
-        "sv": "Att bestämma EU-lagar"
+        "sv": "Att bestämma EU-lagar",
+        "zh-Hant": "決定歐盟法律",
+        "zh-Hans": "决定欧盟法律",
+        "ar": "إقرار قوانين الاتحاد الأوروبي",
+        "ckb": "بڕیاردان لەسەر یاساکانی یەکێتیی ئەوروپا",
+        "fa": "تصمیم‌گیری درباره قوانین اتحادیه اروپا",
+        "pl": "Decydowanie o prawie UE",
+        "so": "Go’aaminta sharciyada Midowga Yurub",
+        "ti": "ሕግታት ሕብረት ኤውሮጳ ምውሳን",
+        "tr": "AB yasalarını belirlemek",
+        "uk": "Ухвалювати закони ЄС"
       },
       {
         "en": "Choosing the crown princess",
-        "sv": "Att välja kronprinsessa"
+        "sv": "Att välja kronprinsessa",
+        "zh-Hant": "選擇王儲公主",
+        "zh-Hans": "选择王储公主",
+        "ar": "اختيار ولية العهد",
+        "ckb": "هەڵبژاردنی شاژنە میراتگر",
+        "fa": "انتخاب ولیعهد شاهدخت",
+        "pl": "Wybieranie następczyni tronu",
+        "so": "Doorashada dhaxal-sugaha boqortooyada",
+        "ti": "ንልዕልቲ ወራሲት ዙፋን ምምራጽ",
+        "tr": "Veliaht prensesi seçmek",
+        "uk": "Обирати кронпринцесу"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden.",
+      "zh-Hant": "市鎮負責居民日常使用的大部分服務，例如自來水和排水、老人和兒童照護、除雪、公園維護和成人教育。因此地方服務的選項是正確的；大使、歐盟法律和王位繼承屬於其他層級或領域。",
+      "zh-Hans": "市镇负责居民日常使用的大部分服务，例如自来水和排水、老人和儿童照护、除雪、公园维护和成人教育。因此地方服务的选项是正确的；大使、欧盟法律和王位继承属于其他层级或领域。",
+      "ar": "تتحمل البلديات مسؤولية جزء كبير من الخدمات التي يستخدمها السكان في الحياة اليومية، مثل المياه والصرف الصحي ورعاية كبار السن والأطفال وإزالة الثلوج وصيانة الحدائق وتعليم البالغين. لذلك فالخيار المتعلق بالخدمات المحلية صحيح؛ أما السفراء وقوانين الاتحاد الأوروبي ووراثة العرش فتتبع مستويات أو مجالات أخرى.",
+      "ckb": "شارەوانییەکان بەرپرسی زۆرێک لەو خزمەتگوزارییانەن کە دانیشتووان لە ژیانی ڕۆژانەدا بەکاریان دەهێنن، وەک ئاو و ئاوەڕۆ، چاودێری بۆ بەساڵاچووان و منداڵان، لابردنی بەفر، چاودێری پارک و پەروەردەی گەورەسالان. بۆیە هەڵبژاردەی خزمەتگوزاریی ناوخۆیی ڕاستە؛ باڵیۆزان، یاساکانی یەکێتیی ئەوروپا و میراتگری تەخت بە ئاست یان بوارەکانی ترەوە پەیوەستن.",
+      "fa": "کمون‌ها مسئول بخش بزرگی از خدماتی هستند که ساکنان در زندگی روزمره استفاده می‌کنند، مانند آب و فاضلاب، مراقبت از سالمندان و کودکان، برف‌روبی، نگهداری پارک و آموزش بزرگسالان. بنابراین گزینه خدمات محلی درست است؛ سفیران، قوانین اتحادیه اروپا و جانشینی تاج‌وتخت به سطح‌ها یا حوزه‌های دیگر مربوط می‌شوند.",
+      "pl": "Gminy odpowiadają za dużą część usług, z których mieszkańcy korzystają na co dzień, na przykład wodę i kanalizację, opiekę nad osobami starszymi i dziećmi, odśnieżanie, utrzymanie parków i edukację dorosłych. Dlatego odpowiedź o usługach lokalnych jest poprawna; ambasadorowie, prawo UE i następstwo tronu należą do innych poziomów lub obszarów.",
+      "so": "Degmooyinku waxay masuul ka yihiin qayb weyn oo ka mid ah adeegyada ay dadka deggani u isticmaalaan nolol maalmeedka, sida biyaha iyo bulaacadda, daryeelka dadka waayeelka ah iyo carruurta, ka saarista barafka, dayactirka jardiinooyinka iyo waxbarashada dadka waaweyn. Sidaas awgeed xulashada adeegyada deegaanka waa sax; safiirrada, sharciyada Midowga Yurub iyo dhaxalka carshigu waxay ka tirsan yihiin heerar ama meelo kale.",
+      "ti": "ምምሕዳራት ከባቢ ንብዙሕ ካብቲ ነበርቲ ኣብ ዕለት ተዕለት ዝጥቀሙሉ ኣገልግሎት ሓላፍነት ይወስዱ፣ ንኣብነት ማይን ፈሳሲ ርስሓትን፣ ክንክን ዓበይትን ቆልዑን፣ በረድ ምእላይ፣ ፓርክ ምክንኻንን ትምህርቲ ዓበይትን። ስለዚ እቲ ናይ ከባቢ ኣገልግሎታት ምርጫ ትኽክል እዩ፤ ኣምባሳደራት፣ ሕግታት ሕብረት ኤውሮጳን ውርሲ ዙፋንን ናብ ካልኦት ደረጃታት ወይ መዳያት ይምልከቱ።",
+      "tr": "Belediyeler, sakinlerin günlük yaşamda kullandığı hizmetlerin büyük bölümünden sorumludur; örneğin su ve kanalizasyon, yaşlılar ve çocuklar için bakım, kar temizleme, park bakımı ve yetişkin eğitimi. Bu yüzden yerel hizmetler seçeneği doğrudur; büyükelçiler, AB yasaları ve taht veraseti başka düzeylere veya alanlara aittir.",
+      "uk": "Комуни відповідають за значну частину послуг, якими жителі користуються в повсякденному житті, наприклад воду й каналізацію, догляд за літніми людьми та дітьми, прибирання снігу, утримання парків і освіту дорослих. Тому варіант про місцеві послуги правильний; посли, закони ЄС і престолонаслідування належать до інших рівнів або сфер."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2351,30 +2691,90 @@
     "type": "single_choice",
     "q": {
       "en": "What does it mean that Sweden is a constitutional monarchy?",
-      "sv": "Vad betyder det att Sverige är en konstitutionell monarki?"
+      "sv": "Vad betyder det att Sverige är en konstitutionell monarki?",
+      "zh-Hant": "瑞典是君主立憲制，這是什麼意思？",
+      "zh-Hans": "瑞典是君主立宪制，这是什么意思？",
+      "ar": "ماذا يعني أن السويد ملكية دستورية؟",
+      "ckb": "ئەوە چی دەگەیەنێت کە سوید پاشایەتییەکی دەستوورییە؟",
+      "fa": "اینکه سوئد پادشاهی مشروطه است یعنی چه؟",
+      "pl": "Co oznacza, że Szwecja jest monarchią konstytucyjną?",
+      "so": "Maxay ka dhigan tahay in Iswiidhan tahay boqortooyo dastuur ah?",
+      "ti": "ሽወደን ሕገመንግስታዊት ንግስነት እያ ማለት እንታይ ማለት እዩ?",
+      "tr": "İsveç’in anayasal monarşi olması ne anlama gelir?",
+      "uk": "Що означає, що Швеція є конституційною монархією?"
     },
     "opts": [
       {
         "en": "That the monarch has all political power",
-        "sv": "Att monarken har all politisk makt"
+        "sv": "Att monarken har all politisk makt",
+        "zh-Hant": "君主擁有所有政治權力",
+        "zh-Hans": "君主拥有所有政治权力",
+        "ar": "أن الملك يملك كل السلطة السياسية",
+        "ckb": "پاشا هەموو دەسەڵاتی سیاسی هەیە",
+        "fa": "پادشاه همه قدرت سیاسی را دارد",
+        "pl": "Monarcha ma całą władzę polityczną",
+        "so": "In boqorku leeyahay dhammaan awoodda siyaasadeed",
+        "ti": "ንጉስ ኩሉ ፖለቲካዊ ስልጣን ኣለዎ",
+        "tr": "Monarkın tüm siyasi güce sahip olması",
+        "uk": "Монарх має всю політичну владу"
       },
       {
         "en": "That the head of state is a king or queen but lacks political power",
-        "sv": "Att statschefen är kung eller drottning men saknar politisk makt"
+        "sv": "Att statschefen är kung eller drottning men saknar politisk makt",
+        "zh-Hant": "國家元首是國王或女王，但沒有政治權力",
+        "zh-Hans": "国家元首是国王或女王，但没有政治权力",
+        "ar": "أن رئيس الدولة ملك أو ملكة لكنه لا يملك سلطة سياسية",
+        "ckb": "سەرۆکی دەوڵەت پاشا یان شاژنە بەڵام دەسەڵاتی سیاسی نییە",
+        "fa": "رئیس کشور پادشاه یا ملکه است اما قدرت سیاسی ندارد",
+        "pl": "Głową państwa jest król lub królowa, ale bez władzy politycznej",
+        "so": "In madaxa qaranku yahay boqor ama boqorad laakiin uusan lahayn awood siyaasadeed",
+        "ti": "ርእሰ ሃገር ንጉስ ወይ ንግስቲ እዩ፣ ግን ፖለቲካዊ ስልጣን የብሉን",
+        "tr": "Devlet başkanının kral veya kraliçe olması ama siyasi gücünün olmaması",
+        "uk": "Глава держави — король або королева, але без політичної влади"
       },
       {
         "en": "That the government is chosen by the king",
-        "sv": "Att regeringen väljs av kungen"
+        "sv": "Att regeringen väljs av kungen",
+        "zh-Hant": "政府由國王選出",
+        "zh-Hans": "政府由国王选出",
+        "ar": "أن الحكومة يختارها الملك",
+        "ckb": "حکومەت لەلایەن پاشاوە هەڵدەبژێردرێت",
+        "fa": "دولت را پادشاه انتخاب می‌کند",
+        "pl": "Rząd wybiera król",
+        "so": "In boqorku doorto dowladda",
+        "ti": "መንግስቲ ብንጉስ ይምረጽ",
+        "tr": "Hükümetin kral tarafından seçilmesi",
+        "uk": "Уряд обирає король"
       },
       {
         "en": "That municipalities are governed by the royal house",
-        "sv": "Att kommunerna styrs av kungahuset"
+        "sv": "Att kommunerna styrs av kungahuset",
+        "zh-Hant": "市鎮由王室治理",
+        "zh-Hans": "市镇由王室治理",
+        "ar": "أن البلديات يحكمها البيت الملكي",
+        "ckb": "شارەوانییەکان لەلایەن بنەماڵەی پاشایەتییەوە بەڕێوە دەبرێن",
+        "fa": "کمون‌ها توسط خاندان سلطنتی اداره می‌شوند",
+        "pl": "Gminami rządzi dom królewski",
+        "so": "In degmooyinka ay maamusho qoyska boqortooyada",
+        "ti": "ምምሕዳራት ከባቢ ብቤተ ንጉስ ይመሓደሩ",
+        "tr": "Belediyelerin kraliyet ailesi tarafından yönetilmesi",
+        "uk": "Комунами керує королівський дім"
       }
     ],
     "answer": 1,
     "why": {
       "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick.",
+      "zh-Hant": "瑞典是君主立憲制：國家元首是沒有政治權力的國王或女王，國王是瑞典的象徵。因此「沒有政治權力的國家元首」這個選項是正確的；其他選項給了君主不屬於瑞典政體的政治權力。",
+      "zh-Hans": "瑞典是君主立宪制：国家元首是没有政治权力的国王或女王，国王是瑞典的象征。因此“没有政治权力的国家元首”这个选项是正确的；其他选项给了君主不属于瑞典政体的政治权力。",
+      "ar": "السويد ملكية دستورية: رئيس الدولة ملك أو ملكة من دون سلطة سياسية، والملك يعمل رمزًا للسويد. لذلك فالخيار عن رئيس دولة بلا سلطة سياسية صحيح؛ أما الخيارات الأخرى فتعطي الملك سلطة سياسية لا تنتمي إلى نظام الحكم السويدي.",
+      "ckb": "سوید پاشایەتییەکی دەستوورییە: سەرۆکی دەوڵەت پاشا یان شاژنێکە بێ دەسەڵاتی سیاسی، و پاشا وەک هێمای سوید کاردەکات. بۆیە هەڵبژاردەی سەرۆکی دەوڵەت بێ دەسەڵاتی سیاسی ڕاستە؛ هەڵبژاردەکانی تر دەسەڵاتی سیاسی بە پاشا دەدەن کە بە شێوازی دەسەڵاتداری سویدەوە پەیوەندیدار نییە.",
+      "fa": "سوئد پادشاهی مشروطه است: رئیس کشور پادشاه یا ملکه‌ای بدون قدرت سیاسی است و پادشاه نقش نماد سوئد را دارد. بنابراین گزینه رئیس کشور بدون قدرت سیاسی درست است؛ گزینه‌های دیگر به پادشاه قدرت سیاسی می‌دهند که بخشی از شیوه حکومت سوئد نیست.",
+      "pl": "Szwecja jest monarchią konstytucyjną: głową państwa jest król lub królowa bez władzy politycznej, a król pełni funkcję symbolu Szwecji. Dlatego odpowiedź o głowie państwa bez władzy politycznej jest poprawna; pozostałe odpowiedzi dają monarsze władzę polityczną, która nie należy do ustroju Szwecji.",
+      "so": "Iswiidhan waa boqortooyo dastuur ah: madaxa qaranku waa boqor ama boqorad aan lahayn awood siyaasadeed, boqorkuna wuxuu yahay astaan u taagan Iswiidhan. Sidaa darteed xulashada madaxa qaranka ee aan lahayn awood siyaasadeed waa sax; xulashooyinka kale waxay monarkha siinayaan awood siyaasadeed oo aan ka tirsanayn nidaamka dowladeed ee Iswiidhan.",
+      "ti": "ሽወደን ሕገመንግስታዊት ንግስነት እያ፤ ርእሰ ሃገር ፖለቲካዊ ስልጣን ዘይብሉ ንጉስ ወይ ንግስቲ እዩ፣ ንጉስ ድማ ከም ምልክት ሽወደን ይሰርሕ። ስለዚ እቲ ብዛዕባ ፖለቲካዊ ስልጣን ዘይብሉ ርእሰ ሃገር ዝብል ምርጫ ትኽክል እዩ፤ ካልኦት ምርጫታት ንንጉስ ኣብ ስርዓት መንግስቲ ሽወደን ዘይጠቕም ፖለቲካዊ ስልጣን ይህባ።",
+      "tr": "İsveç anayasal monarşidir: devlet başkanı siyasi gücü olmayan bir kral veya kraliçedir ve kral İsveç’in sembolü olarak görev yapar. Bu yüzden siyasi gücü olmayan devlet başkanı seçeneği doğrudur; diğer seçenekler monarka İsveç’in yönetim biçimine ait olmayan siyasi güç verir.",
+      "uk": "Швеція є конституційною монархією: глава держави — король або королева без політичної влади, а король є символом Швеції. Тому варіант про главу держави без політичної влади правильний; інші варіанти надають монарху політичну владу, яка не належить до форми правління Швеції."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2397,22 +2797,62 @@
     "type": "true_false",
     "q": {
       "en": "The opposition should scrutinize the government’s work and propose alternative policies.",
-      "sv": "Oppositionen ska granska regeringens arbete och föreslå annan politik."
+      "sv": "Oppositionen ska granska regeringens arbete och föreslå annan politik.",
+      "zh-Hant": "反對派應審查政府工作並提出其他政策。",
+      "zh-Hans": "反对派应审查政府工作并提出其他政策。",
+      "ar": "يجب أن تراجع المعارضة عمل الحكومة وتقترح سياسات بديلة.",
+      "ckb": "ئۆپۆزسیۆن دەبێ کاری حکومەت بپشکنێت و سیاسەتی جێگرەوە پێشنیار بکات.",
+      "fa": "اپوزیسیون باید کار دولت را بررسی کند و سیاست‌های جایگزین پیشنهاد دهد.",
+      "pl": "Opozycja powinna kontrolować pracę rządu i proponować inną politykę.",
+      "so": "Mucaaradku waa inuu kormeeraa shaqada dowladda oo soo jeediyaa siyaasado kale.",
+      "ti": "ተቓውሞ ንስራሕ መንግስቲ ክምርምርን ካልእ ፖሊሲ ከቕርብን ኣለዎ።",
+      "tr": "Muhalefet hükümetin çalışmalarını denetlemeli ve alternatif politikalar önermelidir.",
+      "uk": "Опозиція має перевіряти роботу уряду й пропонувати іншу політику."
     },
     "opts": [
       {
         "en": "True",
-        "sv": "Sant"
+        "sv": "Sant",
+        "zh-Hant": "正確",
+        "zh-Hans": "正确",
+        "ar": "صحيح",
+        "ckb": "ڕاستە",
+        "fa": "درست",
+        "pl": "Prawda",
+        "so": "Sax",
+        "ti": "ትኽክል",
+        "tr": "Doğru",
+        "uk": "Правда"
       },
       {
         "en": "False",
-        "sv": "Falskt"
+        "sv": "Falskt",
+        "zh-Hant": "錯誤",
+        "zh-Hans": "错误",
+        "ar": "خطأ",
+        "ckb": "هەڵەیە",
+        "fa": "نادرست",
+        "pl": "Fałsz",
+        "so": "Khalad",
+        "ti": "ጌጋ",
+        "tr": "Yanlış",
+        "uk": "Неправда"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies. In the Riksdag, the governing parties and the opposition debate different proposals before members vote.",
-      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar.",
+      "zh-Hant": "不支持政府的政黨稱為反對派。反對派審查政府工作並提出其他政策。在國會中，執政黨和反對派在議員投票前辯論不同提案。",
+      "zh-Hans": "不支持政府的政党称为反对派。反对派审查政府工作并提出其他政策。在国会中，执政党和反对派在议员投票前辩论不同提案。",
+      "ar": "تسمى الأحزاب التي لا تدعم الحكومة المعارضة. تراجع المعارضة عمل الحكومة وتقترح سياسات بديلة. في البرلمان، تناقش أحزاب الحكومة والمعارضة مقترحات مختلفة قبل أن يصوت الأعضاء.",
+      "ckb": "ئەو پارتانەی پشتگیری حکومەت ناکەن بە ئۆپۆزسیۆن ناودەبرێن. ئۆپۆزسیۆن کاری حکومەت دەپشکنێت و سیاسەتی جێگرەوە پێشنیار دەکات. لە ڕیکسداگدا پارتە حکومییەکان و ئۆپۆزسیۆن پێش دەنگدانی ئەندامان گفتوگۆ لەسەر پێشنیارە جیاوازەکان دەکەن.",
+      "fa": "حزب‌هایی که از دولت حمایت نمی‌کنند اپوزیسیون نامیده می‌شوند. اپوزیسیون کار دولت را بررسی می‌کند و سیاست‌های جایگزین پیشنهاد می‌دهد. در ریکسداگ، حزب‌های دولتی و اپوزیسیون پیش از رأی‌گیری اعضا درباره پیشنهادهای مختلف بحث می‌کنند.",
+      "pl": "Partie, które nie popierają rządu, nazywa się opozycją. Opozycja kontroluje pracę rządu i proponuje inną politykę. W Riksdagu partie rządowe i opozycja debatują nad różnymi propozycjami, zanim członkowie zagłosują.",
+      "so": "Xisbiyada aan taageerin dowladda waxaa lagu magacaabaa mucaarad. Mucaaradku wuxuu kormeeraa shaqada dowladda wuxuuna soo jeediyaa siyaasado kale. Riksdag-ka dhexdiisa xisbiyada dowladda iyo mucaaradku waxay ka doodaan soo-jeedinno kala duwan ka hor inta xubnuhu codeyn.",
+      "ti": "ንመንግስቲ ዘይድግፉ ፓርቲታት ተቓውሞ ይበሃሉ። ተቓውሞ ንስራሕ መንግስቲ ይምርምርን ካልእ ፖሊሲ የቕርብን። ኣብ ሪክስዳግ ፓርቲታት መንግስቲን ተቓውሞን ኣባላት ቅድሚ ምምራጾም ብዛዕባ ተፈላለዩ ሓሳባት ይከራኸሩ።",
+      "tr": "Hükümeti desteklemeyen partilere muhalefet denir. Muhalefet hükümetin çalışmalarını denetler ve alternatif politikalar önerir. Riksdag’da hükümet partileri ve muhalefet, üyeler oy vermeden önce farklı önerileri tartışır.",
+      "uk": "Партії, які не підтримують уряд, називаються опозицією. Опозиція перевіряє роботу уряду й пропонує іншу політику. У Риксдагу урядові партії та опозиція обговорюють різні пропозиції перед голосуванням депутатів."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2435,30 +2875,90 @@
     "type": "single_choice",
     "q": {
       "en": "How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?",
-      "sv": "Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
+      "sv": "Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?",
+      "zh-Hant": "在瑞典，國會、區域議會和市鎮議會選舉多久舉行一次？",
+      "zh-Hans": "在瑞典，国会、区域议会和市镇议会选举多久举行一次？",
+      "ar": "كم مرة تجرى انتخابات البرلمان والمجالس الإقليمية والمجالس البلدية في السويد؟",
+      "ckb": "لە سویددا هەڵبژاردنی ڕیکسداگ، ئەنجومەنی هەرێم و ئەنجومەنی شارەوانی چەند جارێک بەڕێوە دەچێت؟",
+      "fa": "در سوئد انتخابات ریکسداگ، شوراهای منطقه‌ای و شوراهای کمونی هر چند وقت یک بار برگزار می‌شود؟",
+      "pl": "Jak często odbywają się wybory do Riksdagu, rad regionów i rad gmin w Szwecji?",
+      "so": "Imisa jeer ayaa doorashooyinka Riksdag-ka, golayaasha gobollada iyo golayaasha degmooyinka ka dhaca Iswiidhan?",
+      "ti": "ኣብ ሽወደን ምርጫታት ሪክስዳግ፣ ቤት ምኽሪ ክልልን ቤት ምኽሪ ምምሕዳር ከባቢን ክንደይ ግዜ ይካየዱ?",
+      "tr": "İsveç’te Riksdag, bölge meclisleri ve belediye meclisleri seçimleri ne sıklıkla yapılır?",
+      "uk": "Як часто у Швеції проводяться вибори до Риксдагу, регіональних рад і комунальних рад?"
     },
     "opts": [
       {
         "en": "Every year",
-        "sv": "Varje år"
+        "sv": "Varje år",
+        "zh-Hant": "每年",
+        "zh-Hans": "每年",
+        "ar": "كل سنة",
+        "ckb": "هەموو ساڵێک",
+        "fa": "هر سال",
+        "pl": "Co roku",
+        "so": "Sannad kasta",
+        "ti": "ኩሉ ዓመት",
+        "tr": "Her yıl",
+        "uk": "Щороку"
       },
       {
         "en": "Every four years",
-        "sv": "Vart fjärde år"
+        "sv": "Vart fjärde år",
+        "zh-Hant": "每四年",
+        "zh-Hans": "每四年",
+        "ar": "كل أربع سنوات",
+        "ckb": "هەر چوار ساڵ جارێک",
+        "fa": "هر چهار سال",
+        "pl": "Co cztery lata",
+        "so": "Afartii sano mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት",
+        "tr": "Dört yılda bir",
+        "uk": "Кожні чотири роки"
       },
       {
         "en": "Every five years",
-        "sv": "Vart femte år"
+        "sv": "Vart femte år",
+        "zh-Hant": "每五年",
+        "zh-Hans": "每五年",
+        "ar": "كل خمس سنوات",
+        "ckb": "هەر پێنج ساڵ جارێک",
+        "fa": "هر پنج سال",
+        "pl": "Co pięć lat",
+        "so": "Shantii sano mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት",
+        "tr": "Beş yılda bir",
+        "uk": "Кожні п’ять років"
       },
       {
         "en": "Only when the government asks for it",
-        "sv": "Endast när regeringen ber om det"
+        "sv": "Endast när regeringen ber om det",
+        "zh-Hant": "只有在政府要求時",
+        "zh-Hans": "只有在政府要求时",
+        "ar": "فقط عندما تطلب الحكومة ذلك",
+        "ckb": "تەنها کاتێک حکومەت داوای دەکات",
+        "fa": "فقط وقتی دولت درخواست کند",
+        "pl": "Tylko wtedy, gdy rząd o to poprosi",
+        "so": "Kaliya marka dowladda ay codsato",
+        "ti": "መንግስቲ ምስ ዝሓትት ጥራይ",
+        "tr": "Yalnızca hükümet istediğinde",
+        "uk": "Лише коли уряд про це просить"
       }
     ],
     "answer": 1,
     "why": {
       "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt.",
+      "zh-Hant": "國會、區域議會和市鎮議會選舉每四年舉行一次。這不同於歐洲議會選舉，後者每五年舉行一次，所以「每四年」是正確的。",
+      "zh-Hans": "国会、区域议会和市镇议会选举每四年举行一次。这不同于欧洲议会选举，后者每五年举行一次，所以“每四年”是正确的。",
+      "ar": "تجرى انتخابات البرلمان والمجالس الإقليمية والمجالس البلدية كل أربع سنوات. وهذا يختلف عن انتخابات البرلمان الأوروبي التي تجرى كل خمس سنوات، لذلك فكل أربع سنوات هي الإجابة الصحيحة.",
+      "ckb": "هەڵبژاردنی ڕیکسداگ، ئەنجومەنی هەرێم و ئەنجومەنی شارەوانی هەر چوار ساڵ جارێک بەڕێوە دەچێت. ئەمە جیاوازە لە هەڵبژاردنی پەرلەمانی ئەوروپا کە هەر پێنج ساڵ جارێکە، بۆیە هەر چوار ساڵ جارێک ڕاستە.",
+      "fa": "انتخابات ریکسداگ، شوراهای منطقه‌ای و شوراهای کمونی هر چهار سال برگزار می‌شود. این با انتخابات پارلمان اروپا که هر پنج سال برگزار می‌شود تفاوت دارد، بنابراین هر چهار سال درست است.",
+      "pl": "Wybory do Riksdagu, rad regionów i rad gmin odbywają się co cztery lata. Różni się to od wyborów do Parlamentu Europejskiego, które odbywają się co pięć lat, więc co cztery lata jest poprawne.",
+      "so": "Doorashooyinka Riksdag-ka, golayaasha gobollada iyo golayaasha degmooyinka waxaa la qabtaa afartii sano mar. Tani way ka duwan tahay doorashada Baarlamaanka Yurub oo la qabto shantii sano mar, sidaas awgeed afartii sano mar waa sax.",
+      "ti": "ምርጫታት ሪክስዳግ፣ ቤት ምኽሪ ክልልን ቤት ምኽሪ ምምሕዳር ከባቢን ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት ይካየዱ። እዚ ካብ ምርጫ ፓርላማ ኤውሮጳ ይፈላለይ፣ እቲ ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት ይካየድ፣ ስለዚ ኣርባዕተ ዓመት ትኽክል እዩ።",
+      "tr": "Riksdag, bölge meclisleri ve belediye meclisleri seçimleri dört yılda bir yapılır. Bu, beş yılda bir yapılan Avrupa Parlamentosu seçimlerinden farklıdır; bu yüzden dört yılda bir doğru cevaptır.",
+      "uk": "Вибори до Риксдагу, регіональних рад і комунальних рад проводяться кожні чотири роки. Це відрізняється від виборів до Європейського парламенту, які проводяться кожні п’ять років, тому кожні чотири роки — правильно."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2481,30 +2981,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which requirements apply to voting in Sweden’s Riksdag election?",
-      "sv": "Vilka krav gäller för att rösta i Sveriges riksdagsval?"
+      "sv": "Vilka krav gäller för att rösta i Sveriges riksdagsval?",
+      "zh-Hant": "在瑞典國會選舉中投票需要符合哪些條件？",
+      "zh-Hans": "在瑞典国会选举中投票需要符合哪些条件？",
+      "ar": "ما الشروط المطلوبة للتصويت في انتخابات البرلمان السويدي؟",
+      "ckb": "بۆ دەنگدان لە هەڵبژاردنی ڕیکسداگی سویددا کام مەرجان پێویستن؟",
+      "fa": "برای رأی دادن در انتخابات ریکسداگ سوئد چه شرایطی لازم است؟",
+      "pl": "Jakie warunki trzeba spełnić, aby głosować w wyborach do Riksdagu w Szwecji?",
+      "so": "Shuruudaha lagu codeynayo doorashada Riksdag-ka ee Iswiidhan waa maxay?",
+      "ti": "ኣብ ምርጫ ሪክስዳግ ሽወደን ንምምራጽ ኣየኖት ቅድመ ኩነታት የድልዩ?",
+      "tr": "İsveç Riksdag seçiminde oy kullanmak için hangi şartlar geçerlidir?",
+      "uk": "Які вимоги діють для голосування на виборах до Риксдагу Швеції?"
     },
     "opts": [
       {
         "en": "You must be a Swedish citizen and at least 18 years old",
-        "sv": "Man måste vara svensk medborgare och ha fyllt 18 år"
+        "sv": "Man måste vara svensk medborgare och ha fyllt 18 år",
+        "zh-Hant": "必須是瑞典公民，並且已年滿 18 歲",
+        "zh-Hans": "必须是瑞典公民，并且已年满 18 岁",
+        "ar": "يجب أن يكون الشخص مواطنًا سويديًا وأن يكون قد بلغ 18 عامًا",
+        "ckb": "دەبێ هاووڵاتی سویدی بێت و ١٨ ساڵی تەواو کردبێت",
+        "fa": "باید شهروند سوئد باشد و ۱۸ ساله شده باشد",
+        "pl": "Trzeba być obywatelem Szwecji i mieć ukończone 18 lat",
+        "so": "Waa in qofku yahay muwaadin Iswiidhan ah oo gaaray 18 sano",
+        "ti": "ሰብ ዜጋ ሽወደን ክኸውንን 18 ዓመት ክመልእን ኣለዎ",
+        "tr": "İsveç vatandaşı olmak ve 18 yaşını doldurmuş olmak gerekir",
+        "uk": "Потрібно бути громадянином Швеції та мати 18 років"
       },
       {
         "en": "You must own a home in Sweden",
-        "sv": "Man måste äga en bostad i Sverige"
+        "sv": "Man måste äga en bostad i Sverige",
+        "zh-Hant": "必須在瑞典擁有住宅",
+        "zh-Hans": "必须在瑞典拥有住宅",
+        "ar": "يجب أن يملك الشخص مسكنًا في السويد",
+        "ckb": "دەبێ خانوویەک لە سوید هەبێت",
+        "fa": "باید در سوئد خانه‌ای مالک باشد",
+        "pl": "Trzeba posiadać mieszkanie lub dom w Szwecji",
+        "so": "Waa inuu qofku guri ku leeyahay Iswiidhan",
+        "ti": "ሰብ ኣብ ሽወደን ገዛ ክውንን ኣለዎ",
+        "tr": "İsveç’te bir eve sahip olmak gerekir",
+        "uk": "Потрібно володіти житлом у Швеції"
       },
       {
         "en": "You must be a member of a party",
-        "sv": "Man måste vara medlem i ett parti"
+        "sv": "Man måste vara medlem i ett parti",
+        "zh-Hant": "必須是政黨成員",
+        "zh-Hans": "必须是政党成员",
+        "ar": "يجب أن يكون الشخص عضوًا في حزب",
+        "ckb": "دەبێ ئەندامی پارتێک بێت",
+        "fa": "باید عضو یک حزب باشد",
+        "pl": "Trzeba być członkiem partii",
+        "so": "Waa inuu qofku xubin ka yahay xisbi",
+        "ti": "ሰብ ኣባል ፓርቲ ክኸውን ኣለዎ",
+        "tr": "Bir partiye üye olmak gerekir",
+        "uk": "Потрібно бути членом партії"
       },
       {
         "en": "You must be at least 16 years old",
-        "sv": "Man måste ha fyllt 16 år"
+        "sv": "Man måste ha fyllt 16 år",
+        "zh-Hant": "必須已年滿 16 歲",
+        "zh-Hans": "必须已年满 16 岁",
+        "ar": "يجب أن يكون الشخص قد بلغ 16 عامًا",
+        "ckb": "دەبێ ١٦ ساڵی تەواو کردبێت",
+        "fa": "باید ۱۶ ساله شده باشد",
+        "pl": "Trzeba mieć ukończone 16 lat",
+        "so": "Waa inuu qofku gaaray 16 sano",
+        "ti": "ሰብ 16 ዓመት ክመልእ ኣለዎ",
+        "tr": "16 yaşını doldurmuş olmak gerekir",
+        "uk": "Потрібно мати 16 років"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Voting in a Riksdag election requires both having turned 18 and being a Swedish citizen. Owning a home, being a party member, or being 16 does not give someone the right to vote in a Riksdag election.",
-      "sv": "För att rösta i riksdagsvalet krävs både att väljaren har fyllt 18 år och att väljaren är svensk medborgare. Krav som bostadsägande, partimedlemskap eller 16 års ålder ger inte rösträtt i riksdagsval."
+      "sv": "För att rösta i riksdagsvalet krävs både att väljaren har fyllt 18 år och att väljaren är svensk medborgare. Krav som bostadsägande, partimedlemskap eller 16 års ålder ger inte rösträtt i riksdagsval.",
+      "zh-Hant": "在國會選舉中投票需要選民已年滿 18 歲，並且是瑞典公民。擁有住宅、政黨成員身分或 16 歲都不會給人在國會選舉中的投票權。",
+      "zh-Hans": "在国会选举中投票需要选民已年满 18 岁，并且是瑞典公民。拥有住宅、政党成员身份或 16 岁都不会给人在国会选举中的投票权。",
+      "ar": "يتطلب التصويت في انتخابات البرلمان أن يكون الناخب قد بلغ 18 عامًا وأن يكون مواطنًا سويديًا. امتلاك مسكن أو عضوية حزب أو بلوغ 16 عامًا لا يمنح حق التصويت في انتخابات البرلمان.",
+      "ckb": "دەنگدان لە هەڵبژاردنی ڕیکسداگدا پێویستی بەوەیە دەنگدەر ١٨ ساڵی تەواو کردبێت و هاووڵاتی سویدی بێت. خاوەندارێتی خانوو، ئەندامبوونی پارت یان ١٦ ساڵی مافی دەنگدان لە هەڵبژاردنی ڕیکسداگ نادات.",
+      "fa": "رأی دادن در انتخابات ریکسداگ نیازمند این است که رأی‌دهنده ۱۸ ساله شده باشد و شهروند سوئد باشد. داشتن خانه، عضویت در حزب یا ۱۶ ساله بودن حق رأی در انتخابات ریکسداگ نمی‌دهد.",
+      "pl": "Głosowanie w wyborach do Riksdagu wymaga, aby wyborca miał ukończone 18 lat i był obywatelem Szwecji. Posiadanie mieszkania lub domu, członkostwo w partii albo wiek 16 lat nie daje prawa głosu w wyborach do Riksdagu.",
+      "so": "Codeynta doorashada Riksdag-ka waxay u baahan tahay in codbixiyuhu gaaray 18 sano oo uu yahay muwaadin Iswiidhan ah. Guri lahaansho, xubin xisbi ahaansho ama 16 jir ahaansho qofka ma siiso xaqa inuu ka codeeyo doorashada Riksdag-ka.",
+      "ti": "ኣብ ምርጫ ሪክስዳግ ምምራጽ ድማ መራጺ 18 ዓመት ክመልእን ዜጋ ሽወደን ክኸውንን የድሊ። ገዛ ምውናን፣ ኣባል ፓርቲ ምዃን ወይ 16 ዓመት ምዃን ኣብ ምርጫ ሪክስዳግ ናይ ምምራጽ መሰል ኣይህብን።",
+      "tr": "Riksdag seçiminde oy kullanmak için seçmenin 18 yaşını doldurmuş olması ve İsveç vatandaşı olması gerekir. Ev sahibi olmak, parti üyesi olmak veya 16 yaşında olmak Riksdag seçiminde oy hakkı vermez.",
+      "uk": "Голосування на виборах до Риксдагу вимагає, щоб виборцю виповнилося 18 років і щоб він був громадянином Швеції. Володіння житлом, членство в партії або вік 16 років не дають права голосу на виборах до Риксдагу."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13924,19 +14484,59 @@
     "opts": [
       {
         "en": "The state, regions, and municipalities",
-        "sv": "Stat, regioner och kommuner"
+        "sv": "Stat, regioner och kommuner",
+        "zh-Hant": "國家、區域和市鎮",
+        "zh-Hans": "国家、区域和市镇",
+        "ar": "الدولة والأقاليم والبلديات",
+        "ckb": "دەوڵەت، هەرێمەکان و شارەوانییەکان",
+        "fa": "دولت، منطقه‌ها و کمون‌ها",
+        "pl": "Państwo, regiony i gminy",
+        "so": "Dowladda, gobollada iyo degmooyinka",
+        "ti": "መንግስቲ፣ ክልላትን ምምሕዳራት ከባቢን",
+        "tr": "Devlet, bölgeler ve belediyeler",
+        "uk": "Держава, регіони та комуни"
       },
       {
         "en": "The king, church, and nobility",
-        "sv": "Kung, kyrka och adel"
+        "sv": "Kung, kyrka och adel",
+        "zh-Hant": "國王、教會和貴族",
+        "zh-Hans": "国王、教会和贵族",
+        "ar": "الملك والكنيسة والنبلاء",
+        "ckb": "پاشا، کڵێسا و ئەشراف",
+        "fa": "پادشاه، کلیسا و اشراف",
+        "pl": "Król, kościół i szlachta",
+        "so": "Boqorka, kaniisadda iyo dadka sharafka leh",
+        "ti": "ንጉስ፣ ቤተክርስቲያንን ልዑላንን",
+        "tr": "Kral, kilise ve soylular",
+        "uk": "Король, церква і шляхта"
       },
       {
         "en": "Police, court, and prison",
-        "sv": "Polis, domstol och fängelse"
+        "sv": "Polis, domstol och fängelse",
+        "zh-Hant": "警察、法院和監獄",
+        "zh-Hans": "警察、法院和监狱",
+        "ar": "الشرطة والمحكمة والسجن",
+        "ckb": "پۆلیس، دادگا و زیندان",
+        "fa": "پلیس، دادگاه و زندان",
+        "pl": "Policja, sąd i więzienie",
+        "so": "Booliska, maxkamadda iyo xabsiga",
+        "ti": "ፖሊስ፣ ቤት ፍርድን ቤት ማእሰርትን",
+        "tr": "Polis, mahkeme ve cezaevi",
+        "uk": "Поліція, суд і в’язниця"
       },
       {
         "en": "Banks, companies, and households",
-        "sv": "Banker, företag och hushåll"
+        "sv": "Banker, företag och hushåll",
+        "zh-Hant": "銀行、公司和家庭",
+        "zh-Hans": "银行、公司和家庭",
+        "ar": "البنوك والشركات والأسر",
+        "ckb": "بانک، کۆمپانیا و خێزانەکان",
+        "fa": "بانک‌ها، شرکت‌ها و خانوارها",
+        "pl": "Banki, firmy i gospodarstwa domowe",
+        "so": "Bangiyada, shirkadaha iyo qoysaska",
+        "ti": "ባንክታት፣ ኩባንያታትን ስድራቤታትን",
+        "tr": "Bankalar, şirketler ve haneler",
+        "uk": "Банки, компанії та домогосподарства"
       }
     ],
     "answer": 0,
@@ -14052,19 +14652,59 @@
     "opts": [
       {
         "en": "The state, regions, and municipalities",
-        "sv": "Stat, regioner och kommuner"
+        "sv": "Stat, regioner och kommuner",
+        "zh-Hant": "國家、區域和市鎮",
+        "zh-Hans": "国家、区域和市镇",
+        "ar": "الدولة والأقاليم والبلديات",
+        "ckb": "دەوڵەت، هەرێمەکان و شارەوانییەکان",
+        "fa": "دولت، منطقه‌ها و کمون‌ها",
+        "pl": "Państwo, regiony i gminy",
+        "so": "Dowladda, gobollada iyo degmooyinka",
+        "ti": "መንግስቲ፣ ክልላትን ምምሕዳራት ከባቢን",
+        "tr": "Devlet, bölgeler ve belediyeler",
+        "uk": "Держава, регіони та комуни"
       },
       {
         "en": "The king, church, and nobility",
-        "sv": "Kung, kyrka och adel"
+        "sv": "Kung, kyrka och adel",
+        "zh-Hant": "國王、教會和貴族",
+        "zh-Hans": "国王、教会和贵族",
+        "ar": "الملك والكنيسة والنبلاء",
+        "ckb": "پاشا، کڵێسا و ئەشراف",
+        "fa": "پادشاه، کلیسا و اشراف",
+        "pl": "Król, kościół i szlachta",
+        "so": "Boqorka, kaniisadda iyo dadka sharafka leh",
+        "ti": "ንጉስ፣ ቤተክርስቲያንን ልዑላንን",
+        "tr": "Kral, kilise ve soylular",
+        "uk": "Король, церква і шляхта"
       },
       {
         "en": "Police, court, and prison",
-        "sv": "Polis, domstol och fängelse"
+        "sv": "Polis, domstol och fängelse",
+        "zh-Hant": "警察、法院和監獄",
+        "zh-Hans": "警察、法院和监狱",
+        "ar": "الشرطة والمحكمة والسجن",
+        "ckb": "پۆلیس، دادگا و زیندان",
+        "fa": "پلیس، دادگاه و زندان",
+        "pl": "Policja, sąd i więzienie",
+        "so": "Booliska, maxkamadda iyo xabsiga",
+        "ti": "ፖሊስ፣ ቤት ፍርድን ቤት ማእሰርትን",
+        "tr": "Polis, mahkeme ve cezaevi",
+        "uk": "Поліція, суд і в’язниця"
       },
       {
         "en": "Banks, companies, and households",
-        "sv": "Banker, företag och hushåll"
+        "sv": "Banker, företag och hushåll",
+        "zh-Hant": "銀行、公司和家庭",
+        "zh-Hans": "银行、公司和家庭",
+        "ar": "البنوك والشركات والأسر",
+        "ckb": "بانک، کۆمپانیا و خێزانەکان",
+        "fa": "بانک‌ها، شرکت‌ها و خانوارها",
+        "pl": "Banki, firmy i gospodarstwa domowe",
+        "so": "Bangiyada, shirkadaha iyo qoysaska",
+        "ti": "ባንክታት፣ ኩባንያታትን ስድራቤታትን",
+        "tr": "Bankalar, şirketler ve haneler",
+        "uk": "Банки, компанії та домогосподарства"
       }
     ],
     "answer": 0,
@@ -14100,19 +14740,59 @@
     "opts": [
       {
         "en": "To manage regional public transport",
-        "sv": "Att sköta regionernas kollektivtrafik"
+        "sv": "Att sköta regionernas kollektivtrafik",
+        "zh-Hant": "管理區域公共交通",
+        "zh-Hans": "管理区域公共交通",
+        "ar": "إدارة النقل العام الإقليمي",
+        "ckb": "بەڕێوەبردنی گواستنەوەی گشتی هەرێمی",
+        "fa": "اداره حمل‌ونقل عمومی منطقه‌ای",
+        "pl": "Zarządzanie regionalnym transportem publicznym",
+        "so": "Maamulka gaadiidka dadweynaha ee gobollada",
+        "ti": "ክልላዊ መጓዓዝያ ህዝቢ ምምሕዳር",
+        "tr": "Bölgesel toplu taşımayı yönetmek",
+        "uk": "Керувати регіональним громадським транспортом"
       },
       {
         "en": "To be Sweden's head of state",
-        "sv": "Att vara Sveriges statschef"
+        "sv": "Att vara Sveriges statschef",
+        "zh-Hant": "擔任瑞典國家元首",
+        "zh-Hans": "担任瑞典国家元首",
+        "ar": "أن يكون رئيس دولة السويد",
+        "ckb": "بوون بە سەرۆکی دەوڵەتی سوید",
+        "fa": "رئیس کشور سوئد بودن",
+        "pl": "Pełnienie funkcji głowy państwa Szwecji",
+        "so": "Inuu noqdo madaxa qaranka Iswiidhan",
+        "ti": "ርእሰ ሃገር ሽወደን ምዃን",
+        "tr": "İsveç’in devlet başkanı olmak",
+        "uk": "Бути главою держави Швеції"
       },
       {
         "en": "To decide laws and how the state's money should be used",
-        "sv": "Att besluta om lagar och hur statens pengar ska användas"
+        "sv": "Att besluta om lagar och hur statens pengar ska användas",
+        "zh-Hant": "決定法律以及國家資金如何使用",
+        "zh-Hans": "决定法律以及国家资金如何使用",
+        "ar": "إقرار القوانين وكيفية استخدام أموال الدولة",
+        "ckb": "بڕیاردان لەسەر یاساکان و چۆن پارەی دەوڵەت بەکاربهێنرێت",
+        "fa": "تصمیم‌گیری درباره قانون‌ها و نحوه استفاده از پول دولت",
+        "pl": "Decydowanie o ustawach i o tym, jak używa się pieniędzy państwa",
+        "so": "Go’aaminta sharciyada iyo sida lacagta dowladda loo isticmaalo",
+        "ti": "ብዛዕባ ሕግታትን ገንዘብ መንግስቲ ከመይ ከምዝጥቀመሉን ምውሳን",
+        "tr": "Yasalar ve devlet parasının nasıl kullanılacağı hakkında karar vermek",
+        "uk": "Ухвалювати закони й вирішувати, як використовуються державні кошти"
       },
       {
         "en": "To investigate crimes alone",
-        "sv": "Att ensam utreda brott"
+        "sv": "Att ensam utreda brott",
+        "zh-Hant": "單獨調查犯罪",
+        "zh-Hans": "单独调查犯罪",
+        "ar": "التحقيق في الجرائم وحده",
+        "ckb": "بە تەنها تاوانەکان لێکۆڵینەوە بکات",
+        "fa": "به‌تنهایی درباره جرم‌ها تحقیق کردن",
+        "pl": "Samodzielne prowadzenie dochodzeń w sprawach przestępstw",
+        "so": "Inuu kaligiis baaro dembiyada",
+        "ti": "በይኑ ገበናት ምምርማር",
+        "tr": "Suçları tek başına soruşturmak",
+        "uk": "Самостійно розслідувати злочини"
       }
     ],
     "answer": 2,
@@ -14228,19 +14908,59 @@
     "opts": [
       {
         "en": "To manage regional public transport",
-        "sv": "Att sköta regionernas kollektivtrafik"
+        "sv": "Att sköta regionernas kollektivtrafik",
+        "zh-Hant": "管理區域公共交通",
+        "zh-Hans": "管理区域公共交通",
+        "ar": "إدارة النقل العام الإقليمي",
+        "ckb": "بەڕێوەبردنی گواستنەوەی گشتی هەرێمی",
+        "fa": "اداره حمل‌ونقل عمومی منطقه‌ای",
+        "pl": "Zarządzanie regionalnym transportem publicznym",
+        "so": "Maamulka gaadiidka dadweynaha ee gobollada",
+        "ti": "ክልላዊ መጓዓዝያ ህዝቢ ምምሕዳር",
+        "tr": "Bölgesel toplu taşımayı yönetmek",
+        "uk": "Керувати регіональним громадським транспортом"
       },
       {
         "en": "To be Sweden's head of state",
-        "sv": "Att vara Sveriges statschef"
+        "sv": "Att vara Sveriges statschef",
+        "zh-Hant": "擔任瑞典國家元首",
+        "zh-Hans": "担任瑞典国家元首",
+        "ar": "أن يكون رئيس دولة السويد",
+        "ckb": "بوون بە سەرۆکی دەوڵەتی سوید",
+        "fa": "رئیس کشور سوئد بودن",
+        "pl": "Pełnienie funkcji głowy państwa Szwecji",
+        "so": "Inuu noqdo madaxa qaranka Iswiidhan",
+        "ti": "ርእሰ ሃገር ሽወደን ምዃን",
+        "tr": "İsveç’in devlet başkanı olmak",
+        "uk": "Бути главою держави Швеції"
       },
       {
         "en": "To decide laws and how the state's money should be used",
-        "sv": "Att besluta om lagar och hur statens pengar ska användas"
+        "sv": "Att besluta om lagar och hur statens pengar ska användas",
+        "zh-Hant": "決定法律以及國家資金如何使用",
+        "zh-Hans": "决定法律以及国家资金如何使用",
+        "ar": "إقرار القوانين وكيفية استخدام أموال الدولة",
+        "ckb": "بڕیاردان لەسەر یاساکان و چۆن پارەی دەوڵەت بەکاربهێنرێت",
+        "fa": "تصمیم‌گیری درباره قانون‌ها و نحوه استفاده از پول دولت",
+        "pl": "Decydowanie o ustawach i o tym, jak używa się pieniędzy państwa",
+        "so": "Go’aaminta sharciyada iyo sida lacagta dowladda loo isticmaalo",
+        "ti": "ብዛዕባ ሕግታትን ገንዘብ መንግስቲ ከመይ ከምዝጥቀመሉን ምውሳን",
+        "tr": "Yasalar ve devlet parasının nasıl kullanılacağı hakkında karar vermek",
+        "uk": "Ухвалювати закони й вирішувати, як використовуються державні кошти"
       },
       {
         "en": "To investigate crimes alone",
-        "sv": "Att ensam utreda brott"
+        "sv": "Att ensam utreda brott",
+        "zh-Hant": "單獨調查犯罪",
+        "zh-Hans": "单独调查犯罪",
+        "ar": "التحقيق في الجرائم وحده",
+        "ckb": "بە تەنها تاوانەکان لێکۆڵینەوە بکات",
+        "fa": "به‌تنهایی درباره جرم‌ها تحقیق کردن",
+        "pl": "Samodzielne prowadzenie dochodzeń w sprawach przestępstw",
+        "so": "Inuu kaligiis baaro dembiyada",
+        "ti": "በይኑ ገበናት ምምርማር",
+        "tr": "Suçları tek başına soruşturmak",
+        "uk": "Самостійно розслідувати злочини"
       }
     ],
     "answer": 2,
@@ -14452,19 +15172,59 @@
     "opts": [
       {
         "en": "They replace courts in criminal cases",
-        "sv": "De ersätter domstolarna i brottmål"
+        "sv": "De ersätter domstolarna i brottmål",
+        "zh-Hant": "它們在刑事案件中取代法院",
+        "zh-Hans": "它们在刑事案件中取代法院",
+        "ar": "إنها تحل محل المحاكم في القضايا الجنائية",
+        "ckb": "لە دۆسیەی تاواندا جێگای دادگاکان دەگرنەوە",
+        "fa": "آن‌ها در پرونده‌های کیفری جای دادگاه‌ها را می‌گیرند",
+        "pl": "Zastępują sądy w sprawach karnych",
+        "so": "Waxay beddelaan maxkamadaha kiisaska dembiyada",
+        "ti": "ኣብ ጉዳያት ገበን ንቤት ፍርዲ ይትክኡ",
+        "tr": "Ceza davalarında mahkemelerin yerini alırlar",
+        "uk": "Вони замінюють суди у кримінальних справах"
       },
       {
         "en": "They implement decisions and must follow laws and government instructions",
-        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
+        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner",
+        "zh-Hant": "它們執行決定，並且必須遵守法律和政府指示",
+        "zh-Hans": "它们执行决定，并且必须遵守法律和政府指示",
+        "ar": "إنها تنفذ القرارات ويجب أن تتبع القوانين وتعليمات الحكومة",
+        "ckb": "بڕیارەکان جێبەجێ دەکەن و دەبێ یاساکان و ڕێنماییەکانی حکومەت پەیڕەو بکەن",
+        "fa": "آن‌ها تصمیم‌ها را اجرا می‌کنند و باید از قانون‌ها و دستورهای دولت پیروی کنند",
+        "pl": "Wykonują decyzje i muszą przestrzegać prawa oraz instrukcji rządu",
+        "so": "Waxay fuliyaan go’aamada waana inay raacaan sharciyada iyo tilmaamaha dowladda",
+        "ti": "ውሳነታት ይፍጽሙ፣ ሕግታትን መምርሒታት መንግስትን ድማ ክኽተሉ ኣለዎም",
+        "tr": "Kararları uygularlar ve yasalara ve hükümet talimatlarına uymak zorundadırlar",
+        "uk": "Вони виконують рішення та мають дотримуватися законів і вказівок уряду"
       },
       {
         "en": "They decide who becomes king or queen",
-        "sv": "De beslutar vem som blir kung eller drottning"
+        "sv": "De beslutar vem som blir kung eller drottning",
+        "zh-Hant": "它們決定誰成為國王或女王",
+        "zh-Hans": "它们决定谁成为国王或女王",
+        "ar": "إنها تقرر من يصبح ملكًا أو ملكة",
+        "ckb": "بڕیار دەدەن کێ دەبێتە پاشا یان شاژن",
+        "fa": "آن‌ها تصمیم می‌گیرند چه کسی پادشاه یا ملکه شود",
+        "pl": "Decydują, kto zostaje królem lub królową",
+        "so": "Waxay go’aamiyaan cidda noqonaysa boqor ama boqorad",
+        "ti": "መን ንጉስ ወይ ንግስቲ ከምዝኸውን ይውስኑ",
+        "tr": "Kimin kral veya kraliçe olacağına karar verirler",
+        "uk": "Вони вирішують, хто стане королем або королевою"
       },
       {
         "en": "They write parties’ election platforms",
-        "sv": "De skriver partiernas valprogram"
+        "sv": "De skriver partiernas valprogram",
+        "zh-Hant": "它們撰寫各政黨的選舉綱領",
+        "zh-Hans": "它们撰写各政党的选举纲领",
+        "ar": "إنها تكتب البرامج الانتخابية للأحزاب",
+        "ckb": "بەرنامەی هەڵبژاردنی پارتەکان دەنووسن",
+        "fa": "آن‌ها برنامه‌های انتخاباتی حزب‌ها را می‌نویسند",
+        "pl": "Piszą programy wyborcze partii",
+        "so": "Waxay qoraan barnaamijyada doorashada ee xisbiyada",
+        "ti": "መደባት ምርጫ ፓርቲታት ይጽሕፉ",
+        "tr": "Partilerin seçim programlarını yazarlar",
+        "uk": "Вони пишуть виборчі програми партій"
       }
     ],
     "answer": 1,
@@ -14580,19 +15340,59 @@
     "opts": [
       {
         "en": "They replace courts in criminal cases",
-        "sv": "De ersätter domstolarna i brottmål"
+        "sv": "De ersätter domstolarna i brottmål",
+        "zh-Hant": "它們在刑事案件中取代法院",
+        "zh-Hans": "它们在刑事案件中取代法院",
+        "ar": "إنها تحل محل المحاكم في القضايا الجنائية",
+        "ckb": "لە دۆسیەی تاواندا جێگای دادگاکان دەگرنەوە",
+        "fa": "آن‌ها در پرونده‌های کیفری جای دادگاه‌ها را می‌گیرند",
+        "pl": "Zastępują sądy w sprawach karnych",
+        "so": "Waxay beddelaan maxkamadaha kiisaska dembiyada",
+        "ti": "ኣብ ጉዳያት ገበን ንቤት ፍርዲ ይትክኡ",
+        "tr": "Ceza davalarında mahkemelerin yerini alırlar",
+        "uk": "Вони замінюють суди у кримінальних справах"
       },
       {
         "en": "They implement decisions and must follow laws and government instructions",
-        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner"
+        "sv": "De genomför beslut och måste följa lagar och regeringens instruktioner",
+        "zh-Hant": "它們執行決定，並且必須遵守法律和政府指示",
+        "zh-Hans": "它们执行决定，并且必须遵守法律和政府指示",
+        "ar": "إنها تنفذ القرارات ويجب أن تتبع القوانين وتعليمات الحكومة",
+        "ckb": "بڕیارەکان جێبەجێ دەکەن و دەبێ یاساکان و ڕێنماییەکانی حکومەت پەیڕەو بکەن",
+        "fa": "آن‌ها تصمیم‌ها را اجرا می‌کنند و باید از قانون‌ها و دستورهای دولت پیروی کنند",
+        "pl": "Wykonują decyzje i muszą przestrzegać prawa oraz instrukcji rządu",
+        "so": "Waxay fuliyaan go’aamada waana inay raacaan sharciyada iyo tilmaamaha dowladda",
+        "ti": "ውሳነታት ይፍጽሙ፣ ሕግታትን መምርሒታት መንግስትን ድማ ክኽተሉ ኣለዎም",
+        "tr": "Kararları uygularlar ve yasalara ve hükümet talimatlarına uymak zorundadırlar",
+        "uk": "Вони виконують рішення та мають дотримуватися законів і вказівок уряду"
       },
       {
         "en": "They decide who becomes king or queen",
-        "sv": "De beslutar vem som blir kung eller drottning"
+        "sv": "De beslutar vem som blir kung eller drottning",
+        "zh-Hant": "它們決定誰成為國王或女王",
+        "zh-Hans": "它们决定谁成为国王或女王",
+        "ar": "إنها تقرر من يصبح ملكًا أو ملكة",
+        "ckb": "بڕیار دەدەن کێ دەبێتە پاشا یان شاژن",
+        "fa": "آن‌ها تصمیم می‌گیرند چه کسی پادشاه یا ملکه شود",
+        "pl": "Decydują, kto zostaje królem lub królową",
+        "so": "Waxay go’aamiyaan cidda noqonaysa boqor ama boqorad",
+        "ti": "መን ንጉስ ወይ ንግስቲ ከምዝኸውን ይውስኑ",
+        "tr": "Kimin kral veya kraliçe olacağına karar verirler",
+        "uk": "Вони вирішують, хто стане королем або королевою"
       },
       {
         "en": "They write parties’ election platforms",
-        "sv": "De skriver partiernas valprogram"
+        "sv": "De skriver partiernas valprogram",
+        "zh-Hant": "它們撰寫各政黨的選舉綱領",
+        "zh-Hans": "它们撰写各政党的选举纲领",
+        "ar": "إنها تكتب البرامج الانتخابية للأحزاب",
+        "ckb": "بەرنامەی هەڵبژاردنی پارتەکان دەنووسن",
+        "fa": "آن‌ها برنامه‌های انتخاباتی حزب‌ها را می‌نویسند",
+        "pl": "Piszą programy wyborcze partii",
+        "so": "Waxay qoraan barnaamijyada doorashada ee xisbiyada",
+        "ti": "መደባት ምርጫ ፓርቲታት ይጽሕፉ",
+        "tr": "Partilerin seçim programlarını yazarlar",
+        "uk": "Вони пишуть виборчі програми партій"
       }
     ],
     "answer": 1,
@@ -14628,19 +15428,59 @@
     "opts": [
       {
         "en": "To be responsible for health care",
-        "sv": "Att ansvara för hälso- och sjukvården"
+        "sv": "Att ansvara för hälso- och sjukvården",
+        "zh-Hant": "負責醫療和健康照護",
+        "zh-Hans": "负责医疗和健康照护",
+        "ar": "تحمل مسؤولية الرعاية الصحية",
+        "ckb": "بەرپرسیاربوون لە چاودێری تەندروستی",
+        "fa": "مسئولیت مراقبت‌های سلامت و درمان",
+        "pl": "Odpowiedzialność za opiekę zdrowotną",
+        "so": "Inay masuul ka noqdaan daryeelka caafimaadka",
+        "ti": "ንክንክን ጥዕና ሓላፍነት ምውሳድ",
+        "tr": "Sağlık hizmetlerinden sorumlu olmak",
+        "uk": "Відповідати за охорону здоров’я"
       },
       {
         "en": "To judge criminal cases",
-        "sv": "Att döma i brottmål"
+        "sv": "Att döma i brottmål",
+        "zh-Hant": "審判刑事案件",
+        "zh-Hans": "审判刑事案件",
+        "ar": "الحكم في القضايا الجنائية",
+        "ckb": "دادوەری کردن لە دۆسیەی تاواندا",
+        "fa": "قضاوت در پرونده‌های کیفری",
+        "pl": "Orzekanie w sprawach karnych",
+        "so": "Xukun ka gaarista kiisaska dembiyada",
+        "ti": "ኣብ ጉዳያት ገበን ፍርዲ ምሃብ",
+        "tr": "Ceza davalarında hüküm vermek",
+        "uk": "Судити кримінальні справи"
       },
       {
         "en": "To decide constitutional laws",
-        "sv": "Att besluta om grundlagar"
+        "sv": "Att besluta om grundlagar",
+        "zh-Hant": "決定憲法",
+        "zh-Hans": "决定宪法",
+        "ar": "إقرار القوانين الدستورية",
+        "ckb": "بڕیاردان لەسەر یاسا بنەڕەتییەکان",
+        "fa": "تصمیم‌گیری درباره قوانین اساسی",
+        "pl": "Decydowanie o ustawach konstytucyjnych",
+        "so": "Go’aaminta sharciyada dastuuriga ah",
+        "ti": "ብዛዕባ ሕግታት መሰረታዊ ሕጊ ምውሳን",
+        "tr": "Anayasa yasaları hakkında karar vermek",
+        "uk": "Ухвалювати конституційні закони"
       },
       {
         "en": "To appoint the prime minister",
-        "sv": "Att utse statsminister"
+        "sv": "Att utse statsminister",
+        "zh-Hant": "任命首相",
+        "zh-Hans": "任命首相",
+        "ar": "تعيين رئيس الوزراء",
+        "ckb": "دیاریکردنی سەرۆک وەزیران",
+        "fa": "منصوب کردن نخست‌وزیر",
+        "pl": "Powoływanie premiera",
+        "so": "Magacaabista ra’iisul wasaaraha",
+        "ti": "ቀዳማይ ሚኒስተር ምምዛዝ",
+        "tr": "Başbakanı atamak",
+        "uk": "Призначати прем’єр-міністра"
       }
     ],
     "answer": 0,
@@ -14756,19 +15596,59 @@
     "opts": [
       {
         "en": "To be responsible for health care",
-        "sv": "Att ansvara för hälso- och sjukvården"
+        "sv": "Att ansvara för hälso- och sjukvården",
+        "zh-Hant": "負責醫療和健康照護",
+        "zh-Hans": "负责医疗和健康照护",
+        "ar": "تحمل مسؤولية الرعاية الصحية",
+        "ckb": "بەرپرسیاربوون لە چاودێری تەندروستی",
+        "fa": "مسئولیت مراقبت‌های سلامت و درمان",
+        "pl": "Odpowiedzialność za opiekę zdrowotną",
+        "so": "Inay masuul ka noqdaan daryeelka caafimaadka",
+        "ti": "ንክንክን ጥዕና ሓላፍነት ምውሳድ",
+        "tr": "Sağlık hizmetlerinden sorumlu olmak",
+        "uk": "Відповідати за охорону здоров’я"
       },
       {
         "en": "To judge criminal cases",
-        "sv": "Att döma i brottmål"
+        "sv": "Att döma i brottmål",
+        "zh-Hant": "審判刑事案件",
+        "zh-Hans": "审判刑事案件",
+        "ar": "الحكم في القضايا الجنائية",
+        "ckb": "دادوەری کردن لە دۆسیەی تاواندا",
+        "fa": "قضاوت در پرونده‌های کیفری",
+        "pl": "Orzekanie w sprawach karnych",
+        "so": "Xukun ka gaarista kiisaska dembiyada",
+        "ti": "ኣብ ጉዳያት ገበን ፍርዲ ምሃብ",
+        "tr": "Ceza davalarında hüküm vermek",
+        "uk": "Судити кримінальні справи"
       },
       {
         "en": "To decide constitutional laws",
-        "sv": "Att besluta om grundlagar"
+        "sv": "Att besluta om grundlagar",
+        "zh-Hant": "決定憲法",
+        "zh-Hans": "决定宪法",
+        "ar": "إقرار القوانين الدستورية",
+        "ckb": "بڕیاردان لەسەر یاسا بنەڕەتییەکان",
+        "fa": "تصمیم‌گیری درباره قوانین اساسی",
+        "pl": "Decydowanie o ustawach konstytucyjnych",
+        "so": "Go’aaminta sharciyada dastuuriga ah",
+        "ti": "ብዛዕባ ሕግታት መሰረታዊ ሕጊ ምውሳን",
+        "tr": "Anayasa yasaları hakkında karar vermek",
+        "uk": "Ухвалювати конституційні закони"
       },
       {
         "en": "To appoint the prime minister",
-        "sv": "Att utse statsminister"
+        "sv": "Att utse statsminister",
+        "zh-Hant": "任命首相",
+        "zh-Hans": "任命首相",
+        "ar": "تعيين رئيس الوزراء",
+        "ckb": "دیاریکردنی سەرۆک وەزیران",
+        "fa": "منصوب کردن نخست‌وزیر",
+        "pl": "Powoływanie premiera",
+        "so": "Magacaabista ra’iisul wasaaraha",
+        "ti": "ቀዳማይ ሚኒስተር ምምዛዝ",
+        "tr": "Başbakanı atamak",
+        "uk": "Призначати прем’єр-міністра"
       }
     ],
     "answer": 0,
@@ -14804,19 +15684,59 @@
     "opts": [
       {
         "en": "Water and sewage, care services, snow removal, park maintenance, and adult education",
-        "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning"
+        "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning",
+        "zh-Hant": "自來水和排水、照護、除雪、公園維護和成人教育",
+        "zh-Hans": "自来水和排水、照护、除雪、公园维护和成人教育",
+        "ar": "المياه والصرف الصحي والرعاية وإزالة الثلوج وصيانة الحدائق وتعليم البالغين",
+        "ckb": "ئاو و ئاوەڕۆ، چاودێری، لابردنی بەفر، چاودێری پارک و پەروەردەی گەورەسالان",
+        "fa": "آب و فاضلاب، مراقبت، برف‌روبی، نگهداری پارک و آموزش بزرگسالان",
+        "pl": "Woda i kanalizacja, opieka, odśnieżanie, utrzymanie parków i edukacja dorosłych",
+        "so": "Biyo iyo bulaacad, daryeel, ka saarista barafka, dayactirka jardiinooyinka iyo waxbarashada dadka waaweyn",
+        "ti": "ማይን ፈሳሲ ርስሓትን፣ ክንክን፣ በረድ ምእላይ፣ ፓርክ ምክንኻንን ትምህርቲ ዓበይትን",
+        "tr": "Su ve kanalizasyon, bakım hizmetleri, kar temizleme, park bakımı ve yetişkin eğitimi",
+        "uk": "Вода й каналізація, догляд, прибирання снігу, утримання парків і освіта дорослих"
       },
       {
         "en": "Sending ambassadors to other countries",
-        "sv": "Att skicka ambassadörer till andra länder"
+        "sv": "Att skicka ambassadörer till andra länder",
+        "zh-Hant": "派遣大使到其他國家",
+        "zh-Hans": "派遣大使到其他国家",
+        "ar": "إرسال سفراء إلى دول أخرى",
+        "ckb": "ناردنی باڵیۆز بۆ وڵاتانی تر",
+        "fa": "فرستادن سفیر به کشورهای دیگر",
+        "pl": "Wysyłanie ambasadorów do innych krajów",
+        "so": "In safiiro loo diro dalal kale",
+        "ti": "ኣምባሳደራት ናብ ካልኦት ሃገራት ምልኣኽ",
+        "tr": "Başka ülkelere büyükelçi göndermek",
+        "uk": "Надсилати послів до інших країн"
       },
       {
         "en": "Deciding EU laws",
-        "sv": "Att bestämma EU-lagar"
+        "sv": "Att bestämma EU-lagar",
+        "zh-Hant": "決定歐盟法律",
+        "zh-Hans": "决定欧盟法律",
+        "ar": "إقرار قوانين الاتحاد الأوروبي",
+        "ckb": "بڕیاردان لەسەر یاساکانی یەکێتیی ئەوروپا",
+        "fa": "تصمیم‌گیری درباره قوانین اتحادیه اروپا",
+        "pl": "Decydowanie o prawie UE",
+        "so": "Go’aaminta sharciyada Midowga Yurub",
+        "ti": "ሕግታት ሕብረት ኤውሮጳ ምውሳን",
+        "tr": "AB yasalarını belirlemek",
+        "uk": "Ухвалювати закони ЄС"
       },
       {
         "en": "Choosing the crown princess",
-        "sv": "Att välja kronprinsessa"
+        "sv": "Att välja kronprinsessa",
+        "zh-Hant": "選擇王儲公主",
+        "zh-Hans": "选择王储公主",
+        "ar": "اختيار ولية العهد",
+        "ckb": "هەڵبژاردنی شاژنە میراتگر",
+        "fa": "انتخاب ولیعهد شاهدخت",
+        "pl": "Wybieranie następczyni tronu",
+        "so": "Doorashada dhaxal-sugaha boqortooyada",
+        "ti": "ንልዕልቲ ወራሲት ዙፋን ምምራጽ",
+        "tr": "Veliaht prensesi seçmek",
+        "uk": "Обирати кронпринцесу"
       }
     ],
     "answer": 0,
@@ -14932,19 +15852,59 @@
     "opts": [
       {
         "en": "Water and sewage, care services, snow removal, park maintenance, and adult education",
-        "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning"
+        "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning",
+        "zh-Hant": "自來水和排水、照護、除雪、公園維護和成人教育",
+        "zh-Hans": "自来水和排水、照护、除雪、公园维护和成人教育",
+        "ar": "المياه والصرف الصحي والرعاية وإزالة الثلوج وصيانة الحدائق وتعليم البالغين",
+        "ckb": "ئاو و ئاوەڕۆ، چاودێری، لابردنی بەفر، چاودێری پارک و پەروەردەی گەورەسالان",
+        "fa": "آب و فاضلاب، مراقبت، برف‌روبی، نگهداری پارک و آموزش بزرگسالان",
+        "pl": "Woda i kanalizacja, opieka, odśnieżanie, utrzymanie parków i edukacja dorosłych",
+        "so": "Biyo iyo bulaacad, daryeel, ka saarista barafka, dayactirka jardiinooyinka iyo waxbarashada dadka waaweyn",
+        "ti": "ማይን ፈሳሲ ርስሓትን፣ ክንክን፣ በረድ ምእላይ፣ ፓርክ ምክንኻንን ትምህርቲ ዓበይትን",
+        "tr": "Su ve kanalizasyon, bakım hizmetleri, kar temizleme, park bakımı ve yetişkin eğitimi",
+        "uk": "Вода й каналізація, догляд, прибирання снігу, утримання парків і освіта дорослих"
       },
       {
         "en": "Sending ambassadors to other countries",
-        "sv": "Att skicka ambassadörer till andra länder"
+        "sv": "Att skicka ambassadörer till andra länder",
+        "zh-Hant": "派遣大使到其他國家",
+        "zh-Hans": "派遣大使到其他国家",
+        "ar": "إرسال سفراء إلى دول أخرى",
+        "ckb": "ناردنی باڵیۆز بۆ وڵاتانی تر",
+        "fa": "فرستادن سفیر به کشورهای دیگر",
+        "pl": "Wysyłanie ambasadorów do innych krajów",
+        "so": "In safiiro loo diro dalal kale",
+        "ti": "ኣምባሳደራት ናብ ካልኦት ሃገራት ምልኣኽ",
+        "tr": "Başka ülkelere büyükelçi göndermek",
+        "uk": "Надсилати послів до інших країн"
       },
       {
         "en": "Deciding EU laws",
-        "sv": "Att bestämma EU-lagar"
+        "sv": "Att bestämma EU-lagar",
+        "zh-Hant": "決定歐盟法律",
+        "zh-Hans": "决定欧盟法律",
+        "ar": "إقرار قوانين الاتحاد الأوروبي",
+        "ckb": "بڕیاردان لەسەر یاساکانی یەکێتیی ئەوروپا",
+        "fa": "تصمیم‌گیری درباره قوانین اتحادیه اروپا",
+        "pl": "Decydowanie o prawie UE",
+        "so": "Go’aaminta sharciyada Midowga Yurub",
+        "ti": "ሕግታት ሕብረት ኤውሮጳ ምውሳን",
+        "tr": "AB yasalarını belirlemek",
+        "uk": "Ухвалювати закони ЄС"
       },
       {
         "en": "Choosing the crown princess",
-        "sv": "Att välja kronprinsessa"
+        "sv": "Att välja kronprinsessa",
+        "zh-Hant": "選擇王儲公主",
+        "zh-Hans": "选择王储公主",
+        "ar": "اختيار ولية العهد",
+        "ckb": "هەڵبژاردنی شاژنە میراتگر",
+        "fa": "انتخاب ولیعهد شاهدخت",
+        "pl": "Wybieranie następczyni tronu",
+        "so": "Doorashada dhaxal-sugaha boqortooyada",
+        "ti": "ንልዕልቲ ወራሲት ዙፋን ምምራጽ",
+        "tr": "Veliaht prensesi seçmek",
+        "uk": "Обирати кронпринцесу"
       }
     ],
     "answer": 0,
@@ -14980,19 +15940,59 @@
     "opts": [
       {
         "en": "That the monarch has all political power",
-        "sv": "Att monarken har all politisk makt"
+        "sv": "Att monarken har all politisk makt",
+        "zh-Hant": "君主擁有所有政治權力",
+        "zh-Hans": "君主拥有所有政治权力",
+        "ar": "أن الملك يملك كل السلطة السياسية",
+        "ckb": "پاشا هەموو دەسەڵاتی سیاسی هەیە",
+        "fa": "پادشاه همه قدرت سیاسی را دارد",
+        "pl": "Monarcha ma całą władzę polityczną",
+        "so": "In boqorku leeyahay dhammaan awoodda siyaasadeed",
+        "ti": "ንጉስ ኩሉ ፖለቲካዊ ስልጣን ኣለዎ",
+        "tr": "Monarkın tüm siyasi güce sahip olması",
+        "uk": "Монарх має всю політичну владу"
       },
       {
         "en": "That the head of state is a king or queen but lacks political power",
-        "sv": "Att statschefen är kung eller drottning men saknar politisk makt"
+        "sv": "Att statschefen är kung eller drottning men saknar politisk makt",
+        "zh-Hant": "國家元首是國王或女王，但沒有政治權力",
+        "zh-Hans": "国家元首是国王或女王，但没有政治权力",
+        "ar": "أن رئيس الدولة ملك أو ملكة لكنه لا يملك سلطة سياسية",
+        "ckb": "سەرۆکی دەوڵەت پاشا یان شاژنە بەڵام دەسەڵاتی سیاسی نییە",
+        "fa": "رئیس کشور پادشاه یا ملکه است اما قدرت سیاسی ندارد",
+        "pl": "Głową państwa jest król lub królowa, ale bez władzy politycznej",
+        "so": "In madaxa qaranku yahay boqor ama boqorad laakiin uusan lahayn awood siyaasadeed",
+        "ti": "ርእሰ ሃገር ንጉስ ወይ ንግስቲ እዩ፣ ግን ፖለቲካዊ ስልጣን የብሉን",
+        "tr": "Devlet başkanının kral veya kraliçe olması ama siyasi gücünün olmaması",
+        "uk": "Глава держави — король або королева, але без політичної влади"
       },
       {
         "en": "That the government is chosen by the king",
-        "sv": "Att regeringen väljs av kungen"
+        "sv": "Att regeringen väljs av kungen",
+        "zh-Hant": "政府由國王選出",
+        "zh-Hans": "政府由国王选出",
+        "ar": "أن الحكومة يختارها الملك",
+        "ckb": "حکومەت لەلایەن پاشاوە هەڵدەبژێردرێت",
+        "fa": "دولت را پادشاه انتخاب می‌کند",
+        "pl": "Rząd wybiera król",
+        "so": "In boqorku doorto dowladda",
+        "ti": "መንግስቲ ብንጉስ ይምረጽ",
+        "tr": "Hükümetin kral tarafından seçilmesi",
+        "uk": "Уряд обирає король"
       },
       {
         "en": "That municipalities are governed by the royal house",
-        "sv": "Att kommunerna styrs av kungahuset"
+        "sv": "Att kommunerna styrs av kungahuset",
+        "zh-Hant": "市鎮由王室治理",
+        "zh-Hans": "市镇由王室治理",
+        "ar": "أن البلديات يحكمها البيت الملكي",
+        "ckb": "شارەوانییەکان لەلایەن بنەماڵەی پاشایەتییەوە بەڕێوە دەبرێن",
+        "fa": "کمون‌ها توسط خاندان سلطنتی اداره می‌شوند",
+        "pl": "Gminami rządzi dom królewski",
+        "so": "In degmooyinka ay maamusho qoyska boqortooyada",
+        "ti": "ምምሕዳራት ከባቢ ብቤተ ንጉስ ይመሓደሩ",
+        "tr": "Belediyelerin kraliyet ailesi tarafından yönetilmesi",
+        "uk": "Комунами керує королівський дім"
       }
     ],
     "answer": 1,
@@ -15108,19 +16108,59 @@
     "opts": [
       {
         "en": "That the monarch has all political power",
-        "sv": "Att monarken har all politisk makt"
+        "sv": "Att monarken har all politisk makt",
+        "zh-Hant": "君主擁有所有政治權力",
+        "zh-Hans": "君主拥有所有政治权力",
+        "ar": "أن الملك يملك كل السلطة السياسية",
+        "ckb": "پاشا هەموو دەسەڵاتی سیاسی هەیە",
+        "fa": "پادشاه همه قدرت سیاسی را دارد",
+        "pl": "Monarcha ma całą władzę polityczną",
+        "so": "In boqorku leeyahay dhammaan awoodda siyaasadeed",
+        "ti": "ንጉስ ኩሉ ፖለቲካዊ ስልጣን ኣለዎ",
+        "tr": "Monarkın tüm siyasi güce sahip olması",
+        "uk": "Монарх має всю політичну владу"
       },
       {
         "en": "That the head of state is a king or queen but lacks political power",
-        "sv": "Att statschefen är kung eller drottning men saknar politisk makt"
+        "sv": "Att statschefen är kung eller drottning men saknar politisk makt",
+        "zh-Hant": "國家元首是國王或女王，但沒有政治權力",
+        "zh-Hans": "国家元首是国王或女王，但没有政治权力",
+        "ar": "أن رئيس الدولة ملك أو ملكة لكنه لا يملك سلطة سياسية",
+        "ckb": "سەرۆکی دەوڵەت پاشا یان شاژنە بەڵام دەسەڵاتی سیاسی نییە",
+        "fa": "رئیس کشور پادشاه یا ملکه است اما قدرت سیاسی ندارد",
+        "pl": "Głową państwa jest król lub królowa, ale bez władzy politycznej",
+        "so": "In madaxa qaranku yahay boqor ama boqorad laakiin uusan lahayn awood siyaasadeed",
+        "ti": "ርእሰ ሃገር ንጉስ ወይ ንግስቲ እዩ፣ ግን ፖለቲካዊ ስልጣን የብሉን",
+        "tr": "Devlet başkanının kral veya kraliçe olması ama siyasi gücünün olmaması",
+        "uk": "Глава держави — король або королева, але без політичної влади"
       },
       {
         "en": "That the government is chosen by the king",
-        "sv": "Att regeringen väljs av kungen"
+        "sv": "Att regeringen väljs av kungen",
+        "zh-Hant": "政府由國王選出",
+        "zh-Hans": "政府由国王选出",
+        "ar": "أن الحكومة يختارها الملك",
+        "ckb": "حکومەت لەلایەن پاشاوە هەڵدەبژێردرێت",
+        "fa": "دولت را پادشاه انتخاب می‌کند",
+        "pl": "Rząd wybiera król",
+        "so": "In boqorku doorto dowladda",
+        "ti": "መንግስቲ ብንጉስ ይምረጽ",
+        "tr": "Hükümetin kral tarafından seçilmesi",
+        "uk": "Уряд обирає король"
       },
       {
         "en": "That municipalities are governed by the royal house",
-        "sv": "Att kommunerna styrs av kungahuset"
+        "sv": "Att kommunerna styrs av kungahuset",
+        "zh-Hant": "市鎮由王室治理",
+        "zh-Hans": "市镇由王室治理",
+        "ar": "أن البلديات يحكمها البيت الملكي",
+        "ckb": "شارەوانییەکان لەلایەن بنەماڵەی پاشایەتییەوە بەڕێوە دەبرێن",
+        "fa": "کمون‌ها توسط خاندان سلطنتی اداره می‌شوند",
+        "pl": "Gminami rządzi dom królewski",
+        "so": "In degmooyinka ay maamusho qoyska boqortooyada",
+        "ti": "ምምሕዳራት ከባቢ ብቤተ ንጉስ ይመሓደሩ",
+        "tr": "Belediyelerin kraliyet ailesi tarafından yönetilmesi",
+        "uk": "Комунами керує королівський дім"
       }
     ],
     "answer": 1,
@@ -15332,19 +16372,59 @@
     "opts": [
       {
         "en": "Every year",
-        "sv": "Varje år"
+        "sv": "Varje år",
+        "zh-Hant": "每年",
+        "zh-Hans": "每年",
+        "ar": "كل سنة",
+        "ckb": "هەموو ساڵێک",
+        "fa": "هر سال",
+        "pl": "Co roku",
+        "so": "Sannad kasta",
+        "ti": "ኩሉ ዓመት",
+        "tr": "Her yıl",
+        "uk": "Щороку"
       },
       {
         "en": "Every four years",
-        "sv": "Vart fjärde år"
+        "sv": "Vart fjärde år",
+        "zh-Hant": "每四年",
+        "zh-Hans": "每四年",
+        "ar": "كل أربع سنوات",
+        "ckb": "هەر چوار ساڵ جارێک",
+        "fa": "هر چهار سال",
+        "pl": "Co cztery lata",
+        "so": "Afartii sano mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት",
+        "tr": "Dört yılda bir",
+        "uk": "Кожні чотири роки"
       },
       {
         "en": "Every five years",
-        "sv": "Vart femte år"
+        "sv": "Vart femte år",
+        "zh-Hant": "每五年",
+        "zh-Hans": "每五年",
+        "ar": "كل خمس سنوات",
+        "ckb": "هەر پێنج ساڵ جارێک",
+        "fa": "هر پنج سال",
+        "pl": "Co pięć lat",
+        "so": "Shantii sano mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት",
+        "tr": "Beş yılda bir",
+        "uk": "Кожні п’ять років"
       },
       {
         "en": "Only when the government asks for it",
-        "sv": "Endast när regeringen ber om det"
+        "sv": "Endast när regeringen ber om det",
+        "zh-Hant": "只有在政府要求時",
+        "zh-Hans": "只有在政府要求时",
+        "ar": "فقط عندما تطلب الحكومة ذلك",
+        "ckb": "تەنها کاتێک حکومەت داوای دەکات",
+        "fa": "فقط وقتی دولت درخواست کند",
+        "pl": "Tylko wtedy, gdy rząd o to poprosi",
+        "so": "Kaliya marka dowladda ay codsato",
+        "ti": "መንግስቲ ምስ ዝሓትት ጥራይ",
+        "tr": "Yalnızca hükümet istediğinde",
+        "uk": "Лише коли уряд про це просить"
       }
     ],
     "answer": 1,
@@ -15460,19 +16540,59 @@
     "opts": [
       {
         "en": "Every year",
-        "sv": "Varje år"
+        "sv": "Varje år",
+        "zh-Hant": "每年",
+        "zh-Hans": "每年",
+        "ar": "كل سنة",
+        "ckb": "هەموو ساڵێک",
+        "fa": "هر سال",
+        "pl": "Co roku",
+        "so": "Sannad kasta",
+        "ti": "ኩሉ ዓመት",
+        "tr": "Her yıl",
+        "uk": "Щороку"
       },
       {
         "en": "Every four years",
-        "sv": "Vart fjärde år"
+        "sv": "Vart fjärde år",
+        "zh-Hant": "每四年",
+        "zh-Hans": "每四年",
+        "ar": "كل أربع سنوات",
+        "ckb": "هەر چوار ساڵ جارێک",
+        "fa": "هر چهار سال",
+        "pl": "Co cztery lata",
+        "so": "Afartii sano mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት",
+        "tr": "Dört yılda bir",
+        "uk": "Кожні чотири роки"
       },
       {
         "en": "Every five years",
-        "sv": "Vart femte år"
+        "sv": "Vart femte år",
+        "zh-Hant": "每五年",
+        "zh-Hans": "每五年",
+        "ar": "كل خمس سنوات",
+        "ckb": "هەر پێنج ساڵ جارێک",
+        "fa": "هر پنج سال",
+        "pl": "Co pięć lat",
+        "so": "Shantii sano mar",
+        "ti": "ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት",
+        "tr": "Beş yılda bir",
+        "uk": "Кожні п’ять років"
       },
       {
         "en": "Only when the government asks for it",
-        "sv": "Endast när regeringen ber om det"
+        "sv": "Endast när regeringen ber om det",
+        "zh-Hant": "只有在政府要求時",
+        "zh-Hans": "只有在政府要求时",
+        "ar": "فقط عندما تطلب الحكومة ذلك",
+        "ckb": "تەنها کاتێک حکومەت داوای دەکات",
+        "fa": "فقط وقتی دولت درخواست کند",
+        "pl": "Tylko wtedy, gdy rząd o to poprosi",
+        "so": "Kaliya marka dowladda ay codsato",
+        "ti": "መንግስቲ ምስ ዝሓትት ጥራይ",
+        "tr": "Yalnızca hükümet istediğinde",
+        "uk": "Лише коли уряд про це просить"
       }
     ],
     "answer": 1,
@@ -15508,19 +16628,59 @@
     "opts": [
       {
         "en": "You must be a Swedish citizen and at least 18 years old",
-        "sv": "Man måste vara svensk medborgare och ha fyllt 18 år"
+        "sv": "Man måste vara svensk medborgare och ha fyllt 18 år",
+        "zh-Hant": "必須是瑞典公民，並且已年滿 18 歲",
+        "zh-Hans": "必须是瑞典公民，并且已年满 18 岁",
+        "ar": "يجب أن يكون الشخص مواطنًا سويديًا وأن يكون قد بلغ 18 عامًا",
+        "ckb": "دەبێ هاووڵاتی سویدی بێت و ١٨ ساڵی تەواو کردبێت",
+        "fa": "باید شهروند سوئد باشد و ۱۸ ساله شده باشد",
+        "pl": "Trzeba być obywatelem Szwecji i mieć ukończone 18 lat",
+        "so": "Waa in qofku yahay muwaadin Iswiidhan ah oo gaaray 18 sano",
+        "ti": "ሰብ ዜጋ ሽወደን ክኸውንን 18 ዓመት ክመልእን ኣለዎ",
+        "tr": "İsveç vatandaşı olmak ve 18 yaşını doldurmuş olmak gerekir",
+        "uk": "Потрібно бути громадянином Швеції та мати 18 років"
       },
       {
         "en": "You must own a home in Sweden",
-        "sv": "Man måste äga en bostad i Sverige"
+        "sv": "Man måste äga en bostad i Sverige",
+        "zh-Hant": "必須在瑞典擁有住宅",
+        "zh-Hans": "必须在瑞典拥有住宅",
+        "ar": "يجب أن يملك الشخص مسكنًا في السويد",
+        "ckb": "دەبێ خانوویەک لە سوید هەبێت",
+        "fa": "باید در سوئد خانه‌ای مالک باشد",
+        "pl": "Trzeba posiadać mieszkanie lub dom w Szwecji",
+        "so": "Waa inuu qofku guri ku leeyahay Iswiidhan",
+        "ti": "ሰብ ኣብ ሽወደን ገዛ ክውንን ኣለዎ",
+        "tr": "İsveç’te bir eve sahip olmak gerekir",
+        "uk": "Потрібно володіти житлом у Швеції"
       },
       {
         "en": "You must be a member of a party",
-        "sv": "Man måste vara medlem i ett parti"
+        "sv": "Man måste vara medlem i ett parti",
+        "zh-Hant": "必須是政黨成員",
+        "zh-Hans": "必须是政党成员",
+        "ar": "يجب أن يكون الشخص عضوًا في حزب",
+        "ckb": "دەبێ ئەندامی پارتێک بێت",
+        "fa": "باید عضو یک حزب باشد",
+        "pl": "Trzeba być członkiem partii",
+        "so": "Waa inuu qofku xubin ka yahay xisbi",
+        "ti": "ሰብ ኣባል ፓርቲ ክኸውን ኣለዎ",
+        "tr": "Bir partiye üye olmak gerekir",
+        "uk": "Потрібно бути членом партії"
       },
       {
         "en": "You must be at least 16 years old",
-        "sv": "Man måste ha fyllt 16 år"
+        "sv": "Man måste ha fyllt 16 år",
+        "zh-Hant": "必須已年滿 16 歲",
+        "zh-Hans": "必须已年满 16 岁",
+        "ar": "يجب أن يكون الشخص قد بلغ 16 عامًا",
+        "ckb": "دەبێ ١٦ ساڵی تەواو کردبێت",
+        "fa": "باید ۱۶ ساله شده باشد",
+        "pl": "Trzeba mieć ukończone 16 lat",
+        "so": "Waa inuu qofku gaaray 16 sano",
+        "ti": "ሰብ 16 ዓመት ክመልእ ኣለዎ",
+        "tr": "16 yaşını doldurmuş olmak gerekir",
+        "uk": "Потрібно мати 16 років"
       }
     ],
     "answer": 0,
@@ -15636,19 +16796,59 @@
     "opts": [
       {
         "en": "You must be a Swedish citizen and at least 18 years old",
-        "sv": "Man måste vara svensk medborgare och ha fyllt 18 år"
+        "sv": "Man måste vara svensk medborgare och ha fyllt 18 år",
+        "zh-Hant": "必須是瑞典公民，並且已年滿 18 歲",
+        "zh-Hans": "必须是瑞典公民，并且已年满 18 岁",
+        "ar": "يجب أن يكون الشخص مواطنًا سويديًا وأن يكون قد بلغ 18 عامًا",
+        "ckb": "دەبێ هاووڵاتی سویدی بێت و ١٨ ساڵی تەواو کردبێت",
+        "fa": "باید شهروند سوئد باشد و ۱۸ ساله شده باشد",
+        "pl": "Trzeba być obywatelem Szwecji i mieć ukończone 18 lat",
+        "so": "Waa in qofku yahay muwaadin Iswiidhan ah oo gaaray 18 sano",
+        "ti": "ሰብ ዜጋ ሽወደን ክኸውንን 18 ዓመት ክመልእን ኣለዎ",
+        "tr": "İsveç vatandaşı olmak ve 18 yaşını doldurmuş olmak gerekir",
+        "uk": "Потрібно бути громадянином Швеції та мати 18 років"
       },
       {
         "en": "You must own a home in Sweden",
-        "sv": "Man måste äga en bostad i Sverige"
+        "sv": "Man måste äga en bostad i Sverige",
+        "zh-Hant": "必須在瑞典擁有住宅",
+        "zh-Hans": "必须在瑞典拥有住宅",
+        "ar": "يجب أن يملك الشخص مسكنًا في السويد",
+        "ckb": "دەبێ خانوویەک لە سوید هەبێت",
+        "fa": "باید در سوئد خانه‌ای مالک باشد",
+        "pl": "Trzeba posiadać mieszkanie lub dom w Szwecji",
+        "so": "Waa inuu qofku guri ku leeyahay Iswiidhan",
+        "ti": "ሰብ ኣብ ሽወደን ገዛ ክውንን ኣለዎ",
+        "tr": "İsveç’te bir eve sahip olmak gerekir",
+        "uk": "Потрібно володіти житлом у Швеції"
       },
       {
         "en": "You must be a member of a party",
-        "sv": "Man måste vara medlem i ett parti"
+        "sv": "Man måste vara medlem i ett parti",
+        "zh-Hant": "必須是政黨成員",
+        "zh-Hans": "必须是政党成员",
+        "ar": "يجب أن يكون الشخص عضوًا في حزب",
+        "ckb": "دەبێ ئەندامی پارتێک بێت",
+        "fa": "باید عضو یک حزب باشد",
+        "pl": "Trzeba być członkiem partii",
+        "so": "Waa inuu qofku xubin ka yahay xisbi",
+        "ti": "ሰብ ኣባል ፓርቲ ክኸውን ኣለዎ",
+        "tr": "Bir partiye üye olmak gerekir",
+        "uk": "Потрібно бути членом партії"
       },
       {
         "en": "You must be at least 16 years old",
-        "sv": "Man måste ha fyllt 16 år"
+        "sv": "Man måste ha fyllt 16 år",
+        "zh-Hant": "必須已年滿 16 歲",
+        "zh-Hans": "必须已年满 16 岁",
+        "ar": "يجب أن يكون الشخص قد بلغ 16 عامًا",
+        "ckb": "دەبێ ١٦ ساڵی تەواو کردبێت",
+        "fa": "باید ۱۶ ساله شده باشد",
+        "pl": "Trzeba mieć ukończone 16 lat",
+        "so": "Waa inuu qofku gaaray 16 sano",
+        "ti": "ሰብ 16 ዓመት ክመልእ ኣለዎ",
+        "tr": "16 yaşını doldurmuş olmak gerekir",
+        "uk": "Потрібно мати 16 років"
       }
     ],
     "answer": 0,
