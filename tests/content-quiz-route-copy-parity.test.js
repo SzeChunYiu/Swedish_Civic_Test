@@ -7,7 +7,7 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js', '--focus-native-quiz-copy'], {
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -83,6 +83,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-native-quiz-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -116,6 +117,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-native-quiz-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -149,6 +151,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-native-quiz-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -179,6 +182,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-native-quiz-copy');
 require('./scripts/validate-content.js');
 `,
     ],
