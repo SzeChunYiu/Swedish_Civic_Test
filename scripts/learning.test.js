@@ -64,8 +64,17 @@ test('XP rules follow the MVP gamification table', () => {
 
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: true }), 4);
+  assert.equal(calculateAnswerXp({ isCorrect: 'true', explanationRead: true }), 0);
+  assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }), 10);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }), 70);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }), 0);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }), 0);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }), 0);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }), 0);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }), 0);
   assert.equal(calculateLevel(0), 1);
+  assert.equal(calculateLevel(NaN), 1);
+  assert.equal(calculateLevel(Infinity), 1);
   assert.equal(calculateLevel(100), 2);
   assert.equal(calculateLevel(400), 3);
 });
