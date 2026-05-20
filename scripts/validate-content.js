@@ -14072,10 +14072,22 @@ function validatePracticeScoringRules() {
 
   const cases = [
     { label: 'default empty results', input: undefined, expected: { correct: 0, total: 0 } },
+    { label: 'null input', input: null, expected: { correct: 0, total: 0 } },
+    { label: 'object input', input: { correct: true }, expected: { correct: 0, total: 0 } },
     { label: 'empty results', input: [], expected: { correct: 0, total: 0 } },
     { label: 'all wrong results', input: [false, false], expected: { correct: 0, total: 2 } },
     { label: 'mixed results', input: [true, false, true], expected: { correct: 2, total: 3 } },
     { label: 'all correct results', input: [true, true], expected: { correct: 2, total: 2 } },
+    {
+      label: 'truthy non-booleans ignored',
+      input: ['yes', 1, {}, true, false, true],
+      expected: { correct: 2, total: 3 },
+    },
+    {
+      label: 'invalid array elements ignored',
+      input: ['yes', 1, {}, null],
+      expected: { correct: 0, total: 0 },
+    },
   ];
   let rulesAreValid = true;
 
