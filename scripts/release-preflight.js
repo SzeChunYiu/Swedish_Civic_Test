@@ -162,8 +162,15 @@ const v11ScopeSurfacePaths = [
 
 const removeAdsDeviceQaPath =
   process.env.RELEASE_PREFLIGHT_DEVICE_QA_PATH || 'reports/release-ads-iap-device-qa.md';
+const removeAdsPurchasesPath =
+  process.env.RELEASE_PREFLIGHT_REMOVE_ADS_PURCHASES_PATH || 'lib/monetization/purchases.ts';
+const removeAdsStep3WiringRoots = envPathList('RELEASE_PREFLIGHT_REMOVE_ADS_WIRING_ROOTS', [
+  'app',
+  'components',
+  'lib',
+]);
 const removeAdsStep3StructuralGate =
-  'Remove Ads structural gate: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
+  'Remove Ads structural gate replacing GOAL step 3 grep: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
 const releaseScopeOverrideId = 'release-scope-v11';
 const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
 const removeAdsDeviceQaRequiredChecks = [
@@ -198,6 +205,17 @@ function readFileIfExists(filePath) {
 
 function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function envPathList(name, fallback) {
+  const value = String(process.env[name] || '').trim();
+  if (!value) return fallback;
+
+  const entries = value
+    .split(path.delimiter)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+  return entries.length > 0 ? entries : fallback;
 }
 
 function staleReleaseAdEvidenceTerms(source) {
@@ -237,7 +255,7 @@ function listV11ScopeSurfaces() {
 function removeAdsV1AcceptanceFindings() {
   const findings = [];
   const adsSource = readFileIfExists('lib/monetization/ads.ts');
-  const purchasesSource = readFileIfExists('lib/monetization/purchases.ts');
+  const purchasesSource = readFileIfExists(removeAdsPurchasesPath);
   const publicPrivacySurface = [
     'publishing/public-site/privacy/index.html',
     'publishing/public-support-and-privacy.md',
@@ -252,7 +270,12 @@ function removeAdsV1AcceptanceFindings() {
   if (/REAL_ADS_ENABLED_FOR_V1\s*=\s*false/.test(adsSource)) {
     findings.push('GOAL step 1 is red: REAL_ADS_ENABLED_FOR_V1 is still hardcoded false.');
   }
-  findings.push(...removeAdsStep3StructuralFindings(purchasesSource));
+  findings.push(
+    ...removeAdsStep3StructuralFindings(purchasesSource, {
+      purchasesPath: removeAdsPurchasesPath,
+      wiringRoots: removeAdsStep3WiringRoots,
+    }),
+  );
   if (!exists('publishing/public-site/app-ads.txt')) {
     findings.push('GOAL step 4 is red: publishing/public-site/app-ads.txt is missing.');
   }
@@ -312,11 +335,14 @@ function removeAdsV1AcceptanceFindings() {
   return findings;
 }
 
-function removeAdsStep3StructuralFindings(purchasesSource) {
+function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
   const findings = [];
+  const purchasesPath = options.purchasesPath || removeAdsPurchasesPath;
+  const wiringRoots = options.wiringRoots || removeAdsStep3WiringRoots;
+  const wiringRootLabel = wiringRoots.join('/');
 
   if (!purchasesSource) {
-    return ['GOAL step 3 structural gate is red: lib/monetization/purchases.ts is missing.'];
+    return [`GOAL step 3 structural gate is red: ${purchasesPath} is missing.`];
   }
 
   const normalizedPurchasesSource = purchasesSource.replace(/\s+/g, ' ');
@@ -348,8 +374,8 @@ function removeAdsStep3StructuralFindings(purchasesSource) {
       'restoreRemoveAdsPurchase must remain exported',
     ],
     [
-      anyRepoFileMatches(['app', 'components', 'lib'], /remove[-_\s]?ads/i),
-      'Remove Ads wiring must be visible in app/components/lib',
+      anyRepoFileMatches(wiringRoots, /remove[-_\s]?ads/i),
+      `Remove Ads wiring must be visible in ${wiringRootLabel}`,
     ],
   ];
 
