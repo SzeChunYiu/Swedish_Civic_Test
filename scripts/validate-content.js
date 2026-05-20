@@ -671,7 +671,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Ändra mål, språk och ljud',
+    'Justera mål, språk och ljud',
+    'Öppna inställningar för att justera dagligt mål, språk och ljud',
     'Första övningen',
     'Nivå 2',
     'Misstagsrepetition',
@@ -695,7 +696,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Edit goal, language, and audio',
+    'Adjust goal, language, and audio',
+    'Open settings to adjust daily goal, language, and audio',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -747,6 +749,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
   ],
+  ['style={styles.studySetupLink}', 'profile settings link must sit in the study setup card'],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
   ['entitlementsReady,', 'profile premium banner must read Remove Ads entitlement readiness'],
   [
