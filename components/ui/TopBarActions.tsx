@@ -99,7 +99,10 @@ function TopBarAudioSwitch({
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const interactionHandlers = {
-    onBlur: () => setIsFocused(false),
+    onBlur: () => {
+      setIsFocused(false);
+      setIsPressed(false);
+    },
     onFocus: () => setIsFocused(true),
     onHoverIn: () => setIsHovered(true),
     onHoverOut: () => {
