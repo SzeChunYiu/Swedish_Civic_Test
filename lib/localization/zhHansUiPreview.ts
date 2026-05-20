@@ -43,8 +43,7 @@ export const zhHansUiPreview = {
     },
     setDailyGoalAccessibilityLabelTemplate: '将每日目标设为 {goal} 题',
     importTitle: '导入学习数据',
-    importSectionSubtitle:
-      '粘贴本设备导出的 JSON 学习数据。写入前会先显示摘要，方便你确认。',
+    importSectionSubtitle: '粘贴本设备导出的 JSON 学习数据。写入前会先显示摘要，方便你确认。',
     importPurchasesNote: '购买、收据和应用内购数据不会导入。购买项目请通过应用商店恢复。',
     importPasteLabel: '粘贴 JSON 导出内容',
     importPastePlaceholder: '在这里粘贴导出内容',
@@ -87,8 +86,7 @@ export const zhHansUiPreview = {
       browseChapters: '浏览章节',
       browseChaptersAccessibilityLabel: '浏览全部社会知识章节',
       studyLoopTitle: '更顺手的学习流程',
-      studyLoopSubtitle:
-        '借鉴社会知识考试和语言学习应用的做法：下一步清楚、反馈及时、进度看得见。',
+      studyLoopSubtitle: '借鉴社会知识考试和语言学习应用的做法：下一步清楚、反馈及时、进度看得见。',
       guidedPathTitle: '从基础学习到模拟练习',
       guidedPathSubtitle: '按 13 个社会知识章节分三步学习，继续上次进度，并保持每日练习。',
       guidedPathDailyTitle: '每日练习',
@@ -326,8 +324,7 @@ export const zhHansUiPreview = {
       title: '按章节学习，下一步更清楚',
       subtitle: '每个章节都会显示范围和本设备上的学习进度，帮助你决定先学哪里。',
       flashcardSectionTitle: '快速抽认卡',
-      flashcardSectionSubtitle:
-        '从题库中抽出三张有资料依据的卡片。先读题、说出答案，再马上对照。',
+      flashcardSectionSubtitle: '从题库中抽出三张有资料依据的卡片。先读题、说出答案，再马上对照。',
       sectionTitle: '13 个社会知识领域',
       sectionSubtitle: '按接近资料来源的章节学习，然后用同一批内容练习。',
       chapterLink: {
@@ -439,8 +436,7 @@ export const zhHansUiPreview = {
     closeLabel: '关闭语言选择器',
     menuLabel: '语言选择器',
     title: '选择语言',
-    subtitle:
-      '界面翻译会分批加入。每种语言在完成人工审校前，题目内容仍使用瑞典语或英语。',
+    subtitle: '界面翻译会分批加入。每种语言在完成人工审校前，题目内容仍使用瑞典语或英语。',
     unavailableSuffix: '，正在准备',
     comingSoon: '此语言版本正在准备中。',
   },
