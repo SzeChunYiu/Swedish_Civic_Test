@@ -36,6 +36,10 @@ function collectOpeningTag(lines, startIndex) {
   return tag;
 }
 
+function read(relativePath) {
+  return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
+}
+
 test('interactive elements expose explicit accessibility labels, roles, and states', () => {
   const offenders = [];
 
@@ -115,8 +119,29 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /minWidth:\s*space\[6\]/);
 });
 
+test('launch popup close button keeps a token-sized dismiss target', () => {
+  const source = read('components/monetization/LaunchPopupAd.tsx');
+
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.closeAccessibilityLabel\}[\s\S]*accessibilityRole="button"[\s\S]*hitSlop=\{space\[1\]\}/,
+  );
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[[\s\S]*styles\.closeButton,[\s\S]*pressed \? styles\.closeButtonPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(
+    source,
+    /closeButton:\s*\{[\s\S]*alignItems:\s*'center'[\s\S]*backgroundColor:\s*colors\.accent[\s\S]*borderRadius:\s*radius\.card[\s\S]*justifyContent:\s*'center'[\s\S]*minHeight:\s*space\[6\]/,
+  );
+  assert.match(
+    source,
+    /closeButtonPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.accentActive[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\]/,
+  );
+});
+
 test('LanguagePicker menu rows expose menu-item state semantics', () => {
-  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
+  const source = read('components/ui/LanguagePicker.tsx');
 
   assert.match(source, /accessibilityRole="menu"/);
   assert.match(source, /accessibilityRole="menuitem"/);
