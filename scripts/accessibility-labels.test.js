@@ -134,6 +134,22 @@ test('FirstRunAboutTheTestModal keeps only guide and skip actions exposed', () =
   );
 });
 
+test('SwedishFlagBand remains decorative on web and native by default', () => {
+  const source = fs.readFileSync(
+    path.join(ROOT, 'components', 'ui', 'SwedishFlagBand.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /aria-hidden=\{accessibilityElementsHidden \? true : undefined\}/);
+  assert.match(source, /accessibilityElementsHidden = true/);
+  assert.match(source, /accessibilityElementsHidden=\{accessibilityElementsHidden\}/);
+  assert.match(source, /importantForAccessibility = 'no-hide-descendants'/);
+  assert.match(source, /importantForAccessibility=\{importantForAccessibility\}/);
+  assert.doesNotMatch(source, /<Pressable\b|<Link\b|<Button\b|accessibilityLabel=/);
+  assert.match(source, /backgroundColor:\s*flagColors\.blue/);
+  assert.match(source, /backgroundColor:\s*flagColors\.gold/);
+});
+
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
   const source = fs.readFileSync(
     path.join(ROOT, 'components', 'monetization', 'NativeAdCard.native.tsx'),

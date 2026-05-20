@@ -21,6 +21,19 @@ function walk(relativePath) {
     });
 }
 
+function assertSwedishFlagBandContract(flagBand) {
+  assert.match(flagBand, /import \{ flagColors, radius, space \} from '..\/..\/lib\/theme';/);
+  assert.match(flagBand, /export interface SwedishFlagBandProps extends Omit<ViewProps, 'style'>/);
+  assert.match(flagBand, /height = space\[0\.5\]/);
+  assert.match(flagBand, /aria-hidden=\{accessibilityElementsHidden \? true : undefined\}/);
+  assert.match(flagBand, /accessibilityElementsHidden = true/);
+  assert.match(flagBand, /accessibilityElementsHidden=\{accessibilityElementsHidden\}/);
+  assert.match(flagBand, /importantForAccessibility = 'no-hide-descendants'/);
+  assert.match(flagBand, /importantForAccessibility=\{importantForAccessibility\}/);
+  assert.match(flagBand, /backgroundColor:\s*flagColors\.blue/);
+  assert.match(flagBand, /backgroundColor:\s*flagColors\.gold/);
+}
+
 test('app flag constants expose fixed Swedish flag colors outside the mutable palette', () => {
   const flagSource = readText('lib/theme/flag.ts');
   const themeIndex = readText('lib/theme/index.ts');
@@ -52,11 +65,34 @@ test('app and components do not draw flag surfaces from mutable swedish color to
   const flagBand = readText('components/ui/SwedishFlagBand.tsx');
 
   assert.deepEqual(offenders, []);
-  assert.match(flagBand, /import \{ flagColors, radius, space \} from '..\/..\/lib\/theme';/);
-  assert.match(flagBand, /export interface SwedishFlagBandProps extends Omit<ViewProps, 'style'>/);
-  assert.match(flagBand, /height = space\[0\.5\]/);
-  assert.match(flagBand, /accessibilityElementsHidden = true/);
-  assert.match(flagBand, /importantForAccessibility = 'no'/);
-  assert.match(flagBand, /backgroundColor:\s*flagColors\.blue/);
-  assert.match(flagBand, /backgroundColor:\s*flagColors\.gold/);
+  assertSwedishFlagBandContract(flagBand);
+});
+
+test('SwedishFlagBand fixed-color guard rejects decorative accessibility drift', () => {
+  const flagBand = readText('components/ui/SwedishFlagBand.tsx');
+
+  assert.throws(
+    () =>
+      assertSwedishFlagBandContract(
+        flagBand.replace(
+          '      aria-hidden={accessibilityElementsHidden ? true : undefined}\n',
+          '',
+        ),
+      ),
+    /aria-hidden/,
+  );
+  assert.throws(
+    () => assertSwedishFlagBandContract(flagBand.replace('accessibilityElementsHidden = true', '')),
+    /accessibilityElementsHidden = true/,
+  );
+  assert.throws(
+    () =>
+      assertSwedishFlagBandContract(
+        flagBand.replace(
+          "importantForAccessibility = 'no-hide-descendants'",
+          "importantForAccessibility = 'no'",
+        ),
+      ),
+    /importantForAccessibility = 'no-hide-descendants'/,
+  );
 });

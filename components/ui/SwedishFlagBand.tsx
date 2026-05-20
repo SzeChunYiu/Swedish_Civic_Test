@@ -5,7 +5,7 @@ import { flagColors, radius, space } from '../../lib/theme';
 
 /**
  * Defaults: `height=space[0.5]`, `rounded=true`, and hidden from accessibility
- * because this is a decorative national accent.
+ * on web and native because this is a decorative national accent.
  */
 export interface SwedishFlagBandProps extends Omit<ViewProps, 'style'> {
   height?: number;
@@ -21,13 +21,14 @@ export interface SwedishFlagBandProps extends Omit<ViewProps, 'style'> {
 export function SwedishFlagBand({
   accessibilityElementsHidden = true,
   height = space[0.5],
-  importantForAccessibility = 'no',
+  importantForAccessibility = 'no-hide-descendants',
   rounded = true,
   style,
   ...viewProps
 }: SwedishFlagBandProps) {
   return (
     <View
+      aria-hidden={accessibilityElementsHidden ? true : undefined}
       accessibilityElementsHidden={accessibilityElementsHidden}
       importantForAccessibility={importantForAccessibility}
       style={[styles.row, rounded && styles.rounded, style, { height }]}
