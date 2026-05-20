@@ -49,6 +49,7 @@
     "test:static-site-asset-references": "node --test scripts/static-site-asset-references.test.js",
     "test:native-account-scope": "node --test scripts/native-account-scope.test.js",
     "test:static-site-privacy-copy": "node --test scripts/static-site-privacy-copy.test.js",
+    "test:static-site-adsense-consent-browser": "node --test scripts/static-site-adsense-consent-browser.test.js",
     "test:static-site-question-feedback": "node --test scripts/static-site-question-feedback.test.js",
     "test:static-site-settings-language": "node --test scripts/static-site-settings-language.test.js",
     "test:static-site-practice-result-i18n": "node --test scripts/static-site-practice-result-i18n.test.js",
@@ -93,7 +94,7 @@
   "dependencies": {
     "expo": "~54.0.33",
     "expo-constants": "~18.0.13",
-    "expo-crypto": "^55.0.15",
+    "expo-crypto": "~15.0.9",
     "expo-linking": "~8.0.12",
     "expo-router": "~6.0.23",
     "expo-secure-store": "~15.0.8",
