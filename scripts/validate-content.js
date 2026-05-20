@@ -10266,8 +10266,24 @@ function validateProgressStoreSchemaParity() {
       'readProgress must normalize parsed persisted JSON',
     ],
     [
-      'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
-      'writeProgress must persist JSON through progressStateKey',
+      'function normalizeNonNegativeInteger(value: unknown, max = Number.MAX_SAFE_INTEGER): number',
+      'progress store must centralize finite non-negative integer normalization',
+    ],
+    [
+      'questionProgress[questionId] = normalizeQuestionProgress(questionId, item);',
+      'progress hydration must normalize question counters through the shared helper',
+    ],
+    [
+      'const item = normalizeMockExamProgress(session as Partial<MockExamProgress>);',
+      'progress hydration must normalize mock exam counters through the shared helper',
+    ],
+    [
+      'const normalizedProgress = normalizeProgress(progress);',
+      'writeProgress must normalize progress before persisting JSON',
+    ],
+    [
+      'progressStorage?.set(progressStateKey, JSON.stringify(normalizedProgress));',
+      'writeProgress must persist normalized JSON through progressStateKey',
     ],
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
     ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
