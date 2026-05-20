@@ -35,10 +35,14 @@ function route() {
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', route);
 
+function smtTr(map) {
+  let l = 'en';
+  try { l = localStorage.getItem('smt_lang') || 'en'; } catch { /* keep default */ }
+  return (map && (map[l] || map.en)) || '';
+}
 function smtMobileNavLabel(open) {
-  const sv = document.documentElement.lang === 'sv';
-  if (open) return sv ? 'Stäng navigering' : 'Close navigation';
-  return sv ? 'Öppna navigering' : 'Open navigation';
+  if (open) return smtTr({ sv: 'Stäng navigering', en: 'Close navigation', 'zh-Hans': '关闭导航', 'zh-Hant': '關閉導覽', ar: 'إغلاق التنقّل', ckb: 'داخستنی گەشتکردن', fa: 'بستن پیمایش', pl: 'Zamknij nawigację', so: 'Xir hagista', ti: 'ምልጋብ ዕጸው', tr: 'Gezinmeyi kapat', uk: 'Закрити навігацію' });
+  return smtTr({ sv: 'Öppna navigering', en: 'Open navigation', 'zh-Hans': '打开导航', 'zh-Hant': '開啟導覽', ar: 'فتح التنقّل', ckb: 'کردنەوەی گەشتکردن', fa: 'باز کردن پیمایش', pl: 'Otwórz nawigację', so: 'Fur hagista', ti: 'ምልጋብ ክፈት', tr: 'Gezinmeyi aç', uk: 'Відкрити навігацію' });
 }
 
 function smtSetMobileNav(open) {
@@ -1318,10 +1322,10 @@ function smtQuizEscapeHtml(value) {
 
 function smtQuizSourceCitation(question, lang) {
   const source = question && question.source;
-  if (!source) return lang === 'sv' ? 'Källhänvisning saknas' : 'Source citation unavailable';
+  if (!source) return smtTr({ sv: 'Källhänvisning saknas', en: 'Source citation unavailable', 'zh-Hans': '缺少资料来源标注', 'zh-Hant': '缺少資料來源標註', ar: 'لا تتوفر إشارة إلى المصدر', ckb: 'ئاماژە بە سەرچاوە بەردەست نییە', fa: 'ارجاع به منبع در دسترس نیست', pl: 'Brak źródła', so: 'Tixraac lama hayo', ti: 'ምንጪ የለን', tr: 'Kaynak gösterimi yok', uk: 'Джерело недоступне' });
   const title = source.title || 'Sverige i fokus';
   if (!source.chapter || !source.section || source.page === undefined || source.page === null) {
-    return lang === 'sv' ? 'Källhänvisning saknas' : 'Source citation unavailable';
+    return smtTr({ sv: 'Källhänvisning saknas', en: 'Source citation unavailable', 'zh-Hans': '缺少资料来源标注', 'zh-Hant': '缺少資料來源標註', ar: 'لا تتوفر إشارة إلى المصدر', ckb: 'ئاماژە بە سەرچاوە بەردەست نییە', fa: 'ارجاع به منبع در دسترس نیست', pl: 'Brak źródła', so: 'Tixraac lama hayo', ti: 'ምንጪ የለን', tr: 'Kaynak gösterimi yok', uk: 'Джерело недоступне' });
   }
   return lang === 'sv'
     ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
@@ -1329,9 +1333,7 @@ function smtQuizSourceCitation(question, lang) {
 }
 
 function smtQuizQuestionDisclaimer(lang) {
-  return lang === 'sv'
-    ? 'Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga.'
-    : 'Independent study practice, not a real exam or an official UHR question.';
+  return smtTr({ sv: 'Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga.', en: 'Independent study practice, not a real exam or an official UHR question.', 'zh-Hans': '独立练习，并非真正的考试，也不是官方 UHR 试题。', 'zh-Hant': '獨立練習，並非真正的考試，也不是官方 UHR 試題。', ar: 'تدريب مستقل، وليس اختبارًا حقيقيًا ولا سؤالًا رسميًا من UHR.', ckb: 'مەشقی سەربەخۆیە، نەک تاقیکردنەوەیەکی ڕاستەقینە یان پرسیارێکی فەرمیی UHR.', fa: 'تمرین مستقل است، نه یک آزمون واقعی و نه یک سؤال رسمی UHR.', pl: 'Niezależne ćwiczenie, nie prawdziwy egzamin ani oficjalne pytanie UHR.', so: 'Tababar madaxbannaan, ma aha imtixaan dhab ah ama su\'aal rasmi ah oo UHR.', ti: 'ናጻ ልምምድ፣ ናይ ሓቂ ፈተና ወይ ወግዓዊ ሕቶ UHR ኣይኮነን።', tr: 'Bağımsız alıştırma; gerçek bir sınav veya resmî bir UHR sorusu değildir.', uk: 'Незалежне тренування, не справжній іспит і не офіційне питання UHR.' });
 }
 
 const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE = 0.35;
@@ -1479,8 +1481,8 @@ function smtQuizRender() {
     stage.innerHTML = `
       <div class="quiz__card">
         <div class="quiz__crumb">Practice</div>
-        <h2 class="quiz__q">${lang === 'sv' ? 'Inga frågor hittades.' : 'No questions found.'}</h2>
-        <p class="quiz__counter">${lang === 'sv' ? 'Välj ett annat kapitel.' : 'Pick another chapter.'}</p>
+        <h2 class="quiz__q">${smtTr({ sv: 'Inga frågor hittades.', en: 'No questions found.', 'zh-Hans': '未找到任何题目。', 'zh-Hant': '找不到任何題目。', ar: 'لم يُعثر على أسئلة.', ckb: 'هیچ پرسیارێک نەدۆزرایەوە.', fa: 'هیچ سؤالی یافت نشد.', pl: 'Nie znaleziono pytań.', so: 'Su\'aalo lama helin.', ti: 'ሕቶታት ኣይተረኽቡን።', tr: 'Soru bulunamadı.', uk: 'Питань не знайдено.' })}</h2>
+        <p class="quiz__counter">${smtTr({ sv: 'Välj ett annat kapitel.', en: 'Pick another chapter.', 'zh-Hans': '请选择其他章节。', 'zh-Hant': '請選擇其他章節。', ar: 'اختر فصلًا آخر.', ckb: 'بەشێکی تر هەڵبژێرە.', fa: 'فصل دیگری را انتخاب کنید.', pl: 'Wybierz inny rozdział.', so: 'Dooro cutub kale.', ti: 'ካልእ ምዕራፍ ምረጽ።', tr: 'Başka bir bölüm seçin.', uk: 'Виберіть інший розділ.' })}</p>
       </div>
     `;
     return;
