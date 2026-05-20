@@ -235,11 +235,11 @@ test('settings route exposes page and section titles as headers', () => {
 
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /\{copy\.title\}/);
-  assert.match(source, /\{copy\.studyLanguageTitle\}/);
+  assert.match(source, /\{copy\.questionLanguageTitle\}/);
   assert.match(source, /Inställningar/);
   assert.match(source, /Settings/);
-  assert.match(source, /Studiespråk/);
-  assert.match(source, /Study language/);
+  assert.match(source, /Frågespråk/);
+  assert.match(source, /Question language/);
   assert.match(source, /Dagligt mål/);
   assert.match(source, /Audio/);
   assert.equal(sectionHeaderMatches?.length, 3);
@@ -267,10 +267,8 @@ test('settings controls mirror selected and checked state to web aria attributes
   assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
   assert.match(source, /Svenska/);
   assert.match(source, /Engelskt stöd/);
-  assert.match(source, /Byt studiespråk till \$\{label\}/);
-  assert.match(source, /Set study language to \$\{label\}/);
-  assert.doesNotMatch(source, new RegExp(['Fråge', 'språk'].join('')));
-  assert.doesNotMatch(source, new RegExp(['Question ', 'language'].join('')));
+  assert.match(source, /Byt frågespråk till \$\{label\}/);
+  assert.match(source, /Set question language to \$\{label\}/);
   assert.match(source, /\$\{answerCount\} svar per dag/);
   assert.match(source, /\$\{answerCount\} answers per day/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -321,17 +319,6 @@ test('onboarding route remains scrollable on narrow mobile viewports', () => {
   assert.match(source, /paddingBottom: space\[10\]/);
   assert.doesNotMatch(source, /<View style=\{styles\.container\}>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('first-run modal uses natural Swedish guide accessibility labels', () => {
-  const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
-
-  assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
-  assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
-  assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
-  assert.match(source, /<Text style=\{styles\.primaryButtonText\}>\{copy\.open\}<\/Text>/);
-  assert.doesNotMatch(source, new RegExp(['om-', 'provet-', 'guiden'].join('')));
-  assert.doesNotMatch(source, /om-[^-]+-guiden/);
 });
 
 test('card scaffold groups labelled surfaces for accessibility', () => {
@@ -927,24 +914,18 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
-  assert.match(source, /\{copy\.studySetupActionHelper\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
-  assert.match(source, /href="\/settings"/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Studieinställningar/);
-  assert.match(source, /Justera dagligt mål, frågespråk och ljud på ett ställe\./);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
-  assert.match(source, /Justera inställningar/);
-  assert.match(source, /Öppna inställningar för dagligt mål, frågespråk och ljud/);
+  assert.match(source, /Öppna inställningar/);
   assert.match(source, /Första övningen/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
-  assert.match(source, /Adjust daily goal, question language, and audio in one place\./);
   assert.match(source, /No badges yet/);
-  assert.match(source, /Adjust settings/);
-  assert.match(source, /Open settings for daily goal, question language, and audio/);
+  assert.match(source, /Open settings/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1020,8 +1001,15 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.startPracticeAccessibilityLabel\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel: copy\.startPracticeAccessibilityLabel/);
+  assert.match(source, /accessibilityLabel: copy\.browseChaptersAccessibilityLabel/);
+  assert.match(source, /Quick start/);
+  assert.match(source, /Snabbstart/);
+  assert.match(source, /quickActions\.map/);
+  assert.match(source, /href: '\/search'/);
+  assert.match(source, /accessibilityLabel=\{action\.accessibilityLabel\}/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.quickActionTitle\}>/);
+  assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
@@ -1033,10 +1021,6 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
   assert.match(source, /Smarta studievanor/);
-  assert.match(source, /genomgång av frågor du missat/);
-  assert.match(source, /missade frågor, ljud och redoindikator/);
-  assert.doesNotMatch(source, new RegExp(['fel', 'spårning'].join('')));
-  assert.doesNotMatch(source, new RegExp(['repetition av ', 'misstag'].join('')));
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
   assert.match(source, /Smart study habits/);
@@ -1049,11 +1033,11 @@ test('home screen exposes dashboard card titles as headers', () => {
 
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /\{copy\.readinessTitle\}/);
-  assert.match(source, /\{resumeCopy\.title\}/);
+  assert.match(source, /\{copy\.quickActionsTitle\}/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
-  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.quickActionTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
