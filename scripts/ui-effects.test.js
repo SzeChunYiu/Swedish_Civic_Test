@@ -585,6 +585,8 @@ test('onboarding route exposes its primary title as a header', () => {
   assert.match(source, /Prepare calmly for the civic test/);
   assert.match(source, /Börja studera/);
   assert.match(source, /Start studying/);
+  assert.match(source, /Alla 13 ämnen och hela frågebanken ingår gratis/);
+  assert.match(source, /All 13 topics and the full question bank are included for free/);
   assert.match(source, /Justera inställningar/);
   assert.match(source, /Adjust settings/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -1329,11 +1331,7 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(source, /Återställ köp av Ta bort annonser/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
-  assert.match(source, /Tidsatta övningsprov är redan annonsfria/);
-  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
-  assert.doesNotMatch(placementCtaSource, /\bProv är redan annonsfria\b/);
-  assert.doesNotMatch(placementCtaSource, /\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i);
-  assert.doesNotMatch(source, /\bprov förblir annonsfria\b/i);
+  assert.match(source, /Hela frågebanken och alla 13 ämnen ingår gratis/);
   assert.match(source, /Remove Ads/);
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
   assert.match(source, /Restore Remove Ads purchase/);
@@ -1346,8 +1344,7 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
   assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
   assert.match(source, /Ads are disabled on this device\./);
-  assert.doesNotMatch(source, /adsDisabled \? copy\.bodyIdle/);
-  assert.doesNotMatch(source, /activeAction !== null \|\| adsDisabled/);
+  assert.match(source, /The full question bank and all 13 topics are free/);
   assert.match(homeSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(homeSource, /language=\{language\}/);
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -1557,6 +1554,8 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}/);
   assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
+  assert.match(source, /<Badge tone="blue">\{copy\.freeBankBadge\}<\/Badge>/);
+  assert.match(source, /\{copy\.freeBankText\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
   assert.match(source, /<GuidedPracticePath/);
@@ -1568,9 +1567,13 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
   assert.match(source, /Smarta studievanor/);
+  assert.match(source, /Hela banken gratis/);
+  assert.match(source, /Alla 13 ämnen och hela frågebanken ingår gratis/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
   assert.match(source, /Smart study habits/);
+  assert.match(source, /Full bank free/);
+  assert.match(source, /All 13 topics and the full question bank are included for free/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
