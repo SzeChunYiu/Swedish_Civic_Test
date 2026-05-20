@@ -99,7 +99,7 @@ test('first-run about modal exposes only real guide actions on web', async ({ pa
   await page.goto('/practice', { waitUntil: 'networkidle' });
 
   const dialogs = page.locator('[role="dialog"][aria-modal="true"]');
-  const guideLink = page.getByRole('link', { name: 'Öppna om-provet-guiden' });
+  const guideLink = page.getByRole('link', { name: 'Läs guiden om medborgarskapsprovet' });
   const searchLink = page.getByRole('link', { name: 'Sök' }).first();
 
   await expect(dialogs).toHaveCount(1);
@@ -156,7 +156,7 @@ test('first-run about modal keeps backdrop dismissal and guide navigation workin
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await expect(dialogs).toHaveCount(1);
 
-  await page.getByRole('link', { name: 'Öppna om-provet-guiden' }).click();
+  await page.getByRole('link', { name: 'Läs guiden om medborgarskapsprovet' }).click();
   await expect(page).toHaveURL(/\/about-the-test/);
   await expect(
     page.getByRole('heading', { name: 'Vad är medborgarskapsprovet i samhällskunskap?' }),
