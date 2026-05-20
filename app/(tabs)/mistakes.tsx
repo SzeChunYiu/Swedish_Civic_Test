@@ -62,11 +62,13 @@ type AnswerReviewBlockProps = {
 };
 
 type OptionalPersistenceWarningSlice = {
-  persistenceWarning?: RecoverablePersistenceWarning | null;
   clearPersistenceWarning?: () => void;
+  persistenceWarning?: RecoverablePersistenceWarning | null;
 };
 
-const noopDismissPersistenceWarning = () => {};
+function noopDismissPersistenceWarning() {
+  return undefined;
+}
 
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
