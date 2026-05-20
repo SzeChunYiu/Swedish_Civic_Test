@@ -13,6 +13,7 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
@@ -143,7 +144,17 @@ export default function Screen() {
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
+  const clearProgressPersistenceWarning = useProgressStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
+  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
@@ -324,6 +335,16 @@ export default function Screen() {
         ) : null}
       </View>
       <QuestionDisclaimer />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearProgressPersistenceWarning}
+        warning={progressPersistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearMistakeReviewPersistenceWarning}
+        warning={mistakeReviewPersistenceWarning}
+      />
       <QuestionCard question={question} language={language} />
       <AudioButton
         enabled={audioEnabled}

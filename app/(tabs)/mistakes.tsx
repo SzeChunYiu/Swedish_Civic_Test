@@ -61,6 +61,13 @@ type AnswerReviewBlockProps = {
   selectedWrongAnswer?: string;
 };
 
+type OptionalPersistenceWarningSlice = {
+  persistenceWarning?: RecoverablePersistenceWarning | null;
+  clearPersistenceWarning?: () => void;
+};
+
+const noopDismissPersistenceWarning = () => {};
+
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>

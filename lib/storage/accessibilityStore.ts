@@ -50,6 +50,7 @@ type InitialAccessibilityState = {
   easyReadFont: boolean;
   fontSizeStep: FontSizeStep;
   audioPlaybackRate: AudioPlaybackRate;
+  themeMode: ThemeMode;
   persistenceWarning: RecoverablePersistenceWarning | null;
 };
 
@@ -104,10 +105,12 @@ function readInitialAccessibilityState(): InitialAccessibilityState {
   const easyReadFont = readEasyReadFont();
   const fontSizeStep = readFontSizeStep();
   const audioPlaybackRate = readAudioPlaybackRate();
+  const themeMode = readThemeMode();
   return {
     easyReadFont: easyReadFont.value,
     fontSizeStep: fontSizeStep.value,
     audioPlaybackRate: audioPlaybackRate.value,
+    themeMode,
     persistenceWarning:
       easyReadFont.persistenceWarning ??
       fontSizeStep.persistenceWarning ??
@@ -143,12 +146,14 @@ type AccessibilityState = {
   clearPersistenceWarning: () => void;
 };
 
+const initialAccessibilityState = readInitialAccessibilityState();
+
 export const useAccessibilityStore = create<AccessibilityState>((set) => ({
-  easyReadFont: readEasyReadFont(),
-  fontSizeStep: readFontSizeStep(),
-  audioPlaybackRate: readAudioPlaybackRate(),
-  themeMode: readThemeMode(),
-  persistenceWarning: null,
+  easyReadFont: initialAccessibilityState.easyReadFont,
+  fontSizeStep: initialAccessibilityState.fontSizeStep,
+  audioPlaybackRate: initialAccessibilityState.audioPlaybackRate,
+  themeMode: initialAccessibilityState.themeMode,
+  persistenceWarning: initialAccessibilityState.persistenceWarning,
   setEasyReadFont: (enabled) => {
     const persistenceWarning = writeRecoverably(
       accessibilityStorage,

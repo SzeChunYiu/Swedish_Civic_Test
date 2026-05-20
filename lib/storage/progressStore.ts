@@ -8,6 +8,8 @@ import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
+import { writeRecoverably } from './persistenceWarning';
 
 export type QuestionProgress = {
   questionId: string;
@@ -30,6 +32,7 @@ export type MockExamProgress = {
 };
 
 const progressStateKey = 'progressState';
+const progressStorageId = 'progress';
 const maxHydratedQuestionAnswerCount = 10000;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
@@ -41,7 +44,7 @@ const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
 let progressStorage: MMKV | null = null;
 
 try {
-  progressStorage = createMMKV({ id: 'progress' });
+  progressStorage = createMMKV({ id: progressStorageId });
 } catch {
   progressStorage = null;
 }
@@ -275,25 +278,35 @@ function readProgress(): PersistedProgress {
   }
 }
 
-function writeProgress(progress: PersistedProgress): PersistedProgress {
+function writeProgress(
+  progress: PersistedProgress,
+): PersistedProgress & { persistenceWarning: RecoverablePersistenceWarning | null } {
   const serializedProgress = JSON.stringify(progress);
-  progressStorage?.set(progressStateKey, serializedProgress);
-  return normalizeProgress(JSON.parse(serializedProgress));
+  const persistenceWarning = writeRecoverably(
+    progressStorage,
+    progressStorageId,
+    progressStateKey,
+    serializedProgress,
+  );
+  return { ...normalizeProgress(JSON.parse(serializedProgress)), persistenceWarning };
 }
 
 type ProgressState = PersistedProgress & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
   markQuestionCompleted: (questionId: string) => void;
   recordAnswer(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating): void;
   recordMockExamSession: (session: MockExamProgressInput) => void;
   setStreakFreezeState: (streakFreezeState: StreakFreezeState) => void;
   toggleBookmark: (questionId: string) => void;
   resetProgress: () => void;
+  clearPersistenceWarning: () => void;
 };
 
 const initialProgress = readProgress();
 
 export const useProgressStore = create<ProgressState>((set) => ({
   ...initialProgress,
+  persistenceWarning: null,
   markQuestionCompleted: (questionId) =>
     set((state) => {
       if (state.completedQuestionIds.includes(questionId)) return state;
@@ -454,10 +467,11 @@ export const useProgressStore = create<ProgressState>((set) => ({
     const persistedProgress = writeProgress(emptyProgress);
     set(persistedProgress);
   },
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 export function importProgressSnapshot(progress: PersistedProgress): void {
   const normalizedProgress = normalizeImportedProgress(progress);
-  writeProgress(normalizedProgress);
-  useProgressStore.setState(normalizedProgress);
+  const persistedProgress = writeProgress(normalizedProgress);
+  useProgressStore.setState(persistedProgress);
 }
