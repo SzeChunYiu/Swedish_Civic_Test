@@ -43,7 +43,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.',
     descriptionEn:
       'The fundamental laws, the justice system, rule of law, and the right of public access.',
-    questionCount: 45,
+    questionCount: 70,
   },
   {
     id: 'ch06',
