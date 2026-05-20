@@ -153,8 +153,8 @@ test('legal, source, and support routes stay on shared accessible header path', 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 49);
-  assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
+  assert.equal(summary.legalSwedishEnglishTokenRoutesValidated, 5);
+  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 
@@ -208,7 +208,37 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /Swedish privacy copy must use natural Swedish streak wording, not "streaks"/,
+    /app\/privacy\.tsx Swedish legal copy must use Swedish learner-facing wording, not English token "streaks"/,
+  );
+});
+
+test('legal Swedish English-token guard rejects settings drift outside privacy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/terms.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aktuella krav hos berörda myndigheter', 'aktuella settings hos berörda myndigheter');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/terms\.tsx Swedish legal copy must use Swedish learner-facing wording, not English token "settings"/,
   );
 });
 

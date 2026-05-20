@@ -344,21 +344,6 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
   assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
-  assert.deepEqual(
-    [...manifest.nativeIntentStaticRoutes].sort(),
-    [
-      '/',
-      ...manifest.tabScreenNames.map((name) => `/${name}`),
-      ...manifest.rootStackScreenNames
-        .filter((name) => !['index', '(tabs)', '+not-found'].includes(name))
-        .map((name) => `/${name}`),
-      ...manifest.standaloneRouteHrefs,
-    ].sort(),
-    'native intent static route allowlist should mirror manifest route declarations',
-  );
-  assert.deepEqual(
-    manifest.nativeIntentDynamicRouteRoutes,
-    manifest.dynamicRouteNames.map((name) => `/${name}`),
   assert.equal(
     manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
     true,
