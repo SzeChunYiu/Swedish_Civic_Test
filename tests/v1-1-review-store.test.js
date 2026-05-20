@@ -9,7 +9,7 @@ const ts = require('typescript');
 
 const {
   createMemoryMMKV,
-  createThrowingGetMMKV,
+  createThrowingReadMMKV: createThrowingGetMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
@@ -226,6 +226,62 @@ test('review store: successful writes persist JSON and corrupt reads still fall 
   );
   assert.deepEqual(useCorruptReviewStore.getState().byId, {});
   assert.deepEqual(useCorruptReviewStore.getState().gradedPerDay, {});
+});
+
+test('review store: rejects unsafe runtime question ids before creating or grading cards', () => {
+  const storage = createMemoryMMKV();
+  const { REVIEW_STORE_KEY, useReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/reviewStore.ts',
+    {
+      reviews: storage,
+    },
+  );
+  const unsafeIds = ['', '   ', ' q001 ', '__proto__', 'constructor', 'prototype', null, 17];
+
+  for (const unsafeId of unsafeIds) {
+    assert.throws(
+      () => useReviewStore.getState().ensureCard(unsafeId, '2026-05-19T12:00:00.000Z'),
+      /Review questionId must be a non-empty safe string/,
+    );
+    assert.deepEqual(useReviewStore.getState().byId, {});
+    assert.deepEqual(useReviewStore.getState().gradedPerDay, {});
+    assert.equal(storage.values.has(REVIEW_STORE_KEY), false);
+
+    assert.throws(
+      () => useReviewStore.getState().grade(unsafeId, 3, '2026-05-19T12:00:00.000Z'),
+      /Review questionId must be a non-empty safe string/,
+    );
+    assert.deepEqual(useReviewStore.getState().byId, {});
+    assert.deepEqual(useReviewStore.getState().gradedPerDay, {});
+    assert.equal(storage.values.has(REVIEW_STORE_KEY), false);
+    assert.equal(
+      Object.prototype.hasOwnProperty.call(useReviewStore.getState().byId, unsafeId),
+      false,
+    );
+  }
+
+  const card = useReviewStore.getState().ensureCard('qSafe', '2026-05-19T12:00:00.000Z');
+  assert.equal(card.questionId, 'qSafe');
+  const reviewed = useReviewStore.getState().grade('qSafe', 3, '2026-05-19T12:00:00.000Z');
+  assert.equal(reviewed.questionId, 'qSafe');
+  assert.equal(useReviewStore.getState().byId.qSafe.questionId, 'qSafe');
+  assert.equal(
+    Object.values(useReviewStore.getState().gradedPerDay).reduce((sum, count) => sum + count, 0),
+    1,
+  );
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(useReviewStore.getState().byId, '__proto__'),
+    false,
+  );
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(useReviewStore.getState().byId, 'constructor'),
+    false,
+  );
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(useReviewStore.getState().byId, 'prototype'),
+    false,
+  );
 });
 
 test('review store: corrupt persisted cards and graded days are dropped on hydration', () => {

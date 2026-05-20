@@ -78,3 +78,31 @@ require('./scripts/validate-content.js');
   assert.match(output, /spacedRepetitionSchedule is \[1,3,3,15,30\]/);
   assert.match(output, /spacedRepetitionSchedule\[2\] must be greater than the previous interval/);
 });
+
+test('review store guards unsafe runtime questionId keys before card creation', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'lib/storage/reviewStore.ts'), 'utf8');
+  const keySafetySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/importKeySafety.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /function isSafeReviewQuestionId\(questionId: unknown\)/);
+  assert.match(source, /questionId\.trim\(\) === questionId/);
+  assert.match(source, /questionId\.length > 0/);
+  assert.match(source, /isSafeImportedMapKey\(questionId\)/);
+  assert.match(
+    source,
+    /throw new TypeError\('Review questionId must be a non-empty safe string\.'\)/,
+  );
+  assert.match(
+    source,
+    /ensureCard: \(questionId, now\) => \{\n\s+assertSafeReviewQuestionId\(questionId\);/,
+  );
+  assert.match(
+    source,
+    /grade: \(questionId, grade, now = new Date\(\)\.toISOString\(\)\) => \{\n\s+assertSafeReviewQuestionId\(questionId\);/,
+  );
+  assert.match(keySafetySource, /'__proto__'/);
+  assert.match(keySafetySource, /'constructor'/);
+  assert.match(keySafetySource, /'prototype'/);
+});
