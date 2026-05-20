@@ -14,6 +14,55 @@ const staleEbookCopyPatterns = [
   /Coming soon/i,
   /Kommer snart/i,
 ];
+const swedishEbookQuizLoanwordPatterns = [
+  phrasePattern('gör ett ', 'quiz'),
+  phrasePattern('quiz', 'frågor'),
+  phrasePattern('quiz', 'pass'),
+  phrasePattern('quiz', 'et'),
+];
+const unsupportedEbookOutcomeClaimPatterns = [
+  /Most people who pass this way/i,
+  /three weeks,\s*not three days/i,
+  /de flesta[^.?!]*(?:veckor|veckan)[^.?!]*(?:klarar|klara|godk[aä]n|prov)/i,
+  /\b(?:typical|most)\s+(?:learners|people|users)[^.?!]*(?:pass|passing)[^.?!]*(?:days?|weeks?|months?)/i,
+  /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
+  /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
+];
+const unsupportedPracticalTestClaimPatterns = [
+  phrasePattern('Format of ', 'the real test'),
+  phrasePattern('multiple-choice ', 'and timed'),
+  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
+  phrasePattern('Arrive 30 ', 'minutes early'),
+  phrasePattern('test centre ', 'is strict'),
+  phrasePattern('Multiple-choice:\\s*', 'every question'),
+  phrasePattern('You may ', 'retake the test'),
+  phrasePattern('There is a ', 'small fee'),
+  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
+  phrasePattern('På provdagen är ', 'giltig legitimation'),
+  phrasePattern('Tidsatt ', 'provträning'),
+];
+const officialPracticalTestSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+];
+const factboxSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+];
+const unsupportedFactboxPatterns = [
+  /Facts you'll see on the test/i,
+  /what you'll see on the test/i,
+  /\b69%\s+is\s+forest/i,
+  /\b9%\s+lake/i,
+  /35\s*000\s+km\s+of\s+coastline/i,
+  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /historically commits\s+~?1%\s+of\s+GNI/i,
+  /Citizenship test starts:\s*6 June 2026/i,
+];
 
 function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -107,6 +156,30 @@ function assertNoStaleEbookCopy(value) {
   }
 }
 
+function assertNoSwedishEbookQuizLoanwords(value) {
+  for (const pattern of swedishEbookQuizLoanwordPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertNoUnsupportedEbookOutcomeClaim(value) {
+  for (const pattern of unsupportedEbookOutcomeClaimPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertNoUnsupportedPracticalTestClaim(value) {
+  for (const pattern of unsupportedPracticalTestClaimPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertNoUnsupportedFactboxClaim(value) {
+  for (const pattern of unsupportedFactboxPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
 function hasUnsupportedEbookSourcePromise(value) {
   return [
     /source-backed\s+chapters/i,
@@ -130,6 +203,11 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
   assertNoStaleEbookCopy(source);
+  assertNoSwedishEbookQuizLoanwords(source);
+  assertNoUnsupportedEbookOutcomeClaim(source);
+  assertNoUnsupportedPracticalTestClaim(source);
+  assertNoUnsupportedFactboxClaim(source);
+  assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
 });
 
 test('static ebook does not promise source-backed footnotes without citation coverage', () => {
@@ -158,6 +236,13 @@ test('static ebook renders every chapter with Swedish and English body parity', 
 
     assertNoStaleEbookCopy(englishHtml);
     assertNoStaleEbookCopy(swedishHtml);
+    assertNoSwedishEbookQuizLoanwords(swedishHtml);
+    assertNoUnsupportedEbookOutcomeClaim(englishHtml);
+    assertNoUnsupportedEbookOutcomeClaim(swedishHtml);
+    assertNoUnsupportedPracticalTestClaim(englishHtml);
+    assertNoUnsupportedPracticalTestClaim(swedishHtml);
+    assertNoUnsupportedFactboxClaim(englishHtml);
+    assertNoUnsupportedFactboxClaim(swedishHtml);
 
     assert.match(englishHtml, /ebook__study-actions/);
     assert.match(swedishHtml, /ebook__study-actions/);
@@ -169,6 +254,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     if (chapterId === 'intro') {
       assert.match(englishHtml, /What this book is/);
       assert.match(swedishHtml, /Vad den h[aä]r boken [aä]r/);
+      assert.match(swedishHtml, /gör en övning/);
     } else {
       assert.doesNotMatch(englishHtml, /<div class="ebook__crumb">How to read this book<\/div>/);
       assert.doesNotMatch(
