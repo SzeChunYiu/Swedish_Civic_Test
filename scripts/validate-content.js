@@ -255,6 +255,11 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
+const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat does the Council of Europe work for\??/i,
+  /\bThe Council of Europe works for\b/i,
+  /\bThe Council of Europe works only for\b/i,
+];
 const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
   /\bbec(?:o|a)me important for\b/i,
@@ -4331,6 +4336,20 @@ function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
+  if (!(question.tags || []).includes('council-of-europe')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
   if (!question.tags?.includes('saltsjobaden')) return null;
 
@@ -6000,6 +6019,13 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} has been law in Sweden since ${answer}`;
   match = q.match(/^What does (.+?) work to do$/i);
   if (match) return `${upperFirst(match[1])} works to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^What does (.+?) promote$/i);
+  if (match) {
+    if (/^Only\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} promotes only ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
+    }
+    return `${upperFirst(match[1])} promotes ${lowerFirst(answer)}`;
+  }
   match = q.match(/^What does (.+?) work for$/i);
   if (match) {
     if (/^Only\s+/i.test(answer)) {
@@ -7218,6 +7244,7 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
+let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
@@ -16499,6 +16526,8 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
+      const councilOfEuropeWorkForEnglishNaturalnessIssue =
+        findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
@@ -16546,6 +16575,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal common-to-do English wording`);
       } else {
         questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
+      }
+      if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
+        fail(`${label} uses literal Council of Europe work-for English wording`);
+      } else {
+        questionCouncilOfEuropeWorkForEnglishNaturalnessValidated += 1;
       }
       if (saltsjobadenAgreementEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
@@ -17027,6 +17061,7 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
+      questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
