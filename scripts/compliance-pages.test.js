@@ -9,6 +9,11 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function literalPattern(parts, flags = 'i') {
+  const text = parts.join('');
+  return new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+}
+
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
@@ -25,6 +30,11 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/disclaimer.tsx'), /not real exam questions/i);
   assert.match(read('app/privacy.tsx'), /no account/i);
   assert.match(read('app/privacy.tsx'), /local/i);
+  assert.match(read('app/privacy.tsx'), /studiesviter/);
+  assert.doesNotMatch(
+    read('app/privacy.tsx').match(/sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy'/)?.[0] ?? '',
+    /\bstreaks\b/i,
+  );
   assert.match(read('app/privacy.tsx'), /ad-supported/i);
   assert.match(read('app/privacy.tsx'), /Remove Ads/i);
   assert.match(read('app/privacy.tsx'), /29 SEK/i);
@@ -44,8 +54,10 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Sverige i fokus/i);
   assert.match(sourcesRoute, /Källor/);
   assert.match(sourcesRoute, /Primärt studiematerial/);
+  assert.match(sourcesRoute, /Varje övningsfråga visar en källrad med UHR:s kapitel/);
   assert.match(sourcesRoute, /Sources/);
   assert.match(sourcesRoute, /Primary study material/);
+  assert.match(sourcesRoute, /Every practice question shows a source line with the UHR chapter/);
   assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
   assert.match(
     sourcesRoute,
@@ -53,6 +65,9 @@ test('compliance pages and source links are present', () => {
   );
   assert.match(sourcesRoute, /Öppna UHR:s utbildningsmaterial/);
   assert.match(sourcesRoute, /Open UHR education material/);
+  assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
+  assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
+  assert.doesNotMatch(sourcesRoute, /spreadsheet-friendly|kalkylbladsvänliga/);
   const supportRoute = read('app/support.tsx');
   assert.match(supportRoute, /const supportCopy: Record<AppLanguage, SupportRouteCopy>/);
   assert.match(supportRoute, /const copy = supportCopy\[language\]/);
@@ -73,28 +88,32 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Support/);
 });
 
-test('static marketing copy avoids unsupported real-exam parity claims', () => {
-  const staticApp = read('site/app.js');
-  const phrasePattern = (...tokens) => new RegExp(tokens.join('[\\s\\S]{0,24}'), 'i');
-  const forbidden = [
-    ['real', 'timing'],
-    ['real', 'format'],
-    ['look', 'and', 'feel', 'like', 'the', 'real', 'thing'],
-    ['ready', 'for', 'the', 'real', 'thing'],
-    ['riktig', 'tidsbegränsning'],
-    ['riktig', 'timing'],
-    ['riktigt', 'format'],
-    ['riktig', 'tid'],
-    ['känns', 'som', 'det', 'riktiga'],
-    ['redo', 'för', 'det', 'riktiga'],
+test('static mock exam copy stays unofficial and threshold-free', () => {
+  const practice = read('site/practice.js');
+  const forbiddenFragments = [
+    ['Real exam is ', '60 min'],
+    ['Riktigt provet är ', '60 min'],
+    ['Start ', 'exam'],
+    ['Starta ', 'tentamen'],
+    ['You ', 'passed.'],
+    ['Not ', 'yet.'],
+    ['God', 'känt.'],
+    ['Under', 'känt.'],
+    ['passing ', 'line'],
+    ['godkänt-', 'gräns'],
+    ['75', '% ', 'next time'],
+    ['75', '% ', 'nästa gång'],
   ];
 
-  for (const tokens of forbidden) {
-    assert.doesNotMatch(staticApp, phrasePattern(...tokens), tokens.join(' '));
+  for (const parts of forbiddenFragments) {
+    assert.doesNotMatch(practice, literalPattern(parts));
   }
-
-  assert.match(staticApp, /It is still unofficial study practice/);
-  assert.match(staticApp, /Det är fortfarande inofficiell övning/);
-  assert.match(staticApp, /Timed practice rounds with review cards/);
-  assert.match(staticApp, /Tidsatta övningspass med genomgång efteråt/);
+  assert.doesNotMatch(practice, />=\s*75|75\s*%/);
+  assert.match(practice, /Practice timer only/);
+  assert.match(practice, /Timer endast för övning/);
+  assert.match(practice, /Start timed practice/);
+  assert.match(practice, /Starta tidsatt övning/);
+  assert.match(practice, /Practice round complete/);
+  assert.match(practice, /Övningspass klart/);
+  assert.match(practice, /Independent study practice, not a real exam or an official UHR question/);
 });

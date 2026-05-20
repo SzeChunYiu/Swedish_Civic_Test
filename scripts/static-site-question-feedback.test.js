@@ -53,6 +53,13 @@ function createRenderContext({ hash = '#/practice?c=1', language = 'en' } = {}) 
         querySelectorAll() {
           return [];
         },
+        closest() {
+          return {
+            querySelector() {
+              return null;
+            },
+          };
+        },
       });
     }
     return elements.get(id);
@@ -146,6 +153,42 @@ test('static Mock review renders citation and disclaimer for every reviewed ques
     html,
     /class="mock-review__disclaimer">Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga\.<\/p>/,
   );
+  assert.match(html, /Övningspass klart\./);
+  assert.match(html, /100% — 1\/1 rätt/);
+  [
+    ['God', 'känt'],
+    ['Under', 'känt'],
+    ['godkänt-', 'gräns'],
+  ]
+    .map((parts) => parts.join(''))
+    .forEach((phrase) => assert.doesNotMatch(html, new RegExp(phrase)));
+});
+
+test('static Mock landing renders neutral timed-practice copy', () => {
+  const { sandbox, element } = createRenderContext({ hash: '#/mock', language: 'en' });
+  sandbox.window.SMT_CHAPTERS_META = [
+    { id: 1, emoji: '🇸🇪', title: { en: 'Sweden', sv: 'Sverige' } },
+  ];
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    ['renderMockLanding();', '})();'].join('\n'),
+  );
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  const html = element('mock-stage').innerHTML;
+  assert.match(html, /Timed practice/);
+  assert.match(html, /Build your practice round/);
+  assert.match(html, /Practice timer only/);
+  assert.match(html, /Result<\/b> percent correct/);
+  assert.match(html, /Start timed practice/);
+  [
+    ['Real ', 'exam'],
+    ['Start ', 'exam'],
+    ['Pass', '<\\/b> 75'],
+    ['passing ', 'line'],
+  ]
+    .map((parts) => parts.join(''))
+    .forEach((phrase) => assert.doesNotMatch(html, new RegExp(phrase, 'i')));
 });
 
 test('static active Mock question renders citation and independent-study disclaimer', () => {
