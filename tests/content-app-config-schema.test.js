@@ -20,8 +20,11 @@ test('app config schema stays aligned with release app metadata and ad/IAP plugi
 
   assert.equal(summary.appConfigPluginsValidated, 5);
   assert.equal(summary.appConfigSchemaValidated, true);
+  assert.equal(appConfig.expo.name, 'Almost Swedish');
+  assert.equal(appConfig.expo.slug, 'almost-swedish');
   assert.equal(appConfig.expo.version, packageMetadata.version);
   assert.equal(appConfig.expo.scheme, appConfig.expo.slug);
+  assert.equal(appConfig.expo.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
   assert.equal(appConfig.expo.ios.bundleIdentifier, appConfig.expo.android.package);
   assert.ok(plugins.some((plugin) => plugin === 'react-native-iap'));
   assert.ok(
