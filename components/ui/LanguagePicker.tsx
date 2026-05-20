@@ -76,94 +76,13 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const currentCode = language === 'sv' ? 'sv' : 'en';
   const currentLabel = currentCode.toUpperCase();
   const copy = languagePickerCopy[language];
-  const availableLocaleOptions = useMemo(() => locales.filter((option) => option.available), []);
-
-  const focusView = (node: View | null) => {
-    if (Platform.OS !== 'web') return;
-    (node as FocusableView | null)?.focus?.();
-  };
-
-  const focusTrigger = () => {
-    focusView(triggerRef.current);
-  };
-
-  const focusCloseButton = () => {
-    setFocusedOptionCode(null);
-    focusView(closeButtonRef.current);
-  };
-
-  const focusAvailableOption = (optionCode: string) => {
-    setFocusedOptionCode(optionCode);
-    focusView(rowRefs.current[optionCode] ?? null);
-  };
-
-  const closePicker = ({ restoreFocus = false } = {}) => {
-    setOpen(false);
-    setFocusedOptionCode(null);
-    if (restoreFocus) {
-      requestAnimationFrame(focusTrigger);
-    }
-  };
-
-  const selectedAvailableIndex = Math.max(
-    availableLocaleOptions.findIndex((option) => option.fallback === language),
-    0,
-  );
-
-  const getFocusedAvailableIndex = () => {
-    const focusedIndex = availableLocaleOptions.findIndex(
-      (option) => option.code === focusedOptionCode,
-    );
-
-    return focusedIndex >= 0 ? focusedIndex : selectedAvailableIndex;
-  };
-
-  const focusAvailableIndex = (index: number) => {
-    const nextOption = availableLocaleOptions[index];
-    if (nextOption) focusAvailableOption(nextOption.code);
-  };
-
-  const moveFocusBy = (delta: number) => {
-    if (!availableLocaleOptions.length) return;
-
-    const nextIndex =
-      (getFocusedAvailableIndex() + delta + availableLocaleOptions.length) %
-      availableLocaleOptions.length;
-    focusAvailableIndex(nextIndex);
-  };
-
-  const containTabFocus = (event: WebKeyboardEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (!availableLocaleOptions.length) {
-      focusCloseButton();
-      return;
-    }
-
-    if (!focusedOptionCode) {
-      focusAvailableIndex(event.shiftKey ? availableLocaleOptions.length - 1 : 0);
-      return;
-    }
-
-    const focusedIndex = getFocusedAvailableIndex();
-    const nextIndex = event.shiftKey ? focusedIndex - 1 : focusedIndex + 1;
-
-    if (nextIndex < 0 || nextIndex >= availableLocaleOptions.length) {
-      focusCloseButton();
-      return;
-    }
-
-    focusAvailableIndex(nextIndex);
-  };
+  const closePicker = () => setOpen(false);
 
   const handleSelect = (option: LocaleOption) => {
-    if (!option.available) {
-      return;
+    if (option.available) {
+      setLanguage(option.fallback);
     }
-
-    setLanguage(option.fallback);
-    setOpen(false);
+    closePicker();
   };
 
   const handleMenuKeyDown = (event: WebKeyboardEvent) => {
@@ -244,51 +163,41 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
       </Pressable>
 
-      <Modal
-        animationType="fade"
-        transparent
-        visible={open}
-        onRequestClose={() => closePicker({ restoreFocus: true })}
-      >
-        <Pressable
-          accessible={false}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          onPress={() => closePicker({ restoreFocus: true })}
-          style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
-        >
+      <Modal animationType="fade" transparent visible={open} onRequestClose={closePicker}>
+        <View style={styles.backdropLayer}>
           <Pressable
+            accessible={false}
+            hitSlop={space[0]}
+            importantForAccessibility="no"
+            onPress={closePicker}
+            style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
+          />
+          <View
             accessibilityLabel={copy.menuLabel}
             accessibilityRole="menu"
-            hitSlop={space[0]}
-            onPress={(e) => e.stopPropagation()}
-            style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
-            {...menuKeyboardProps}
+            accessibilityViewIsModal
+            style={styles.card}
           >
-            <View style={styles.headerRow}>
-              <Text style={styles.title}>{copy.title}</Text>
+            <View style={styles.header}>
+              <View style={styles.headingCopy}>
+                <Text accessibilityRole="header" style={styles.title}>
+                  {copy.title}
+                </Text>
+                <Text style={styles.subtitle}>{copy.subtitle}</Text>
+              </View>
               <Pressable
                 accessibilityLabel={copy.closeLabel}
                 accessibilityRole="button"
                 hitSlop={space[1]}
-                onFocus={() => setFocusedOptionCode(null)}
-                onPress={() => closePicker({ restoreFocus: true })}
-                ref={closeButtonRef}
+                onPress={closePicker}
                 style={({ pressed }) => [
                   styles.closeButton,
                   pressed ? styles.closeButtonPressed : null,
                 ]}
               >
-                <Text
-                  accessibilityElementsHidden
-                  importantForAccessibility="no"
-                  style={styles.closeButtonText}
-                >
-                  ×
-                </Text>
+                <Text style={styles.closeGlyph}>×</Text>
               </Pressable>
             </View>
-            <Text style={styles.subtitle}>{copy.subtitle}</Text>
             <ScrollView style={styles.list}>
               {locales.map((opt) => {
                 const selected = opt.available && opt.fallback === language;
@@ -343,8 +252,8 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                 );
               })}
             </ScrollView>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </>
   );
@@ -376,12 +285,15 @@ const styles = StyleSheet.create({
     fontWeight: typography.badge.fontWeight,
     letterSpacing: typography.badge.letterSpacing,
   },
-  backdrop: {
+  backdropLayer: {
     alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
     flex: 1,
     justifyContent: 'center',
     padding: space[3],
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: colors.surfaceMuted,
   },
   backdropPressed: {
     backgroundColor: colors.focusSoft,
@@ -397,14 +309,34 @@ const styles = StyleSheet.create({
     padding: space[3],
     width: '100%',
   },
-  cardPressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  headerRow: {
-    alignItems: 'center',
+  header: {
+    alignItems: 'flex-start',
     flexDirection: 'row',
     gap: space[1.5],
-    justifyContent: 'space-between',
+  },
+  headingCopy: {
+    flex: 1,
+    gap: space[0.75],
+  },
+  closeButton: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    minHeight: space[6],
+    minWidth: space[6],
+  },
+  closeButtonPressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  closeGlyph: {
+    color: colors.textMuted,
+    fontFamily: typography.bodyBold.fontFamily,
+    fontSize: typography.bodyBold.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   title: {
     color: colors.text,

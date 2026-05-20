@@ -48,15 +48,17 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         const tag = collectOpeningTag(lines, index);
         const isButtonImplementation = relPath === 'components/ui/Button.tsx';
         const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
-        if (isIntentionallyHiddenInteractive(tag)) {
+        const isExplicitlyInertPressable =
+          tagName === 'Pressable' && tag.includes('accessible={false}');
+        if (isExplicitlyInertPressable) {
           if (tag.includes('accessibilityLabel=')) {
             offenders.push(
-              `${relPath}:${index + 1}: hidden interactive should not expose accessibilityLabel: ${line.trim()}`,
+              `${relPath}:${index + 1}: inert Pressable should not expose an accessibilityLabel: ${line.trim()}`,
             );
           }
           if (tag.includes('accessibilityRole=')) {
             offenders.push(
-              `${relPath}:${index + 1}: hidden interactive should not expose accessibilityRole: ${line.trim()}`,
+              `${relPath}:${index + 1}: inert Pressable should not expose an accessibilityRole: ${line.trim()}`,
             );
           }
           return;
