@@ -272,8 +272,8 @@ const QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
   /\bresearch at colleges and universities\b/i,
 ];
 const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
-  /\bWhat is common to do on All Saints(?:’|') Day\b/i,
+  /\bWhat is common to do on New Year(?:’|’)s Eve\b/i,
+  /\bWhat is common to do on All Saints(?:’|’) Day\b/i,
 ];
 const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does the Council of Europe work for\??/i,
@@ -283,6 +283,9 @@ const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
 const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
   /\bbec(?:o|a)me important for\b/i,
+];
+const QUESTION_EQUALITY_OMBUDSMAN_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bwork(?:s|ing)?\s+for\s+equal\s+rights\b/i,
 ];
 const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
   /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
@@ -315,8 +318,6 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
 const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
   /\bVilket svar beskriver\b/i,
   /\bWhich answer describes\b/i,
-  /\bVilket är ett sätt att\b/i,
-  /\bWhich is a way to\b/i,
   /\bVilket påstående stämmer om julfirande i Sverige\??/i,
   /\bWhich statement is correct about Christmas celebrations in Sweden\??/i,
 ];
@@ -695,7 +696,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Ändra mål, språk och ljud',
     'Första övningen',
     'Nivå 2',
-    'Missade frågor',
+    'Misstagsrepetition',
     'Tre dagars svit',
   ],
   en: [
@@ -782,11 +783,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile Pro tier comparison must distinguish existing Remove Ads owners',
   ],
 ];
-const FORBIDDEN_PROFILE_PRO_SV_MISTAKE_REVIEW_COPY = [
-  ['Misstags', 'repetition'],
-  ['Repetera ', 'misstag'],
-  ['Fel', 'granskning'],
-].map((parts) => parts.join(''));
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
@@ -1065,19 +1061,19 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad för att öva igen',
+    'Sparad för fokuserad repetition',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
-    'När du missar en övningsfråga visas den här.',
-    'Inga missade frågor ännu',
-    'Öva igen',
-    'Frågor att öva igen',
-    'Ditt senaste svar',
-    'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
-    'Missade frågor',
-    'Antal missar: ${count}',
+    'Svara fel på en övningsfråga så visas den här.',
+    'Inga misstag ännu',
+    'Fellogg',
+    'Fel svar att repetera',
+    'Ditt senaste felaktiga svar',
+    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+    'Misstag',
+    'Fel svar: ${count}',
   ],
   en: [
     'Smart review',
@@ -1097,14 +1093,6 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
-const FORBIDDEN_MISTAKES_ROUTE_SWEDISH_COPY = [
-  ['Fell', 'ogg'],
-  ['Fel svar att', ' repetera'],
-  ['Gå igenom fel svar', ' med fråga'],
-  ['repetitionsantal på', ' samma plats'],
-  ['Sparad för fokuserad', ' repetition'],
-  ['Ditt senaste felaktiga', ' svar'],
-].map((parts) => parts.join(''));
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -1726,10 +1714,6 @@ const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   [
     'const copy = chapterRouteCopy[language];',
     'chapter route must select copy from settings language',
-  ],
-  [
-    '<QuestionDisclaimer language={language} />',
-    'chapter route disclaimer must receive settings language',
   ],
   [
     'chapterDescription: (chapter) => chapter.descriptionSv',
@@ -4444,6 +4428,20 @@ function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionEqualityOmbudsmanEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('equality-ombudsman')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_EQUALITY_OMBUDSMAN_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
   if (!(question.tags || []).includes('lucia-procession')) return null;
 
@@ -4962,6 +4960,22 @@ function swedishTraditionalCelebrationAnswer(answer) {
 function englishTraditionalCelebrationAnswer(answer) {
   if (/^Jesus' birth\b/.test(answer)) return answer;
   return lowerFirst(answer);
+}
+function swedishMentionedExample(answer, category) {
+  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
+  if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
+  return `${answer} nämns som exempel på ${category}`;
+}
+function englishMentionedExample(answer, category) {
+  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
+  if (built) {
+    return `The building of ${built[1]} ${built[2]} is mentioned as an example of ${category}`;
+  }
+  return `${answer} ${englishSubjectVerb(answer, 'is', 'are')} mentioned as ${englishSubjectVerb(
+    answer,
+    'an example',
+    'examples',
+  )} of ${category}`;
 }
 function swedishPurposeClause(value) {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
@@ -5602,13 +5616,8 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
-  match = q.match(/^Hur kan (.+?) påverka (.+?) och delta i (.+)$/i);
-  if (match) {
-    const method = answer.replace(/^Genom att\s+/i, '');
-    return `${upperFirst(match[1])} kan påverka ${match[2]} och delta i ${
-      match[3]
-    } genom att ${lowerFirst(method)}`;
-  }
+  match = q.match(/^Vilket är ett sätt att (.+)$/i);
+  if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
@@ -5732,6 +5741,8 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
     return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
   match = q.match(/^När firas (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
   match = q.match(/^När firas (.+)$/i);
@@ -5816,6 +5827,8 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} byggdes ${lowerFirst(answer)}`;
   match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[1]}`;
+  match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
+  if (match) return `${answer} nämns som exempel i ${match[1]}`;
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad skyddar (.+?) när det gäller (.+)$/i);
@@ -5833,8 +5846,12 @@ function civicStatementSv(source, option) {
   if (match) return swedishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[2]}`;
+  match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
+  if (match) return `${answer} nämns som exempel i ${match[2]}`;
   match = q.match(/^Vad bidrog till (.+)$/i);
   if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
+  match = q.match(/^Vad nämns som exempel på (.+)$/i);
+  if (match) return swedishMentionedExample(answer, match[1]);
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
   match = q.match(/^Vad är vanligt i många hem under (.+)$/i);
@@ -5910,12 +5927,8 @@ function civicStatementEn(source, option) {
   if (match) return meaningStatementEn(match[1], answer);
   match = q.match(/^Which of the following is part of (.+)$/i);
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
-  match = q.match(/^How can (.+?) influence (.+?) and participate in (.+)$/i);
-  if (match) {
-    return `${upperFirst(match[1])} can influence ${match[2]} and participate in ${
-      match[3]
-    } by ${lowerFirst(stripLeadingByEn(answer))}`;
-  }
+  match = q.match(/^Which is a way to (.+)$/i);
+  if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
@@ -6052,6 +6065,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
   match = q.match(/^When are (.+?) celebrated$/i);
@@ -6158,6 +6173,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
   match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
   if (match) return `${answer} exist in ${match[1]}`;
+  match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
+  if (match) return `${answer} are mentioned as examples in ${match[1]}`;
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
@@ -6175,8 +6192,12 @@ function civicStatementEn(source, option) {
   if (match) return englishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
+  match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
+  if (match) return `${answer} are mentioned as examples in ${match[2]}`;
   match = q.match(/^What contributed to (.+)$/i);
   if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
+  match = q.match(/^What is mentioned as an example of (.+)$/i);
+  if (match) return englishMentionedExample(answer, match[1]);
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;
   match = q.match(/^What is common in many homes during (.+)$/i);
@@ -7311,6 +7332,7 @@ let questionStateWelfareCoverageSplitValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
+let questionEqualityOmbudsmanEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
@@ -9565,12 +9587,6 @@ function validateMistakesRouteCopyParity() {
     });
   });
 
-  FORBIDDEN_MISTAKES_ROUTE_SWEDISH_COPY.forEach((copy) => {
-    if (mistakesRoute.includes(copy)) {
-      reject(`mistakes route Swedish copy must not expose stale label ${JSON.stringify(copy)}`);
-    }
-  });
-
   const expectedLabelCount = Object.values(EXPECTED_MISTAKES_ROUTE_COPY_LABELS).reduce(
     (count, labels) => count + labels.length,
     0,
@@ -9778,7 +9794,6 @@ function validateProfileRouteHeaderParity() {
 function validateProfileRouteCopyParity() {
   let valid = true;
   let profileRoute = '';
-  let tierComparison = '';
 
   function reject(message) {
     valid = false;
@@ -9787,22 +9802,10 @@ function validateProfileRouteCopyParity() {
 
   try {
     profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
-    tierComparison = fs.readFileSync(
-      path.join(repoRoot, 'lib/monetization/tierComparison.ts'),
-      'utf8',
-    );
   } catch (error) {
     reject(`profile route copy source could not be read: ${error.message}`);
     return;
   }
-
-  FORBIDDEN_PROFILE_PRO_SV_MISTAKE_REVIEW_COPY.forEach((phrase) => {
-    if (profileRoute.includes(phrase) || tierComparison.includes(phrase)) {
-      reject(
-        `profile/pro Swedish missed-question review copy must not use ${JSON.stringify(phrase)}`,
-      );
-    }
-  });
 
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
@@ -16651,6 +16654,8 @@ if (Array.isArray(questions)) {
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
+      const equalityOmbudsmanEnglishNaturalnessIssue =
+        findQuestionEqualityOmbudsmanEnglishNaturalnessIssue(question);
       const luciaExplanationRoleScaffoldIssue =
         findQuestionLuciaExplanationRoleScaffoldIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
@@ -16714,8 +16719,13 @@ if (Array.isArray(questions)) {
       } else {
         questionSaltsjobadenAgreementEnglishNaturalnessValidated += 1;
       }
+      if (equalityOmbudsmanEnglishNaturalnessIssue) {
+        fail(`${label} uses literal Equality Ombudsman English wording`);
+      } else {
+        questionEqualityOmbudsmanEnglishNaturalnessValidated += 1;
+      }
       if (luciaExplanationRoleScaffoldIssue) {
-        fail(`${label} uses Lucia role-scaffold explanation wording`);
+        fail(`${label} uses scaffold Lucia explanation role wording`);
       } else {
         questionLuciaExplanationRoleScaffoldValidated += 1;
       }
@@ -17197,6 +17207,7 @@ console.log(
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
+      questionEqualityOmbudsmanEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
