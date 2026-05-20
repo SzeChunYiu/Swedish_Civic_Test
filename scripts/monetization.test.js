@@ -1052,7 +1052,14 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
@@ -1079,6 +1086,34 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     homeSource,
     /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
+  assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(placementCtaSource, /useRemoveAdsEntitlements/);
+  assert.match(placementCtaSource, /buyRemoveAds\(purchaseRuntime\)/);
+  assert.match(placementCtaSource, /restoreRemoveAdsPurchase\(purchaseRuntime\)/);
+  assert.match(placementCtaSource, /setEntitlements\(result\.entitlements\)/);
+  assert.match(
+    placementCtaSource,
+    /if \(!entitlementsReady \|\| entitlements\.adsDisabled\) return null;/,
+  );
+  assert.match(placementCtaSource, /Buy Remove Ads for \$\{price\}/);
+  assert.match(placementCtaSource, /Köp Ta bort annonser för \$\{price\}/);
+  assert.match(placementCtaSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
+  assert.match(placementCtaSource, /Mock exams are already ad-free/);
+  assert.match(placementCtaSource, /Övningsprov är redan annonsfria/);
+  assert.match(placementCtaSource, /Restore Remove Ads purchase/);
+  assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
+  assert.match(learnSource, /import \{ RemoveAdsPlacementCta \}/);
+  assert.match(
+    learnSource,
+    /<RemoveAdsPlacementCta \/>\s*<AdBanner placement="chapter_list_banner" \/>/,
+  );
+  assert.match(practiceSource, /import \{ RemoveAdsPlacementCta \}/);
+  assert.match(
+    practiceSource,
+    /<RemoveAdsPlacementCta \/>\s*<AdBanner placement="quiz_completed_interstitial" \/>/,
+  );
+  assert.match(mistakesSource, /import \{ RemoveAdsPlacementCta \}/);
+  assert.match(mistakesSource, /<RemoveAdsPlacementCta \/>\s*<NativeAdCard \/>/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);

@@ -38,9 +38,18 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     homeSource,
     /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
-  assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
-  assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(learnSource, /import \{ RemoveAdsPlacementCta \}/);
+  assert.match(
+    learnSource,
+    /<RemoveAdsPlacementCta \/>\s*<AdBanner placement="chapter_list_banner" \/>/,
+  );
+  assert.match(practiceSource, /import \{ RemoveAdsPlacementCta \}/);
+  assert.match(
+    practiceSource,
+    /<RemoveAdsPlacementCta \/>\s*<AdBanner placement="quiz_completed_interstitial" \/>/,
+  );
+  assert.match(mistakesSource, /import \{ RemoveAdsPlacementCta \}/);
+  assert.match(mistakesSource, /<RemoveAdsPlacementCta \/>\s*<NativeAdCard \/>/);
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
   assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
   assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
@@ -55,6 +64,36 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+});
+
+test('ad placement route parity rejects missing nearby Remove Ads CTA', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/learn.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('      <RemoveAdsPlacementCta />\\n      <AdBanner placement="chapter_list_banner" />', '      <AdBanner placement="chapter_list_banner" />');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/learn\.tsx must render AdBanner placement chapter_list_banner/,
+  );
 });
 
 test('ad placement route parity rejects a drifted study route placement', () => {

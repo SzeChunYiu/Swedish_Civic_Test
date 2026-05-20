@@ -982,19 +982,20 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     file: 'app/(tabs)/learn.tsx',
     component: 'AdBanner',
     placement: 'chapter_list_banner',
-    pattern: /<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
+    pattern: /<RemoveAdsPlacementCta\s+\/>\s*<AdBanner\s+placement="chapter_list_banner"\s+\/>/,
   },
   {
     file: 'app/(tabs)/practice.tsx',
     component: 'AdBanner',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern:
+      /<RemoveAdsPlacementCta\s+\/>\s*<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
     component: 'NativeAdCard',
     placement: 'results_native',
-    pattern: /<NativeAdCard\s+\/>/,
+    pattern: /<RemoveAdsPlacementCta\s+\/>\s*<NativeAdCard\s+\/>/,
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
