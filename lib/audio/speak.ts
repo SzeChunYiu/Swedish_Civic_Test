@@ -1,11 +1,27 @@
 import * as Speech from 'expo-speech';
-import type { QuestionOption } from '../../types/content';
-import { stripSourceAuthorityPhrasing } from '../quiz/questionText';
+import type { LocalizedContentText, QuestionOption } from '../../types/content';
+import {
+  getQuestionExplanationText,
+  getQuestionOptionText,
+  stripSourceAuthorityPhrasing,
+} from '../quiz/questionText';
 
 type SpeakableQuestion = {
   questionSv: string;
   options: QuestionOption[];
+  correctOptionId?: string;
+  explanationSv?: string;
+  explanationText?: Partial<LocalizedContentText>;
 };
+
+const SOURCE_CITATION_REPLACEMENTS = [
+  /^\s*Enligt UHR-materialet\s+/gi,
+  /^\s*According to the UHR material\s+/gi,
+  /\s*\bKälla\s*:\s*Sverige i fokus\b[\s\S]*$/gi,
+  /\s*\bSource\s*:\s*Sverige i fokus\b[\s\S]*$/gi,
+  /\s*\bUHR-källa\s*:\s*[\s\S]*$/gi,
+  /\s*\bUHR reference\s*:\s*[\s\S]*$/gi,
+];
 
 function optionLetter(index: number): string {
   return String.fromCharCode('A'.charCodeAt(0) + index);
@@ -17,6 +33,54 @@ export function buildQuestionSpeechText(question: SpeakableQuestion): string {
     .map((option, index) => `Alternativ ${optionLetter(index)}. ${option.textSv}.`)
     .join(' ');
   return `${promptText} ${optionText}`.trim();
+}
+
+export function buildAnswerFeedbackSpeechText(
+  question: SpeakableQuestion,
+  selectedOptionId: string | null | undefined,
+): string {
+  if (!selectedOptionId) return '';
+
+  const selectedOption = question.options.find((option) => option.id === selectedOptionId);
+  if (!selectedOption) return '';
+
+  const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+  const selectedText = spokenSentenceText(getQuestionOptionText(selectedOption, 'sv'));
+  const correctText = correctOption
+    ? spokenSentenceText(getQuestionOptionText(correctOption, 'sv'))
+    : '';
+  const explanationText = spokenSentenceText(
+    getQuestionExplanationText(question, 'sv', question.explanationSv ?? ''),
+  );
+  const selectedIsCorrect = selectedOption.id === question.correctOptionId;
+  const answerFeedback = selectedIsCorrect
+    ? 'Det stämmer.'
+    : correctText
+      ? `Det rätta svaret är: ${correctText}`
+      : 'Det svaret är inte markerat som rätt.';
+
+  return [
+    `Du valde: ${selectedText}`,
+    answerFeedback,
+    explanationText ? `Förklaring: ${explanationText}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+}
+
+function spokenSentenceText(text: string): string {
+  const sourceTrimmedText = SOURCE_CITATION_REPLACEMENTS.reduce(
+    (current, replacement) => current.replace(replacement, ''),
+    text,
+  );
+  const cleaned = stripSourceAuthorityPhrasing(sourceTrimmedText)
+    .replace(/\s+([,.:;!?])/g, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+  if (!cleaned) return '';
+  return /[.!?]$/.test(cleaned) ? cleaned : `${cleaned}.`;
 }
 
 export interface SpeakSwedishOptions {

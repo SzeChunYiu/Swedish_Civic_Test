@@ -67,6 +67,80 @@ test('buildQuestionSpeechText keeps source citation separate from spoken prompt'
   );
 });
 
+test('buildAnswerFeedbackSpeechText stays silent until an answer is selected', () => {
+  const { buildAnswerFeedbackSpeechText } = loadTs('lib/audio/speak.ts');
+  const text = buildAnswerFeedbackSpeechText(
+    {
+      questionSv: 'Var ligger Sverige?',
+      options: [{ id: 'a', textSv: 'I Norden', textEn: 'In the Nordic region' }],
+      correctOptionId: 'a',
+      explanationSv: 'Sverige ligger i Norden.',
+    },
+    null,
+  );
+
+  assert.equal(text, '');
+});
+
+test('buildAnswerFeedbackSpeechText speaks selected, correct, and explanation text', () => {
+  const { buildAnswerFeedbackSpeechText } = loadTs('lib/audio/speak.ts');
+  const text = buildAnswerFeedbackSpeechText(
+    {
+      questionSv: 'Var ligger Sverige?',
+      options: [
+        { id: 'a', textSv: 'I Norden i norra Europa', textEn: 'In northern Europe' },
+        { id: 'b', textSv: 'I södra Europa', textEn: 'In southern Europe' },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Sverige ligger i Norden i norra Europa.',
+    },
+    'b',
+  );
+
+  assert.equal(
+    text,
+    'Du valde: I södra Europa. Det rätta svaret är: I Norden i norra Europa. Förklaring: Sverige ligger i Norden i norra Europa.',
+  );
+});
+
+test('buildAnswerFeedbackSpeechText omits correct answer repetition for a correct selection', () => {
+  const { buildAnswerFeedbackSpeechText } = loadTs('lib/audio/speak.ts');
+  const text = buildAnswerFeedbackSpeechText(
+    {
+      questionSv: 'Var ligger Sverige?',
+      options: [{ id: 'a', textSv: 'I Norden', textEn: 'In the Nordic region' }],
+      correctOptionId: 'a',
+      explanationSv: 'Sverige ligger i Norden.',
+    },
+    'a',
+  );
+
+  assert.equal(text, 'Du valde: I Norden. Det stämmer. Förklaring: Sverige ligger i Norden.');
+});
+
+test('buildAnswerFeedbackSpeechText keeps authority wording and source citations out of speech', () => {
+  const { buildAnswerFeedbackSpeechText } = loadTs('lib/audio/speak.ts');
+  const text = buildAnswerFeedbackSpeechText(
+    {
+      questionSv: 'Enligt UHR-materialet, var ligger Sverige?',
+      options: [
+        { id: 'a', textSv: 'I Norden', textEn: 'In the Nordic region' },
+        { id: 'b', textSv: 'I Nordamerika', textEn: 'In North America' },
+      ],
+      correctOptionId: 'a',
+      explanationSv:
+        'Enligt UHR-materialet, Sverige ligger i Norden. Källa: Sverige i fokus, Landet Sverige, s. 5.',
+    },
+    'b',
+  );
+
+  assert.equal(
+    text,
+    'Du valde: I Nordamerika. Det rätta svaret är: I Norden. Förklaring: Sverige ligger i Norden.',
+  );
+  assert.doesNotMatch(text, /UHR|Källa|Source|Sverige i fokus|s\. 5/i);
+});
+
 test('speech helpers do not crash when the platform speech engine is unavailable', () => {
   const warnings = [];
   const originalWarn = console.warn;
@@ -130,7 +204,7 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
     assert.match(source, /import\s+\{\s*AudioButton\s*\}\s+from ['"][^'"]+AudioButton['"]/);
     assert.match(
       source,
-      /import\s+\{\s*buildQuestionSpeechText\s*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
+      /import\s+\{[^}]*buildQuestionSpeechText[^}]*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
     );
     assert.match(
       source,
