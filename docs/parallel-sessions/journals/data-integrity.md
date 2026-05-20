@@ -119,6 +119,14 @@ Blocked? no - the atom is verified against both positive content gates and a tar
 Next suggested validator action: review and accept this DATA-INTEGRITY parity atom as the next DI row, then keep `npm run validate:content` and `npm run test:content` as the nearest generated-source metadata regression gates.
 
 Lane: DATA-INTEGRITY
+Host/branch: task/release-stale-ads-evidence-2860607
+Task/checklist item: RELEASE-GATE-STALE-ADS-EVIDENCE-1 stale disabled-real-ads release evidence repair.
+Artifacts changed: `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `reports/release-gates.json`, `reports/store-policy-questionnaires/store-policy-questionnaires.json`, `publishing/post-eas-auth-runbook.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' npm run test:release-preflight` passed 54/54; `NODE_OPTIONS='--v8-pool-size=1' npm run test:publishing` passed 9/9; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` passed; `NODE_OPTIONS='--v8-pool-size=1' npm run format:check` passed; direct `node scripts/release-preflight.js --json` exits 1 only for remaining external/manual blockers and has zero matches for `real ads disabled`, `real ads remain disabled`, `AdMob is deferred`, or `REAL_ADS_ENABLED_FOR_V1=false`; scoped stale-phrase `rg` against current release evidence files returned no matches.
+Blocked? no - PR #1288 replaces current release evidence/runbook wording with Google Mobile Ads, ATT/UMP consent, and Remove Ads IAP posture while making READY manual evidence and referenced local JSON evidence reject stale disabled-real-ads text.
+Next suggested validator action: review PR #1288, then keep `npm run test:release-preflight`, `npm run test:publishing`, and the scoped stale-phrase scan as the nearest regression gates; follow-up `RELEASE-PREFLIGHT-ALLOWED-DIRTY-FIRST-LINE-1` was queued on `origin/main` for the allowed dirty-path parser edge case found during verification.
+
+Lane: DATA-INTEGRITY
 Host/branch: local/main
 Task/checklist item: Published question prompt uniqueness schema atom.
 Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/data-integrity.md`.

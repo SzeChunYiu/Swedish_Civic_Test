@@ -10,11 +10,62 @@ const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 
+function read(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function staleNativeIdentifierPattern() {
+  return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+}
+
+function oldRealAdsEnvFlagPattern() {
+  return new RegExp(['REAL_ADS', 'ENABLED_FOR_V1'].join('_'), 'i');
+}
+
+function staleDisabledAdsDecisionPattern() {
+  return /real[-\s]+ads[-\s]+disabled|keep\s+real\s+ads\s+disabled/i;
+}
+
+function disabledGoogleMobileAdsPattern() {
+  return new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i');
+}
+
+function staleDeferredRealAdsStatusPattern() {
+  return new RegExp(['deferred', 'real', 'ads', 'disabled'].join('[-\\s]+'), 'i');
+}
+
+function staleCurrentReleaseAdEvidencePattern() {
+  const oldFlag = ['REAL_ADS', 'ENABLED_FOR_V1'].join('_');
+  return new RegExp(
+    [
+      ['AdMob', 'is', 'deferred'].join('\\s+'),
+      ['real ads? remain', 'disabled'].join('\\s+'),
+      'real ads? (?:is|are)\\s+disabled',
+      'keep\\s+real\\s+ads\\s+disabled',
+      ['deferred', 'real', 'ads', 'disabled'].join('[-\\s]+'),
+      ['disabled', 'Google Mobile Ads'].join('\\s+'),
+      `${oldFlag}\\s*=\\s*false`,
+    ].join('|'),
+    'i',
+  );
+}
+
 function storeRecordReadyEvidence(extra = '') {
   return [
     `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
     `Support URL ${supportUrl} and Privacy Policy URL ${privacyUrl} entered in both stores.`,
     `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
+    extra,
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function storePolicyReadyEvidence(extra = '') {
+  return [
+    'Apple age rating/export compliance/content rights/no-official-affiliation review completed.',
+    'Google Play content rating, target audience, Google Mobile Ads ads declaration, ATT/UMP consent disclosures, and Remove Ads IAP questionnaire reviewed.',
+    'Real-money gambling and government-affiliation claims are absent.',
     extra,
   ]
     .filter(Boolean)
@@ -32,6 +83,93 @@ function privacyReviewReadyEvidence(extra = '') {
     .filter(Boolean)
     .join(' ');
 }
+
+function readJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
+}
+
+test('checked-in local evidence stubs keep blocked current ad-supported shape', () => {
+  const storeRecords = readJson('reports/store-records/store-records.json');
+  const privacyReview = readJson('reports/privacy-review/privacy-review.json');
+  const releaseGates = readJson('reports/release-gates.json');
+  const storePolicyQuestionnaires = readJson(
+    'reports/store-policy-questionnaires/store-policy-questionnaires.json',
+  );
+  const storeRecordsSource = fs.readFileSync(
+    path.join(repoRoot, 'reports/store-records/store-records.json'),
+    'utf8',
+  );
+  const privacyReviewSource = fs.readFileSync(
+    path.join(repoRoot, 'reports/privacy-review/privacy-review.json'),
+    'utf8',
+  );
+  const currentReleaseEvidenceSources = [
+    storeRecordsSource,
+    privacyReviewSource,
+    read('reports/release-gates.json'),
+    read('reports/store-policy-questionnaires/store-policy-questionnaires.json'),
+    read('publishing/post-eas-auth-runbook.md'),
+  ];
+
+  assert.equal(storeRecords.status, 'blocked');
+  assert.equal(storeRecords.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.packageName, 'com.billyyiu.almostswedish');
+  assert.equal(storeRecords.supportUrl, supportUrl);
+  assert.equal(storeRecords.privacyUrl, privacyUrl);
+  assert.match(storeRecords.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.iosAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.match(storeRecords.adMob.androidAppId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.equal(storeRecords.adMob.realAdsEnabled, true);
+  assert.equal(storeRecords.adMob.appAdsTxtReviewed, false);
+  assert.match(storeRecords.adMob.appAdsTxtPublisherLine, /^google\.com, pub-\d+, DIRECT,/);
+
+  assert.equal(privacyReview.status, 'blocked');
+  assert.equal(privacyReview.reviewedBuild.version, '1.0.0');
+  assert.equal(privacyReview.googleMobileAds.sdkPresent, true);
+  assert.equal(privacyReview.googleMobileAds.realAdsEnabled, true);
+  assert.equal(privacyReview.googleMobileAds.removeAdsIapReviewed, false);
+  assert.equal(privacyReview.googleMobileAds.consentFlowReviewed, false);
+  assert.match(privacyReview.googleMobileAds.gate, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/);
+  assert.match(privacyReview.googleMobileAds.gate, /Google Mobile Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /Remove Ads/);
+  assert.match(privacyReview.googleMobileAds.gate, /29 SEK/);
+  assert.match(privacyReview.googleMobileAds.gate, /ATT and UMP consent/i);
+  assert.notEqual(privacyReview.disabledSdks.realAds, true);
+  assert.notEqual(privacyReview.disabledSdks.purchases, true);
+
+  const storeRecordsGate = releaseGates.gates['store-records'];
+  const storePolicyGate = releaseGates.gates['store-policy-questionnaires'];
+  const privacyGate = releaseGates.gates['privacy-review'];
+  assert.equal(storeRecordsGate.status, 'BLOCKED');
+  assert.match(storeRecordsGate.evidence, /AdMob app IDs|Google Mobile Ads/i);
+  assert.match(storeRecordsGate.evidence, /app-ads\.txt/i);
+  assert.equal(storePolicyGate.status, 'READY');
+  assert.match(storePolicyGate.evidence, /Google Mobile Ads/i);
+  assert.match(storePolicyGate.evidence, /ATT\/UMP|consent/i);
+  assert.match(storePolicyGate.evidence, /Remove Ads/i);
+  assert.match(privacyGate.evidence, /Google Mobile Ads/i);
+  assert.match(privacyGate.evidence, /ATT\/UMP|consent/i);
+  assert.match(privacyGate.evidence, /Remove Ads/i);
+
+  assert.deepEqual(storePolicyQuestionnaires.evidenceBasis, [
+    'publishing/app-store-listing.md',
+    'publishing/google-play-listing.md',
+    'publishing/privacy-labels.md',
+    'publishing/google-play-data-safety.md',
+    'reports/store-records/store-records.json',
+  ]);
+  assert.match(storePolicyQuestionnaires.google.notes, /Google Mobile Ads/i);
+  assert.match(storePolicyQuestionnaires.google.notes, /ATT\/UMP|consent/i);
+  assert.match(storePolicyQuestionnaires.google.notes, /Remove Ads/i);
+
+  for (const source of currentReleaseEvidenceSources) {
+    assert.doesNotMatch(source, /com\.billyyiu\.swedishcivictest(?!"?\.removeads)/);
+    assert.doesNotMatch(source, /REAL_ADS_ENABLED_FOR_V1/);
+    assert.doesNotMatch(source, /real ads? (?:is|are )?disabled/i);
+    assert.doesNotMatch(source, staleDeferredRealAdsStatusPattern());
+    assert.doesNotMatch(source, staleCurrentReleaseAdEvidencePattern());
+  }
+});
 
 function runPreflight(options = {}) {
   const result = spawnSync(
@@ -149,8 +287,9 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
           },
           'store-policy-questionnaires': {
             status: 'READY',
-            evidence:
-              'Apple age rating/export compliance and Google Play content rating/ads declarations reviewed at https://example.com/store-policy/evidence.',
+            evidence: storePolicyReadyEvidence(
+              'Evidence recorded at https://example.com/store-policy/evidence.',
+            ),
           },
           'privacy-review': {
             status: 'READY',
@@ -798,6 +937,8 @@ function createStorePolicyQuestionnaireEvidence(options = {}) {
       adsDeclarationReviewed: true,
       containsRealMoneyGambling: false,
       noGovernmentAffiliationClaims: true,
+      notes:
+        'Google Mobile Ads ads declaration, ATT/UMP consent disclosures, and Remove Ads IAP questionnaire reviewed for ad-supported v1.0.',
     },
     ...options.evidence,
   };
@@ -1315,7 +1456,7 @@ test('release preflight blocks local store policy questionnaire evidence missing
     writeAllReadyEvidence(evidencePath, {
       'store-policy-questionnaires': {
         status: 'READY',
-        evidence: `Apple age rating/export compliance and Google Play content rating/ads declarations reviewed in ${policyEvidence.relativePath}.`,
+        evidence: storePolicyReadyEvidence(`Evidence recorded in ${policyEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -1339,6 +1480,50 @@ test('release preflight blocks local store policy questionnaire evidence missing
   }
 });
 
+test('release preflight blocks local store policy questionnaire evidence with stale disabled-real-ads posture', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-store-policy-stale-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const oldFlag = ['REAL_ADS', 'ENABLED_FOR_V1'].join('_');
+  const policyEvidence = createStorePolicyQuestionnaireEvidence({
+    evidence: {
+      google: {
+        contentRatingReviewed: true,
+        targetAudienceReviewed: true,
+        adsDeclarationReviewed: true,
+        containsRealMoneyGambling: false,
+        noGovernmentAffiliationClaims: true,
+        notes: `Google Mobile Ads SDK remains test-ID/fail-closed for v1.0 with ${oldFlag}=false.`,
+      },
+    },
+  });
+
+  try {
+    writeAllReadyEvidence(evidencePath, {
+      'store-policy-questionnaires': {
+        status: 'READY',
+        evidence: storePolicyReadyEvidence(`Evidence recorded in ${policyEvidence.relativePath}.`),
+      },
+    });
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const policy = report.gates.find((gate) => gate.id === 'store-policy-questionnaires');
+    assert.equal(policy.status, 'BLOCKED');
+    assert.match(policy.evidence, /local artifact content/i);
+    assert.match(policy.evidence, /stale disabled-real-ads evidence/i);
+  } finally {
+    policyEvidence.cleanup();
+  }
+});
+
 test('release preflight accepts valid local store policy questionnaire evidence', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-valid-policy-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
@@ -1348,7 +1533,7 @@ test('release preflight accepts valid local store policy questionnaire evidence'
     writeAllReadyEvidence(evidencePath, {
       'store-policy-questionnaires': {
         status: 'READY',
-        evidence: `Apple age rating/export compliance and Google Play content rating/ads declarations reviewed in ${policyEvidence.relativePath}.`,
+        evidence: storePolicyReadyEvidence(`Evidence recorded in ${policyEvidence.relativePath}.`),
       },
     });
     writeFakeReleaseCommands(tmpDir);
@@ -2235,7 +2420,7 @@ test('release preflight blocks store record evidence without exact public URLs',
     'store-records': {
       status: 'READY',
       evidence:
-        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured.',
+        'App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish; Support URL and Privacy Policy URL entered in both stores; AdMob app is configured for Google Mobile Ads and app-ads.txt is reviewed.',
     },
   });
   writeFakeReleaseCommands(tmpDir);
@@ -2260,6 +2445,76 @@ test('release preflight blocks store record evidence without exact public URLs',
     storeRecords.evidence,
     /https:\/\/szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/privacy\//i,
   );
+});
+
+test('release preflight blocks READY manual release gates with stale disabled-real-ads evidence', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-stale-ads-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const oldFlag = ['REAL_ADS', 'ENABLED_FOR_V1'].join('_');
+  const adMobDeferred = ['AdMob', 'is', 'deferred'].join(' ');
+  const realAdsAreDisabled = ['real ads are', 'disabled'].join(' ');
+  const realAdsRemainDisabled = ['real ads remain', 'disabled'].join(' ');
+
+  writeAllReadyEvidence(evidencePath, {
+    'store-records': {
+      status: 'READY',
+      evidence: `${storeRecordReadyEvidence()} ${adMobDeferred} because ${realAdsAreDisabled} for v1.0.`,
+    },
+    'store-policy-questionnaires': {
+      status: 'READY',
+      evidence: storePolicyReadyEvidence(`${realAdsRemainDisabled} for v1.0.`),
+    },
+    'privacy-review': {
+      status: 'READY',
+      evidence: privacyReviewReadyEvidence(`Generated binary reviewed with ${oldFlag}=false.`),
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  for (const id of ['store-records', 'store-policy-questionnaires', 'privacy-review']) {
+    const currentGate = report.gates.find((gate) => gate.id === id);
+    assert.equal(currentGate.status, 'BLOCKED');
+    assert.match(
+      currentGate.evidence,
+      /stale disabled-real-ads|blocker, placeholder, or not-final/i,
+    );
+  }
+});
+
+test('release evidence template is synchronized with ad-supported store and privacy evidence', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  const template = read('reports/release-evidence-template.md');
+
+  assert.match(template, new RegExp(appConfig.ios.bundleIdentifier, 'i'));
+  assert.match(template, new RegExp(appConfig.android.package, 'i'));
+  assert.match(template, /AdMob app ID/i);
+  assert.match(template, /app-ads\.txt/i);
+  assert.match(template, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(template, /adMob\.appAdsTxtReviewed:\s*true/i);
+  assert.match(template, /googleMobileAds\.realAdsEnabled:\s*true/i);
+  assert.match(template, /googleMobileAds\.removeAdsIapReviewed:\s*true/i);
+  assert.match(template, /googleMobileAds\.consentFlowReviewed:\s*true/i);
+  assert.match(template, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(template, /generated binary\/build|generated binary/i);
+  assert.match(template, /Remove Ads/i);
+  assert.match(template, /29 SEK/i);
+  assert.match(template, /non-consumable/i);
+  assert.match(template, /App Tracking Transparency|ATT/i);
+  assert.match(template, /Google UMP|UMP consent/i);
+
+  assert.doesNotMatch(template, staleNativeIdentifierPattern());
+  assert.doesNotMatch(template, oldRealAdsEnvFlagPattern());
+  assert.doesNotMatch(template, staleDisabledAdsDecisionPattern());
+  assert.doesNotMatch(template, disabledGoogleMobileAdsPattern());
 });
 
 test('release preflight blocks local store record evidence missing store URLs', () => {
