@@ -238,6 +238,42 @@ function englishCivicActionClause(value: string): string {
     .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
 }
 
+function webSocialMediaStatementSv(answer: string): string {
+  if (/^Vem som helst kan skapa innehåll där/i.test(answer)) {
+    return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
+  }
+  if (/^Bara ansvariga utgivare får skriva inlägg där/i.test(answer)) {
+    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
+  }
+  if (/^Allt innehåll godkänns först av staten/i.test(answer)) {
+    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
+  }
+  if (/^Innehållet är alltid mer pålitligt/i.test(answer)) {
+    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
+  }
+  return `På webben och i sociala medier gäller att ${lowerFirst(
+    answer.replace(/\bdär\b/gi, 'på webben och i sociala medier'),
+  )}`;
+}
+
+function webSocialMediaStatementEn(answer: string): string {
+  if (/^Anyone can create content there/i.test(answer)) {
+    return 'On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media';
+  }
+  if (/^Only responsible publishers may write posts there/i.test(answer)) {
+    return 'On the web and in social media, only responsible publishers may write posts';
+  }
+  if (/^All content is first approved by the state/i.test(answer)) {
+    return 'On the web and in social media, all content is first approved by the state';
+  }
+  if (/^The content is always more reliable/i.test(answer)) {
+    return 'Content on the web and in social media is always more reliable than news in newspapers';
+  }
+  return `On the web and in social media, ${lowerFirst(
+    answer.replace(/\bthere\b/gi, 'on the web and in social media'),
+  )}`;
+}
+
 function swedishCommonToDoStatement(timePhrase: string, answer: string): string {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -1427,6 +1463,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad uppmärksammas på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} uppmärksammas ${lowerFirst(answer)}`;
 
+  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
+  if (match) return webSocialMediaStatementSv(answer);
+
   match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
   if (match) return `På olika platser i Sverige finns ${lowerFirst(answer)} för ${match[1]}`;
 
@@ -1905,6 +1944,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
+
+  match = q.match(/^What is important to remember about the web and social media$/i);
+  if (match) return webSocialMediaStatementEn(answer);
 
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)

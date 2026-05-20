@@ -34382,8 +34382,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Anyone can create content there, and it is not always checked the same way as in other media.",
-      "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier."
+      "en": "On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier."
     },
     "opts": [
       {
@@ -34422,8 +34422,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Only responsible publishers may write posts there.",
-      "sv": "Bara ansvariga utgivare får skriva inlägg där."
+      "en": "On the web and in social media, only responsible publishers may write posts.",
+      "sv": "På webben och i sociala medier får bara ansvariga utgivare skriva inlägg."
     },
     "opts": [
       {
