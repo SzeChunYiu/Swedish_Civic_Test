@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceActionLink } from '../../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
+import { BadgeRow } from '../../components/learning/BadgeRow';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { ProPaywall } from '../../components/monetization/ProPaywall';
 import { Badge } from '../../components/ui/Badge';
@@ -11,7 +12,7 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import { deriveBadges, getBadgeTitle } from '../../lib/learning/badges';
+import { deriveBadges, getBadgeDescription, getBadgeTitle } from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
 import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
@@ -103,16 +104,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     xpMetric: 'XP',
   },
 };
-
-function formatBadges(
-  badges: ReturnType<typeof deriveBadges>,
-  language: AppLanguage,
-  emptyLabel: string,
-): string {
-  if (badges.length === 0) return emptyLabel;
-
-  return badges.map((badge) => getBadgeTitle(badge, language)).join(', ');
-}
 
 export default function Screen() {
   const { focus } = useLocalSearchParams<{ focus?: string }>();
@@ -238,7 +229,18 @@ export default function Screen() {
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
-        <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
+        {badges.length ? (
+          <View style={styles.badgeList}>
+            {badges.map((badge) => {
+              const title = getBadgeTitle(badge, language);
+              const description = getBadgeDescription(badge, language);
+
+              return <BadgeRow key={badge.id} title={title} description={description} />;
+            })}
+          </View>
+        ) : (
+          <Text style={styles.emptyBadgeText}>{copy.noBadges}</Text>
+        )}
       </Card>
 
       {!removeAdsFocused ? removeAdsPaywall : null}
@@ -275,11 +277,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
-  value: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
+  badgeList: {
+    gap: space[1],
+  },
+  emptyBadgeText: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   removeAdsPaywall: {
     gap: space[1],
