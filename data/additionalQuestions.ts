@@ -2178,7 +2178,7 @@ export const additionalQuestions: PracticeQuestion[] = [
       pageApprox: 42,
     },
     'Vad blev tillåtet för svenskar år 1860?',
-    'What became permitted for Swedes in 1860?',
+    'What were Swedes allowed to do starting in 1860?',
     [
       [
         'Att lämna Svenska kyrkan, men bara om man gick med i ett annat kristet samfund',
@@ -2186,7 +2186,7 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
       [
         'Att helt fritt välja vilken religion som helst eller ingen religion alls',
-        'To choose any religion or no religion at all completely freely',
+        'To choose any religion freely or no religion at all',
       ],
       [
         'Att staten och Svenska kyrkan skildes åt',

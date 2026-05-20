@@ -1928,6 +1928,10 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match)
     return `In ${match[2]}, ${match[1]} were permitted to ${stripLeadingPurposeEn(answer)}`;
 
+  match = q.match(/^What were (.+?) allowed to do starting in (.+)$/i);
+  if (match)
+    return `Starting in ${match[2]}, ${match[1]} were allowed to ${stripLeadingPurposeEn(answer)}`;
+
   match = q.match(/^Which Christian holidays do (.+?) celebrate even if (.+)$/i);
   if (match) return englishChristianHolidayStatement(match[1], match[2], answer);
 
