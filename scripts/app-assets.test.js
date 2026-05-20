@@ -29,3 +29,11 @@ test('release app assets are configured and present at store-safe sizes', () => 
   assert.deepEqual(pngDimensions('assets/adaptive-icon.png'), { width: 1024, height: 1024 });
   assert.deepEqual(pngDimensions('assets/splash-icon.png'), { width: 1242, height: 2436 });
 });
+
+test('mascot catalog keeps Skoglimpa asset resolution local and SVG-based', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'lib/mascot/catalog.ts'), 'utf8');
+
+  assert.match(source, /'skoglimpa'/);
+  assert.match(source, /assets\/mascot\/\$\{id\}\/\$\{expression\}\.svg/);
+  assert.doesNotMatch(source, /https?:\/\//);
+});

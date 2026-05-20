@@ -55,6 +55,7 @@ function loadTs(rel) {
 test('resolveCompanionId: returns valid mascot id unchanged', () => {
   const { resolveCompanionId } = loadTs('lib/storage/companionStore.ts');
   assert.equal(resolveCompanionId('lucia'), 'lucia');
+  assert.equal(resolveCompanionId('skoglimpa'), 'skoglimpa');
   assert.equal(resolveCompanionId('dala-horse'), 'dala-horse');
 });
 
@@ -69,10 +70,29 @@ test('resolveCompanionId: falls back to DEFAULT on unknown / non-string', () => 
 
 test('companion store source: never Pro-gated (invariant)', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'lib/storage/companionStore.ts'), 'utf8');
+  const pickerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/CompanionPicker.tsx'),
+    'utf8',
+  );
   assert.ok(
     !/hasProEntitlement|isPremiumUser|adsDisabled|ProTierEntitlements/.test(source),
     'companion picker must never be Pro-gated',
   );
+  assert.ok(
+    !/hasProEntitlement|isPremiumUser|adsDisabled|ProTierEntitlements/.test(pickerSource),
+    'companion picker UI must never be Pro-gated',
+  );
+});
+
+test('companion picker source consumes favorite ordering and store-compatible ids', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/CompanionPicker.tsx'),
+    'utf8',
+  );
+  assert.match(source, /getCompanionPickerMascots/);
+  assert.match(source, /FAVORITE_COMPANION_IDS/);
+  assert.match(source, /onSelect\(mascot\.id\)/);
+  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
 });
 
 test('companion store uses MMKV id "companion" (separate from settings)', () => {
