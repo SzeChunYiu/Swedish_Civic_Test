@@ -33,6 +33,16 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
+  assert.equal(source.match(/accessibilityRole="radiogroup"/g)?.length, 2);
+  assert.equal(source.match(/accessibilityRole="radio"/g)?.length, 2);
+  assert.match(source, /aria-label=\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /aria-label=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /aria-checked=\{language === value\}/);
+  assert.match(source, /aria-checked=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
+  assert.doesNotMatch(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
 });
 
 test('settings route copy parity rejects bypassing the settings language', () => {

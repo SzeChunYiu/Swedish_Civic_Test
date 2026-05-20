@@ -323,6 +323,78 @@ function progressWithSessions(sessions) {
   };
 }
 
+test('dashboard progress snapshot adapts local store progress for free dashboard selectors', () => {
+  const { buildDashboardProgressSnapshot } = loadTs('lib/learning/dashboardProgressSnapshot.ts');
+  const { dailyActivityHistogram, perChapterProgress, xpSparkline, dashboardSummary } = loadTs(
+    'lib/learning/dashboardStats.ts',
+  );
+  const questionProgress = {
+    q1: {
+      questionId: 'q1',
+      seenCount: 3,
+      correctCount: 2,
+      wrongCount: 1,
+      correctStreak: 1,
+      lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+    },
+    q2: {
+      questionId: 'q2',
+      seenCount: 1,
+      correctCount: 0,
+      wrongCount: 1,
+      correctStreak: 0,
+      lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+    },
+  };
+  const progress = buildDashboardProgressSnapshot({
+    answerDates: ['2026-05-18', '2026-05-19'],
+    dailyGoalAnswers: 10,
+    mockExamSessions: [
+      {
+        sessionId: 'mock-1',
+        score: 0.8,
+        completedAt: '2026-05-19T12:00:00.000Z',
+        correctCount: 16,
+        totalCount: 20,
+      },
+    ],
+    questionProgress,
+    totalXp: 120,
+  });
+  const questionChapterIndex = { q1: 'ch01', q2: 'ch02' };
+
+  assert.equal(progress.sessions.length, 2);
+  assert.equal(progress.sessions[0].answers.length, 4);
+  assert.equal(progress.level, 2);
+  assert.equal(
+    dailyActivityHistogram(progress, { daysBack: 2, now: new Date('2026-05-19T12:00:00.000Z') }).at(
+      -1,
+    ).count,
+    3,
+  );
+  assert.equal(
+    perChapterProgress(
+      progress,
+      [
+        { id: 'ch01', questionCount: 10 },
+        { id: 'ch02', questionCount: 5 },
+      ],
+      questionChapterIndex,
+    )[0].answers,
+    3,
+  );
+  assert.equal(
+    xpSparkline(progress, { daysBack: 1, now: new Date('2026-05-19T12:00:00.000Z') })[0].xp,
+    20,
+  );
+  assert.equal(
+    dashboardSummary(progress, questionChapterIndex, {
+      now: new Date('2026-05-19T12:00:00.000Z'),
+    }).bestMockScore,
+    0.8,
+  );
+});
+
 test('dailyActivityHistogram: returns contiguous bins ending today', () => {
   const { dailyActivityHistogram } = loadTs('lib/learning/dashboardStats.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');

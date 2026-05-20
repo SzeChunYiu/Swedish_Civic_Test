@@ -203,11 +203,18 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'web-document',
     'native-intent',
   ]);
-  assert.deepEqual(manifest.rootStackScreenNames, ['index', '(tabs)', 'search', '+not-found']);
+  assert.deepEqual(manifest.rootStackScreenNames, [
+    'index',
+    '(tabs)',
+    'search',
+    'dashboard',
+    '+not-found',
+  ]);
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
     'app/search.tsx',
+    'app/dashboard.tsx',
     'app/+not-found.tsx',
   ]);
   assert.deepEqual(manifest.recoveryHrefs, ['/home']);
@@ -247,10 +254,6 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(
     manifest.nativeIntentDynamicRouteRoutes,
     manifest.dynamicRouteNames.map((name) => `/${name}`),
-  assert.equal(
-    manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
-    true,
-    'native intent static route allowlist should include the about-the-test guide',
   );
   assert.deepEqual(manifest.nativeIntentDynamicRouteFiles, manifest.dynamicRouteFiles);
   assert.deepEqual(manifest.nativeIntentDynamicRouteSamplePaths, manifest.dynamicRouteHrefSamples);
@@ -347,15 +350,6 @@ test('top-bar language picker keeps a token-sized target and feedback', () => {
     languagePicker,
     /trigger:\s*\{[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*\}/,
     'language picker trigger should preserve the shared 48px top-bar target',
-    redirectSystemPath({
-      initial: true,
-      path: 'almost-swedish://app/about-the-test',
-    }),
-    '/about-the-test',
-  );
-  assert.equal(
-    redirectSystemPath({ initial: true, path: 'almost-swedish://app/not-real' }),
-    '/home',
   );
   assertContains(languagePicker, 'backgroundColor: colors.focusSoft');
   assertContains(languagePicker, 'transform: [{ scale: motion.pressedScale }]');

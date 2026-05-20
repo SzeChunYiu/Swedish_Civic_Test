@@ -61,7 +61,12 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await submit.click();
 
   await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();
-  await expect(page.getByText('Övningsresultat')).toBeVisible();
+  await expectNeutralResultSummary(page, {
+    correctCountPattern: new RegExp(`\\d+/${totalQuestions} rätt`),
+    progressPattern: /\d+ procent rätt/,
+    summaryAriaPrefix: 'Övningsresultat.',
+    visibleLabel: 'Övningsresultat',
+  });
   await expect(page.getByText(new RegExp(`/${totalQuestions} rätt`))).toBeVisible();
   await expect(page.getByText('Kapitelöversikt')).toBeVisible();
   await expect(page.getByText('Frågegenomgång')).toBeVisible();
@@ -113,6 +118,12 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await expect(page.getByText('Exam result', { exact: true })).toBeVisible();
   await expect(page.getByText('Mock exam result')).toBeVisible();
+  await expectNeutralResultSummary(page, {
+    correctCountPattern: new RegExp(`\\d+/${totalQuestions} correct`),
+    progressPattern: /\d+ percent correct/,
+    summaryAriaPrefix: 'Practice result.',
+    visibleLabel: 'Practice result',
+  });
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
   await expect(page.getByText('Chapter breakdown')).toBeVisible();
   await expect(page.getByText('The country of Sweden')).toBeVisible();

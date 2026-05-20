@@ -36,6 +36,19 @@ test('quiz CelebrationBurst keeps success motion decorative and non-interactive'
   assert.match(source, /<View style=\{styles\.pill\}>/);
 });
 
+test('CelebrationBurst is reachable from practice and routed quiz feedback', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const quizSource = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+
+  for (const source of [practiceSource, quizSource]) {
+    assert.match(source, /import \{ CelebrationBurst \}/);
+    assert.match(source, /active=\{selectedIsCorrect\}/);
+    assert.match(source, /languageOverride=\{language\}/);
+    assert.match(source, /streak=\{celebrationStreak\}/);
+    assert.match(source, /questionProgress\[question\.id\]\?\.correctStreak \?\? 1/);
+  }
+});
+
 test('CelebrationBurst accessibility parity rejects descendant exposure drift', () => {
   const result = spawnSync(
     process.execPath,
