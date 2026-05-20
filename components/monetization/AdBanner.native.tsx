@@ -25,7 +25,12 @@ export function AdBanner({
   const visible =
     entitlementsReady &&
     mobileAdsConsent.initialized &&
-    shouldShowAd(placement, resolvedEntitlements, mobileAdsConsent.decision.consentDecision);
+    shouldShowAd(
+      placement,
+      resolvedEntitlements,
+      mobileAdsConsent.decision.consentDecision,
+      Platform.OS,
+    );
 
   if (!visible || !unitId) return null;
 
