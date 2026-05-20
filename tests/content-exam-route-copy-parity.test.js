@@ -6,6 +6,10 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function readExamRouteSource() {
+  return fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+}
+
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -15,9 +19,19 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+test('exam route result summary avoids unsupported official pass-line styling', () => {
+  const source = readExamRouteSource();
+
+  assert.match(source, /<ResultSummary[\s\S]*correctCount=\{result\.correctCount\}/);
+  assert.match(source, /tone=\{endedByTime \? 'orange' : 'blue'\}/);
+  assert.doesNotMatch(source, /result\.percent\s*>=\s*75/);
+  assert.doesNotMatch(source, /status=\{result\.percent/);
+  assert.doesNotMatch(source, /75\s*%|Passing\s+line|Gräns\s+för\s+godkänt|\bPassed\b|\bGodkänt\b/);
+});
+
 test('exam route shell and review copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
-  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const source = readExamRouteSource();
 
   assert.equal(summary.examRouteCopyLabelsValidated, 60);
   assert.equal(summary.examRouteCopyParityValidated, true);

@@ -1242,6 +1242,16 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
 ];
 const EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY = [
   {
+    file: 'app/(tabs)/exam.tsx',
+    snippets: [
+      ['<ResultSummary', 'exam route must render the neutral result summary'],
+      [
+        "tone={endedByTime ? 'orange' : 'blue'}",
+        'exam result badge must avoid score-threshold styling',
+      ],
+    ],
+  },
+  {
     file: 'components/MockExamStatusBar.tsx',
     snippets: [
       ["eyebrowLabel: 'Övningsprov'", 'status bar must default to Swedish practice copy'],
@@ -1257,6 +1267,32 @@ const EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY = [
       ],
       ["startLabel: 'Start mock exam'", 'config panel must preserve English mock exam start copy'],
     ],
+  },
+];
+const NATIVE_MOCK_EXAM_UNSUPPORTED_SCORE_SOURCE_PATTERNS = [
+  {
+    label: '75% pass line',
+    pattern: /75\s*%/,
+  },
+  {
+    label: 'hardcoded 75 percent result threshold',
+    pattern: /result\.percent\s*>=\s*75/,
+  },
+  {
+    label: 'Swedish passing-line copy',
+    pattern: /Gräns\s+för\s+godkänt/i,
+  },
+  {
+    label: 'English passing-line copy',
+    pattern: /Passing\s+line/i,
+  },
+  {
+    label: 'Swedish pass verdict',
+    pattern: /\bGodkänt\b/,
+  },
+  {
+    label: 'English pass verdict',
+    pattern: /\bPassed\b/,
   },
 ];
 const EXPECTED_QUIZ_ROUTE_HEADERS = [
@@ -6569,6 +6605,7 @@ let examRouteCopyLabelsValidated = 0;
 let examRouteCopyParityValidated = false;
 let nativeMockExamComponentCopyLabelsValidated = 0;
 let nativeMockExamComponentLegalCopyValidated = false;
+let nativeMockExamScoreSourceCopyValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
@@ -8266,6 +8303,12 @@ function validateNativeMockExamComponentLegalCopy() {
         );
       }
     });
+
+    NATIVE_MOCK_EXAM_UNSUPPORTED_SCORE_SOURCE_PATTERNS.forEach(({ label, pattern }) => {
+      if (pattern.test(source)) {
+        reject(`${file} must not expose unsupported native mock-exam ${label}`);
+      }
+    });
   });
 
   const expectedLabelCount = EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY.reduce(
@@ -8274,6 +8317,7 @@ function validateNativeMockExamComponentLegalCopy() {
   );
   if (valid && nativeMockExamComponentCopyLabelsValidated === expectedLabelCount) {
     nativeMockExamComponentLegalCopyValidated = true;
+    nativeMockExamScoreSourceCopyValidated = true;
   }
 }
 
@@ -14901,6 +14945,7 @@ console.log(
       examRouteCopyParityValidated,
       nativeMockExamComponentCopyLabelsValidated,
       nativeMockExamComponentLegalCopyValidated,
+      nativeMockExamScoreSourceCopyValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
       quizRouteCopyLabelsValidated,
