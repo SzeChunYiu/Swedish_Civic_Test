@@ -61,7 +61,7 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
+function createRenderContext({ hash, language = 'en', reducedMotion = false, storedMotion }) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
   const rootAttributes = new Map();
@@ -69,6 +69,7 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
     ['smt_lang', language],
     ['smt_mock_cfg', JSON.stringify({ count: 5, minutes: 30, chapters: [1] })],
   ]);
+  if (storedMotion !== undefined) storage.set('smt_motion', storedMotion);
   let reloadCount = 0;
 
   const settingButtons = staticSiteLanguageValues.map((value) => ({
@@ -416,6 +417,30 @@ test('Settings applies prefers-reduced-motion on first load without claiming a u
 
   assert.equal(context.rootAttribute('data-motion'), 'reduce');
   assert.equal(context.storage.has('smt_motion'), false);
+
+  const explicitOffContext = createRenderContext({
+    hash: '#/',
+    language: 'en',
+    reducedMotion: true,
+    storedMotion: '',
+  });
+  loadScripts(explicitOffContext);
+  explicitOffContext.fireWindowEvent('DOMContentLoaded');
+
+  assert.equal(explicitOffContext.rootAttribute('data-motion'), '');
+  assert.equal(explicitOffContext.storage.get('smt_motion'), '');
+
+  const explicitOnContext = createRenderContext({
+    hash: '#/',
+    language: 'en',
+    reducedMotion: false,
+    storedMotion: 'reduce',
+  });
+  loadScripts(explicitOnContext);
+  explicitOnContext.fireWindowEvent('DOMContentLoaded');
+
+  assert.equal(explicitOnContext.rootAttribute('data-motion'), 'reduce');
+  assert.equal(explicitOnContext.storage.get('smt_motion'), 'reduce');
 });
 
 const mockOfficialPassLineClaimPatterns = [
