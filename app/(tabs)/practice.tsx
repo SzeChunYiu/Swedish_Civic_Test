@@ -79,13 +79,13 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     aboutSourcesHide: 'Stäng om källorna',
     aboutSourcesUhrTitle: 'UHR-källa',
     aboutSourcesUhrBody:
-      'Frågor som kommer direkt från UHR:s utbildningsmaterial Sverige i fokus. Allt innehåll i mock-provet är UHR.',
+      'Frågor som kommer direkt från UHR:s utbildningsmaterial Sverige i fokus. Allt innehåll i övningsprovet är UHR.',
     aboutSourcesSupplementaryTitle: 'Tilläggsfråga',
     aboutSourcesSupplementaryBody:
       'Variant som genererats utifrån en UHR-fråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
-      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
   },
   en: {
     badge: '5-minute practice',
