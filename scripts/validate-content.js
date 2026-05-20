@@ -280,6 +280,9 @@ const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe Council of Europe works for\b/i,
   /\bThe Council of Europe works only for\b/i,
 ];
+const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bThe EU is political and economic cooperation between European countries\b/i,
+];
 const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
   /\bbec(?:o|a)me important for\b/i,
@@ -4511,6 +4514,16 @@ function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
   if (!question.tags?.includes('saltsjobaden')) return null;
 
@@ -7400,6 +7413,7 @@ let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionStateWelfareCoverageSplitValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
+let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
@@ -16742,6 +16756,8 @@ if (Array.isArray(questions)) {
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
+      const euCooperationEnglishNaturalnessIssue =
+        findQuestionEuCooperationEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
       const luciaExplanationRoleScaffoldIssue =
@@ -16803,6 +16819,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
       } else {
         questionCouncilOfEuropeWorkForEnglishNaturalnessValidated += 1;
+      }
+      if (euCooperationEnglishNaturalnessIssue) {
+        fail(`${label} uses ungrammatical EU cooperation English wording`);
+      } else {
+        questionEuCooperationEnglishNaturalnessValidated += 1;
       }
       if (saltsjobadenAgreementEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
@@ -17296,6 +17317,7 @@ console.log(
       questionStateWelfareCoverageSplitValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+      questionEuCooperationEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionSecretBallotSvPronounNaturalnessValidated,

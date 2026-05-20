@@ -22,6 +22,8 @@ const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
+const euCooperationMissingArticlePattern =
+  /\bThe EU is political and economic cooperation between European countries\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const luciaExplanationRoleScaffoldPattern =
@@ -122,6 +124,10 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
   assert.equal(
     summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
+    summary.questionEuCooperationEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
@@ -578,6 +584,83 @@ require('./scripts/validate-content.js');
   assert.match(output, /q088 uses literal Council of Europe work-for English wording/);
   assert.ok(
     (output.match(/uses literal Council of Europe work-for English wording/g) || []).length >= 5,
+    output,
+  );
+});
+
+test('EU cooperation source and exports use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q086GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q086', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q086', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q086', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q086', 'judgement'),
+  ];
+  const q086Ids = ['q086', ...q086GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q086Ids.includes(question.id))
+    .filter((question) => euCooperationMissingArticlePattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q086Ids.includes(question.id))
+    .filter((question) => euCooperationMissingArticlePattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q086Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => euCooperationMissingArticlePattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q086 = generatedSiteBank.find((question) => question.id === 'q086');
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q086, 'q086 should be published in the site bank');
+  assert.match(
+    q086.why.en,
+    /The EU is a political and economic partnership among European countries/,
+  );
+});
+
+test('EU cooperation English naturalness guard rejects the missing article phrase', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'The EU is a political and economic partnership among European countries',
+      'The EU is political and economic cooperation between European countries',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q086 uses ungrammatical EU cooperation English wording/);
+  assert.ok(
+    (output.match(/uses ungrammatical EU cooperation English wording/g) || []).length >= 5,
     output,
   );
 });
