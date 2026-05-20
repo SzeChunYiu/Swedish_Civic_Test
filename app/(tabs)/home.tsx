@@ -27,7 +27,10 @@ import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
-type BenchmarkProduct = (typeof uxBenchmarks)[number]['product'];
+type StudyLoopItemCopy = {
+  label: string;
+  lesson: string;
+};
 
 type GuidedPathStageCopy = {
   accessibilityLabel: (
@@ -48,7 +51,6 @@ type GuidedPathStageCopy = {
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
-  benchmarkLessons: Record<BenchmarkProduct, string>;
   dailyGoalTitle: string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -78,6 +80,7 @@ type HomeCopy = {
   questionsHelper: (count: number) => string;
   questionsMetric: string;
   readinessAccessibilityLabel: (score: number, verdict: string, details: string) => string;
+  readinessCaveat: string;
   readinessCta: string;
   readinessCtaAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
@@ -89,6 +92,7 @@ type HomeCopy = {
   startPractice: string;
   startPracticeAccessibilityLabel: string;
   startPracticeSet: string;
+  studyLoopItems: StudyLoopItemCopy[];
   studyLoopSubtitle: string;
   studyLoopTitle: string;
   subtitle: string;
@@ -102,16 +106,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
-    benchmarkLessons: {
-      CivicsGo:
-        'Börja med kort ämnesövning, tydliga sviter, XP, märken och väg tillbaka efter misstag.',
-      'Citizen Pass':
-        'Visa behärskning per område så att eleven ser vad som är klart, repeterat eller fortfarande svagt.',
-      'Duolingo-inspired learning loops':
-        'Ge en snabb första vinst, en självklar nästa handling och varsam daglig vanefeedback utan att hindra seriösa studier.',
-      'Life in the UK Test apps':
-        'Kombinera realistiska tidsatta prov med flashcards, bokmärken, felspårning, ljud, offline-studier och tydliga redo-signaler.',
-    },
     dailyGoalTitle: 'Dagens mål',
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
@@ -192,30 +186,51 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
-    readinessCta: 'Gör ett mockprov',
-    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
+      `Förberedelsesignal: ${score} procent. ${verdict}. ${details}. Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos.`,
+    readinessCaveat: 'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos.',
+    readinessCta: 'Gör ett tidsatt övningsprov',
+    readinessCtaAccessibilityLabel:
+      'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
-    readinessMetricLabel: 'redo',
-    readinessSparseNote:
-      'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
-    readinessTitle: 'Redoindikator',
+      `${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade`,
+    readinessMetricLabel: 'lokalt',
+    readinessSparseNote: 'Svara på fler frågor för en stabilare lokal signal.',
+    readinessTitle: 'Förberedelsesignal',
     readinessVerdicts: {
-      not_ready_yet: 'Öva mer först',
-      getting_there: 'På rätt väg',
-      almost_ready: 'Nästan redo',
-      strong_preparation: 'Stark förberedelse',
+      not_ready_yet: 'Bygg mer underlag',
+      getting_there: 'Du gör framsteg',
+      almost_ready: 'Stadig övning',
+      strong_preparation: 'Stark övningsgrund',
     },
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
     startPracticeSet: 'Starta en 5-minutersövning',
+    studyLoopItems: [
+      {
+        label: 'Korta pass',
+        lesson: 'Börja med ett litet ämnespass, få direkt återkoppling och fortsätt utan krångel.',
+      },
+      {
+        label: 'Tydlig behärskning',
+        lesson: 'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
+      },
+      {
+        label: 'Vana i vardagen',
+        lesson:
+          'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
+      },
+      {
+        label: 'Tidsatt övning',
+        lesson:
+          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+      },
+    ],
     studyLoopSubtitle:
-      'Lärdomar från framgångsrika samhällsprovs- och språkstudieappar: ett tydligt nästa steg, direkt återkoppling och synliga framsteg.',
-    studyLoopTitle: 'Optimerat studieflöde',
+      'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
+    studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',
@@ -224,16 +239,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   en: {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
-    benchmarkLessons: {
-      CivicsGo:
-        'Lead with bite-sized topic practice, visible streaks, XP, badges, and mistake recovery.',
-      'Citizen Pass':
-        'Show mastery by skill area so learners know what is ready, reviewed, or still weak.',
-      'Duolingo-inspired learning loops':
-        'Give a fast first win, one obvious next action, and gentle daily habit feedback without blocking serious study.',
-      'Life in the UK Test apps':
-        'Combine realistic timed exams with flashcards, bookmarks, wrong-answer tracking, audio, offline study, and readiness indicators.',
-    },
     dailyGoalTitle: "Today's goal",
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
@@ -315,28 +320,50 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
-    readinessCta: 'Take a mock exam',
-    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
+      `Preparation signal: ${score} percent. ${verdict}. ${details}. Based only on your in-app answers and mock practice, not an official result forecast.`,
+    readinessCaveat:
+      'Based only on your in-app answers and mock practice, not an official result forecast.',
+    readinessCta: 'Take a timed practice exam',
+    readinessCtaAccessibilityLabel:
+      'Start a timed practice exam to compare with your local preparation signal',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
-    readinessMetricLabel: 'ready',
-    readinessSparseNote:
-      'Based on your answers so far. Answer more questions for a steadier signal.',
-    readinessTitle: 'Readiness indicator',
+      `${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried`,
+    readinessMetricLabel: 'local',
+    readinessSparseNote: 'Answer more questions for a steadier local signal.',
+    readinessTitle: 'Preparation signal',
     readinessVerdicts: {
-      not_ready_yet: 'Keep practicing first',
-      getting_there: 'Getting there',
-      almost_ready: 'Almost ready',
-      strong_preparation: 'Strong preparation',
+      not_ready_yet: 'Build more evidence',
+      getting_there: 'Making progress',
+      almost_ready: 'Steady practice',
+      strong_preparation: 'Strong practice base',
     },
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
     startPracticeSet: 'Start a 5-minute practice set',
+    studyLoopItems: [
+      {
+        label: 'Bite-size practice',
+        lesson: 'Start with a small topic set, get immediate feedback, and keep moving.',
+      },
+      {
+        label: 'Clear mastery',
+        lesson: 'See which areas are solid, reviewed, or still weak.',
+      },
+      {
+        label: 'Study rhythm',
+        lesson:
+          'Get one simple next action and gentle habit feedback without blocking serious study.',
+      },
+      {
+        label: 'Timed practice',
+        lesson:
+          'Switch between timed practice exams, bookmarks, missed-question review, audio, and preparation signals.',
+      },
+    ],
     studyLoopSubtitle:
-      'Borrowed from successful civic-test and language-learning products: one clear next step, instant feedback, and visible progress.',
-    studyLoopTitle: 'Optimized study loop',
+      'Choose one clear next step, get quick feedback, and follow progress without distractions in exam mode.',
+    studyLoopTitle: 'Smart study habits',
     subtitle:
       'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     title: 'Prepare calmly, one civic concept at a time',
@@ -431,6 +458,7 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
+        <Text style={styles.readinessCaveat}>{copy.readinessCaveat}</Text>
         {readiness.isSparse ? (
           <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
         ) : null}
@@ -514,12 +542,17 @@ export default function Screen() {
 
       <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
       <View style={styles.loopGrid}>
-        {uxBenchmarks.map((item) => (
-          <Card key={item.product} style={styles.loopCard}>
-            <Badge tone="warm">{item.product}</Badge>
-            <Text style={styles.loopText}>{copy.benchmarkLessons[item.product]}</Text>
-          </Card>
-        ))}
+        {uxBenchmarks.map((item, index) => {
+          const itemCopy = copy.studyLoopItems[index];
+          if (!itemCopy) return null;
+
+          return (
+            <Card key={item.product} style={styles.loopCard}>
+              <Badge tone="warm">{itemCopy.label}</Badge>
+              <Text style={styles.loopText}>{itemCopy.lesson}</Text>
+            </Card>
+          );
+        })}
       </View>
 
       {entitlementsReady ? (
@@ -593,6 +626,11 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
+  },
+  readinessCaveat: {
+    color: colors.textDisclaimer,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
   },
   readinessSparseNote: {
     color: colors.textDisclaimer,

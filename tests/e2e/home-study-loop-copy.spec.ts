@@ -52,28 +52,32 @@ test('home study-loop copy renders without stale flashcard promises', async ({ p
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  await expect(page.getByText('Provredo')).toBeVisible();
+  await expect(page.getByText('Tidsatt övning')).toBeVisible();
   await expect(
     page.getByText(
-      'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och redoindikator.',
+      'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
     ),
   ).toBeVisible();
 
   let bodyText = await readVisibleBody(page);
-  expect(bodyText).not.toMatch(/flashcards|Flashkort|flashkort|felspårning|mistake tracking/i);
+  expect(bodyText).not.toMatch(
+    /flashcards|Flashkort|flashkort|felspårning|mistake tracking|redoindikator|Provredo/i,
+  );
 
   await page.getByRole('button', { name: /Nuvarande språk SV\. Öppna språkväljaren\./ }).click();
   await page.getByRole('button', { name: 'English' }).click();
   await dismissBlockingModals(page);
 
-  await expect(page.getByText('Exam readiness')).toBeVisible();
+  await expect(page.getByText('Timed practice')).toBeVisible();
   await expect(
     page.getByText(
-      'Switch between timed mock exams, bookmarks, missed-question review, audio, and readiness signals.',
+      'Switch between timed practice exams, bookmarks, missed-question review, audio, and preparation signals.',
     ),
   ).toBeVisible();
 
   bodyText = await readVisibleBody(page);
-  expect(bodyText).not.toMatch(/flashcards|Flashkort|flashkort|felspårning|mistake tracking/i);
+  expect(bodyText).not.toMatch(
+    /flashcards|Flashkort|flashkort|felspårning|mistake tracking|Exam readiness|readiness signals/i,
+  );
   expect(consoleErrors).toEqual([]);
 });

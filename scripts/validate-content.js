@@ -649,19 +649,20 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
-    'Redoindikator',
-    'redo',
-    'Öva mer först',
-    'På rätt väg',
-    'Nästan redo',
-    'Stark förberedelse',
-    'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
-    '${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade',
-    'Redoindikator: ${score} procent. ${verdict}. ${details}',
-    'Starta ett mockprov för att kontrollera din redoindikator',
-    'Gör ett mockprov',
+    'Förberedelsesignal',
+    'lokalt',
+    'Bygg mer underlag',
+    'Du gör framsteg',
+    'Stadig övning',
+    'Stark övningsgrund',
+    'Svara på fler frågor för en stabilare lokal signal.',
+    'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos.',
+    '${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade',
+    'Förberedelsesignal: ${score} procent. ${verdict}. ${details}. Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos.',
+    'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+    'Gör ett tidsatt övningsprov',
     'Repetera svaga kapitel',
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
@@ -691,25 +692,26 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
-    'Provredo',
-    'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+    'Tidsatt övning',
+    'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
   ],
   en: [
     'Study dashboard',
     'Prepare calmly, one civic concept at a time',
     'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     "Today's goal",
-    'Readiness indicator',
-    'ready',
-    'Keep practicing first',
-    'Getting there',
-    'Almost ready',
-    'Strong preparation',
-    'Based on your answers so far. Answer more questions for a steadier signal.',
-    '${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried',
-    'Readiness indicator: ${score} percent. ${verdict}. ${details}',
-    'Start a mock exam to check your readiness indicator',
-    'Take a mock exam',
+    'Preparation signal',
+    'local',
+    'Build more evidence',
+    'Making progress',
+    'Steady practice',
+    'Strong practice base',
+    'Answer more questions for a steadier local signal.',
+    'Based only on your in-app answers and mock practice, not an official result forecast.',
+    '${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried',
+    'Preparation signal: ${score} percent. ${verdict}. ${details}. Based only on your in-app answers and mock practice, not an official result forecast.',
+    'Start a timed practice exam to compare with your local preparation signal',
+    'Take a timed practice exam',
     'Review weak chapters',
     'Start a 5-minute practice set',
     'Start the recommended practice session',
@@ -736,11 +738,11 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Bite-size practice',
     'Start with a small topic set, get immediate feedback, and keep moving.',
     'Clear mastery',
-    'See which areas are ready, reviewed, or still weak.',
+    'See which areas are solid, reviewed, or still weak.',
     'Study rhythm',
     'Get one simple next action and gentle habit feedback without blocking serious study.',
-    'Exam readiness',
-    'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+    'Timed practice',
+    'Switch between timed practice exams, bookmarks, missed-question review, audio, and preparation signals.',
   ],
 };
 const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
@@ -753,6 +755,20 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
+const FORBIDDEN_HOME_ROUTE_READINESS_COPY = [
+  'Redoindikator',
+  'redoindikator',
+  'Nästan redo',
+  'redo-signaler',
+  'Provredo',
+  'Readiness indicator',
+  'readiness indicator',
+  'Almost ready',
+  'Exam readiness',
+  'readiness signals',
+  "readinessMetricLabel: 'redo'",
+  "readinessMetricLabel: 'ready'",
+];
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
   ['type HomeCopy = {', 'home route must define a typed copy contract'],
@@ -8903,6 +8919,12 @@ function validateHomeRouteCopyParity() {
   FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
       reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_READINESS_COPY.forEach((forbidden) => {
+    if (homeRoute.includes(forbidden)) {
+      reject(`home route preparation signal copy must not expose official-readiness wording`);
     }
   });
 
