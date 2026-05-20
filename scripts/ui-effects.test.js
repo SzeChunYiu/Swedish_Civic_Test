@@ -1182,6 +1182,16 @@ test('chapter detail route exposes page and question section headings as headers
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
   assert.match(source, /\{copy\.missingTitle\}/);
   assert.match(source, /\{copy\.practiceQuestionsTitle\(chapterQuestions\.length\)\}/);
+  assert.match(source, /<FlatList[\s\S]*data=\{chapterQuestions\}/);
+  assert.match(source, /renderItem=\{renderQuestionItem\}/);
+  assert.match(source, /keyExtractor=\{\(question\) => question\.id\}/);
+  assert.match(source, /ListHeaderComponent=\{renderListHeader\}/);
+  assert.match(source, /ListEmptyComponent=\{renderEmptyQuestions\}/);
+  assert.match(source, /initialNumToRender=\{8\}/);
+  assert.match(source, /maxToRenderPerBatch=\{8\}/);
+  assert.match(source, /windowSize=\{5\}/);
+  assert.doesNotMatch(source, /\bScrollView\b/);
+  assert.doesNotMatch(source, /chapterQuestions\.map\s*\(/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

@@ -55,8 +55,18 @@ test('chapter route title, disclaimer, missing state, and question section stay 
     source,
     /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.practiceQuestionsTitle\(chapterQuestions\.length\)\}\s*<\/Text>/,
   );
+  assert.match(source, /<FlatList[\s\S]*data=\{chapterQuestions\}/);
+  assert.match(source, /renderItem=\{renderQuestionItem\}/);
+  assert.match(source, /keyExtractor=\{\(question\) => question\.id\}/);
+  assert.match(source, /ListHeaderComponent=\{renderListHeader\}/);
+  assert.match(source, /ListEmptyComponent=\{renderEmptyQuestions\}/);
+  assert.match(source, /initialNumToRender=\{8\}/);
+  assert.match(source, /maxToRenderPerBatch=\{8\}/);
+  assert.match(source, /windowSize=\{5\}/);
   assert.match(source, /UHRReferenceCard language=\{language\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
+  assert.doesNotMatch(source, /\bScrollView\b/);
+  assert.doesNotMatch(source, /chapterQuestions\.map\s*\(/);
 });
 
 test('chapter route copy parity rejects bypassing the settings language', () => {
@@ -178,5 +188,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /chapter route title and section text must expose accessibilityRole="header"/,
+  );
+});
+
+test('chapter route header parity rejects eager question-list rendering', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/chapter/[chapterId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const renderQuestionSeparator = () => <View style={styles.questionSeparator} />;',
+        'chapterQuestions.map((question) => question.id);\\n  const renderQuestionSeparator = () => <View style={styles.questionSeparator} />;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /chapter route must not eagerly map all chapter questions/,
   );
 });

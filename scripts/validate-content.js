@@ -1781,6 +1781,26 @@ const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
     'chapter route UHR cards must receive settings language',
   ],
 ];
+const EXPECTED_CHAPTER_ROUTE_VIRTUALIZATION_SNIPPETS = [
+  ['<FlatList', 'chapter route must render question rows through a virtualized FlatList'],
+  ['data={chapterQuestions}', 'chapter route FlatList must receive chapterQuestions as data'],
+  ['renderItem={renderQuestionItem}', 'chapter route FlatList must render rows through renderItem'],
+  [
+    'keyExtractor={(question) => question.id}',
+    'chapter route FlatList must keep stable question row keys',
+  ],
+  [
+    'ListHeaderComponent={renderListHeader}',
+    'chapter route FlatList must keep localized header copy in the list header',
+  ],
+  [
+    'ListEmptyComponent={renderEmptyQuestions}',
+    'chapter route FlatList must keep the localized empty state',
+  ],
+  ['initialNumToRender={8}', 'chapter route FlatList must bound initial question rendering'],
+  ['maxToRenderPerBatch={8}', 'chapter route FlatList must bound question render batches'],
+  ['windowSize={5}', 'chapter route FlatList must use a bounded render window'],
+];
 const EXPECTED_CHAPTER_ROUTE_HEADERS = [
   {
     label: 'missing chapter title',
@@ -9817,6 +9837,17 @@ function validateChapterRouteHeaderParity() {
     chapterRoute.match(/<Text\s+style=\{styles\.(?:title|sectionTitle)\}>/g) || [];
   if (unheaderedRouteHeadings.length > 0) {
     reject('chapter route title and section text must expose accessibilityRole="header"');
+  }
+
+  EXPECTED_CHAPTER_ROUTE_VIRTUALIZATION_SNIPPETS.forEach(([snippet, message]) => {
+    if (!chapterRoute.includes(snippet)) reject(message);
+  });
+
+  if (/\bScrollView\b/.test(chapterRoute)) {
+    reject('chapter route must not wrap the full question list in ScrollView');
+  }
+  if (/chapterQuestions\.map\s*\(/.test(chapterRoute)) {
+    reject('chapter route must not eagerly map all chapter questions');
   }
 
   EXPECTED_CHAPTER_ROUTE_HEADERS.forEach((expectedHeader) => {

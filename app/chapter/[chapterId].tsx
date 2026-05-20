@@ -1,9 +1,9 @@
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import type { ListRenderItem } from 'react-native';
 
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
-import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/Button';
 import { chapters } from '../../data/chapters';
@@ -11,7 +11,7 @@ import { questions } from '../../data/questions';
 import { getChapterQuizSessionId } from '../../lib/quiz/practiceFlow';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
-import type { Chapter } from '../../types/content';
+import type { Chapter, PracticeQuestion } from '../../types/content';
 
 type ChapterRouteCopy = {
   backToListAccessibilityLabel: string;
@@ -36,8 +36,8 @@ const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy> = {
     emptyQuestions: 'Frågor för det här kapitlet har inte lagts till ännu.',
     missingTitle: 'Kapitlet hittades inte',
     practiceQuestionsTitle: (count) => `Övningsfrågor (${count})`,
-    startQuiz: 'Starta övning',
-    startQuizAccessibilityLabel: (chapterTitle) => `Starta övning för ${chapterTitle}`,
+    startQuiz: 'Starta frågepass',
+    startQuizAccessibilityLabel: (chapterTitle) => `Starta frågepass för ${chapterTitle}`,
   },
   en: {
     backToListAccessibilityLabel: 'Back to chapter list',
@@ -81,9 +81,16 @@ export default function ChapterScreen() {
 
   const quizSessionId = getChapterQuizSessionId(questions, chapter.id);
   const chapterTitle = copy.chapterTitle(chapter);
-
-  return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+  const renderQuestionItem: ListRenderItem<PracticeQuestion> = ({ item: question }) => (
+    <View style={styles.questionBlock}>
+      <QuestionCard question={question} language={language} />
+      <UHRReferenceCard language={language} reference={question.uhrReference} />
+    </View>
+  );
+  const renderQuestionSeparator = () => <View style={styles.questionSeparator} />;
+  const renderEmptyQuestions = () => <Text style={styles.empty}>{copy.emptyQuestions}</Text>;
+  const renderListHeader = () => (
+    <View style={styles.headerContent}>
       <Link
         accessibilityLabel={copy.backToListAccessibilityLabel}
         accessibilityRole="link"
@@ -117,20 +124,23 @@ export default function ChapterScreen() {
       <Text accessibilityRole="header" style={styles.sectionTitle}>
         {copy.practiceQuestionsTitle(chapterQuestions.length)}
       </Text>
-      <View style={styles.list}>
-        {chapterQuestions.length > 0 ? (
-          chapterQuestions.map((question) => (
-            <View key={question.id} style={styles.questionBlock}>
-              <QuestionCard question={question} language={language} />
-              <UHRReferenceCard language={language} reference={question.uhrReference} />
-              <QuestionReportLink language={language} question={question} screen="chapter" />
-            </View>
-          ))
-        ) : (
-          <Text style={styles.empty}>{copy.emptyQuestions}</Text>
-        )}
-      </View>
-    </ScrollView>
+    </View>
+  );
+
+  return (
+    <FlatList
+      contentContainerStyle={styles.content}
+      data={chapterQuestions}
+      initialNumToRender={8}
+      ItemSeparatorComponent={renderQuestionSeparator}
+      keyExtractor={(question) => question.id}
+      ListEmptyComponent={renderEmptyQuestions}
+      ListHeaderComponent={renderListHeader}
+      maxToRenderPerBatch={8}
+      renderItem={renderQuestionItem}
+      style={styles.container}
+      windowSize={5}
+    />
   );
 }
 
@@ -140,8 +150,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    gap: space[1.75],
     padding: space[3],
+  },
+  headerContent: {
+    gap: space[1.75],
+    marginBottom: space[2],
   },
   centered: {
     alignItems: 'center',
@@ -173,11 +186,11 @@ const styles = StyleSheet.create({
     fontWeight: typography.bodyBold.fontWeight,
     marginTop: space[1],
   },
-  list: {
-    gap: space[2],
-  },
   questionBlock: {
     gap: space[1],
+  },
+  questionSeparator: {
+    height: space[2],
   },
   empty: {
     color: colors.textMuted,

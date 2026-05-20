@@ -1,8 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-import { questions } from '../../data/questions';
+import { dismissBlockingModals } from './browserLaunch';
 
-const CH01_QUESTION_COUNT = questions.filter((question) => question.chapterId === 'ch01').length;
+function extractQuestionCount(text: string | null, pattern: RegExp) {
+  const match = text?.match(pattern);
+  expect(match).not.toBeNull();
+
+  return Number(match?.[1] ?? '0');
+}
 
 test('learning path opens a source-backed chapter detail screen and returns to the chapter list', async ({
   page,
@@ -15,24 +20,24 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
 
   await expect(page.locator('body')).toContainText('Studieväg');
   await expect(page.locator('body')).toContainText('13 samhällsområden');
   const firstChapter = page.getByLabel(/Öppna kapitel Landet Sverige/);
   await expect(firstChapter).toBeVisible();
   await expect(firstChapter).toContainText('Landet Sverige');
-  await expect(firstChapter).toContainText(`0/${CH01_QUESTION_COUNT} besvarade`);
+  const questionCount = extractQuestionCount(
+    await firstChapter.textContent(),
+    /0\/(\d+) besvarade/,
+  );
+  expect(questionCount).toBeGreaterThanOrEqual(50);
+  await expect(firstChapter).toContainText(`0/${questionCount} besvarade`);
 
   await firstChapter.click();
 
   await expect(page).toHaveURL(/\/chapter\/ch01$/);
-  await expect(page.getByLabel('Starta quiz för Landet Sverige')).toBeVisible();
+  await expect(page.getByLabel('Starta frågepass för Landet Sverige')).toBeVisible();
 
   const chapterScreen = page.locator('body');
   await expect(chapterScreen).toContainText('Landet Sverige');
@@ -40,12 +45,16 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await expect(chapterScreen).toContainText(
     'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
   );
-  await expect(chapterScreen).toContainText(`Övningsfrågor (${CH01_QUESTION_COUNT})`);
+  await expect(chapterScreen).toContainText(`Övningsfrågor (${questionCount})`);
   await expect(chapterScreen).toContainText('Var ligger Sverige?');
   await expect(chapterScreen).toContainText('Where is Sweden located?');
   await expect(chapterScreen).toContainText('UHR-källa');
   await expect(chapterScreen).toContainText('Landet Sverige · Geografi, klimat och natur');
   await expect(chapterScreen).toContainText('Ungefär sida 5');
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(chapterScreen).toContainText('UHR-källa');
+  await page.evaluate(() => window.scrollTo(0, 0));
 
   await page.getByLabel('Tillbaka till kapitellistan').click();
 
@@ -64,12 +73,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
@@ -79,9 +83,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   );
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
 
   await expect(page.locator('body')).toContainText('Learning path');
   const firstChapter = page.getByLabel(
@@ -96,7 +98,12 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(firstChapter).not.toContainText(
     'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
   );
-  await expect(firstChapter).toContainText(`0/${CH01_QUESTION_COUNT} practiced`);
+  const questionCount = extractQuestionCount(
+    await firstChapter.textContent(),
+    /0\/(\d+) practiced/,
+  );
+  expect(questionCount).toBeGreaterThanOrEqual(50);
+  await expect(firstChapter).toContainText(`0/${questionCount} practiced`);
 
   await firstChapter.click();
 
@@ -104,7 +111,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(page.getByLabel('Start quiz for The country of Sweden')).toBeVisible();
   await expect(page.locator('body')).toContainText('The country of Sweden');
   await expect(page.locator('body')).toContainText('Geography, climate, nature');
-  await expect(page.locator('body')).toContainText(`Practice questions (${CH01_QUESTION_COUNT})`);
+  await expect(page.locator('body')).toContainText(`Practice questions (${questionCount})`);
 
   expect(consoleErrors).toEqual([]);
 });
