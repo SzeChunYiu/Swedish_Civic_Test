@@ -100,6 +100,175 @@ test('button derives an accessibility label from plain text children by default'
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('shared buttons use token disabled styles without dimming child labels', () => {
+  const uiButtonSource = read('components/ui/Button.tsx');
+  const appButtonSource = read('components/Button.tsx');
+
+  for (const source of [uiButtonSource, appButtonSource]) {
+    assert.doesNotMatch(source, /disabled:\s*\{\s*opacity\s*:/);
+    assert.match(
+      source,
+      /disabled:\s*\{[\s\S]*backgroundColor:\s*colors\.surfaceWarm[\s\S]*borderColor:\s*colors\.border[\s\S]*\}/,
+    );
+    assert.match(source, /disabledLabel:\s*\{[\s\S]*color:\s*colors\.textMuted[\s\S]*\}/);
+  }
+
+  assert.match(uiButtonSource, /disabled \? styles\.disabledLabel : null/);
+  assert.match(appButtonSource, /if \(disabled\) \{\s*return colors\.textMuted;\s*\}/);
+});
+
+test('language picker future-language rows are disabled instead of selectable', () => {
+  const source = read('components/ui/LanguagePicker.tsx');
+
+  assert.match(source, /const availableLocaleOptions = useMemo\(/);
+  assert.match(source, /const closeButtonRef = useRef<View \| null>\(null\);/);
+  assert.match(source, /const focusAvailableOption = \(optionCode: string\) => \{/);
+  assert.match(source, /const focusCloseButton = \(\) => \{/);
+  assert.match(source, /focusView\(closeButtonRef\.current\);/);
+  assert.match(source, /const containTabFocus = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /if \(!availableLocaleOptions\.length\) \{/);
+  assert.match(
+    source,
+    /focusAvailableIndex\(event\.shiftKey \? availableLocaleOptions\.length - 1 : 0\);/,
+  );
+  assert.match(
+    source,
+    /const nextIndex = event\.shiftKey \? focusedIndex - 1 : focusedIndex \+ 1;/,
+  );
+  assert.match(source, /if \(nextIndex < 0 \|\| nextIndex >= availableLocaleOptions\.length\) \{/);
+  assert.match(source, /const handleMenuKeyDown = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /case 'Tab':/);
+  assert.match(source, /containTabFocus\(event\);/);
+  assert.match(source, /case 'Escape':/);
+  assert.match(source, /closePicker\(\{ restoreFocus: true \}\);/);
+  assert.match(source, /case 'ArrowDown':/);
+  assert.match(source, /moveFocusBy\(1\);/);
+  assert.match(source, /case 'ArrowUp':/);
+  assert.match(source, /moveFocusBy\(-1\);/);
+  assert.match(source, /case 'Home':/);
+  assert.match(source, /focusAvailableIndex\(0\);/);
+  assert.match(source, /case 'End':/);
+  assert.match(source, /focusAvailableIndex\(availableLocaleOptions\.length - 1\);/);
+  assert.match(source, /case 'Enter':/);
+  assert.match(source, /case ' ':/);
+  assert.match(source, /if \(!focusedOptionCode\) return;/);
+  assert.match(
+    source,
+    /availableLocaleOptions\.find\(\(option\) => option\.code === focusedOptionCode\)/,
+  );
+  assert.match(source, /\.\.\.menuKeyboardProps/);
+  assert.match(source, /const triggerKeyboardProps: WebKeyboardProps =/);
+  assert.match(
+    source,
+    /Platform\.OS === 'web' && open \? \{ onKeyDown: handleMenuKeyDown \} : \{\}/,
+  );
+  assert.match(source, /\.\.\.triggerKeyboardProps/);
+  assert.match(
+    source,
+    /onFocus=\{\(\) => \{\s*if \(opt\.available\) setFocusedOptionCode\(opt\.code\);/,
+  );
+  assert.match(source, /rowRefs\.current\[opt\.code\] = node;/);
+  assert.match(source, /tabIndex=\{\s*opt\.available/);
+  assert.match(source, /aria-expanded=\{open\}/);
+  assert.match(source, /aria-haspopup="menu"/);
+  assert.match(source, /accessibilityState=\{\{ expanded: open \}\}/);
+  assert.match(source, /if \(!option\.available\) return;/);
+  assert.match(source, /aria-disabled=\{!opt\.available\}/);
+  assert.match(source, /aria-selected=\{selected\}/);
+  assert.match(source, /disabled=\{!opt\.available\}/);
+  assert.match(source, /accessibilityRole="menuitem"/);
+  assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
+  assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
+  assert.match(source, /accessible=\{false\}/);
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
+  assert.match(source, /styles\.closeButton/);
+  assert.match(source, /ref=\{closeButtonRef\}/);
+  assert.doesNotMatch(
+    source,
+    /const handleSelect = \(option: LocaleOption\) => \{[\s\S]*setOpen\(false\);[\s\S]*if \(!option\.available\) return;/,
+  );
+  assert.doesNotMatch(
+    source,
+    /<Pressable[\s\S]*accessibilityLabel=\{copy\.closeLabel\}[\s\S]*styles\.backdrop/,
+  );
+  assert.doesNotMatch(
+    source,
+    /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*selected, disabled: !opt\.available/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('top bar route links keep web anchors large enough with token hover and pressed feedback', () => {
+  const source = read('components/ui/TopBarActions.tsx');
+
+  assert.match(source, /import \{ Platform, Pressable, StyleSheet, View \}/);
+  assert.match(source, /import \{ useEffect, useState \} from 'react';/);
+  assert.match(source, /function TopBarActionLink/);
+  assert.match(source, /const topBarActionLinkClassName = 'top-bar-action-link';/);
+  assert.match(source, /const topBarActionLinkStyleElementId = 'top-bar-action-link-style';/);
+  assert.match(source, /function useTopBarActionLinkWebStyles\(\)/);
+  assert.match(source, /document\.getElementById\(topBarActionLinkStyleElementId\)/);
+  assert.match(source, /document\.createElement\('style'\)/);
+  assert.match(source, /styleElement\.id = topBarActionLinkStyleElementId;/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:hover,/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:focus-visible/);
+  assert.match(source, /background-color: \$\{colors\.focusSoft\};/);
+  assert.match(source, /transform: scale\(\$\{motion\.hoverScale\}\);/);
+  assert.match(source, /\.\$\{topBarActionLinkClassName\}:active/);
+  assert.match(source, /transform: scale\(\$\{motion\.pressedScale\}\);/);
+  assert.match(source, /document\.head\.appendChild\(styleElement\);/);
+  assert.match(source, /useTopBarActionLinkWebStyles\(\);/);
+  assert.match(source, /<Link[\s\S]*accessibilityRole="link"[\s\S]*href=\{href\}/);
+  assert.doesNotMatch(source, /<Link[\s\S]*asChild/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(source, /const linkInteractionHandlers = \{/);
+  assert.match(
+    source,
+    /Platform\.OS === 'web' \? \{ className: topBarActionLinkClassName \} : \{\};/,
+  );
+  assert.match(source, /\{\.\.\.webClassName\}/);
+  assert.match(source, /onPressIn: \(\) => setIsPressed\(true\)/);
+  assert.match(source, /onPressOut: clearPressedState/);
+  assert.match(
+    source,
+    /style=\{\[styles\.iconLink, isPressed \? styles\.iconLinkPressed : null\]\}/,
+  );
+  assert.match(source, /display: 'flex'/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /minWidth: space\[6\]/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('home source-trust row is a token-sized sources link with focus and press feedback', () => {
+  const source = read('components/ui/SocialProofRow.tsx');
+
+  assert.match(source, /import \{ Link \} from 'expo-router';/);
+  assert.match(source, /useState/);
+  assert.match(source, /Platform\.OS === 'web'/);
+  assert.match(source, /href="\/sources"/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /aria-label=\{rowAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{rowAccessibilityLabel\}/);
+  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
+  assert.match(source, /isFocused \|\| isHovered \? styles\.linkFocused : null/);
+  assert.match(source, /isPressed \? styles\.linkPressed : null/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /backgroundColor: colors\.surfaceMuted/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /borderRadius: radius\.card/);
+  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(source, /Excellent|Utmärkt|5 of 5|5 av 5|★★★★★/);
+});
+
 test('screen scaffold exposes page and section titles as headers', () => {
   const source = read('components/ui/ScreenShell.tsx');
 
