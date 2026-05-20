@@ -47,12 +47,12 @@ test('static mock exam and review render per-question source citations', () => {
     source,
     /`Source: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, p\. \$\{source\.page\}`/,
   );
-  assert.match(source, /function questionSourceRow\(question, citationClassName = "quiz__source"\)/);
-  assert.match(source, /\$\{questionSourceRow\(q\)\}/);
   assert.match(
     source,
-    /\$\{questionSourceRow\(q, "mock-review__source"\)\}/,
+    /function questionSourceRow\(question, citationClassName = "quiz__source"\)/,
   );
+  assert.match(source, /\$\{questionSourceRow\(q\)\}/);
+  assert.match(source, /\$\{questionSourceRow\(q, "mock-review__source"\)\}/);
   assert.match(source, /questionProvenance/);
   assert.match(source, /quiz__provenance--\$\{provenance\}/);
 });

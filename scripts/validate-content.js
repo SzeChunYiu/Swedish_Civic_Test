@@ -7290,6 +7290,8 @@ let themeRadiusTokensValidated = 0;
 let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
+let themeDesignColorTokensValidated = 0;
+let themeDesignColorTokenParityValidated = false;
 let themeContrastPairsValidated = 0;
 let themeTokenSchemaValidated = false;
 let themeContrastPairsAAValidated = false;
@@ -13910,6 +13912,47 @@ function validateThemeTokenSchema() {
     fail(message);
   }
 
+  function parseDesignColorTokens() {
+    const designPath = path.join(repoRoot, 'DESIGN.md');
+    const designSource = fs.readFileSync(designPath, 'utf8');
+    const sectionMatch = designSource.match(
+      /## 2\. Color tokens[\s\S]*?(?=\n## \d+\.|\n##\s+\d|\n?$)/,
+    );
+    if (!sectionMatch) {
+      reject('DESIGN.md section 2 color-token table is missing');
+      return [];
+    }
+
+    const documentedTokens = [];
+    sectionMatch[0]
+      .split('\n')
+      .filter((line) => line.trim().startsWith('|'))
+      .forEach((line) => {
+        const cells = line
+          .split('|')
+          .slice(1, -1)
+          .map((cell) => cell.trim());
+        if (cells.length < 2 || cells[0].toLowerCase() === 'token' || /^-+$/.test(cells[0])) {
+          return;
+        }
+
+        const tokenNames = cells[0].split(/\s*\/\s*/).filter(Boolean);
+        const tokenValues = cells[1].split(/\s*\/\s*/).filter(Boolean);
+        if (tokenNames.length !== tokenValues.length) {
+          reject(
+            `DESIGN.md section 2 row ${JSON.stringify(cells[0])} has ${tokenNames.length} tokens but ${tokenValues.length} values`,
+          );
+          return;
+        }
+
+        tokenNames.forEach((token, index) => {
+          documentedTokens.push({ token, value: tokenValues[index].toLowerCase() });
+        });
+      });
+
+    return documentedTokens;
+  }
+
   function validateNoExtraKeys(actual, expectedKeys, label) {
     if (!isObjectRecord(actual)) {
       reject(`${label} must be an object`);
@@ -13958,6 +14001,22 @@ function validateThemeTokenSchema() {
     }
     if (themeContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS.length) {
       themeContrastPairsAAValidated = true;
+    }
+  }
+
+  const designColorTokens = parseDesignColorTokens();
+  if (isObjectRecord(colors)) {
+    for (const { token, value } of designColorTokens) {
+      if (!Object.prototype.hasOwnProperty.call(colors, token)) {
+        reject(`DESIGN.md section 2 color token ${token} is missing from theme colors`);
+        continue;
+      }
+      const actualValue = String(colors[token]).toLowerCase();
+      if (actualValue !== value) {
+        reject(`theme colors.${token} is ${actualValue}, expected DESIGN.md section 2 ${value}`);
+        continue;
+      }
+      themeDesignColorTokensValidated += 1;
     }
   }
 
@@ -14123,6 +14182,8 @@ function validateThemeTokenSchema() {
     themeMotionTokensValidated ===
       Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length + EXPECTED_THEME_MOTION_EASING.length + 2
   ) {
+    themeDesignColorTokenParityValidated =
+      themeDesignColorTokensValidated === designColorTokens.length && designColorTokens.length > 0;
     themeTokenSchemaValidated = true;
   }
 }
@@ -17297,6 +17358,8 @@ console.log(
       themeTypographyTokensValidated,
       themeShadowTokensValidated,
       themeMotionTokensValidated,
+      themeDesignColorTokensValidated,
+      themeDesignColorTokenParityValidated,
       themeContrastPairsValidated,
       themeContrastPairsAAValidated,
       themeTokenSchemaValidated,
