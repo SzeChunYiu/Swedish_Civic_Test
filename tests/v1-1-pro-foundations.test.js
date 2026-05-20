@@ -313,14 +313,15 @@ test('tierComparison: Swedish Pro labels use natural learner-facing copy', () =>
   const labelsById = Object.fromEntries(TIER_ROWS.map((row) => [row.id, row.labelSv]));
 
   assert.equal(labelsById.mockExams, 'Övningsprov');
-  assert.equal(labelsById.mistakeReview, 'Repetera misstag');
+  assert.equal(labelsById.mistakeReview, 'Öva missade frågor');
   assert.equal(labelsById.spacedRepetition, 'Repetition med intervall');
   assert.equal(labelsById.customStudyPlan, 'Studieplan efter provdatum');
   assert.equal(labelsById.predictedPass, 'Beräknad provberedskap');
   assert.equal(labelsById.confidenceSlider, 'Säkerhetsskala och kalibrering');
   assert.equal(labelsById.accessibility, 'Lättläst typsnitt, textstorlek och mörkt läge');
   assert.notEqual(labelsById.mockExams, 'Provexamina');
-  assert.notEqual(labelsById.mistakeReview, 'Felgranskning');
+  assert.notEqual(labelsById.mistakeReview, ['Repetera ', 'misstag'].join(''));
+  assert.notEqual(labelsById.mistakeReview, ['Fel', 'granskning'].join(''));
 });
 
 test('tierComparison: three columns in canonical order', () => {

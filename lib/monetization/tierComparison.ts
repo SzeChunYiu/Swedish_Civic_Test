@@ -98,7 +98,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'mistakeReview',
-    labelSv: 'Repetera misstag',
+    labelSv: 'Öva missade frågor',
     labelEn: 'Mistake review',
     flag: 'fullMistakeReview',
     free: { kind: 'text', sv: 'senaste 20', en: 'last 20' },
