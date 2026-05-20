@@ -67,9 +67,14 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
   assert.match(guidedPathSource, /href=\{stage\.href\}/);
   assert.match(guidedPathSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
+  assert.match(guidedPathSource, /accessibilityLabel=\{copy\.dailyPracticeAccessibilityLabel\}/);
+  assert.match(guidedPathSource, /accessibilityLabel=\{copy\.resumeAccessibilityLabel\}/);
   assert.match(guidedPathSource, /\{stage\.cta\}/);
   assert.match(guidedPathSource, /href="\/practice"/);
   assert.match(guidedPathSource, /minHeight: space\[6\]/);
+  (guidedPathSource.match(/<Card\b[\s\S]*?>/g) || []).forEach((tag) => {
+    assert.doesNotMatch(tag, /\baccessible\b|accessibilityLabel=/);
+  });
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
   assert.match(
@@ -233,6 +238,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route guided path must finish with chapters 10-13/,
+  );
+});
+
+test('home route copy parity rejects grouped guided path card links', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/learning/GuidedPracticePath.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<Card style={styles.dailyCard}>',
+        '<Card accessible accessibilityLabel={copy.dailyPracticeAccessibilityLabel} style={styles.dailyCard}>',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home guided path cards must not group nested link controls/,
   );
 });
 

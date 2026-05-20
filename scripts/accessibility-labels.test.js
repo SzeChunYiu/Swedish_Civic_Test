@@ -184,3 +184,24 @@ test('MockExamConfigPanel summary header is separate from interactive controls',
   );
   assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
 });
+
+test('GuidedPracticePath summaries stay separate from nested links', () => {
+  const source = fs.readFileSync(
+    path.join(ROOT, 'components', 'learning', 'GuidedPracticePath.tsx'),
+    'utf8',
+  );
+  const cardOpeningTags = source.match(/<Card\b[\s\S]*?>/g) || [];
+
+  assert.ok(cardOpeningTags.length >= 2, 'GuidedPracticePath should keep card surfaces');
+  cardOpeningTags.forEach((tag) => {
+    assert.doesNotMatch(tag, /\baccessible\b|accessibilityLabel=/);
+  });
+  assert.match(
+    source,
+    /<Link[\s\S]*accessibilityLabel=\{copy\.dailyPracticeAccessibilityLabel\}[\s\S]*href="\/practice"/,
+  );
+  assert.match(
+    source,
+    /<Link[\s\S]*accessibilityLabel=\{copy\.resumeAccessibilityLabel\}[\s\S]*href=\{resumeHref\}/,
+  );
+});

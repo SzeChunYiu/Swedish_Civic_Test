@@ -1515,9 +1515,14 @@ test('home screen surfaces a guided civic readiness path', () => {
   assert.match(componentSource, /href="\/practice"/);
   assert.match(componentSource, /href=\{stage\.href\}/);
   assert.match(componentSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
+  assert.match(componentSource, /accessibilityLabel=\{copy\.dailyPracticeAccessibilityLabel\}/);
+  assert.match(componentSource, /accessibilityLabel=\{copy\.resumeAccessibilityLabel\}/);
   assert.match(componentSource, /\{stage\.cta\}/);
   assert.match(componentSource, /ProgressBar language=\{language\} progress=\{stage\.progress\}/);
   assert.match(componentSource, /minHeight: space\[6\]/);
+  (componentSource.match(/<Card\b[\s\S]*?>/g) || []).forEach((tag) => {
+    assert.doesNotMatch(tag, /\baccessible\b|accessibilityLabel=/);
+  });
   assert.doesNotMatch(`${source}\n${componentSource}`, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

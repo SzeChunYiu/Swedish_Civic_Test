@@ -50,11 +50,7 @@ export function GuidedPracticePath({
 }) {
   return (
     <View style={styles.grid}>
-      <Card
-        accessible
-        accessibilityLabel={copy.dailyPracticeAccessibilityLabel}
-        style={styles.dailyCard}
-      >
+      <Card style={styles.dailyCard}>
         <Text accessibilityRole="header" style={styles.dailyTitle}>
           {copy.dailyPracticeTitle}
         </Text>

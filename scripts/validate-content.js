@@ -9812,6 +9812,7 @@ function validateHomeRouteHeaderParity() {
 function validateHomeRouteCopyParity() {
   let valid = true;
   let homeRoute = '';
+  let guidedPathSource = '';
 
   function reject(message) {
     valid = false;
@@ -9820,6 +9821,10 @@ function validateHomeRouteCopyParity() {
 
   try {
     homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+    guidedPathSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/GuidedPracticePath.tsx'),
+      'utf8',
+    );
   } catch (error) {
     reject(`home route copy source could not be read: ${error.message}`);
     return;
@@ -9837,6 +9842,19 @@ function validateHomeRouteCopyParity() {
 
   if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
     reject('home route Swedish missed-question review copy must use natural learner wording');
+  }
+
+  const guidedPathCardOpeningTags = guidedPathSource.match(/<Card\b[\s\S]*?>/g) || [];
+  if (guidedPathCardOpeningTags.some((tag) => /\baccessible\b|accessibilityLabel=/.test(tag))) {
+    reject('home guided path cards must not group nested link controls');
+  }
+  if (
+    !/<Link[\s\S]*accessibilityLabel=\{copy\.dailyPracticeAccessibilityLabel\}/.test(
+      guidedPathSource,
+    ) ||
+    !/<Link[\s\S]*accessibilityLabel=\{copy\.resumeAccessibilityLabel\}/.test(guidedPathSource)
+  ) {
+    reject('home guided path links must preserve localized summary accessibility labels');
   }
 
   const seenLabels = new Set();
