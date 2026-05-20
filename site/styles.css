@@ -1549,7 +1549,7 @@ p.deck {
 .set-group__h { margin: 0; font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
 .set-group__sub { margin: -4px 0 4px; color: var(--ink-soft); font-size: 13.5px; }
 
-.set-segment { display: inline-flex; padding: 3px; gap: 2px; background: var(--paper-warm); border-radius: 12px; border: 1px solid var(--line); }
+.set-segment { display: inline-flex; flex-wrap: wrap; max-width: 100%; padding: 3px; gap: 2px; background: var(--paper-warm); border-radius: 12px; border: 1px solid var(--line); }
 .set-segment button { border: 0; background: transparent; cursor: pointer; padding: 8px 14px; border-radius: 9px; font: inherit; font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--ink-soft); }
 .set-segment button.is-on { background: var(--ink); color: var(--gold); }
 
