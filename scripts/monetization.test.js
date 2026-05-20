@@ -380,6 +380,7 @@ test('real ad units can be supplied through the local override loader', () => {
       );
     },
   );
+});
 test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
   const nativeAdCardSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
