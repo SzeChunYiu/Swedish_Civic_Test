@@ -2184,6 +2184,28 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   );
 });
 
+test('AdBanner placement contract has a compile-time fixture for banner-only props', () => {
+  const fixtureSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/ad-banner-placement-type-contract.tsx'),
+    'utf8',
+  );
+
+  assert.match(
+    fixtureSource,
+    /import \{ AdBanner \} from '\.\.\/components\/monetization\/AdBanner'/,
+  );
+  assert.match(
+    fixtureSource,
+    /import \{ AdBanner as NativeAdBanner \} from '\.\.\/components\/monetization\/AdBanner\.native'/,
+  );
+  assert.match(fixtureSource, /import type \{ BannerAdPlacement \}/);
+  assert.match(fixtureSource, /placement=\{homeBanner\}/);
+  assert.match(fixtureSource, /placement=\{chapterListBanner\}/);
+  assert.match(fixtureSource, /@ts-expect-error[\s\S]*quiz_completed_interstitial/);
+  assert.match(fixtureSource, /@ts-expect-error[\s\S]*results_native/);
+  assert.match(fixtureSource, /@ts-expect-error[\s\S]*rewarded_extra_exam/);
+});
+
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
   const appConfig = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8')).expo;
   const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
