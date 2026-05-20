@@ -3192,6 +3192,29 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     label: 'visible approximate page label',
     pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
   },
+  {
+    label: 'nested SourceCitation opts out of duplicate accessibility node',
+    pattern: /<SourceCitation[\s\S]*accessibilityRole="none"[\s\S]*label=\{copy\.title\}/,
+  },
+  {
+    label: 'nested SourceCitation omits duplicate accessibility label',
+    pattern:
+      /<SourceCitation(?![\s\S]*accessibilityLabel=\{referenceAccessibilityLabel\})[\s\S]*accessibilityRole="none"[\s\S]*>/,
+  },
+];
+const EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES = [
+  {
+    label: 'standalone SourceCitation text role default',
+    pattern: /accessibilityRole = 'text'/,
+  },
+  {
+    label: 'standalone SourceCitation default accessibility label includes page text',
+    pattern: /const defaultAccessibilityLabel = \[resolvedLabel, citationText, pageText\]/,
+  },
+  {
+    label: 'nested SourceCitation none role suppresses duplicate label',
+    pattern: /accessibilityRole === 'none'\s*\? undefined/,
+  },
 ];
 const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
@@ -11984,6 +12007,7 @@ function validateExplanationPanelAccessibilityParity() {
 function validateUhrReferenceCardAccessibilityParity() {
   let valid = true;
   let uhrReferenceCardSource = '';
+  let sourceCitationSource = '';
 
   function reject(message) {
     valid = false;
@@ -12002,9 +12026,30 @@ function validateUhrReferenceCardAccessibilityParity() {
     return;
   }
 
+  try {
+    sourceCitationSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/SourceCitation.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/SourceCitation.tsx could not be read for UHRReferenceCard accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
   EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(uhrReferenceCardSource)) {
       reject(`UHRReferenceCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    uhrReferenceCardAccessibilityRulesValidated += 1;
+  });
+  EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(sourceCitationSource)) {
+      reject(
+        `SourceCitation missing ${expectedRule.label} for UHRReferenceCard accessibility parity`,
+      );
       return;
     }
     uhrReferenceCardAccessibilityRulesValidated += 1;
@@ -12013,10 +12058,21 @@ function validateUhrReferenceCardAccessibilityParity() {
   if (
     valid &&
     uhrReferenceCardAccessibilityRulesValidated ===
-      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length
+      EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.length +
+        EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.length
   ) {
     uhrReferenceCardAccessibilityParityValidated = true;
   }
+}
+
+if (process.argv.includes('--focus-uhr-reference-card-accessibility')) {
+  validateUhrReferenceCardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    uhrReferenceCardAccessibilityRulesValidated,
+    uhrReferenceCardAccessibilityParityValidated,
+  });
+  process.exit(0);
 }
 
 function validateCelebrationBurstAccessibilityParity() {
