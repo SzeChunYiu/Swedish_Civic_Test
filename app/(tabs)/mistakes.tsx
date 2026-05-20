@@ -54,6 +54,12 @@ type MistakesReviewListItem =
       type: 'question';
     };
 
+type AnswerReviewBlockProps = {
+  copy: MistakesCopy;
+  correctAnswer: string;
+  selectedWrongAnswer?: string;
+};
+
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
@@ -107,29 +113,6 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
 
   return language === 'en' ? option.textEn : option.textSv;
 }
-
-export default function Screen() {
-  const router = useRouter();
-  const language = useSettingsStore((state) => state.language);
-  const copy = mistakesCopy[language];
-  const questionProgress = useProgressStore((state) => state.questionProgress);
-  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
-  const clearProgressPersistenceWarning = useProgressStore(
-    (state) => state.clearPersistenceWarning,
-  );
-  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
-  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.persistenceWarning,
-  );
-  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.clearPersistenceWarning,
-  );
-  const mistakenQuestions = questions.filter(
-    (question) => questionProgress[question.id]?.wrongCount > 0,
-  );
-  const bookmarkedQuestions = questions.filter(
-    (question) => questionProgress[question.id]?.bookmarked,
-  );
 
 function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
   return (
