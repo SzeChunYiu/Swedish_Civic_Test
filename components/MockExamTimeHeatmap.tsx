@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { colors, radius, space, typography } from '../lib/theme';
+import { colors, motion, radius, space, typography } from '../lib/theme';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import type { QuizAnswer } from '../types/progress';
 import { PillBadge } from './PillBadge';
@@ -138,6 +138,7 @@ export function MockExamTimeHeatmap({
                 answer.isCorrect,
               )}
               accessibilityRole="button"
+              hitSlop={space[1]}
               key={answer.questionId}
               onPress={() => onSelectQuestion?.(answer.questionId)}
               style={({ pressed }) => [
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
     borderColor: colors.warning,
   },
   pressed: {
-    opacity: 0.82,
+    transform: [{ scale: motion.pressedScale }],
   },
   cellNumber: {
     color: colors.text,
