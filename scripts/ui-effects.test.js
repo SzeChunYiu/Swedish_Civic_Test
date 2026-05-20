@@ -458,6 +458,28 @@ test('custom pressed controls mirror false checked and expanded state to web ari
   assert.doesNotMatch(provenanceBadgeSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('mock exam config controls are not nested inside labelled summary containers', () => {
+  const source = read('components/MockExamConfigPanel.tsx');
+
+  assert.match(source, /const resolvedPanelAccessibilityLabel =/);
+  assert.match(
+    source,
+    /<Surface[\s\S]*accessibilityRole="none"[\s\S]*\{\.\.\.surfaceProps\}[\s\S]*accessible=\{false\}/,
+  );
+  assert.match(
+    source,
+    /<View\s+accessible\s+accessibilityLabel=\{resolvedPanelAccessibilityLabel\}\s+accessibilityRole=\{accessibilityRole\}\s+style=\{styles\.header\}/,
+  );
+  assert.match(source, /accessibilityRole="adjustable"/);
+  assert.match(source, /accessibilityRole="checkbox"/);
+  assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
+  assert.doesNotMatch(
+    source,
+    /<View\s+accessibilityLabel=\{resolvedChaptersLabel\}\s+accessibilityRole="summary"\s+style=\{styles\.chips\}/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings controls use token pressed feedback on all direct controls', () => {
   const source = read('app/settings.tsx');
 
@@ -1059,6 +1081,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
+  assert.match(webSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(webSource, /\bAdPlacement\b/);
   assert.match(webSource, /useSettingsStore/);
   assert.match(webSource, /const copy = adBannerCopy\[language\]/);
   assert.match(webSource, /const placementLabel = copy\.placementLabels\[placement\];/);
@@ -1073,6 +1097,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   );
   assert.match(webSource, /<Card[\s\S]*accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(nativeSource, /react-native-google-mobile-ads/);
+  assert.match(nativeSource, /placement\?: BannerAdPlacement;/);
+  assert.doesNotMatch(nativeSource, /\bAdPlacement\b/);
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
@@ -1188,6 +1214,14 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Remove Ads/);
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
   assert.match(source, /Restore Remove Ads purchase/);
+  assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
+  assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
+  assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
+  assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /Restore Remove Ads purchase/);
+  assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
+  assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
+  assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
   assert.match(source, /Ads are disabled on this device\./);
   assert.doesNotMatch(source, /adsDisabled \? copy\.bodyIdle/);
   assert.doesNotMatch(source, /activeAction !== null \|\| adsDisabled/);
@@ -1197,6 +1231,32 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(profileSource, /language=\{language\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(placementCtaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('pro paywall renders accessible tier summaries without changing Remove Ads wiring', () => {
+  const source = read('components/monetization/ProPaywall.tsx');
+  const profileSource = read('app/(tabs)/profile.tsx');
+
+  assert.match(source, /TIER_COLUMNS/);
+  assert.match(source, /TIER_ROWS/);
+  assert.match(source, /paywallCtaLabels/);
+  assert.match(source, /const proPaywallCopy: Record<AppLanguage, ProPaywallCopy>/);
+  assert.match(source, /Jämför Gratis, Annonsfri och Pro/);
+  assert.match(source, /Compare Free, Ad-Free, and Pro/);
+  assert.match(source, /copy\.priceAccessibilityLabel\(column\)/);
+  assert.match(source, /copy\.rowSummary\(/);
+  assert.match(source, /accessibilityRole="summary"/);
+  assert.match(source, /buyProLifetime/);
+  assert.match(source, /restoreProLifetime/);
+  assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
+  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
+  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
+  assert.doesNotMatch(source, /buyRemoveAds|restoreRemoveAdsPurchase/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.match(profileSource, /import \{ ProPaywall \}/);
+  assert.match(profileSource, /<ProPaywall/);
+  assert.match(profileSource, /alreadyAdFree=\{monetizationEntitlements\.adsDisabled\}/);
+  assert.match(profileSource, /onEntitlementsChange=\{\(nextEntitlements\) =>/);
 });
 
 test('profile shell copy follows Swedish and English settings language', () => {

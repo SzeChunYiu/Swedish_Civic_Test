@@ -47,9 +47,10 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createRenderContext({ hash, language = 'en' }) {
+function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
+  const rootAttributes = new Map();
   const storage = new Map([
     ['smt_lang', language],
     ['smt_mock_cfg', JSON.stringify({ count: 5, minutes: 30, chapters: [1] })],
@@ -137,7 +138,12 @@ function createRenderContext({ hash, language = 'en' }) {
       body: { style: {} },
       documentElement: {
         lang: language,
-        setAttribute() {},
+        setAttribute(name, value) {
+          rootAttributes.set(name, String(value));
+        },
+        getAttribute(name) {
+          return rootAttributes.get(name) ?? null;
+        },
         style: { setProperty() {} },
       },
       createElement() {
@@ -172,8 +178,8 @@ function createRenderContext({ hash, language = 'en' }) {
     },
     window: {},
     clearInterval() {},
-    matchMedia: () => ({
-      matches: false,
+    matchMedia: (query) => ({
+      matches: query === '(prefers-reduced-motion: reduce)' ? reducedMotion : false,
       addEventListener() {},
     }),
     requestAnimationFrame(handler) {
@@ -215,9 +221,29 @@ function createRenderContext({ hash, language = 'en' }) {
         .filter((entry) => entry.type === 'click')
         .forEach((entry) => entry.handler({ target }));
     },
+    changeSettingsMotion(checked) {
+      const target = {
+        checked,
+        dataset: { set: 'motion' },
+        matches(selector) {
+          return selector === 'input[type=checkbox][data-set]';
+        },
+      };
+      listeners.document
+        .filter((entry) => entry.type === 'change')
+        .forEach((entry) => entry.handler({ target }));
+    },
     element,
+    fireWindowEvent(type) {
+      listeners.window
+        .filter((entry) => entry.type === type)
+        .forEach((entry) => entry.handler({ type }));
+    },
     get reloadCount() {
       return reloadCount;
+    },
+    rootAttribute(name) {
+      return rootAttributes.get(name) ?? null;
     },
     sandbox,
     storage,
@@ -261,6 +287,39 @@ test('Static icon-control accessible names follow smtSetLanguage without reload'
   assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), '关闭');
   assert.equal(context.element('dala-figure').getAttribute('aria-label'), '学习伙伴');
   assert.equal(context.reloadCount, 0);
+});
+
+test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {
+  const context = createRenderContext({ hash: '#/', language: 'en' });
+  const motionEvents = [];
+  loadScripts(context);
+  context.sandbox.window.addEventListener('smt:motionchange', (event) => {
+    motionEvents.push(event.detail.reduced);
+  });
+
+  context.changeSettingsMotion(true);
+
+  assert.equal(context.storage.get('smt_motion'), 'reduce');
+  assert.equal(context.rootAttribute('data-motion'), 'reduce');
+  assert.deepEqual(motionEvents, [true]);
+  assert.equal(context.reloadCount, 0);
+
+  context.changeSettingsMotion(false);
+
+  assert.equal(context.storage.get('smt_motion'), '');
+  assert.equal(context.rootAttribute('data-motion'), '');
+  assert.deepEqual(motionEvents, [true, false]);
+  assert.equal(context.reloadCount, 0);
+});
+
+test('Settings applies prefers-reduced-motion on first load without claiming a user preference', () => {
+  const context = createRenderContext({ hash: '#/', language: 'en', reducedMotion: true });
+  loadScripts(context);
+
+  context.fireWindowEvent('DOMContentLoaded');
+
+  assert.equal(context.rootAttribute('data-motion'), 'reduce');
+  assert.equal(context.storage.has('smt_motion'), false);
 });
 
 const mockOfficialPassLineClaimPatterns = [

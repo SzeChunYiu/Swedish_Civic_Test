@@ -830,12 +830,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'One reason voters vote behind a screen at the polling station is that votes are counted faster.',
     ],
     [generatedQuestionId(sourceQuestions, 'q044', 'trueStatement')]: [
-      'Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
-      'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.',
+      'Från 15 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
+      'A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 15.',
     ],
     [generatedQuestionId(sourceQuestions, 'q044', 'falseStatement')]: [
-      'Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
-      'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.',
+      'Från 13 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
+      'A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 13.',
     ],
     [generatedQuestionId(sourceQuestions, 'q046', 'trueStatement')]: [
       'Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess.',
@@ -894,8 +894,8 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sweden has labour-market laws to decide who becomes head of state.',
     ],
     [generatedQuestionId(sourceQuestions, 'q067', 'falseStatement')]: [
-      'A-kassan är en myndighet som dömer i arbetsmiljöbrott.',
-      'A-kassan is an authority that judges work environment crimes.',
+      'A-kassan är en myndighet som kontrollerar arbetsmiljöer.',
+      'A-kassan is a government agency that inspects work environments.',
     ],
     [generatedQuestionId(sourceQuestions, 'q076', 'trueStatement')]: [
       'Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg.',
@@ -986,12 +986,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.',
     ],
     [generatedQuestionId(sourceQuestions, 'q114', 'trueStatement')]: [
-      'Resor till Asien och ökat intresse för meditation och yoga nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet.',
-      'Travel to Asia and increased interest in meditation and yoga are mentioned as examples of contacts with Hindus and Buddhists in Sweden during the 20th century.',
+      'Resor till Asien och ökat intresse för meditation och yoga bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet.',
+      'Travel to Asia and increased interest in meditation and yoga contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.',
     ],
     [generatedQuestionId(sourceQuestions, 'q114', 'falseStatement')]: [
-      'Byggandet av Sveriges första moskéer under 1970-talet nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet.',
-      "The building of Sweden's first mosques during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      'Byggandet av Sveriges första moskéer under 1970-talet bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet.',
+      "The building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
     ],
     [generatedQuestionId(sourceQuestions, 'q116', 'trueStatement')]: [
       'Regeringsformen skyddar rätten att utöva sin religion och ger skydd mot diskriminering på grund av tro.',
