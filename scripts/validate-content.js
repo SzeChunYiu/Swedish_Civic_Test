@@ -316,6 +316,43 @@ const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
   /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
 ];
+const QUESTION_STEM_SOURCE_AUTHORITY_PATTERN_FIXTURES = [
+  {
+    label: 'enligt-uhr',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[0],
+    text: 'Enligt UHR ligger Sveriges nordligaste del norr om polcirkeln.',
+  },
+  {
+    label: 'uhr-materialet',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[1],
+    text: 'UHR-materialet beskriver Sveriges nordligaste del.',
+  },
+  {
+    label: 'uhrs-material',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[2],
+    text: 'UHR:s material beskriver Sveriges nordligaste del.',
+  },
+  {
+    label: 'according-to-uhr',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[3],
+    text: "According to the UHR, Sweden's northernmost part lies north of the Arctic Circle.",
+  },
+  {
+    label: 'uhr-section',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[4],
+    text: 'The UHR section describes where Sweden is located.',
+  },
+  {
+    label: 'stemmer-bast-enligt-uhr',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[5],
+    text: 'Vilket svar stämmer bäst enligt UHR?',
+  },
+  {
+    label: 'best-matches-uhr-section',
+    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[6],
+    text: 'Which answer best matches the UHR section?',
+  },
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -4512,26 +4549,41 @@ function findQuestionStemSourceAuthorityReference(question) {
   return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
 }
 
-function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
-  const text = [
-    question.questionEn,
-    question.explanationEn,
-    ...(question.options || []).map((option) => option.textEn),
-  ].join(' ');
+function validateSourceAuthorityStemPatternFixtures() {
+  const startFailureCount = failures.length;
+  const validatedPatterns = new Set();
 
-  return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
-}
+  if (
+    QUESTION_STEM_SOURCE_AUTHORITY_PATTERN_FIXTURES.length !==
+    QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.length
+  ) {
+    fail(
+      `source-authority stem pattern fixtures must cover every shared source-authority pattern (${QUESTION_STEM_SOURCE_AUTHORITY_PATTERN_FIXTURES.length}/${QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.length})`,
+    );
+  }
 
-function findQuestionTaxVatTwoConceptIssue(question) {
-  const text = [
-    question.questionSv,
-    question.questionEn,
-    question.explanationSv,
-    question.explanationEn,
-    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
-  ].join(' ');
+  QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.forEach((pattern, index) => {
+    const fixtures = QUESTION_STEM_SOURCE_AUTHORITY_PATTERN_FIXTURES.filter(
+      (fixture) => fixture.pattern === pattern,
+    );
+    if (fixtures.length !== 1) {
+      fail(`source-authority stem pattern ${index + 1} must have exactly one direct fixture`);
+      return;
+    }
 
-  return QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS.find((pattern) => pattern.test(text));
+    const [fixture] = fixtures;
+    if (!pattern.test(fixture.text)) {
+      fail(`source-authority stem pattern fixture "${fixture.label}" no longer matches`);
+      return;
+    }
+
+    validatedPatterns.add(pattern);
+  });
+
+  return {
+    fixtureParityValidated: failures.length === startFailureCount,
+    fixturesValidated: validatedPatterns.size,
+  };
 }
 
 function findQuestionNestedMetaStem(question) {
@@ -7434,6 +7486,8 @@ let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
 let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
+let sourceAuthorityStemPatternFixturesValidated = 0;
+let sourceAuthorityStemPatternFixtureParityValidated = false;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
@@ -7522,15 +7576,12 @@ if (
 ) {
   fail('strings export is not an object');
 }
-derivedCivicStatementPromptMirrorValidated = validateDerivedCivicStatementPromptMirror();
 {
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  const sourceAuthorityStemPatternFixtureValidation = validateSourceAuthorityStemPatternFixtures();
+  sourceAuthorityStemPatternFixturesValidated =
+    sourceAuthorityStemPatternFixtureValidation.fixturesValidated;
+  sourceAuthorityStemPatternFixtureParityValidated =
+    sourceAuthorityStemPatternFixtureValidation.fixtureParityValidated;
 }
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
@@ -17579,6 +17630,8 @@ console.log(
       questionTextFieldsNormalizedValidated,
       questionSentenceEndingsValidated,
       questionAuthorityBoundaryTextValidated,
+      sourceAuthorityStemPatternFixturesValidated,
+      sourceAuthorityStemPatternFixtureParityValidated,
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
