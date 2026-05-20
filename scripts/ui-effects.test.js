@@ -1205,12 +1205,19 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
+  assert.match(nativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
+  assert.match(
+    nativeSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
+  assert.match(nativeSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     nativeSource,
     /accessibilityHint=\{`\$\{copy\.previewHint\} \$\{copy\.removeAdsHint\}`\}/,
   );
-  assert.match(
+  assert.match(nativeSource, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.doesNotMatch(
     nativeSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
