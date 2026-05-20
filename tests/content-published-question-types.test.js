@@ -2864,6 +2864,16 @@ test('published question schema guards capitalized generated reason clauses', ()
   assert.match(validatorSource, /\/\^One reason is that It\\b\//);
 });
 
+test('published question schema guards targetless generated why-reason stems', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /\/\^En anledning är\\b\//);
+  assert.match(validatorSource, /\/\^One reason is\\b\//);
+});
+
 test('published question schema rejects residual q306-q355 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
