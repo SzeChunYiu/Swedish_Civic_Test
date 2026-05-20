@@ -62,6 +62,9 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.match(source, /motion\.duration\.slow/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
+  assert.match(source, /export interface ProgressBarProps \{/);
+  assert.match(source, /presentationOnly\?: boolean;/);
+  assert.match(source, /presentationOnly = false,/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
   assert.match(source, /`\$\{progressPercent\} percent complete`/);
   assert.match(source, /const progressPercent = Math\.round\(clampedProgress \* 100\);/);
@@ -77,6 +80,9 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.match(source, /aria-valuetext=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole="progressbar"/);
+  assert.match(source, /if \(presentationOnly\) \{/);
+  assert.match(source, /aria-hidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(
     source,
     /accessibilityValue=\{\{\s*min: 0,\s*max: 100,\s*now: progressPercent,\s*text: progressAccessibilityLabel,\s*\}\}/,
@@ -569,7 +575,12 @@ test('mock exam time heatmap keeps its summary separate from jump buttons', () =
   );
   assert.match(source, /accessibilityLabel=\{copy\.questionLabel\(/);
   assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /onPress=\{\(\) => onSelectQuestion\?\.\(answer\.questionId\)\}/);
+  assert.match(source, /pressed \? styles\.pressed : null/);
+  assert.match(source, /import \{ colors, motion, radius, space, typography \}/);
+  assert.match(source, /pressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /pressed: \{[\s\S]*opacity:/);
   assert.match(source, /Nära median/);
   assert.match(source, /Near median/);
   assert.doesNotMatch(surfaceOpening, /accessibilityLabel=/);
@@ -1413,6 +1424,7 @@ test('premium banner announces Remove Ads purchase status changes', () => {
 test('pro paywall renders accessible tier summaries without changing Remove Ads wiring', () => {
   const source = read('components/monetization/ProPaywall.tsx');
   const profileSource = read('app/(tabs)/profile.tsx');
+  const tierComparisonSource = read('lib/monetization/tierComparison.ts');
 
   assert.match(source, /TIER_COLUMNS/);
   assert.match(source, /TIER_ROWS/);
@@ -1426,8 +1438,12 @@ test('pro paywall renders accessible tier summaries without changing Remove Ads 
   assert.match(source, /buyProLifetime/);
   assert.match(source, /restoreProLifetime/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
-  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
+  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
+  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
+  assert.match(tierComparisonSource, /Bara ta bort annonser · \$\{REMOVE_ADS_PRICE_LABEL\}/);
+  assert.doesNotMatch(source, /29 kr|29 kronor/);
+  assert.doesNotMatch(tierComparisonSource, /29 kr|29 kronor/);
   assert.doesNotMatch(source, /buyRemoveAds|restoreRemoveAdsPurchase/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.match(profileSource, /import \{ ProPaywall \}/);
