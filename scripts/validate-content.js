@@ -113,6 +113,7 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
   'questionProvenance',
+  'uhrSourcePublisher',
 ];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
@@ -824,19 +825,19 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad för fokuserad repetition',
+    'Sparad till senare övning',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
-    'Svara fel på en övningsfråga så visas den här.',
-    'Inga misstag ännu',
-    'Fellogg',
-    'Fel svar att repetera',
-    'Ditt senaste felaktiga svar',
-    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
-    'Misstag',
-    'Fel svar: ${count}',
+    'När du missar en övningsfråga visas den här.',
+    'Inga missade frågor ännu',
+    'Öva igen',
+    'Frågor att öva på',
+    'Ditt senaste svar',
+    'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och hur många gånger de har missats.',
+    'Missade frågor',
+    'Missad ${count} gånger',
   ],
   en: [
     'Smart review',
@@ -856,6 +857,13 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
+const FORBIDDEN_MISTAKES_ROUTE_SV_COPY_PATTERNS = [
+  ['Fell', 'ogg'],
+  ['Fel svar att', ' repetera'],
+  ['Gå igenom fel svar', ' med fråga'],
+  ['repetitionsantal på', ' samma plats'],
+  ['Sparad för fokuserad', ' repetition'],
+];
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -8206,6 +8214,13 @@ function validateMistakesRouteCopyParity() {
     if (!mistakesRoute.includes(snippet)) reject(message);
   });
 
+  FORBIDDEN_MISTAKES_ROUTE_SV_COPY_PATTERNS.forEach((patternParts) => {
+    const pattern = patternParts.join('');
+    if (mistakesRoute.includes(pattern)) {
+      reject(`mistakes route must not publish stale Swedish copy ${JSON.stringify(pattern)}`);
+    }
+  });
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_MISTAKES_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -13154,17 +13169,6 @@ function validateQuestionBankCsvContract() {
   }
 
   const [header, ...dataRows] = rows;
-  const duplicateHeaderNames = [
-    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
-  ];
-  if (duplicateHeaderNames.length) {
-    fail(
-      `content/question-bank.csv header has duplicate column name(s): ${duplicateHeaderNames.join(
-        ', ',
-      )}`,
-    );
-  }
-
   if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
     fail(
       `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
@@ -13222,6 +13226,7 @@ function validateQuestionBankCsvContract() {
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
       getQuestionProvenance(question),
+      uhrSectionMap?.source?.publisher,
     ];
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {

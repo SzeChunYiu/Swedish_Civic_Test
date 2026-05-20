@@ -36,7 +36,10 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Här finns frågor du har missat, med förklaring, källhänvisning/);
+  assert.match(source, /Här samlas frågor du vill öva på igen, med förklaring, källhänvisning/);
+  assert.match(source, /Sparad till senare övning/);
+  assert.match(source, /Frågor att öva på/);
+  assert.match(source, /Ditt senaste svar/);
   assert.match(source, /Review wrong answers with the question, explanation, source reference/);
   [
     ['Fell', 'ogg'],

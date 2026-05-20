@@ -62,7 +62,7 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
         : `Fråga att öva igen. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad för att öva igen',
+    bookmarkedMeta: 'Sparad till senare övning',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
@@ -70,11 +70,12 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
     emptyText: 'När du missar en övningsfråga visas den här.',
     emptyTitle: 'Inga missade frågor ännu',
     mistakeBadge: 'Öva igen',
-    mistakeTitle: 'Frågor att öva igen',
+    mistakeTitle: 'Frågor att öva på',
     selectedWrongAnswerLabel: 'Ditt senaste svar',
-    subtitle: 'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
+    subtitle:
+      'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och hur många gånger de har missats.',
     title: 'Missade frågor',
-    wrongAnswers: (count) => `Antal missar: ${count}`,
+    wrongAnswers: (count) => (count === 1 ? 'Missad 1 gång' : `Missad ${count} gånger`),
   },
   en: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
