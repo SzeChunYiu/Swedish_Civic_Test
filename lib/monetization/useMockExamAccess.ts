@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 
 import type { PremiumEntitlements } from '../../types/monetization';
-import type { AdRuntimePlatform } from './ads';
 import type { AdConsentDecision } from './consent';
 import { FREE_ENTITLEMENTS } from './premium';
 import type { PurchaseRuntimeOptions } from './purchases';
@@ -38,13 +37,11 @@ function buildAccessDecision({
   consentDecision,
   entitlements,
   freeMockExamLimit,
-  platform,
   snapshot,
 }: {
   consentDecision?: Pick<AdConsentDecision, 'adServingAllowed'>;
   entitlements: PremiumEntitlements;
   freeMockExamLimit: number;
-  platform: AdRuntimePlatform;
   snapshot: StoredMockExamAccessSnapshot;
 }): MockExamAccessDecision {
   return getMockExamAccessDecision({
@@ -52,7 +49,7 @@ function buildAccessDecision({
     consentDecision,
     entitlements,
     freeMockExamLimit,
-    platform,
+    platform: Platform.OS,
     rewardedExtraExamCredits: snapshot.rewardedExtraExamCredits,
   });
 }
@@ -114,7 +111,6 @@ export function useMockExamAccess({
         consentDecision,
         entitlements,
         freeMockExamLimit,
-        platform: Platform.OS,
         snapshot,
       }),
     [
