@@ -548,7 +548,7 @@ export default function Screen() {
         })}
       </View>
 
-      {monetizationEntitlementsReady ? (
+      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
         <PremiumBanner
           entitlements={monetizationEntitlements}
           language={language}

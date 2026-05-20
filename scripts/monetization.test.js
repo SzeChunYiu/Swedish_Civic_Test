@@ -1357,6 +1357,300 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
   assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
+test('native remove-ads purchase only grants from purchase update listener events', async () => {
+  const { REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+
+  function createNativeIapMock({ emitPurchase, requestRejects = false, requestResult } = {}) {
+    const calls = [];
+    let purchaseUpdatedListener;
+
+    return {
+      calls,
+      endConnection: async () => {
+        calls.push(['endConnection']);
+      },
+      finishTransaction: async (args) => {
+        calls.push(['finishTransaction', args]);
+      },
+      getAvailablePurchases: async () => [],
+      initConnection: async () => {
+        calls.push(['initConnection']);
+      },
+      purchaseErrorListener: (listener) => {
+        void listener;
+        calls.push(['purchaseErrorListener']);
+        return {
+          remove() {
+            calls.push(['removePurchaseErrorListener']);
+          },
+        };
+      },
+      purchaseUpdatedListener: (listener) => {
+        purchaseUpdatedListener = listener;
+        calls.push(['purchaseUpdatedListener']);
+        return {
+          remove() {
+            calls.push(['removePurchaseUpdatedListener']);
+          },
+        };
+      },
+      requestPurchase: async (args) => {
+        calls.push(['requestPurchase', args]);
+        if (requestRejects) throw new Error('request failed');
+        if (emitPurchase) {
+          setTimeout(() => purchaseUpdatedListener?.(emitPurchase), 0);
+        }
+        return requestResult ?? null;
+      },
+      restorePurchases: async () => {
+        calls.push(['restorePurchases']);
+      },
+    };
+  }
+
+  const directReturnIap = createNativeIapMock({
+    requestResult: {
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'direct-return-token',
+      transactionId: 'direct-return-transaction',
+    },
+  });
+  const directReturnExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
+    'expo-secure-store': {},
+    'react-native-iap': directReturnIap,
+  });
+  const directReturnStorage = directReturnExports.createMemoryPurchaseStorage();
+  const directReturnResult = await directReturnExports.buyRemoveAds({
+    provider: directReturnExports.createNativePurchaseProvider({ purchaseTimeoutMs: 5 }),
+    storage: directReturnStorage,
+  });
+
+  assert.equal(directReturnResult.status, 'pending');
+  assert.equal(directReturnResult.entitlements.adsDisabled, false);
+  assert.equal(
+    await directReturnStorage.getItemAsync(directReturnExports.REMOVE_ADS_STORAGE_KEY),
+    null,
+  );
+  assert.equal(
+    directReturnIap.calls.some(([name]) => name === 'finishTransaction'),
+    false,
+  );
+
+  const listenerIap = createNativeIapMock({
+    emitPurchase: {
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'listener-token',
+      transactionId: 'listener-transaction',
+    },
+    requestResult: {
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'ignored-direct-token',
+      transactionId: 'ignored-direct-transaction',
+    },
+  });
+  const listenerExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
+    'expo-secure-store': {},
+    'react-native-iap': listenerIap,
+  });
+  const listenerStorage = listenerExports.createMemoryPurchaseStorage();
+  const listenerResult = await listenerExports.buyRemoveAds({
+    provider: listenerExports.createNativePurchaseProvider({ purchaseTimeoutMs: 50 }),
+    storage: listenerStorage,
+  });
+  const storedListenerRecord = JSON.parse(
+    await listenerStorage.getItemAsync(listenerExports.REMOVE_ADS_STORAGE_KEY),
+  );
+
+  assert.equal(listenerResult.status, 'purchased');
+  assert.equal(listenerResult.entitlements.adsDisabled, true);
+  assert.equal(storedListenerRecord.purchaseToken, 'listener-token');
+  assert.equal(storedListenerRecord.transactionId, 'listener-transaction');
+  assert.equal(listenerIap.calls.filter(([name]) => name === 'finishTransaction').length, 1);
+
+  const rejectedIap = createNativeIapMock({ requestRejects: true });
+  const rejectedExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
+    'expo-secure-store': {},
+    'react-native-iap': rejectedIap,
+  });
+  await assert.rejects(
+    () =>
+      rejectedExports.buyRemoveAds({
+        provider: rejectedExports.createNativePurchaseProvider({ purchaseTimeoutMs: 50 }),
+        storage: rejectedExports.createMemoryPurchaseStorage(),
+      }),
+    /request failed/,
+  );
+});
+
+test('failed remove-ads receipt validation does not grant adsDisabled', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    createMockPurchaseProvider,
+    restoreRemoveAdsPurchase,
+    setRemoveAdsEntitlement,
+  } = loadTs('lib/monetization/purchases.ts');
+
+  const failedPurchaseStorage = createMemoryPurchaseStorage();
+  const failedPurchase = await buyRemoveAds({
+    provider: createMockPurchaseProvider({ receiptValidationStatus: 'invalid' }),
+    storage: failedPurchaseStorage,
+  });
+
+  assert.equal(failedPurchase.status, 'pending');
+  assert.equal(failedPurchase.entitlements.adsDisabled, false);
+  assert.equal(await failedPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const pendingPurchaseStorage = createMemoryPurchaseStorage();
+  const pendingPurchase = await buyRemoveAds({
+    provider: createMockPurchaseProvider({ receiptValidationStatus: 'pending' }),
+    storage: pendingPurchaseStorage,
+  });
+
+  assert.equal(pendingPurchase.status, 'pending');
+  assert.equal(pendingPurchase.entitlements.adsDisabled, false);
+  assert.equal(await pendingPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const malformedValidationStorage = createMemoryPurchaseStorage();
+  const malformedValidationProvider = {
+    ...createMockPurchaseProvider(),
+    async validateRemoveAdsReceipt() {
+      return {
+        productId: REMOVE_ADS_PRODUCT_ID,
+        status: 'valid',
+        validatedAt: new Date().toISOString(),
+      };
+    },
+  };
+  const malformedValidationPurchase = await buyRemoveAds({
+    provider: malformedValidationProvider,
+    storage: malformedValidationStorage,
+  });
+
+  assert.equal(malformedValidationPurchase.status, 'pending');
+  assert.equal(malformedValidationPurchase.entitlements.adsDisabled, false);
+  assert.equal(await malformedValidationStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const failedRestoreStorage = createMemoryPurchaseStorage();
+  const failedRestore = await restoreRemoveAdsPurchase({
+    provider: createMockPurchaseProvider({ owned: true, receiptValidationStatus: 'invalid' }),
+    storage: failedRestoreStorage,
+  });
+
+  assert.equal(failedRestore.status, 'not_found');
+  assert.equal(failedRestore.entitlements.adsDisabled, false);
+  assert.equal(await failedRestoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const directGrantStorage = createMemoryPurchaseStorage();
+  const directGrant = await setRemoveAdsEntitlement(true, { storage: directGrantStorage });
+
+  assert.equal(directGrant.adsDisabled, false);
+  assert.equal(await directGrantStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+});
+
+test('remove-ads purchase cleanup failures do not replace primary outcomes', async () => {
+  const {
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    createMockPurchaseProvider,
+    getPurchaseEntitlements,
+    restoreRemoveAdsPurchase,
+  } = loadTs('lib/monetization/purchases.ts');
+
+  const purchaseCleanupCalls = [];
+  const purchasedStorage = createMemoryPurchaseStorage();
+  const successfulPurchaseProvider = {
+    ...createMockPurchaseProvider(),
+    async disconnect() {
+      purchaseCleanupCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+  };
+  const purchaseResult = await buyRemoveAds({
+    provider: successfulPurchaseProvider,
+    storage: purchasedStorage,
+  });
+
+  assert.equal(purchaseResult.status, 'purchased');
+  assert.equal(purchaseResult.entitlements.adsDisabled, true);
+  assert.equal((await getPurchaseEntitlements({ storage: purchasedStorage })).adsDisabled, true);
+  assert.ok(await purchasedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
+  assert.deepEqual(purchaseCleanupCalls, ['disconnect']);
+
+  const restoreCleanupCalls = [];
+  const restoredStorage = createMemoryPurchaseStorage();
+  const successfulRestoreProvider = {
+    ...createMockPurchaseProvider({ owned: true }),
+    async disconnect() {
+      restoreCleanupCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+  };
+  const restoreResult = await restoreRemoveAdsPurchase({
+    provider: successfulRestoreProvider,
+    storage: restoredStorage,
+  });
+
+  assert.equal(restoreResult.status, 'restored');
+  assert.equal(restoreResult.entitlements.adsDisabled, true);
+  assert.equal((await getPurchaseEntitlements({ storage: restoredStorage })).adsDisabled, true);
+  assert.deepEqual(restoreCleanupCalls, ['disconnect']);
+
+  const requestFailureCalls = [];
+  const requestFailureProvider = {
+    async connect() {
+      requestFailureCalls.push('connect');
+    },
+    async disconnect() {
+      requestFailureCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+    async requestRemoveAdsPurchase() {
+      requestFailureCalls.push('request');
+      throw new Error('store request failed');
+    },
+    async restorePurchases() {
+      return [];
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      buyRemoveAds({
+        provider: requestFailureProvider,
+        storage: createMemoryPurchaseStorage(),
+      }),
+    /store request failed/,
+  );
+  assert.deepEqual(requestFailureCalls, ['connect', 'request', 'disconnect']);
+
+  const validationFailureCalls = [];
+  const validationFailureProvider = {
+    ...createMockPurchaseProvider(),
+    async disconnect() {
+      validationFailureCalls.push('disconnect');
+      throw new Error('endConnection failed');
+    },
+    async validateRemoveAdsReceipt() {
+      validationFailureCalls.push('validate');
+      throw new Error('receipt validation failed');
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      buyRemoveAds({
+        provider: validationFailureProvider,
+        storage: createMemoryPurchaseStorage(),
+      }),
+    /receipt validation failed/,
+  );
+  assert.deepEqual(validationFailureCalls, ['validate', 'disconnect']);
+});
+
 test('remove-ads paywall is surfaced near an ad placement and wired to purchase helpers', () => {
   const paywallSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
@@ -1427,7 +1721,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   );
   assert.match(
     homeSource,
-    /\{monetizationEntitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>[\s\S]*\) : null\}[\s\S]*<AdBanner placement="home_banner" \/>/,
+    /\{monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled \? \([\s\S]*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>[\s\S]*\) : null\}[\s\S]*<AdBanner placement="home_banner" \/>/,
   );
   assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);

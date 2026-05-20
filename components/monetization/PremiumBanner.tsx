@@ -43,11 +43,11 @@ type PremiumBannerCopy = {
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
     bodyActive:
-      'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen.',
+      'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen. Hela frågebanken är fortfarande gratis.',
     bodyIdle: (price) =>
-      `Hela frågebanken och alla 13 ämnen ingår gratis. Betala ${price} en gång för att ta bort annonser från studieskärmar; provläget är redan annonsfritt.`,
+      `Hela frågebanken är gratis. Hela frågebanken och alla 13 ämnen ingår gratis. Betala ${price} en gång för att ta bort studieannonser; det låser inte upp frågor.`,
     buyAccessibilityHint:
-      'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
+      'Köpet tar bort annonser efter butikens bekräftelse. Tidsatta övningsprov är redan annonsfria. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyHint: 'Startar ett engångsköp som tar bort annonser från studieskärmar.',
     buyIdle: (price) => `Köp ${price}`,
@@ -66,17 +66,17 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       idle: 'Engångsköp. Återställning finns om du redan har köpt.',
       not_found: 'Inget tidigare köp av Ta bort annonser hittades.',
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
-      purchased: 'Köpet är bekräftat. Annonser är avstängda på den här enheten.',
-      restored: 'Köpet är återställt. Annonser är avstängda på den här enheten.',
+      purchased: 'Köpet är bekräftat. Studieannonser är avstängda på den här enheten.',
+      restored: 'Köpet är återställt. Studieannonser är avstängda på den här enheten.',
     },
     titleActive: 'Annonsfri studie är aktiv',
     titleIdle: 'Ta bort annonser',
   },
   en: {
     bodyActive:
-      'Purchase confirmed. Study ads are disabled on this device, and Restore stays available if this store account needs to be checked again.',
+      'Purchase confirmed. Study ads are disabled on this device, and Restore stays available if this store account needs to be checked again. The full question bank stays free.',
     bodyIdle: (price) =>
-      `The full question bank and all 13 topics are free. Pay ${price} once to remove ads from study screens; exams stay ad-free.`,
+      `The full question bank stays free. The full question bank and all 13 topics are free. Pay ${price} once to remove study ads; it does not unlock questions.`,
     buyAccessibilityHint:
       'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
@@ -97,8 +97,8 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       idle: 'One-time purchase. Restore is available if you already bought it.',
       not_found: 'No previous Remove Ads purchase was found.',
       pending: 'Waiting for store confirmation before removing ads.',
-      purchased: 'Purchase confirmed. Ads are disabled on this device.',
-      restored: 'Purchase restored. Ads are disabled on this device.',
+      purchased: 'Purchase confirmed. Study ads are disabled on this device.',
+      restored: 'Purchase restored. Study ads are disabled on this device.',
     },
     titleActive: 'Ad-free study is active',
     titleIdle: 'Remove Ads',

@@ -433,18 +433,14 @@ export function createNativePurchaseProvider({
 
         timeout = setTimeout(() => settle(undefined, null), purchaseTimeoutMs);
 
-        void iap
-          .requestPurchase({
-            request: {
-              apple: { sku: productId },
-              google: { skus: [productId] },
-            },
-            type: 'in-app',
-          })
-          .then(() => {
-            // Native purchases are granted only from purchaseUpdatedListener events.
-          })
-          .catch((error: unknown) => settle(error));
+        const requestPurchasePromise = iap.requestPurchase({
+          request: {
+            apple: { sku: productId },
+            google: { skus: [productId] },
+          },
+          type: 'in-app',
+        });
+        void requestPurchasePromise.catch((error: unknown) => settle(error));
       });
     },
     async restorePurchases(productIds) {

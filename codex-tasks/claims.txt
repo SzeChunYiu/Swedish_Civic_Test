@@ -799,3 +799,5 @@ CLAIMED P0-GATE-VALIDATE-CONTENT-DERIVED-MIRROR-1 by pane4-data-integrity-takeov
 CLAIMED STATIC-SITE-E2E-SERVER-HARNESS-1 by pane3-uiux-1779265600 2026-05-20T08:26:40Z
 CLAIMED CITIZENSHIP-REQUIREMENTS-SOURCE-LINK-HREF-PARITY-1 by pane3-uiux-463677 2026-05-20T08:23:50Z
 CLAIMED P0-GATE-VALIDATE-CONTENT-TAB-COPY-REDECLARE-1 by pane4-data-integrity-521887 2026-05-20T08:31:08Z
+CLAIMED REMOVE-ADS-NATIVE-PURCHASE-LISTENER-ONLY-1 by pane0-manager-build-1779266200 2026-05-20T08:25:23Z (regression: prior branch is already ancestor of main, later requested-product-id merge reintroduced direct requestPurchase grants and validator drift)
+CLAIMED REMOVE-ADS-PAYWALL-GATE-DRIFT-1 by pane0-manager-build-1779266200 2026-05-20T08:31:15Z (same branch: restore paywall copy keys and Home adsDisabled guard blocking monetization gate)
