@@ -3136,11 +3136,11 @@ export const additionalQuestions: PracticeQuestion[] = [
       pageApprox: 30,
     },
     'Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?',
-    'How can a welfare service be private and still tax-funded?',
+    'How can a welfare service be provided by a private company but still be funded by tax revenue?',
     [
       [
         'Ett privat företag kan utföra tjänsten medan skattepengar betalar den',
-        'A private company can provide the service while tax revenue pays for it',
+        'A private company can provide the service while tax revenue funds it',
       ],
       [
         'Tjänsten måste alltid betalas helt med privata lån',
