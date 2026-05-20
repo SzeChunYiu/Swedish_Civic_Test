@@ -86,7 +86,8 @@
     "test:practice": "node --test scripts/practice-flow.test.js",
     "release:owner-action-packet": "node scripts/write-release-owner-action-packet.js",
     "release:owner-action-packet-comment": "node scripts/post-release-owner-action-packet.js",
-    "release:evidence-stubs-all": "node scripts/create-release-evidence-stub.js --all"
+    "release:evidence-stubs-all": "node scripts/create-release-evidence-stub.js --all",
+    "test:localization-readiness": "node --test scripts/localization-readiness.test.js"
   },
   "dependencies": {
     "expo": "~54.0.33",

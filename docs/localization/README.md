@@ -26,6 +26,10 @@ micro-excerpts only when needed, and your own style observations. If a source is
 public-domain or openly licensed, record the license before copying more than a
 few words.
 
+## Readiness gate
+
+Use `readiness.json` and `readiness.md` to distinguish source/style-guide progress from releasable app translations. A target language can stay in the picker as coming soon, but it must not be marked available until the readiness ledger says its UI strings, question content, glossary, native review, culture/humor review, accessibility review, and tests are complete. Validate with `npm run test:localization-readiness`.
+
 ## What workers must do before translating
 
 1. Read `docs/parallel-sessions/language.md` and this hub.
