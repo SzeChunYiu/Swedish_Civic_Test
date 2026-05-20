@@ -31,6 +31,7 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
+const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -485,6 +486,67 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q129 uses Lucia role-scaffold explanation wording/,
+  );
+});
+
+test('Umeå demonym source and exports use natural Swedish spelling', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    umeaDemonymOldSwedishPattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.sv, ...(question.opts || []).map((option) => option.sv)].join(' ');
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => umeaDemonymOldSwedishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const umeaDemonymRows = generatedSiteBank.filter((question) =>
+    textForQuestion(question).includes('Stockholmare, göteborgare, malmöbor, uppsalabor'),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(umeaDemonymRows.length >= 1, 'Umeå demonym distractor should be published');
+  for (const question of umeaDemonymRows) {
+    assert.match(textForQuestion(question), /umeåbor/);
+  }
+});
+
+test('Umeå demonym naturalness guard rejects learner-facing umebor', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'Stockholmare, göteborgare, malmöbor, uppsalabor och umeåbor',
+      'Stockholmare, göteborgare, malmöbor, uppsalabor och umebor',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+      '--',
+      '--focus-umea-demonym',
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q058 uses nonstandard Umeå demonym Swedish wording/,
   );
 });
 
