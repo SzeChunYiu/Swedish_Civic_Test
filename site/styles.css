@@ -1551,7 +1551,8 @@ p.deck {
 .set-group__sub { margin: -4px 0 4px; color: var(--ink-soft); font-size: 13.5px; }
 
 .set-segment { display: inline-flex; padding: 3px; gap: 2px; background: var(--paper-warm); border-radius: 12px; border: 1px solid var(--line); }
-.set-segment button { border: 0; background: transparent; cursor: pointer; padding: 8px 14px; border-radius: 9px; font: inherit; font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--ink-soft); }
+.set-segment--language { flex-wrap: wrap; align-self: flex-start; max-width: 100%; }
+.set-segment button { border: 0; background: transparent; cursor: pointer; padding: 8px 14px; min-height: 44px; border-radius: 9px; font: inherit; font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--ink-soft); }
 .set-segment button.is-on { background: var(--ink); color: var(--gold); }
 
 .set-palettes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
