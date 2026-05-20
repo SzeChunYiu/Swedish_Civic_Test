@@ -1669,10 +1669,14 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
+  assert.match(source, /Förberedelsesignal/);
+  assert.match(source, /Gör ett tidsatt övningsprov/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Fortsätt där du slutade i \${chapterTitle}\. \${subtitle}/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
+  assert.match(source, /Preparation signal/);
+  assert.match(source, /Take a timed practice exam/);
   assert.match(source, /Smart study habits/);
   assert.match(source, /Continue where you left off in \${chapterTitle}\. \${subtitle}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);

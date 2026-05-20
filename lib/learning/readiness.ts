@@ -1,19 +1,18 @@
-// Readiness score (competitive-teardown.md rec #1, P0).
+// Local preparation signal (competitive-teardown.md rec #1, P0).
 //
-// "Are you ready to pass?" — a synthesized number on the home dashboard
-// derived from rolling accuracy, chapter coverage, recency, and recent
-// mock scores. Pure function over UserProgress + chapter index + mock
-// history. No I/O.
+// Synthesized number on the home dashboard derived from rolling accuracy,
+// chapter coverage, recency, and recent mock scores. Pure function over
+// UserProgress + chapter index + mock history. No I/O.
 //
-// Verdict ladder maps to the existing exam-readiness band copy in
+// Verdict ladder maps to the local practice-preparation bands in
 // `06_learning_and_gamification.md`:
 //   0–49  not_ready_yet
 //   50–69 getting_there
 //   70–84 almost_ready
 //   85–100 strong_preparation
 //
-// NEVER say "you will pass". Verdict strings are codes; UI maps them
-// through i18n to user-facing copy.
+// NEVER frame this as an official outcome forecast. Verdict strings are codes;
+// UI maps them through i18n to user-facing copy.
 
 import { perChapterProgress, mockHistory } from './dashboardStats';
 import type {
