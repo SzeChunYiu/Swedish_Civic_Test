@@ -27,6 +27,17 @@ function optionLetter(index: number): string {
   return String.fromCharCode('A'.charCodeAt(0) + index);
 }
 
+function cleanSpeechText(text?: string): string {
+  if (!text) return '';
+  const withoutAuthority = stripSourceAuthorityPhrasing(text) || text;
+  return SOURCE_CITATION_REPLACEMENTS.reduce(
+    (current, pattern) => current.replace(pattern, ''),
+    withoutAuthority,
+  )
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 export function buildQuestionSpeechText(question: SpeakableQuestion): string {
   const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;
   const optionText = question.options
@@ -42,15 +53,18 @@ export function buildAnswerFeedbackSpeechText(
   if (!selectedOptionId || !question.correctOptionId) return '';
 
   const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+  const selectedOption = question.options.find((option) => option.id === selectedOptionId);
+  const selectedText = getQuestionOptionText(selectedOption, 'sv', 'det valda svaret');
+  const correctText = getQuestionOptionText(correctOption, 'sv', 'det markerade rätta svaret');
   const selectedIsCorrect = selectedOptionId === question.correctOptionId;
   const resultText = selectedIsCorrect
-    ? 'Rätt.'
-    : `Fel. Rätt svar är ${correctOption?.textSv ?? 'det markerade rätta svaret'}.`;
-  const explanationText = question.explanationSv
-    ? stripSourceAuthorityPhrasing(question.explanationSv) || question.explanationSv
-    : '';
+    ? `Du valde: ${selectedText}. Det stämmer.`
+    : `Du valde: ${selectedText}. Det rätta svaret är: ${correctText}.`;
+  const explanationText = cleanSpeechText(
+    getQuestionExplanationText(question, 'sv', question.explanationSv ?? ''),
+  );
 
-  return `${resultText} ${explanationText}`.trim();
+  return `${resultText} Förklaring: ${explanationText}`.trim();
 }
 
 export interface SpeakSwedishOptions {
