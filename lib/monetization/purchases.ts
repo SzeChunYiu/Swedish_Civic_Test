@@ -441,11 +441,8 @@ export function createNativePurchaseProvider({
             },
             type: 'in-app',
           })
-          .then((requestResult) => {
-            const matched = normalizePurchases(requestResult).find((candidate) =>
-              purchaseMatchesProductId(candidate, productId),
-            );
-            if (matched) settle(undefined, matched);
+          .then(() => {
+            // Native purchases are granted only from purchaseUpdatedListener events.
           })
           .catch((error: unknown) => settle(error));
       });

@@ -4,7 +4,7 @@ Locale: Polish for Polish-speaking Sweden residents.
 
 ## Register target
 
-Polish plain public-service/legal-information prose for style, with Swedish official sources for institution facts.
+Polish public-service/legal-information prose for style, Swedish official sources for facts.
 
 ## Seed sources
 
@@ -20,13 +20,12 @@ Polish plain public-service/legal-information prose for style, with Swedish offi
 
 ## Reusable localization notes
 
-- See `style-guide.md` for Polish civic voice, plain-language repairs, UI patterns, glossary, and word-by-word audit checklist.
 - Error encouragement should reassure and teach; never shame the learner.
 - Source labels must say the app is based on/reference material, not an official exam authority.
 - Institution names should teach the Swedish term when the term itself matters.
 
 ## Next tasks
 
-1. Native-speaker review of `style-guide.md` examples and civic terminology.
-2. Apply the audit checklist before introducing Polish app strings.
-3. Add short source cards for any new Polish government/newcomer pages used later.
+1. Add native-speaker observations after reading the sources directly.
+2. Add glossary terms with source URLs before translating UI or questions.
+3. Add humor/tone examples that are newly authored, not copied.

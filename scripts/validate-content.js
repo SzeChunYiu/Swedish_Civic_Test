@@ -4787,7 +4787,7 @@ function validateDerivedCivicStatementPromptMirror() {
   return mirrorsValidated;
 }
 
-function expectedGeneratedTags(sourceQuestion, convention) {
+function validatorGeneratedTags(sourceQuestion, convention) {
   return [
     ...new Set([...sourceQuestion.tags, 'published-variant', convention?.tag].filter(Boolean)),
   ];
@@ -5026,22 +5026,6 @@ function swedishTraditionalCelebrationAnswer(answer) {
 function englishTraditionalCelebrationAnswer(answer) {
   if (/^Jesus' birth\b/.test(answer)) return answer;
   return lowerFirst(answer);
-}
-function swedishMentionedExample(answer, category) {
-  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
-  if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
-  return `${answer} nämns som exempel på ${category}`;
-}
-function englishMentionedExample(answer, category) {
-  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
-  if (built) {
-    return `The building of ${built[1]} ${built[2]} is mentioned as an example of ${category}`;
-  }
-  return `${answer} ${englishSubjectVerb(answer, 'is', 'are')} mentioned as ${englishSubjectVerb(
-    answer,
-    'an example',
-    'examples',
-  )} of ${category}`;
 }
 function swedishPurposeClause(value) {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
@@ -5670,6 +5654,10 @@ function civicStatementSv(source, option) {
   if (match) return `Sveriges två största öar är ${answer}`;
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
+  match = q.match(/^Vilka är Sveriges fyra grundlagar$/i);
+  if (match) return `Sveriges fyra grundlagar är ${lowerFirst(answer)}`;
+  match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
+  if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
   match = q.match(/^Vilka tre företag kallas (.+) i Sverige$/i);
@@ -5682,8 +5670,13 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
-  match = q.match(/^Vilket är ett sätt att (.+)$/i);
-  if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Hur kan (.+?) påverka (.+?) och delta i (.+)$/i);
+  if (match) {
+    const method = answer.replace(/^Genom att\s+/i, '');
+    return `${upperFirst(match[1])} kan påverka ${match[2]} och delta i ${
+      match[3]
+    } genom att ${lowerFirst(method)}`;
+  }
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
@@ -5730,8 +5723,6 @@ function civicStatementSv(source, option) {
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vilken är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
-  match = q.match(/^Vilket exempel beskriver (.+)$/i);
-  if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
   match = q.match(/^Hur ofta hålls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
   match = q.match(/^Vilka krav gäller för (.+)$/i);
@@ -5807,8 +5798,6 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
     return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
-  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
-  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
   match = q.match(/^När firas (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
   match = q.match(/^När firas (.+)$/i);
@@ -5893,8 +5882,6 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} byggdes ${lowerFirst(answer)}`;
   match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[1]}`;
-  match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
-  if (match) return `${answer} nämns som exempel i ${match[1]}`;
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad skyddar (.+?) när det gäller (.+)$/i);
@@ -5912,12 +5899,8 @@ function civicStatementSv(source, option) {
   if (match) return swedishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[2]}`;
-  match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
-  if (match) return `${answer} nämns som exempel i ${match[2]}`;
   match = q.match(/^Vad bidrog till (.+)$/i);
   if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
-  match = q.match(/^Vad nämns som exempel på (.+)$/i);
-  if (match) return swedishMentionedExample(answer, match[1]);
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
   match = q.match(/^Vad är vanligt i många hem under (.+)$/i);
@@ -5981,8 +5964,12 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} are ${answer}`;
   match = q.match(/^Which are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
+  match = q.match(/^What are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
+  match = q.match(/^Which (.+?) are (.+?) responsible for$/i);
+  if (match) return `${upperFirst(match[2])} are responsible for ${lowerFirst(answer)}`;
   match = q.match(/^Which three companies are called (.+) in Sweden$/i);
   if (match) return `${answer} are called ${match[1]} in Sweden`;
   match = q.match(/^Approximately how many (.+)$/i);
@@ -5993,8 +5980,12 @@ function civicStatementEn(source, option) {
   if (match) return meaningStatementEn(match[1], answer);
   match = q.match(/^Which of the following is part of (.+)$/i);
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
-  match = q.match(/^Which is a way to (.+)$/i);
-  if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^How can (.+?) influence (.+?) and participate in (.+)$/i);
+  if (match) {
+    return `${upperFirst(match[1])} can influence ${match[2]} and participate in ${
+      match[3]
+    } by ${lowerFirst(stripLeadingByEn(answer))}`;
+  }
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
@@ -6052,9 +6043,6 @@ function civicStatementEn(source, option) {
   if (match) {
     return `The foremost task of ${lowerLeadingEnglishArticle(match[1])} is ${englishInfinitive(stripLeadingPurposeEn(answer))}`;
   }
-  match = q.match(/^Which example describes (.+)$/i);
-  if (match)
-    return `${upperFirst(answer)} ${englishSubjectVerb(answer, 'belongs', 'belong')} among ${match[1]}`;
   match = q.match(/^How often are (.+) held in Sweden$/i);
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
   match = q.match(/^Which requirements apply to (.+)$/i);
@@ -6131,8 +6119,6 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
-  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
-  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
   match = q.match(/^When are (.+?) celebrated$/i);
@@ -6150,7 +6136,10 @@ function civicStatementEn(source, option) {
     return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
   match = q.match(/^What was (.+?) important for$/i);
   if (match)
-    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
+    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(
+      /^Cooperation\b/,
+      'cooperation',
+    )}`;
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
     return `The goal of ${match[1]} during ${match[2]} was to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -6239,8 +6228,6 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
   match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
   if (match) return `${answer} exist in ${match[1]}`;
-  match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
-  if (match) return `${answer} are mentioned as examples in ${match[1]}`;
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
@@ -6258,12 +6245,8 @@ function civicStatementEn(source, option) {
   if (match) return englishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
-  match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
-  if (match) return `${answer} are mentioned as examples in ${match[2]}`;
   match = q.match(/^What contributed to (.+)$/i);
   if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
-  match = q.match(/^What is mentioned as an example of (.+)$/i);
-  if (match) return englishMentionedExample(answer, match[1]);
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;
   match = q.match(/^What is common in many homes during (.+)$/i);
@@ -6290,6 +6273,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} became ${match[2]} in ${answer}`;
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
+  match = q.match(/^At (.+?) in Sweden, what do many people do with (.+)$/i);
+  if (match) return `At ${match[1]}, ${manyPeopleActionEn(answer)}`;
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What do many people do with (.+?) at (.+?) in Sweden$/i);
@@ -6321,7 +6306,7 @@ function wrongOption(question) {
   );
 }
 
-function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
+function validatorGeneratedPrompt(sourceQuestion, variantIndex) {
   if (variantIndex === 0) {
     return {
       questionSv: singleChoicePromptSv(sourceQuestion),
@@ -6351,7 +6336,7 @@ function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
   };
 }
 
-function expectedGeneratedExplanation(sourceQuestion, variantIndex) {
+function validatorGeneratedExplanation(sourceQuestion, variantIndex) {
   if (variantIndex === 1) {
     return {
       explanationSv: trueStatementExplanationSv(sourceQuestion),
@@ -6404,7 +6389,7 @@ function normalizeSingleChoiceOptions(options, correctOptionId) {
   };
 }
 
-function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
+function validatorGeneratedAnswerShape(sourceQuestion, variantIndex) {
   if (variantIndex === 0) {
     return normalizeSingleChoiceOptions(
       singleChoiceOptions(sourceQuestion),
@@ -7061,6 +7046,10 @@ function validateQuestionSchema(question, index) {
 
 const chapters = loadTs('data/chapters.ts', 'chapters');
 const questionModule = loadTs('data/questions.ts');
+const derivePublishedQuestionVariants = loadTs(
+  'lib/content/derivedQuestions.ts',
+  'derivePublishedQuestionVariants',
+);
 const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
@@ -16101,7 +16090,7 @@ function validateGeneratedSourceMetadataParity() {
       if (!Array.isArray(variant.tags)) {
         reject(`${label} tags is not an array`);
       } else {
-        const expectedTags = expectedGeneratedTags(sourceQuestion, convention);
+        const expectedTags = validatorGeneratedTags(sourceQuestion, convention);
         const variantTags = new Set(variant.tags);
         sourceQuestion.tags.forEach((tag) => {
           if (!variantTags.has(tag)) reject(`${label} is missing source tag ${tag}`);
@@ -16145,7 +16134,7 @@ function validateGeneratedExplanationTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedExplanation(sourceQuestion, variantIndex);
+      const expected = validatorGeneratedExplanation(sourceQuestion, variantIndex);
 
       if (variant.explanationSv !== expected.explanationSv) {
         variantIsValid = false;
@@ -16190,7 +16179,7 @@ function validateGeneratedPromptTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedPrompt(sourceQuestion, variantIndex);
+      const expected = validatorGeneratedPrompt(sourceQuestion, variantIndex);
 
       if (variant.questionSv !== expected.questionSv) {
         variantIsValid = false;
@@ -16227,7 +16216,7 @@ function validateGeneratedAnswerTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedAnswerShape(sourceQuestion, variantIndex);
+      const expected = validatorGeneratedAnswerShape(sourceQuestion, variantIndex);
 
       if (!jsonEqual(variant.options, expected.options)) {
         variantIsValid = false;
