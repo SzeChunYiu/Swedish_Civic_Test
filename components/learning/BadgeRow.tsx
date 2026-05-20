@@ -1,46 +1,50 @@
 import { StyleSheet, Text, View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 import { colors, radius, space, typography } from '../../lib/theme';
 import { Badge } from '../ui/Badge';
 
 /**
- * Defaults: locked rows use the warm muted style, unlocked rows use the success
- * status badge, and the whole row exposes a single summary label for screen
- * readers. Pass localized strings for every visible field.
+ * Defaults: renders one badge milestone as a grouped accessible row with
+ * localized title, status, description, and progress hint. Locked rows are
+ * muted but remain visible so first-time learners can see the next target.
  */
 export interface BadgeRowProps {
-  title: string;
   description: string;
   progressHint: string;
   statusLabel: string;
-  unlocked?: boolean;
-  accessibilityLabel?: string;
+  style?: StyleProp<ViewStyle>;
+  title: string;
+  unlocked: boolean;
 }
 
 export function BadgeRow({
-  title,
   description,
   progressHint,
   statusLabel,
-  unlocked = false,
-  accessibilityLabel,
+  style,
+  title,
+  unlocked,
 }: BadgeRowProps) {
-  const rowAccessibilityLabel =
-    accessibilityLabel ?? `${title}. ${statusLabel}. ${description}. ${progressHint}`;
+  const accessibilityLabel = `${title}. ${statusLabel}. ${description}. ${progressHint}.`;
 
   return (
     <View
       accessible
-      accessibilityLabel={rowAccessibilityLabel}
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="summary"
-      style={[styles.row, unlocked ? styles.unlockedRow : styles.lockedRow]}
+      style={[styles.row, unlocked ? styles.unlocked : styles.locked, style]}
     >
-      <View style={styles.textStack}>
+      <View style={styles.copy}>
         <Text style={[styles.title, unlocked ? null : styles.lockedText]}>{title}</Text>
         <Text style={[styles.description, unlocked ? null : styles.lockedText]}>{description}</Text>
         <Text style={styles.progress}>{progressHint}</Text>
       </View>
-      <Badge tone={unlocked ? 'green' : 'warm'} accessibilityLabel={statusLabel}>
+      <Badge
+        accessibilityLabel={statusLabel}
+        style={styles.statusBadge}
+        tone={unlocked ? 'green' : 'warm'}
+      >
         {statusLabel}
       </Badge>
     </View>
@@ -49,46 +53,47 @@ export function BadgeRow({
 
 const styles = StyleSheet.create({
   row: {
-    borderRadius: radius.card,
+    alignItems: 'flex-start',
+    borderColor: colors.border,
+    borderRadius: radius.small,
     borderWidth: space.hairline,
     flexDirection: 'row',
-    gap: space[1.5],
+    gap: space[1.25],
     justifyContent: 'space-between',
-    minHeight: space[8],
+    minHeight: space[7],
     paddingHorizontal: space[1.5],
     paddingVertical: space[1.25],
   },
-  unlockedRow: {
+  unlocked: {
     backgroundColor: colors.surface,
-    borderColor: colors.border,
   },
-  lockedRow: {
+  locked: {
     backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
   },
-  textStack: {
+  copy: {
     flex: 1,
     gap: space[0.5],
   },
   title: {
     color: colors.text,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-    lineHeight: typography.bodySemibold.lineHeight,
+    fontSize: typography.bodyBold.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyBold.lineHeight,
+  },
+  lockedText: {
+    color: colors.textSecondary,
   },
   description: {
     color: colors.textSecondary,
-    fontSize: typography.captionLight.fontSize,
-    fontWeight: typography.captionLight.fontWeight,
-    lineHeight: typography.captionLight.lineHeight,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   progress: {
     color: colors.textMuted,
-    fontSize: typography.micro.fontSize,
-    fontWeight: typography.micro.fontWeight,
-    lineHeight: typography.micro.lineHeight,
+    fontSize: typography.disclaimer.fontSize,
+    lineHeight: typography.disclaimer.lineHeight,
   },
-  lockedText: {
-    color: colors.textMuted,
+  statusBadge: {
+    flexShrink: 0,
   },
 });

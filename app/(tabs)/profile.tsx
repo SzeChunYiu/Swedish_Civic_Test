@@ -1,16 +1,29 @@
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceActionLink } from '../../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
+import { BadgeRow } from '../../components/learning/BadgeRow';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
+import { ProPaywall } from '../../components/monetization/ProPaywall';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import { deriveBadges } from '../../lib/learning/badges';
+import {
+  deriveBadges,
+  getAllBadges,
+  getBadgeDescription,
+  getBadgeLockedHint,
+  getBadgeProgressHint,
+  getBadgeTitle,
+  type BadgeInput,
+} from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
+import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -18,19 +31,24 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
+  badgeLocked: string;
+  badgeUnlocked: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
+  dashboardAccessibilityLabel: string;
+  dashboardCta: string;
+  dashboardSubtitle: string;
+  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
   languageBadge: string;
   levelMetric: string;
-  noBadges: string;
   openSettings: string;
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
-  studySetupActionHelper: string;
+  removeAdsFocusCue: string;
   streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
@@ -42,19 +60,24 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
+    badgeLocked: 'Låst',
+    badgeUnlocked: 'Upplåst',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
+    dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
+    dashboardCta: 'Visa översikt',
+    dashboardSubtitle: 'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
+    dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
-    noBadges: 'Inga märken ännu',
-    openSettings: 'Justera inställningar',
-    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, frågespråk och ljud',
+    openSettings: 'Öppna inställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar',
     questionsHelper: 'frågor',
-    studySetupActionHelper: 'Justera dagligt mål, frågespråk och ljud på ett ställe.',
+    removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     streakFreezeBadge: 'Svitskydd',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
@@ -65,19 +88,24 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
+    badgeLocked: 'Locked',
+    badgeUnlocked: 'Unlocked',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
+    dashboardAccessibilityLabel: 'Open progress dashboard',
+    dashboardCta: 'View dashboard',
+    dashboardSubtitle: 'Activity, chapter progress, and XP live on a dedicated page.',
+    dashboardTitle: 'Progress dashboard',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',
     languageBadge: 'English support',
     levelMetric: 'level',
-    noBadges: 'No badges yet',
-    openSettings: 'Adjust settings',
-    openSettingsAccessibilityLabel: 'Open settings for daily goal, question language, and audio',
+    openSettings: 'Open settings',
+    openSettingsAccessibilityLabel: 'Open settings',
     questionsHelper: 'questions',
-    studySetupActionHelper: 'Adjust daily goal, question language, and audio in one place.',
+    removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
     streakFreezeBadge: 'Streak freeze',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
@@ -88,29 +116,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
 };
 
-const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
-  sv: {
-    first_practice: 'Första övningen',
-    level_2: 'Nivå 2',
-    mistake_reviewer: 'Misstagsrepetition',
-    streak_3: 'Tre dagars svit',
-  },
-  en: {},
-};
-
-function formatBadges(
-  badges: ReturnType<typeof deriveBadges>,
-  language: AppLanguage,
-  emptyLabel: string,
-): string {
-  if (badges.length === 0) return emptyLabel;
-
-  return badges.map((badge) => localizedBadgeTitles[language][badge.id] ?? badge.title).join(', ');
-}
-
 export default function Screen() {
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -123,6 +133,8 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
+  const removeAdsFocused = focus === 'remove-ads';
+  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
   const level = calculateLevel(totalXp);
   const streakWithFreeze = useMemo(
     () =>
@@ -142,16 +154,35 @@ export default function Screen() {
     (count, progress) => count + progress.wrongCount,
     0,
   );
-  const badges = deriveBadges({
+  const badgeInput: BadgeInput = {
     completedQuestionCount: completedQuestionIds.length,
     currentStreak,
     level,
     wrongAnswerCount,
-  });
+  };
+  const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
   }, [setStreakFreezeState, streakWithFreeze.freezeState]);
+
+  const removeAdsPaywall = entitlementsReady ? (
+    <View
+      nativeID="remove-ads-paywall"
+      testID="remove-ads-paywall"
+      style={[styles.removeAdsPaywall, removeAdsFocused ? styles.removeAdsPaywallFocused : null]}
+    >
+      {removeAdsFocused ? (
+        <Text style={styles.removeAdsFocusCue}>{copy.removeAdsFocusCue}</Text>
+      ) : null}
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
+    </View>
+  ) : null;
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
@@ -173,6 +204,7 @@ export default function Screen() {
           <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
         </Card>
       ) : null}
+      {removeAdsFocused ? removeAdsPaywall : null}
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
@@ -182,28 +214,63 @@ export default function Screen() {
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
         </View>
-        <Text style={styles.setupHelper}>{copy.studySetupActionHelper}</Text>
         <Link
           accessibilityLabel={copy.openSettingsAccessibilityLabel}
           accessibilityRole="link"
+          asChild
           href="/settings"
-          style={styles.settingsLink}
         >
-          {copy.openSettings}
+          <Button
+            accessibilityLabel={copy.openSettingsAccessibilityLabel}
+            accessibilityRole="link"
+            style={styles.settingsLink}
+          >
+            {copy.openSettings}
+          </Button>
         </Link>
       </Card>
 
       <Card style={styles.cardWide}>
-        <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
-        <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
+        <SectionHeader title={copy.dashboardTitle} subtitle={copy.dashboardSubtitle} />
+        <ComplianceActionLink
+          accessibilityLabel={copy.dashboardAccessibilityLabel}
+          href="/dashboard"
+          label={copy.dashboardCta}
+        />
       </Card>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
+      <Card style={styles.cardWide}>
+        <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
+        <View style={styles.badgeList}>
+          {getAllBadges().map((badge) => {
+            const unlocked = unlockedBadgeIds.has(badge.id);
+            const statusLabel = unlocked ? copy.badgeUnlocked : copy.badgeLocked;
+            const description = unlocked
+              ? getBadgeDescription(badge, language)
+              : getBadgeLockedHint(badge, language);
+
+            return (
+              <BadgeRow
+                description={description}
+                key={badge.id}
+                progressHint={getBadgeProgressHint(badge, badgeInput, language)}
+                statusLabel={statusLabel}
+                title={getBadgeTitle(badge, language)}
+                unlocked={unlocked}
+              />
+            );
+          })}
+        </View>
+      </Card>
+
+      {!removeAdsFocused ? removeAdsPaywall : null}
+      {entitlementsReady && proRuntimeScopeEnabled ? (
+        <ProPaywall
+          alreadyAdFree={monetizationEntitlements.adsDisabled}
+          language={language}
+          onEntitlementsChange={(nextEntitlements) => setMonetizationEntitlements(nextEntitlements)}
+        />
+      ) : null}
       <ComplianceLinks />
     </ScreenShell>
   );
@@ -230,30 +297,11 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
-  value: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  setupHelper: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
+  badgeList: {
+    gap: space[1],
   },
   settingsLink: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.card,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    justifyContent: 'center',
-    lineHeight: typography.navButton.lineHeight,
     minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-    textAlign: 'center',
-    textDecorationLine: 'none',
   },
 });
