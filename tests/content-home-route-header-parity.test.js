@@ -26,7 +26,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 142);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 150);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
@@ -58,6 +58,16 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /<GuidedPracticePath/);
   assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
   assert.match(source, /dailyProgress=\{progress\}/);
+  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
+  assert.match(
+    source,
+    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
+  );
+  assert.match(source, /: '\/exam';/);
+  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
+  assert.match(guidedPathSource, /href=\{stage\.href\}/);
+  assert.match(guidedPathSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
+  assert.match(guidedPathSource, /\{stage\.cta\}/);
   assert.match(guidedPathSource, /href="\/practice"/);
   assert.match(guidedPathSource, /minHeight: space\[6\]/);
   assert.match(source, /Smarta studievanor/);
