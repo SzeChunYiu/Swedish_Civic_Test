@@ -263,6 +263,20 @@ function englishCommonToDoStatement(timePhrase: string, answer: string): string 
   return `On ${time}, ${activity} are common`;
 }
 
+function englishCommonCelebrationMode(answer: string): string {
+  const activity = stripLeadingPurposeEn(answer).trim();
+  const celebrateMatch = activity.match(/^celebrate with (.+)$/i);
+  if (celebrateMatch) return `with ${lowerFirst(celebrateMatch[1])}`;
+  if (
+    /^(?:celebrate|eat|light|open|hold|wear|serve|welcome|arrange|gather|dance|sing|go)\b/i.test(
+      activity,
+    )
+  ) {
+    return `by ${englishGerundPhrase(activity)}`;
+  }
+  return `with ${lowerFirst(activity)}`;
+}
+
 function swedishHabitualPredicate(answer: string): string {
   return lowerFirst(answer).replace(/\barrangerar\b/i, 'arrangera');
 }
@@ -1864,6 +1878,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
+
+  match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
+  if (match)
+    return `${match[1]} is commonly ${match[2].toLowerCase()} ${englishCommonCelebrationMode(
+      answer,
+    )}`;
 
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)
