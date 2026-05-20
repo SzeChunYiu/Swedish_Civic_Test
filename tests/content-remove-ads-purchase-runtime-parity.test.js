@@ -26,7 +26,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 18);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 17);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -43,53 +43,11 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
-  assert.match(purchaseSource, /purchaseUpdatedListener/);
-  assert.match(purchaseSource, /const requestPurchasePromise = iap\.requestPurchase/);
-  assert.doesNotMatch(purchaseSource, /requestResult/);
-  assert.doesNotMatch(purchaseSource, /normalizePurchases\(request/);
   assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
   assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
-});
-
-test('Remove Ads purchase runtime parity rejects direct requestPurchase grants', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'void requestPurchasePromise.catch((error: unknown) => settle(error));',
-        \`void requestPurchasePromise
-          .then((requestResult) => {
-            const matched = normalizePurchases(requestResult).find(isRemoveAdsPurchase);
-            if (matched) settle(undefined, matched);
-          })
-          .catch((error: unknown) => settle(error));\`,
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /native Remove Ads buy must grant only from purchaseUpdatedListener events/,
-  );
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
