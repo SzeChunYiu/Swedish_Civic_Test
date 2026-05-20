@@ -135,6 +135,11 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'generöst med tid',
   'Praktiska detaljer väntar hos UHR',
 ];
+const STATIC_SITE_SWEDISH_STUDY_TERM_PATTERNS = [
+  { label: 'Spaced repetition', pattern: /\bSpaced repetition\b/i },
+  { label: 'quiz', pattern: /\bquiz\b/i },
+  { label: 'timing', pattern: /\btiming\b/i },
+];
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -3601,6 +3606,92 @@ function textHasSentenceEnding(value) {
   return typeof value === 'string' && /[.!?]$/.test(value.trim());
 }
 
+function stringLiteralValue(node) {
+  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
+  return null;
+}
+
+function unwrapI18nInitializer(initializer) {
+  if (
+    ts.isBinaryExpression(initializer) &&
+    initializer.operatorToken.kind === ts.SyntaxKind.EqualsToken
+  ) {
+    return initializer.right;
+  }
+  return initializer;
+}
+
+function extractStaticSiteI18nDictionaries() {
+  const source = loadText('site/app.js');
+  const sourceFile = ts.createSourceFile(
+    'site/app.js',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.JS,
+  );
+  let i18nObject = null;
+
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === 'i18n' &&
+      node.initializer
+    ) {
+      const initializer = unwrapI18nInitializer(node.initializer);
+      if (ts.isObjectLiteralExpression(initializer)) i18nObject = initializer;
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  if (!i18nObject) {
+    fail('static site i18n dictionary could not be parsed from site/app.js');
+    return {};
+  }
+
+  const dictionaries = {};
+  for (const languageProperty of i18nObject.properties) {
+    if (!ts.isPropertyAssignment(languageProperty)) continue;
+    const language = propertyNameText(languageProperty.name);
+    if (!language || !ts.isObjectLiteralExpression(languageProperty.initializer)) continue;
+    dictionaries[language] = {};
+    for (const entry of languageProperty.initializer.properties) {
+      if (!ts.isPropertyAssignment(entry)) continue;
+      const key = propertyNameText(entry.name);
+      const value = stringLiteralValue(entry.initializer);
+      if (key && value !== null) dictionaries[language][key] = value;
+    }
+  }
+
+  return dictionaries;
+}
+
+function validateStaticSiteSwedishStudyTerms() {
+  const dictionaries = extractStaticSiteI18nDictionaries();
+  const svEntries = Object.entries(dictionaries.sv || {});
+  let patternsValidated = 0;
+
+  if (svEntries.length === 0) {
+    fail('static site Swedish dictionary is empty or missing');
+    return patternsValidated;
+  }
+
+  STATIC_SITE_SWEDISH_STUDY_TERM_PATTERNS.forEach(({ label, pattern }) => {
+    const offenders = svEntries.filter(([, value]) => pattern.test(value)).map(([key]) => key);
+    if (offenders.length > 0) {
+      fail(
+        `static site Swedish dictionary contains learner-facing English term "${label}" in ${offenders.join(', ')}`,
+      );
+      return;
+    }
+    patternsValidated += 1;
+  });
+
+  return patternsValidated;
+}
+
 function validateStaticEbookOutcomeClaimPatterns() {
   const source = loadText('site/ebook.js');
   const offenders = STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.filter((pattern) =>
@@ -6271,6 +6362,8 @@ let questionBankCsvRowsValidated = 0;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
+let staticSiteSwedishStudyTermPatternsValidated = 0;
+let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -6346,6 +6439,9 @@ staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatter
 staticEbookOutcomeClaimParityValidated =
   staticEbookOutcomeClaimPatternsValidated ===
   STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
+staticSiteSwedishStudyTermPatternsValidated = validateStaticSiteSwedishStudyTerms();
+staticSiteSwedishStudyTermNaturalnessValidated =
+  staticSiteSwedishStudyTermPatternsValidated === STATIC_SITE_SWEDISH_STUDY_TERM_PATTERNS.length;
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -14094,6 +14190,8 @@ console.log(
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
+      staticSiteSwedishStudyTermPatternsValidated,
+      staticSiteSwedishStudyTermNaturalnessValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookPracticalTestClaimPatternsValidated,

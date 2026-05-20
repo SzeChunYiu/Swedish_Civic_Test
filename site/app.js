@@ -418,7 +418,7 @@ const i18n = window.i18n = {
     "demo.h1": "Inga läroböcker.",
     "demo.h2": "Bara klick.",
     "demo.deck": "Varje fråga har en förklaring på begriplig svenska och en länk till källan. Fel svar? Den dyker upp igen senare, i lugn och ro. Rätt svar? Gå vidare, häll upp ett kaffe till.",
-    "demo.li1": "<b>Spaced repetition</b> tar fram svåra frågor på rätt dag.",
+    "demo.li1": "<b>Intervallrepetition</b> tar upp svåra frågor på rätt dag.",
     "demo.li2": "<b>Begripliga förklaringar</b> — ingen juridiska, ingen byråkratdjungel.",
     "demo.li3": "<b>Provläge</b> med riktig tidsbegränsning, så provdagen känns bekant.",
 
@@ -498,10 +498,10 @@ const i18n = window.i18n = {
     "how.h2": "Klara stort.",
     "how.deck": "Tre lägen, en app. Använd i valfri ordning — de flesta cyklar genom alla tre veckan innan provet.",
     "how.s1.t": "Lär — korta kapitel",
-    "how.s1.p": "Läs en 5-minuters förklaring, gör sedan ett litet quiz. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
+    "how.s1.p": "Läs en förklaring på fem minuter och gör sedan en kort övning. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
     "how.s2.t": "Öva — smarta drills",
     "how.s2.p": "Misstag dyker upp igen på rätt dag. Du kommer bli förvånad över hur snabbt Riksdagen slutar låta som möbler.",
-    "how.s3.t": "Provläge — riktig timing",
+    "how.s3.t": "Provläge — realistisk tidskänsla",
     "how.s3.p": "Kör riktigt format med riktig tid. Provdagen blir en tisdag med sämre stol.",
 
     "faq.eyebrow": "Ofta och uppriktigt ställda",
