@@ -11,6 +11,8 @@ export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/practice',
   '/quiz',
   '/disclaimer',
+  '/about-the-test',
+  '/onboarding',
   '/privacy',
   '/sources',
   '/support',
