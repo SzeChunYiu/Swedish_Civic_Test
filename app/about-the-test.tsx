@@ -1,7 +1,7 @@
-import { Link } from 'expo-router';
 import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
@@ -123,22 +123,17 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <View style={styles.actions}>
-        <Link
+        <ComplianceActionLink
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
-        >
-          {copy.openPractice}
-        </Link>
-        <Link
+          label={copy.openPractice}
+          variant="primary"
+        />
+        <ComplianceActionLink
           accessibilityLabel={copy.backHomeAccessibilityLabel}
-          accessibilityRole="link"
           href="/home"
-          style={styles.secondaryLink}
-        >
-          {copy.backHome}
-        </Link>
+          label={copy.backHome}
+        />
       </View>
     </ScrollView>
   );
@@ -202,25 +197,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
 });
