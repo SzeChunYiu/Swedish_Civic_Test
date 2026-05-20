@@ -6,7 +6,10 @@ import {
   buyRemoveAds,
   restoreRemoveAdsPurchase,
 } from '../../lib/monetization/purchases';
-import { createDefaultPurchaseRuntimeOptions } from '../../lib/monetization/useRemoveAdsEntitlements';
+import {
+  createDefaultPurchaseRuntimeOptions,
+  type RemoveAdsEntitlementStatus,
+} from '../../lib/monetization/useRemoveAdsEntitlements';
 import type {
   PurchaseRuntimeOptions,
   RemoveAdsPurchaseStatus,
@@ -18,7 +21,7 @@ import { Button } from '../ui/Button';
 import { colors, space, typography } from '../../lib/theme';
 
 type PurchaseAction = 'buy' | 'restore';
-type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error';
+type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error' | RemoveAdsEntitlementStatus;
 type PremiumBannerCopy = {
   body: (price: string) => string;
   buyAccessibilityHint: string;
@@ -26,7 +29,9 @@ type PremiumBannerCopy = {
   buyIdle: (price: string) => string;
   buying: string;
   eyebrowActive: string;
+  eyebrowChecking: string;
   eyebrowIdle: string;
+  eyebrowReadFailed: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
@@ -34,7 +39,9 @@ type PremiumBannerCopy = {
   statusAccessibilityLabel: (message: string) => string;
   statusMessages: Record<PurchaseUiStatus, string>;
   titleActive: string;
+  titleChecking: string;
   titleIdle: string;
+  titleReadFailed: string;
 };
 
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
@@ -47,7 +54,9 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
+    eyebrowChecking: 'Kontrollerar köp',
     eyebrowIdle: 'Ta bort annonser',
+    eyebrowReadFailed: 'Kontroll behövs',
     restoreAccessibilityHint:
       'Kontrollerar om Ta bort annonser redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
@@ -57,13 +66,19 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     statusMessages: {
       error: 'Köp är inte tillgängligt. Försök igen senare.',
       idle: 'Engångsköp. Återställning finns om du redan har köpt.',
+      loading: 'Kontrollerar om Ta bort annonser redan är aktivt.',
       not_found: 'Inget tidigare köp av Ta bort annonser hittades.',
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
       purchased: 'Annonser är avstängda på den här enheten.',
+      ready: 'Engångsköp. Återställning finns om du redan har köpt.',
+      read_failed:
+        'Köpet kunde inte kontrolleras. Annonser hålls avstängda här tills du återställer eller försöker igen.',
       restored: 'Annonser är avstängda på den här enheten.',
     },
     titleActive: 'Annonsfri studie är aktiv',
+    titleChecking: 'Kontrollerar Ta bort annonser',
     titleIdle: 'Ta bort annonser',
+    titleReadFailed: 'Återställ köp för att bekräfta Ta bort annonser',
   },
   en: {
     body: (price) =>
@@ -74,7 +89,9 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
+    eyebrowChecking: 'Checking purchase',
     eyebrowIdle: 'Remove Ads',
+    eyebrowReadFailed: 'Check needed',
     restoreAccessibilityHint:
       'Checks whether Remove Ads was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
@@ -84,13 +101,19 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     statusMessages: {
       error: 'Purchase is unavailable. Try again later.',
       idle: 'One-time purchase. Restore is available if you already bought it.',
+      loading: 'Checking whether Remove Ads is already active.',
       not_found: 'No previous Remove Ads purchase was found.',
       pending: 'Waiting for store confirmation before removing ads.',
       purchased: 'Ads are disabled on this device.',
+      ready: 'One-time purchase. Restore is available if you already bought it.',
+      read_failed:
+        'Purchase state could not be checked. Ads stay suppressed here until you restore or try again.',
       restored: 'Ads are disabled on this device.',
     },
     titleActive: 'Ad-free study is active',
+    titleChecking: 'Checking Remove Ads',
     titleIdle: 'Remove Ads',
+    titleReadFailed: 'Restore purchase to confirm Remove Ads',
   },
 };
 
@@ -100,11 +123,13 @@ function getStatusMessage(status: PurchaseUiStatus, copy: PremiumBannerCopy): st
 
 export function PremiumBanner({
   entitlements,
+  entitlementStatus = 'ready',
   language = 'sv',
   onEntitlementsChange,
   runtimeOptions,
 }: {
   entitlements: PremiumEntitlements;
+  entitlementStatus?: RemoveAdsEntitlementStatus;
   language?: AppLanguage;
   onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
   runtimeOptions?: PurchaseRuntimeOptions;
@@ -117,7 +142,9 @@ export function PremiumBanner({
   const [currentEntitlements, setCurrentEntitlements] = useState(entitlements);
   const [activeAction, setActiveAction] = useState<PurchaseAction | null>(null);
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
-  const adsDisabled = currentEntitlements.adsDisabled;
+  const entitlementStateUnresolved =
+    entitlementStatus === 'loading' || entitlementStatus === 'read_failed';
+  const confirmedAdsDisabled = currentEntitlements.adsDisabled && entitlementStatus === 'ready';
   const updateEntitlements = useCallback(
     (nextEntitlements: PremiumEntitlements) => {
       setCurrentEntitlements(nextEntitlements);
@@ -130,7 +157,24 @@ export function PremiumBanner({
     setCurrentEntitlements(entitlements);
   }, [entitlements]);
 
-  const statusMessage = getStatusMessage(adsDisabled ? 'purchased' : status, copy);
+  const statusMessage = getStatusMessage(
+    entitlementStateUnresolved ? entitlementStatus : confirmedAdsDisabled ? 'purchased' : status,
+    copy,
+  );
+  const eyebrow = confirmedAdsDisabled
+    ? copy.eyebrowActive
+    : entitlementStatus === 'loading'
+      ? copy.eyebrowChecking
+      : entitlementStatus === 'read_failed'
+        ? copy.eyebrowReadFailed
+        : copy.eyebrowIdle;
+  const title = confirmedAdsDisabled
+    ? copy.titleActive
+    : entitlementStatus === 'loading'
+      ? copy.titleChecking
+      : entitlementStatus === 'read_failed'
+        ? copy.titleReadFailed
+        : copy.titleIdle;
 
   async function runPurchaseAction(action: PurchaseAction) {
     setActiveAction(action);
@@ -152,9 +196,9 @@ export function PremiumBanner({
 
   return (
     <Card style={styles.card}>
-      <Text style={styles.eyebrow}>{adsDisabled ? copy.eyebrowActive : copy.eyebrowIdle}</Text>
+      <Text style={styles.eyebrow}>{eyebrow}</Text>
       <Text accessibilityRole="header" style={styles.title}>
-        {adsDisabled ? copy.titleActive : copy.titleIdle}
+        {title}
       </Text>
       <Text style={styles.meta}>{copy.body(REMOVE_ADS_PRICE_LABEL)}</Text>
       <View style={styles.actions}>
@@ -162,8 +206,8 @@ export function PremiumBanner({
           accessibilityHint={copy.buyAccessibilityHint}
           accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
           accessibilityRole="button"
-          accessibilityState={{ disabled: activeAction !== null || adsDisabled }}
-          disabled={activeAction !== null || adsDisabled}
+          accessibilityState={{ disabled: activeAction !== null || confirmedAdsDisabled }}
+          disabled={activeAction !== null || confirmedAdsDisabled}
           onPress={() => void runPurchaseAction('buy')}
           style={styles.actionButton}
         >
