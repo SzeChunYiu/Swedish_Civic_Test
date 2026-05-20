@@ -97,6 +97,7 @@ test('published question types stay answerable by quiz runtime', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
+  assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
 test('criminal-responsibility age copy is date-stamped to the current main-rule boundary', () => {
@@ -165,6 +166,38 @@ test('mutation fixtures derive generated question ids from source ids', () => {
     'scan should include scripts',
   );
   assert.deepEqual(scannedFiles.flatMap(hardcodedGeneratedIdFindings), []);
+});
+
+test('derived civic statement mirror guard rejects validator-only prompt drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
+    return String(contents).replace(
+      'match = q.match(/^Vad heter (.+)$/i);',
+      'match = q.match(/^Vad kallas (.+)$/i);',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /civicStatementSv prompt patterns differ between lib\/content\/derivedQuestions\.ts and scripts\/validate-content\.js/,
+  );
 });
 
 test('generated id fixture guard rejects raw generated ids in newly added content test files', () => {
@@ -864,7 +897,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
-test('published question schema rejects generated Swedish modal and duplicated-infinitive clauses', () => {
+test('published question schema rejects generated social-insurance list fragments', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -881,17 +914,15 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const swedishClauseResiduals = {",
-        "  [generatedFixtureId('q020', 1)]: { questionSv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.' },",
-        "  [generatedFixtureId('q020', 2)]: { questionSv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste alltid följa resultatet.' },",
-        "  [generatedFixtureId('q055', 1)]: { questionSv: 'Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte.' },",
-        "  [generatedFixtureId('q055', 2)]: { questionSv: 'Att köpa sex i Sverige är alltid lagligt att köpa sex.' },",
+        "const socialInsuranceListResiduals = {",
+        "  [generatedFixtureId('q156', 1)]: { questionSv: 'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring.', questionEn: 'Sickness insurance, parental insurance, and unemployment insurance.' },",
+        "  [generatedFixtureId('q156', 2)]: { questionSv: 'Vårdcentraler, sjukhus och regional kollektivtrafik.', questionEn: 'Health centres, hospitals, and regional public transport.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  swedishClauseResiduals[question.id]",
+        "  socialInsuranceListResiduals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...swedishClauseResiduals[question.id],",
+        "        ...socialInsuranceListResiduals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -908,7 +939,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects generated true/false statement-about-statement stems', () => {

@@ -13,6 +13,10 @@ const {
   findUnsupportedStaticOutcomeSlogans,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
+const {
+  webDocumentMetaDescriptions,
+  webDocumentMetadata,
+} = require('../lib/scaffold/webDocumentMetadata');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -34,7 +38,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 160;
+const EXPECTED_SOURCE_QUESTIONS = 159;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -171,6 +175,52 @@ const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
   'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
   'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
 ];
+const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
+  sourceId: 'q044',
+  retrievedAt: '2026-05-20',
+  proposalSubmittedAt: '2026-04-16',
+  proposalEffectiveDate: '2026-08-02',
+  officialSources: [
+    {
+      label: 'current-law-main-rule',
+      url: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700.',
+    },
+    {
+      label: 'proposal-government-pdf',
+      url: 'https://www.regeringen.se/contentassets/c776976adafb4f6890297223ae109e4e/skarpta-regler-for-unga-lagovertradare-prop.-202526246.pdf',
+    },
+    {
+      label: 'proposal-riksdag-html',
+      url: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/skarpta-regler-for-unga-lagovertradare_hd03246/html/',
+    },
+  ],
+  requiredQuestionSv: /\bhuvudregeln\b/i,
+  requiredQuestionEn: /\bmain rule\b/i,
+  requiredTextSv: [
+    /\bhuvudregeln\b/i,
+    /\b15 års?\b/i,
+    /\bProposition 2025\/26:246\b/,
+    /\b16 april 2026\b/i,
+    /\b2 augusti 2026\b/i,
+    /\btidsbegränsad sänkning till 13 år\b/i,
+    /\bkontrolleras på nytt efter det datumet\b/i,
+  ],
+  requiredTextEn: [
+    /\bmain rule\b/i,
+    /\bage 15\b/i,
+    /\bProposition 2025\/26:246\b/,
+    /\b16 April 2026\b/,
+    /\b2 August 2026\b/,
+    /\btime-limited lowering to age 13\b/i,
+    /\bshould be rechecked after that date\b/i,
+  ],
+  stalePatterns: [
+    /\bregeringsförslag under 2026\b/i,
+    /\b2026 government proposal\b/i,
+    /\b13 år gäller ett regeringsförslag\b/i,
+    /\bage 13 option refers to\b/i,
+  ],
+};
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -191,6 +241,10 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
+  /\bn(?:ä|a)mns\s+som\s+exempel\b/i,
+  /\bmentioned\s+as\s+examples?\b/i,
+  /\bn(?:ä|a)mns\s+som\s+en\s+anledning\b/i,
+  /\bmentioned\s+as\s+a\s+reason\b/i,
   /\bn(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l\b/i,
   /\bmentioned\s+as\s+(?:historical\s+)?reasons\b/i,
 ];
@@ -293,16 +347,12 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
-  /\bbetyder att politikerna måste (?:inte|alltid) följa resultatet\b/i,
-  /^Att köpa sex i Sverige är (?:olagligt|alltid lagligt) att köpa sex\b/i,
+  /^(?:Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring|Vårdcentraler, sjukhus och regional kollektivtrafik)\.?$/i,
+  /^(?:Sickness insurance, parental insurance, and unemployment insurance|Health centres, hospitals, and regional public transport)\.?$/i,
   /^Many people voting\b/i,
   /^Fewer people taking\b/i,
   /^People with [^.?!]*\bliving closer\b/i,
   /^People living completely separated\b/i,
-];
-const QUESTION_UDHR_MULTI_CONCEPT_PATTERNS = [
-  { year: /\b1948\b/, count: /\b30\s+artiklar\b/i },
-  { year: /\b1948\b/, count: /\b30\s+articles\b/i },
 ];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -647,14 +697,23 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
   ['entitlementsReady,', 'profile premium banner must read Remove Ads entitlement readiness'],
-  ['{entitlementsReady ? (', 'profile premium banner must fail closed while entitlements load'],
+  [
+    '{entitlementsReady ? (\n        <PremiumBanner',
+    'profile premium banner must fail closed while entitlements load',
+  ],
   ['language={language}', 'profile premium banner must receive the settings language'],
+  ['import { ProPaywall }', 'profile route must import the Pro tier comparison surface'],
+  ['<ProPaywall', 'profile route must render the Pro tier comparison surface'],
+  [
+    'alreadyAdFree={monetizationEntitlements.adsDisabled}',
+    'profile Pro tier comparison must distinguish existing Remove Ads owners',
+  ],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Redoindikator',
     'redo',
@@ -722,7 +781,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
     'Provredo',
-    'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+    'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',
@@ -809,6 +868,7 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
 const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
+const FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY = /\b(?:felspårning|repetition av misstag)\b/i;
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['GuidedPracticePath', 'home route must render the guided practice path component'],
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -1156,7 +1216,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
 const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
 const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -1536,8 +1596,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta frågepass',
-    'Starta frågepass för ${chapterTitle}',
+    'Starta kapitelövning',
+    'Starta kapitelövning för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -3191,15 +3251,9 @@ const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'correctStreak',
   'lastAnsweredAt',
   'nextReviewAt',
-  'confidenceRating',
   'bookmarked',
 ];
-const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set([
-  'lastAnsweredAt',
-  'nextReviewAt',
-  'confidenceRating',
-  'bookmarked',
-]);
+const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set(['lastAnsweredAt', 'nextReviewAt', 'bookmarked']);
 const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   questionId: 'string',
   seenCount: 'number',
@@ -3208,14 +3262,11 @@ const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   correctStreak: 'number',
   lastAnsweredAt: 'string',
   nextReviewAt: 'string',
-  confidenceRating: 'ConfidenceRating',
   bookmarked: 'boolean',
 };
 const EXPECTED_PROGRESS_TYPE_UNIONS = [
   { typeName: 'QuizMode', values: ['study', 'exam', 'mistakes', 'challenge'] },
-];
-const EXPECTED_PROGRESS_TYPE_ALIASES = [
-  { typeName: 'ConfidenceRating', text: '1 | 2 | 3 | 4 | 5' },
+  { typeName: 'Confidence', values: ['low', 'medium', 'high'] },
 ];
 const EXPECTED_PROGRESS_INTERFACES = [
   {
@@ -3228,7 +3279,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'correctStreak', type: 'number', optional: false },
       { name: 'lastAnsweredAt', type: 'string', optional: true },
       { name: 'nextReviewAt', type: 'string', optional: true },
-      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
+      { name: 'confidence', type: 'Confidence', optional: true },
       { name: 'bookmarked', type: 'boolean', optional: true },
     ],
   },
@@ -3240,7 +3291,6 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'isCorrect', type: 'boolean', optional: false },
       { name: 'answeredAt', type: 'string', optional: false },
       { name: 'timeSpentSeconds', type: 'number', optional: false },
-      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
     ],
   },
   {
@@ -3277,7 +3327,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
-    type: '(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating) => void',
+    type: '(questionId: string, isCorrect: boolean) => void',
     optional: false,
   },
   {
@@ -4212,22 +4262,6 @@ function findQuestionJudgementMetaStem(question) {
   return QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
-function findQuestionUdhrMultiConceptIssue(question) {
-  const texts = [
-    question.questionSv,
-    question.questionEn,
-    question.explanationSv,
-    question.explanationEn,
-    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
-  ];
-
-  return texts.find((text) =>
-    QUESTION_UDHR_MULTI_CONCEPT_PATTERNS.some(
-      ({ year, count }) => year.test(text) && count.test(text),
-    ),
-  );
-}
-
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   if (question.type !== 'true_false') return null;
 
@@ -4377,6 +4411,78 @@ function jsonEqual(left, right) {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function extractFunctionSlice(source, functionName, nextFunctionName, label) {
+  const start = source.indexOf(`function ${functionName}`);
+  if (start < 0) {
+    fail(`${label} is missing function ${functionName}`);
+    return '';
+  }
+
+  const end = source.indexOf(`function ${nextFunctionName}`, start + 1);
+  if (end < 0) {
+    fail(`${label} cannot find function ${nextFunctionName} after ${functionName}`);
+    return '';
+  }
+
+  return source.slice(start, end);
+}
+
+function extractCivicStatementPromptPatterns(source, functionName, nextFunctionName, label) {
+  const functionSlice = extractFunctionSlice(source, functionName, nextFunctionName, label);
+  return [...functionSlice.matchAll(/\bq\.match\((\/(?:\\.|[^/])+\/[dgimsuy]*)\)/g)].map(
+    (match) => match[1],
+  );
+}
+
+function validateDerivedCivicStatementPromptMirror() {
+  const productionSource = loadText('lib/content/derivedQuestions.ts');
+  const validatorSource = loadText('scripts/validate-content.js');
+  const mirrorPairs = [
+    {
+      functionName: 'civicStatementSv',
+      productionNextFunctionName: 'civicStatementEn',
+      validatorNextFunctionName: 'civicStatementEn',
+    },
+    {
+      functionName: 'civicStatementEn',
+      productionNextFunctionName: 'buildSingleChoiceVariant',
+      validatorNextFunctionName: 'correctOption',
+    },
+  ];
+
+  let mirrorsValidated = 0;
+  mirrorPairs.forEach(({ functionName, productionNextFunctionName, validatorNextFunctionName }) => {
+    const productionPatterns = extractCivicStatementPromptPatterns(
+      productionSource,
+      functionName,
+      productionNextFunctionName,
+      'lib/content/derivedQuestions.ts',
+    );
+    const validatorPatterns = extractCivicStatementPromptPatterns(
+      validatorSource,
+      functionName,
+      validatorNextFunctionName,
+      'scripts/validate-content.js',
+    );
+
+    if (productionPatterns.length < 1 || validatorPatterns.length < 1) {
+      fail(`${functionName} prompt-pattern mirror must include generated civic statement cases`);
+      return;
+    }
+
+    if (!jsonEqual(productionPatterns, validatorPatterns)) {
+      fail(
+        `${functionName} prompt patterns differ between lib/content/derivedQuestions.ts and scripts/validate-content.js`,
+      );
+      return;
+    }
+
+    mirrorsValidated += 1;
+  });
+
+  return mirrorsValidated;
 }
 
 function expectedGeneratedTags(sourceQuestion, convention) {
@@ -4735,24 +4841,6 @@ function replaceLeadingSwedishSubject(subject, value) {
     .replace(/^Den\s+/i, `${normalizedSubject} `)
     .replace(/^Det är\s+/i, `${normalizedSubject} är `);
 }
-function referendumAdvisoryStatementSv(answer) {
-  if (/(?:måste inte|behöver inte)\s+följa resultatet/i.test(answer)) {
-    return 'Rådgivande folkomröstningar i Sverige betyder att politiker inte behöver följa resultatet';
-  }
-  if (/(?:måste alltid följa|är skyldiga att följa)\s+resultatet/i.test(answer)) {
-    return 'Rådgivande folkomröstningar i Sverige betyder att politiker är skyldiga att följa resultatet';
-  }
-  return `Att folkomröstningar i Sverige är rådgivande betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
-}
-function sexPurchaseLawStatementSv(answer) {
-  if (/olagligt att köpa sex,\s*men personen som säljer straffas inte/i.test(answer)) {
-    return 'I Sverige är det olagligt att köpa sex, men personen som säljer sex straffas inte';
-  }
-  if (/alltid lagligt att köpa sex/i.test(answer)) {
-    return 'I Sverige är det alltid lagligt att köpa sex';
-  }
-  return replaceLeadingSwedishSubject('att köpa sex i Sverige', answer);
-}
 function replaceLeadingEnglishSubject(subject, value) {
   const normalizedSubject = upperFirst(subject.trim());
   return value
@@ -4764,6 +4852,12 @@ function replaceLeadingEnglishSubject(subject, value) {
     .replace(/^It was\s+/i, `${normalizedSubject} was `)
     .replace(/^It says\s+/i, `${normalizedSubject} says `)
     .replace(/^It (gives|lets|applies)\b/i, `${normalizedSubject} $1`);
+}
+function stateSocialInsuranceStatementSv(answer) {
+  return `${upperFirst(answer)} är statligt finansierade trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet`;
+}
+function stateSocialInsuranceStatementEn(answer) {
+  return `${upperFirst(answer)} are state-funded welfare systems that can provide financial support during illness, parenthood, or unemployment`;
 }
 function describesStatementSv(subject, answer) {
   if (/^Som\s+/i.test(answer) && /Sverige för tvåhundra år sedan/i.test(subject)) {
@@ -5172,6 +5266,10 @@ function civicStatementSv(source, option) {
   if (match) return `Sveriges två största öar är ${answer}`;
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
+  match = q.match(
+    /^Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet$/i,
+  );
+  if (match) return stateSocialInsuranceStatementSv(answer);
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
   match = q.match(/^Vilka tre företag kallas (.+) i Sverige$/i);
@@ -5208,8 +5306,6 @@ function civicStatementSv(source, option) {
   if (match) return `Man måste ha fyllt ${lowerFirst(answer)} för att ${match[1]}`;
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
-  match = q.match(/^Vad betyder det att folkomröstningar i Sverige är rådgivande$/i);
-  if (match) return referendumAdvisoryStatementSv(answer);
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
@@ -5272,8 +5368,6 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} i Sverige är ${lowerFirst(answer)}`;
   match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
   if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
-  match = q.match(/^Vad gäller för att köpa sex i Sverige$/i);
-  if (match) return sexPurchaseLawStatementSv(answer);
   match = q.match(/^Vad gäller för (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Hur stor del av (.+?) (jobbar .+)$/i);
@@ -5316,10 +5410,6 @@ function civicStatementSv(source, option) {
   if (match) return decisionStatementSv(match[1], match[2], answer);
   match = q.match(/^Vilket år hölls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hölls ${answer}`;
-  match = q.match(/^Vilket år presenterades (.+)$/i);
-  if (match) return `${upperFirst(match[1])} presenterades ${answer}`;
-  match = q.match(/^Hur många (.+?) innehåller (.+)$/i);
-  if (match) return `${upperFirst(match[2])} innehåller ${answer}`;
   match = q.match(/^Vad blev (.+?) viktigt för$/i);
   if (match)
     return `${upperFirst(match[1])} blev viktigt för ${lowerLeadingSwedishClauseStart(answer)}`;
@@ -5388,6 +5478,8 @@ function civicStatementSv(source, option) {
   if (match) return `Ett mål med ${match[1]} är ${swedishPurposeClause(answer)}`;
   match = q.match(/^När byggdes (.+)$/i);
   if (match) return `${upperFirst(match[1])} byggdes ${lowerFirst(answer)}`;
+  match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
+  if (match) return `${answer} finns i ${match[1]}`;
   match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
   if (match) return `${answer} nämns som exempel i ${match[1]}`;
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
@@ -5405,8 +5497,12 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} var ${lowerFirst(answer)} under ${match[2]}`;
   match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
   if (match) return swedishGainedRightStatement(match[1], answer);
+  match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
+  if (match) return `${answer} finns i ${match[2]}`;
   match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
   if (match) return `${answer} nämns som exempel i ${match[2]}`;
+  match = q.match(/^Vad bidrog till (.+)$/i);
+  if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
   match = q.match(/^Vad nämns som exempel på (.+)$/i);
   if (match) return swedishMentionedExample(answer, match[1]);
   match = q.match(/^Vad är vanligt vid (.+)$/i);
@@ -5474,6 +5570,10 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
+  match = q.match(
+    /^Which state security systems can provide financial support during illness, parenthood, or unemployment$/i,
+  );
+  if (match) return stateSocialInsuranceStatementEn(answer);
   match = q.match(/^Which three companies are called (.+) in Sweden$/i);
   if (match) return `${answer} are called ${match[1]} in Sweden`;
   match = q.match(/^Approximately how many (.+)$/i);
@@ -5620,12 +5720,8 @@ function civicStatementEn(source, option) {
   if (match) return describesStatementEn(match[1], answer);
   match = q.match(/^What did (.+?) decide as (.+)$/i);
   if (match) return decisionStatementEn(match[1], match[2], answer);
-  match = q.match(/^In which year was (.+?) presented$/i);
-  if (match) return `${upperFirst(match[1])} was presented in ${answer}`;
   match = q.match(/^In which year was (.+)$/i);
   if (match) return `${upperFirst(match[1])} was in ${answer}`;
-  match = q.match(/^How many (.+?) does (.+?) contain$/i);
-  if (match) return `${upperFirst(match[2])} contains ${answer}`;
   match = q.match(/^What did (.+?) become important for$/i);
   if (match)
     return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
@@ -5701,6 +5797,8 @@ function civicStatementEn(source, option) {
   if (match) return `One goal of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^When were (.+?) built$/i);
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
+  match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
+  if (match) return `${answer} exist in ${match[1]}`;
   match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
   if (match) return `${answer} are mentioned as examples in ${match[1]}`;
   match = q.match(/^Which statement about (.+?) is correct$/i);
@@ -5718,8 +5816,12 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} was ${lowerFirst(answer)} during ${match[2]}`;
   match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
   if (match) return englishGainedRightStatement(match[1], answer);
+  match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
+  if (match) return `${answer} are found in ${match[2]}`;
   match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
   if (match) return `${answer} are mentioned as examples in ${match[2]}`;
+  match = q.match(/^What contributed to (.+)$/i);
+  if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
   match = q.match(/^What is mentioned as an example of (.+)$/i);
   if (match) return englishMentionedExample(answer, match[1]);
   match = q.match(/^What is common during (.+)$/i);
@@ -6610,6 +6712,7 @@ const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
+const publicWebManifest = loadJson('public/manifest.webmanifest');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
@@ -6642,6 +6745,7 @@ let mockExamConfigExactSchemaKeysValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
+let mockExamSessionRotationParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
@@ -6858,6 +6962,12 @@ let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
 const questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
+let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
+let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
+let criminalResponsibilityCurrentnessProposalEffectiveDate = null;
+let criminalResponsibilityCurrentnessQuestionsValidated = 0;
+let criminalResponsibilityCurrentnessParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
@@ -6900,6 +7010,7 @@ let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+let derivedCivicStatementPromptMirrorValidated = 0;
 
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
@@ -6919,6 +7030,7 @@ if (
 ) {
   fail('strings export is not an object');
 }
+derivedCivicStatementPromptMirrorValidated = validateDerivedCivicStatementPromptMirror();
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
@@ -7111,6 +7223,38 @@ function validateAppConfigSchema() {
   }
   if (expo.android?.package !== EXPECTED_APP_NATIVE_IDENTIFIER) {
     reject(`app.json android.package must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
+  }
+  if (webDocumentMetadata.title !== expo.name) {
+    reject('web document title must match app.json expo.name');
+  }
+  if (webDocumentMetadata.applicationName !== expo.name) {
+    reject('web document application-name must match app.json expo.name');
+  }
+  if (webDocumentMetadata.appleMobileWebAppTitle !== expo.name) {
+    reject('web document apple-mobile-web-app-title must match app.json expo.name');
+  }
+  if (webDocumentMetadata.openGraphSiteName !== expo.name) {
+    reject('web document og:site_name must match app.json expo.name');
+  }
+  if (webDocumentMetadata.openGraphTitle !== expo.name) {
+    reject('web document og:title must match app.json expo.name');
+  }
+  if (webDocumentMetadata.language !== publicWebManifest.lang) {
+    reject('web document language must match public manifest lang');
+  }
+  const localizedWebDescription = webDocumentMetaDescriptions.find(
+    (entry) => entry.language === webDocumentMetadata.language,
+  )?.description;
+  if (!localizedWebDescription) {
+    reject('web document metadata must have a localized description for its language');
+  } else if (webDocumentMetadata.description !== localizedWebDescription) {
+    reject('web document description must come from the shared localized description list');
+  }
+  if (webDocumentMetadata.openGraphDescription !== webDocumentMetadata.description) {
+    reject('web document og:description must match the canonical document description');
+  }
+  if (publicWebManifest.description !== webDocumentMetadata.description) {
+    reject('public web manifest description must match shared web document metadata');
   }
 
   const plugins = expo.plugins;
@@ -8354,8 +8498,40 @@ function validateMockExamRuntimeParity(config) {
     }
   }
 
-  if (valid) mockExamRuntimeParityValidated = true;
-  if (valid) mockExamChapterBalanceParityValidated = true;
+  const sessionIds = ['mock-exam-0', 'mock-exam-1', 'mock-exam-2'];
+  const sessionQuestionIds = sessionIds.map((sessionId) =>
+    generateExam(questions, { questionCount: config.questionCount, sessionId }).map(
+      (question) => question.id,
+    ),
+  );
+  const repeatedSessionQuestionIds = generateExam(questions, {
+    questionCount: config.questionCount,
+    sessionId: sessionIds[0],
+  }).map((question) => question.id);
+
+  if (JSON.stringify(sessionQuestionIds[0]) !== JSON.stringify(repeatedSessionQuestionIds)) {
+    reject('mock exam question rotation is not deterministic for the same session seed');
+  }
+
+  for (let index = 1; index < sessionQuestionIds.length; index += 1) {
+    if (
+      JSON.stringify(sessionQuestionIds[index - 1]) === JSON.stringify(sessionQuestionIds[index])
+    ) {
+      reject('mock exam question rotation ignores the session seed');
+    }
+  }
+
+  sessionQuestionIds.forEach((questionIds, index) => {
+    if (new Set(questionIds).size !== questionIds.length) {
+      reject(`${sessionIds[index]} repeats question ids after session rotation`);
+    }
+  });
+
+  if (valid) {
+    mockExamRuntimeParityValidated = true;
+    mockExamChapterBalanceParityValidated = true;
+    mockExamSessionRotationParityValidated = true;
+  }
 }
 
 function expectedFormattedExamTime(totalSeconds) {
@@ -9304,6 +9480,10 @@ function validateHomeRouteCopyParity() {
     }
   });
 
+  if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
+    reject('home route Swedish missed-question review copy must use natural learner wording');
+  }
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -10228,7 +10408,7 @@ function validateSwedishFlashcardCopyNaturalness() {
 
   if (
     !homeRoute.includes(
-      'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+      'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
     )
   ) {
     reject('home route Swedish study-loop copy must not include unreachable flashcard copy');
@@ -11567,19 +11747,6 @@ function validateProgressTypeSchemaParity() {
     progressTypeUnionsValidated += 1;
   });
 
-  EXPECTED_PROGRESS_TYPE_ALIASES.forEach(({ typeName, text }) => {
-    const actualText = extractTypeAliasTextFromTs(progressTypesSource, typeName);
-    if (actualText !== text) {
-      reject(
-        `types/progress.ts ${typeName} alias is ${JSON.stringify(
-          actualText,
-        )}, expected ${JSON.stringify(text)}`,
-      );
-      return;
-    }
-    progressTypeUnionsValidated += 1;
-  });
-
   EXPECTED_PROGRESS_INTERFACES.forEach((expectedInterface) => {
     const actualFields = extractObjectTypePropertiesFromTs(
       progressTypesSource,
@@ -11633,8 +11800,7 @@ function validateProgressTypeSchemaParity() {
 
   if (
     valid &&
-    progressTypeUnionsValidated ===
-      EXPECTED_PROGRESS_TYPE_UNIONS.length + EXPECTED_PROGRESS_TYPE_ALIASES.length &&
+    progressTypeUnionsValidated === EXPECTED_PROGRESS_TYPE_UNIONS.length &&
     progressTypeInterfacesValidated === EXPECTED_PROGRESS_INTERFACES.length
   ) {
     progressTypeSchemaParityValidated = true;
@@ -11733,10 +11899,6 @@ function validateProgressStoreSchemaParity() {
       'progress hydration must normalize unknown ISO timestamp fields through a shared helper',
     ],
     [
-      'function normalizeConfidenceRating(value: unknown)',
-      'progress hydration must normalize optional confidence ratings through a shared helper',
-    ],
-    [
       'function normalizeLocalDateKey(value: unknown',
       'progress hydration must normalize persisted local date keys through a shared helper',
     ],
@@ -11763,14 +11925,6 @@ function validateProgressStoreSchemaParity() {
     [
       'if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;',
       'question progress hydration must normalize and omit absent nextReviewAt timestamps',
-    ],
-    [
-      'const confidenceRating = normalizeConfidenceRating(item.confidenceRating);',
-      'question progress hydration must read confidenceRating through the normalizer',
-    ],
-    [
-      'if (confidenceRating) normalizedQuestionProgress.confidenceRating = confidenceRating;',
-      'question progress hydration must preserve only valid 1..5 confidence ratings',
     ],
     [
       'const completedAt = normalizeIsoTimestamp(item.completedAt);',
@@ -11807,10 +11961,6 @@ function validateProgressStoreSchemaParity() {
     [
       "import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';",
       'progress store must import quiz completion XP rules',
-    ],
-    [
-      "import { gradeFromConfidence, lapsePenaltyForWrong } from '../learning/calibration';",
-      'progress store must import confidence-to-review mapping helpers',
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     [
@@ -11856,7 +12006,6 @@ function validateProgressStoreSchemaParity() {
     'lastAnsweredAt: item.lastAnsweredAt',
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
-    'confidenceRating: item.confidenceRating',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
     'bookmarked: item.bookmarked,',
     'bookmarked: Boolean(item.bookmarked)',
@@ -12305,6 +12454,7 @@ function validatePurchaseTypeSchemaParity() {
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let purchaseSource = '';
+  let placementCtaSource = '';
 
   function reject(message) {
     valid = false;
@@ -12313,12 +12463,17 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   try {
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
   } catch (error) {
-    reject(`lib/monetization/purchases.ts could not be read: ${error.message}`);
+    reject(`Remove Ads purchase runtime source could not be read: ${error.message}`);
     return;
   }
 
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -12402,6 +12557,33 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
         normalizedPurchaseSource.includes('receiptValidation,'),
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
+    ],
+    [
+      /restoreRemoveAdsPurchase/.test(placementCtaSource) &&
+        normalizedPlacementCtaSource.includes(
+          "runPurchaseAction('restore', restoreRemoveAdsPurchase)",
+        ),
+      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'accessibilityLabel={copy.restoreAccessibilityLabel}',
+      ) &&
+        normalizedPlacementCtaSource.includes(
+          'accessibilityHint={copy.restoreAccessibilityHint}',
+        ) &&
+        normalizedPlacementCtaSource.includes('variant="secondary"'),
+      'RemoveAdsPlacementCta restore action must be an accessible secondary action',
+    ],
+    [
+      /not_found:\s*'No previous Remove Ads purchase was found\.'/.test(placementCtaSource) &&
+        /restored:\s*'Purchase restored\. Study ads are being removed\.'/.test(
+          placementCtaSource,
+        ) &&
+        /pending:\s*'Waiting for store confirmation before removing ads\.'/.test(
+          placementCtaSource,
+        ),
+      'RemoveAdsPlacementCta must expose localized pending, not_found, and restored status copy',
     ],
   ];
 
@@ -13218,11 +13400,8 @@ function validateThemeTokenSchema() {
         if (!['400', '500', '600', '700'].includes(style.fontWeight)) {
           rejectToken(`theme typography.${token}.fontWeight must use a supported weight`);
         }
-        if (
-          style.letterSpacing !== undefined &&
-          (!Number.isFinite(style.letterSpacing) || Math.abs(style.letterSpacing) > 4)
-        ) {
-          rejectToken(`theme typography.${token}.letterSpacing must be a bounded number`);
+        if (style.letterSpacing !== undefined && style.letterSpacing !== 0) {
+          rejectToken(`theme typography.${token}.letterSpacing must be 0 when defined`);
         }
       }
 
@@ -14898,6 +15077,127 @@ function validateQuestionBankCsvContract() {
   });
 }
 
+function criminalResponsibilityCurrentnessRows() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) return [];
+
+  const sourceIndex = sourceQuestions.findIndex(
+    (question) => question.id === CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId,
+  );
+  if (sourceIndex < 0) return [];
+
+  const sourceQuestion = sourceQuestions[sourceIndex];
+  const generatedStart = sourceIndex * GENERATED_VARIANTS_PER_SOURCE;
+  const generatedRows = generatedPublishedQuestions.slice(
+    generatedStart,
+    generatedStart + GENERATED_VARIANTS_PER_SOURCE,
+  );
+
+  return [sourceQuestion, ...generatedRows].filter(Boolean);
+}
+
+function validateCriminalResponsibilityCurrentness() {
+  const rows = criminalResponsibilityCurrentnessRows();
+  let allRowsAreValid = true;
+  let sourceMetadataIsValid = true;
+
+  function rejectMetadata(message) {
+    sourceMetadataIsValid = false;
+    allRowsAreValid = false;
+    fail(message);
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt)) {
+    rejectMetadata('criminal-responsibility currentness retrievedAt metadata is invalid');
+  }
+  if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalSubmittedAt !== '2026-04-16') {
+    rejectMetadata('criminal-responsibility proposal submitted-at metadata is invalid');
+  }
+  if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate !== '2026-08-02') {
+    rejectMetadata('criminal-responsibility proposal effective-date metadata is invalid');
+  }
+
+  CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.forEach((source) => {
+    if (!/^https:\/\/www\.(?:riksdagen|regeringen)\.se\//.test(source.url)) {
+      rejectMetadata(
+        `criminal-responsibility currentness source ${source.label} must be an official HTTPS source`,
+      );
+    } else {
+      criminalResponsibilityCurrentnessOfficialSourcesValidated += 1;
+    }
+  });
+
+  criminalResponsibilityCurrentnessSourceMetadataValidated =
+    sourceMetadataIsValid &&
+    criminalResponsibilityCurrentnessOfficialSourcesValidated ===
+      CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.length;
+  criminalResponsibilityCurrentnessSourceRetrievedAt =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt;
+  criminalResponsibilityCurrentnessProposalEffectiveDate =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
+
+  if (rows.length !== GENERATED_VARIANTS_PER_SOURCE + 1) {
+    allRowsAreValid = false;
+    fail(
+      `${CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId} criminal-responsibility currentness expected ${
+        GENERATED_VARIANTS_PER_SOURCE + 1
+      } source/generated rows, found ${rows.length}`,
+    );
+  }
+
+  rows.forEach((question) => {
+    let rowIsValid = true;
+
+    function reject(message) {
+      rowIsValid = false;
+      allRowsAreValid = false;
+      fail(message);
+    }
+
+    const combinedText = [
+      question.questionSv,
+      question.questionEn,
+      question.explanationSv,
+      question.explanationEn,
+    ].join('\n');
+
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.stalePatterns.forEach((pattern) => {
+      if (pattern.test(combinedText)) {
+        reject(
+          `${question.id} criminal-responsibility age currentness uses stale proposal wording`,
+        );
+      }
+    });
+
+    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionSv.test(question.questionSv)) {
+      reject(
+        `${question.id} criminal-responsibility Swedish stem must say the question tests huvudregeln`,
+      );
+    }
+    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionEn.test(question.questionEn)) {
+      reject(
+        `${question.id} criminal-responsibility English stem must say the question tests the main rule`,
+      );
+    }
+
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredTextSv.forEach((pattern) => {
+      if (!pattern.test(combinedText)) {
+        reject(`${question.id} criminal-responsibility Swedish copy is missing ${pattern}`);
+      }
+    });
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredTextEn.forEach((pattern) => {
+      if (!pattern.test(combinedText)) {
+        reject(`${question.id} criminal-responsibility English copy is missing ${pattern}`);
+      }
+    });
+
+    if (rowIsValid) criminalResponsibilityCurrentnessQuestionsValidated += 1;
+  });
+
+  criminalResponsibilityCurrentnessParityValidated =
+    allRowsAreValid &&
+    criminalResponsibilityCurrentnessQuestionsValidated === GENERATED_VARIANTS_PER_SOURCE + 1;
+}
+
 function validateStaticSiteQuestionBankParity() {
   if (failures.length > 0) return;
 
@@ -15823,7 +16123,6 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
-      const udhrMultiConceptIssue = findQuestionUdhrMultiConceptIssue(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
@@ -15846,9 +16145,6 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated judgement meta-stem instead of a civic-study prompt`);
       } else {
         questionJudgementMetaStemsValidated += 1;
-      }
-      if (udhrMultiConceptIssue) {
-        fail(`${label} combines the UDHR year and article-count facts in one text`);
       }
       if (generatedTrueFalseNaturalnessIssue) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
@@ -16035,6 +16331,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
+validateCriminalResponsibilityCurrentness();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
 
@@ -16084,6 +16381,7 @@ console.log(
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
+      mockExamSessionRotationParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,
@@ -16305,6 +16603,7 @@ console.log(
       generatedSingleChoiceExplanationLabelsValidated,
       generatedTrueFalseExplanationMetaValidated,
       generatedTagTemplateParityValidated,
+      derivedCivicStatementPromptMirrorValidated,
       questionSchemasValidated,
       publishedQuestionTypesValidated,
       questionIdSequencesValidated,
@@ -16327,6 +16626,12 @@ console.log(
       questionTagsValidated,
       questionBankCsvRowsValidated,
       questionBankCsvProvenanceCounts,
+      criminalResponsibilityCurrentnessOfficialSourcesValidated,
+      criminalResponsibilityCurrentnessSourceMetadataValidated,
+      criminalResponsibilityCurrentnessSourceRetrievedAt,
+      criminalResponsibilityCurrentnessProposalEffectiveDate,
+      criminalResponsibilityCurrentnessQuestionsValidated,
+      criminalResponsibilityCurrentnessParityValidated,
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
