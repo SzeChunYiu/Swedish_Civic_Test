@@ -1,17 +1,28 @@
 const assert = require('node:assert/strict');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const {
+  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
+  UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
   assertNoUnsupportedStaticOutcomeSlogans,
   assertStaticHeadMetadataDescriptionSource,
   assertStaticHeadMetadataTitleSource,
 } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
+const expectedStaticHeadMetadataOutcomePatterns =
+  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS.length + UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function parseValidationSummary(output) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
 }
 
 function readAppName() {
@@ -233,6 +244,65 @@ test('static head metadata description is neutral and non-empty', () => {
       ),
     /static meta description English pass-the-test slogan/,
   );
+});
+
+test('validate-content reports static head metadata summary fields', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-static-head-metadata'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const summary = parseValidationSummary(output);
+
+  assert.equal(summary.staticHeadMetadataTitleValidated, 1);
+  assert.equal(summary.staticHeadMetadataDescriptionValidated, 1);
+  assert.equal(
+    summary.staticHeadMetadataOutcomeClaimPatternsValidated,
+    expectedStaticHeadMetadataOutcomePatterns,
+  );
+  assert.equal(summary.staticHeadMetadataParityValidated, true);
+  assert.equal(summary.staticValidationSyntaxGateValidated, true);
+});
+
+test('validate-content rejects static head metadata pass outcome mutations', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const path = require('node:path');
+const repoRoot = process.cwd();
+const originalReadFileSync = fs.readFileSync;
+
+fs.readFileSync = function patchedReadFileSync(filePath, ...rest) {
+  if (
+    typeof filePath === 'string' &&
+    path.resolve(filePath) === path.join(repoRoot, 'site/index.html')
+  ) {
+    return originalReadFileSync
+      .call(this, filePath, ...rest)
+      .replace(/(<title>)[\\s\\S]*?(<\\/title>)/, '$1Almost Swedish — Study, fika, pass.$2');
+  }
+
+  return originalReadFileSync.call(this, filePath, ...rest);
+};
+
+process.argv.push('--focus-static-head-metadata');
+require('./scripts/validate-content.js');
+`,
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Study,\s*fika,\s*pass/);
 });
 
 test('static Swedish mock exam copy stays clearly unofficial practice wording', () => {
