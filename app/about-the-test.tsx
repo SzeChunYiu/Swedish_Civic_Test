@@ -123,11 +123,10 @@ export default function Screen() {
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
           accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
-        >
-          {copy.openPractice}
-        </Link>
-        <Link
+          label={copy.openPractice}
+          variant="primary"
+        />
+        <ComplianceActionLink
           accessibilityLabel={copy.backHomeAccessibilityLabel}
           accessibilityRole="link"
           href="/home"

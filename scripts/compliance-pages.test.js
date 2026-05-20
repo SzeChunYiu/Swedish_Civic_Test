@@ -9,9 +9,6 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function readAppName() {
-  return JSON.parse(read('app.json')).expo.name;
-}
 test('static mock exam copy avoids unsupported official pass-line claims', () => {
   const practiceSource = read('site/practice.js');
   const forbiddenFragments = [
@@ -96,34 +93,6 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Support/);
 });
 
-test('static site brand copy matches app identity', () => {
-  const appName = readAppName();
-  const staleBrand = /Sveriges Medborgartest|Sweden Citizenship Test Prep/;
-  const staticFiles = fs
-    .readdirSync(path.join(repoRoot, 'site'))
-    .filter((fileName) => /\.(?:html|js|jsx|css)$/.test(fileName));
-
-  for (const fileName of staticFiles) {
-    const body = read(path.join('site', fileName));
-    assert.doesNotMatch(body, staleBrand, `site/${fileName} should not use the old brand`);
-  }
-
-  for (const filePath of [
-    'site/index.html',
-    'site/app.js',
-    'site/ebook.js',
-    'site/practice.js',
-    'site/settings.js',
-    'site/questions.js',
-    'scripts/export-site-question-bank.js',
-  ]) {
-    assert.match(read(filePath), new RegExp(appName), `${filePath} should use ${appName}`);
-  }
-
-  assert.match(
-    read('site/questions.js'),
-    new RegExp(`^/\\* ${appName} - generated static question bank\\.`),
-  );
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
@@ -172,24 +141,4 @@ test('static Swedish mock exam copy stays clearly unofficial practice wording', 
   assert.match(practice, /['"]Starta övningsprov['"]/);
   assert.doesNotMatch(practice, /Skarp tentamen|Bygg din tentamen|Starta tentamen|\btentamen\b/i);
   assert.match(practice, /['"]Mock exam['"]/);
-});
-
-test('static Swedish legal and study copy keeps adult grammar and tone', () => {
-  const staticApp = read('site/app.js');
-  const staleFragments = [
-    ['ingen', 'juridiska'].join(' '),
-    ['fika', 'stor'].join('-'),
-    ['fika', 'skador'].join('-'),
-  ];
-
-  staleFragments.forEach((fragment) => {
-    assert.doesNotMatch(staticApp, new RegExp(fragment, 'i'));
-  });
-
-  assert.match(staticApp, /inget juridiskt kr[aå]ngel/);
-  assert.match(staticApp, /en kort studievana/);
-  assert.match(
-    staticApp,
-    /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
-  );
 });

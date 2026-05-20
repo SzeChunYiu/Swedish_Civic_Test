@@ -22,6 +22,9 @@ export function buildQuestionSpeechText(question: SpeakableQuestion): string {
 export interface SpeakSwedishOptions {
   /** Playback rate. Default 1.0. expo-speech clamps engine-supported range. */
   rate?: number;
+  onDone?: () => void;
+  onError?: (error: Error) => void;
+  onStopped?: () => void;
 }
 
 export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): void {
@@ -32,9 +35,16 @@ export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): v
       ? Math.max(0.1, Math.min(2.0, options.rate))
       : undefined;
   try {
-    Speech.speak(speechText, { language: 'sv-SE', ...(rate !== undefined ? { rate } : {}) });
+    Speech.speak(speechText, {
+      language: 'sv-SE',
+      ...(rate !== undefined ? { rate } : {}),
+      ...(options.onDone ? { onDone: options.onDone } : {}),
+      ...(options.onError ? { onError: options.onError } : {}),
+      ...(options.onStopped ? { onStopped: options.onStopped } : {}),
+    });
   } catch (error) {
     console.warn('Speech unavailable:', error);
+    options.onError?.(error instanceof Error ? error : new Error(String(error)));
   }
 }
 

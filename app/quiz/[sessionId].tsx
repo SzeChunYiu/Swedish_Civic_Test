@@ -12,7 +12,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildQuestionSpeechText } from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -91,6 +91,7 @@ export default function QuizSessionScreen() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const questionProgress = useProgressStore((state) => state.questionProgress);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = quizSessionCopy[language];
@@ -120,6 +121,9 @@ export default function QuizSessionScreen() {
   const hasSelectedAnswer = Boolean(selectedOptionId);
   const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const celebrationStreak = selectedIsCorrect
+    ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
 
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
@@ -182,6 +186,11 @@ export default function QuizSessionScreen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
+          <CelebrationBurst
+            active={selectedIsCorrect}
+            languageOverride={language}
+            streak={celebrationStreak}
+          />
           {score ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {score.correct}/{score.total}

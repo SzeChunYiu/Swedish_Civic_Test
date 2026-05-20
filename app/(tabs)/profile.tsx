@@ -2,21 +2,12 @@ import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
-import { BadgeRow } from '../../components/learning/BadgeRow';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import {
-  deriveBadges,
-  getAllBadges,
-  getBadgeDescription,
-  getBadgeLockedHint,
-  getBadgeProgressHint,
-  getBadgeTitle,
-  type BadgeInput,
-} from '../../lib/learning/badges';
+import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -26,8 +17,6 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
-  badgeLocked: string;
-  badgeUnlocked: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
@@ -49,8 +38,6 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
-    badgeLocked: 'Låst',
-    badgeUnlocked: 'Upplåst',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
@@ -71,8 +58,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
-    badgeLocked: 'Locked',
-    badgeUnlocked: 'Unlocked',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
@@ -93,6 +78,26 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
 };
 
+const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
+  sv: {
+    first_practice: 'Första övningen',
+    level_2: 'Nivå 2',
+    mistake_reviewer: 'Missade frågor',
+    streak_3: 'Tre dagars svit',
+  },
+  en: {},
+};
+
+function formatBadges(
+  badges: ReturnType<typeof deriveBadges>,
+  language: AppLanguage,
+  emptyLabel: string,
+): string {
+  if (badges.length === 0) return emptyLabel;
+
+  return badges.map((badge) => localizedBadgeTitles[language][badge.id] ?? badge.title).join(', ');
+}
+
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
@@ -106,20 +111,19 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
+  const removeAdsFocused = focus === 'remove-ads';
   const level = calculateLevel(totalXp);
   const currentStreak = calculateStreak(answerDates);
   const wrongAnswerCount = Object.values(questionProgress).reduce(
     (count, progress) => count + progress.wrongCount,
     0,
   );
-  const badgeInput: BadgeInput = {
+  const badges = deriveBadges({
     completedQuestionCount: completedQuestionIds.length,
     currentStreak,
     level,
     wrongAnswerCount,
-  };
-  const badges = deriveBadges(badgeInput);
-  const unlockedBadgeIds = new Set(badges.map((badge) => badge.id));
+  });
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
@@ -148,36 +152,17 @@ export default function Screen() {
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
-        <View style={styles.badgeList}>
-          {getAllBadges().map((badge) => {
-            const unlocked = unlockedBadgeIds.has(badge.id);
-            const title = getBadgeTitle(badge, language);
-            const description = unlocked
-              ? getBadgeDescription(badge, language)
-              : getBadgeLockedHint(badge, language);
-            const progressHint = getBadgeProgressHint(badge, badgeInput, language);
-            const statusLabel = unlocked ? copy.badgeUnlocked : copy.badgeLocked;
-
-            return (
-              <BadgeRow
-                key={badge.id}
-                title={title}
-                description={description}
-                progressHint={progressHint}
-                statusLabel={statusLabel}
-                unlocked={unlocked}
-              />
-            );
-          })}
-        </View>
+        <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
+      {!removeAdsFocused ? removeAdsPaywall : null}
+      {entitlementsReady ? (
+        <ProPaywall
+          alreadyAdFree={monetizationEntitlements.adsDisabled}
+          language={language}
+          onEntitlementsChange={(nextEntitlements) => setMonetizationEntitlements(nextEntitlements)}
+        />
+      ) : null}
       <ComplianceLinks />
 
       <Link
@@ -205,13 +190,11 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
-  badgeList: {
-    gap: space[1],
-  },
-  emptyBadgeText: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
+  value: {
+    color: colors.text,
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.sectionTitle.fontWeight,
+    lineHeight: typography.sectionTitle.lineHeight,
   },
   settingsLink: {
     alignSelf: 'flex-start',

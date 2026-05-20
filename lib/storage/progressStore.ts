@@ -17,6 +17,12 @@ export type QuestionProgress = {
   bookmarked?: boolean;
 };
 
+export type MockExamAnswerProgress = {
+  questionId: string;
+  isCorrect: boolean;
+  timeSpentSeconds: number;
+};
+
 export type MockExamProgress = {
   sessionId: string;
   score: number;
@@ -26,6 +32,14 @@ export type MockExamProgress = {
 };
 
 const progressStateKey = 'progressState';
+const maxHydratedQuestionAnswerCount = 10000;
+const maxHydratedTotalXp = 1000000;
+const maxHydratedMockQuestionCount = 720;
+const maxHydratedMockQuestionTimeSeconds = 12 * 60 * 60;
+const maxHydratedFreezeLifetimeCount = 10000;
+const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
+const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
 
 let progressStorage: MMKV | null = null;
 
@@ -62,6 +76,95 @@ type MockExamProgressInput = {
 function clampScore(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.max(0, Math.min(1, value));
+}
+
+function normalizeMockExamAnswers(value: unknown): MockExamAnswerProgress[] {
+  if (!Array.isArray(value)) return [];
+
+  const answers: MockExamAnswerProgress[] = [];
+  for (const answer of value) {
+    if (answers.length >= maxHydratedMockQuestionCount) break;
+    if (!answer || typeof answer !== 'object') continue;
+
+    const item = answer as Partial<MockExamAnswerProgress>;
+    if (typeof item.questionId !== 'string' || item.questionId.trim().length === 0) continue;
+    if (typeof item.isCorrect !== 'boolean') continue;
+
+    answers.push({
+      questionId: item.questionId,
+      isCorrect: item.isCorrect,
+      timeSpentSeconds: normalizeNonNegativeInteger(
+        item.timeSpentSeconds,
+        0,
+        maxHydratedMockQuestionTimeSeconds,
+      ),
+    });
+  }
+
+  return answers;
+}
+
+function isHydratableDateTime(timeMs: number): boolean {
+  return Number.isFinite(timeMs) && timeMs <= Date.now() + maxHydratedFutureDateMs;
+}
+
+function normalizeIsoTimestamp(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  if (!isoTimestampPattern.test(trimmed)) return undefined;
+
+  const timeMs = Date.parse(trimmed);
+  if (!isHydratableDateTime(timeMs)) return undefined;
+
+  const normalized = new Date(timeMs).toISOString();
+  return normalized === trimmed ? trimmed : undefined;
+}
+
+function normalizeLocalDateKey(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  if (!localDateKeyPattern.test(trimmed)) return undefined;
+
+  const [year, month, day] = trimmed.split('-').map(Number);
+  const timeMs = Date.UTC(year, month - 1, day);
+  if (!isHydratableDateTime(timeMs)) return undefined;
+
+  const normalized = new Date(timeMs).toISOString().slice(0, 10);
+  return normalized === trimmed ? trimmed : undefined;
+}
+
+function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
+  const fallback = createInitialFreezeState();
+  if (!value || typeof value !== 'object') return fallback;
+
+  const candidate = value as Partial<StreakFreezeState>;
+  const rescuedDayKeys = Array.isArray(candidate.rescuedDayKeys)
+    ? [
+        ...new Set(
+          candidate.rescuedDayKeys.map(normalizeLocalDateKey).filter((day): day is string => !!day),
+        ),
+      ]
+    : [];
+
+  return {
+    available: normalizeNonNegativeInteger(candidate.available, fallback.available, 4),
+    lastEarnedAt: normalizeLocalDateKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
+    lifetimeEarned: normalizeNonNegativeInteger(
+      candidate.lifetimeEarned,
+      fallback.lifetimeEarned,
+      maxHydratedFreezeLifetimeCount,
+    ),
+    lifetimeSpent: normalizeNonNegativeInteger(
+      candidate.lifetimeSpent,
+      fallback.lifetimeSpent,
+      maxHydratedFreezeLifetimeCount,
+    ),
+    rescuedDayKeys,
+  };
+}
+
+function streakFreezeStatesEqual(a: StreakFreezeState, b: StreakFreezeState): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 function normalizeProgress(value: unknown): PersistedProgress {
@@ -112,7 +215,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
   return {
     completedQuestionIds,
     questionProgress,
-    totalXp: Math.max(0, candidate.totalXp ?? 0),
+    totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp),
     answerDates,
     mockExamSessions,
   };
@@ -129,8 +232,10 @@ function readProgress(): PersistedProgress {
   }
 }
 
-function writeProgress(progress: PersistedProgress): void {
-  progressStorage?.set(progressStateKey, JSON.stringify(progress));
+function writeProgress(progress: PersistedProgress): PersistedProgress {
+  const serializedProgress = JSON.stringify(progress);
+  progressStorage?.set(progressStateKey, serializedProgress);
+  return normalizeProgress(JSON.parse(serializedProgress));
 }
 
 type ProgressState = PersistedProgress & {
@@ -214,6 +319,21 @@ export const useProgressStore = create<ProgressState>((set) => ({
       const otherSessions = state.mockExamSessions.filter(
         (item) => item.sessionId !== nextSession.sessionId,
       );
+      const nextProgress = {
+        completedQuestionIds: state.completedQuestionIds,
+        questionProgress: state.questionProgress,
+        totalXp: state.totalXp + completionXp,
+        answerDates: state.answerDates,
+        mockExamSessions: [...otherSessions, nextSession],
+        streakFreezeState: state.streakFreezeState,
+      };
+      const persistedProgress = writeProgress(nextProgress);
+      return persistedProgress;
+    }),
+  setStreakFreezeState: (streakFreezeState) =>
+    set((state) => {
+      if (streakFreezeStatesEqual(state.streakFreezeState, streakFreezeState)) return state;
+
       const nextProgress = {
         completedQuestionIds: state.completedQuestionIds,
         questionProgress: state.questionProgress,

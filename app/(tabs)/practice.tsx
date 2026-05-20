@@ -16,13 +16,21 @@ import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
-import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
-import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
+import {
+  getCompletedQuestionIdsForQuestionBank,
+  getPracticeQuestionForSession,
+} from '../../lib/quiz/practiceFlow';
+import {
+  getPracticeInterstitialShowKey,
+  usePracticeSessionStore,
+} from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
+
+type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
 type PracticeCopy = {
   badge: string;
@@ -139,14 +147,21 @@ export default function Screen() {
     (state) => state.setIncludeSupplementaryQuestions,
   );
   const [aboutSourcesOpen, setAboutSourcesOpen] = useState(false);
+  const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
+    null,
+  );
   const copy = practiceCopy[language];
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
+  const visibleCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+    [completedQuestionIds, filteredQuestions],
+  );
   const rawQuestion = getPracticeQuestionForSession(
     filteredQuestions,
-    completedQuestionIds,
+    visibleCompletedQuestionIds,
     activeQuestionId,
   );
   const question = useMemo(
@@ -168,6 +183,10 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
+  const celebrationStreak = selectedIsCorrect
+    ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
   const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
@@ -196,30 +215,26 @@ export default function Screen() {
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
-        <Pressable
-          aria-selected={isBookmarked}
-          accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
-          accessibilityRole="button"
-          accessibilityState={{ selected: isBookmarked }}
-          onPress={() => toggleBookmark(question.id)}
-          style={[styles.bookmarkButton, isBookmarked ? styles.bookmarkButtonActive : null]}
-        >
-          <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
-            {isBookmarked ? copy.bookmarked : copy.bookmark}
-          </Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="switch"
-          accessibilityState={{ checked: includeSupplementary }}
-          accessibilityLabel={
-            includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
-          }
-          onPress={() => setIncludeSupplementary(!includeSupplementary)}
-          style={[styles.bookmarkButton, includeSupplementary ? styles.bookmarkButtonActive : null]}
-        >
-          <Text
-            style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
+        <Text style={styles.meta}>
+          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
+        </Text>
+        <View style={styles.headerControls}>
+          <Pressable
+            android_ripple={{ color: colors.focusSoft }}
+            aria-selected={isBookmarked}
+            accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isBookmarked }}
+            hitSlop={space[1]}
+            onBlur={() => setFocusedHeaderControl(null)}
+            onFocus={() => setFocusedHeaderControl('bookmark')}
+            onPress={() => toggleBookmark(question.id)}
+            style={({ pressed }) => [
+              styles.bookmarkButton,
+              isBookmarked ? styles.bookmarkButtonActive : null,
+              focusedHeaderControl === 'bookmark' ? styles.headerControlFocused : null,
+              pressed ? styles.headerControlPressed : null,
+            ]}
           >
             {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
           </Text>
@@ -280,6 +295,11 @@ export default function Screen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
+          <CelebrationBurst
+            active={selectedIsCorrect}
+            languageOverride={language}
+            streak={celebrationStreak}
+          />
           {currentScore ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}

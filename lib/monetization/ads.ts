@@ -11,8 +11,6 @@ export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/practice',
   '/quiz',
   '/disclaimer',
-  '/about-the-test',
-  '/onboarding',
   '/privacy',
   '/sources',
   '/support',
@@ -109,9 +107,8 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 ];
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
-  const envKeys = REAL_AD_UNIT_ENV_KEYS[unit.placement];
-  const androidUnitId = readEnvString(envKeys.android);
-  const iosUnitId = readEnvString(envKeys.ios);
+  const androidUnitId = getRealAdUnitEnvValue(unit.placement, 'android');
+  const iosUnitId = getRealAdUnitEnvValue(unit.placement, 'ios');
 
   return {
     ...unit,
@@ -180,6 +177,7 @@ export const adsConfig = {
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
+  realUnitEnvValues: REAL_AD_UNIT_ENV_VALUES,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
   units: getConfiguredAdUnits(),

@@ -2,7 +2,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
-import { getAdUnit, getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
+import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
@@ -29,16 +29,13 @@ export function AdBanner({
 
   if (!visible || !unitId) return null;
 
-  const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
-  const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;
-  const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);
 
   return (
     <View
       accessible
       accessibilityHint={`${copy.previewHint} ${copy.removeAdsHint}`}
-      accessibilityLabel={accessibilityLabel}
+      accessibilityLabel={copy.accessibilityLabel(placementLabel, copy.liveStatus)}
       style={styles.nativeSlot}
     >
       <BannerAd
