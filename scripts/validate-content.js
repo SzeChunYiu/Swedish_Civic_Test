@@ -1039,7 +1039,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -7097,6 +7097,18 @@ function validateRemoveAdsEntitlementHookParity() {
         hookSource,
       ),
       'unresolved purchase state must return ad-blocked pending entitlements',
+    ],
+    [
+      /catch\(\(\)\s*=>\s*\{[\s\S]*if\s*\(\s*sharedRemoveAdsEntitlements\s*\)\s*\{[\s\S]*applyEntitlements\(sharedRemoveAdsEntitlements\);[\s\S]*\}\s*else\s*\{[\s\S]*setCurrentEntitlements\(AD_BLOCKED_PENDING_ENTITLEMENTS\);[\s\S]*setEntitlementsReady\(false\);[\s\S]*\}/.test(
+        hookSource,
+      ),
+      'persisted Remove Ads entitlement read failures must keep ads blocked until retry or restore',
+    ],
+    [
+      !/catch\(\(\)\s*=>\s*\{[\s\S]*else\s*\{[\s\S]*setEntitlementsReady\(true\);[\s\S]*\}/.test(
+        hookSource,
+      ),
+      'persisted Remove Ads entitlement read failures must not publish free-ready ad entitlements',
     ],
   ];
 

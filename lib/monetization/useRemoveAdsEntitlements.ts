@@ -101,7 +101,8 @@ export function useRemoveAdsEntitlements({
         if (sharedRemoveAdsEntitlements) {
           applyEntitlements(sharedRemoveAdsEntitlements);
         } else {
-          setEntitlementsReady(true);
+          setCurrentEntitlements(AD_BLOCKED_PENDING_ENTITLEMENTS);
+          setEntitlementsReady(false);
         }
       });
 

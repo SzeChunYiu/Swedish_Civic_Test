@@ -22,7 +22,7 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
     'utf8',
   );
 
-  assert.equal(summary.removeAdsEntitlementHookCasesValidated, 5);
+  assert.equal(summary.removeAdsEntitlementHookCasesValidated, 7);
   assert.equal(summary.removeAdsEntitlementHookParityValidated, true);
   assert.match(hookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /adsDisabled: true/);
@@ -30,6 +30,9 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /publishRemoveAdsEntitlements\(storedEntitlements\)/);
   assert.match(hookSource, /entitlements: explicitEntitlements/);
   assert.match(hookSource, /entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS/);
+  assert.match(hookSource, /setCurrentEntitlements\(AD_BLOCKED_PENDING_ENTITLEMENTS\)/);
+  assert.match(hookSource, /setEntitlementsReady\(false\)/);
+  assert.doesNotMatch(hookSource, /catch\(\(\) => \{[\s\S]*setEntitlementsReady\(true\)/);
 });
 
 test('Remove Ads entitlement hook parity rejects pending ad enablement', () => {
@@ -89,5 +92,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /explicit ad entitlements must bypass async purchase loading as ready/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects failed read ad enablement', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'setCurrentEntitlements(AD_BLOCKED_PENDING_ENTITLEMENTS);\\n          setEntitlementsReady(false);',
+        'setEntitlementsReady(true);',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /persisted Remove Ads entitlement read failures must keep ads blocked until retry or restore|persisted Remove Ads entitlement read failures must not publish free-ready ad entitlements/,
   );
 });
