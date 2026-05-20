@@ -1329,6 +1329,9 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
+  assert.match(placementCtaSource, /Open the Remove Ads panel in Profile/);
+  assert.match(placementCtaSource, /Öppna Ta bort annonser-panelen i profilen/);
   assert.match(placementCtaSource, /Restore Remove Ads purchase/);
   assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
   assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
@@ -1340,6 +1343,11 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(homeSource, /language=\{language\}/);
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(profileSource, /language=\{language\}/);
+  assert.match(profileSource, /useLocalSearchParams<\{ focus\?: string \}>/);
+  assert.match(profileSource, /const removeAdsFocused = focus === 'remove-ads';/);
+  assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
+  assert.match(profileSource, /nativeID="remove-ads-paywall"/);
+  assert.match(profileSource, /\{removeAdsFocused \? removeAdsPaywall : null\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(placementCtaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
