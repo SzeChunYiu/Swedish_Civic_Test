@@ -7,11 +7,11 @@ import {
 } from '../quiz/questionText';
 
 type SpeakableQuestion = {
-  questionSv: string;
-  options: QuestionOption[];
-  correctOptionId?: string;
-  explanationSv?: string;
-  explanationText?: Partial<LocalizedContentText>;
+  questionSv?: string | null;
+  options?: QuestionOption[] | null;
+  correctOptionId?: string | null;
+  explanationSv?: string | null;
+  explanationText?: Partial<LocalizedContentText> | null;
 };
 
 const SOURCE_CITATION_REPLACEMENTS = [
@@ -27,22 +27,46 @@ function optionLetter(index: number): string {
   return String.fromCharCode('A'.charCodeAt(0) + index);
 }
 
-export function buildQuestionSpeechText(question: SpeakableQuestion): string {
-  const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;
-  const optionText = question.options
-    .map((option, index) => `Alternativ ${optionLetter(index)}. ${option.textSv}.`)
+function normalizeSpeechText(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function getQuestionOptions(question: SpeakableQuestion | null | undefined): QuestionOption[] {
+  return Array.isArray(question?.options)
+    ? question.options.filter(
+        (option): option is QuestionOption => typeof option === 'object' && option !== null,
+      )
+    : [];
+}
+
+function getSpeechCallback<T extends keyof Speech.SpeechOptions>(
+  callback: unknown,
+): Speech.SpeechOptions[T] | undefined {
+  return typeof callback === 'function' ? (callback as Speech.SpeechOptions[T]) : undefined;
+}
+
+export function buildQuestionSpeechText(question: SpeakableQuestion | null | undefined): string {
+  const rawPromptText = normalizeSpeechText(question?.questionSv);
+  const promptText = stripSourceAuthorityPhrasing(rawPromptText) || rawPromptText;
+  const optionText = getQuestionOptions(question)
+    .map((option, index) => {
+      const textSv = normalizeSpeechText(option.textSv);
+      return textSv ? `Alternativ ${optionLetter(index)}. ${textSv}.` : '';
+    })
+    .filter(Boolean)
     .join(' ');
   return `${promptText} ${optionText}`.trim();
 }
 
 export function buildAnswerFeedbackSpeechText(
-  question: SpeakableQuestion,
+  question: SpeakableQuestion | null | undefined,
   selectedOptionId: string | null | undefined,
 ): string {
-  if (!selectedOptionId || !question.correctOptionId) return '';
+  if (!selectedOptionId || !question?.correctOptionId) return '';
 
-  const correctOption = question.options.find((option) => option.id === question.correctOptionId);
-  const selectedOption = question.options.find((option) => option.id === selectedOptionId);
+  const options = getQuestionOptions(question);
+  const correctOption = options.find((option) => option.id === question.correctOptionId);
+  const selectedOption = options.find((option) => option.id === selectedOptionId);
   const selectedOptionText = getQuestionOptionText(selectedOption, 'sv', 'det valda svaret');
   const correctOptionText = getQuestionOptionText(
     correctOption,
@@ -53,10 +77,19 @@ export function buildAnswerFeedbackSpeechText(
   const resultText = selectedIsCorrect
     ? `Du valde: ${selectedOptionText}. Det stämmer.`
     : `Du valde: ${selectedOptionText}. Det rätta svaret är: ${correctOptionText}.`;
+  const explanationSource = {
+    explanationSv: normalizeSpeechText(question.explanationSv),
+    explanationText:
+      question.explanationText &&
+      typeof question.explanationText === 'object' &&
+      !Array.isArray(question.explanationText)
+        ? question.explanationText
+        : undefined,
+  };
   const explanationText = SOURCE_CITATION_REPLACEMENTS.reduce(
     (current, replacement) => current.replace(replacement, ''),
     stripSourceAuthorityPhrasing(
-      getQuestionExplanationText(question, 'sv', question.explanationSv ?? ''),
+      getQuestionExplanationText(explanationSource, 'sv', explanationSource.explanationSv),
     ),
   ).trim();
 
@@ -65,33 +98,34 @@ export function buildAnswerFeedbackSpeechText(
 
 export interface SpeakSwedishOptions {
   /** Playback rate. Default 1.0. expo-speech clamps engine-supported range. */
-  rate?: number;
+  rate?: unknown;
   /** Called by expo-speech when playback finishes naturally. */
-  onDone?: Speech.SpeechOptions['onDone'];
+  onDone?: unknown;
   /** Called by expo-speech when playback fails. */
-  onError?: Speech.SpeechOptions['onError'];
+  onError?: unknown;
   /** Called by expo-speech when playback is stopped. */
-  onStopped?: Speech.SpeechOptions['onStopped'];
+  onStopped?: unknown;
 }
 
-export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): void {
-  const speechText = text.trim();
+export function speakSwedish(text: unknown, options: SpeakSwedishOptions = {}): void {
+  const speechText = normalizeSpeechText(text);
   if (speechText.length === 0) return;
   const rate =
-    typeof options.rate === 'number' && options.rate > 0
+    typeof options.rate === 'number' && Number.isFinite(options.rate) && options.rate > 0
       ? Math.max(0.1, Math.min(2.0, options.rate))
       : undefined;
   try {
     Speech.speak(speechText, {
       language: 'sv-SE',
       ...(rate !== undefined ? { rate } : {}),
-      onDone: options.onDone,
-      onError: options.onError,
-      onStopped: options.onStopped,
+      onDone: getSpeechCallback<'onDone'>(options.onDone),
+      onError: getSpeechCallback<'onError'>(options.onError),
+      onStopped: getSpeechCallback<'onStopped'>(options.onStopped),
     });
   } catch (error) {
     console.warn('Speech unavailable:', error);
-    options.onError?.(error instanceof Error ? error : new Error(String(error)));
+    const onError = getSpeechCallback<'onError'>(options.onError);
+    onError?.(error instanceof Error ? error : new Error(String(error)));
   }
 }
 

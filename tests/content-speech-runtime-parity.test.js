@@ -22,8 +22,12 @@ test('speech runtime parity validates Swedish TTS language and stop handling', (
   );
   const summary = parseValidationSummary(output);
 
-  assert.equal(summary.speechRuntimeCasesValidated, 5);
+  assert.equal(summary.speechRuntimeCasesValidated, 10);
   assert.equal(summary.speechRuntimeParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'audioButtonAccessibilityParityValidated'),
+    false,
+  );
 });
 
 test('speech runtime parity rejects language drift away from Swedish', () => {
@@ -70,7 +74,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/audio/speak.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("    options.onError?.(error instanceof Error ? error : new Error(String(error)));\\n", "");
+      .replace(
+        "    const onError = getSpeechCallback<'onError'>(options.onError);\\n" +
+          "    onError?.(error instanceof Error ? error : new Error(String(error)));\\n",
+        "",
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

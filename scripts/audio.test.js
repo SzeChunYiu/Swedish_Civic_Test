@@ -141,6 +141,37 @@ test('buildAnswerFeedbackSpeechText keeps authority wording and source citations
   assert.doesNotMatch(text, /UHR|Källa|Source|Sverige i fokus|s\. 5/i);
 });
 
+test('speech text builders tolerate malformed runtime question data', () => {
+  const { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } = loadTs('lib/audio/speak.ts');
+
+  assert.doesNotThrow(() => buildQuestionSpeechText({ questionSv: 'Fråga?' }));
+  assert.equal(buildQuestionSpeechText({ questionSv: 'Fråga?' }), 'Fråga?');
+
+  const questionText = buildQuestionSpeechText({
+    questionSv: null,
+    options: [
+      { id: 'a', textSv: null, textEn: 'Missing Swedish text' },
+      { id: 'b', textSv: 'Ett svar', textEn: 'An answer' },
+    ],
+  });
+  assert.equal(questionText, 'Alternativ B. Ett svar.');
+  assert.doesNotMatch(questionText, /null|undefined/i);
+
+  const feedbackText = buildAnswerFeedbackSpeechText(
+    {
+      questionSv: 'Fråga?',
+      correctOptionId: 'a',
+      explanationSv: null,
+    },
+    'b',
+  );
+  assert.equal(
+    feedbackText,
+    'Du valde: det valda svaret. Det rätta svaret är: det markerade rätta svaret.',
+  );
+  assert.doesNotMatch(feedbackText, /null|undefined/i);
+});
+
 test('speech helpers do not crash when the platform speech engine is unavailable', () => {
   moduleCache.clear();
   const warnings = [];
@@ -212,6 +243,39 @@ test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
   assert.equal(speakCalls[0].options.onDone, callbacks.onDone);
   assert.equal(speakCalls[0].options.onError, callbacks.onError);
   assert.equal(speakCalls[0].options.onStopped, callbacks.onStopped);
+});
+
+test('speakSwedish ignores malformed text, non-finite rates, and non-function callbacks', () => {
+  moduleCache.clear();
+  const speakCalls = [];
+  const { speakSwedish } = loadTs('lib/audio/speak.ts', {
+    speechMock: {
+      speak(text, options) {
+        speakCalls.push({ text, options });
+      },
+      stop() {},
+    },
+  });
+
+  assert.doesNotThrow(() => speakSwedish(null));
+  assert.doesNotThrow(() => speakSwedish(undefined));
+  assert.doesNotThrow(() => speakSwedish(123));
+  assert.doesNotThrow(() => speakSwedish({ trim: () => 'hej' }));
+  assert.equal(speakCalls.length, 0);
+
+  speakSwedish('Hej igen', {
+    rate: Infinity,
+    onDone: 'done',
+    onError: null,
+    onStopped: 123,
+  });
+
+  assert.equal(speakCalls.length, 1);
+  assert.equal(speakCalls[0].text, 'Hej igen');
+  assert.equal(Object.prototype.hasOwnProperty.call(speakCalls[0].options, 'rate'), false);
+  assert.equal(speakCalls[0].options.onDone, undefined);
+  assert.equal(speakCalls[0].options.onError, undefined);
+  assert.equal(speakCalls[0].options.onStopped, undefined);
 });
 
 test('practice and routed quiz screens honor the persisted audio setting', () => {
