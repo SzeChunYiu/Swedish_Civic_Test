@@ -16,7 +16,9 @@
 // through i18n to user-facing copy.
 
 import { perChapterProgress, mockHistory } from './dashboardStats';
-import type { QuizAnswer, QuizSession, UserProgress } from '../../types/progress';
+import type { UserProgress, UserQuestionProgress } from '../../types/progress';
+import type { PracticeQuestion } from '../../types/content';
+import type { MockExamProgress } from '../storage/progressStore';
 
 export type ReadinessVerdict =
   | 'not_ready_yet'
@@ -30,10 +32,10 @@ export interface ReadinessScore {
   verdict: ReadinessVerdict;
   /** Component contributions in 0..1, useful for "why?" tooltip. */
   components: {
-    accuracy: number; // rolling accuracy 0..1
-    coverage: number; // share of chapters with >= 1 answer
-    recency: number; // 0..1 freshness weight
-    mockAverage: number; // average of best mock per session, 0..1; 0 when none
+    accuracy: number;       // rolling accuracy 0..1
+    coverage: number;       // share of chapters with >= 1 answer
+    recency: number;        // 0..1 freshness weight
+    mockAverage: number;    // average of best mock per session, 0..1; 0 when none
   };
   /** True when we don't yet have enough data (verdict still set, but UI should soften copy). */
   isSparse: boolean;
@@ -116,101 +118,50 @@ export interface ReadinessInput {
   now?: Date;
 }
 
-export interface QuestionProgressReadinessInput {
-  questionProgress: Record<
-    string,
-    {
-      correctCount?: number;
-      lastAnsweredAt?: string;
-      seenCount?: number;
-      wrongCount?: number;
-    }
-  >;
-  questions: ReadonlyArray<{ id: string; chapterId: string }>;
-  chapters: ReadonlyArray<{ id: string; questionCount: number }>;
-  mockExamSessions?: ReadonlyArray<{
-    completedAt: string;
-    score: number;
-    sessionId: string;
-  }>;
-  now?: Date;
-}
-
-function safeCount(value: number | undefined): number {
-  return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
-}
-
-function buildAnswersFromQuestionProgress(input: QuestionProgressReadinessInput): QuizAnswer[] {
-  const nowIso = (input.now ?? new Date()).toISOString();
-  const answers: QuizAnswer[] = [];
-
-  for (const question of input.questions) {
-    const progress = input.questionProgress[question.id];
-    if (!progress) continue;
-
-    const seenCount = safeCount(progress.seenCount);
-    const correctCount = Math.min(safeCount(progress.correctCount), seenCount);
-    const answeredAt = progress.lastAnsweredAt ?? nowIso;
-
-    for (let index = 0; index < seenCount; index += 1) {
-      answers.push({
-        answeredAt,
-        isCorrect: index < correctCount,
-        questionId: question.id,
-        selectedOptionIds: [],
-        timeSpentSeconds: 0,
-      });
-    }
+// Adapter: called by home.tsx with the flat store slices it already holds.
+export function computeReadinessFromQuestionProgress(input: {
+  questionProgress: Record<string, UserQuestionProgress>;
+  questions: readonly PracticeQuestion[];
+  chapters: readonly { id: string; questionCount: number }[];
+  mockExamSessions: readonly MockExamProgress[];
+}): ReadinessScore {
+  // Build a minimal UserProgress so computeReadinessScore can run unchanged.
+  const questionChapterIndex: Record<string, string> = {};
+  for (const q of input.questions) {
+    questionChapterIndex[q.id] = q.chapterId;
   }
-
-  return answers;
-}
-
-function buildMockSessions(
-  mockExamSessions: QuestionProgressReadinessInput['mockExamSessions'] = [],
-): QuizSession[] {
-  return mockExamSessions.map((session) => ({
-    answers: [],
-    completedAt: session.completedAt,
-    id: session.sessionId,
-    mode: 'exam',
+  const sessions = input.mockExamSessions.map((s) => ({
+    id: s.sessionId,
+    mode: 'exam' as const,
     questionIds: [],
-    score: session.score,
-    startedAt: session.completedAt,
+    answers: Array.from({ length: s.correctCount }, () => ({
+      questionId: '',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: s.completedAt,
+      timeSpentSeconds: 0,
+    })).concat(
+      Array.from({ length: s.totalCount - s.correctCount }, () => ({
+        questionId: '',
+        selectedOptionIds: [],
+        isCorrect: false,
+        answeredAt: s.completedAt,
+        timeSpentSeconds: 0,
+      })),
+    ),
+    startedAt: s.completedAt,
+    completedAt: s.completedAt,
+    score: s.score,
   }));
-}
-
-export function computeReadinessFromQuestionProgress(
-  input: QuestionProgressReadinessInput,
-): ReadinessScore {
-  const answers = buildAnswersFromQuestionProgress(input);
-  const questionChapterIndex = Object.fromEntries(
-    input.questions.map((question) => [question.id, question.chapterId]),
-  );
   const progress: UserProgress = {
-    currentStreak: 0,
-    dailyGoalAnswers: 0,
-    level: 0,
-    questionProgress: {},
-    sessions: [
-      {
-        answers,
-        id: 'question-progress-readiness',
-        mode: 'study',
-        questionIds: input.questions.map((question) => question.id),
-        startedAt: answers[0]?.answeredAt ?? (input.now ?? new Date()).toISOString(),
-      },
-      ...buildMockSessions(input.mockExamSessions),
-    ],
     totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: input.questionProgress,
+    sessions,
   };
-
-  return computeReadinessScore({
-    chapters: input.chapters,
-    now: input.now,
-    progress,
-    questionChapterIndex,
-  });
+  return computeReadinessScore({ progress, chapters: input.chapters, questionChapterIndex });
 }
 
 export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
@@ -238,7 +189,10 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
   const score = Math.round(clamp01(blended) * 100);
 
   // Sparse: too little data to be meaningful.
-  const totalAnswers = (input.progress.sessions ?? []).reduce((n, s) => n + s.answers.length, 0);
+  const totalAnswers = (input.progress.sessions ?? []).reduce(
+    (n, s) => n + s.answers.length,
+    0,
+  );
   const isSparse = totalAnswers < 30;
 
   return {
