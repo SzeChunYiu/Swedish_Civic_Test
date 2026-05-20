@@ -25,6 +25,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
+const q140OldChristmasPromptPattern =
+  /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -679,6 +681,111 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q070 combines tax liability and VAT purchase taxation in one learner-facing item/,
+  );
+});
+
+test('Christmas celebration source and generated prompts use a direct civic question', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const textForQuestion = (question) =>
+    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en]
+      .concat((question.opts || []).flatMap((option) => [option.sv, option.en]))
+      .join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q140OldChristmasPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => q140OldChristmasPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q140OldChristmasPromptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const q140 = generatedSiteBank.find((question) => question.id === 'q140');
+  const q140SectionPractice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q140', 'singleChoice'),
+  );
+  const q140Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q140', 'judgement'),
+  );
+  const q140True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q140', 'trueStatement'),
+  );
+  const q140False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q140', 'falseStatement'),
+  );
+
+  assert.ok(q140, 'q140 should be published in the site bank');
+  assert.equal(
+    q140.q.sv,
+    'Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?',
+  );
+  assert.equal(
+    q140.q.en,
+    'How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
+  );
+  assert.ok(q140SectionPractice, 'q140 section-practice generated variant should be published');
+  assert.match(q140SectionPractice.q.sv, /Hur firar många jul i Sverige/);
+  assert.match(q140SectionPractice.q.en, /How do many people in Sweden celebrate Christmas/);
+  assert.ok(q140Judgement, 'q140 judgement generated variant should be published');
+  assert.match(q140Judgement.q.sv, /Hur firar många jul i Sverige/);
+  assert.match(q140Judgement.q.en, /How do many people in Sweden celebrate Christmas/);
+  assert.equal(
+    q140True?.q.sv,
+    'Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem.',
+  );
+  assert.equal(
+    q140True?.q.en,
+    'Many people celebrate Christmas as a family holiday even when it has no religious meaning for them.',
+  );
+  assert.equal(q140False?.q.sv, 'Jul firas alltid med demonstrationer om sociala frågor.');
+  assert.equal(
+    q140False?.q.en,
+    'Christmas is always celebrated with demonstrations about social issues.',
+  );
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('Christmas celebration prompt guard rejects the old answer-key phrasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?',
+        'Vilket påstående stämmer om julfirande i Sverige?',
+      )
+      .replace(
+        'How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
+        'Which statement is correct about Christmas celebrations in Sweden?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q140 asks about the answer instead of the civic concept/,
   );
 });
 
