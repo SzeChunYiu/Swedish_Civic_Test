@@ -22,7 +22,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 98);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.match(source, /type HomeCopy =/);
@@ -35,8 +35,21 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
+  assert.match(source, /resumeWhereLeftOff/);
+  assert.match(source, /resumeBannerCopy/);
+  assert.match(source, /const questionChapterIndex = Object\.fromEntries/);
+  assert.match(source, /function buildResumeProgress/);
+  assert.match(source, /const resumeCandidate = useMemo/);
+  assert.match(source, /const resumeChapter = chapters\.find/);
+  assert.match(source, /resumeChapter && resumeChapterTitle && resumeAccessibilityLabel \? \(/);
+  assert.match(source, /href=\{`\/chapter\/\$\{resumeChapter\.id\}`\}/);
+  assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
+  assert.match(source, /Senaste övning/);
+  assert.match(source, /Recent practice/);
+  assert.match(source, /Fortsätt \$\{chapterTitle\}/);
+  assert.match(source, /Resume \$\{chapterTitle\}/);
   assert.match(source, /Redoindikator/);
   assert.match(source, /Readiness indicator/);
   assert.match(source, /Smarta studievanor/);
