@@ -275,6 +275,15 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
+const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
+const QUESTION_CHRISTMAS_TREE_ENGLISH_NATURALNESS_PATTERNS = [
+  /\btree at Christmas\b/i,
+  /\bbring a tree into the house\b/i,
+  /\bBring a tree\b/i,
+  /\bPlant a tree\b/i,
+  /\bDance around a tree\b/i,
+  /\bLight a tree\b/i,
+];
 const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does the Council of Europe work for\??/i,
   /\bThe Council of Europe works for\b/i,
@@ -4650,6 +4659,28 @@ function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionMayDayEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionChristmasTreeEnglishNaturalnessIssue(question) {
+  if (!(question.tags || []).includes('christmas-tree')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_CHRISTMAS_TREE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
   if (!(question.tags || []).includes('council-of-europe')) return null;
 
@@ -6446,6 +6477,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} became ${match[2]} in ${answer}`;
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
+  match = q.match(/^At (.+?) in Sweden, what do many people do with (.+)$/i);
+  if (match) return `At ${match[1]}, ${manyPeopleActionEn(answer)}`;
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What do many people do with (.+?) at (.+?) in Sweden$/i);
@@ -7553,6 +7586,8 @@ let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionStateWelfareCoverageSplitValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
+let questionMayDayEnglishNaturalnessValidated = 0;
+let questionChristmasTreeEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
@@ -16976,6 +17011,9 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareCoverageOverlapIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
+      const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
+      const christmasTreeEnglishNaturalnessIssue =
+        findQuestionChristmasTreeEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
@@ -17034,6 +17072,16 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal common-to-do English wording`);
       } else {
         questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
+      }
+      if (mayDayEnglishNaturalnessIssue) {
+        fail(`${label} uses literal First of May English wording`);
+      } else {
+        questionMayDayEnglishNaturalnessValidated += 1;
+      }
+      if (christmasTreeEnglishNaturalnessIssue) {
+        fail(`${label} uses generic tree English Christmas wording`);
+      } else {
+        questionChristmasTreeEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -17531,6 +17579,8 @@ console.log(
       questionStateWelfareEnglishNaturalnessValidated,
       questionStateWelfareCoverageSplitValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
+      questionMayDayEnglishNaturalnessValidated,
+      questionChristmasTreeEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
