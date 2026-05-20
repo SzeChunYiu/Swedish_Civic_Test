@@ -44,6 +44,8 @@ interface ScoredQuestion {
   bucket: 'recently-wrong' | 'unseen' | 'mastered' | 'stale';
 }
 
+type AdaptiveBucket = ScoredQuestion['bucket'];
+
 function recentAccuracy(progress: UserProgress, now: Date): number {
   const cutoff = now.getTime() - 30 * DAY_MS;
   let total = 0;
@@ -86,9 +88,8 @@ const DIFFICULTY_WEIGHT: Record<NonNullable<AdaptiveQuestion['difficulty']>, num
   hard: 2,
 };
 
-export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
+function scoreAdaptiveQuestions(input: AdaptivePracticeInput): ScoredQuestion[] {
   const now = input.now ?? new Date();
-  const size = input.size ?? 10;
   const accuracy = input.recentAccuracyOverride ?? recentAccuracy(input.progress, now);
   const seen = lastSeenMap(input.progress, now);
 
@@ -102,10 +103,10 @@ export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
     ? input.bank.filter((q) => q.chapterId === input.chapterId)
     : input.bank.slice();
 
-  const scored: ScoredQuestion[] = eligible.map((question) => {
+  const scored = eligible.map((question): ScoredQuestion => {
     const last = seen[question.id];
     let score = 0;
-    let bucket: ScoredQuestion['bucket'];
+    let bucket: AdaptiveBucket;
 
     if (!last) {
       // Unseen — high priority, especially when accuracy is decent.
@@ -140,46 +141,21 @@ export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
   // Sort descending score; ties break on question id for determinism.
   scored.sort((a, b) => b.score - a.score || a.question.id.localeCompare(b.question.id));
 
-  return scored.slice(0, size).map((s) => s.question.id);
+  return scored;
+}
+
+export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
+  const size = input.size ?? 10;
+  return scoreAdaptiveQuestions(input)
+    .slice(0, size)
+    .map((s) => s.question.id);
 }
 
 /** Visibility helper for the practice screen: how many of the picked items are recently-wrong / unseen / etc. */
-export function explainAdaptivePick(
-  input: AdaptivePracticeInput,
-): Record<ScoredQuestion['bucket'], number> {
-  const now = input.now ?? new Date();
+export function explainAdaptivePick(input: AdaptivePracticeInput): Record<AdaptiveBucket, number> {
   const size = input.size ?? 10;
-  const accuracy = input.recentAccuracyOverride ?? recentAccuracy(input.progress, now);
-  const seen = lastSeenMap(input.progress, now);
-  const eligible = input.chapterId
-    ? input.bank.filter((q) => q.chapterId === input.chapterId)
-    : input.bank.slice();
-
-  const scored: ScoredQuestion[] = eligible.map((question) => {
-    const last = seen[question.id];
-    let score = 0;
-    let bucket: ScoredQuestion['bucket'];
-    if (!last) {
-      score = 80 + (accuracy > 0.5 ? 10 : 0);
-      bucket = 'unseen';
-    } else if (last.correctStreak === 0) {
-      score = 100;
-      bucket = 'recently-wrong';
-    } else {
-      const daysSince = (now.getTime() - last.lastAtMs) / DAY_MS;
-      if (last.correctStreak >= 3 && daysSince < 14) {
-        score = 30;
-        bucket = 'mastered';
-      } else {
-        score = 50 + Math.min(daysSince, 30);
-        bucket = 'stale';
-      }
-    }
-    return { question, score, bucket };
-  });
-  scored.sort((a, b) => b.score - a.score || a.question.id.localeCompare(b.question.id));
-  const picked = scored.slice(0, size);
-  const counts: Record<ScoredQuestion['bucket'], number> = {
+  const picked = scoreAdaptiveQuestions(input).slice(0, size);
+  const counts: Record<AdaptiveBucket, number> = {
     'recently-wrong': 0,
     unseen: 0,
     mastered: 0,

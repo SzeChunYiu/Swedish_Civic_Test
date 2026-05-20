@@ -132,6 +132,34 @@ test('pickAdaptiveSession: low accuracy biases toward easy questions', () => {
   assert.equal(picked[0], 'easy1');
 });
 
+test('explainAdaptivePick: bucket summary follows difficulty-adjusted picked questions', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const input = {
+    progress: progressFromAnswers([
+      {
+        questionId: 'a-stale-hard',
+        selectedOptionIds: [],
+        isCorrect: true,
+        answeredAt: '2026-04-01T10:00:00.000Z',
+        timeSpentSeconds: 5,
+      },
+    ]),
+    bank: [
+      { id: 'a-stale-hard', difficulty: 'hard', chapterId: 'c1' },
+      { id: 'z-unseen-easy', difficulty: 'easy', chapterId: 'c1' },
+    ],
+    size: 1,
+    recentAccuracyOverride: 0.95,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  assert.deepEqual(pickAdaptiveSession(input), ['a-stale-hard']);
+
+  const counts = explainAdaptivePick(input);
+  assert.equal(counts.stale, 1);
+  assert.equal(counts.unseen, 0);
+});
+
 test('explainAdaptivePick: bucket counts roll up correctly', () => {
   const { explainAdaptivePick } = loadTs('lib/learning/adaptivePractice.ts');
   const answers = [
