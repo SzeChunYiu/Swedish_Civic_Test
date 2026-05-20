@@ -231,7 +231,29 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.themeColorTokens, ['colors.canvas']);
   assert.deepEqual(manifest.statusBarStyles, ['auto']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
-  assert.deepEqual(manifest.appSchemes, ['swedish-civic-test']);
+  assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
+  assert.deepEqual(
+    [...manifest.nativeIntentStaticRoutes].sort(),
+    [
+      '/',
+      ...manifest.tabScreenNames.map((name) => `/${name}`),
+      ...manifest.rootStackScreenNames
+        .filter((name) => !['index', '(tabs)', '+not-found'].includes(name))
+        .map((name) => `/${name}`),
+      ...manifest.standaloneRouteHrefs,
+    ].sort(),
+    'native intent static route allowlist should mirror manifest route declarations',
+  );
+  assert.deepEqual(
+    manifest.nativeIntentDynamicRouteRoutes,
+    manifest.dynamicRouteNames.map((name) => `/${name}`),
+  assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
+    true,
+    'native intent static route allowlist should include the about-the-test guide',
+  );
+  assert.deepEqual(manifest.nativeIntentDynamicRouteFiles, manifest.dynamicRouteFiles);
+  assert.deepEqual(manifest.nativeIntentDynamicRouteSamplePaths, manifest.dynamicRouteHrefSamples);
 
   for (const file of manifest.files) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
@@ -289,6 +311,54 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     new RegExp(`return ["']${escapeRegExp(manifest.nativeFallbackHrefs[0])}["']`, 'g'),
     'native intent should keep the safe fallback route from the manifest',
   );
+});
+
+test('native intent resolves every manifest runtime sample before the Home fallback', () => {
+  const manifest = readRouterShellManifest();
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(typeof redirectSystemPath, 'function');
+  assert.equal(
+    manifest.nativeIntentRuntimeSampleInputs.length,
+    manifest.nativeIntentRuntimeSampleExpectedPaths.length,
+    'native intent runtime sample inputs and expectations should stay paired',
+  );
+
+  for (const [index, input] of manifest.nativeIntentRuntimeSampleInputs.entries()) {
+    assert.equal(
+      redirectSystemPath({ initial: true, path: input }),
+      manifest.nativeIntentRuntimeSampleExpectedPaths[index],
+      `native intent sample ${input} should resolve to its manifest expectation`,
+    );
+  }
+});
+
+test('top-bar language picker keeps a token-sized target and feedback', () => {
+  const languagePicker = read('components/ui/LanguagePicker.tsx');
+  const topBarActions = read('components/ui/TopBarActions.tsx');
+
+  assertContains(topBarActions, '<LanguagePicker />');
+  assertMatches(
+    languagePicker,
+    /style=\{\(\{ pressed \}\) => \[styles\.trigger, pressed \? styles\.triggerPressed : null\]\}/,
+    'language picker trigger should keep tokenized pressed feedback',
+  );
+  assertMatches(
+    languagePicker,
+    /trigger:\s*\{[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*\}/,
+    'language picker trigger should preserve the shared 48px top-bar target',
+    redirectSystemPath({
+      initial: true,
+      path: 'almost-swedish://app/about-the-test',
+    }),
+    '/about-the-test',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'almost-swedish://app/not-real' }),
+    '/home',
+  );
+  assertContains(languagePicker, 'backgroundColor: colors.focusSoft');
+  assertContains(languagePicker, 'transform: [{ scale: motion.pressedScale }]');
 });
 
 test('router shell tooling guard is wired into package scripts', () => {
