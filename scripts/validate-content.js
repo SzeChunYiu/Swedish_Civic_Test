@@ -7758,6 +7758,15 @@ function validateTabNavigationParity() {
     reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
   }
 
+  const iconMapBlock = tabLayout.match(/const tabIconMap: TabIconMap = \{([\s\S]*?)\};/)?.[1] ?? '';
+  const seenIcons = new Set();
+
+  const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
+  const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
+  if (swedishExamTabTitle !== 'Övningsprov') {
+    reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
+  }
+
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
       `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
