@@ -30,7 +30,7 @@ import {
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswersForLocalDate } from '../../lib/learning/streaks';
+import { countAnswerAttemptsForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
@@ -479,6 +479,7 @@ export default function Screen() {
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const answerAttempts = useProgressStore((state) => state.answerAttempts);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
@@ -487,7 +488,10 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
-  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
+  const completedToday = Math.min(
+    countAnswerAttemptsForLocalDate({ answerAttempts, questionProgress }),
+    dailyGoalAnswers,
+  );
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const streakWithFreeze = useMemo(
     () =>
@@ -526,12 +530,13 @@ export default function Screen() {
     () =>
       buildDashboardProgressSnapshot({
         answerDates,
+        answerAttempts,
         dailyGoalAnswers,
         mockExamSessions,
         questionProgress,
         totalXp,
       }),
-    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+    [answerAttempts, answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
   );
   const dashboardQuestionChapterIndex = useMemo(
     () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
