@@ -39,6 +39,15 @@ const UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS = Object.freeze([
   { label: 'Somali passport slogan', pattern: /Hel baasaboorka\./ },
 ]);
 
+const UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS = Object.freeze([
+  { label: 'static title fika-pass outcome slogan', pattern: /\bStudy,\s*fika,\s*pass\b/i },
+  { label: 'static title pass-the-test outcome claim', pattern: /\bpass\s+the\s+test\b/i },
+  { label: 'static title bare pass outcome claim', pattern: /\bfika,\s*pass\b/i },
+  { label: 'static title passport outcome claim', pattern: /\b(?:earn|get)\s+the\s+passport\b/i },
+  { label: 'static title Swedish pass-outcome claim', pattern: /\bKlara\s+provet\b/i },
+  { label: 'static title Swedish passport outcome claim', pattern: /\bFå\s+passet\b/i },
+]);
+
 function phrasePattern(...parts) {
   return new RegExp(parts.map(escapeRegExp).join('\\s*'), 'i');
 }
@@ -101,6 +110,22 @@ function extractStaticHeadMetaDescriptions(source) {
   return descriptions;
 }
 
+function extractStaticHeadTitles(source) {
+  const headMatch = /<head\b[^>]*>([\s\S]*?)<\/head>/i.exec(source);
+  const headSource = headMatch ? headMatch[1] : source;
+  const headOffset = headMatch ? headMatch.index + headMatch[0].indexOf(headSource) : 0;
+  const titles = [];
+
+  for (const match of headSource.matchAll(/<title\b[^>]*>([\s\S]*?)<\/title>/gi)) {
+    titles.push({
+      content: match[1].replace(/\s+/g, ' ').trim(),
+      line: lineNumberForIndex(source, headOffset + match.index),
+    });
+  }
+
+  return titles;
+}
+
 function findStaticHeadMetadataDescriptionIssues(source, file = 'site/index.html') {
   const descriptions = extractStaticHeadMetaDescriptions(source);
   const issues = [];
@@ -136,6 +161,41 @@ function findStaticHeadMetadataDescriptionIssues(source, file = 'site/index.html
   return issues;
 }
 
+function findStaticHeadMetadataTitleIssues(source, file = 'site/index.html') {
+  const titles = extractStaticHeadTitles(source);
+  const issues = [];
+
+  if (titles.length === 0) {
+    issues.push({ file, line: 1, label: 'missing static title', match: '' });
+    return issues;
+  }
+
+  for (const title of titles) {
+    if (!title.content) {
+      issues.push({
+        file,
+        line: title.line,
+        label: 'blank static title',
+        match: '',
+      });
+      continue;
+    }
+
+    for (const { label, pattern } of UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS) {
+      const match = pattern.exec(title.content);
+      if (!match) continue;
+      issues.push({
+        file,
+        line: title.line,
+        label,
+        match: match[0],
+      });
+    }
+  }
+
+  return issues;
+}
+
 function findUnsupportedStaticOutcomeSlogans(repoRoot = DEFAULT_REPO_ROOT) {
   const offenders = [];
 
@@ -151,6 +211,10 @@ function findUnsupportedStaticOutcomeSlogans(repoRoot = DEFAULT_REPO_ROOT) {
         line: lineNumberForIndex(source, match.index),
         match: match[0],
       });
+    }
+
+    if (file === 'site/index.html') {
+      offenders.push(...findStaticHeadMetadataTitleIssues(source, file));
     }
   }
 
@@ -203,9 +267,26 @@ function assertStaticHeadMetadataDescriptionSource(source, file = 'site/index.ht
   return extractStaticHeadMetaDescriptions(source).length;
 }
 
+function assertStaticHeadMetadataTitleSource(source, file = 'site/index.html') {
+  const issues = findStaticHeadMetadataTitleIssues(source, file);
+  assert.equal(
+    issues.length,
+    0,
+    `static head title must be branded, non-empty, and avoid pass/passport outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
+      issues,
+    )}`,
+  );
+  return extractStaticHeadTitles(source).length;
+}
+
 function assertStaticHeadMetadataDescription(repoRoot = DEFAULT_REPO_ROOT) {
   const source = fs.readFileSync(path.join(repoRoot, 'site/index.html'), 'utf8');
   return assertStaticHeadMetadataDescriptionSource(source);
+}
+
+function assertStaticHeadMetadataTitle(repoRoot = DEFAULT_REPO_ROOT) {
+  const source = fs.readFileSync(path.join(repoRoot, 'site/index.html'), 'utf8');
+  return assertStaticHeadMetadataTitleSource(source);
 }
 
 function formatUnsupportedStaticTeamCredentialClaims(offenders) {
@@ -241,14 +322,19 @@ function assertNoUnsupportedStaticTeamCredentialClaims(repoRoot = DEFAULT_REPO_R
 module.exports = {
   STATIC_TEAM_CREDENTIAL_COPY_FILES,
   STATIC_OUTCOME_COPY_FILES,
+  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
   UNSUPPORTED_STATIC_TEAM_CREDENTIAL_PATTERNS,
   UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
   assertNoUnsupportedStaticTeamCredentialClaims,
   assertNoUnsupportedStaticOutcomeSlogans,
   assertStaticHeadMetadataDescription,
   assertStaticHeadMetadataDescriptionSource,
+  assertStaticHeadMetadataTitle,
+  assertStaticHeadMetadataTitleSource,
   extractStaticHeadMetaDescriptions,
+  extractStaticHeadTitles,
   findStaticHeadMetadataDescriptionIssues,
+  findStaticHeadMetadataTitleIssues,
   findUnsupportedStaticTeamCredentialClaims,
   findUnsupportedStaticTeamCredentialClaimsInSource,
   findUnsupportedStaticOutcomeSlogans,

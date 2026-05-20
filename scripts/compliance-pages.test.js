@@ -5,6 +5,7 @@ const test = require('node:test');
 const {
   assertNoUnsupportedStaticOutcomeSlogans,
   assertStaticHeadMetadataDescriptionSource,
+  assertStaticHeadMetadataTitleSource,
 } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -160,6 +161,8 @@ test('static site brand copy matches app identity', () => {
 
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+  assert.equal(assertStaticHeadMetadataTitleSource(read('site/index.html')), 1);
+  assert.match(read('site/index.html'), /<title>Almost Swedish — Study and practice\.<\/title>/);
   assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
   assert.match(read('site/index.html'), /data-i18n="footer\.t1">Study the material\./);
   const siteAppSource = read('site/app.js');
@@ -172,6 +175,28 @@ test('static learner-facing slogans avoid pass and passport outcome promises', (
 test('static head metadata description is neutral and non-empty', () => {
   const indexHtml = read('site/index.html');
 
+  assert.equal(assertStaticHeadMetadataTitleSource(indexHtml), 1);
+  assert.throws(
+    () => assertStaticHeadMetadataTitleSource(indexHtml.replace(/<title>[\s\S]*?<\/title>/, '')),
+    /missing static title/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataTitleSource(
+        indexHtml.replace(/(<title>)[\s\S]*?(<\/title>)/, '$1$2'),
+      ),
+    /blank static title/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataTitleSource(
+        indexHtml.replace(
+          /(<title>)[\s\S]*?(<\/title>)/,
+          '$1Almost Swedish — Study, fika, pass.$2',
+        ),
+      ),
+    /Study,\s*fika,\s*pass/,
+  );
   assert.equal(assertStaticHeadMetadataDescriptionSource(indexHtml), 1);
   assert.throws(
     () =>

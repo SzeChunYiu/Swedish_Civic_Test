@@ -60,6 +60,7 @@
     "test:static-site-chapter-count-copy": "node --test scripts/static-site-chapter-count-copy.test.js",
     "test:static-site-source-provenance-copy": "node --test scripts/static-site-source-provenance-copy.test.js",
     "test:site-live": "node scripts/check-live-site.js",
+    "update:site-asset-manifest": "node scripts/update-site-asset-manifest.js",
     "test:ui-effects": "node --test scripts/ui-effects.test.js",
     "simulate:ux-users": "node scripts/simulate-ux-users.js",
     "test:ux-simulation": "node --test scripts/ux-simulation.test.js",
