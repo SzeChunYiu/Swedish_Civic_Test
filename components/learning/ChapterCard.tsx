@@ -46,11 +46,13 @@ const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = {
 };
 
 export function ChapterCard({
+  accessibilityMode = 'summary',
   chapter,
   questionCount = chapter?.questionCount ?? 0,
   completedCount = 0,
   language = 'sv',
 }: {
+  accessibilityMode?: 'summary' | 'presentation';
   chapter?: Chapter;
   questionCount?: number;
   completedCount?: number;
@@ -79,9 +81,17 @@ export function ChapterCard({
   ]
     .filter(Boolean)
     .join('. ');
+  const shouldGroupForAccessibility = accessibilityMode === 'summary';
+  const shouldHideNestedAccessibility = accessibilityMode === 'presentation';
 
   return (
-    <Card accessibilityLabel={chapterAccessibilityLabel} elevated style={styles.card}>
+    <Card
+      accessibilityElementsHidden={shouldHideNestedAccessibility}
+      accessibilityLabel={shouldGroupForAccessibility ? chapterAccessibilityLabel : undefined}
+      elevated
+      importantForAccessibility={shouldHideNestedAccessibility ? 'no-hide-descendants' : undefined}
+      style={styles.card}
+    >
       <View style={styles.headerRow}>
         <Badge tone={questionCount > 0 ? 'blue' : 'warm'}>{status}</Badge>
       </View>

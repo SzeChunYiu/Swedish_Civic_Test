@@ -22,9 +22,11 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     'utf8',
   );
 
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 23);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 29);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/);
+  assert.match(source, /accessibilityMode = 'summary'/);
+  assert.match(source, /accessibilityMode\?: 'summary' \| 'presentation';/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /const copy = chapterCardCopy\[language\];/);
   assert.match(source, /innehåll planerat/);
@@ -45,7 +47,20 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
   assert.match(source, /copy\.accessibilityLabel\.secondaryName\(secondaryName\)/);
   assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
   assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
-  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
+  assert.match(source, /const shouldGroupForAccessibility = accessibilityMode === 'summary';/);
+  assert.match(
+    source,
+    /const shouldHideNestedAccessibility = accessibilityMode === 'presentation';/,
+  );
+  assert.match(
+    source,
+    /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/,
+  );
+  assert.match(source, /accessibilityElementsHidden=\{shouldHideNestedAccessibility\}/);
+  assert.match(
+    source,
+    /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/,
+  );
   assert.match(source, /<Text style=\{styles\.title\}>\{title\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
