@@ -391,9 +391,9 @@
     stage.innerHTML = `
       <div class="mock-landing">
         <div class="mock-landing__inner">
-          <span class="eyebrow">${sv ? 'Övningsprov' : 'Mock exam'}</span>
+          <span class="eyebrow">${sv ? 'Övningsprov' : 'Timed practice'}</span>
           <h1 class="practice__title">
-            <span>${sv ? 'Bygg ditt övningsprov.' : 'Build your exam.'}</span>
+            <span>${sv ? 'Bygg ditt övningsprov.' : 'Build your practice round.'}</span>
           </h1>
           <p class="mock-landing__lede">${
             sv
@@ -432,14 +432,14 @@
             </div>
 
             <div class="mock-cfg__meta">
-              <span><b>${sv ? 'Övningspoäng' : 'Practice score'}</b> ${sv ? '% rätt' : '% correct'}</span>
-              <span><b>${sv ? 'Ingen återkoppling' : 'No feedback'}</b> ${sv ? 'förrän inlämnat' : 'until submit'}</span>
+              <span><b>${sv ? 'Övningspoäng' : 'Result'}</b> ${sv ? '% rätt' : 'percent correct'}</span>
+              <span><b>${sv ? 'Ingen återkoppling' : 'Practice timer only'}</b> ${sv ? 'förrän inlämnat' : 'not official exam timing'}</span>
               <span><b>${sv ? 'Lokalt sparat' : 'Saved locally'}</b></span>
             </div>
           </div>
 
           <div class="mock-landing__cta">
-            <a class="btn btn--gold" href="#/mock?run=1" id="cfg-start">${sv ? 'Starta övningsprov' : 'Start exam'} →</a>
+            <a class="btn btn--gold" href="#/mock?run=1" id="cfg-start">${sv ? 'Starta övningsprov' : 'Start timed practice'} →</a>
             <a class="btn btn--ghost" href="#/practice">${sv ? 'Öva först' : 'Practice first'}</a>
             <button class="mock-cfg__link" id="cfg-reset">${sv ? 'Återställ' : 'Reset to defaults'}</button>
           </div>
