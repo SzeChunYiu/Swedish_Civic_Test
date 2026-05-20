@@ -253,6 +253,26 @@ test('XP rules focused content validation runs only its parity summary', () => {
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'streakRulesParityValidated'), false);
 });
 
+test('readiness adapter focused content validation runs only its runtime summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-readiness-adapter-rules'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused readiness adapter validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.readinessAdapterRulesValidated, 6);
+  assert.equal(summary.readinessAdapterRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
+});
+
 test('exam submission finality focused validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,

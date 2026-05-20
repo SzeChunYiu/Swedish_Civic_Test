@@ -351,6 +351,88 @@ test('readiness mock recency uses completion metadata without depending on synth
   assert.equal(countedMock.components.accuracy, 0);
 });
 
+test('readiness adapter aggregates counters without synthetic answer rows', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/readiness.ts'), 'utf8');
+  const start = source.indexOf('export function computeReadinessFromQuestionProgress');
+  const end = source.indexOf('\nexport function computeReadinessScore', start);
+  assert.notEqual(start, -1);
+  assert.notEqual(end, -1);
+
+  const adapterSource = source.slice(start, end);
+  assert.doesNotMatch(adapterSource, /Array\.from\s*\(/);
+  assert.match(adapterSource, /scoreFromComponents\(/);
+});
+
+test('readiness adapter ignores malformed aggregate counters', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+
+  const result = computeReadinessFromQuestionProgress({
+    questionProgress: {
+      infinite: {
+        seenCount: Infinity,
+        correctCount: Infinity,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+      },
+      stringy: {
+        seenCount: '3',
+        correctCount: '2',
+        wrongCount: '1',
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:01:00.000Z',
+      },
+      fractional: {
+        seenCount: 1.5,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:02:00.000Z',
+      },
+      oversized: {
+        seenCount: 10001,
+        correctCount: 10001,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:03:00.000Z',
+      },
+      valid: {
+        seenCount: 1,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 1,
+        lastAnsweredAt: '2026-05-19T10:04:00.000Z',
+      },
+    },
+    questions: [
+      { id: 'infinite', chapterId: 'ch01' },
+      { id: 'stringy', chapterId: 'ch01' },
+      { id: 'fractional', chapterId: 'ch01' },
+      { id: 'oversized', chapterId: 'ch01' },
+      { id: 'valid', chapterId: 'ch02' },
+    ],
+    chapters: [
+      { id: 'ch01', questionCount: 4 },
+      { id: 'ch02', questionCount: 1 },
+    ],
+    mockExamSessions: [
+      {
+        sessionId: 'score-only-invalid-total',
+        score: 0.8,
+        completedAt: '2026-05-19T10:05:00.000Z',
+        totalCount: Infinity,
+        correctCount: 32,
+      },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.components.accuracy, 1);
+  assert.equal(result.components.coverage, 0.5);
+  assert.equal(result.components.mockAverage, 0.8);
+  assert.equal(result.isSparse, true);
+});
+
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
   const { bestMockScore, mockHistory } = loadAllTs('lib/learning/dashboardStats.ts');
   const progress = {
