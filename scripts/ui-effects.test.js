@@ -1214,6 +1214,14 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Remove Ads/);
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
   assert.match(source, /Restore Remove Ads purchase/);
+  assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
+  assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
+  assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
+  assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /Restore Remove Ads purchase/);
+  assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
+  assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
+  assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
   assert.match(source, /Ads are disabled on this device\./);
   assert.doesNotMatch(source, /adsDisabled \? copy\.bodyIdle/);
   assert.doesNotMatch(source, /activeAction !== null \|\| adsDisabled/);
