@@ -27,6 +27,8 @@ function staleToken(...parts) {
 
 function staleSeparatedWords(...words) {
   return new RegExp(words.join('[\\s_-]+'), 'i');
+}
+
 function staleNativeIdentifierPattern() {
   return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
 }

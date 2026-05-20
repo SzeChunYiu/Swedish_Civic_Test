@@ -432,6 +432,8 @@ test('mock exam completion XP is awarded once per stored session', () => {
     completedAt: '2026-05-19T10:10:00.000Z',
   });
   assert.equal(store.getState().totalXp, 90);
+});
+
 test('readiness and dashboard selectors ignore invalid or future answer dates', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
   const { dashboardSummary } = loadAllTs('lib/learning/dashboardStats.ts');
