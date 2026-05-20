@@ -67,11 +67,17 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
   const metaStemPattern = /^(?:Vilket svar är korrekt\?|Which answer is correct\?)/i;
+  const statementChoicePromptPattern =
+    /\b(?:Vilket påstående är korrekt|Vilket påstående stämmer|Which statement is correct|Which statement best matches|Which statement about)\b/i;
   const absentTrueFalseExplanationPattern =
-    /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
+    /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|påståendet som motsvarar den uppgiften|motsatsen inte stämmer|That makes True correct|True is correct|while False|statement that matches that fact|opposite statement is not)\b/i;
 
   function singleChoiceOptionTexts(question) {
     return (question.opts || []).flatMap((option) => [option.sv, option.en]);
+  }
+
+  function isGeneratedSingleChoice(question) {
+    return question.type === 'single_choice' && question.tags?.includes('published-variant');
   }
 
   function fillerRows(questions) {
@@ -108,9 +114,20 @@ test('generated single-choice banks omit true-false and filler option shells', (
       .map((question) => question.id);
   }
 
+  function statementChoicePromptRows(questions) {
+    return Array.from(questions)
+      .filter(isGeneratedSingleChoice)
+      .filter(
+        (question) =>
+          statementChoicePromptPattern.test(question.q.sv) ||
+          statementChoicePromptPattern.test(question.q.en),
+      )
+      .map((question) => question.id);
+  }
+
   function absentTrueFalseExplanationRows(questions) {
     return Array.from(questions)
-      .filter((question) => question.type === 'single_choice')
+      .filter(isGeneratedSingleChoice)
       .filter(
         (question) =>
           !singleChoiceOptionTexts(question).some((text) =>
@@ -131,6 +148,8 @@ test('generated single-choice banks omit true-false and filler option shells', (
   assert.deepEqual(trueFalseShellRows(actualSiteBank), []);
   assert.deepEqual(metaStemRows(generatedSiteBank), []);
   assert.deepEqual(metaStemRows(actualSiteBank), []);
+  assert.deepEqual(statementChoicePromptRows(generatedSiteBank), []);
+  assert.deepEqual(statementChoicePromptRows(actualSiteBank), []);
   assert.deepEqual(absentTrueFalseExplanationRows(generatedSiteBank), []);
   assert.deepEqual(absentTrueFalseExplanationRows(actualSiteBank), []);
 });

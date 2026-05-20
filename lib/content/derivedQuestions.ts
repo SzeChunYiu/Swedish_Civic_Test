@@ -807,22 +807,32 @@ function falseStatementExplanationEn(source: PracticeQuestion): string {
 }
 
 function trueFalseSingleChoiceExplanationSv(source: PracticeQuestion): string {
-  return `${ensureSentence(
-    trueFalseSourceStatementSv(source, true),
-  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
+  if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationSv(source);
+  return source.explanationSv;
 }
 
 function trueFalseSingleChoiceExplanationEn(source: PracticeQuestion): string {
-  return `${ensureSentence(
-    trueFalseSourceStatementEn(source, true),
-  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
+  if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationEn(source);
+  return source.explanationEn;
 }
 
 function statementTopicSv(source: PracticeQuestion): string {
   const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
 
+  if (
+    /^Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat\b/i.test(
+      statement,
+    )
+  ) {
+    return 'Sveriges klimat';
+  }
+
   if (/^År 2000 blev Svenska kyrkan\b/i.test(statement)) {
     return 'Svenska kyrkan och staten år 2000';
+  }
+
+  if (/^Sverige brukar delas in i\b/i.test(statement)) {
+    return 'Sveriges landsdelar';
   }
 
   const match = statement.match(
@@ -841,8 +851,20 @@ function statementTopicSv(source: PracticeQuestion): string {
 function statementTopicEn(source: PracticeQuestion): string {
   const statement = stripFinalPunctuation(stripTrueFalsePromptEn(source.questionEn));
 
+  if (
+    /^The Gulf Stream and the North Atlantic Current help make Sweden's climate mild\b/i.test(
+      statement,
+    )
+  ) {
+    return "Sweden's climate";
+  }
+
   if (/^In 2000, the Church of Sweden became\b/i.test(statement)) {
     return 'the Church of Sweden and the state in 2000';
+  }
+
+  if (/^Sweden is usually divided into\b/i.test(statement)) {
+    return "Sweden's major parts";
   }
 
   const match = statement.match(
@@ -868,15 +890,37 @@ function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
     },
     {
       id: 'both-statements',
-      textSv: 'Båda påståendena är korrekta',
-      textEn: 'Both statements are correct',
+      textSv: 'Båda beskrivningarna är korrekta',
+      textEn: 'Both descriptions are correct',
     },
     {
       id: 'neither-statement',
-      textSv: 'Inget av påståendena är korrekt',
-      textEn: 'Neither statement is correct',
+      textSv: 'Ingen av beskrivningarna är korrekt',
+      textEn: 'Neither description is correct',
     },
   ];
+}
+
+function naturalSingleChoiceSourceQuestionSv(question: string): string {
+  const q = stripFinalPunctuation(question);
+  let match = q.match(/^Vilket påstående stämmer om (.+)$/i);
+  if (match) return `Vad stämmer om ${match[1]}?`;
+
+  match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
+  if (match) return `Vad stämmer om ${match[1]}?`;
+
+  return question;
+}
+
+function naturalSingleChoiceSourceQuestionEn(question: string): string {
+  const q = stripFinalPunctuation(question);
+  let match = q.match(/^Which statement is correct about (.+)$/i);
+  if (match) return `What is true about ${lowerLeadingEnglishArticle(match[1])}?`;
+
+  match = q.match(/^Which statement about (.+?) is correct$/i);
+  if (match) return `What is true about ${lowerLeadingEnglishArticle(match[1])}?`;
+
+  return question;
 }
 
 function generatedTrueFalseStatementSv(
@@ -899,30 +943,30 @@ function generatedTrueFalseStatementEn(
 
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
+    return `Vad stämmer om ${statementTopicSv(source)}?`;
   }
-  return `Välj rätt alternativ: ${source.questionSv}`;
+  return `Välj rätt alternativ: ${naturalSingleChoiceSourceQuestionSv(source.questionSv)}`;
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Which statement best matches ${statementTopicEn(source)}?`;
+    return `What is true about ${statementTopicEn(source)}?`;
   }
-  return `Choose the correct option: ${source.questionEn}`;
+  return `Choose the correct option: ${naturalSingleChoiceSourceQuestionEn(source.questionEn)}`;
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
+    return `Vilken uppgift om ${statementTopicSv(source)} är korrekt?`;
   }
-  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+  return `Vilket svar stämmer bäst? ${naturalSingleChoiceSourceQuestionSv(source.questionSv)}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Which statement is correct about ${statementTopicEn(source)}?`;
+    return `Which fact about ${statementTopicEn(source)} is correct?`;
   }
-  return `Which answer best matches? ${source.questionEn}`;
+  return `Which answer best matches? ${naturalSingleChoiceSourceQuestionEn(source.questionEn)}`;
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
