@@ -981,12 +981,42 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.match(workflow, /actions\/upload-artifact@v6/);
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
+  assert.match(workflow, /npx playwright install --with-deps chromium/);
   assert.match(workflow, /npm run validate/);
+  assert.match(workflow, /npm run test:screenshot-manifest/);
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
+  const installDependenciesIndex = workflow.indexOf('run: npm ci');
+  const installChromiumIndex = workflow.indexOf('run: npx playwright install --with-deps chromium');
+  const validateIndex = workflow.indexOf('run: npm run validate');
+  assert.ok(installChromiumIndex > installDependenciesIndex, 'Chromium installs after npm ci');
+  assert.ok(validateIndex > installChromiumIndex, 'Chromium installs before validation runs');
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
+});
+
+test('static browser tests fail closed in CI instead of using test-level Chromium skips', () => {
+  const helper = fs.readFileSync(path.join(repoRoot, 'scripts/static-browser-support.js'), 'utf8');
+  assert.match(helper, /function isCiEnvironment/);
+  assert.match(helper, /isTruthy\(env\.CI\) \|\| isTruthy\(env\.GITHUB_ACTIONS\)/);
+  assert.match(helper, /CI static browser check must run/);
+  assert.match(helper, /testContext\.skip\(message\);\s*return null;/);
+  assert.match(helper, /npx playwright install --with-deps chromium/);
+
+  ['scripts/static-site-flag-palette.test.js', 'scripts/static-site-mobile-nav.test.js'].forEach(
+    (relativePath) => {
+      const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+      assert.match(source, /launchStaticChromium/);
+      assert.match(source, /launchStaticChromium\(t,/);
+      assert.match(source, /if \(!browser\) return;/);
+      assert.doesNotMatch(source, /chromiumTestOptions/);
+      assert.doesNotMatch(source, /hasPlayableChromium/);
+      assert.doesNotMatch(source, /chromiumLaunchOptions/);
+      assert.doesNotMatch(source, /chromium\.launch/);
+      assert.doesNotMatch(source, /skip:\s*['"`]Chromium is not available/);
+    },
+  );
 });
 
 test('manual external blocker loop workflow runs redacted evidence loop and uploads report', () => {
