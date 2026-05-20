@@ -52,6 +52,11 @@ function staleCurrentReleaseAdEvidencePattern() {
   );
 }
 
+function assertNoStaleCurrentReleaseAdEvidence(value) {
+  assert.doesNotMatch(JSON.stringify(value), staleCurrentReleaseAdEvidencePattern());
+  assert.doesNotMatch(JSON.stringify(value), oldRealAdsEnvFlagPattern());
+}
+
 function storeRecordReadyEvidence(extra = '') {
   return [
     `App Store Connect and Google Play Console records exist for com.billyyiu.almostswedish.`,
@@ -156,6 +161,7 @@ test('checked-in local evidence stubs keep blocked current ad-supported shape', 
   assert.deepEqual(storePolicyQuestionnaires.evidenceBasis, [
     'publishing/app-store-listing.md',
     'publishing/google-play-listing.md',
+    'publishing/admob-progress.md',
     'publishing/privacy-labels.md',
     'publishing/google-play-data-safety.md',
     'reports/store-records/store-records.json',
@@ -1723,7 +1729,9 @@ test('release preflight blocks local store policy questionnaire evidence with st
     const policy = report.gates.find((gate) => gate.id === 'store-policy-questionnaires');
     assert.equal(policy.status, 'BLOCKED');
     assert.match(policy.evidence, /local artifact content/i);
-    assert.match(policy.evidence, /stale disabled-real-ads evidence/i);
+    assert.match(policy.evidence, /obsolete ad-disablement evidence/i);
+    assert.doesNotMatch(policy.evidence, staleCurrentReleaseAdEvidencePattern());
+    assertNoStaleCurrentReleaseAdEvidence(report);
   } finally {
     policyEvidence.cleanup();
   }
@@ -2746,9 +2754,50 @@ test('release preflight blocks READY manual release gates with stale disabled-re
     assert.equal(currentGate.status, 'BLOCKED');
     assert.match(
       currentGate.evidence,
-      /stale disabled-real-ads|blocker, placeholder, or not-final/i,
+      /obsolete ad-disablement release posture|current ad-supported Google Mobile Ads/i,
     );
+    assert.doesNotMatch(currentGate.evidence, staleCurrentReleaseAdEvidencePattern());
   }
+  assertNoStaleCurrentReleaseAdEvidence(report);
+});
+
+test('release preflight blocks stale disabled-ad wording in non-ready manual gates without echoing it', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-blocked-stale-ads-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const oldFlag = ['REAL_ADS', 'ENABLED_FOR_V1'].join('_');
+
+  writeAllReadyEvidence(evidencePath, {
+    'store-records': {
+      status: 'BLOCKED',
+      evidence: 'AdMob is deferred because real ads are disabled for v1.0.',
+    },
+    'store-policy-questionnaires': {
+      status: 'BLOCKED',
+      evidence: 'Store policy review says real ads remain disabled for v1.0.',
+    },
+    'privacy-review': {
+      status: 'BLOCKED',
+      evidence: `Privacy review still asks for ${oldFlag}=false.`,
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  for (const id of ['store-records', 'store-policy-questionnaires', 'privacy-review']) {
+    const currentGate = report.gates.find((gate) => gate.id === id);
+    assert.equal(currentGate.status, 'BLOCKED');
+    assert.match(currentGate.evidence, /obsolete ad-disablement release posture/i);
+    assert.doesNotMatch(currentGate.evidence, staleCurrentReleaseAdEvidencePattern());
+  }
+  assertNoStaleCurrentReleaseAdEvidence(report);
 });
 
 test('release evidence template is synchronized with ad-supported store and privacy evidence', () => {
@@ -2934,6 +2983,8 @@ test('release preflight blocks local store record evidence without AdMob app rea
     assert.match(storeRecords.evidence, /adMob\.appId/i);
     assert.match(storeRecords.evidence, /adMob\.status/i);
     assert.match(storeRecords.evidence, /adMob\.realAdsEnabled/i);
+    assert.doesNotMatch(storeRecords.evidence, staleCurrentReleaseAdEvidencePattern());
+    assertNoStaleCurrentReleaseAdEvidence(report);
   } finally {
     storeEvidence.cleanup();
   }
@@ -3038,6 +3089,8 @@ test('release preflight blocks local privacy review evidence with disabled-ad po
     assert.match(privacyReview.evidence, /local artifact content/i);
     assert.match(privacyReview.evidence, /realAdsEnabled/i);
     assert.match(privacyReview.evidence, /disabledSdks\.realAds/i);
+    assert.doesNotMatch(privacyReview.evidence, staleCurrentReleaseAdEvidencePattern());
+    assertNoStaleCurrentReleaseAdEvidence(report);
   } finally {
     privacyEvidence.cleanup();
   }
