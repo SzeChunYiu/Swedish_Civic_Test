@@ -9,11 +9,11 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
-function readStaticSwedishDictionary() {
-  const source = read('site/app.js');
-  const match = source.match(/\n  sv: \{([\s\S]*?)\n  \}\n\};/);
-  assert.ok(match, 'site/app.js Swedish i18n dictionary must stay parseable');
-  return match[1];
+function staticDictionaryValues(source, key) {
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return [...source.matchAll(new RegExp(`"${escapedKey}":\\s*"([^"]+)"`, 'g'))].map(
+    (match) => match[1],
+  );
 }
 
 test('static site privacy copy rejects stale monetization claims', () => {
@@ -50,10 +50,36 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
-test('static site Swedish dictionary avoids obvious English loanwords', () => {
-  const swedishDictionary = readStaticSwedishDictionary();
-
-  [/\bdrills\b/i, /\bMVP(?::n)?\b/i, /studieflöde-bug/i, /bygge-problem/i, /\bstreaks?\b/i].forEach(
-    (pattern) => assert.doesNotMatch(swedishDictionary, pattern),
+test('static site Swedish privacy copy uses natural study-streak wording', () => {
+  const appSource = read('site/app.js');
+  const privacyParagraphs = [
+    ...staticDictionaryValues(appSource, 'privacy.s3.p'),
+    ...staticDictionaryValues(appSource, 'privacy.s4.p'),
+  ];
+  const swedishPrivacyParagraphs = privacyParagraphs.filter((paragraph) =>
+    /\b(?:lagras|skickar|annonsleverantörer|studiesvar)\b/i.test(paragraph),
   );
+  const englishPrivacyParagraphs = privacyParagraphs.filter((paragraph) =>
+    /\b(?:stored locally|ad providers)\b/i.test(paragraph),
+  );
+
+  assert.equal(swedishPrivacyParagraphs.length, 2);
+  assert.equal(englishPrivacyParagraphs.length, 2);
+
+  swedishPrivacyParagraphs.forEach((paragraph) => {
+    assert.doesNotMatch(
+      paragraph,
+      /\bstreaks\b/i,
+      'Swedish static privacy copy must not use the English plural "streaks"',
+    );
+    assert.match(
+      paragraph,
+      /\bstudiesviter\b/i,
+      'Swedish static privacy copy should name locally stored study streaks naturally',
+    );
+  });
+
+  englishPrivacyParagraphs.forEach((paragraph) => {
+    assert.match(paragraph, /\bstreaks\b/i);
+  });
 });

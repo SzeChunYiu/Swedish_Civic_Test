@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
+import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
+import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -13,11 +15,14 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildQuestionSpeechText, stopSpeech } from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
-import { getPracticeQuestionForSession } from '../../lib/quiz/practiceFlow';
+import {
+  getCompletedQuestionIdsForQuestionBank,
+  getPracticeQuestionForSession,
+} from '../../lib/quiz/practiceFlow';
 import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
@@ -110,7 +115,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     provenanceSupplementaryLabel: 'Supplementary',
     provenanceEditorialLabel: 'Editorial',
     aboutSourcesShow: 'About the sources',
-    aboutSourcesHide: 'Close about-the-sources',
+    aboutSourcesHide: 'Close source details',
     aboutSourcesUhrTitle: 'UHR source',
     aboutSourcesUhrBody:
       "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
@@ -150,9 +155,13 @@ export default function Screen() {
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
+  const visibleCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+    [completedQuestionIds, filteredQuestions],
+  );
   const rawQuestion = getPracticeQuestionForSession(
     filteredQuestions,
-    completedQuestionIds,
+    visibleCompletedQuestionIds,
     activeQuestionId,
   );
   const question = useMemo(
@@ -160,13 +169,6 @@ export default function Screen() {
       rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
     [rawQuestion, shuffleSessionId],
   );
-
-  useEffect(() => {
-    stopSpeech();
-    return () => {
-      stopSpeech();
-    };
-  }, [question?.id]);
 
   if (!question) {
     return (
@@ -181,6 +183,9 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const celebrationStreak = selectedIsCorrect
+    ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
   const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
@@ -199,14 +204,6 @@ export default function Screen() {
       });
     }
   };
-  const handleAdvanceQuestion = () => {
-    stopSpeech();
-    advanceQuestion();
-  };
-  const handleResetSelection = () => {
-    stopSpeech();
-    resetSelection();
-  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -217,7 +214,9 @@ export default function Screen() {
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionIds.length)}</Text>
+        <Text style={styles.meta}>
+          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
+        </Text>
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
@@ -242,6 +241,7 @@ export default function Screen() {
           </Pressable>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
+            aria-checked={includeSupplementary}
             accessibilityRole="switch"
             accessibilityState={{ checked: includeSupplementary }}
             accessibilityLabel={
@@ -266,6 +266,7 @@ export default function Screen() {
           </Pressable>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
+            aria-expanded={aboutSourcesOpen}
             accessibilityRole="button"
             accessibilityState={{ expanded: aboutSourcesOpen }}
             accessibilityLabel={aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
@@ -329,6 +330,11 @@ export default function Screen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
+          <CelebrationBurst
+            active={selectedIsCorrect}
+            languageOverride={language}
+            streak={celebrationStreak}
+          />
           {currentScore ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
@@ -339,14 +345,19 @@ export default function Screen() {
             explanationSv={question.explanationSv}
             language={language}
           />
+          <FeedbackAudioButton
+            enabled={audioEnabled}
+            language={language}
+            text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
+          />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <RemoveAdsPlacementCta />
           <AdBanner placement="quiz_completed_interstitial" />
+          <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Button
               accessibilityLabel={copy.nextQuestionAccessibilityLabel}
               accessibilityRole="button"
-              onPress={handleAdvanceQuestion}
+              onPress={advanceQuestion}
               style={styles.feedbackButton}
             >
               {copy.nextQuestion}
@@ -354,7 +365,7 @@ export default function Screen() {
             <Button
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
-              onPress={handleResetSelection}
+              onPress={resetSelection}
               style={styles.feedbackButton}
               variant="secondary"
             >

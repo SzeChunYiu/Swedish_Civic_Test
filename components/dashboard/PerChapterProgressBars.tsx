@@ -64,10 +64,7 @@ export function PerChapterProgressBars({
   const accessibilityLabel = `${copy.title}: ${answeredChapters} / ${chapters.length}`;
 
   return (
-    <Card style={styles.card}>
-      <Text accessibilityRole="summary" style={styles.accessibilitySummary}>
-        {accessibilityLabel}
-      </Text>
+    <Card accessibilityLabel={accessibilityLabel} accessibilityRole="summary" style={styles.card}>
       <View style={styles.header}>
         <Text accessibilityRole="header" style={styles.title}>
           {copy.title}
@@ -152,13 +149,6 @@ export function PerChapterProgressBars({
 }
 
 const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
   card: {
     gap: space[1.5],
   },

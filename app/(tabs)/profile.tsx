@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
@@ -18,11 +19,13 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
-  audioDisabledBadge: string;
-  audioEnabledBadge: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
+  dashboardAccessibilityLabel: string;
+  dashboardCta: string;
+  dashboardSubtitle: string;
+  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -32,7 +35,6 @@ type ProfileCopy = {
   openSettings: string;
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
-  settingsShortcutHelper: string;
   streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
@@ -44,21 +46,22 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
-    audioDisabledBadge: 'Ljud av',
-    audioEnabledBadge: 'Ljud på',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
+    dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
+    dashboardCta: 'Visa översikt',
+    dashboardSubtitle: 'Aktivitet, kapitelprogress och XP visas på en egen sida.',
+    dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Justera studieinställningar',
-    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
+    openSettings: 'Ändra mål, språk och ljud',
+    openSettingsAccessibilityLabel: 'Ändra mål, språk och ljud',
     questionsHelper: 'frågor',
-    settingsShortcutHelper: 'Dagligt mål, språk och ljud',
     streakFreezeBadge: 'Svitskydd',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
@@ -69,21 +72,22 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
-    audioDisabledBadge: 'Audio off',
-    audioEnabledBadge: 'Audio on',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
+    dashboardAccessibilityLabel: 'Open progress dashboard',
+    dashboardCta: 'View dashboard',
+    dashboardSubtitle: 'Activity, chapter progress, and XP live on a dedicated page.',
+    dashboardTitle: 'Progress dashboard',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Adjust study settings',
-    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
+    openSettings: 'Edit goal, language, and audio',
+    openSettingsAccessibilityLabel: 'Edit goal, language, and audio',
     questionsHelper: 'questions',
-    settingsShortcutHelper: 'Daily goal, language, and audio',
     streakFreezeBadge: 'Streak freeze',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
@@ -117,6 +121,7 @@ function formatBadges(
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -126,7 +131,6 @@ export default function Screen() {
   const answerDates = useProgressStore((state) => state.answerDates);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
   const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
-  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
@@ -188,21 +192,33 @@ export default function Screen() {
             {dailyGoalAnswers} {copy.answersPerDay}
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
-          <Badge tone={audioEnabled ? 'green' : 'orange'}>
-            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
-          </Badge>
         </View>
-        <View style={styles.settingsShortcutRow}>
-          <Text style={styles.settingsShortcutHelper}>{copy.settingsShortcutHelper}</Text>
-          <Link
+        <Link
+          accessibilityLabel={copy.openSettingsAccessibilityLabel}
+          accessibilityRole="link"
+          asChild
+          href="/settings"
+        >
+          <Button
             accessibilityLabel={copy.openSettingsAccessibilityLabel}
             accessibilityRole="link"
-            href="/settings"
             style={styles.settingsLink}
           >
             {copy.openSettings}
-          </Link>
-        </View>
+          </Button>
+        </Link>
+      </Card>
+
+      <Card style={styles.cardWide}>
+        <SectionHeader title={copy.dashboardTitle} subtitle={copy.dashboardSubtitle} />
+        <Link
+          accessibilityLabel={copy.dashboardAccessibilityLabel}
+          accessibilityRole="link"
+          href="/dashboard"
+          style={styles.dashboardLink}
+        >
+          {copy.dashboardCta}
+        </Link>
       </Card>
 
       <Card style={styles.cardWide}>
@@ -210,12 +226,14 @@ export default function Screen() {
         <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
+      {entitlementsReady ? (
+        <PremiumBanner
+          entitlements={monetizationEntitlements}
+          language={language}
+          onEntitlementsChange={setMonetizationEntitlements}
+          runtimeOptions={purchaseRuntime}
+        />
+      ) : null}
       <ComplianceLinks />
     </ScreenShell>
   );
@@ -242,36 +260,26 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
-  settingsShortcutHelper: {
-    color: colors.textSecondary,
-    flex: 1,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  settingsShortcutRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'space-between',
-  },
   value: {
     color: colors.text,
     fontSize: typography.sectionTitle.fontSize,
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
   },
-  settingsLink: {
+  dashboardLink: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.small,
-    color: colors.surface,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
-    paddingVertical: space[1.5],
+    paddingVertical: space[1],
     textDecorationLine: 'none',
+  },
+  settingsLink: {
+    alignSelf: 'flex-start',
+    minHeight: space[6],
   },
 });

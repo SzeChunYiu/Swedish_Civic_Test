@@ -82,9 +82,13 @@ const expectedLegalRoutes = [
       'const copy = sourcesCopy[language];',
       'Källor',
       'Primärt studiematerial',
+      'UHR står inte bakom dem',
+      'Källa hämtad 2026-05-19',
       'Varje övningsfråga visar en källrad med UHR:s kapitel',
       'Sources',
       'Primary study material',
+      'quality is not checked by UHR or any other authority',
+      'Source accessed 2026-05-19',
       'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
@@ -149,6 +153,8 @@ test('legal, source, and support routes stay on shared accessible header path', 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
+  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 47);
+  assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 
@@ -237,4 +243,36 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /legal route shared heading components must expose accessibilityRole="header"/,
   );
+});
+
+test('legal Swedish copy guard rejects non-allowlisted English learner tokens', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/privacy.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'XP, studiesviter och ljudinställningar',
+        'XP, streaks, settings och ljudinställningar',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /Swedish legal copy contains English token "streaks"/);
+  assert.match(output, /Swedish legal copy contains English token "settings"/);
 });

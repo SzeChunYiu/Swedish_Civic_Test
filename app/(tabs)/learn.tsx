@@ -143,6 +143,7 @@ export default function Screen() {
 
       <RemoveAdsPlacementCta />
       <AdBanner placement="chapter_list_banner" />
+      <RemoveAdsPlacementCta placement="chapter_list_banner" />
     </ScreenShell>
   );
 }
