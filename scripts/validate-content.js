@@ -6182,6 +6182,12 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
+const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
+const expectedGeneratedPublishedQuestions =
+  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
+    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
+    : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
@@ -13692,7 +13698,11 @@ function validateGeneratedSourceMetadataParity() {
 validateGeneratedSourceMetadataParity();
 
 function validateGeneratedExplanationTemplateParity() {
-  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+  if (
+    !Array.isArray(sourceQuestions) ||
+    !Array.isArray(generatedPublishedQuestions) ||
+    !Array.isArray(expectedGeneratedPublishedQuestions)
+  ) {
     return;
   }
 
@@ -13710,13 +13720,19 @@ function validateGeneratedExplanationTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedExplanation(sourceQuestion, variantIndex);
+      const expected =
+        expectedGeneratedPublishedQuestions[
+          sourceIndex * GENERATED_VARIANTS_PER_SOURCE + variantIndex
+        ];
 
-      if (variant.explanationSv !== expected.explanationSv) {
+      if (!expected) {
+        variantIsValid = false;
+        fail(`${label} expected generated variant is missing`);
+      } else if (variant.explanationSv !== expected.explanationSv) {
         variantIsValid = false;
         fail(`${label} explanationSv does not match generated explanation template`);
       }
-      if (variant.explanationEn !== expected.explanationEn) {
+      if (expected && variant.explanationEn !== expected.explanationEn) {
         variantIsValid = false;
         fail(`${label} explanationEn does not match generated explanation template`);
       }
@@ -13737,7 +13753,11 @@ function validateGeneratedExplanationTemplateParity() {
 validateGeneratedExplanationTemplateParity();
 
 function validateGeneratedPromptTemplateParity() {
-  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+  if (
+    !Array.isArray(sourceQuestions) ||
+    !Array.isArray(generatedPublishedQuestions) ||
+    !Array.isArray(expectedGeneratedPublishedQuestions)
+  ) {
     return;
   }
 
@@ -13755,13 +13775,19 @@ function validateGeneratedPromptTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedPrompt(sourceQuestion, variantIndex);
+      const expected =
+        expectedGeneratedPublishedQuestions[
+          sourceIndex * GENERATED_VARIANTS_PER_SOURCE + variantIndex
+        ];
 
-      if (variant.questionSv !== expected.questionSv) {
+      if (!expected) {
+        variantIsValid = false;
+        fail(`${label} expected generated variant is missing`);
+      } else if (variant.questionSv !== expected.questionSv) {
         variantIsValid = false;
         fail(`${label} questionSv does not match generated prompt template`);
       }
-      if (variant.questionEn !== expected.questionEn) {
+      if (expected && variant.questionEn !== expected.questionEn) {
         variantIsValid = false;
         fail(`${label} questionEn does not match generated prompt template`);
       }
@@ -13774,7 +13800,11 @@ function validateGeneratedPromptTemplateParity() {
 validateGeneratedPromptTemplateParity();
 
 function validateGeneratedAnswerTemplateParity() {
-  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+  if (
+    !Array.isArray(sourceQuestions) ||
+    !Array.isArray(generatedPublishedQuestions) ||
+    !Array.isArray(expectedGeneratedPublishedQuestions)
+  ) {
     return;
   }
 
@@ -13792,13 +13822,19 @@ function validateGeneratedAnswerTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedAnswerShape(sourceQuestion, variantIndex);
+      const expected =
+        expectedGeneratedPublishedQuestions[
+          sourceIndex * GENERATED_VARIANTS_PER_SOURCE + variantIndex
+        ];
 
-      if (!jsonEqual(variant.options, expected.options)) {
+      if (!expected) {
+        variantIsValid = false;
+        fail(`${label} expected generated variant is missing`);
+      } else if (!jsonEqual(variant.options, expected.options)) {
         variantIsValid = false;
         fail(`${label} options do not match generated answer template`);
       }
-      if (variant.correctOptionId !== expected.correctOptionId) {
+      if (expected && variant.correctOptionId !== expected.correctOptionId) {
         variantIsValid = false;
         fail(`${label} correctOptionId does not match generated answer template`);
       }
