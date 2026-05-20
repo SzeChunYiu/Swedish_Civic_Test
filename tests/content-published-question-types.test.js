@@ -18,6 +18,7 @@ const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
+const luciaRoleEnglishPattern = /\b(?:the\s+)?person who is Lucia\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const generatedIdLiteralPatterns = [
@@ -284,6 +285,76 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.equal(
     q104Judgement?.q.en,
     'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
+  );
+});
+
+test('Lucia role prompts use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    luciaRoleEnglishPattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+  );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => luciaRoleEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q129 = generatedSiteBank.find((question) => question.id === 'q129');
+  const q129True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q129', 'trueStatement'),
+  );
+  const q129SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q129', 'singleChoice'),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q129, 'q129 should be published in the site bank');
+  assert.ok(q129True, 'q129 true/false variant should be published in the site bank');
+  assert.ok(q129SingleChoice, 'q129 single-choice variant should be published in the site bank');
+  assert.equal(q129.q.en, 'What does Lucia usually wear in a Lucia procession?');
+  assert.equal(q129True.q.en, 'Lucia usually wears a crown of lights on her head.');
+  assert.match(q129SingleChoice.q.en, /What does Lucia usually wear in a Lucia procession\?/);
+});
+
+test('Lucia role naturalness guard rejects person-who-is phrasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'What does Lucia usually wear in a Lucia procession?',
+      'What does the person who is Lucia usually wear in a Lucia procession?',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q129 uses stilted Lucia role English wording/,
   );
 });
 

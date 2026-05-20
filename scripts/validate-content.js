@@ -255,6 +255,7 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
+const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4311,6 +4312,16 @@ function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -5701,8 +5712,8 @@ function civicStatementSv(source, option) {
   if (match) return `Under ${match[1]} är det vanligt med ${lowerFirst(answer)} i många hem`;
   match = q.match(/^Vilken högtid avslutar (.+)$/i);
   if (match) return `${answer} avslutar ${match[1]}`;
-  match = q.match(/^Vad brukar personen som är Lucia bära i ett luciatåg$/i);
-  if (match) return `Personen som är Lucia brukar bära ${lowerFirst(answer)}`;
+  match = q.match(/^Vad brukar Lucia bära i ett luciatåg$/i);
+  if (match) return `Lucia brukar bära ${lowerFirst(answer)}`;
   match = q.match(/^Vad kallas gudstjänsten tidigt på morgonen den 25 december$/i);
   if (match)
     return `Gudstjänsten tidigt på morgonen den 25 december kallas ${swedishCalledAnswer(answer)}`;
@@ -6037,8 +6048,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(answer)} are common in many homes during ${match[1]}`;
   match = q.match(/^Which holiday ends (.+)$/i);
   if (match) return `${answer} ends ${match[1]}`;
-  match = q.match(/^What does the person who is Lucia usually wear in a Lucia procession$/i);
-  if (match) return `The person who is Lucia usually wears ${lowerFirst(answer)}`;
+  match = q.match(/^What does Lucia usually wear in a Lucia procession$/i);
+  if (match) return `Lucia usually wears ${lowerFirst(answer)}`;
   match = q.match(/^What is the church service early on the morning of 25 December called$/i);
   if (match)
     return `The church service early on the morning of 25 December is called ${englishCalledAnswer(
@@ -7162,6 +7173,7 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
+let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16442,6 +16454,8 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
+      const luciaRoleEnglishNaturalnessIssue =
+        findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
@@ -16486,6 +16500,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal common-to-do English wording`);
       } else {
         questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
+      }
+      if (luciaRoleEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Lucia role English wording`);
+      } else {
+        questionLuciaRoleEnglishNaturalnessValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -16959,6 +16978,7 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
+      questionLuciaRoleEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
