@@ -11,6 +11,7 @@ export const releaseMonetizationPolicy = {
   realAdsEnvFlag: 'EXPO_PUBLIC_REAL_ADS_ENABLED',
   removeAdsPriceLabel: '29 SEK',
   removeAdsProductId: 'com.billyyiu.almostswedish.removeads',
+  removeAdsAndroidProductId: 'removeads',
   storeDisclosureTopics: [
     'Google Mobile Ads',
     'Remove Ads in-app purchase',
@@ -45,6 +46,7 @@ export function isReleaseMonetizationPolicyReady(): boolean {
     releaseMonetizationPolicy.proRuntimeScopeDefaultEnabled === false &&
     releaseMonetizationPolicy.proRuntimeScopeEnvFlag === 'EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE' &&
     releaseMonetizationPolicy.proRuntimeScopeOverrideGate === 'release-scope-v11' &&
-    releaseMonetizationPolicy.removeAdsPriceLabel === '29 SEK'
+    releaseMonetizationPolicy.removeAdsPriceLabel === '29 SEK' &&
+    releaseMonetizationPolicy.removeAdsAndroidProductId === 'removeads'
   );
 }

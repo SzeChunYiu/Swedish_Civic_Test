@@ -1277,9 +1277,11 @@ test('effective entitlement primary source keeps Remove Ads and Pro Lifetime sta
 test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async () => {
   const purchaseExports = loadTs('lib/monetization/purchases.ts');
   const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
     REMOVE_ADS_PRICE_LABEL,
     REMOVE_ADS_RECORD_SCHEMA_VERSION,
     REMOVE_ADS_PRODUCT_ID,
+    getRemoveAdsStoreProductId,
     REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
     createMemoryPurchaseStorage,
@@ -1301,6 +1303,9 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(packageJson.dependencies['react-native-iap'], '^15.3.0');
   assert.equal(REMOVE_ADS_PRODUCT_ID, expectedRemoveAdsProductId);
   assert.match(REMOVE_ADS_PRODUCT_ID, /removeads$/);
+  assert.equal(REMOVE_ADS_ANDROID_PRODUCT_ID, 'removeads');
+  assert.equal(getRemoveAdsStoreProductId('ios'), REMOVE_ADS_PRODUCT_ID);
+  assert.equal(getRemoveAdsStoreProductId('android'), REMOVE_ADS_ANDROID_PRODUCT_ID);
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.equal(REMOVE_ADS_RECORD_SCHEMA_VERSION, 1);
   assert.equal(Object.hasOwn(purchaseExports, removedVerifierExportName), false);
@@ -1662,7 +1667,9 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
 });
 
 test('native remove-ads purchase only grants from purchase update listener events', async () => {
-  const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
+  const { REMOVE_ADS_ANDROID_PRODUCT_ID, REMOVE_ADS_PRODUCT_ID } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
 
   function createNativeIapMock({ emitPurchase, requestRejects = false, requestResult } = {}) {
     const calls = [];
@@ -1770,6 +1777,36 @@ test('native remove-ads purchase only grants from purchase update listener event
   assert.equal(storedListenerRecord.purchaseToken, 'listener-token');
   assert.equal(storedListenerRecord.transactionId, 'listener-transaction');
   assert.equal(listenerIap.calls.filter(([name]) => name === 'finishTransaction').length, 1);
+  const androidIap = createNativeIapMock({
+    emitPurchase: {
+      productId: REMOVE_ADS_ANDROID_PRODUCT_ID,
+      purchaseToken: 'android-listener-token',
+      transactionId: 'android-listener-transaction',
+    },
+  });
+  const androidExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
+    'expo-secure-store': {},
+    'react-native-iap': androidIap,
+  });
+  const androidStorage = androidExports.createMemoryPurchaseStorage();
+  const androidResult = await androidExports.buyRemoveAds({
+    provider: androidExports.createNativePurchaseProvider({
+      iapModule: androidIap,
+      platform: 'android',
+      purchaseTimeoutMs: 50,
+    }),
+    storage: androidStorage,
+  });
+  const androidRequest = androidIap.calls.find(([name]) => name === 'requestPurchase')?.[1];
+  const storedAndroidRecord = JSON.parse(
+    await androidStorage.getItemAsync(androidExports.REMOVE_ADS_STORAGE_KEY),
+  );
+
+  assert.equal(androidResult.status, 'purchased');
+  assert.equal(androidResult.productId, androidExports.REMOVE_ADS_PRODUCT_ID);
+  assert.deepEqual(androidRequest.request.google.skus, [REMOVE_ADS_ANDROID_PRODUCT_ID]);
+  assert.equal(storedAndroidRecord.productId, androidExports.REMOVE_ADS_PRODUCT_ID);
+  assert.equal(storedAndroidRecord.purchaseToken, 'android-listener-token');
 
   const rejectedIap = createNativeIapMock({ requestRejects: true });
   const rejectedExports = loadTs('lib/monetization/purchases.ts', undefined, new Map(), {
@@ -1898,7 +1935,15 @@ test('validated remove-ads purchases fail closed when entitlement persistence fa
   });
 
   assert.equal(buyRetryRestore.status, 'restored');
-  assert.equal((await getPurchaseEntitlements({ storage: buyBackingStorage })).adsDisabled, true);
+  assert.equal(
+    (
+      await getPurchaseEntitlements({
+        provider: buyProvider,
+        storage: buyBackingStorage,
+      })
+    ).adsDisabled,
+    true,
+  );
 
   const restoreBackingStorage = createMemoryPurchaseStorage();
   const restoreProvider = createMockPurchaseProvider({ owned: true });
@@ -1919,7 +1964,12 @@ test('validated remove-ads purchases fail closed when entitlement persistence fa
 
   assert.equal(restoreRetry.status, 'restored');
   assert.equal(
-    (await getPurchaseEntitlements({ storage: restoreBackingStorage })).adsDisabled,
+    (
+      await getPurchaseEntitlements({
+        provider: restoreProvider,
+        storage: restoreBackingStorage,
+      })
+    ).adsDisabled,
     true,
   );
 
@@ -2491,10 +2541,7 @@ test('native Mobile Ads consent hook retries after consent-blocked initializatio
     });
   });
 
-  const {
-    initializeMobileAdsConsentOnce,
-    resetMobileAdsConsentInitializationCache,
-  } = consentHook;
+  const { initializeMobileAdsConsentOnce, resetMobileAdsConsentInitializationCache } = consentHook;
   const entitlements = { adsDisabled: false };
   const calls = [];
 
