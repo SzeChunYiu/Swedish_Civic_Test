@@ -484,8 +484,8 @@ test('Settings language change rerenders the Mock landing without reload', () =>
   const context = createRenderContext({ hash: '#/mock', language: 'en' });
   loadScripts(context, 'renderMockLanding();');
 
-  assert.match(context.element('mock-stage').innerHTML, /Build your exam\./);
-  assert.match(context.element('mock-stage').innerHTML, /Practice score/);
+  assert.match(context.element('mock-stage').innerHTML, /Build your practice round\./);
+  assert.match(context.element('mock-stage').innerHTML, /Practice timer only/);
   assertNoMockOfficialPassLineCopy(context.element('mock-stage').innerHTML);
   context.clickSettingsLanguage('sv');
 
@@ -547,6 +547,6 @@ test('Settings language change rerenders submitted Mock results without restarti
   assert.match(html, /Rätt svar/);
   assert.match(html, /Övningen är klar/);
   assertNoMockOfficialPassLineCopy(html);
-  assert.doesNotMatch(html, /Build your exam|Bygg din tentamen|Starta tentamen|Skarp tentamen/);
+  assert.doesNotMatch(html, /Build your exam|Start exam|Bygg din tentamen|Starta tentamen|Skarp tentamen/);
   assert.equal(context.reloadCount, 0);
 });
