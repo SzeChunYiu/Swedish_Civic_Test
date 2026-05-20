@@ -251,9 +251,8 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
 ];
-const QUESTION_BUDDHIST_HINDU_SOURCE_PROMPT_NATURALNESS_PATTERNS = [
-  /\bVad finns på olika platser i Sverige för buddhister och hinduer\b/i,
-  /\bWhat exists in different places in Sweden for Buddhists and Hindus\b/i,
+const QUESTION_SUSPECTED_CRIME_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat applies to a person suspected of a crime\b/i,
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -348,8 +347,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:spreadinging|welcominging)\b/i,
   /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
   /\bthere are buddhist and Hindu\b/,
-  /\bthere are (?:Buddhist and Hindu congregations and temples|government agencies that choose religion) for Buddhists and Hindus\b/i,
-  /\bfinns (?:buddhistiska och hinduiska församlingar och tempel|statliga myndigheter som väljer religion) för buddhister och hinduer\b/i,
   /\bcalled Lucia procession\b/i,
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
@@ -4296,10 +4293,10 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
-function findQuestionBuddhistHinduSourcePromptNaturalnessIssue(question) {
-  const text = [question.questionSv, question.questionEn].join(' ');
+function findQuestionSuspectedCrimeEnglishNaturalnessIssue(question) {
+  const text = [question.questionEn].join(' ');
 
-  return QUESTION_BUDDHIST_HINDU_SOURCE_PROMPT_NATURALNESS_PATTERNS.find((pattern) =>
+  return QUESTION_SUSPECTED_CRIME_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(text),
   );
 }
@@ -5585,10 +5582,6 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} infaller ${lowerFirst(answer)}`;
   match = q.match(/^Vad uppmärksammas på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} uppmärksammas ${lowerFirst(answer)}`;
-  match = q.match(
-    /^Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige$/i,
-  );
-  if (match) return `${answer} finns i Sverige`;
   match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
   if (match) return `På olika platser i Sverige finns ${lowerFirst(answer)} för ${match[1]}`;
   match = q.match(/^Vilka högtider är exempel på (.+)$/i);
@@ -5911,10 +5904,6 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} occurs ${englishOccurrencePhrase(answer)}`;
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
-  match = q.match(
-    /^What kinds of congregations and temples are there for Buddhists and Hindus in Sweden$/i,
-  );
-  if (match) return `${answer} exist in Sweden`;
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)
     return `In different places in Sweden, there are ${lowerEnglishNounPhrase(answer)} for ${match[1]}`;
@@ -7087,7 +7076,7 @@ let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
-let questionBuddhistHinduSourcePromptNaturalnessValidated = 0;
+let questionSuspectedCrimeEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -15505,6 +15494,9 @@ function validateAuthoredSourceParity() {
     if (findQuestionAnswerKeyPrompt(question)) {
       reject(`${label} source prompt asks about the answer instead of the civic concept`);
     }
+    if (findQuestionSuspectedCrimeEnglishNaturalnessIssue(question)) {
+      reject(`${label} uses a suspected-crime English prompt calque`);
+    }
 
     if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
       authoredSourceQuestionsValidated += 1;
@@ -16284,8 +16276,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
-      const buddhistHinduSourcePromptNaturalnessIssue =
-        findQuestionBuddhistHinduSourcePromptNaturalnessIssue(question);
+      const suspectedCrimeEnglishNaturalnessIssue =
+        findQuestionSuspectedCrimeEnglishNaturalnessIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
@@ -16325,10 +16317,10 @@ if (Array.isArray(questions)) {
       } else {
         questionStateWelfareEnglishNaturalnessValidated += 1;
       }
-      if (buddhistHinduSourcePromptNaturalnessIssue) {
-        fail(`${label} uses vague Buddhist/Hindu source prompt wording`);
+      if (suspectedCrimeEnglishNaturalnessIssue) {
+        fail(`${label} uses a suspected-crime English prompt calque`);
       } else {
-        questionBuddhistHinduSourcePromptNaturalnessValidated += 1;
+        questionSuspectedCrimeEnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16796,7 +16788,7 @@ console.log(
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
-      questionBuddhistHinduSourcePromptNaturalnessValidated,
+      questionSuspectedCrimeEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
