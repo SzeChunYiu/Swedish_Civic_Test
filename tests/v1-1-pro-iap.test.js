@@ -67,10 +67,31 @@ function makeMemoryStorage() {
 }
 
 test('proLifetime: product id + price label + storage key exported', () => {
+  const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8')).expo;
+  const identity = loadTs('lib/monetization/appStoreIdentity.ts');
   const m = loadTs('lib/monetization/proLifetimePurchase.ts');
-  assert.equal(m.PRO_LIFETIME_PRODUCT_ID, 'com.billyyiu.swedishcivictest.prolifetime');
+  assert.equal(identity.APP_NATIVE_IDENTIFIER, appJson.ios.bundleIdentifier);
+  assert.equal(identity.APP_NATIVE_IDENTIFIER, appJson.android.package);
+  assert.equal(m.PRO_LIFETIME_PRODUCT_ID, `${identity.APP_NATIVE_IDENTIFIER}.prolifetime`);
+  assert.equal(m.PRO_LIFETIME_PRODUCT_ID, identity.appStoreProductIds.proLifetime);
   assert.equal(m.PRO_LIFETIME_PRICE_LABEL, '59 SEK');
   assert.match(m.PRO_LIFETIME_STORAGE_KEY, /proLifetime/);
+});
+
+test('proLifetime: active store identity follows the current app namespace', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
+    'utf8',
+  );
+  const identitySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/appStoreIdentity.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /appStoreProductIds/);
+  assert.match(identitySource, /APP_NATIVE_IDENTIFIER/);
+  assert.doesNotMatch(source, /swedishcivictest\.prolifetime/);
+  assert.doesNotMatch(identitySource, /swedishcivictest/);
 });
 
 test('buyProLifetime: fresh buy persists entitlement and returns purchased status', async () => {
