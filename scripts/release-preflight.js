@@ -153,13 +153,39 @@ const gateSpecificBlockedEvidencePatterns = {
   ],
 };
 
-const v11ScopeSurfacePaths = [
-  'lib/storage/reviewStore.ts',
-  'lib/learning/adaptivePractice.ts',
-  'lib/learning/dailyChallenge.ts',
-  'lib/storage/companionStore.ts',
-  'lib/mascot/catalog.ts',
-  'lib/monetization/proLifetimePurchase.ts',
+const v11ScopeRoots = envPathList('RELEASE_PREFLIGHT_V11_SCOPE_ROOTS', [
+  'app',
+  'components',
+  'lib',
+  'tests',
+]);
+const v11ScopeFilePattern = /\.(?:js|jsx|ts|tsx)$/;
+const v11ScopePathClassifiers = [
+  [/^tests\/v1-1-.*\.test\.js$/, 'v1.1 test suite'],
+  [/^app\/dashboard\.tsx$/, 'v1.1 user-facing route'],
+  [/^components\/mascot\//, 'v1.1 companion UI'],
+  [/^components\/monetization\/ProPaywall\.tsx$/, 'v1.1 Pro UI'],
+  [/^components\/quiz\/ConfidenceRatingPicker\.tsx$/, 'v1.1 confidence UI'],
+  [/^components\/learning\/BadgeRow\.tsx$/, 'v1.1 learning UI'],
+  [
+    /^lib\/learning\/(?:adaptivePractice|calibration|dailyChallenge|readiness)\.ts$/,
+    'v1.1 learning runtime',
+  ],
+  [/^lib\/mascot\//, 'v1.1 companion runtime'],
+  [
+    /^lib\/monetization\/(?:proLifetimePurchase|releasePolicy|tierComparison|useProLifetimeEntitlements)\.ts$/,
+    'v1.1 monetization runtime',
+  ],
+  [/^lib\/notifications\/studyReminder\.ts$/, 'v1.1 reminder runtime'],
+  [
+    /^lib\/storage\/(?:accessibilityStore|companionStore|highlightsStore|reviewStore)\.ts$/,
+    'v1.1 storage runtime',
+  ],
+];
+const v11ScopeSourceClassifiers = [
+  [/\bv1\.1\b|v1-1/i, 'v1.1 source marker'],
+  [/\bPro Lifetime\b|isProRuntimeScopeEnabled|proRuntimeScopeEnabled/, 'v1.1 Pro scope marker'],
+  [/\bDaily Challenge\b|\bAdaptive practice\b|\bcompanion picker\b/i, 'v1.1 feature marker'],
 ];
 
 const removeAdsDeviceQaPath =
@@ -262,16 +288,43 @@ function anyRepoFileMatches(roots, pattern) {
   );
 }
 
-function listV11ScopeSurfaces() {
-  const explicitSurfaces = v11ScopeSurfacePaths.filter((surfacePath) => exists(surfacePath));
-  const testSurfaces = exists('tests')
-    ? fs
-        .readdirSync('tests')
-        .filter((name) => /^v1-1-.*\.test\.js$/.test(name))
-        .map((name) => path.join('tests', name))
-    : [];
+function reportPath(filePath) {
+  const relativePath = path.relative(process.cwd(), filePath);
+  const displayPath =
+    relativePath && !relativePath.startsWith('..') && !path.isAbsolute(relativePath)
+      ? relativePath
+      : filePath;
+  return displayPath.split(path.sep).join('/');
+}
 
-  return [...explicitSurfaces, ...testSurfaces].sort();
+function classifyV11ScopeSurface(filePath, source) {
+  if (!v11ScopeFilePattern.test(filePath)) return null;
+
+  const displayPath = reportPath(filePath);
+  const pathMatch = v11ScopePathClassifiers.find(([pattern]) => pattern.test(displayPath));
+  if (pathMatch) return pathMatch[1];
+
+  const isRuntimeOrUiPath =
+    /^(?:app|components|lib)\//.test(displayPath) ||
+    /(?:^|\/)(?:app|components|lib)\//.test(displayPath);
+  if (!isRuntimeOrUiPath) return null;
+
+  const sourceMatch = v11ScopeSourceClassifiers.find(([pattern]) => pattern.test(source));
+  return sourceMatch ? sourceMatch[1] : null;
+}
+
+function listV11ScopeSurfaces() {
+  const surfaces = new Set();
+  for (const root of v11ScopeRoots) {
+    for (const filePath of listFiles(root)) {
+      const source = readFileIfExists(filePath);
+      if (classifyV11ScopeSurface(filePath, source)) {
+        surfaces.add(reportPath(filePath));
+      }
+    }
+  }
+
+  return [...surfaces].sort();
 }
 
 function removeAdsV1AcceptanceFindings() {
