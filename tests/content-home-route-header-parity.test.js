@@ -20,9 +20,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
-  assert.equal(summary.homeRouteHeadersValidated, 5);
+  assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 98);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 110);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.match(source, /type HomeCopy =/);
@@ -35,29 +35,12 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
-  assert.match(source, /resumeWhereLeftOff/);
-  assert.match(source, /resumeBannerCopy/);
-  assert.match(source, /const questionChapterIndex = Object\.fromEntries/);
-  assert.match(source, /function buildResumeProgress/);
-  assert.match(source, /const resumeCandidate = useMemo/);
-  assert.match(source, /const resumeChapter = chapters\.find/);
-  assert.match(source, /resumeChapter && resumeChapterTitle && resumeAccessibilityLabel \? \(/);
-  assert.match(source, /href=\{`\/chapter\/\$\{resumeChapter\.id\}`\}/);
-  assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
-  assert.match(source, /Senaste övning/);
-  assert.match(source, /Recent practice/);
-  assert.match(source, /Fortsätt \$\{chapterTitle\}/);
-  assert.match(source, /Resume \$\{chapterTitle\}/);
   assert.match(source, /Redoindikator/);
   assert.match(source, /Readiness indicator/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
-  assert.match(source, /genomgång av frågor du missat/);
-  assert.match(source, /missade frågor, ljud och redoindikator/);
-  assert.doesNotMatch(source, new RegExp(['fel', 'spårning'].join('')));
-  assert.doesNotMatch(source, new RegExp(['repetition av ', 'misstag'].join('')));
   assert.match(source, /calculateStreakWithFreeze/);
   assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
   assert.match(source, /Svitskydd/);
@@ -69,6 +52,18 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /helper=\{dayStreakHelper\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
   assert.match(source, /\{copy\.readinessTitle\}/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.quickActionsTitle\}/);
+  assert.match(source, /subtitle=\{copy\.quickActionsSubtitle\}/);
+  assert.match(source, /const quickActions = \[/);
+  assert.match(source, /href: '\/search'/);
+  assert.match(source, /accessibilityLabel: copy\.quickActionSearchAccessibilityLabel/);
+  assert.match(source, /<View style=\{styles\.quickActionGrid\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.quickActionTitle\}>/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /Snabbstart/);
+  assert.match(source, /Quick start/);
+  assert.match(source, /Sök i frågorna/);
+  assert.match(source, /Search questions/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.doesNotMatch(
@@ -77,41 +72,6 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
-});
-
-test('home route copy parity rejects stale Swedish mistake-review wording', () => {
-  const staleSubtitle = ['repetition av ', 'misstag'].join('');
-  const staleLoopCopy = ['fel', 'spårning'].join('');
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-const staleSubtitle = ${JSON.stringify(staleSubtitle)};
-const staleLoopCopy = ${JSON.stringify(staleLoopCopy)};
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('genomgång av frågor du missat', staleSubtitle)
-      .replace('missade frågor, ljud och redoindikator', staleLoopCopy + ', ljud och redoindikator');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route Swedish copy must describe reviewing missed questions/,
-  );
 });
 
 test('home route copy parity rejects internal benchmark phrases in learner copy', () => {
