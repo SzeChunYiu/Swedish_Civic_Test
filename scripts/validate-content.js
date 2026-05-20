@@ -249,6 +249,8 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 ];
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
+  /\btax-funded\b/i,
+  /\btax revenue pays for it\b/i,
 ];
 const QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS = [
   /\bsjukförsäkring\b/i,
