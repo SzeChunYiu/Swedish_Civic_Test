@@ -1963,6 +1963,33 @@ test('release preflight can ignore workflow-generated report files', () => {
   assert.match(worktree.evidence, /Only ignored generated files were present/);
 });
 
+test('release preflight applies allowed dirty paths to the first modified porcelain line', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-first-dirty-line-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  writeAllReadyEvidence(evidencePath);
+  writeFakeReleaseCommands(tmpDir, {
+    gitStatusPorcelain:
+      ' M publishing/post-eas-auth-runbook.md\n?? reports/release-issue-update-latest.md',
+  });
+
+  const report = runPreflight({
+    expectedStatus: 0,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      RELEASE_PREFLIGHT_ALLOWED_DIRTY_PATHS:
+        'publishing/post-eas-auth-runbook.md,reports/release-issue-update-latest.md',
+    },
+  });
+
+  const worktree = report.gates.find((gate) => gate.id === 'git-worktree-clean');
+  assert.equal(worktree.status, 'READY');
+  assert.match(worktree.evidence, /publishing\/post-eas-auth-runbook\.md/);
+  assert.match(worktree.evidence, /reports\/release-issue-update-latest\.md/);
+});
+
 test('release preflight blocks READY screenshot evidence with a missing local artifact path', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-missing-shot-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');

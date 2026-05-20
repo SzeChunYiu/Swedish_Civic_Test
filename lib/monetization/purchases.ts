@@ -506,14 +506,19 @@ export function createNativePurchaseProvider({
 
         timeout = setTimeout(() => settle(undefined, null), purchaseTimeoutMs);
 
-        const requestPurchasePromise = iap.requestPurchase({
-          request: {
-            apple: { sku: productId },
-            google: { skus: [productId] },
-          },
-          type: 'in-app',
-        });
-        void requestPurchasePromise.catch((error: unknown) => settle(error));
+        void iap
+          .requestPurchase({
+            request: {
+              apple: { sku: productId },
+              google: { skus: [productId] },
+            },
+            type: 'in-app',
+          })
+          .then((requestResult) => {
+            const matched = normalizePurchases(requestResult).find(isRemoveAdsPurchase);
+            if (matched) settle(undefined, matched);
+          })
+          .catch((error: unknown) => settle(error));
       });
     },
     async restorePurchases() {

@@ -110,6 +110,30 @@ test('LanguagePicker menu rows expose menu-item state semantics', () => {
   );
 });
 
+test('FirstRunAboutTheTestModal keeps only guide and skip actions exposed', () => {
+  const source = fs.readFileSync(
+    path.join(ROOT, 'components', 'onboarding', 'FirstRunAboutTheTestModal.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /accessibilityViewIsModal/);
+  assert.match(source, /accessibilityLabel=\{copy\.title\}/);
+  assert.match(source, /accessible=\{false\}/);
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /accessibilityLabel=\{copy\.skipAccessibilityLabel\}/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /ref=\{guideLinkRef\}/);
+  assert.match(source, /ref=\{skipButtonRef\}/);
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.doesNotMatch(
+    source,
+    /<Pressable[\s\S]*accessibilityLabel=\{copy\.skipAccessibilityLabel\}[\s\S]*styles\.backdrop/,
+  );
+});
+
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
   const source = fs.readFileSync(
     path.join(ROOT, 'components', 'monetization', 'NativeAdCard.native.tsx'),
