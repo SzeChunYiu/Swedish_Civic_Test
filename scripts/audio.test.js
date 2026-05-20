@@ -94,15 +94,31 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.match(warnings[1], /Speech stop unavailable/i);
 });
 
-test('practice and routed quiz screens honor the persisted audio setting', () => {
-  const routeFiles = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
+test('practice and routed quiz screens honor audio setting and stop stale speech', () => {
+  const routeFiles = [
+    {
+      file: 'app/(tabs)/practice.tsx',
+      resetHandler:
+        /const handleResetSelection = \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*resetSelection\(\);[\s\S]*\};/,
+      nextHandler:
+        /const handleAdvanceQuestion = \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*advanceQuestion\(\);[\s\S]*\};/,
+      pressHandlers: [/onPress=\{handleAdvanceQuestion\}/, /onPress=\{handleResetSelection\}/],
+    },
+    {
+      file: 'app/quiz/[sessionId].tsx',
+      resetHandler:
+        /const handleTryAgain = \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*setSelectedOptionId\(null\);[\s\S]*\};/,
+      nextHandler: null,
+      pressHandlers: [/onPress=\{handleTryAgain\}/],
+    },
+  ];
 
   for (const routeFile of routeFiles) {
-    const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
+    const source = fs.readFileSync(path.join(repoRoot, routeFile.file), 'utf8');
     assert.match(source, /import\s+\{\s*AudioButton\s*\}\s+from ['"][^'"]+AudioButton['"]/);
     assert.match(
       source,
-      /import\s+\{\s*buildQuestionSpeechText\s*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
+      /import\s+\{\s*buildQuestionSpeechText,\s*stopSpeech\s*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
     );
     assert.match(
       source,
@@ -112,5 +128,14 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
       source,
       /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
     );
+    assert.match(
+      source,
+      /useEffect\(\(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[[^\]]*question\?\.id[^\]]*\]\);/,
+    );
+    assert.match(source, routeFile.resetHandler);
+    if (routeFile.nextHandler) assert.match(source, routeFile.nextHandler);
+    for (const pressHandler of routeFile.pressHandlers) {
+      assert.match(source, pressHandler);
+    }
   }
 });

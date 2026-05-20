@@ -12,7 +12,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildQuestionSpeechText } from '../../lib/audio/speak';
+import { buildQuestionSpeechText, stopSpeech } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -96,7 +96,11 @@ export default function QuizSessionScreen() {
   const copy = quizSessionCopy[language];
 
   useEffect(() => {
+    stopSpeech();
     setSelectedOptionId(null);
+    return () => {
+      stopSpeech();
+    };
   }, [normalizedSessionId, question?.id]);
 
   if (!question) {
@@ -135,6 +139,10 @@ export default function QuizSessionScreen() {
         selectedOptionTextSv: selectedOption.textSv,
       });
     }
+  };
+  const handleTryAgain = () => {
+    stopSpeech();
+    setSelectedOptionId(null);
   };
 
   return (
@@ -198,7 +206,7 @@ export default function QuizSessionScreen() {
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               accessibilityState={{ disabled: false }}
-              onPress={() => setSelectedOptionId(null)}
+              onPress={handleTryAgain}
               style={styles.actionButton}
               variant="secondary"
             >

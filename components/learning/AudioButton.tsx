@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Button } from '../ui/Button';
 import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
@@ -54,6 +56,12 @@ export function AudioButton({
     : hasSpeechText
       ? copy.enabledHint
       : copy.unavailableHint;
+
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, [speechText]);
 
   return (
     <Button
