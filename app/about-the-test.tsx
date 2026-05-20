@@ -1,5 +1,4 @@
 import { Link } from 'expo-router';
-import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
@@ -20,33 +19,65 @@ type AboutTheTestCopy = {
   sectionMaterialBody: string;
   sectionIndependenceTitle: string;
   sectionIndependenceBody: string;
+  sectionSourceTitle: string;
+  sectionSourceBody: string;
   backHome: string;
   backHomeAccessibilityLabel: string;
   openPractice: string;
   openPracticeAccessibilityLabel: string;
 };
 
+const officialTestSourceNotes = [
+  {
+    title: 'UHR: Om medborgarskapsprovet',
+    url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+    retrievedDate: '2026-05-19',
+  },
+  {
+    title: 'UHR: Frågor och svar',
+    url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+    retrievedDate: '2026-05-19',
+  },
+  {
+    title: 'UHR: Anmälan',
+    url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+    retrievedDate: '2026-05-19',
+  },
+  {
+    title: 'UHR: Utbildningsmaterial om det svenska samhället',
+    url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+    retrievedDate: '2026-05-19',
+  },
+  {
+    title: 'Migrationsverket: Nya regler för svenskt medborgarskap från 6 juni 2026',
+    url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+    retrievedDate: '2026-05-19',
+  },
+] as const;
+
 const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
   sv: {
     eyebrow: 'Om provet',
     title: 'Vad är medborgarskapsprovet i samhällskunskap?',
     subtitle:
-      'Ett kort prov som personer som ansöker om svenskt medborgarskap ska klara. Det handlar om Sverige som land, demokratin, vardagslivet och dina rättigheter.',
+      'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
     sectionWhatTitle: 'Vad är det?',
     sectionWhatBody:
-      'Medborgarskapsprovet är ett digitalt prov som testar grundläggande kunskaper om det svenska samhället. Det ingår i kraven för att få bli svensk medborgare.',
+      'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
     sectionWhoTitle: 'Vem ska göra det?',
     sectionWhoBody:
-      'Du som ansöker om svenskt medborgarskap. Vissa grupper är undantagna; läs alltid Migrationsverkets aktuella regler innan du planerar provet.',
-    sectionFormatTitle: 'Hur ser provet ut?',
+      'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+    sectionFormatTitle: 'Vad är känt om första provet?',
     sectionFormatBody:
-      'Flervalsfrågor på svenska. Du svarar på en dator i en provlokal. Provet täcker tretton områden, från geografi och historia till lag och rätt, arbetsmarknad och välfärd.',
+      'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
     sectionMaterialTitle: 'Vilket material bygger appen på?',
     sectionMaterialBody:
-      'Allt grundinnehåll följer UHR:s utbildningsmaterial Sverige i fokus. Övningsprovet visar bara UHR-frågor; tilläggsfrågor och redaktionellt innehåll markeras tydligt och kan slås av.',
+      'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
     sectionIndependenceTitle: 'Är appen officiell?',
     sectionIndependenceBody:
       'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
+    sectionSourceTitle: 'Källäge kontrollerat',
+    sectionSourceBody: `Lägesbilden är kontrollerad ${officialTestSourceNotes[0].retrievedDate} mot UHR:s sidor om provet, anmälan, frågor och svar, utbildningsmaterial samt Migrationsverkets nyhet om reglerna från 6 juni 2026.`,
     backHome: 'Tillbaka till start',
     backHomeAccessibilityLabel: 'Tillbaka till startsidan',
     openPractice: 'Börja öva',
@@ -56,24 +87,26 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     eyebrow: 'About the test',
     title: 'What is the Swedish civic test?',
     subtitle:
-      'A short test that applicants for Swedish citizenship must pass. It covers Sweden as a country, democracy, everyday life, and your rights.',
+      'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
     sectionWhatTitle: 'What is it?',
     sectionWhatBody:
-      'The civic test is a digital exam that checks basic knowledge of Swedish society. It is part of the requirements for becoming a Swedish citizen.',
+      'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
     sectionWhoTitle: 'Who takes it?',
     sectionWhoBody:
-      'People applying for Swedish citizenship. Some groups are exempt; always check the current Migrationsverket rules before booking.',
-    sectionFormatTitle: 'What does it look like?',
+      'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
+    sectionFormatTitle: 'What is known about the first test?',
     sectionFormatBody:
-      'Multiple-choice questions in Swedish, answered on a computer at a test centre. The exam covers thirteen topics from geography and history to law, the labour market, and welfare.',
+      'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
     sectionMaterialTitle: 'What material does this app use?',
     sectionMaterialBody:
-      "All core content follows UHR's study material Sverige i fokus. The mock exam only shows UHR questions; supplementary and editorial content is clearly labelled and can be switched off.",
+      "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
     sectionIndependenceTitle: 'Is this app official?',
     sectionIndependenceBody:
       'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
+    sectionSourceTitle: 'Source status checked',
+    sectionSourceBody: `This status was checked on ${officialTestSourceNotes[0].retrievedDate} against UHR's pages about the test, registration, FAQ, study material, and Migrationsverket's news about the rules from 6 June 2026.`,
     backHome: 'Back to home',
-    backHomeAccessibilityLabel: 'Go back to home',
+    backHomeAccessibilityLabel: 'Return to the home screen',
     openPractice: 'Start practising',
     openPracticeAccessibilityLabel: 'Open practice mode',
   },
@@ -81,15 +114,12 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
-  const hasSeenAboutTheTest = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markAboutTheTestSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
   const copy = aboutTheTestCopy[language];
 
-  useEffect(() => {
-    if (!hasSeenAboutTheTest) {
-      markAboutTheTestSeen();
-    }
-  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);
+  if (!useSettingsStore.getState().hasSeenAboutTheTest) {
+    markAboutTheTestSeen();
+  }
 
   const sections: readonly { title: string; body: string }[] = [
     { title: copy.sectionWhatTitle, body: copy.sectionWhatBody },
@@ -97,6 +127,7 @@ export default function Screen() {
     { title: copy.sectionFormatTitle, body: copy.sectionFormatBody },
     { title: copy.sectionMaterialTitle, body: copy.sectionMaterialBody },
     { title: copy.sectionIndependenceTitle, body: copy.sectionIndependenceBody },
+    { title: copy.sectionSourceTitle, body: copy.sectionSourceBody },
   ];
 
   return (
