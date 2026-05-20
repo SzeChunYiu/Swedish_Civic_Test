@@ -138,7 +138,10 @@ test('practice question source citation prefix follows the selected language', a
     page.getByText('Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5'),
   ).toBeVisible();
   await expect(
-    page.getByLabel(/Källhänvisning: Källa: Sverige i fokus, Landet Sverige/),
+    page.getByLabel(
+      'Källhänvisning: Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5',
+      { exact: true },
+    ),
   ).toBeVisible();
   await expect(page.getByText(/Källa\/Source:/)).toHaveCount(0);
 
@@ -150,7 +153,10 @@ test('practice question source citation prefix follows the selected language', a
     page.getByText('Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5'),
   ).toBeVisible();
   await expect(
-    page.getByLabel(/Source citation: Source: Sverige i fokus, Landet Sverige/),
+    page.getByLabel(
+      'Source citation: Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
+      { exact: true },
+    ),
   ).toBeVisible();
   await expect(page.getByText(/Källa\/Source:/)).toHaveCount(0);
 
@@ -179,7 +185,9 @@ test('practice flow answers a question, shows source feedback, and advances', as
   await expect(correctAnswer).toBeVisible();
   await correctAnswer.click();
 
-  await expect(page.getByText('In the Nordic region in northern Europe — Correct')).toBeVisible();
+  await expect(
+    page.getByLabel('In the Nordic region in northern Europe, Correct', { exact: true }),
+  ).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toBeVisible();
   await expect(page.getByText('Completed questions: 1')).toBeVisible();
   await expect(page.getByText('Explanation')).toBeVisible();
@@ -214,12 +222,14 @@ test('practice feedback reveals the correct option after a wrong answer', async 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
   await page.getByLabel('Select answer In southern Europe').click();
 
-  await expect(page.getByText('In southern Europe — Wrong')).toBeVisible();
+  await expect(page.getByLabel('In southern Europe, Wrong', { exact: true })).toBeVisible();
   await expect(
-    page.getByText('In the Nordic region in northern Europe — Correct answer'),
+    page.getByLabel('In the Nordic region in northern Europe, Correct answer', { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText('I södra Europa — Fel')).toHaveCount(0);
-  await expect(page.getByText('I Norden i norra Europa — Rätt svar')).toHaveCount(0);
+  await expect(page.getByLabel('I södra Europa, Fel', { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel('I Norden i norra Europa, Rätt svar', { exact: true })).toHaveCount(
+    0,
+  );
   await expect(page.getByText('Score: 0/1')).toBeVisible();
   await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
 
@@ -241,8 +251,10 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   await expectPrimaryPrompt(page, 'Var ligger Sverige?', 'Where is Sweden located?');
   await page.getByLabel('Välj svaret I södra Europa').click();
 
-  await expect(page.getByText('I södra Europa — Fel')).toBeVisible();
-  await expect(page.getByText('I Norden i norra Europa — Rätt svar')).toBeVisible();
+  await expect(page.getByLabel('I södra Europa, Fel', { exact: true })).toBeVisible();
+  await expect(
+    page.getByLabel('I Norden i norra Europa, Rätt svar', { exact: true }),
+  ).toBeVisible();
 
   await page.getByText('Misstag', { exact: true }).click();
   await closeLaunchAdIfPresent(page);
@@ -250,13 +262,14 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   await expect(page).toHaveURL(/\/mistakes$/);
   await expect(page.getByText('Fel svar att repetera')).toBeVisible();
   await expect(page.getByText('Ditt senaste felaktiga svar')).toBeVisible();
-  await expect(page.getByText('I södra Europa', { exact: true })).toBeVisible();
-  await expect(page.getByText('Rätt svar', { exact: true })).toBeVisible();
-  await expect(page.getByText('I Norden i norra Europa', { exact: true })).toBeVisible();
+  const swedishAnswerReview = page.getByLabel(
+    'Svar att repetera. Ditt senaste felaktiga svar: I södra Europa. Rätt svar: I Norden i norra Europa.',
+  );
+  await expect(swedishAnswerReview).toBeVisible();
+  await expect(swedishAnswerReview.getByText('I södra Europa', { exact: true })).toBeVisible();
+  await expect(swedishAnswerReview.getByText('Rätt svar', { exact: true })).toBeVisible();
   await expect(
-    page.getByLabel(
-      'Svar att repetera. Ditt senaste felaktiga svar: I södra Europa. Rätt svar: I Norden i norra Europa.',
-    ),
+    swedishAnswerReview.getByText('I Norden i norra Europa', { exact: true }),
   ).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
@@ -279,9 +292,9 @@ test('wrong practice answer appears in Mistakes with English answer review conte
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
   await page.getByLabel('Select answer In southern Europe').click();
 
-  await expect(page.getByText('In southern Europe — Wrong')).toBeVisible();
+  await expect(page.getByLabel('In southern Europe, Wrong', { exact: true })).toBeVisible();
   await expect(
-    page.getByText('In the Nordic region in northern Europe — Correct answer'),
+    page.getByLabel('In the Nordic region in northern Europe, Correct answer', { exact: true }),
   ).toBeVisible();
 
   await page.getByText('Mistakes', { exact: true }).click();
@@ -290,15 +303,14 @@ test('wrong practice answer appears in Mistakes with English answer review conte
   await expect(page).toHaveURL(/\/mistakes$/);
   await expect(page.getByText('Wrong answers to revisit')).toBeVisible();
   await expect(page.getByText('Your latest wrong answer')).toBeVisible();
-  await expect(page.getByText('In southern Europe', { exact: true })).toBeVisible();
-  await expect(page.getByText('Correct answer', { exact: true })).toBeVisible();
+  const englishAnswerReview = page.getByLabel(
+    'Answers to review. Your latest wrong answer: In southern Europe. Correct answer: In the Nordic region in northern Europe.',
+  );
+  await expect(englishAnswerReview).toBeVisible();
+  await expect(englishAnswerReview.getByText('In southern Europe', { exact: true })).toBeVisible();
+  await expect(englishAnswerReview.getByText('Correct answer', { exact: true })).toBeVisible();
   await expect(
-    page.getByText('In the Nordic region in northern Europe', { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByLabel(
-      'Answers to review. Your latest wrong answer: In southern Europe. Correct answer: In the Nordic region in northern Europe.',
-    ),
+    englishAnswerReview.getByText('In the Nordic region in northern Europe', { exact: true }),
   ).toBeVisible();
   await expect(page.getByText('Ditt senaste felaktiga svar')).toHaveCount(0);
   await expect(page.getByText('Rätt svar', { exact: true })).toHaveCount(0);
@@ -323,12 +335,14 @@ test('routed quiz uses English question headings and answer feedback in English 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
   await page.getByLabel('Select answer In southern Europe').click();
 
-  await expect(page.getByText('In southern Europe — Wrong')).toBeVisible();
+  await expect(page.getByLabel('In southern Europe, Wrong', { exact: true })).toBeVisible();
   await expect(
-    page.getByText('In the Nordic region in northern Europe — Correct answer'),
+    page.getByLabel('In the Nordic region in northern Europe, Correct answer', { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText('I södra Europa — Fel')).toHaveCount(0);
-  await expect(page.getByText('I Norden i norra Europa — Rätt svar')).toHaveCount(0);
+  await expect(page.getByLabel('I södra Europa, Fel', { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel('I Norden i norra Europa, Rätt svar', { exact: true })).toHaveCount(
+    0,
+  );
   await expect(page.getByText('Score: 0/1')).toBeVisible();
   await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
 
