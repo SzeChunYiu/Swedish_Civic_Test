@@ -547,6 +547,9 @@ test('Settings language change rerenders submitted Mock results without restarti
   assert.match(html, /Rätt svar/);
   assert.match(html, /Övningen är klar/);
   assertNoMockOfficialPassLineCopy(html);
-  assert.doesNotMatch(html, /Build your exam|Start exam|Bygg din tentamen|Starta tentamen|Skarp tentamen/);
+  assert.doesNotMatch(
+    html,
+    /Build your exam|Start exam|Bygg din tentamen|Starta tentamen|Skarp tentamen/,
+  );
   assert.equal(context.reloadCount, 0);
 });
