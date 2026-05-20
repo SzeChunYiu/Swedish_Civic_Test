@@ -185,25 +185,6 @@ function hasStoreConfirmation(record: StoredRemoveAdsEntitlementRecord): boolean
   );
 }
 
-function purchaseMatchesStoredRecord(
-  purchase: RemoveAdsPurchaseRecord,
-  record: StoredRemoveAdsEntitlementRecord,
-): boolean {
-  if (!isRemoveAdsPurchase(purchase)) return false;
-  if (record.purchaseToken && purchase.purchaseToken === record.purchaseToken) return true;
-  if (record.transactionId && purchase.transactionId === record.transactionId) return true;
-  return false;
-}
-
-async function clearStoredRemoveAdsEntitlement(storage: PurchaseStorage): Promise<void> {
-  if (storage.deleteItemAsync) {
-    await storage.deleteItemAsync(REMOVE_ADS_STORAGE_KEY);
-    return;
-  }
-
-  await storage.setItemAsync(REMOVE_ADS_STORAGE_KEY, 'false');
-}
-
 function createReceiptValidationResult(
   purchase: RemoveAdsPurchaseRecord,
   validatedAt = new Date(),
@@ -230,7 +211,7 @@ function isValidatedRemoveAdsReceipt(
   return Boolean(
     result &&
     result.status === 'valid' &&
-    isRemoveAdsProductId(result.productId) &&
+    result.productId === REMOVE_ADS_PRODUCT_ID &&
     isValidIsoDate(result.validatedAt) &&
     (result.purchaseToken || result.transactionId),
   );
@@ -642,13 +623,6 @@ export function createNativePurchaseProvider({
     },
     async restorePurchases() {
       const iap = await getIap();
-      const storePlatform = await resolveNativeStorePlatform(platform);
-      const storeProductIds = new Map(
-        productIds.map((productId) => [
-          productId,
-          getPurchaseStoreProductId(productId, storePlatform),
-        ]),
-      );
       await iap.restorePurchases();
       return normalizePurchases(await iap.getAvailablePurchases()).filter(isRemoveAdsPurchase);
     },
@@ -763,7 +737,7 @@ export async function restoreRemoveAdsPurchase({
       return createResult('not_found', await getPurchaseEntitlements({ storage }), purchase);
     }
 
-    const persistenceResult = await persistValidatedRemoveAdsEntitlement({
+    const entitlements = await setRemoveAdsEntitlement(true, {
       purchase,
       receiptValidation,
       source: 'restore',

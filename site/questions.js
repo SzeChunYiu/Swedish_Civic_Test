@@ -14331,54 +14331,6 @@
       "law-and-order",
       "crime-prevention",
       "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q327",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
-    "q": {
-      "en": "At what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
-      "sv": "Vid vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
-    },
-    "opts": [
-      {
-        "en": "13 years",
-        "sv": "13 år"
-      },
-      {
-        "en": "15 years",
-        "sv": "15 år"
-      },
-      {
-        "en": "18 years",
-        "sv": "18 år"
-      },
-      {
-        "en": "21 years",
-        "sv": "21 år"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Lag och rätt",
-      "section": "Straffmyndighet och belastningsregister",
-      "page": 19
-    },
-    "questionProvenance": "derived",
-    "difficulty": "medium",
-    "tags": [
-      "criminal-responsibility",
-      "age-15",
-      "criminal-record",
-      "published-variant",
       "section-practice"
     ]
   },
@@ -14388,55 +14340,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "In what way does the principle of public access make it easier to scrutinize authorities?",
-      "sv": "Kunskapsfråga: Hur underlättar offentlighetsprincipen granskning av myndigheter?"
-    },
-    "opts": [
-      {
-        "en": "By allowing public documents to be requested unless they are covered by secrecy rules",
-        "sv": "Genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess"
-      },
-      {
-        "en": "By letting the state decide what media may write",
-        "sv": "Genom att staten bestämmer vad medier får skriva"
-      },
-      {
-        "en": "By allowing only politicians to read authority documents",
-        "sv": "Genom att bara politiker får läsa myndigheters handlingar"
-      },
-      {
-        "en": "By making all authority decisions secret",
-        "sv": "Genom att alla myndighetsbeslut blir hemliga"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The principle of public access means public documents held by authorities are public. Journalists and others can therefore request email and other documents to examine how decisions were made, unless the documents are covered by secrecy rules.",
-      "sv": "Offentlighetsprincipen innebär att allmänna handlingar hos myndigheter är offentliga. Journalister och andra kan därför begära ut e-post och andra handlingar för att granska hur beslut har fattats, om handlingarna inte omfattas av sekretess."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mediernas roll",
-      "section": "Fria medier",
-      "page": 20
-    },
-    "difficulty": "medium",
-    "tags": [
-      "public-access",
-      "public-documents",
-      "media-scrutiny",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q315",
-    "chapterId": 5,
-    "chapter": "Ch. 05 · Law and justice",
-    "type": "true_false",
-    "q": {
-      "en": "The principle of public access makes it easier to scrutinize authorities by allowing public documents to be requested unless they are covered by secrecy rules.",
-      "sv": "Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess."
+      "en": "The role of the police in Sweden is to maintain law and order and prevent and investigate crimes.",
+      "sv": "Polisens uppgift i Sverige är att upprätthålla lag och ordning samt förebygga och utreda brott."
     },
     "opts": [
       {
@@ -14450,32 +14355,32 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The principle of public access means public documents held by authorities are public. Journalists and others can therefore request email and other documents to examine how decisions were made, unless the documents are covered by secrecy rules.",
-      "sv": "Offentlighetsprincipen innebär att allmänna handlingar hos myndigheter är offentliga. Journalister och andra kan därför begära ut e-post och andra handlingar för att granska hur beslut har fattats, om handlingarna inte omfattas av sekretess."
+      "en": "The police maintain law and order and prevent and investigate crimes. They also work with schools, municipalities, companies, associations, and other authorities for safety and can help people exposed to crime or needing protection.",
+      "sv": "Polisens uppgift är att upprätthålla lag och ordning samt att förebygga och utreda brott. Polisen samarbetar också med skolor, kommuner, företag, föreningar och andra myndigheter för trygghet och kan hjälpa personer som utsatts för brott eller behöver skydd."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mediernas roll",
-      "section": "Fria medier",
-      "page": 20
+      "chapter": "Lag och rätt",
+      "section": "Polisen",
+      "page": 18
     },
     "difficulty": "medium",
     "tags": [
-      "public-access",
-      "public-documents",
-      "media-scrutiny",
+      "police",
+      "law-and-order",
+      "crime-prevention",
       "published-variant",
       "true-false"
     ]
   },
   {
-    "id": "q316",
+    "id": "q315",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
-    "type": "single_choice",
+    "type": "true_false",
     "q": {
-      "en": "The principle of public access makes it easier to scrutinize authorities by letting the state decide what media may write.",
-      "sv": "Offentlighetsprincipen underlättar granskning av myndigheter genom att staten bestämmer vad medier får skriva."
+      "en": "The role of the police in Sweden is to decide the state budget.",
+      "sv": "Polisens uppgift i Sverige är att besluta statens budget."
     },
     "opts": [
       {
@@ -14489,22 +14394,69 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The principle of public access means public documents held by authorities are public. Journalists and others can therefore request email and other documents to examine how decisions were made, unless the documents are covered by secrecy rules.",
-      "sv": "Offentlighetsprincipen innebär att allmänna handlingar hos myndigheter är offentliga. Journalister och andra kan därför begära ut e-post och andra handlingar för att granska hur beslut har fattats, om handlingarna inte omfattas av sekretess."
+      "en": "The police maintain law and order and prevent and investigate crimes. They also work with schools, municipalities, companies, associations, and other authorities for safety and can help people exposed to crime or needing protection.",
+      "sv": "Polisens uppgift är att upprätthålla lag och ordning samt att förebygga och utreda brott. Polisen samarbetar också med skolor, kommuner, företag, föreningar och andra myndigheter för trygghet och kan hjälpa personer som utsatts för brott eller behöver skydd."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Mediernas roll",
-      "section": "Fria medier",
-      "page": 20
+      "chapter": "Lag och rätt",
+      "section": "Polisen",
+      "page": 18
     },
     "difficulty": "medium",
     "tags": [
-      "public-access",
-      "public-documents",
-      "media-scrutiny",
+      "police",
+      "law-and-order",
+      "crime-prevention",
       "published-variant",
       "false-statement"
+    ]
+  },
+  {
+    "id": "q316",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which statement describes the role of the police in Sweden?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver polisens uppgift i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "To maintain law and order and prevent and investigate crimes",
+        "sv": "Att upprätthålla lag och ordning samt förebygga och utreda brott"
+      },
+      {
+        "en": "To decide the state budget",
+        "sv": "Att besluta statens budget"
+      },
+      {
+        "en": "To appoint lay judges",
+        "sv": "Att utse nämndemän"
+      },
+      {
+        "en": "To finance public service broadcasting",
+        "sv": "Att finansiera public service"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The police maintain law and order and prevent and investigate crimes. They also work with schools, municipalities, companies, associations, and other authorities for safety and can help people exposed to crime or needing protection.",
+      "sv": "Polisens uppgift är att upprätthålla lag och ordning samt att förebygga och utreda brott. Polisen samarbetar också med skolor, kommuner, företag, föreningar och andra myndigheter för trygghet och kan hjälpa personer som utsatts för brott eller behöver skydd."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Polisen",
+      "page": 18
+    },
+    "difficulty": "medium",
+    "tags": [
+      "police",
+      "law-and-order",
+      "crime-prevention",
+      "published-variant",
+      "judgement"
     ]
   },
   {
@@ -19710,8 +19662,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about Regionerna ansvarar för sjukvården?",
-      "sv": "Sveriges regioner ansvarar för ..."
+      "en": "Choose the correct option: What responsibility do Sweden's regions have within welfare?",
+      "sv": "Välj rätt alternativ: Vilket ansvar har Sveriges regioner inom välfärden?"
     },
     "opts": [
       {
@@ -22628,8 +22580,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about EU och Europarådet?",
-      "sv": "EU:s fyra friheter innebär ..."
+      "en": "Choose the correct option: What do the EU's four freedoms mean?",
+      "sv": "Välj rätt alternativ: Vad innebär EU:s fyra friheter?"
     },
     "opts": [
       {
@@ -27089,55 +27041,6 @@
       "1970s",
       "religion",
       "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q603",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "single_choice",
-    "q": {
-      "en": "Study question: Which Christian churches or communities are mentioned as examples in Sweden today?",
-      "sv": "Kunskapsfråga: Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
-    },
-    "opts": [
-      {
-        "en": "Orthodox churches, the Catholic Church, and Protestant churches",
-        "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor"
-      },
-      {
-        "en": "Only the Church of Sweden and no other communities",
-        "sv": "Bara Svenska kyrkan och inga andra samfund"
-      },
-      {
-        "en": "Only Buddhist and Hindu temples",
-        "sv": "Endast buddhistiska och hinduiska tempel"
-      },
-      {
-        "en": "Mosques and Muslim prayer rooms",
-        "sv": "Moskéer och muslimska bönelokaler"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "In present-day Sweden there are many Christian communities representing different traditions and beliefs. Examples include Orthodox churches, the Catholic Church, and different Protestant churches; the options about only the Church of Sweden, Buddhist and Hindu temples, or mosques describe other or too narrow parts.",
-      "sv": "I dagens Sverige finns många kristna samfund som representerar olika traditioner och trosinriktningar. Exempel är ortodoxa kyrkor, katolska kyrkan och olika protestantiska kyrkor; alternativen om bara Svenska kyrkan, buddhistiska och hinduiska tempel eller moskéer beskriver andra eller för snäva delar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Kristendom",
-      "page": 43
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "christianity",
-      "christian-communities",
-      "orthodox-catholic-protestant",
-      "religion",
-      "published-variant",
       "section-practice"
     ]
   },
@@ -27147,8 +27050,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Orthodox churches, the Catholic Church, and Protestant churches are mentioned as examples in Sweden today.",
-      "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor nämns som exempel i dagens Sverige."
+      "en": "Sweden's first mosques were built during the 1970s.",
+      "sv": "Sveriges första moskéer byggdes under 1970-talet."
     },
     "opts": [
       {
@@ -27162,20 +27065,20 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In present-day Sweden there are many Christian communities representing different traditions and beliefs. Examples include Orthodox churches, the Catholic Church, and different Protestant churches; the options about only the Church of Sweden, Buddhist and Hindu temples, or mosques describe other or too narrow parts.",
-      "sv": "I dagens Sverige finns många kristna samfund som representerar olika traditioner och trosinriktningar. Exempel är ortodoxa kyrkor, katolska kyrkan och olika protestantiska kyrkor; alternativen om bara Svenska kyrkan, buddhistiska och hinduiska tempel eller moskéer beskriver andra eller för snäva delar."
+      "en": "At the beginning of the 20th century there were only a few Muslims in Sweden, and the number increased through immigration after the Second World War. Sweden's first mosques were built during the 1970s; the year 2000 refers to Stockholm Mosque, and the Middle Ages belong to other parts of religious history.",
+      "sv": "I början av 1900-talet fanns bara ett fåtal muslimer i Sverige, och antalet ökade genom invandring efter andra världskriget. Under 1970-talet byggdes Sveriges första moskéer; år 2000 gäller Stockholms moské och medeltiden hör till andra delar av religionshistorien."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Kristendom",
-      "page": 43
+      "section": "Islam",
+      "page": 44
     },
     "difficulty": "easy",
     "tags": [
-      "christianity",
-      "christian-communities",
-      "orthodox-catholic-protestant",
+      "islam",
+      "mosques",
+      "1970s",
       "religion",
       "published-variant",
       "true-false"
@@ -27187,48 +27090,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "In 1860, Swedes were permitted to leave the Church of Sweden, but only if they joined another Christian community.",
-      "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om man gick med i ett annat kristet samfund."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
-      "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionsfrihet",
-      "page": 42
-    },
-    "difficulty": "easy",
-    "tags": [
-      "religious-freedom",
-      "church-of-sweden",
-      "1860",
-      "christian-community",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q592",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "In 1860, Swedes were permitted to choose any religion or no religion at all completely freely.",
-      "sv": "År 1860 blev det tillåtet för svenskar att helt fritt välja vilken religion som helst eller ingen religion alls."
+      "en": "Sweden's first mosques were built at the beginning of the 20th century.",
+      "sv": "Sveriges första moskéer byggdes i början av 1900-talet."
     },
     "opts": [
       {
@@ -27242,23 +27105,71 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
-      "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
+      "en": "At the beginning of the 20th century there were only a few Muslims in Sweden, and the number increased through immigration after the Second World War. Sweden's first mosques were built during the 1970s; the year 2000 refers to Stockholm Mosque, and the Middle Ages belong to other parts of religious history.",
+      "sv": "I början av 1900-talet fanns bara ett fåtal muslimer i Sverige, och antalet ökade genom invandring efter andra världskriget. Under 1970-talet byggdes Sveriges första moskéer; år 2000 gäller Stockholms moské och medeltiden hör till andra delar av religionshistorien."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Religionsfrihet",
-      "page": 42
+      "section": "Islam",
+      "page": 44
     },
     "difficulty": "easy",
     "tags": [
-      "religious-freedom",
-      "church-of-sweden",
-      "1860",
-      "christian-community",
+      "islam",
+      "mosques",
+      "1970s",
+      "religion",
       "published-variant",
       "false-statement"
+    ]
+  },
+  {
+    "id": "q592",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: When were Sweden's first mosques built?",
+      "sv": "Välj rätt alternativ: När byggdes Sveriges första moskéer?"
+    },
+    "opts": [
+      {
+        "en": "During the 1970s",
+        "sv": "Under 1970-talet"
+      },
+      {
+        "en": "At the beginning of the 20th century",
+        "sv": "I början av 1900-talet"
+      },
+      {
+        "en": "In 2000",
+        "sv": "År 2000"
+      },
+      {
+        "en": "During the Middle Ages",
+        "sv": "Under medeltiden"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "At the beginning of the 20th century there were only a few Muslims in Sweden, and the number increased through immigration after the Second World War. Sweden's first mosques were built during the 1970s; the year 2000 refers to Stockholm Mosque, and the Middle Ages belong to other parts of religious history.",
+      "sv": "I början av 1900-talet fanns bara ett fåtal muslimer i Sverige, och antalet ökade genom invandring efter andra världskriget. Under 1970-talet byggdes Sveriges första moskéer; år 2000 gäller Stockholms moské och medeltiden hör till andra delar av religionshistorien."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Islam",
+      "page": 44
+    },
+    "difficulty": "easy",
+    "tags": [
+      "islam",
+      "mosques",
+      "1970s",
+      "religion",
+      "published-variant",
+      "judgement"
     ]
   },
   {
@@ -27370,21 +27281,21 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In present-day Sweden there are many Christian communities representing different traditions and beliefs. Examples include Orthodox churches, the Catholic Church, and different Protestant churches; the options about only the Church of Sweden, Buddhist and Hindu temples, or mosques describe other or too narrow parts.",
-      "sv": "I dagens Sverige finns många kristna samfund som representerar olika traditioner och trosinriktningar. Exempel är ortodoxa kyrkor, katolska kyrkan och olika protestantiska kyrkor; alternativen om bara Svenska kyrkan, buddhistiska och hinduiska tempel eller moskéer beskriver andra eller för snäva delar."
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Kristendom",
-      "page": 43
+      "section": "Religionsfrihet",
+      "page": 42
     },
     "difficulty": "easy",
     "tags": [
-      "christianity",
-      "christian-communities",
-      "orthodox-catholic-protestant",
-      "religion",
+      "religious-freedom",
+      "church-of-sweden",
+      "1860",
+      "christian-community",
       "published-variant",
       "false-statement"
     ]
@@ -27513,15 +27424,14 @@
     "source": {
       "title": "Sverige i fokus",
       "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Hinduism och buddhism",
+      "section": "Kristendom",
       "page": 43
     },
     "difficulty": "medium",
     "tags": [
-      "hinduism",
-      "buddhism",
-      "20th-century",
-      "meditation-yoga",
+      "christianity",
+      "christian-communities",
+      "orthodox-catholic-protestant",
       "religion",
       "published-variant",
       "true-false"
@@ -33334,8 +33244,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden is divided into ...",
-      "sv": "Sverige är indelat i ..."
+      "en": "Choose the correct option: How many historical provinces is Sweden divided into?",
+      "sv": "Välj rätt alternativ: Hur många landskap är Sverige indelat i?"
     },
     "opts": [
       {

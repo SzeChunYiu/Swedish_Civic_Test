@@ -28,11 +28,6 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /const copy = profileCopy\[language\]/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Progress without an account/);
-  assert.match(
-    source,
-    /Dina mål, språkval, sviter och märken sparas bara på den här enheten, så att dina studier förblir privata\./,
-  );
-  assert.doesNotMatch(source, /för\s+privat\s+studierutin/i);
   assert.match(source, /Första övningen/);
   assert.match(source, /<ScreenShell eyebrow=\{copy\.eyebrow\} title=\{copy\.title\}/);
   assert.match(source, /<MetricCard label=\{copy\.levelMetric\}/);

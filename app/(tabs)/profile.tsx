@@ -150,17 +150,6 @@ export default function Screen() {
             {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
           </Badge>
         </View>
-        <View style={styles.settingsShortcutRow}>
-          <Text style={styles.settingsShortcutHelper}>{copy.settingsShortcutHelper}</Text>
-          <Link
-            accessibilityLabel={copy.openSettingsAccessibilityLabel}
-            accessibilityRole="link"
-            href="/settings"
-            style={styles.settingsLink}
-          >
-            {copy.openSettings}
-          </Link>
-        </View>
       </Card>
 
       <Card style={styles.cardWide}>
@@ -200,19 +189,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
-  },
-  value: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  settingsShortcutRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'space-between',
   },
   value: {
     color: colors.text,

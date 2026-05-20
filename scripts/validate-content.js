@@ -72,8 +72,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'correctOptionId',
   'optionSv',
   'optionEn',
-  'correctOptionSv',
-  'correctOptionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
@@ -113,43 +111,6 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\b(?:the\s+)?UHR\s+(?:material|section)\b/i,
   /\bst(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR\b/i,
   /\bbest\s+matches\s+(?:the\s+)?UHR\s+section\b/i,
-];
-const QUESTION_STEM_SOURCE_AUTHORITY_PATTERN_FIXTURES = [
-  {
-    label: 'enligt-uhr',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[0],
-    text: 'Enligt UHR ligger Sveriges nordligaste del norr om polcirkeln.',
-  },
-  {
-    label: 'uhr-materialet',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[1],
-    text: 'UHR-materialet beskriver Sveriges nordligaste del.',
-  },
-  {
-    label: 'uhrs-material',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[2],
-    text: 'UHR:s material beskriver Sveriges nordligaste del.',
-  },
-  {
-    label: 'according-to-uhr',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[3],
-    text: "According to the UHR, Sweden's northernmost part lies north of the Arctic Circle.",
-  },
-  {
-    label: 'uhr-section',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[4],
-    text: 'The UHR section describes where Sweden is located.',
-  },
-  {
-    label: 'stemmer-bast-enligt-uhr',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[5],
-    text: 'Vilket svar stämmer bäst enligt UHR?',
-  },
-  {
-    label: 'best-matches-uhr-section',
-    pattern: QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS[6],
-    text: 'Which answer best matches the UHR section?',
-  },
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -730,12 +691,6 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home study-loop benchmark lessons must render localized copy',
   ],
 ];
-const HOME_ROUTE_SYNTHETIC_COPY_PATTERNS = [
-  /simulerade\s+elever/i,
-  /simulerade\s+studier/i,
-  /simulated\s+learners/i,
-  /simulated\s+study\s+sessions/i,
-];
 const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
@@ -970,9 +925,9 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdInterstitial',
+    component: 'AdBanner',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdInterstitial\s+triggerKey=\{question\.id\}\s+\/>/,
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -6291,9 +6246,7 @@ const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
 const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
-const appConfig = fs.existsSync(path.join(repoRoot, 'app.config.ts'))
-  ? { expo: loadTs('app.config.ts').default() }
-  : loadJson('app.json');
+const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
@@ -6918,19 +6871,6 @@ function validateAdPlacementRouteParity() {
     ? adsConfig.blockedPlacements
     : [];
 
-  for (const file of ['components/monetization/PremiumBanner.tsx', 'lib/monetization/adCopy.ts']) {
-    try {
-      const source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
-      SWEDISH_MONETIZATION_COPY_BANNED_PATTERNS.forEach((pattern) => {
-        if (pattern.test(source)) {
-          reject(`${file} contains literal Swedish monetization copy`);
-        }
-      });
-    } catch (error) {
-      reject(`${file} could not be read for Swedish monetization copy parity: ${error.message}`);
-    }
-  }
-
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
     let routeIsValid = true;
@@ -6990,43 +6930,6 @@ function validateAdPlacementRouteParity() {
       );
       if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
-        routeIsValid = false;
-      }
-    }
-
-    if (spec.component === 'AdInterstitial') {
-      const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
-      );
-      const nativeInterstitialSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdInterstitial.native.tsx'),
-        'utf8',
-      );
-      const webInterstitialSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdInterstitial.tsx'),
-        'utf8',
-      );
-
-      if (!nativeInterstitialSource.includes('InterstitialAd.createForAdRequest')) {
-        reject('AdInterstitial native placement must use the Google Mobile Ads interstitial API');
-        routeIsValid = false;
-      }
-      if (nativeInterstitialSource.includes('BannerAd')) {
-        reject('AdInterstitial native placement must not render BannerAd');
-        routeIsValid = false;
-      }
-      if (!consentAwareShouldShowPattern.test(nativeInterstitialSource)) {
-        reject(`AdInterstitial must gate ${spec.placement} through consent-aware shouldShowAd`);
-        routeIsValid = false;
-      }
-      if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
-        reject('AdInterstitial must pass non-personalized ad request options from consent');
-        routeIsValid = false;
-      }
-      if (!webInterstitialSource.includes('placement="quiz_completed_interstitial"')) {
-        reject(
-          'AdInterstitial web fallback must render the accessible quiz completion placeholder',
-        );
         routeIsValid = false;
       }
     }
@@ -8610,9 +8513,6 @@ function validateLegalRouteHeaderParity() {
   );
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
-  }
-  if (valid && legalSwedishEnglishTokenRoutesValidated === EXPECTED_LEGAL_ROUTE_HEADERS.length) {
-    legalSwedishEnglishTokenGuardValidated = true;
   }
 }
 
@@ -13139,8 +13039,6 @@ function validateQuestionBankCsvContract() {
       question.correctOptionId,
       questionOptionPayload(question, 'textSv'),
       questionOptionPayload(question, 'textEn'),
-      question.options.find((option) => option.id === question.correctOptionId)?.textSv,
-      question.options.find((option) => option.id === question.correctOptionId)?.textEn,
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),

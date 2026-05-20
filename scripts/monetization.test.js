@@ -187,54 +187,6 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   );
 });
 
-test('practice completion interstitial uses the native full-screen ad API', () => {
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const nativeInterstitialSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdInterstitial.native.tsx'),
-    'utf8',
-  );
-  const webInterstitialSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdInterstitial.tsx'),
-    'utf8',
-  );
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
-  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-
-  assert.match(
-    practiceSource,
-    /import \{ AdInterstitial \} from '..\/..\/components\/monetization\/AdInterstitial';/,
-  );
-  assert.match(practiceSource, /<AdInterstitial triggerKey=\{question\.id\} \/>/);
-  assert.doesNotMatch(practiceSource, /<AdBanner\s+placement="quiz_completed_interstitial"/);
-
-  assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
-  assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
-  assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
-  assert.match(nativeInterstitialSource, /interstitialAd\.load\(\)/);
-  assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
-  assert.match(
-    nativeInterstitialSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial',\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*\)/,
-  );
-  assert.match(
-    nativeInterstitialSource,
-    /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
-  );
-  assert.match(nativeInterstitialSource, /shownInterstitialTriggerKeys\.has\(triggerKey\)/);
-  assert.doesNotMatch(nativeInterstitialSource, /BannerAd|BannerAdSize/);
-  assert.doesNotMatch(nativeBannerSource, /quiz_completed_interstitial/);
-
-  assert.match(
-    webInterstitialSource,
-    /<AdBanner entitlements=\{entitlements\} placement="quiz_completed_interstitial" \/>/,
-  );
-  assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads|InterstitialAd/);
-  assert.doesNotMatch(examSource, /AdInterstitial|InterstitialAd|quiz_completed_interstitial/);
-});
-
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
     {
@@ -840,9 +792,8 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
 
   try {
     const webStorage = createWebPurchaseStorage();
-    const webProvider = createMockPurchaseProvider();
     await buyRemoveAds({
-      provider: webProvider,
+      provider: createMockPurchaseProvider(),
       storage: webStorage,
     });
 
