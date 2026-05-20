@@ -62,6 +62,30 @@ test('progress writes keep in-memory answers and expose recoverable warnings', (
   assert.match(storage.values.get('progressState'), /"bookmarked":true/);
 });
 
+test('progress corrupt JSON reads fall back with a recoverable read warning', () => {
+  const storage = createMemoryMMKV({ progressState: '{broken' });
+  const { useProgressStore } = loadTsWithStorage(repoRoot, 'lib/storage/progressStore.ts', {
+    progress: storage,
+  });
+
+  let state = useProgressStore.getState();
+  assert.deepEqual(state.completedQuestionIds, []);
+  assert.deepEqual(state.questionProgress, {});
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'progress');
+  assert.equal(state.persistenceWarning.key, 'progressState');
+  assert.match(state.persistenceWarning.errorMessage, /JSON|Unexpected|position/i);
+
+  state.recordAnswer('q001', true);
+  state = useProgressStore.getState();
+  assert.equal(state.persistenceWarning, null);
+  assert.equal(
+    JSON.parse(storage.values.get('progressState')).questionProgress.q001.correctCount,
+    1,
+  );
+});
+
 test('settings writes keep in-memory choices and clear warnings after a later successful write', () => {
   const storage = createFailOnceMMKV();
   const { useSettingsStore } = loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', {
@@ -108,6 +132,65 @@ test('mistake-review writes keep selected answers and expose dismissible warning
   state.clearPersistenceWarning();
   state = useMistakeReviewStore.getState();
   assert.equal(state.persistenceWarning, null);
+});
+
+test('mistake-review corrupt JSON reads fall back with a recoverable read warning', () => {
+  const storage = createMemoryMMKV({ mistakeReviewState: '{broken' });
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': storage,
+    },
+  );
+
+  let state = useMistakeReviewStore.getState();
+  assert.deepEqual(state.wrongAnswerReviews, {});
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'mistake-review');
+  assert.equal(state.persistenceWarning.key, 'mistakeReviewState');
+  assert.match(state.persistenceWarning.errorMessage, /JSON|Unexpected|position/i);
+
+  state.recordWrongAnswerReview({
+    questionId: 'q001',
+    selectedOptionTextEn: 'Southern Europe',
+    selectedOptionTextSv: 'Södra Europa',
+  });
+  state = useMistakeReviewStore.getState();
+  assert.equal(state.persistenceWarning, null);
+  assert.equal(
+    JSON.parse(storage.values.get('mistakeReviewState')).wrongAnswerReviews.q001
+      .selectedOptionTextEn,
+    'Southern Europe',
+  );
+});
+
+test('highlight corrupt JSON reads fall back with a recoverable read warning', () => {
+  const storage = createMemoryMMKV({ 'ebook.highlights.v1': '{broken' });
+  const { useHighlightsStore } = loadTsWithStorage(repoRoot, 'lib/storage/highlightsStore.ts', {
+    highlights: storage,
+  });
+
+  let state = useHighlightsStore.getState();
+  assert.deepEqual(state.byChapter, {});
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'highlights');
+  assert.equal(state.persistenceWarning.key, 'ebook.highlights.v1');
+  assert.match(state.persistenceWarning.errorMessage, /JSON|Unexpected|position/i);
+
+  const created = state.addHighlight({
+    chapterId: 'ch01',
+    blockId: 'intro',
+    startOffset: 1,
+    endOffset: 3,
+    color: 'yellow',
+  });
+  state = useHighlightsStore.getState();
+  assert.ok(created);
+  assert.equal(state.persistenceWarning, null);
+  assert.equal(JSON.parse(storage.values.get('ebook.highlights.v1')).byChapter.ch01.length, 1);
 });
 
 test('routes render localized storage warning notices with dismiss hooks', () => {

@@ -3,7 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { readRecoverably, writeRecoverably } from './persistenceWarning';
+import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 // Ebook highlight + optional margin note. See
 // swedish_citizenship_app_project_plan/15_ebook_highlights.md.
@@ -158,14 +158,14 @@ function read(): {
     highlightsStorage?.getString(HIGHLIGHTS_STATE_KEY),
   );
   if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
-  try {
-    return {
-      state: normalizeHighlightsState(JSON.parse(result.value)),
-      persistenceWarning: result.warning,
-    };
-  } catch {
-    return { state: EMPTY, persistenceWarning: result.warning };
-  }
+  const parsed = parseJsonRecoverably(
+    result.value,
+    highlightsStorageId,
+    HIGHLIGHTS_STATE_KEY,
+    (rawValue) => normalizeHighlightsState(JSON.parse(rawValue)),
+    EMPTY,
+  );
+  return { state: parsed.value, persistenceWarning: parsed.warning ?? result.warning };
 }
 
 function write(state: PersistedHighlights): RecoverablePersistenceWarning | null {

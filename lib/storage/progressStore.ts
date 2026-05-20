@@ -10,7 +10,7 @@ import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
 import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export type QuestionProgress = {
   questionId: string;
@@ -436,21 +436,31 @@ export function normalizeImportedProgress(value: unknown): PersistedProgress {
   return normalizeProgress(value);
 }
 
-function readProgress(): PersistedProgress {
+function parseProgress(rawProgress: string): PersistedProgress {
+  return normalizeProgress(JSON.parse(rawProgress));
+}
+
+function readProgress(): PersistedProgress & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
   let rawProgress: string | undefined;
-  try {
+  const readResult = readRecoverably(progressStorage, progressStorageId, progressStateKey, () => {
     rawProgress = progressStorage?.getString(progressStateKey);
-  } catch {
-    return emptyProgress;
+    return rawProgress;
+  });
+
+  if (!readResult.value) {
+    return { ...emptyProgress, persistenceWarning: readResult.warning };
   }
 
-  if (!rawProgress) return emptyProgress;
-
-  try {
-    return normalizeProgress(JSON.parse(rawProgress));
-  } catch {
-    return emptyProgress;
-  }
+  const parseResult = parseJsonRecoverably(
+    readResult.value,
+    progressStorageId,
+    progressStateKey,
+    parseProgress,
+    emptyProgress,
+  );
+  return { ...parseResult.value, persistenceWarning: parseResult.warning ?? readResult.warning };
 }
 
 function writeProgress(
@@ -482,7 +492,7 @@ const initialProgress = readProgress();
 
 export const useProgressStore = create<ProgressState>((set) => ({
   ...initialProgress,
-  persistenceWarning: null,
+  persistenceWarning: initialProgress.persistenceWarning,
   markQuestionCompleted: (questionId) =>
     set((state) => {
       if (state.completedQuestionIds.includes(questionId)) return state;

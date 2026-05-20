@@ -17,7 +17,7 @@ import { createNewCard, gradeCard, isDue, sortByDueAscending } from '../learning
 import { getLocalDateKey } from '../learning/streaks';
 import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { readRecoverably, writeRecoverably } from './persistenceWarning';
+import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
@@ -136,11 +136,14 @@ function read(): InitialReviewState {
     reviewStorage?.getString(REVIEW_STORE_KEY),
   );
   if (!result.value) return { ...EMPTY, persistenceWarning: result.warning };
-  try {
-    return { ...normalize(JSON.parse(result.value)), persistenceWarning: result.warning };
-  } catch {
-    return { ...EMPTY, persistenceWarning: null };
-  }
+  const parsed = parseJsonRecoverably(
+    result.value,
+    reviewStorageId,
+    REVIEW_STORE_KEY,
+    (rawValue) => normalize(JSON.parse(rawValue)),
+    EMPTY,
+  );
+  return { ...parsed.value, persistenceWarning: parsed.warning ?? result.warning };
 }
 
 function write(state: PersistedReviews): RecoverablePersistenceWarning | null {

@@ -226,6 +226,17 @@ test('review store: successful writes persist JSON and corrupt reads still fall 
   );
   assert.deepEqual(useCorruptReviewStore.getState().byId, {});
   assert.deepEqual(useCorruptReviewStore.getState().gradedPerDay, {});
+  assert.equal(useCorruptReviewStore.getState().persistenceWarning.recoverable, true);
+  assert.equal(useCorruptReviewStore.getState().persistenceWarning.operation, 'read');
+  assert.equal(useCorruptReviewStore.getState().persistenceWarning.storageId, 'reviews');
+  assert.equal(useCorruptReviewStore.getState().persistenceWarning.key, REVIEW_STORE_KEY);
+  assert.match(
+    useCorruptReviewStore.getState().persistenceWarning.errorMessage,
+    /JSON|Unexpected/i,
+  );
+
+  useCorruptReviewStore.getState().ensureCard('q3', '2026-05-19T12:00:00.000Z');
+  assert.equal(useCorruptReviewStore.getState().persistenceWarning, null);
 });
 
 test('review store: rejects unsafe runtime question ids before creating or grading cards', () => {
