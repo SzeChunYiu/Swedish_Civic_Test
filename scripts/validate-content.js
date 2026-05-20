@@ -825,19 +825,19 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad för fokuserad repetition',
+    'Sparad till senare övning',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
-    'Svara fel på en övningsfråga så visas den här.',
-    'Inga misstag ännu',
-    'Fellogg',
-    'Fel svar att repetera',
-    'Ditt senaste felaktiga svar',
-    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
-    'Misstag',
-    'Fel svar: ${count}',
+    'När du missar en övningsfråga visas den här.',
+    'Inga missade frågor ännu',
+    'Öva igen',
+    'Frågor att öva på',
+    'Ditt senaste svar',
+    'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och hur många gånger de har missats.',
+    'Missade frågor',
+    'Missad ${count} gånger',
   ],
   en: [
     'Smart review',
@@ -857,6 +857,13 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
+const FORBIDDEN_MISTAKES_ROUTE_SV_COPY_PATTERNS = [
+  ['Fell', 'ogg'],
+  ['Fel svar att', ' repetera'],
+  ['Gå igenom fel svar', ' med fråga'],
+  ['repetitionsantal på', ' samma plats'],
+  ['Sparad för fokuserad', ' repetition'],
+];
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -8205,6 +8212,13 @@ function validateMistakesRouteCopyParity() {
 
   EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!mistakesRoute.includes(snippet)) reject(message);
+  });
+
+  FORBIDDEN_MISTAKES_ROUTE_SV_COPY_PATTERNS.forEach((patternParts) => {
+    const pattern = patternParts.join('');
+    if (mistakesRoute.includes(pattern)) {
+      reject(`mistakes route must not publish stale Swedish copy ${JSON.stringify(pattern)}`);
+    }
   });
 
   const seenLabels = new Set();
