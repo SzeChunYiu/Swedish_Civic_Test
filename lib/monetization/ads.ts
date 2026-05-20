@@ -154,31 +154,25 @@ export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   consentDecision?: AdConsentGate,
-  platform?: AdRuntimePlatform,
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
   const unit = getAdUnit(placement);
-  return isAdUnitAvailableForPlatform(unit, platform);
+  return Boolean(unit?.enabled);
 }
 
 export function shouldShowLaunchPopupAd({
   alreadyShownThisLaunch,
   consentDecision,
   entitlements,
-  platform,
 }: {
   alreadyShownThisLaunch: boolean;
   consentDecision?: AdConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
-  platform?: AdRuntimePlatform;
 }): boolean {
-  return (
-    !alreadyShownThisLaunch &&
-    shouldShowAd('app_open_launch', entitlements, consentDecision, platform)
-  );
+  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
 }
 
 function pathMatchesRoute(pathname: string, route: string): boolean {

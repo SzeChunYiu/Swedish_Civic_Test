@@ -1,9 +1,31 @@
 const assert = require('node:assert/strict');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const exportQuestionBankExecPattern =
+  /execFileSync\(\s*process\.execPath\s*,\s*\[[\s\S]*?['"]scripts\/export-question-bank\.js['"][\s\S]*?\]\s*,\s*\{(?<options>[\s\S]*?)\}\s*\)/g;
+
+function summarizeExportQuestionBankExecCwd(source) {
+  const matches = [...source.matchAll(exportQuestionBankExecPattern)];
+  return {
+    total: matches.length,
+    pinned: matches.filter((match) => /\bcwd:\s*repoRoot\b/.test(match.groups?.options || ''))
+      .length,
+  };
+}
+
+function parseValidationSummary() {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
 
 function contentTestFiles() {
   return fs
@@ -125,5 +147,70 @@ test('test:content script includes every content test file exactly once', () => 
     duplicateTests,
     [],
     `test:content duplicates tests: ${duplicateTests.join(', ')}`,
+  );
+});
+
+test('content export parity exec pins export-question-bank cwd to repo root', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-export-parity.test.js'),
+    'utf8',
+  );
+  const summary = summarizeExportQuestionBankExecCwd(source);
+
+  assert.equal(summary.total, 1);
+  assert.equal(summary.pinned, summary.total);
+  assert.match(source, /const repoRoot = path\.resolve\(__dirname, '\.\.'\);/);
+});
+
+test('content export parity cwd guard rejects ambient export exec fixtures', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-export-parity.test.js'),
+    'utf8',
+  );
+  const mutated = source.replace(/\n\s+cwd:\s*repoRoot,/, '');
+  const summary = summarizeExportQuestionBankExecCwd(mutated);
+
+  assert.equal(summary.total, 1);
+  assert.equal(summary.pinned, 0);
+});
+
+test('validate:content reports export-question-bank cwd parity summary', () => {
+  const summary = parseValidationSummary();
+
+  assert.equal(summary.exportQuestionBankExecCallsValidated, 1);
+  assert.equal(
+    summary.exportQuestionBankExecCwdPinnedValidated,
+    summary.exportQuestionBankExecCallsValidated,
+  );
+  assert.equal(summary.exportQuestionBankExecCwdParityValidated, true);
+});
+
+test('validate:content rejects an unpinned export-question-bank exec fixture', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/tests/content-export-parity.test.js')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(/\\n\\s+cwd:\\s*repoRoot,/, '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /pins 0\/1 export-question-bank exec cwd values to repoRoot/,
   );
 });
