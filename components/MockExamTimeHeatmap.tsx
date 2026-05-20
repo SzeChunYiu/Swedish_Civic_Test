@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { classifyMockExamTimePace, type MockExamTimePace } from '../lib/learning/mockExamTimePace';
 import { colors, radius, space, typography } from '../lib/theme';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import type { QuizAnswer } from '../types/progress';
@@ -7,11 +8,9 @@ import { PillBadge } from './PillBadge';
 import { Surface } from './Surface';
 import { Text } from './Text';
 
-type TimePace = 'rushed' | 'median' | 'overthought' | 'stuck';
-
 type MockExamTimeHeatmapCopy = {
   median: (seconds: number) => string;
-  paceLabels: Record<TimePace, string>;
+  paceLabels: Record<MockExamTimePace, string>;
   questionLabel: (
     questionNumber: number,
     seconds: number,
@@ -78,14 +77,6 @@ function formatSeconds(seconds: number, language: AppLanguage): string {
   return language === 'sv' ? `${minutes} min ${remainder} sek` : `${minutes} min ${remainder} sec`;
 }
 
-function classifyPace(seconds: number, medianSeconds: number | null): TimePace {
-  if (!medianSeconds || medianSeconds <= 0) return 'median';
-  if (seconds <= Math.max(5, medianSeconds * 0.5)) return 'rushed';
-  if (seconds <= medianSeconds * 1.5) return 'median';
-  if (seconds <= medianSeconds * 2.5) return 'overthought';
-  return 'stuck';
-}
-
 export function MockExamTimeHeatmap({
   answers,
   language,
@@ -123,7 +114,7 @@ export function MockExamTimeHeatmap({
       </View>
       <View style={styles.grid}>
         {timedAnswers.map((answer) => {
-          const pace = classifyPace(answer.seconds, medianSeconds);
+          const pace = classifyMockExamTimePace(answer.seconds, medianSeconds);
           const paceLabel = copy.paceLabels[pace];
           const resultLabel = answer.isCorrect
             ? copy.resultLabels.correct

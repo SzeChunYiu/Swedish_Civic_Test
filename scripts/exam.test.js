@@ -253,6 +253,18 @@ test('buildCompletedExamQuizSession keeps ordered mock answers with clamped timi
   assert.equal(diagnostic.medianMs, 21602000);
 });
 
+test('mock exam time heatmap classifies pace relative to low medians', () => {
+  const { classifyMockExamTimePace } = loadTs('lib/learning/mockExamTimePace.ts');
+
+  assert.equal(classifyMockExamTimePace(4, 4), 'median');
+  assert.equal(classifyMockExamTimePace(1, 4), 'rushed');
+  assert.equal(classifyMockExamTimePace(12, 20), 'median');
+  assert.equal(classifyMockExamTimePace(10, 20), 'rushed');
+  assert.equal(classifyMockExamTimePace(31, 20), 'overthought');
+  assert.equal(classifyMockExamTimePace(51, 20), 'stuck');
+  assert.equal(classifyMockExamTimePace(4, null), 'median');
+});
+
 test('buildExamChapterBreakdownItems adds human-readable chapter names', () => {
   const { buildExamChapterBreakdownItems } = loadTs('lib/quiz/examGenerator.ts');
   const breakdown = [
