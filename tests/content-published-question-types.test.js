@@ -1567,6 +1567,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q116', 2)]: { questionSv: 'Regeringsformen skyddar att staten väljer religion åt varje invånare.', questionEn: 'The Instrument of Government protects that the state chooses a religion for each resident.' },",
         "  [generatedFixtureId('q117', 2)]: { questionSv: 'Många svenskar firar id al-fitr och Newroz även om de inte ser sig som religiösa.', questionEn: 'Many Swedes celebrate Eid al-Fitr and Newroz even if they do not see themselves as religious.' },",
         "  [generatedFixtureId('q120', 1)]: { questionSv: 'Judar fick rätt att bo i landet och utöva sin religion.', questionEn: 'Jews gained the right to live in the country and practice their religion.' },",
+        "  [generatedFixtureId('q120', 2)]: { questionSv: 'Judar fick rätt att bli Sveriges största religiösa grupp.', questionEn: 'Jews gained the right to become Sweden’s largest religious group.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q606Residuals[question.id]",
@@ -1589,7 +1590,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 5);
 });
 
 test('published question schema rejects residual q656-q705 proper-noun lowercasing', () => {

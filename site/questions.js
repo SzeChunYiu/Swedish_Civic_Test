@@ -28484,8 +28484,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Jews gained the right to become Sweden’s largest religious group.",
-      "sv": "Judar fick rätt att bli Sveriges största religiösa grupp."
+      "en": "Jews became Sweden’s largest religious group in the 18th century.",
+      "sv": "Judar blev Sveriges största religiösa grupp på 1700-talet."
     },
     "opts": [
       {

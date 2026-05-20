@@ -411,15 +411,20 @@ function englishChristianHolidayStatement(
   return `${answer} are Christian holidays that ${lowerFirst(subject)} celebrate even if ${condition}`;
 }
 
-function swedishGainedRightStatement(subject: string, answer: string): string {
+function swedishGainedRightStatement(subject: string, answer: string, timePhrase: string): string {
   const activity = stripLeadingPurposeSv(answer).replace(/\bi landet\b/i, 'i Sverige');
+  if (/^bli Sveriges största religiösa grupp$/i.test(activity)) {
+    return `${upperFirst(subject)} blev Sveriges största religiösa grupp på ${timePhrase}`;
+  }
   return `${upperFirst(subject)} fick rätt att ${lowerFirst(activity)}`;
 }
 
-function englishGainedRightStatement(subject: string, answer: string): string {
-  return `${upperFirst(subject)} gained the right to ${lowerFirst(
-    stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
-  )}`;
+function englishGainedRightStatement(subject: string, answer: string, timePhrase: string): string {
+  const activity = stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden');
+  if (/^become Sweden’s largest religious group$/i.test(activity)) {
+    return `${upperFirst(subject)} became Sweden’s largest religious group in ${timePhrase}`;
+  }
+  return `${upperFirst(subject)} gained the right to ${lowerFirst(activity)}`;
 }
 
 function whyTargetStatementSv(target: string): string {
@@ -1386,7 +1391,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} var ${lowerFirst(answer)} under ${match[2]}`;
 
   match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
-  if (match) return swedishGainedRightStatement(match[1], answer);
+  if (match) return swedishGainedRightStatement(match[1], answer, match[2]);
 
   match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[2]}`;
@@ -1858,7 +1863,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `${upperFirst(match[1])} was ${lowerFirst(answer)} during ${match[2]}`;
 
   match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
-  if (match) return englishGainedRightStatement(match[1], answer);
+  if (match) return englishGainedRightStatement(match[1], answer, match[2]);
 
   match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
