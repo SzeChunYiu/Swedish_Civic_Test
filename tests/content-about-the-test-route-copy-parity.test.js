@@ -5,10 +5,13 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const forbiddenCompact = ['mock', 'prov'].join('');
-const forbiddenHyphenated = ['mock', '-provet'].join('');
-const scanRoots = ['app', 'components', 'lib', 'scripts', 'tests'];
-const scanExtensions = new Set(['.cjs', '.js', '.jsx', '.mjs', '.ts', '.tsx']);
+const officialSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+];
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -19,58 +22,40 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
-function collectScanFiles(relativeRoot) {
-  const absoluteRoot = path.join(repoRoot, relativeRoot);
-  const stats = fs.statSync(absoluteRoot);
-
-  if (stats.isFile()) return [absoluteRoot];
-
-  const collected = [];
-  fs.readdirSync(absoluteRoot, { withFileTypes: true }).forEach((entry) => {
-    const absolutePath = path.join(absoluteRoot, entry.name);
-    if (entry.isDirectory()) {
-      collected.push(...collectScanFiles(path.relative(repoRoot, absolutePath)));
-      return;
-    }
-    if (entry.isFile() && scanExtensions.has(path.extname(entry.name))) {
-      collected.push(absolutePath);
-    }
-  });
-  return collected;
-}
-
-function sourceContainsForbiddenTerm(source, term) {
-  const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`(^|[^\\p{L}\\p{N}_])${escapedTerm}(?![\\p{L}\\p{N}_])`, 'iu').test(source);
-}
-
-test('about-the-test route copy stays localized and uses natural Swedish exam wording', () => {
+test('about-the-test route uses cautious current official-detail copy', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
 
-  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 34);
+  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 38);
   assert.equal(summary.aboutTheTestRouteCopyParityValidated, true);
-  assert.equal(summary.swedishMockExamWordingNaturalnessValidated, true);
+  assert.equal(summary.aboutTheTestOfficialSourceUrlsValidated, officialSourceUrls.length);
+  assert.equal(summary.aboutTheTestOfficialSourceRetrievedDateValidated, '2026-05-19');
+  assert.match(source, /const officialTestSourceNotes = \[/);
   assert.match(source, /const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = \{/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = aboutTheTestCopy\[language\];/);
-  assert.match(source, /Övningsprovet visar bara UHR-frågor/);
-  assert.match(source, /The mock exam only shows UHR questions/);
-  assert.match(source, /<QuestionDisclaimer \/>/);
+  assert.match(source, /15 augusti 2026 i Stockholm/);
+  assert.match(source, /15 August 2026 in Stockholm/);
+  assert.match(source, /brev från Migrationsverket/);
+  assert.match(source, /letter from Migrationsverket/);
+  assert.match(source, /kostnadsfritt och ges som ett utprövningsprov med generös tid/);
+  assert.match(source, /free of charge and is a trial sitting with generous time/);
+  assert.match(
+    source,
+    /Lägesbilden är kontrollerad \$\{officialTestSourceNotes\[0\]\.retrievedDate\}/,
+  );
 
-  const forbiddenTerms = [forbiddenCompact, forbiddenHyphenated];
-  const offendingFiles = [];
-  scanRoots.forEach((root) => {
-    collectScanFiles(root).forEach((filePath) => {
-      const text = fs.readFileSync(filePath, 'utf8');
-      if (forbiddenTerms.some((term) => sourceContainsForbiddenTerm(text, term))) {
-        offendingFiles.push(path.relative(repoRoot, filePath));
-      }
-    });
-  });
-  assert.deepEqual(offendingFiles, []);
+  for (const url of officialSourceUrls) {
+    assert.match(source, new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+
+  assert.doesNotMatch(source, /Ett kort\s+prov|short\s+test/i);
+  assert.doesNotMatch(source, /digitalt\s+prov|digital\s+exam/i);
+  assert.doesNotMatch(source, /Flervalsfr[aå]gor|Multiple-choice\s+questions/i);
+  assert.doesNotMatch(source, /dator i en\s+provlokal|computer at a\s+test centre/i);
 });
 
-test('about-the-test copy parity rejects bypassing the settings language', () => {
+test('about-the-test route copy parity rejects bypassing the settings language', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -100,7 +85,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('about-the-test copy parity rejects the old Swedish compound wording', () => {
+test('about-the-test route copy parity rejects unsupported old logistics claims', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -108,13 +93,18 @@ test('about-the-test copy parity rejects the old Swedish compound wording', () =
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
-const forbiddenHyphenated = ${JSON.stringify(forbiddenHyphenated)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Övningsprovet visar bara UHR-frågor', forbiddenHyphenated + ' visar bara UHR-frågor');
+      .replace(
+        'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+        'Ett kort' +
+          ' prov med flervals' +
+          'frågor på svenska. Du svarar på en dator i en ' +
+          'provlokal.',
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -125,10 +115,13 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /legacy Swedish mock-exam wording/);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route must not make unsupported logistics claim/,
+  );
 });
 
-test('app-facing copy scan rejects the old compact Swedish compound', () => {
+test('about-the-test route copy parity rejects missing official source metadata', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -136,13 +129,13 @@ test('app-facing copy scan rejects the old compact Swedish compound', () => {
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
-const forbiddenCompact = ${JSON.stringify(forbiddenCompact)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Gör ett övningsprov', 'Gör ett ' + forbiddenCompact);
+      .replace('https://www.uhr.se/medborgarskapsprovet/anmalan/', 'https://example.invalid/anmalan/')
+      .replaceAll("retrievedDate: '2026-05-19'", "retrievedDate: '2026-05-01'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -153,5 +146,12 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /legacy Swedish mock-exam wording/);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route official source metadata missing https:\/\/www\.uhr\.se\/medborgarskapsprovet\/anmalan\//,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route official source metadata must use retrievedDate 2026-05-19 for every source/,
+  );
 });
