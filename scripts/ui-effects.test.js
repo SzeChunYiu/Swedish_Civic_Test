@@ -1519,12 +1519,17 @@ test('search route turns the header search action into a searchable glossary ref
   assert.match(source, /TextInput/);
   assert.match(source, /type SearchRouteCopy =/);
   assert.match(source, /const searchRouteCopy: Record<AppLanguage, SearchRouteCopy>/);
-  assert.match(source, /useLocalSearchParams<SearchQueryParams>/);
+  assert.match(source, /import \{ Link, useLocalSearchParams \} from 'expo-router';/);
+  assert.match(source, /type SearchRouteParams = \{/);
+  assert.match(source, /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/);
+  assert.match(source, /const routeQuery = getRouteSearchQuery\(searchParams\);/);
+  assert.match(source, /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/);
+  assert.match(source, /function getRouteSearchQuery\(params: SearchRouteParams\)/);
   assert.match(
     source,
-    /const \[query, setQuery\] = useState\(\(\) =>\s+initialSearchQueryFromParams\(searchParams\.q, searchParams\.query\),\s+\);/,
+    /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
   );
-  assert.match(source, /function initialSearchQueryFromParams/);
+  assert.doesNotMatch(source, /const \[query, setQuery\] = useState\(''\);/);
   assert.match(source, /normalizeSearchText/);
   assert.match(source, /const filteredTerms = useMemo/);
   assert.match(source, /placeholderTextColor=\{colors\.textPlaceholder\}/);

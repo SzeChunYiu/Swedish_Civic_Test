@@ -1,291 +1,382 @@
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
-import {
-  getGlossaryChapterLabel,
-  searchGlossary,
-  type GlossarySearchResult,
-} from '../lib/learning/glossarySearch';
+import { chapters } from '../data/chapters';
+import { glossaryTerms } from '../data/glossary';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
+import type { GlossaryTerm } from '../types/content';
 
-type SearchCopy = {
-  backHome: string;
-  backHomeAccessibilityLabel: string;
-  browseChapters: string;
-  browseChaptersAccessibilityLabel: string;
-  emptyText: string;
-  emptyTitle: string;
-  eyebrow: string;
-  inputAccessibilityHint: string;
-  inputAccessibilityLabel: string;
-  placeholder: string;
-  resultAccessibilityLabel: (term: string, chapter: string) => string;
-  resultCount: (count: number) => string;
-  resultSectionSubtitle: string;
-  resultSectionTitle: string;
-  sourcePrefix: string;
-  subtitle: string;
-  termBadge: string;
-  title: string;
+type SearchRouteParams = {
+  q?: string | string[];
+  query?: string | string[];
 };
-
-const searchCopy: Record<AppLanguage, SearchCopy> = {
-  sv: {
-    backHome: 'Tillbaka hem',
-    backHomeAccessibilityLabel: 'Gå tillbaka till startsidan',
-    browseChapters: 'Bläddra bland kapitel',
-    browseChaptersAccessibilityLabel: 'Bläddra bland alla kapitel',
-    emptyText: 'Prova ett annat samhällsbegrepp eller bläddra via kapitel.',
-    emptyTitle: 'Inga begrepp hittades',
-    eyebrow: 'Begrepp och sök',
-    inputAccessibilityHint: 'Sök bland samhällsbegrepp på svenska eller engelska.',
-    inputAccessibilityLabel: 'Sök begrepp',
-    placeholder: 'Sök begrepp, till exempel riksdag',
-    resultAccessibilityLabel: (term, chapter) => `Öppna kapitlet ${chapter} för begreppet ${term}.`,
-    resultCount: (count) => `${count} begrepp`,
-    resultSectionSubtitle:
-      'Varje träff pekar till kapitlet där begreppet hör hemma i UHR-materialet.',
-    resultSectionTitle: 'Ordlisteträffar',
-    sourcePrefix: 'Kapitel',
-    subtitle:
-      'Hitta centrala samhällsord snabbt och gå vidare till rätt kapitel när du vill läsa mer.',
-    termBadge: 'Begrepp',
-    title: 'Sök i ordlistan',
-  },
-  en: {
-    backHome: 'Back home',
-    backHomeAccessibilityLabel: 'Go back to the home screen',
-    browseChapters: 'Browse chapters',
-    browseChaptersAccessibilityLabel: 'Browse all chapters',
-    emptyText: 'Try another civic term or browse by chapter.',
-    emptyTitle: 'No terms found',
-    eyebrow: 'Terms and search',
-    inputAccessibilityHint: 'Search civic terms in Swedish or English.',
-    inputAccessibilityLabel: 'Search glossary terms',
-    placeholder: 'Search terms, for example Riksdag',
-    resultAccessibilityLabel: (term, chapter) => `Open the ${chapter} chapter for ${term}.`,
-    resultCount: (count) => `${count} terms`,
-    resultSectionSubtitle:
-      'Each match points to the chapter where the term belongs in the UHR material.',
-    resultSectionTitle: 'Glossary results',
-    sourcePrefix: 'Chapter',
-    subtitle: 'Find core civic terms quickly, then open the right chapter when you want context.',
-    termBadge: 'Term',
-    title: 'Search the glossary',
-  },
-};
-
-function getTermText(term: GlossarySearchResult, language: AppLanguage) {
-  return language === 'en' ? term.termEn : term.termSv;
-}
-
-function getSecondaryTermText(term: GlossarySearchResult, language: AppLanguage) {
-  return language === 'en' ? term.termSv : term.termEn;
-}
-
-function getExplanationText(term: GlossarySearchResult, language: AppLanguage) {
-  return language === 'en' ? term.explanationEn : term.explanationSv;
-}
 
 export default function SearchScreen() {
+  const searchParams = useLocalSearchParams<SearchRouteParams>();
+  const routeQuery = getRouteSearchQuery(searchParams);
+  const [query, setQuery] = useState(() => routeQuery);
   const language = useSettingsStore((state) => state.language);
-  const copy = searchCopy[language];
-  const [query, setQuery] = useState('');
-  const results = useMemo(() => searchGlossary(query, language, 8), [language, query]);
-  const hasResults = results.length > 0;
+  const copy = searchRouteCopy[language];
+  const termsWithChapters = useMemo(
+    () =>
+      glossaryTerms.map((term) => ({
+        term,
+        chapter: chapters.find((chapter) => chapter.id === term.chapterId),
+      })),
+    [],
+  );
+  const trimmedQuery = query.trim();
+  const filteredTerms = useMemo(() => {
+    const normalizedQuery = normalizeSearchText(trimmedQuery);
+    if (!normalizedQuery) return termsWithChapters;
+
+    return termsWithChapters.filter(({ chapter, term }) =>
+      glossaryTermMatchesQuery(term, chapter, normalizedQuery),
+    );
+  }, [termsWithChapters, trimmedQuery]);
+  const resultSummary =
+    trimmedQuery.length > 0
+      ? copy.filteredSummary(filteredTerms.length, termsWithChapters.length)
+      : copy.allTermsSummary(termsWithChapters.length);
+  const searchDescriptionId = 'search-route-glossary-description';
 
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
-      <View style={styles.searchPanel}>
+      <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
+
+      <Card>
+        <Text nativeID={searchDescriptionId} style={styles.accessibilitySummaryText}>
+          {copy.searchCardAccessibilityLabel}
+        </Text>
+        <Text accessibilityRole="header" style={styles.searchLabel}>
+          {copy.searchLabel}
+        </Text>
         <TextInput
-          accessibilityHint={copy.inputAccessibilityHint}
-          accessibilityLabel={copy.inputAccessibilityLabel}
+          aria-describedby={searchDescriptionId}
+          accessibilityHint={copy.searchCardAccessibilityLabel}
+          accessibilityLabel={copy.searchInputAccessibilityLabel}
           autoCapitalize="none"
           autoCorrect={false}
           clearButtonMode="while-editing"
           onChangeText={setQuery}
-          placeholder={copy.placeholder}
+          placeholder={copy.searchPlaceholder}
           placeholderTextColor={colors.textPlaceholder}
           returnKeyType="search"
-          style={styles.input}
+          style={styles.searchInput}
           value={query}
         />
-        <Text style={styles.resultCount}>{copy.resultCount(results.length)}</Text>
-      </View>
-
-      <SectionHeader title={copy.resultSectionTitle} subtitle={copy.resultSectionSubtitle} />
-
-      {hasResults ? (
-        <View style={styles.results}>
-          {results.map((term) => {
-            const chapterLabel = getGlossaryChapterLabel(term, language) ?? term.chapterId ?? '';
-            const primaryTerm = getTermText(term, language);
-            const secondaryTerm = getSecondaryTermText(term, language);
-            const explanation = getExplanationText(term, language);
-            return (
-              <Link
-                key={term.id}
-                accessibilityLabel={copy.resultAccessibilityLabel(primaryTerm, chapterLabel)}
-                accessibilityRole="link"
-                href={`/chapter/${term.chapterId}`}
-                style={styles.resultLink}
-              >
-                <Card style={styles.resultCard}>
-                  <View style={styles.resultHeader}>
-                    <Badge tone="blue">{copy.termBadge}</Badge>
-                    <Text style={styles.sourceLine}>
-                      {copy.sourcePrefix}: {chapterLabel}
-                    </Text>
-                  </View>
-                  <Text accessibilityRole="header" style={styles.term}>
-                    {primaryTerm}
-                  </Text>
-                  <Text style={styles.secondaryTerm}>{secondaryTerm}</Text>
-                  <Text style={styles.explanation}>{explanation}</Text>
-                </Card>
-              </Link>
-            );
-          })}
-        </View>
-      ) : (
-        <Card accessible accessibilityLabel={`${copy.emptyTitle}. ${copy.emptyText}`}>
-          <Text accessibilityRole="header" style={styles.emptyTitle}>
-            {copy.emptyTitle}
+        <View style={styles.searchActions}>
+          <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.resultSummary}>
+            {resultSummary}
           </Text>
-          <Text style={styles.emptyText}>{copy.emptyText}</Text>
-        </Card>
-      )}
+          <Button
+            accessibilityLabel={copy.clearSearchAccessibilityLabel}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: query.length === 0 }}
+            disabled={query.length === 0}
+            onPress={() => setQuery('')}
+            variant="secondary"
+          >
+            {copy.clearSearch}
+          </Button>
+        </View>
+      </Card>
 
-      <View style={styles.actions}>
-        <Link
-          accessibilityLabel={copy.browseChaptersAccessibilityLabel}
-          accessibilityRole="link"
-          href="/learn"
-          style={styles.primaryLink}
-        >
-          {copy.browseChapters}
-        </Link>
-        <Link
-          accessibilityLabel={copy.backHomeAccessibilityLabel}
-          accessibilityRole="link"
-          href="/(tabs)/home"
-          style={styles.secondaryLink}
-        >
-          {copy.backHome}
-        </Link>
+      <View style={styles.termList}>
+        {filteredTerms.length > 0 ? (
+          filteredTerms.map(({ chapter, term }) => {
+            const primaryTerm = language === 'en' ? term.termEn : term.termSv;
+            const secondaryTerm = language === 'en' ? term.termSv : term.termEn;
+            const explanation = language === 'en' ? term.explanationEn : term.explanationSv;
+            const chapterName = chapter
+              ? language === 'en'
+                ? chapter.nameEn
+                : chapter.nameSv
+              : undefined;
+            const termSummary = copy.termAccessibilityLabel({
+              chapterName,
+              explanation,
+              primaryTerm,
+            });
+            const termSummaryId = `search-term-summary-${term.id}`;
+
+            return (
+              <Card key={term.id} style={styles.termCard}>
+                <Text nativeID={termSummaryId} style={styles.accessibilitySummaryText}>
+                  {termSummary}
+                </Text>
+                <View style={styles.termHeader}>
+                  <View style={styles.termTitleGroup}>
+                    <Text accessibilityRole="header" style={styles.termTitle}>
+                      {primaryTerm}
+                    </Text>
+                    <Text style={styles.termSubtitle}>{secondaryTerm}</Text>
+                  </View>
+                  {term.chapterId && chapterName ? (
+                    <Link
+                      aria-describedby={termSummaryId}
+                      accessibilityLabel={copy.openChapterAccessibilityLabel(chapterName)}
+                      accessibilityRole="link"
+                      href={`/chapter/${term.chapterId}`}
+                      style={styles.chapterLink}
+                    >
+                      {chapterName}
+                    </Link>
+                  ) : null}
+                </View>
+                <Text style={styles.explanation}>{explanation}</Text>
+              </Card>
+            );
+          })
+        ) : (
+          <Card accessible accessibilityLabel={`${copy.emptyTitle}. ${copy.emptyBody}`}>
+            <Text accessibilityRole="header" style={styles.emptyTitle}>
+              {copy.emptyTitle}
+            </Text>
+            <Text style={styles.explanation}>{copy.emptyBody}</Text>
+          </Card>
+        )}
       </View>
+
+      <Link
+        accessibilityLabel={copy.browseChaptersAccessibilityLabel}
+        accessibilityRole="link"
+        href="/(tabs)/learn"
+        style={styles.backLink}
+      >
+        {copy.browseChapters}
+      </Link>
     </ScreenShell>
   );
 }
 
+type SearchRouteCopy = {
+  allTermsSummary: (count: number) => string;
+  browseChapters: string;
+  browseChaptersAccessibilityLabel: string;
+  clearSearch: string;
+  clearSearchAccessibilityLabel: string;
+  emptyBody: string;
+  emptyTitle: string;
+  eyebrow: string;
+  filteredSummary: (visibleCount: number, totalCount: number) => string;
+  openChapterAccessibilityLabel: (chapterName: string) => string;
+  searchCardAccessibilityLabel: string;
+  searchInputAccessibilityLabel: string;
+  searchLabel: string;
+  searchPlaceholder: string;
+  sectionSubtitle: string;
+  sectionTitle: string;
+  subtitle: string;
+  termAccessibilityLabel: ({
+    chapterName,
+    explanation,
+    primaryTerm,
+  }: {
+    chapterName?: string;
+    explanation: string;
+    primaryTerm: string;
+  }) => string;
+  title: string;
+};
+
+const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
+  sv: {
+    allTermsSummary: (count) => `${count} samhällsbegrepp i referensen`,
+    browseChapters: 'Bläddra bland kapitel',
+    browseChaptersAccessibilityLabel: 'Gå till alla kapitel',
+    clearSearch: 'Rensa sökning',
+    clearSearchAccessibilityLabel: 'Rensa sökfältet',
+    emptyBody: 'Prova ett annat ord, en myndighet eller ett kapitelnamn.',
+    emptyTitle: 'Inga begrepp matchar din sökning',
+    eyebrow: 'Sökbar referens',
+    filteredSummary: (visibleCount, totalCount) =>
+      `${visibleCount} av ${totalCount} samhällsbegrepp visas`,
+    openChapterAccessibilityLabel: (chapterName) => `Öppna kapitlet ${chapterName}`,
+    searchCardAccessibilityLabel: 'Sök bland samhällsbegrepp och kapitelkopplingar',
+    searchInputAccessibilityLabel: 'Sök samhällsbegrepp',
+    searchLabel: 'Sök begrepp',
+    searchPlaceholder: 'Sök demokrati, kommun, välfärd ...',
+    sectionSubtitle: 'Slå upp centrala ord och öppna kapitlet där begreppet används i frågebanken.',
+    sectionTitle: 'Begreppsreferens',
+    subtitle:
+      'En snabb ordlista för centrala samhällsbegrepp, med svenska och engelska förklaringar.',
+    termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
+      chapterName
+        ? `${primaryTerm}. ${explanation}. Kopplat kapitel: ${chapterName}.`
+        : `${primaryTerm}. ${explanation}.`,
+    title: 'Sök begrepp, kapitel och förklaringar',
+  },
+  en: {
+    allTermsSummary: (count) => `${count} civic reference terms`,
+    browseChapters: 'Browse chapters',
+    browseChaptersAccessibilityLabel: 'Go to all chapters',
+    clearSearch: 'Clear search',
+    clearSearchAccessibilityLabel: 'Clear the search field',
+    emptyBody: 'Try another word, authority, or chapter name.',
+    emptyTitle: 'No terms match your search',
+    eyebrow: 'Searchable reference',
+    filteredSummary: (visibleCount, totalCount) =>
+      `${visibleCount} of ${totalCount} civic reference terms shown`,
+    openChapterAccessibilityLabel: (chapterName) => `Open the chapter ${chapterName}`,
+    searchCardAccessibilityLabel: 'Search civic reference terms and chapter links',
+    searchInputAccessibilityLabel: 'Search civic terms',
+    searchLabel: 'Search terms',
+    searchPlaceholder: 'Search democracy, municipality, welfare ...',
+    sectionSubtitle:
+      'Look up central words and open the chapter where the term appears in the question bank.',
+    sectionTitle: 'Civic reference terms',
+    subtitle: 'A quick glossary for key civic terms, with Swedish and English explanations.',
+    termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
+      chapterName
+        ? `${primaryTerm}. ${explanation}. Linked chapter: ${chapterName}.`
+        : `${primaryTerm}. ${explanation}.`,
+    title: 'Search terms, chapters, and explanations',
+  },
+};
+
+function normalizeSearchText(value: string) {
+  return value
+    .toLocaleLowerCase('sv')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
+function getFirstSearchParamValue(value: string | string[] | undefined) {
+  const firstValue = Array.isArray(value) ? value[0] : value;
+
+  return typeof firstValue === 'string' ? firstValue : '';
+}
+
+function getRouteSearchQuery(params: SearchRouteParams) {
+  return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);
+}
+
+function glossaryTermMatchesQuery(
+  term: GlossaryTerm,
+  chapter: (typeof chapters)[number] | undefined,
+  normalizedQuery: string,
+) {
+  const searchableText = [
+    term.termSv,
+    term.termEn,
+    term.explanationSv,
+    term.explanationEn,
+    chapter?.nameSv,
+    chapter?.nameEn,
+  ]
+    .filter(Boolean)
+    .map((value) => normalizeSearchText(String(value)))
+    .join(' ');
+
+  return searchableText.includes(normalizedQuery);
+}
+
 const styles = StyleSheet.create({
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  emptyText: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-    marginTop: space[0.75],
-  },
-  emptyTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  explanation: {
+  searchLabel: {
     color: colors.text,
     fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
+    fontWeight: typography.bodyBold.fontWeight,
   },
-  input: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-    textAlign: 'center',
-    textDecorationLine: 'none',
-  },
-  resultCard: {
-    gap: space[1],
-  },
-  resultCount: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  resultHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  resultLink: {
-    color: colors.text,
-    textDecorationLine: 'none',
-  },
-  results: {
-    gap: space[1.25],
-  },
-  searchPanel: {
-    gap: space[1],
-  },
-  secondaryLink: {
+  searchInput: {
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: radius.card,
     borderWidth: space.hairline,
     color: colors.text,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+    marginTop: space[1],
+    minHeight: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  searchActions: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+    marginTop: space[1.5],
+  },
+  resultSummary: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  accessibilitySummaryText: {
+    height: space.hairline,
+    left: -10000,
+    overflow: 'hidden',
+    position: 'absolute',
+    width: space.hairline,
+  },
+  termList: {
+    gap: space[1.5],
+  },
+  termCard: {
+    gap: space[1.25],
+  },
+  termHeader: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+  },
+  termTitleGroup: {
+    flex: 1,
+    gap: space[0.5],
+    minWidth: space[15],
+  },
+  termTitle: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  termSubtitle: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  explanation: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  chapterLink: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
+    color: colors.text,
+    fontFamily: typography.navButton.fontFamily,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-    textAlign: 'center',
+    minHeight: space[5],
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.75],
     textDecorationLine: 'none',
   },
-  secondaryTerm: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sourceLine: {
-    color: colors.textMuted,
-    flexShrink: 1,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  term: {
+  emptyTitle: {
     color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    marginBottom: space[1],
+  },
+  backLink: {
+    alignSelf: 'flex-start',
+    color: colors.accent,
+    fontFamily: typography.navButton.fontFamily,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
   },
 });
