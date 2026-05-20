@@ -423,15 +423,19 @@ test('settings route exposes page and section titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('settings controls mirror selected and checked state to web aria attributes', () => {
+test('settings controls expose exclusive radio groups and checked state', () => {
   const source = read('app/settings.tsx');
 
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy>/);
   assert.match(source, /const copy = settingsCopy\[language\]/);
-  assert.match(source, /aria-selected=\{language === value\}/);
+  assert.equal(source.match(/accessibilityRole="radiogroup"/g)?.length, 2);
+  assert.equal(source.match(/accessibilityRole="radio"/g)?.length, 2);
+  assert.match(source, /aria-label=\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /aria-checked=\{language === value\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: language === value \}\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
   assert.match(source, /aria-checked=\{audioEnabled\}/);
   assert.match(
     source,
@@ -439,9 +443,18 @@ test('settings controls mirror selected and checked state to web aria attributes
   );
   assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
-  assert.match(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /aria-label=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /aria-checked=\{dailyGoalAnswers === goal\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
+  assert.doesNotMatch(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
+  assert.doesNotMatch(source, /accessibilityRole="button"[\s\S]{0,140}languageAccessibilityLabel/);
+  assert.doesNotMatch(
+    source,
+    /accessibilityRole="button"[\s\S]{0,140}setDailyGoalAccessibilityLabel/,
+  );
   assert.match(source, /Svenska/);
   assert.match(source, /Engelskt stöd/);
   assert.match(source, /Byt frågespråk till \$\{label\}/);

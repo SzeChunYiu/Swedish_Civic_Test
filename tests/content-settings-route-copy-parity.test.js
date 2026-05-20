@@ -33,6 +33,16 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
+  assert.equal(source.match(/accessibilityRole="radiogroup"/g)?.length, 2);
+  assert.equal(source.match(/accessibilityRole="radio"/g)?.length, 2);
+  assert.match(source, /aria-label=\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /aria-label=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /aria-checked=\{language === value\}/);
+  assert.match(source, /aria-checked=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
+  assert.doesNotMatch(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
 });
 
 test('settings route copy parity rejects bypassing the settings language', () => {
@@ -119,5 +129,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /settings route language buttons must choose visible labels from settings language/,
+  );
+});
+
+test('settings route copy parity rejects selected-button segmented controls', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replaceAll('accessibilityRole="radio"', 'accessibilityRole="button"')
+      .replaceAll('aria-checked=', 'aria-selected=')
+      .replaceAll('accessibilityState={{ checked:', 'accessibilityState={{ selected:');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route language and daily-goal options must use radio semantics|must not use aria-selected/,
   );
 });
