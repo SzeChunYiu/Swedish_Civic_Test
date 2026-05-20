@@ -103,7 +103,7 @@ const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
   sv: {
     first_practice: 'Första övningen',
     level_2: 'Nivå 2',
-    mistake_reviewer: 'Misstagsrepetition',
+    mistake_reviewer: 'Missade frågor',
     streak_3: 'Tre dagars svit',
   },
   en: {},
