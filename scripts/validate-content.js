@@ -4527,6 +4527,83 @@ function findDuplicateOptionTextLabels(question) {
   return duplicates;
 }
 
+function optionGrammarPromptRequiresConsistentShape(question) {
+  const questionEn = normalizeOptionText(question.questionEn);
+  const questionSv = normalizeOptionText(question.questionSv);
+
+  return (
+    /^What do .+ have in common\?$/i.test(questionEn) ||
+    /^Vad har .+ gemensamt\?$/i.test(questionSv) ||
+    /^How does .+\bhelp\b.*\?$/i.test(questionEn) ||
+    /^Hur hjälper .+\?$/i.test(questionSv)
+  );
+}
+
+function optionAnswerGrammarShape(text, language) {
+  const normalized = normalizeOptionText(text).replace(/[.!?]\s*$/, '');
+  if (!normalized) return 'blank';
+
+  if (language === 'sv') {
+    if (/^För att\b/i.test(normalized)) return 'purpose clause';
+    if (/^Genom att\b/i.test(normalized)) return 'means clause';
+    if (/^Att\s+(?:de|den|det|man|människor|personer|väljare|partier)\b/i.test(normalized)) {
+      return 'complement clause';
+    }
+    if (/^Att\b/i.test(normalized)) return 'infinitive clause';
+    if (
+      /^(?:De|Den|Det|Man|Människor|Personer|Väljare|Partier|Kronofogdemyndigheten)\b/.test(
+        normalized,
+      )
+    ) {
+      return 'finite clause';
+    }
+  } else {
+    if (/^Because\b/i.test(normalized)) return 'reason clause';
+    if (/^(?:So|To)\b/i.test(normalized)) return 'infinitive/purpose clause';
+    if (/^(?:By|Through)\b/i.test(normalized)) return 'means clause';
+    if (
+      /^That\s+(?:they|it|the|people|voters|parties|a|an)\b/i.test(normalized) ||
+      /^That\b/i.test(normalized)
+    ) {
+      return 'complement clause';
+    }
+    if (
+      /^(?:It|They|People|Voters|Parties|Municipalities|Sweden|Private providers|Tax revenue|The Swedish Enforcement Authority)\b/.test(
+        normalized,
+      )
+    ) {
+      return 'finite clause';
+    }
+  }
+
+  return 'noun phrase/list';
+}
+
+function findQuestionOptionGrammarShapeIssue(question) {
+  if (
+    question.type !== 'single_choice' ||
+    !Array.isArray(question.options) ||
+    !optionGrammarPromptRequiresConsistentShape(question)
+  ) {
+    return null;
+  }
+
+  for (const { field, language, label } of [
+    { field: 'textSv', language: 'sv', label: 'Swedish' },
+    { field: 'textEn', language: 'en', label: 'English' },
+  ]) {
+    const shapes = question.options.map((option) =>
+      optionAnswerGrammarShape(option?.[field], language),
+    );
+    const uniqueShapes = [...new Set(shapes)];
+    if (uniqueShapes.length > 1) {
+      return { label, shapes: uniqueShapes };
+    }
+  }
+
+  return null;
+}
+
 function optionCountMatchesQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   if (question.type === 'single_choice') return question.options.length === 4;
@@ -7015,6 +7092,7 @@ let questionPoliticalPartyOptionShapeValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
+let questionOptionGrammarShapeValidated = 0;
 let questionTypeOptionCountsValidated = 0;
 let questionOptionIdConventionsValidated = 0;
 let trueFalseQuestions = 0;
@@ -16051,6 +16129,7 @@ if (Array.isArray(questions)) {
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
         findGeneratedTrueFalseExplanationMetaIssue(question);
+      const optionGrammarShapeIssue = findQuestionOptionGrammarShapeIssue(question);
       if (authorityOverclaim) {
         fail(`${label} appears to overclaim official status or exam certainty`);
       } else if (stemSourceAuthorityReference) {
@@ -16139,6 +16218,13 @@ if (Array.isArray(questions)) {
       }
       if (findDuplicateOptionTextLabels(question).length === 0) {
         questionOptionTextLabelsValidated += 1;
+      }
+      if (optionGrammarShapeIssue) {
+        fail(
+          `${label} mixes ${optionGrammarShapeIssue.label} option grammar shapes for a prompt that requires consistent answer form: ${optionGrammarShapeIssue.shapes.join(', ')}`,
+        );
+      } else {
+        questionOptionGrammarShapeValidated += 1;
       }
       if (optionCountMatchesQuestionType(question)) {
         questionTypeOptionCountsValidated += 1;
@@ -16589,6 +16675,7 @@ console.log(
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
+      questionOptionGrammarShapeValidated,
       questionTypeOptionCountsValidated,
       questionOptionIdConventionsValidated,
       trueFalseQuestions,

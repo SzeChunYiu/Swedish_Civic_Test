@@ -75,7 +75,78 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.questionPoliticalPartyOptionShapeValidated, 3);
+  assert.equal(summary.questionOptionGrammarShapeValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
+});
+
+test('option grammar-shape guard rejects have-in-common noun versus clause mixes', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Gemensamma idéer om hur samhället ska styras',
+        'De har gemensamma idéer om hur samhället ska styras',
+      )
+      .replace(
+        'Shared ideas about how society should be governed',
+        'They share ideas about how society should be governed',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q033 mixes (?:Swedish|English) option grammar shapes/);
+});
+
+test('option grammar-shape guard rejects how-does-help finite versus infinitive mixes', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Kronofogdemyndigheten förhandlar om kollektivavtal mellan arbetsgivare och fackförbund',
+        'Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund',
+      )
+      .replace(
+        'The Swedish Enforcement Authority negotiates collective agreements between employers and trade unions',
+        'To negotiate collective agreements between employers and trade unions',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q068 mixes (?:Swedish|English) option grammar shapes/);
 });
 
 test('criminal-responsibility age copy is date-stamped to the current main-rule boundary', () => {

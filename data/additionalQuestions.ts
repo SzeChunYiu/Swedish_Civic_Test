@@ -1110,17 +1110,20 @@ export const additionalQuestions: PracticeQuestion[] = [
     'How does the Swedish Enforcement Authority help with debts?',
     [
       [
-        'Den ser till att skulder blir betalda och kan hjälpa till med skuldsanering',
-        'It makes sure debts are paid and can help with debt restructuring',
+        'Kronofogdemyndigheten ser till att skulder blir betalda och kan hjälpa till med skuldsanering',
+        'The Swedish Enforcement Authority makes sure debts are paid and can help with debt restructuring',
       ],
       [
-        'Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund',
-        'To negotiate collective agreements between employers and trade unions',
+        'Kronofogdemyndigheten förhandlar om kollektivavtal mellan arbetsgivare och fackförbund',
+        'The Swedish Enforcement Authority negotiates collective agreements between employers and trade unions',
       ],
-      ['Att betala ut barnbidrag och pensioner', 'To pay child allowances and pensions'],
       [
-        'Att granska public service-företagens program',
-        'To review public-service companies’ programmes',
+        'Kronofogdemyndigheten betalar ut barnbidrag och pensioner',
+        'The Swedish Enforcement Authority pays child allowances and pensions',
+      ],
+      [
+        'Kronofogdemyndigheten granskar public service-företagens program',
+        'The Swedish Enforcement Authority reviews public-service companies’ programmes',
       ],
     ],
     0,

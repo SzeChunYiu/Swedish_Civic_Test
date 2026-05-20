@@ -2984,20 +2984,20 @@
     },
     "opts": [
       {
-        "en": "It makes sure debts are paid and can help with debt restructuring",
-        "sv": "Den ser till att skulder blir betalda och kan hjälpa till med skuldsanering"
+        "en": "The Swedish Enforcement Authority makes sure debts are paid and can help with debt restructuring",
+        "sv": "Kronofogdemyndigheten ser till att skulder blir betalda och kan hjälpa till med skuldsanering"
       },
       {
-        "en": "To negotiate collective agreements between employers and trade unions",
-        "sv": "Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund"
+        "en": "The Swedish Enforcement Authority negotiates collective agreements between employers and trade unions",
+        "sv": "Kronofogdemyndigheten förhandlar om kollektivavtal mellan arbetsgivare och fackförbund"
       },
       {
-        "en": "To pay child allowances and pensions",
-        "sv": "Att betala ut barnbidrag och pensioner"
+        "en": "The Swedish Enforcement Authority pays child allowances and pensions",
+        "sv": "Kronofogdemyndigheten betalar ut barnbidrag och pensioner"
       },
       {
-        "en": "To review public-service companies’ programmes",
-        "sv": "Att granska public service-företagens program"
+        "en": "The Swedish Enforcement Authority reviews public-service companies’ programmes",
+        "sv": "Kronofogdemyndigheten granskar public service-företagens program"
       }
     ],
     "answer": 0,
@@ -18723,20 +18723,20 @@
     },
     "opts": [
       {
-        "en": "It makes sure debts are paid and can help with debt restructuring",
-        "sv": "Den ser till att skulder blir betalda och kan hjälpa till med skuldsanering"
+        "en": "The Swedish Enforcement Authority makes sure debts are paid and can help with debt restructuring",
+        "sv": "Kronofogdemyndigheten ser till att skulder blir betalda och kan hjälpa till med skuldsanering"
       },
       {
-        "en": "To negotiate collective agreements between employers and trade unions",
-        "sv": "Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund"
+        "en": "The Swedish Enforcement Authority negotiates collective agreements between employers and trade unions",
+        "sv": "Kronofogdemyndigheten förhandlar om kollektivavtal mellan arbetsgivare och fackförbund"
       },
       {
-        "en": "To pay child allowances and pensions",
-        "sv": "Att betala ut barnbidrag och pensioner"
+        "en": "The Swedish Enforcement Authority pays child allowances and pensions",
+        "sv": "Kronofogdemyndigheten betalar ut barnbidrag och pensioner"
       },
       {
-        "en": "To review public-service companies’ programmes",
-        "sv": "Att granska public service-företagens program"
+        "en": "The Swedish Enforcement Authority reviews public-service companies’ programmes",
+        "sv": "Kronofogdemyndigheten granskar public service-företagens program"
       }
     ],
     "answer": 0,
@@ -18806,8 +18806,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "The Swedish Enforcement Authority helps with debts by negotiating collective agreements between employers and trade unions.",
-      "sv": "Kronofogdemyndigheten hjälper till med skulder genom att förhandla om kollektivavtal mellan arbetsgivare och fackförbund."
+      "en": "The Swedish Enforcement Authority negotiates collective agreements between employers and trade unions.",
+      "sv": "Kronofogdemyndigheten förhandlar om kollektivavtal mellan arbetsgivare och fackförbund."
     },
     "opts": [
       {
@@ -18851,20 +18851,20 @@
     },
     "opts": [
       {
-        "en": "It makes sure debts are paid and can help with debt restructuring",
-        "sv": "Den ser till att skulder blir betalda och kan hjälpa till med skuldsanering"
+        "en": "The Swedish Enforcement Authority makes sure debts are paid and can help with debt restructuring",
+        "sv": "Kronofogdemyndigheten ser till att skulder blir betalda och kan hjälpa till med skuldsanering"
       },
       {
-        "en": "To negotiate collective agreements between employers and trade unions",
-        "sv": "Att förhandla om kollektivavtal mellan arbetsgivare och fackförbund"
+        "en": "The Swedish Enforcement Authority negotiates collective agreements between employers and trade unions",
+        "sv": "Kronofogdemyndigheten förhandlar om kollektivavtal mellan arbetsgivare och fackförbund"
       },
       {
-        "en": "To pay child allowances and pensions",
-        "sv": "Att betala ut barnbidrag och pensioner"
+        "en": "The Swedish Enforcement Authority pays child allowances and pensions",
+        "sv": "Kronofogdemyndigheten betalar ut barnbidrag och pensioner"
       },
       {
-        "en": "To review public-service companies’ programmes",
-        "sv": "Att granska public service-företagens program"
+        "en": "The Swedish Enforcement Authority reviews public-service companies’ programmes",
+        "sv": "Kronofogdemyndigheten granskar public service-företagens program"
       }
     ],
     "answer": 0,
