@@ -1,5 +1,6 @@
 import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types/monetization';
 import type { AdConsentDecision } from './consent';
+import { getRealAdUnitOverride, readRealAdUnitOverrides } from './adUnitsReal';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
@@ -72,6 +73,7 @@ function getRealAdUnitEnvValue(placement: AdPlacement, platform: 'android' | 'io
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
 
 const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
+const REAL_AD_UNIT_OVERRIDES = readRealAdUnitOverrides();
 
 const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   app_open_launch: {
@@ -146,8 +148,9 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 ];
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
-  const androidUnitId = getRealAdUnitEnvValue(unit.placement, 'android');
-  const iosUnitId = getRealAdUnitEnvValue(unit.placement, 'ios');
+  const override = getRealAdUnitOverride(unit.placement, REAL_AD_UNIT_OVERRIDES);
+  const androidUnitId = override?.androidUnitId ?? getRealAdUnitEnvValue(unit.placement, 'android');
+  const iosUnitId = override?.iosUnitId ?? getRealAdUnitEnvValue(unit.placement, 'ios');
 
   return {
     ...unit,
@@ -224,7 +227,9 @@ export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
+  realUnitOverrideEnvKey: 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON',
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
+  realUnitOverrides: REAL_AD_UNIT_OVERRIDES,
   realUnitEnvValues: REAL_AD_UNIT_ENV_VALUES,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
