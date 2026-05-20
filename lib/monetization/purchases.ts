@@ -613,25 +613,14 @@ async function validateRemoveAdsReceipt(
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
 }
 
-async function runWithPurchaseProviderCleanup<T>(
+async function finishRemoveAdsPurchase(
   provider: RemoveAdsPurchaseProvider,
-  operation: () => Promise<T>,
-): Promise<T> {
+  purchase: RemoveAdsPurchaseRecord,
+): Promise<void> {
   try {
-    const result = await operation();
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // A successful or pending purchase outcome must not be replaced by cleanup failure.
-    }
-    return result;
-  } catch (error) {
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // Preserve the original purchase, restore, or validation error for the caller.
-    }
-    throw error;
+    await provider.finishPurchase?.(purchase);
+  } catch {
+    // Receipt validation is the entitlement boundary; store acknowledgement can retry later.
   }
 }
 
@@ -652,7 +641,7 @@ export async function buyRemoveAds({
       return createResult('pending', await getPurchaseEntitlements({ storage }), purchase);
     }
 
-    await provider.finishPurchase?.(purchase);
+    await finishRemoveAdsPurchase(provider, purchase);
     const entitlements = await setRemoveAdsEntitlement(true, {
       purchase,
       receiptValidation,
@@ -681,6 +670,7 @@ export async function restoreRemoveAdsPurchase({
       return createResult('not_found', await getPurchaseEntitlements({ storage }), purchase);
     }
 
+    await finishRemoveAdsPurchase(provider, purchase);
     const entitlements = await setRemoveAdsEntitlement(true, {
       purchase,
       receiptValidation,

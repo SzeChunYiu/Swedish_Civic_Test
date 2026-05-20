@@ -1425,6 +1425,111 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   }
 });
 
+test('remove-ads purchase preserves valid grants when finishTransaction fails', async () => {
+  const {
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    createMockPurchaseProvider,
+    getPurchaseEntitlements,
+    restoreRemoveAdsPurchase,
+  } = loadTs('lib/monetization/purchases.ts');
+
+  const buyStorage = createMemoryPurchaseStorage();
+  const finishedBuys = [];
+  const buyFinishFailureProvider = {
+    ...createMockPurchaseProvider(),
+    async finishPurchase(purchase) {
+      finishedBuys.push(purchase.transactionId);
+      throw new Error('finish failed after store purchase update');
+    },
+  };
+  const buyResult = await buyRemoveAds({
+    provider: buyFinishFailureProvider,
+    storage: buyStorage,
+  });
+
+  assert.equal(buyResult.status, 'purchased');
+  assert.equal(buyResult.entitlements.adsDisabled, true);
+  assert.deepEqual(finishedBuys, ['buy-remove-ads']);
+  assert.equal((await getPurchaseEntitlements({ storage: buyStorage })).adsDisabled, true);
+  assert.equal(
+    JSON.parse(await buyStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).source,
+    'purchase',
+  );
+
+  const restoreStorage = createMemoryPurchaseStorage();
+  const finishedRestores = [];
+  const restoreFinishFailureProvider = {
+    ...createMockPurchaseProvider({ owned: true }),
+    async finishPurchase(purchase) {
+      finishedRestores.push(purchase.transactionId);
+      throw new Error('finish failed after restored store purchase');
+    },
+  };
+  const restoreResult = await restoreRemoveAdsPurchase({
+    provider: restoreFinishFailureProvider,
+    storage: restoreStorage,
+  });
+
+  assert.equal(restoreResult.status, 'restored');
+  assert.equal(restoreResult.entitlements.adsDisabled, true);
+  assert.deepEqual(finishedRestores, ['restore-remove-ads']);
+  assert.equal((await getPurchaseEntitlements({ storage: restoreStorage })).adsDisabled, true);
+  assert.equal(
+    JSON.parse(await restoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).source,
+    'restore',
+  );
+
+  const requestFailureStorage = createMemoryPurchaseStorage();
+  const requestFailureProvider = {
+    ...createMockPurchaseProvider(),
+    async requestRemoveAdsPurchase() {
+      throw new Error('request failed before receipt validation');
+    },
+    async finishPurchase() {
+      throw new Error('finish should not replace request failure');
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      buyRemoveAds({
+        provider: requestFailureProvider,
+        storage: requestFailureStorage,
+      }),
+    /request failed before receipt validation/,
+  );
+  assert.equal(
+    (await getPurchaseEntitlements({ storage: requestFailureStorage })).adsDisabled,
+    false,
+  );
+
+  const validationFailureStorage = createMemoryPurchaseStorage();
+  const validationFailureProvider = {
+    ...createMockPurchaseProvider(),
+    async validateRemoveAdsReceipt() {
+      throw new Error('receipt validator failed before finish');
+    },
+    async finishPurchase() {
+      throw new Error('finish should not replace validation failure');
+    },
+  };
+
+  await assert.rejects(
+    () =>
+      buyRemoveAds({
+        provider: validationFailureProvider,
+        storage: validationFailureStorage,
+      }),
+    /receipt validator failed before finish/,
+  );
+  assert.equal(
+    (await getPurchaseEntitlements({ storage: validationFailureStorage })).adsDisabled,
+    false,
+  );
+});
+
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
