@@ -27,6 +27,27 @@ const emptyMistakeReview: PersistedMistakeReview = {
   wrongAnswerReviews: {},
 };
 
+const maxSelectedAnswerTextLength = 500;
+
+function normalizeQuestionId(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const questionId = value.trim();
+  return questionId.length > 0 ? questionId : null;
+}
+
+function isIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date.toISOString() === value;
+}
+
+function normalizeSelectedAnswerText(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const text = value.trim();
+  if (text.length === 0 || text.length > maxSelectedAnswerTextLength) return null;
+  return text;
+}
+
 function normalizeMistakeReview(value: unknown): PersistedMistakeReview {
   if (!value || typeof value !== 'object') return emptyMistakeReview;
 
@@ -38,19 +59,18 @@ function normalizeMistakeReview(value: unknown): PersistedMistakeReview {
       if (!review || typeof review !== 'object') continue;
 
       const item = review as Partial<MistakeAnswerReview>;
-      if (
-        typeof item.answeredAt !== 'string' ||
-        typeof item.selectedOptionTextEn !== 'string' ||
-        typeof item.selectedOptionTextSv !== 'string'
-      ) {
-        continue;
-      }
+      const safeQuestionId = normalizeQuestionId(questionId);
+      const selectedOptionTextEn = normalizeSelectedAnswerText(item.selectedOptionTextEn);
+      const selectedOptionTextSv = normalizeSelectedAnswerText(item.selectedOptionTextSv);
+      if (!safeQuestionId || item.questionId !== safeQuestionId) continue;
+      if (!isIsoTimestamp(item.answeredAt)) continue;
+      if (!selectedOptionTextEn || !selectedOptionTextSv) continue;
 
-      wrongAnswerReviews[questionId] = {
+      wrongAnswerReviews[safeQuestionId] = {
         answeredAt: item.answeredAt,
-        questionId,
-        selectedOptionTextEn: item.selectedOptionTextEn,
-        selectedOptionTextSv: item.selectedOptionTextSv,
+        questionId: safeQuestionId,
+        selectedOptionTextEn,
+        selectedOptionTextSv,
       };
     }
   }
@@ -59,7 +79,13 @@ function normalizeMistakeReview(value: unknown): PersistedMistakeReview {
 }
 
 function readMistakeReview(): PersistedMistakeReview {
-  const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
+  let rawReview: string | undefined;
+  try {
+    rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
+  } catch {
+    return emptyMistakeReview;
+  }
+
   if (!rawReview) return emptyMistakeReview;
 
   try {

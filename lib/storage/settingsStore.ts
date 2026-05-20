@@ -22,12 +22,24 @@ try {
 }
 
 function readLanguage(): AppLanguage {
-  const language = settingsStorage?.getString(languageKey);
+  let language: string | undefined;
+  try {
+    language = settingsStorage?.getString(languageKey);
+  } catch {
+    return 'sv';
+  }
+
   return language === 'en' ? 'en' : 'sv';
 }
 
 function readAudioEnabled(): boolean {
-  const storedValue = settingsStorage?.getBoolean(audioEnabledKey);
+  let storedValue: boolean | undefined;
+  try {
+    storedValue = settingsStorage?.getBoolean(audioEnabledKey);
+  } catch {
+    return true;
+  }
+
   return storedValue ?? true;
 }
 
@@ -48,17 +60,35 @@ function normalizeDailyGoalAnswers(answerCount: number | undefined): number {
 }
 
 function readDailyGoalAnswers(): number {
-  const storedValue = settingsStorage?.getNumber(dailyGoalKey);
+  let storedValue: number | undefined;
+  try {
+    storedValue = settingsStorage?.getNumber(dailyGoalKey);
+  } catch {
+    return defaultDailyGoalAnswers;
+  }
+
   return normalizeDailyGoalAnswers(storedValue);
 }
 
 function readIncludeSupplementary(): boolean {
-  const storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
+  let storedValue: boolean | undefined;
+  try {
+    storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
+  } catch {
+    return false;
+  }
+
   return storedValue ?? false;
 }
 
 function readHasSeenAboutTheTest(): boolean {
-  const storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
+  let storedValue: boolean | undefined;
+  try {
+    storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
+  } catch {
+    return false;
+  }
+
   return storedValue ?? false;
 }
 
