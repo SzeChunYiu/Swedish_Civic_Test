@@ -13,6 +13,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { questions } from '../../data/questions';
+import type { RecoverablePersistenceWarning } from '../../lib/storage/persistenceWarning';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -135,40 +136,28 @@ function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerR
   );
 }
 
-function renderListHeader(copy: MistakesCopy) {
-  return (
-    <View style={styles.headerStack}>
-      <View style={styles.hero}>
-        <Badge tone="orange">{copy.badge}</Badge>
-        <Text accessibilityRole="header" style={styles.title}>
-          {copy.title}
-        </Text>
-        <Text style={styles.subtitle}>{copy.subtitle}</Text>
-      </View>
-      <QuestionDisclaimer />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearProgressPersistenceWarning}
-        warning={progressPersistenceWarning}
-      />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearMistakeReviewPersistenceWarning}
-        warning={mistakeReviewPersistenceWarning}
-      />
-
-      <NativeAdCard />
-      <RemoveAdsPlacementCta placement="results_native" />
-    </View>
-  );
-}
-
 export default function Screen() {
   const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const progressPersistenceWarning = useProgressStore(
+    (state) => (state as OptionalPersistenceWarningSlice).persistenceWarning ?? null,
+  );
+  const clearProgressPersistenceWarning = useProgressStore(
+    (state) =>
+      (state as OptionalPersistenceWarningSlice).clearPersistenceWarning ??
+      noopDismissPersistenceWarning,
+  );
   const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
+  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => (state as OptionalPersistenceWarningSlice).persistenceWarning ?? null,
+  );
+  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) =>
+      (state as OptionalPersistenceWarningSlice).clearPersistenceWarning ??
+      noopDismissPersistenceWarning,
+  );
   const reviewItems = useMemo<MistakesReviewListItem[]>(() => {
     const mistakenQuestions = questions.filter(
       (question) => questionProgress[question.id]?.wrongCount > 0,
@@ -214,6 +203,32 @@ export default function Screen() {
 
     return items;
   }, [questionProgress]);
+
+  const renderListHeader = () => (
+    <View style={styles.headerStack}>
+      <View style={styles.hero}>
+        <Badge tone="orange">{copy.badge}</Badge>
+        <Text accessibilityRole="header" style={styles.title}>
+          {copy.title}
+        </Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
+      </View>
+      <QuestionDisclaimer />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearProgressPersistenceWarning}
+        warning={progressPersistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearMistakeReviewPersistenceWarning}
+        warning={mistakeReviewPersistenceWarning}
+      />
+
+      <NativeAdCard />
+      <RemoveAdsPlacementCta placement="results_native" />
+    </View>
+  );
 
   const renderReviewItem = ({ item }: ListRenderItemInfo<MistakesReviewListItem>) => {
     if (item.type === 'section') {
@@ -302,7 +317,7 @@ export default function Screen() {
       initialNumToRender={10}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={renderEmptyState}
-      ListHeaderComponent={renderListHeader(copy)}
+      ListHeaderComponent={renderListHeader}
       maxToRenderPerBatch={8}
       renderItem={renderReviewItem}
       removeClippedSubviews
