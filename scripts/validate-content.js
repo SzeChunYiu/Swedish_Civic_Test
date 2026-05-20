@@ -1080,6 +1080,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Nästa prov',
     'Sparat',
     'Sparar',
+    'Ej sparat',
   ],
   en: [
     'Mock exam',
@@ -1110,6 +1111,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Next exam',
     'Saved',
     'Saving',
+    'Not saved',
   ],
 };
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
@@ -7447,14 +7449,25 @@ function validateExamSubmissionFinalityParity() {
     reject('exam result screen must not directly reopen submitted answers');
   }
   if (
-    !examRoute.includes(
-      'disabled: !completionRecorded || !canStartAccessibleExam || startingAccessibleExam',
+    !/disabled:\s*!completionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam/.test(
+      examRoute,
     ) ||
-    !examRoute.includes(
-      'disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}',
+    !/disabled=\{\s*!completionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\}/.test(
+      examRoute,
     )
   ) {
-    reject('next-exam control must stay disabled until the submitted completion is stored');
+    reject(
+      'next-exam control must stay disabled until the submitted completion is stored or premium-unlimited access is confirmed',
+    );
+  }
+  if (
+    !examRoute.includes(
+      "completionRecorded || accessDecision.reason === 'premium_unlimited_mock_exams'",
+    ) ||
+    !examRoute.includes('setCompletionWriteFailed(true)') ||
+    /\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\)/.test(examRoute)
+  ) {
+    reject('completion write failures must fail closed instead of marking the result as recorded');
   }
   if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||
