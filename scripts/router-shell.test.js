@@ -88,6 +88,16 @@ function readRouterShellManifest() {
     notFoundRedirectHrefs: valuesForFieldInSource(manifest, 'notFoundRedirectHref'),
     notFoundFileProtocolFallbacks: valuesForFieldInSource(manifest, 'notFoundFileProtocolFallback'),
     webLanguages: valuesForFieldInSource(manifest, 'webLanguage'),
+    webDocumentMetaDescriptionLanguages: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterWebDocumentMetaDescriptions',
+      'language',
+    ),
+    webDocumentMetaDescriptions: valuesForFieldInConstArray(
+      manifest,
+      'expoRouterWebDocumentMetaDescriptions',
+      'description',
+    ),
     webAppShellMarkers: valuesForFieldInSource(manifest, 'webAppShellMarker'),
     themeColorTokens: valuesForFieldInSource(manifest, 'themeColorToken'),
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
@@ -319,6 +329,32 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     nativeIntent,
     new RegExp(`return ["']${escapeRegExp(manifest.nativeFallbackHrefs[0])}["']`, 'g'),
     'native intent should keep the safe fallback route from the manifest',
+  );
+});
+
+test('router shell manifest keeps natural Swedish web metadata', () => {
+  const manifest = readRouterShellManifest();
+  const svDescription =
+    manifest.webDocumentMetaDescriptions[
+      manifest.webDocumentMetaDescriptionLanguages.indexOf('sv')
+    ];
+  const enDescription =
+    manifest.webDocumentMetaDescriptions[
+      manifest.webDocumentMetaDescriptionLanguages.indexOf('en')
+    ];
+
+  assert.equal(
+    svDescription,
+    'Öva svensk samhällskunskap med övningar som fungerar utan uppkoppling, sparade framsteg och källreferenser.',
+  );
+  assert.doesNotMatch(
+    svDescription,
+    new RegExp(`\\b(?:${['offline', 'quiz'].join('')}|quiz(?:pass|frågor|frågan)?)\\b`, 'i'),
+    'Swedish metadata should not expose quiz loanwords to learners',
+  );
+  assert.equal(
+    enDescription,
+    'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
   );
 });
 

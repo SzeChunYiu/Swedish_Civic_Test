@@ -11,9 +11,18 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { hasSourceAuthorityStemPattern } = require('../scripts/sourceAuthorityStemPatterns');
 
 const CSV = path.resolve(__dirname, '..', 'content', 'question-bank.csv');
+
+const BANNED = [
+  /enligt\s+UHR\b/i,
+  /UHR[\s-]?(?:materialet|avsnittet)/i,
+  /UHR:s\s+material/i,
+  /according to\s+(?:the\s+)?UHR\b/i,
+  /(?:the\s+)?UHR\s+(?:material|section)/i,
+  /st(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR/i,
+  /best matches (?:the\s+)?UHR section/i,
+];
 
 function parseCsv(text) {
   // RFC4180-ish: every field quoted (QUOTE_ALL export).
@@ -63,7 +72,7 @@ function collectStemAuthorityConnectiveOffenders(text) {
     const id = rows[r][idIdx];
     for (const col of [svIdx, enIdx]) {
       const v = rows[r][col] || '';
-      if (hasSourceAuthorityStemPattern(v)) {
+      if (BANNED.some((re) => re.test(v))) {
         offenders.push(`${id} [${header[col]}]: ${v}`);
       }
     }
