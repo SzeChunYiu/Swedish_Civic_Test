@@ -1126,6 +1126,16 @@ function generatedSingleChoicePromptFromSourceEn(
     : `What is correct about ${match[1]}?`;
 }
 
+function referendumAdvisoryStatementSv(subject: string, answer: string): string | null {
+  if (/^politikerna?\s+(?:måste|behöver)\s+inte\s+följa\s+resultatet$/i.test(answer)) {
+    return `Att ${subject} betyder att politikerna inte behöver följa resultatet`;
+  }
+  if (/^politikerna?\s+måste\s+alltid\s+följa\s+resultatet$/i.test(answer)) {
+    return `Att ${subject} betyder att politikerna alltid måste följa resultatet`;
+  }
+  return null;
+}
+
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1202,7 +1212,11 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
 
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) {
+    const referendumStatement = referendumAdvisoryStatementSv(match[1], answer);
+    if (referendumStatement) return referendumStatement;
+    return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  }
 
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
   if (match) {

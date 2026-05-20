@@ -517,9 +517,13 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
+const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
+  /\bmåste\s+inte\s+följa\s+resultatet\b/i,
+];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
   /\bIt is true that\s+(?:The|In|Approximately)\b/i,
+  /\bbetyder att politikerna måste (?:inte|alltid) följa resultatet\b/i,
   /\bbelongs to\s+[a-zåäö][^.,"]*/i,
   /\bhör till\s+[a-zåäö][^.,"]*/i,
   /\b(?:Det är korrekt att\s+)?(?:Det att|Svaret är)\b/i,
@@ -5074,6 +5078,18 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function findQuestionReferendumAdvisorySwedishNaturalnessIssue(question) {
+  const text = [
+    question.questionSv,
+    question.explanationSv,
+    ...(question.options || []).map((option) => option.textSv),
+  ].join(' ');
+
+  return QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
   const text = [
     question.questionEn,
@@ -6160,6 +6176,17 @@ function generatedSingleChoicePromptFromSourceEn(source, variant) {
     ? `Which fact is correct about ${match[1]}?`
     : `What is correct about ${match[1]}?`;
 }
+
+function referendumAdvisoryStatementSv(subject, answer) {
+  if (/^politikerna?\s+(?:måste|behöver)\s+inte\s+följa\s+resultatet$/i.test(answer)) {
+    return `Att ${subject} betyder att politikerna inte behöver följa resultatet`;
+  }
+  if (/^politikerna?\s+måste\s+alltid\s+följa\s+resultatet$/i.test(answer)) {
+    return `Att ${subject} betyder att politikerna alltid måste följa resultatet`;
+  }
+  return null;
+}
+
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -6213,7 +6240,11 @@ function civicStatementSv(source, option) {
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) {
+    const referendumStatement = referendumAdvisoryStatementSv(match[1], answer);
+    if (referendumStatement) return referendumStatement;
+    return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  }
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
   if (match) {
     return `${upperFirst(match[1])} blir ${match[2]} när ${lowerFirst(
@@ -7979,6 +8010,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionReligiousFreedomParallelismValidated = 0;
@@ -17301,6 +17333,8 @@ if (Array.isArray(questions)) {
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+      const referendumAdvisorySwedishNaturalnessIssue =
+        findQuestionReferendumAdvisorySwedishNaturalnessIssue(question);
       const luciaRoleEnglishNaturalnessIssue =
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
@@ -17338,6 +17372,11 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (referendumAdvisorySwedishNaturalnessIssue) {
+        fail(`${label} uses ambiguous advisory-referendum Swedish wording`);
+      } else {
+        questionReferendumAdvisorySwedishNaturalnessValidated += 1;
       }
       if (luciaRoleEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Lucia role English wording`);
@@ -17848,6 +17887,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      questionReferendumAdvisorySwedishNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
       questionReligiousFreedomParallelismValidated,

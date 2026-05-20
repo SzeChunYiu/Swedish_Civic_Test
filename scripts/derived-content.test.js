@@ -617,10 +617,16 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
     text,
     /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is that (?:so|It)|En anledning är att Det|have they|har de/i,
   );
+  assert.doesNotMatch(text, /betyder att politikerna måste (?:inte|alltid) följa resultatet/i);
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
+      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
     ),
   );
   assert.ok(

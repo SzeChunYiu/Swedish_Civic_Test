@@ -591,7 +591,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     options: [
       {
         id: 'a',
-        textSv: 'Politikerna måste inte följa resultatet',
+        textSv: 'Politikerna behöver inte följa resultatet',
         textEn: 'Politicians do not have to follow the result',
       },
       {
@@ -612,7 +612,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.',
+      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.',
     explanationEn:
       'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
     uhrReference: {

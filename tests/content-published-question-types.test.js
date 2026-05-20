@@ -42,6 +42,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
+const referendumAdvisorySwedishNaturalnessPattern =
+  /\b(?:måste inte följa resultatet|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -144,6 +146,10 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionReferendumAdvisorySwedishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -802,6 +808,111 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.match(output, /q103 uses literal First of May English wording/);
+});
+
+test('referendum advisory Swedish copy stays natural across source and exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q020GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q020', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q020', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q020', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q020', 'judgement'),
+  ];
+  const q020Ids = ['q020', ...q020GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.sv, question.why?.sv, ...(question.opts || []).map((option) => option.sv)].join(
+      ' ',
+    );
+  const fileFindings = ['data/questions.ts', 'content/question-bank.csv', 'site/questions.js']
+    .filter((relativePath) =>
+      referendumAdvisorySwedishNaturalnessPattern.test(
+        fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+      ),
+    )
+    .map((relativePath) => path.normalize(relativePath));
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q020Ids.includes(question.id))
+    .filter((question) =>
+      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q020Ids.includes(question.id))
+    .filter((question) =>
+      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const q020 = generatedSiteBank.find((question) => question.id === 'q020');
+  const q020True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q020', 'trueStatement'),
+  );
+  const q020False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q020', 'falseStatement'),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.ok(q020, 'q020 should be published in the site bank');
+  assert.equal(q020.opts[0]?.sv, 'Politikerna behöver inte följa resultatet');
+  assert.match(q020.why.sv, /politikerna behöver inte följa resultatet/);
+  assert.ok(q020True, 'q020 true generated variant should be published');
+  assert.ok(q020False, 'q020 false generated variant should be published');
+  assert.equal(
+    q020True.q.sv,
+    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+  );
+  assert.equal(
+    q020False.q.sv,
+    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+  );
+});
+
+test('referendum advisory Swedish naturalness guard rejects old måste inte wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Politikerna behöver inte följa resultatet',
+        'Politikerna måste inte följa resultatet',
+      )
+      .replace(
+        'politikerna behöver inte följa resultatet.',
+        'politikerna måste inte följa resultatet.',
+      );
+  }
+  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
+    return String(contents).replace(
+      'validateAuthoredSourceParity();',
+      '// validateAuthoredSourceParity skipped for focused q020 fixture;',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q020 uses ambiguous advisory-referendum Swedish wording/,
+  );
 });
 
 test('May Day holiday options use natural International Workers Day English', () => {
