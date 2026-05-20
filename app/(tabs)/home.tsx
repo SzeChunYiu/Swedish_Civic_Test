@@ -30,7 +30,12 @@ import { colors, radius, space, typography } from '../../lib/theme';
 type BenchmarkProduct = (typeof uxBenchmarks)[number]['product'];
 
 type GuidedPathStageCopy = {
-  accessibilityLabel: (title: string, chapterRange: string, progressLabel: string, status: string) => string;
+  accessibilityLabel: (
+    title: string,
+    chapterRange: string,
+    progressLabel: string,
+    status: string,
+  ) => string;
   chapterRange: string;
   cta: (isCompleted: boolean) => string;
   ctaAccessibilityLabel: (title: string, isCompleted: boolean) => string;
@@ -344,6 +349,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -376,6 +382,7 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
+  const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
 
   return (
     <ScreenShell
@@ -437,7 +444,7 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      {!monetizationEntitlements.adsDisabled ? (
+      {showRemoveAdsOffer ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -515,13 +522,17 @@ export default function Screen() {
         ))}
       </View>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
-      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
+      {entitlementsReady ? (
+        <>
+          <PremiumBanner
+            entitlements={monetizationEntitlements}
+            language={language}
+            onEntitlementsChange={setMonetizationEntitlements}
+            runtimeOptions={purchaseRuntime}
+          />
+          <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
+        </>
+      ) : null}
     </ScreenShell>
   );
 }

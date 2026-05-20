@@ -1071,7 +1071,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 6;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -7324,6 +7324,7 @@ function validateReleaseMonetizationPolicyParity() {
 function validateRemoveAdsEntitlementHookParity() {
   let valid = true;
   let hookSource = '';
+  let homeSource = '';
 
   function reject(message) {
     valid = false;
@@ -7335,12 +7336,14 @@ function validateRemoveAdsEntitlementHookParity() {
       path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
       'utf8',
     );
+    homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   } catch (error) {
-    reject(`lib/monetization/useRemoveAdsEntitlements.ts could not be read: ${error.message}`);
+    reject(`Remove Ads entitlement sources could not be read: ${error.message}`);
     return;
   }
 
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
+  const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const hookCases = [
     [
       /const\s+AD_BLOCKED_PENDING_ENTITLEMENTS:\s*PremiumEntitlements\s*=\s*\{[\s\S]*\.\.\.FREE_ENTITLEMENTS,[\s\S]*adsDisabled:\s*true,[\s\S]*\};/.test(
@@ -7369,6 +7372,17 @@ function validateRemoveAdsEntitlementHookParity() {
         hookSource,
       ),
       'unresolved purchase state must return ad-blocked pending entitlements',
+    ],
+    [
+      /entitlementsReady/.test(homeSource) &&
+        normalizedHomeSource.includes(
+          'const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;',
+        ) &&
+        /\{showRemoveAdsOffer\s*\?\s*\([\s\S]{0,420}<PricingWedge/.test(homeSource) &&
+        /\{entitlementsReady\s*\?\s*\([\s\S]{0,1200}<PremiumBanner[\s\S]{0,1200}<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s*\/>/.test(
+          homeSource,
+        ),
+      'Home monetization surfaces must wait for Remove Ads entitlements before rendering',
     ],
   ];
 
@@ -11388,6 +11402,7 @@ function validateMobileAdsConsentHookParity() {
   }
 
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
+  const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const hookCases = [
     [
       normalizedHookSource.includes(

@@ -36,6 +36,20 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /entitlementStatus/);
 });
 
+test('Home Remove Ads surfaces wait for entitlement readiness before rendering', () => {
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+
+  assert.match(
+    homeSource,
+    /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
+  );
+  assert.match(homeSource, /\{showRemoveAdsOffer \? \([\s\S]*<PricingWedge/);
+  assert.match(
+    homeSource,
+    /\{entitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+  );
+});
+
 test('Remove Ads entitlement hook parity rejects pending ad enablement', () => {
   const result = spawnSync(
     process.execPath,
