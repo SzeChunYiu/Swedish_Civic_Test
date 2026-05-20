@@ -11,6 +11,10 @@ const {
   formatUnsupportedStaticTeamCredentialClaims,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
+const {
+  findUnsupportedStaticReleaseCopyInSource,
+  formatUnsupportedStaticReleaseCopy,
+} = require('./static-site-release-copy-guard');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
 const LOCAL_SITE_INDEX_PATH = path.join(__dirname, '..', 'site', 'index.html');
@@ -266,6 +270,10 @@ function findStaticTeamCredentialClaimIssues(indexSource, appSource) {
   ];
 }
 
+function findStaticReleaseCopyIssues(indexSource, appSource) {
+  return findUnsupportedStaticReleaseCopyInSource(`${indexSource}\n${appSource}`, 'live static');
+}
+
 function normalizeHeaderValue(value) {
   return String(value ?? '')
     .trim()
@@ -402,6 +410,13 @@ async function checkLiveSite(inputUrl, options = {}) {
           'static team credential copy',
           formatUnsupportedStaticTeamCredentialClaims(staticTeamCredentialIssues),
         ),
+  );
+
+  const staticReleaseCopyIssues = findStaticReleaseCopyIssues(index, app);
+  checks.push(
+    staticReleaseCopyIssues.length === 0
+      ? pass('static release copy')
+      : fail('static release copy', formatUnsupportedStaticReleaseCopy(staticReleaseCopyIssues)),
   );
 
   checks.push(

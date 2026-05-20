@@ -12,6 +12,7 @@ const {
   assertStaticHeadMetadataTitleSource,
   findUnsupportedStaticTeamCredentialClaimsInSource,
 } = require('./static-outcome-copy-guard');
+const { assertNoUnsupportedStaticReleaseCopy } = require('./static-site-release-copy-guard');
 const { assertStaticV11ReadinessCopySource } = require('./static-v11-readiness-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -230,6 +231,14 @@ test('static site brand copy matches app identity', () => {
     read('site/questions.js'),
     new RegExp(`^/\\* ${appName} - generated static question bank\\.`),
   );
+});
+
+test('static site release copy avoids MVP and beta labels', () => {
+  assert.equal(assertNoUnsupportedStaticReleaseCopy(repoRoot), 3);
+  assert.match(read('site/app.js'), /['"]privacy\.meta2\.v['"]:\s*['"]1\.0['"]/);
+  assert.match(read('site/index.html'), /data-i18n="privacy\.meta2\.v">1\.0</);
+  assert.match(read('site/app.js'), /No\. You do not need to register\./);
+  assert.match(read('site/app.js'), /Nej\. Du behöver inte registrera dig\./);
 });
 
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {

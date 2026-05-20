@@ -232,7 +232,7 @@ const i18n = (window.i18n = {
       "It'll help you <em>study</em>. The rest depends on you, the official source material, and how much fika you take. We pull questions from the public bank and explain each one in plain language.",
     'faq.3.q': 'Do I need an account?',
     'faq.3.a':
-      'No. The MVP needs zero registration. No email, no phone number, no awkward profile photo from 2017. Progress lives on your device.',
+      'No. You do not need to register. No email, no phone number, no awkward profile photo from 2017. Progress lives on your device.',
     'faq.4.q': 'Is it free?',
     'faq.4.a':
       'Free to start, free to study, and free to take mock exams. Ads help keep the core app available; Remove Ads is an optional one-time 29 SEK purchase that removes ads.',
@@ -251,7 +251,7 @@ const i18n = (window.i18n = {
     'privacy.meta1.b': 'Effective',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
-    'privacy.meta2.v': '1.0 MVP',
+    'privacy.meta2.v': '1.0',
     'privacy.meta3.b': 'Reading time',
     'privacy.meta3.v': '~3 min',
     'privacy.toc': 'In this policy',
@@ -260,7 +260,7 @@ const i18n = (window.i18n = {
       'Almost Swedish is an independent study app for Swedish civic knowledge practice. It is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Anything you read here represents what <em>this app</em> does — nothing more.',
     'privacy.s2.t': 'No account required',
     'privacy.s2.p':
-      "The MVP requires no account, email address, phone number, or profile registration. You open the app, you study, you close the app. That's the deal.",
+      "The app requires no account, email address, phone number, or profile registration. You open the app, you study, you close the app. That's the deal.",
     'privacy.s3.t': 'Local study progress',
     'privacy.s3.p':
       'Study progress, settings, mistakes, XP, streaks, badges, bookmarks, and audio preferences are stored locally on your device. They never leave it. If you uninstall the app, that data is gone — fair warning.',
@@ -621,7 +621,7 @@ const i18n = (window.i18n = {
       'Det hjälper dig att <em>plugga</em>. Resten beror på dig, det officiella materialet och hur många fikapauser du tar. Vi hämtar frågor från den offentliga banken och förklarar varje en på enkel svenska.',
     'faq.3.q': 'Behöver jag ett konto?',
     'faq.3.a':
-      'Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.',
+      'Nej. Du behöver inte registrera dig. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.',
     'faq.4.q': 'Är den gratis?',
     'faq.4.a':
       'Gratis att börja, plugga och öva med övningsprov. Du kan göra övningsprov i appen utan betalning; annonser hjälper oss hålla kärnfunktionerna tillgängliga, och Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.',
@@ -640,7 +640,7 @@ const i18n = (window.i18n = {
     'privacy.meta1.b': 'Gäller från',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
-    'privacy.meta2.v': '1.0 MVP',
+    'privacy.meta2.v': '1.0',
     'privacy.meta3.b': 'Lästid',
     'privacy.meta3.v': '~3 min',
     'privacy.toc': 'I denna policy',
@@ -649,7 +649,7 @@ const i18n = (window.i18n = {
       'Almost Swedish är en fristående studieapp för övning av svensk samhällskunskap. Den är inte officiell och inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Allt du läser här gäller bara vad <em>denna app</em> gör — inget mer.',
     'privacy.s2.t': 'Inget konto krävs',
     'privacy.s2.p':
-      'MVP:n kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.',
+      'Appen kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.',
     'privacy.s3.t': 'Lokala studieframsteg',
     'privacy.s3.p':
       'Framsteg, inställningar, misstag, XP, streaks, märken, bokmärken och ljudpreferenser lagras lokalt på din enhet. De lämnar den aldrig. Avinstallerar du appen är de borta — bra att veta.',

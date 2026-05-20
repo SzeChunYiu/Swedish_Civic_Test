@@ -2,6 +2,11 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const {
+  assertNoUnsupportedStaticReleaseCopy,
+  findUnsupportedStaticReleaseCopyInSource,
+  formatUnsupportedStaticReleaseCopy,
+} = require('./static-site-release-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const unqualifiedNoTrackingPatterns = [
@@ -65,6 +70,24 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
     /ads never collect study answers or progress/,
     /annonser samlar aldrig in dina studiesvar eller framsteg/,
   ].forEach((pattern) => assert.match(surface, pattern));
+});
+
+test('static site public copy does not label the release as MVP', () => {
+  const surface = [read('site/app.js'), read('site/index.html')].join('\n');
+
+  assert.equal(assertNoUnsupportedStaticReleaseCopy(repoRoot), 3);
+  assert.equal(findUnsupportedStaticReleaseCopyInSource(surface).length, 0);
+  assert.match(surface, /No\. You do not need to register\./);
+  assert.match(surface, /Nej\. Du behöver inte registrera dig\./);
+  assert.match(surface, /The app requires no account/);
+  assert.match(surface, /Appen kräver inget konto/);
+  assert.match(surface, /data-i18n="privacy\.meta2\.v">1\.0</);
+
+  const mutated = findUnsupportedStaticReleaseCopyInSource(
+    `${surface}\nThe MVP needs zero registration.`,
+  );
+  assert.equal(mutated.length, 1);
+  assert.match(formatUnsupportedStaticReleaseCopy(mutated), /MVP release label/);
 });
 
 test('static site Swedish study copy uses natural Swedish study terms', () => {

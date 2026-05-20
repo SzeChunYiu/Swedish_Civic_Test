@@ -258,6 +258,26 @@ test('live site check rejects static team credential claims', async () => {
   });
 });
 
+test('live site check rejects static MVP release copy', async () => {
+  const staleIndex = [
+    currentAssets()['/index.html'],
+    '<p>No. The MVP needs zero registration.</p>',
+    '<span data-i18n="privacy.meta2.v">1.0 MVP</span>',
+  ].join('\n');
+
+  await withStaticServer({ ...currentAssets(), '/index.html': staleIndex }, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find((check) => check.name === 'static release copy');
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /MVP release label/);
+    assert.match(failedCheck?.details ?? '', /"MVP"/);
+  });
+});
+
 test('live site check rejects missing static security headers', async () => {
   await withStaticServer(
     currentAssets(),
