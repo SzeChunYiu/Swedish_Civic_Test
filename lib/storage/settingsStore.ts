@@ -2,6 +2,7 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import { stopSpeech } from '../audio/speak';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { writeRecoverably } from './persistenceWarning';
 
@@ -23,6 +24,9 @@ const dailyGoalKey = 'dailyGoalAnswers';
 const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
 const settingsStorageId = 'settings';
+const defaultDailyGoalAnswers = 10;
+const minDailyGoalAnswers = 1;
+const maxDailyGoalAnswers = 50;
 
 let settingsStorage: MMKV | null = null;
 
@@ -33,28 +37,74 @@ try {
 }
 
 function readLanguage(): AppLanguage {
-  const language = settingsStorage?.getString(languageKey);
-  return language === 'en' ? 'en' : 'sv';
+  const language = readStorageString(languageKey);
+  return normalizeLanguage(language);
 }
 
 function readAudioEnabled(): boolean {
-  const storedValue = settingsStorage?.getBoolean(audioEnabledKey);
+  const storedValue = readStorageBoolean(audioEnabledKey);
   return storedValue ?? true;
 }
 
 function readDailyGoalAnswers(): number {
-  const storedValue = settingsStorage?.getNumber(dailyGoalKey);
-  return storedValue && storedValue > 0 ? storedValue : 10;
+  const storedValue = readStorageNumber(dailyGoalKey);
+  return normalizeDailyGoalAnswers(storedValue);
 }
 
 function readIncludeSupplementary(): boolean {
-  const storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
+  const storedValue = readStorageBoolean(includeSupplementaryKey);
   return storedValue ?? false;
 }
 
 function readHasSeenAboutTheTest(): boolean {
-  const storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
+  const storedValue = readStorageBoolean(hasSeenAboutTheTestKey);
   return storedValue ?? false;
+}
+
+function readStorageString(key: string): string | undefined {
+  try {
+    return settingsStorage?.getString(key);
+  } catch {
+    return undefined;
+  }
+}
+
+function readStorageBoolean(key: string): boolean | undefined {
+  try {
+    return settingsStorage?.getBoolean(key);
+  } catch {
+    return undefined;
+  }
+}
+
+function readStorageNumber(key: string): number | undefined {
+  try {
+    return settingsStorage?.getNumber(key);
+  } catch {
+    return undefined;
+  }
+}
+
+function normalizeLanguage(language: unknown): AppLanguage {
+  return language === 'en' ? 'en' : 'sv';
+}
+
+function normalizeBoolean(value: unknown, fallback: boolean): boolean {
+  return typeof value === 'boolean' ? value : fallback;
+}
+
+function normalizeDailyGoalAnswers(answerCount: unknown): number {
+  if (
+    typeof answerCount !== 'number' ||
+    !Number.isFinite(answerCount) ||
+    !Number.isInteger(answerCount) ||
+    answerCount < minDailyGoalAnswers ||
+    answerCount > maxDailyGoalAnswers
+  ) {
+    return defaultDailyGoalAnswers;
+  }
+
+  return answerCount;
 }
 
 type SettingsState = {
@@ -118,6 +168,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
   persistenceWarning: null,
   setLanguage: (language) => {
+    language = normalizeLanguage(language);
     const persistenceWarning = writeRecoverably(
       settingsStorage,
       settingsStorageId,
@@ -127,6 +178,10 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ language, persistenceWarning });
   },
   setAudioEnabled: (audioEnabled) => {
+    audioEnabled = normalizeBoolean(audioEnabled, true);
+    if (!audioEnabled) {
+      stopSpeech();
+    }
     const persistenceWarning = writeRecoverably(
       settingsStorage,
       settingsStorageId,
@@ -137,15 +192,17 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   },
   setDailyGoalAnswers: (dailyGoalAnswers) => {
     const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));
+    const normalizedGoal = Number.isFinite(safeGoal) ? safeGoal : defaultDailyGoalAnswers;
     const persistenceWarning = writeRecoverably(
       settingsStorage,
       settingsStorageId,
       dailyGoalKey,
-      safeGoal,
+      normalizedGoal,
     );
-    set({ dailyGoalAnswers: safeGoal, persistenceWarning });
+    set({ dailyGoalAnswers: normalizedGoal, persistenceWarning });
   },
   setIncludeSupplementaryQuestions: (include) => {
+    include = normalizeBoolean(include, false);
     const persistenceWarning = writeRecoverably(
       settingsStorage,
       settingsStorageId,

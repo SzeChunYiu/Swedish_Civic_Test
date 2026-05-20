@@ -73,8 +73,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -104,8 +103,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -132,8 +130,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -198,8 +195,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');
-require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },

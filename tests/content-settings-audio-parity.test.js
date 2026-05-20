@@ -41,6 +41,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -49,10 +50,13 @@ require('./scripts/validate-content.js');
 }
 
 test('audio setting stays in parity between storage and settings switch', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-store'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -122,6 +126,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -136,10 +141,13 @@ require('./scripts/validate-content.js');
 });
 
 test('settings store schema stays in parity with persisted settings state', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-store'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -149,7 +157,7 @@ test('settings store schema stays in parity with persisted settings state', () =
     'utf8',
   );
 
-  assert.equal(summary.settingsStoreFieldsValidated, 10);
+  assert.equal(summary.settingsStoreFieldsValidated, 12);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
   assert.match(settingsStore, /type SettingsState = \{/);
   assert.match(settingsStore, /language: AppLanguage;/);
@@ -158,7 +166,7 @@ test('settings store schema stays in parity with persisted settings state', () =
   assert.match(settingsStore, /setLanguage: \(language: AppLanguage\) => void;/);
   assert.match(settingsStore, /setAudioEnabled: \(enabled: boolean\) => void;/);
   assert.match(settingsStore, /setDailyGoalAnswers: \(answerCount: number\) => void;/);
-  assert.match(settingsStore, /createMMKV\(\{ id: 'settings' \}\)/);
+  assert.match(settingsStore, /createMMKV\(\{ id: settingsStorageId \}\)/);
 });
 
 test('settings store schema parity rejects setter optionality drift', () => {
@@ -178,6 +186,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-settings-store');
 require('./scripts/validate-content.js');
 `,
     ],
