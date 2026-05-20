@@ -7124,7 +7124,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -7147,7 +7147,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34866,7 +34866,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Which answer best matches? Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Vilket svar stämmer bäst? Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -34889,7 +34889,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34930,7 +34930,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34971,7 +34971,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34997,7 +34997,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Choose the correct option: Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Välj rätt alternativ: Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -35020,7 +35020,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {

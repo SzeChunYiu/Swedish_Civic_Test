@@ -3165,7 +3165,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Statligt finansierad välfärd', pageApprox: 30 },
     'Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?',
-    'Which state security systems can provide financial support during illness, parenthood, or unemployment?',
+    'Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
     [
       [
         'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring',
@@ -3186,7 +3186,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete.',
-    'The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.',
+    'The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.',
     ['state-welfare', 'social-insurance', 'sickness-insurance', 'parental-insurance'],
   ),
   single(
