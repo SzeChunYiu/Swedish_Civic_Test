@@ -484,10 +484,14 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
+    'Ljud på',
+    'Ljud av',
+    'Dagligt mål, språk och ljud',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Öppna inställningar',
+    'Justera studieinställningar',
+    'Öppna inställningar för dagligt mål, språk och ljud',
     'Första övningen',
     'Nivå 2',
     'Misstagsrepetition',
@@ -508,10 +512,14 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
+    'Audio on',
+    'Audio off',
+    'Daily goal, language, and audio',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Open settings',
+    'Adjust study settings',
+    'Open settings for daily goal, language, and audio',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -528,6 +536,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
+  ],
+  [
+    'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
+    'profile route must read audio state from settings store',
   ],
   ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
   [
@@ -549,6 +561,15 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
   ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
+  ["audioEnabled ? 'green' : 'orange'", 'profile audio badge must reflect the current audio state'],
+  [
+    'audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge',
+    'profile audio badge must render localized audio state copy',
+  ],
+  [
+    '{copy.settingsShortcutHelper}',
+    'profile study setup card must name the settings shortcut scope',
+  ],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   [

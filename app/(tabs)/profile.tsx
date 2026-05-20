@@ -8,7 +8,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
-import { deriveBadges, getBadgeTitle } from '../../lib/learning/badges';
+import { deriveBadges } from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -18,6 +18,8 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
+  audioDisabledBadge: string;
+  audioEnabledBadge: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
@@ -27,9 +29,10 @@ type ProfileCopy = {
   languageBadge: string;
   levelMetric: string;
   noBadges: string;
-  studySetupCta: string;
-  studySetupCtaAccessibilityLabel: string;
+  openSettings: string;
+  openSettingsAccessibilityLabel: string;
   questionsHelper: string;
+  settingsShortcutHelper: string;
   streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
@@ -41,6 +44,8 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
+    audioDisabledBadge: 'Ljud av',
+    audioEnabledBadge: 'Ljud på',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
@@ -50,11 +55,12 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
+    openSettings: 'Justera studieinställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
     questionsHelper: 'frågor',
+    settingsShortcutHelper: 'Dagligt mål, språk och ljud',
     streakFreezeBadge: 'Svitskydd',
-    studySetupCta: 'Justera mål, språk och ljud',
-    studySetupCtaAccessibilityLabel: 'Justera mål, språk och ljud',
-    studySetupSubtitle: 'Justera dagligt mål, frågespråk och ljud innan nästa pass.',
+    studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
       'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
@@ -63,6 +69,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
+    audioDisabledBadge: 'Audio off',
+    audioEnabledBadge: 'Audio on',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
@@ -72,18 +80,28 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
+    openSettings: 'Adjust study settings',
+    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
     questionsHelper: 'questions',
+    settingsShortcutHelper: 'Daily goal, language, and audio',
     streakFreezeBadge: 'Streak freeze',
-    studySetupCta: 'Adjust goal, language, and audio',
-    studySetupCtaAccessibilityLabel: 'Adjust goal, language, and audio',
-    studySetupSubtitle:
-      'Tune your daily goal, question language, and audio before the next session.',
+    studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
       'Your goals, language mode, streaks, and badges stay on this device for a private study experience.',
     title: 'Progress without an account',
     xpMetric: 'XP',
   },
+};
+
+const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
+  sv: {
+    first_practice: 'Första övningen',
+    level_2: 'Nivå 2',
+    mistake_reviewer: 'Misstagsrepetition',
+    streak_3: 'Tre dagars svit',
+  },
+  en: {},
 };
 
 function formatBadges(
@@ -93,13 +111,12 @@ function formatBadges(
 ): string {
   if (badges.length === 0) return emptyLabel;
 
-  return badges.map((badge) => getBadgeTitle(badge, language)).join(', ');
+  return badges.map((badge) => localizedBadgeTitles[language][badge.id] ?? badge.title).join(', ');
 }
 
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
-    entitlementStatus: monetizationEntitlementStatus,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -109,6 +126,7 @@ export default function Screen() {
   const answerDates = useProgressStore((state) => state.answerDates);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
   const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
+  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
@@ -170,15 +188,21 @@ export default function Screen() {
             {dailyGoalAnswers} {copy.answersPerDay}
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
+          <Badge tone={audioEnabled ? 'green' : 'orange'}>
+            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
+          </Badge>
         </View>
-        <Link
-          accessibilityLabel={copy.studySetupCtaAccessibilityLabel}
-          accessibilityRole="link"
-          href="/settings"
-          style={styles.studySetupLink}
-        >
-          {copy.studySetupCta}
-        </Link>
+        <View style={styles.settingsShortcutRow}>
+          <Text style={styles.settingsShortcutHelper}>{copy.settingsShortcutHelper}</Text>
+          <Link
+            accessibilityLabel={copy.openSettingsAccessibilityLabel}
+            accessibilityRole="link"
+            href="/settings"
+            style={styles.settingsLink}
+          >
+            {copy.openSettings}
+          </Link>
+        </View>
       </Card>
 
       <Card style={styles.cardWide}>
@@ -188,7 +212,6 @@ export default function Screen() {
 
       <PremiumBanner
         entitlements={monetizationEntitlements}
-        entitlementStatus={monetizationEntitlementStatus}
         language={language}
         onEntitlementsChange={setMonetizationEntitlements}
         runtimeOptions={purchaseRuntime}
@@ -219,25 +242,36 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[1],
   },
+  settingsShortcutHelper: {
+    color: colors.textSecondary,
+    flex: 1,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.caption.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
+  settingsShortcutRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+  },
   value: {
     color: colors.text,
     fontSize: typography.sectionTitle.fontSize,
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
   },
-  studySetupLink: {
+  settingsLink: {
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
-    borderRadius: radius.card,
+    borderRadius: radius.small,
     color: colors.surface,
-    display: 'flex',
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    justifyContent: 'center',
     lineHeight: typography.navButton.lineHeight,
-    minHeight: space[6],
     paddingHorizontal: space[2],
-    paddingVertical: space[1],
+    paddingVertical: space[1.5],
     textDecorationLine: 'none',
   },
 });
