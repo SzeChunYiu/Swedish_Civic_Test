@@ -1,8 +1,17 @@
 #!/usr/bin/env node
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
+const TEXT_EXPORT_EXTENSIONS = new Set(['.css', '.html', '.js', '.json', '.map', '.txt']);
+const FORBIDDEN_EXPORT_PATH_PATTERNS = [
+  /(^|\/)node_modules(\/|$)/,
+  /(^|\/)__[^/]*(home|swedish_civic_test|sct-worktrees)[^/]*(\/|$)/i,
+  /\/home\//,
+  /sct-worktrees/i,
+  /Swedish_Civic_Test/,
+];
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -32,6 +41,63 @@ function walkFiles(directory, predicate) {
     }
   }
   return files;
+}
+
+function toPosixPath(filePath) {
+  return filePath.split(path.sep).join('/');
+}
+
+function toRelativePosixPath(rootDir, filePath) {
+  return toPosixPath(path.relative(rootDir, filePath));
+}
+
+function isTextExportFile(filePath) {
+  return TEXT_EXPORT_EXTENSIONS.has(path.extname(filePath));
+}
+
+function hasForbiddenExportPathFragment(value) {
+  return FORBIDDEN_EXPORT_PATH_PATTERNS.some((pattern) => pattern.test(value));
+}
+
+function uniqueFlatAssetPath({ existingTargets, oldRelativePath, outputDir }) {
+  const basename = path.basename(oldRelativePath);
+  let candidate = `assets/${basename}`;
+  const candidatePath = path.join(outputDir, ...candidate.split('/'));
+
+  if (!existingTargets.has(candidate) && !fs.existsSync(candidatePath)) {
+    return candidate;
+  }
+
+  const parsed = path.parse(basename);
+  const digest = crypto.createHash('sha1').update(oldRelativePath).digest('hex').slice(0, 8);
+  candidate = `assets/${parsed.name}.${digest}${parsed.ext}`;
+
+  let suffix = 1;
+  while (
+    existingTargets.has(candidate) ||
+    fs.existsSync(path.join(outputDir, ...candidate.split('/')))
+  ) {
+    candidate = `assets/${parsed.name}.${digest}-${suffix}${parsed.ext}`;
+    suffix += 1;
+  }
+
+  return candidate;
+}
+
+function removeEmptyDirectories(directory, stopAt) {
+  if (!fs.existsSync(directory) || path.resolve(directory) === path.resolve(stopAt)) {
+    return;
+  }
+
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      removeEmptyDirectories(path.join(directory, entry.name), stopAt);
+    }
+  }
+
+  if (fs.readdirSync(directory).length === 0) {
+    fs.rmdirSync(directory);
+  }
 }
 
 function toRelativeBundlePath(bundlePath) {
@@ -71,6 +137,88 @@ function rewriteRootRelativeBundlePaths(source) {
   return source.replace(/(["'])\/(_expo|assets)\//g, '$1$2/');
 }
 
+function rewriteTextFileReferences(outputDir, replacements) {
+  if (replacements.size === 0) return;
+
+  const textFiles = walkFiles(outputDir, isTextExportFile);
+  for (const textFile of textFiles) {
+    const source = fs.readFileSync(textFile, 'utf8');
+    let rewritten = source;
+
+    for (const [oldPath, newPath] of replacements) {
+      rewritten = rewritten.split(`/${oldPath}`).join(newPath);
+      rewritten = rewritten.split(oldPath).join(newPath);
+    }
+
+    if (rewritten !== source) {
+      fs.writeFileSync(textFile, rewritten);
+    }
+  }
+}
+
+function normalizeExportedAssetPaths(outputDir) {
+  const assetsDir = path.join(outputDir, 'assets');
+  const assetFiles = walkFiles(assetsDir);
+  const replacements = new Map();
+  const existingTargets = new Set();
+
+  for (const assetFile of assetFiles) {
+    const oldRelativePath = toRelativePosixPath(outputDir, assetFile);
+    const oldAssetSubpath = toRelativePosixPath(assetsDir, assetFile);
+    const isFlatAsset = !oldAssetSubpath.includes('/');
+
+    if (isFlatAsset && !hasForbiddenExportPathFragment(oldRelativePath)) {
+      existingTargets.add(oldRelativePath);
+    }
+  }
+
+  for (const assetFile of assetFiles) {
+    if (!fs.existsSync(assetFile)) continue;
+
+    const oldRelativePath = toRelativePosixPath(outputDir, assetFile);
+    const oldAssetSubpath = toRelativePosixPath(assetsDir, assetFile);
+    const needsNormalization =
+      oldAssetSubpath.includes('/') || hasForbiddenExportPathFragment(oldRelativePath);
+
+    if (!needsNormalization) continue;
+
+    const newRelativePath = uniqueFlatAssetPath({ existingTargets, oldRelativePath, outputDir });
+    const newAssetPath = path.join(outputDir, ...newRelativePath.split('/'));
+    fs.mkdirSync(path.dirname(newAssetPath), { recursive: true });
+    fs.renameSync(assetFile, newAssetPath);
+    existingTargets.add(newRelativePath);
+    replacements.set(oldRelativePath, newRelativePath);
+  }
+
+  rewriteTextFileReferences(outputDir, replacements);
+
+  if (fs.existsSync(assetsDir)) {
+    for (const entry of fs.readdirSync(assetsDir, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        removeEmptyDirectories(path.join(assetsDir, entry.name), assetsDir);
+      }
+    }
+  }
+}
+
+function assertNoForbiddenExportPathFragments(outputDir) {
+  const files = walkFiles(outputDir);
+
+  for (const file of files) {
+    const relativePath = toRelativePosixPath(outputDir, file);
+    if (hasForbiddenExportPathFragment(relativePath)) {
+      throw new Error(`Exported file path leaks local build details: ${relativePath}`);
+    }
+
+    if (!isTextExportFile(file)) continue;
+
+    const source = fs.readFileSync(file, 'utf8');
+    if (hasForbiddenExportPathFragment(source)) {
+      throw new Error(`${relativePath} leaks local build path or dependency path fragments`);
+    }
+  }
+}
+
 function prepare(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
@@ -93,6 +241,8 @@ function prepare(outputDir) {
       fs.writeFileSync(jsFile, rewritten);
     }
   }
+
+  normalizeExportedAssetPaths(outputDir);
 }
 
 function check(outputDir) {
@@ -120,6 +270,8 @@ function check(outputDir) {
       throw new Error(`${jsFile} still contains root-relative exported asset URLs`);
     }
   }
+
+  assertNoForbiddenExportPathFragments(outputDir);
 }
 
 function main() {
@@ -147,6 +299,8 @@ if (require.main === module) {
 
 module.exports = {
   check,
+  hasForbiddenExportPathFragment,
+  normalizeExportedAssetPaths,
   prepare,
   rewriteHtml,
   rewriteRootRelativeBundlePaths,
