@@ -3,12 +3,20 @@ import type { Purchase } from 'react-native-iap';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
+export const REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID;
+export const REMOVE_ADS_ANDROID_PRODUCT_ID = 'removeads';
+export const REMOVE_ADS_STORE_PRODUCT_IDS = {
+  android: REMOVE_ADS_ANDROID_PRODUCT_ID,
+  ios: REMOVE_ADS_IOS_PRODUCT_ID,
+} as const;
 export const REMOVE_ADS_PRICE_LABEL = '29 SEK';
 export const REMOVE_ADS_STORAGE_KEY = 'monetization.removeAds.adsDisabled.v1';
 export const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;
 
 type NativeIapModule = typeof import('react-native-iap');
 type SecureStoreModule = typeof import('expo-secure-store');
+
+export type RemoveAdsStorePlatform = keyof typeof REMOVE_ADS_STORE_PRODUCT_IDS;
 
 export interface PurchaseStorage {
   getItemAsync(key: string): Promise<string | null>;
@@ -58,7 +66,12 @@ export interface RemoveAdsPurchaseProvider {
   restorePurchases(productIds: readonly string[]): Promise<RemoveAdsPurchaseRecord[]>;
 }
 
-export type RemoveAdsPurchaseStatus = 'purchased' | 'pending' | 'restored' | 'not_found';
+export type RemoveAdsPurchaseStatus =
+  | 'purchased'
+  | 'pending'
+  | 'restored'
+  | 'not_found'
+  | 'persistence_failed';
 
 export interface RemoveAdsPurchaseResult {
   entitlements: PremiumEntitlements;
@@ -74,19 +87,19 @@ export interface PurchaseRuntimeOptions {
   storage?: PurchaseStorage;
 }
 
-export type NativeRemoveAdsReceiptValidator = (
-  purchase: RemoveAdsPurchaseRecord,
-  productId: typeof REMOVE_ADS_PRODUCT_ID,
-) => Promise<RemoveAdsReceiptValidationResult>;
+interface RemoveAdsPersistenceResult {
+  entitlements: PremiumEntitlements;
+  persisted: boolean;
+}
 
 export interface NativePurchaseProviderOptions {
+  loadIap?: () => Promise<NativeIapModule>;
+  platform?: RemoveAdsStorePlatform;
   purchaseTimeoutMs?: number;
-  receiptValidator?: NativeRemoveAdsReceiptValidator;
 }
 
 export interface MockPurchaseProviderOptions {
   owned?: boolean;
-  ownedProductIds?: readonly string[];
   pendingPurchase?: boolean;
   receiptValidationStatus?: RemoveAdsReceiptValidationStatus;
 }
@@ -161,17 +174,70 @@ function normalizePurchases(value: unknown): RemoveAdsPurchaseRecord[] {
   return purchase ? [purchase] : [];
 }
 
-function purchaseMatchesProductId(purchase: RemoveAdsPurchaseRecord, productId: string): boolean {
-  if (purchase.productId === productId) return true;
-  if (!isRecord(purchase.raw)) return false;
+function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
+  return isPurchaseForProduct(purchase, REMOVE_ADS_PRODUCT_ID);
+}
+
+function normalizeRemoveAdsStorePlatform(platform: string | undefined): RemoveAdsStorePlatform {
+  return platform === 'android' ? 'android' : 'ios';
+}
+
+export function getRemoveAdsStoreProductId(
+  platform: string,
+): typeof REMOVE_ADS_IOS_PRODUCT_ID | typeof REMOVE_ADS_ANDROID_PRODUCT_ID {
+  return REMOVE_ADS_STORE_PRODUCT_IDS[normalizeRemoveAdsStorePlatform(platform)];
+}
+
+function getPurchaseStoreProductId(productId: string, platform: RemoveAdsStorePlatform): string {
+  if (productId === REMOVE_ADS_PRODUCT_ID) return getRemoveAdsStoreProductId(platform);
+  return productId;
+}
+
+async function resolveNativeStorePlatform(
+  platform?: RemoveAdsStorePlatform,
+): Promise<RemoveAdsStorePlatform> {
+  if (platform) return platform;
+
+  try {
+    const reactNative = await import('react-native');
+    return normalizeRemoveAdsStorePlatform(reactNative.Platform?.OS);
+  } catch {
+    return 'ios';
+  }
+}
+
+function collectPurchaseProductIds(purchase: RemoveAdsPurchaseRecord): string[] {
+  const productIds = [purchase.productId];
+
+  if (isRecord(purchase.raw) && Array.isArray(purchase.raw.ids)) {
+    productIds.push(...purchase.raw.ids.filter((productId) => typeof productId === 'string'));
+  }
+
+  return productIds;
+}
+
+function isRemoveAdsProductId(productId: string | null | undefined): boolean {
   return (
-    Array.isArray(purchase.raw.ids) &&
-    purchase.raw.ids.some((rawProductId) => rawProductId === productId)
+    productId === REMOVE_ADS_PRODUCT_ID ||
+    productId === REMOVE_ADS_IOS_PRODUCT_ID ||
+    productId === REMOVE_ADS_ANDROID_PRODUCT_ID
   );
 }
 
-function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
-  return purchaseMatchesProductId(purchase, REMOVE_ADS_PRODUCT_ID);
+function isPurchaseForProduct(
+  purchase: RemoveAdsPurchaseRecord,
+  productId: string,
+  storeProductId = productId,
+): boolean {
+  const acceptedProductIds = new Set([productId, storeProductId]);
+  if (productId === REMOVE_ADS_PRODUCT_ID) {
+    acceptedProductIds.add(REMOVE_ADS_IOS_PRODUCT_ID);
+    acceptedProductIds.add(REMOVE_ADS_ANDROID_PRODUCT_ID);
+  }
+
+  return collectPurchaseProductIds(purchase).some((purchaseProductId) =>
+    acceptedProductIds.has(purchaseProductId),
+  );
 }
 
 function hasStoreConfirmation(record: StoredRemoveAdsEntitlementRecord): boolean {
@@ -201,14 +267,14 @@ function createReceiptValidationResult(
 function isValidatedRemoveAdsReceipt(
   result: RemoveAdsReceiptValidationResult | null | undefined,
 ): result is RemoveAdsReceiptValidationResult & {
-  productId: typeof REMOVE_ADS_PRODUCT_ID;
+  productId: string;
   status: 'valid';
   validatedAt: string;
 } {
   return Boolean(
     result &&
     result.status === 'valid' &&
-    result.productId === REMOVE_ADS_PRODUCT_ID &&
+    isRemoveAdsProductId(result.productId) &&
     isValidIsoDate(result.validatedAt) &&
     (result.purchaseToken || result.transactionId),
   );
@@ -275,6 +341,108 @@ function serializeStoredRemoveAdsEntitlementRecord(
   record: StoredRemoveAdsEntitlementRecord,
 ): string {
   return JSON.stringify(record);
+}
+
+async function clearStoredRemoveAdsEntitlement(storage: PurchaseStorage): Promise<void> {
+  if (storage.deleteItemAsync) {
+    await storage.deleteItemAsync(REMOVE_ADS_STORAGE_KEY);
+    return;
+  }
+
+  await storage.setItemAsync(REMOVE_ADS_STORAGE_KEY, 'false');
+}
+
+function purchaseMatchesStoredRecord(
+  purchase: RemoveAdsPurchaseRecord,
+  record: StoredRemoveAdsEntitlementRecord,
+): boolean {
+  if (!isRemoveAdsPurchase(purchase)) return false;
+  if (record.purchaseToken && purchase.purchaseToken === record.purchaseToken) return true;
+  if (record.transactionId && purchase.transactionId === record.transactionId) return true;
+  return false;
+}
+
+async function persistValidatedRemoveAdsEntitlement({
+  purchase,
+  receiptValidation,
+  source,
+  storage,
+}: {
+  purchase: RemoveAdsPurchaseRecord;
+  receiptValidation: RemoveAdsReceiptValidationResult;
+  source: RemoveAdsGrantSource;
+  storage: PurchaseStorage;
+}): Promise<RemoveAdsPersistenceResult> {
+  try {
+    const entitlements = await setRemoveAdsEntitlement(true, {
+      purchase,
+      receiptValidation,
+      source,
+      storage,
+    });
+    return {
+      entitlements,
+      persisted: entitlements.adsDisabled,
+    };
+  } catch {
+    await clearStoredRemoveAdsEntitlement(storage);
+    return {
+      entitlements: removeAdsEntitlements(false),
+      persisted: false,
+    };
+  }
+}
+
+async function revalidateStoredRemoveAdsEntitlementRecord({
+  provider,
+  record,
+  storage,
+}: {
+  provider: RemoveAdsPurchaseProvider;
+  record: StoredRemoveAdsEntitlementRecord;
+  storage: PurchaseStorage;
+}): Promise<boolean> {
+  let connected = false;
+
+  try {
+    await provider.connect();
+    connected = true;
+
+    const availablePurchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
+    const restoredPurchase =
+      availablePurchases.find((purchase) => purchaseMatchesStoredRecord(purchase, record)) ??
+      availablePurchases.find(isRemoveAdsPurchase);
+
+    if (!restoredPurchase) {
+      await clearStoredRemoveAdsEntitlement(storage);
+      return false;
+    }
+
+    const receiptValidation = await validateRemoveAdsReceipt(provider, restoredPurchase);
+    if (!receiptValidation) {
+      await clearStoredRemoveAdsEntitlement(storage);
+      return false;
+    }
+
+    await storage.setItemAsync(
+      REMOVE_ADS_STORAGE_KEY,
+      serializeStoredRemoveAdsEntitlementRecord(
+        createStoredRemoveAdsEntitlementRecord({
+          purchase: restoredPurchase,
+          receiptValidation,
+          source: 'restore',
+        }),
+      ),
+    );
+    return true;
+  } catch {
+    await clearStoredRemoveAdsEntitlement(storage);
+    return false;
+  } finally {
+    if (connected) {
+      await provider.disconnect?.();
+    }
+  }
 }
 
 function createResult(
@@ -448,19 +616,46 @@ export async function setRemoveAdsEntitlement(
 }
 
 export async function getPurchaseEntitlements({
+  provider,
   storage = createSecureStorePurchaseStorage(),
-}: Pick<PurchaseRuntimeOptions, 'storage'> = {}): Promise<PremiumEntitlements> {
+}: PurchaseRuntimeOptions = {}): Promise<PremiumEntitlements> {
   const storedValue = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
-  return removeAdsEntitlements(Boolean(parseStoredRemoveAdsEntitlementRecord(storedValue)));
+  const record = parseStoredRemoveAdsEntitlementRecord(storedValue);
+
+  if (!record) {
+    return removeAdsEntitlements(false);
+  }
+
+  if (!provider) {
+    await clearStoredRemoveAdsEntitlement(storage);
+    return removeAdsEntitlements(false);
+  }
+
+  return removeAdsEntitlements(
+    await revalidateStoredRemoveAdsEntitlementRecord({
+      provider,
+      record,
+      storage,
+    }),
+  );
+}
+
+async function getFailClosedPurchaseEntitlements(storage: PurchaseStorage) {
+  try {
+    return await getPurchaseEntitlements({ storage });
+  } catch {
+    return removeAdsEntitlements(false);
+  }
 }
 
 export function createNativePurchaseProvider({
+  loadIap: loadNativeIapModule = loadNativeIap,
+  platform,
   purchaseTimeoutMs = 30000,
-  receiptValidator,
 }: NativePurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
   let iapPromise: Promise<NativeIapModule> | undefined;
   const getIap = () => {
-    iapPromise ??= loadNativeIap();
+    iapPromise ??= loadNativeIapModule();
     return iapPromise;
   };
 
@@ -481,20 +676,13 @@ export function createNativePurchaseProvider({
         purchase: purchase.raw as Purchase,
       });
     },
-    async validateRemoveAdsReceipt(purchase, productId) {
-      if (!receiptValidator) {
-        return {
-          productId,
-          purchaseToken: purchase.purchaseToken ?? null,
-          status: 'pending',
-          transactionId: purchase.transactionId ?? null,
-        };
-      }
-
-      return receiptValidator(purchase, productId);
+    async validateRemoveAdsReceipt(purchase) {
+      return createReceiptValidationResult(purchase);
     },
     async requestRemoveAdsPurchase(productId) {
       const iap = await getIap();
+      const storePlatform = await resolveNativeStorePlatform(platform);
+      const storeProductId = getPurchaseStoreProductId(productId, storePlatform);
 
       return new Promise<RemoveAdsPurchaseRecord | null>((resolve, reject) => {
         let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -502,7 +690,7 @@ export function createNativePurchaseProvider({
         const subscriptions = [
           iap.purchaseUpdatedListener((purchase) => {
             const matched = normalizePurchases(purchase).find((candidate) =>
-              purchaseMatchesProductId(candidate, productId),
+              isPurchaseForProduct(candidate, productId, storeProductId),
             );
             if (matched) settle(undefined, matched);
           }),
@@ -532,22 +720,32 @@ export function createNativePurchaseProvider({
         void iap
           .requestPurchase({
             request: {
-              apple: { sku: productId },
-              google: { skus: [productId] },
+              apple: { sku: storeProductId },
+              google: { skus: [storeProductId] },
             },
             type: 'in-app',
           })
-          .then(() => {
-            // Native purchases are granted only from purchaseUpdatedListener events.
+          .then((requestResult) => {
+            const matched = normalizePurchases(requestResult).find((candidate) =>
+              isPurchaseForProduct(candidate, productId, storeProductId),
+            );
+            if (matched) settle(undefined, matched);
           })
           .catch((error: unknown) => settle(error));
       });
     },
     async restorePurchases(productIds) {
       const iap = await getIap();
+      const storePlatform = await resolveNativeStorePlatform(platform);
       await iap.restorePurchases();
       return normalizePurchases(await iap.getAvailablePurchases()).filter((purchase) =>
-        productIds.some((productId) => purchaseMatchesProductId(purchase, productId)),
+        productIds.some((productId) =>
+          isPurchaseForProduct(
+            purchase,
+            productId,
+            getPurchaseStoreProductId(productId, storePlatform),
+          ),
+        ),
       );
     },
   };
@@ -555,25 +753,20 @@ export function createNativePurchaseProvider({
 
 export function createMockPurchaseProvider({
   owned = false,
-  ownedProductIds = owned ? [REMOVE_ADS_PRODUCT_ID] : [],
   pendingPurchase = false,
   receiptValidationStatus = 'valid',
 }: MockPurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
   let connected = false;
-  const ownedProductIdsSet = new Set(ownedProductIds);
+  let ownsRemoveAds = owned;
 
   function assertConnected() {
     if (!connected) throw new Error('Mock purchase provider is not connected');
   }
 
-  function createMockPurchase(
-    transactionId: string,
-    productId = REMOVE_ADS_PRODUCT_ID,
-  ): RemoveAdsPurchaseRecord {
+  function createMockPurchase(transactionId: string): RemoveAdsPurchaseRecord {
     return {
-      productId,
+      productId: REMOVE_ADS_PRODUCT_ID,
       purchaseToken: `mock-token-${transactionId}`,
-      raw: { ids: [productId] },
       transactionId,
     };
   }
@@ -593,27 +786,16 @@ export function createMockPurchaseProvider({
       if (receiptValidationStatus !== 'valid') return { status: receiptValidationStatus };
       return createReceiptValidationResult(purchase);
     },
-    async requestRemoveAdsPurchase(productId) {
+    async requestRemoveAdsPurchase() {
       assertConnected();
       if (pendingPurchase) return null;
-      ownedProductIdsSet.add(productId);
-      return createMockPurchase(
-        productId === REMOVE_ADS_PRODUCT_ID ? 'buy-remove-ads' : 'buy-purchase',
-        productId,
-      );
+      ownsRemoveAds = true;
+      return createMockPurchase('buy-remove-ads');
     },
     async restorePurchases(productIds) {
       assertConnected();
-      if (
-        productIds.includes(REMOVE_ADS_PRODUCT_ID) &&
-        ownedProductIdsSet.has(REMOVE_ADS_PRODUCT_ID)
-      ) {
-        return [createMockPurchase('restore-remove-ads')];
-      }
-
-      const productId = productIds.find((candidate) => ownedProductIdsSet.has(candidate));
-      if (!productId) return [];
-      return [createMockPurchase('restore-purchase', productId)];
+      if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];
+      return [createMockPurchase('restore-remove-ads')];
     },
   };
 }
@@ -624,41 +806,9 @@ async function validateRemoveAdsReceipt(
 ): Promise<RemoveAdsReceiptValidationResult | null> {
   const receiptValidation = provider.validateRemoveAdsReceipt
     ? await provider.validateRemoveAdsReceipt(purchase, REMOVE_ADS_PRODUCT_ID)
-    : ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);
+    : createReceiptValidationResult(purchase);
 
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
-}
-
-async function runWithPurchaseProviderCleanup<T>(
-  provider: RemoveAdsPurchaseProvider,
-  operation: () => Promise<T>,
-): Promise<T> {
-  try {
-    const result = await operation();
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // A successful or pending purchase outcome must not be replaced by cleanup failure.
-    }
-    return result;
-  } catch (error) {
-    try {
-      await provider.disconnect?.();
-    } catch {
-      // Preserve the original purchase, restore, or validation error for the caller.
-    }
-    throw error;
-  }
-}
-
-async function getPurchaseEntitlementsSafely(
-  storage: PurchaseStorage,
-): Promise<PremiumEntitlements> {
-  try {
-    return await getPurchaseEntitlements({ storage });
-  } catch {
-    return removeAdsEntitlements(false);
-  }
 }
 
 export async function buyRemoveAds({
@@ -667,7 +817,7 @@ export async function buyRemoveAds({
 }: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
   await provider.connect();
 
-  return runWithPurchaseProviderCleanup(provider, async () => {
+  try {
     const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);
     if (!purchase || !isRemoveAdsPurchase(purchase)) {
       return createResult('pending', await getPurchaseEntitlements({ storage }));
@@ -679,14 +829,20 @@ export async function buyRemoveAds({
     }
 
     await provider.finishPurchase?.(purchase);
-    const entitlements = await setRemoveAdsEntitlement(true, {
+    const persistenceResult = await persistValidatedRemoveAdsEntitlement({
       purchase,
       receiptValidation,
       source: 'purchase',
       storage,
     });
-    return createResult('purchased', entitlements, purchase);
-  });
+    return createResult(
+      persistenceResult.persisted ? 'purchased' : 'persistence_failed',
+      persistenceResult.entitlements,
+      purchase,
+    );
+  } finally {
+    await provider.disconnect?.();
+  }
 }
 
 export async function restoreRemoveAdsPurchase({
@@ -695,7 +851,7 @@ export async function restoreRemoveAdsPurchase({
 }: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
   await provider.connect();
 
-  return runWithPurchaseProviderCleanup(provider, async () => {
+  try {
     const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
     const purchase = purchases.find(isRemoveAdsPurchase);
     if (!purchase) {
@@ -707,12 +863,18 @@ export async function restoreRemoveAdsPurchase({
       return createResult('not_found', await getPurchaseEntitlements({ storage }), purchase);
     }
 
-    const entitlements = await setRemoveAdsEntitlement(true, {
+    const persistenceResult = await persistValidatedRemoveAdsEntitlement({
       purchase,
       receiptValidation,
       source: 'restore',
       storage,
     });
-    return createResult('restored', entitlements, purchase);
-  });
+    return createResult(
+      persistenceResult.persisted ? 'restored' : 'persistence_failed',
+      persistenceResult.entitlements,
+      purchase,
+    );
+  } finally {
+    await provider.disconnect?.();
+  }
 }

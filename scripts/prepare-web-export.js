@@ -3,15 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
-const FAVICON_FILE_NAME = 'favicon.svg';
-const FAVICON_SOURCE = path.join(__dirname, '..', 'assets', FAVICON_FILE_NAME);
-const ROUTER_SHELL_MANIFEST_PATH = path.join(
-  __dirname,
-  '..',
-  'lib',
-  'scaffold',
-  'routerShellManifest.ts',
-);
+const REPO_ROOT = path.resolve(__dirname, '..');
+const FAVICON_FILE_NAME = 'favicon.png';
+const FAVICON_SOURCE = path.join(REPO_ROOT, 'assets/icon.png');
+const { webDocumentMetadata } = require('../lib/scaffold/webDocumentMetadata.js');
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -84,11 +79,10 @@ function extractMetaDescriptionForLanguage(source, language) {
 }
 
 function readWebDocumentMetadata() {
-  const manifest = fs.readFileSync(ROUTER_SHELL_MANIFEST_PATH, 'utf8');
-  const language = extractManifestString(manifest, 'webLanguage');
-  const description = extractMetaDescriptionForLanguage(manifest, language);
-
-  return { description, language };
+  return {
+    description: webDocumentMetadata.description,
+    language: webDocumentMetadata.language,
+  };
 }
 
 function createRuntimeLoader(bundlePath) {
@@ -110,68 +104,63 @@ function createRuntimeLoader(bundlePath) {
 }
 
 function rewriteHtml(html) {
-  if (html.includes(HTML_LOADER_MARKER)) {
-    return html;
+  const rewrittenLoader = html.includes(HTML_LOADER_MARKER)
+    ? html
+    : html.replace(
+        /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
+        (_match, bundlePath) => createRuntimeLoader(bundlePath),
+      );
+
+  return rewriteWebDocumentMetadata(rewrittenLoader);
+}
+
+function rewriteWebDocumentMetadata(html) {
+  const metadata = readWebDocumentMetadata();
+  const escapedLanguage = escapeHtmlAttribute(metadata.language);
+  const escapedDescription = escapeHtmlAttribute(metadata.description);
+  let next = html.replace(
+    /<html([^>]*)>/,
+    (_match, attributes) =>
+      `<html${attributes.replace(/\s+lang=(["'])[^"']*\1/, '')} lang="${escapedLanguage}">`,
+  );
+
+  if (/<meta\s+[^>]*name=["']description["'][^>]*>/i.test(next)) {
+    next = next.replace(
+      /<meta\s+[^>]*name=["']description["'][^>]*>/i,
+      `<meta name="description" content="${escapedDescription}">`,
+    );
+  } else if (/<meta\s+[^>]*content=["'][^"']*["'][^>]*name=["']description["'][^>]*>/i.test(next)) {
+    next = next.replace(
+      /<meta\s+[^>]*content=["'][^"']*["'][^>]*name=["']description["'][^>]*>/i,
+      `<meta name="description" content="${escapedDescription}">`,
+    );
+  } else {
+    next = next.replace(
+      /<head([^>]*)>/i,
+      `<head$1>\n  <meta name="description" content="${escapedDescription}">`,
+    );
   }
 
-  return html.replace(
-    /<script\s+src="(\/_expo\/static\/js\/web\/[^"]+)"\s+defer><\/script>/,
-    (_match, bundlePath) => createRuntimeLoader(bundlePath),
-  );
+  return next;
 }
 
 function rewriteRootRelativeBundlePaths(source) {
   return source.replace(/(["'])\/(_expo|assets)\//g, '$1$2/');
 }
 
-function ensureHtmlLanguage(html, language) {
-  const escapedLanguage = escapeHtmlAttribute(language);
-  return html.replace(/<html\b([^>]*)>/i, (match, attributes) => {
-    if (/\slang=/.test(attributes)) {
-      return match.replace(/\slang=(["'])[^"']*\1/i, ` lang="${escapedLanguage}"`);
-    }
-    return `<html${attributes} lang="${escapedLanguage}">`;
-  });
-}
-
-function ensureMetaDescription(html, description) {
-  const escapedDescription = escapeHtmlAttribute(description);
-  const descriptionMeta = `<meta name="description" content="${escapedDescription}">`;
-
-  if (/<meta\b[^>]*\bname=(["'])description\1[^>]*>/i.test(html)) {
-    return html.replace(/<meta\b[^>]*\bname=(["'])description\1[^>]*>/i, (match) =>
-      /\bcontent=/.test(match)
-        ? match.replace(/\scontent=(["'])[^"']*\1/i, ` content="${escapedDescription}"`)
-        : match.replace(/>$/, ` content="${escapedDescription}">`),
-    );
-  }
-
-  return html.replace(/<head>/i, `<head>\n  ${descriptionMeta}`);
-}
-
-function applyWebDocumentMetadata(html, metadata) {
-  return ensureMetaDescription(ensureHtmlLanguage(html, metadata.language), metadata.description);
-}
-
 function prepare(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
-  const faviconPath = path.join(outputDir, FAVICON_FILE_NAME);
   assertFile(indexPath);
-  assertFile(FAVICON_SOURCE);
 
   const originalIndex = fs.readFileSync(indexPath, 'utf8');
-  const preparedIndex = applyWebDocumentMetadata(
-    rewriteHtml(originalIndex),
-    readWebDocumentMetadata(),
-  );
-  if (!preparedIndex.includes(HTML_LOADER_MARKER)) {
+  const preparedIndex = rewriteHtml(originalIndex);
+  if (preparedIndex === originalIndex && !preparedIndex.includes(HTML_LOADER_MARKER)) {
     throw new Error('Could not find Expo web bundle script in index.html');
   }
 
   fs.writeFileSync(indexPath, preparedIndex);
   fs.writeFileSync(fallbackPath, preparedIndex);
-  fs.copyFileSync(FAVICON_SOURCE, faviconPath);
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
   for (const jsFile of jsFiles) {
@@ -186,10 +175,8 @@ function prepare(outputDir) {
 function check(outputDir) {
   const indexPath = path.join(outputDir, 'index.html');
   const fallbackPath = path.join(outputDir, '404.html');
-  const faviconPath = path.join(outputDir, FAVICON_FILE_NAME);
   assertFile(indexPath);
   assertFile(fallbackPath);
-  assertFile(faviconPath);
 
   const index = fs.readFileSync(indexPath, 'utf8');
   const fallback = fs.readFileSync(fallbackPath, 'utf8');
@@ -197,14 +184,14 @@ function check(outputDir) {
   if (index !== fallback) {
     throw new Error('404.html must match index.html for SPA fallback routing');
   }
-  if (!new RegExp(`<html\\b[^>]*\\blang="${escapeRegExp(metadata.language)}"`).test(index)) {
+  if (!index.includes(HTML_LOADER_MARKER)) {
+    throw new Error('index.html is missing the web export runtime loader');
+  }
+  if (!index.includes(`lang="${metadata.language}"`)) {
     throw new Error(`index.html must declare lang="${metadata.language}"`);
   }
   if (!index.includes(`content="${escapeHtmlAttribute(metadata.description)}"`)) {
-    throw new Error('index.html must include the configured web meta description');
-  }
-  if (!index.includes(HTML_LOADER_MARKER)) {
-    throw new Error('index.html is missing the web export runtime loader');
+    throw new Error('index.html must include the configured web document description');
   }
   if (/src="\/_expo\//.test(index) || /href="\/_expo\//.test(index)) {
     throw new Error('index.html still contains root-relative Expo bundle URLs');
@@ -244,9 +231,9 @@ if (require.main === module) {
 
 module.exports = {
   check,
-  applyWebDocumentMetadata,
   prepare,
   readWebDocumentMetadata,
   rewriteHtml,
   rewriteRootRelativeBundlePaths,
+  rewriteWebDocumentMetadata,
 };

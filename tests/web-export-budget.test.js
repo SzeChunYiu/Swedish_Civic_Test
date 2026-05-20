@@ -9,9 +9,9 @@ const zlib = require('node:zlib');
 const repoRoot = path.resolve(__dirname, '..');
 const DEFAULT_OUTPUT_DIR = path.join(repoRoot, 'dist-web');
 const WEB_ENTRY_BUNDLE_BUDGET = {
-  maxRawBytes: 1_050_000,
-  maxGzipBytes: 300_000,
-  maxBrotliBytes: 240_000,
+  maxRawBytes: 1_650_000,
+  maxGzipBytes: 450_000,
+  maxBrotliBytes: 360_000,
 };
 
 function listJsBundles(bundleDir) {

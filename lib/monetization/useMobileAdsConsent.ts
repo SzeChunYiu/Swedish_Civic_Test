@@ -12,21 +12,24 @@ import {
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let cachedInitialization: MobileAdsConsentInitializationResult | undefined;
+let cachedInitializationPlatform: string | undefined;
 let initializationPromise: Promise<MobileAdsConsentInitializationResult> | undefined;
+let initializationPromisePlatform: string | undefined;
 
 function createInitialResult(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
+  platform: string,
 ): MobileAdsConsentInitializationResult {
   const shouldCollectConsent =
     adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;
   const state: AdConsentState = createInitialAdConsentState({
     entitlements,
     googleMobileAdsEnabled: adsConfig.googleMobileAdsEnabled,
-    platform: Platform.OS,
+    platform,
     realAdsEnabled: adsConfig.realAdsEnabled,
     region: 'unknown',
     trackingTransparencyStatus:
-      Platform.OS === 'ios' && shouldCollectConsent ? 'not_determined' : 'unavailable',
+      platform === 'ios' && shouldCollectConsent ? 'not_determined' : 'unavailable',
     umpConsentStatus: shouldCollectConsent ? 'unknown' : 'not_required',
   });
 
@@ -39,20 +42,27 @@ function createInitialResult(
 
 function initializeOnce(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
+  platform: string,
 ): Promise<MobileAdsConsentInitializationResult> {
   if (entitlements.adsDisabled) {
     return initializeGoogleMobileAdsAfterConsent({
       entitlements,
-      runtime: createNativeMobileAdsConsentRuntime(Platform.OS),
+      runtime: createNativeMobileAdsConsentRuntime(platform),
     });
   }
 
+  if (initializationPromisePlatform && initializationPromisePlatform !== platform) {
+    initializationPromise = undefined;
+  }
+  initializationPromisePlatform = platform;
+
   initializationPromise ??= initializeGoogleMobileAdsAfterConsent({
     entitlements,
-    runtime: createNativeMobileAdsConsentRuntime(Platform.OS),
+    runtime: createNativeMobileAdsConsentRuntime(platform),
   })
     .then((result) => {
       cachedInitialization = result;
+      cachedInitializationPlatform = platform;
       return result;
     })
     .catch((error: unknown) => {
@@ -63,29 +73,39 @@ function initializeOnce(
   return initializationPromise;
 }
 
-export function useMobileAdsConsent(entitlements: Pick<PremiumEntitlements, 'adsDisabled'>) {
+export function useMobileAdsConsent(
+  entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
+  options: { platform?: string } = {},
+) {
+  const platform = options.platform ?? Platform.OS;
   const initialResult = useMemo(() => {
-    if (!entitlements.adsDisabled && cachedInitialization) return cachedInitialization;
-    return createInitialResult(entitlements);
-  }, [entitlements]);
+    if (
+      !entitlements.adsDisabled &&
+      cachedInitialization &&
+      cachedInitializationPlatform === platform
+    ) {
+      return cachedInitialization;
+    }
+    return createInitialResult(entitlements, platform);
+  }, [entitlements, platform]);
   const [result, setResult] = useState(initialResult);
 
   useEffect(() => {
     let isMounted = true;
     setResult(initialResult);
 
-    void initializeOnce(entitlements)
+    void initializeOnce(entitlements, platform)
       .then((nextResult) => {
         if (isMounted) setResult(nextResult);
       })
       .catch(() => {
-        if (isMounted) setResult(createInitialResult(entitlements));
+        if (isMounted) setResult(createInitialResult(entitlements, platform));
       });
 
     return () => {
       isMounted = false;
     };
-  }, [entitlements, initialResult]);
+  }, [entitlements, initialResult, platform]);
 
   return result;
 }

@@ -3115,7 +3115,7 @@ const EXPECTED_PURCHASE_TYPE_UNIONS = [
   },
   {
     typeName: 'RemoveAdsPurchaseStatus',
-    values: ['purchased', 'pending', 'restored', 'not_found'],
+    values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
   },
 ];
 const EXPECTED_PURCHASE_INTERFACES = [
@@ -3199,6 +3199,7 @@ const EXPECTED_PURCHASE_INTERFACES = [
     name: 'NativePurchaseProviderOptions',
     fields: [
       { name: 'loadIap', type: '() => Promise<NativeIapModule>', optional: true },
+      { name: 'platform', type: 'RemoveAdsStorePlatform', optional: true },
       { name: 'purchaseTimeoutMs', type: 'number', optional: true },
     ],
   },
@@ -10603,10 +10604,13 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'native Remove Ads finish transaction must be non-consumable',
     ],
     [
-      /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*productId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*productId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
-        purchaseSource,
-      ),
-      'native Remove Ads purchase request must use the supplied product id as an in-app purchase',
+      normalizedPurchaseSource.includes(
+        'const storeProductId = getPurchaseStoreProductId(productId, storePlatform);',
+      ) &&
+        /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*storeProductId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*storeProductId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
+          purchaseSource,
+        ),
+      'native Remove Ads purchase request must map the supplied canonical id to the active store id as an in-app purchase',
     ],
     [
       normalizedPurchaseSource.includes(
@@ -10872,8 +10876,9 @@ function validateMobileAdsConsentHookParity() {
       normalizedHookSource.includes(
         'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;',
       ) &&
+        normalizedHookSource.includes('platform,') &&
         normalizedHookSource.includes(
-          "trackingTransparencyStatus: Platform.OS === 'ios' && shouldCollectConsent ? 'not_determined' : 'unavailable',",
+          "trackingTransparencyStatus: platform === 'ios' && shouldCollectConsent ? 'not_determined' : 'unavailable',",
         ) &&
         normalizedHookSource.includes(
           "umpConsentStatus: shouldCollectConsent ? 'unknown' : 'not_required',",
@@ -10887,7 +10892,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must route initial state through the consent SDK decision helper',
     ],
     [
-      /if\s*\(\s*entitlements\.adsDisabled\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(Platform\.OS\),[\s\S]*\}\);\s*\}/.test(
+      /if\s*\(\s*entitlements\.adsDisabled\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
         hookSource,
       ),
       'Mobile Ads consent hook must bypass cached initialization when Remove Ads is active',
@@ -10902,12 +10907,12 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must cache successful non-disabled initialization and reset after errors',
     ],
     [
-      normalizedHookSource.includes(
-        'if (!entitlements.adsDisabled && cachedInitialization) return cachedInitialization;',
+      /if\s*\([\s\S]*!entitlements\.adsDisabled[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
+        hookSource,
       ) &&
         normalizedHookSource.includes('setResult(initialResult);') &&
-        normalizedHookSource.includes('void initializeOnce(entitlements)') &&
-        /\.\s*catch\(\(\)\s*=>\s*\{\s*if\s*\(\s*isMounted\s*\)\s*setResult\(createInitialResult\(entitlements\)\);\s*\}\);/.test(
+        normalizedHookSource.includes('void initializeOnce(entitlements, platform)') &&
+        /\.\s*catch\(\(\)\s*=>\s*\{\s*if\s*\(\s*isMounted\s*\)\s*setResult\(createInitialResult\(entitlements,\s*platform\)\);\s*\}\);/.test(
           hookSource,
         ) &&
         normalizedHookSource.includes('isMounted = false;'),

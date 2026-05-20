@@ -900,7 +900,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(purchaseResult.entitlements.adsDisabled, true);
   assert.equal(purchaseResult.entitlements.fullMistakeReview, false);
   assert.equal(purchaseResult.entitlements.unlimitedMockExams, false);
-  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
   const storedPurchaseRecord = JSON.parse(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
   assert.deepEqual(
     {
@@ -923,6 +922,15 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(storedPurchaseRecord.grantedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(storedPurchaseRecord.receiptValidatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(Object.hasOwn(storedPurchaseRecord, 'raw'), false);
+  assert.equal(
+    (
+      await getPurchaseEntitlements({
+        provider: createMockPurchaseProvider({ owned: true }),
+        storage,
+      })
+    ).adsDisabled,
+    true,
+  );
 
   const restoredStorage = createMemoryPurchaseStorage();
   const restoreResult = await restoreRemoveAdsPurchase({
@@ -932,7 +940,15 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
 
   assert.equal(restoreResult.status, 'restored');
   assert.equal(restoreResult.entitlements.adsDisabled, true);
-  assert.equal((await getPurchaseEntitlements({ storage: restoredStorage })).adsDisabled, true);
+  assert.equal(
+    (
+      await getPurchaseEntitlements({
+        provider: createMockPurchaseProvider({ owned: true }),
+        storage: restoredStorage,
+      })
+    ).adsDisabled,
+    true,
+  );
   const storedRestoreRecord = JSON.parse(
     await restoredStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
   );
@@ -968,15 +984,17 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   });
 
   try {
+    const webProvider = createMockPurchaseProvider();
     const webStorage = createWebPurchaseStorage();
     await buyRemoveAds({
-      provider: createMockPurchaseProvider(),
+      provider: webProvider,
       storage: webStorage,
     });
 
     const webStorageAfterReload = createWebPurchaseStorage();
     assert.equal(
-      (await getPurchaseEntitlements({ storage: webStorageAfterReload })).adsDisabled,
+      (await getPurchaseEntitlements({ provider: webProvider, storage: webStorageAfterReload }))
+        .adsDisabled,
       true,
     );
 
@@ -1033,13 +1051,14 @@ test('native purchase provider matches requested product ids instead of Remove A
   assert.equal(state.restored, true);
   assert.deepEqual(state.requestedProductIds, [PRO_LIFETIME_PRODUCT_ID]);
   assert.match(purchasesSource, /function isPurchaseForProduct/);
+  assert.match(purchasesSource, /const storeProductId = getPurchaseStoreProductId/);
   assert.match(
     purchasesSource,
-    /requestRemoveAdsPurchase\(productId\)[\s\S]*isPurchaseForProduct\(candidate, productId\)/,
+    /requestRemoveAdsPurchase\(productId\)[\s\S]*isPurchaseForProduct\(\s*candidate,\s*productId,\s*storeProductId\s*\)/,
   );
   assert.match(
     purchasesSource,
-    /restorePurchases\(productIds\)[\s\S]*productIds\.some\(\(productId\) => isPurchaseForProduct\(purchase, productId\)\)/,
+    /restorePurchases\(productIds\)[\s\S]*productIds\.some\(\(productId\) =>[\s\S]*isPurchaseForProduct\(\s*purchase,\s*productId,\s*getPurchaseStoreProductId\(productId, storePlatform\),\s*\)/,
   );
 });
 
@@ -1436,7 +1455,8 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.match(mobileConsentSource, /expo-tracking-transparency/);
   assert.match(mobileConsentSource, /AdsConsent\.gatherConsent/);
   assert.match(mobileConsentSource, /mobileAds\(\)\.initialize/);
-  assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
+  assert.match(hookSource, /const platform = options\.platform \?\? Platform\.OS/);
+  assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(platform\)/);
   assert.match(nativeBannerSource, /useMobileAdsConsent/);
   assert.match(nativeBannerSource, /consentDecision/);
   assert.match(
