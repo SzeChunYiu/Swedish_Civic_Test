@@ -1538,6 +1538,10 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
     path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
     'utf8',
   );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
   const paywallSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
@@ -1548,6 +1552,7 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
   assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
+  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
@@ -1559,6 +1564,10 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   );
   assert.doesNotMatch(
     paywallSource,
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
+  );
+  assert.doesNotMatch(
+    placementCtaSource,
     /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
   );
 });

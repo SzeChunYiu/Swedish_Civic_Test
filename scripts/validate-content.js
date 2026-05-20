@@ -1263,7 +1263,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
-const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
+const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -12557,6 +12557,7 @@ function validateRemoveAdsSwedishExamCopyParity() {
   const sourceFiles = [
     'components/monetization/PremiumBanner.tsx',
     'components/monetization/PricingWedge.tsx',
+    'components/monetization/RemoveAdsPlacementCta.tsx',
   ];
   const sources = new Map();
 
@@ -12577,7 +12578,8 @@ function validateRemoveAdsSwedishExamCopyParity() {
 
   const premiumBannerSource = sources.get('components/monetization/PremiumBanner.tsx');
   const pricingWedgeSource = sources.get('components/monetization/PricingWedge.tsx');
-  const combinedSource = `${premiumBannerSource}\n${pricingWedgeSource}`;
+  const placementCtaSource = sources.get('components/monetization/RemoveAdsPlacementCta.tsx');
+  const combinedSource = `${premiumBannerSource}\n${pricingWedgeSource}\n${placementCtaSource}`;
   const bareExamAdFreeClaimPattern =
     /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i;
   const copyCases = [
@@ -12592,6 +12594,10 @@ function validateRemoveAdsSwedishExamCopyParity() {
     [
       /tidsatta övningsprov är alltid annonsfria/.test(pricingWedgeSource),
       'PricingWedge Swedish pitch must keep the timed practice-exam qualifier',
+    ],
+    [
+      /Tidsatta övningsprov är redan annonsfria/.test(placementCtaSource),
+      'RemoveAdsPlacementCta Swedish body must keep the timed practice-exam qualifier',
     ],
     [
       !/prov förblir annonsfria/i.test(combinedSource),

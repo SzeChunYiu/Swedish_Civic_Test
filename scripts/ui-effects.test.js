@@ -911,6 +911,7 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
 
 test('premium banner announces Remove Ads purchase status changes', () => {
   const source = read('components/monetization/PremiumBanner.tsx');
+  const placementCtaSource = read('components/monetization/RemoveAdsPlacementCta.tsx');
   const homeSource = read('app/(tabs)/home.tsx');
   const profileSource = read('app/(tabs)/profile.tsx');
 
@@ -933,8 +934,13 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Återställ köp av Ta bort annonser/);
   assert.match(source, /tidsatta övningsprov i appen redan är annonsfria/);
   assert.match(source, /Tidsatta övningsprov i appen är redan annonsfria/);
+  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
   assert.doesNotMatch(
     source,
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
+  );
+  assert.doesNotMatch(
+    placementCtaSource,
     /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
   );
   assert.match(source, /Köpet bekräftades, men annonsfri status kunde inte sparas/);
