@@ -6,11 +6,19 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function runUhrSourceMetadataValidation() {
+  return execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-uhr-source-metadata'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+}
+
 test('UHR source metadata schema validates a current retrieval date', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = runUhrSourceMetadataValidation();
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -42,6 +50,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-uhr-source-metadata');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -74,6 +83,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-uhr-source-metadata');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -103,6 +113,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-uhr-source-metadata');
 require('./scripts/validate-content.js');
 `,
     ],

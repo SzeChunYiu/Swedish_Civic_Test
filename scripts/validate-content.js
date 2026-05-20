@@ -202,7 +202,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
   'questionProvenance',
-  'uhrSourcePublisher',
 ];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
@@ -7535,7 +7534,12 @@ let questionOptionIdConventionsValidated = 0;
 let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
+let questionBankCsvHeaderColumnsValidated = 0;
+let questionBankCsvUniqueHeaderNamesValidated = false;
 let questionBankCsvRowsValidated = 0;
+let questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let questionBankCsvUhrSourcePublisherRowsValidated = 0;
+let questionBankCsvUhrSourcePublisherParityValidated = false;
 let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
@@ -14881,6 +14885,20 @@ function validateQuestionBankCsvContract() {
   }
 
   const [header, ...dataRows] = rows;
+  questionBankCsvHeaderColumnsValidated = header.length;
+
+  const duplicateHeaderNames = [
+    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
+  ];
+  questionBankCsvUniqueHeaderNamesValidated = duplicateHeaderNames.length === 0;
+  if (duplicateHeaderNames.length) {
+    fail(
+      `content/question-bank.csv header has duplicate column name(s): ${duplicateHeaderNames.join(
+        ', ',
+      )}`,
+    );
+  }
+
   if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
     fail(
       `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
@@ -14893,6 +14911,35 @@ function validateQuestionBankCsvContract() {
     fail(
       `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
     );
+  }
+
+  const sharedMetadataFields = new Map([
+    ['uhrSourceTitle', uhrSectionMap?.source?.title],
+    ['uhrSourcePublisher', uhrSectionMap?.source?.publisher],
+    ['uhrSourceUrl', uhrSectionMap?.source?.url],
+    ['uhrSourceRetrievedAt', uhrSectionMap?.source?.retrievedDate],
+  ]);
+  const sharedMetadataSourceKeys = new Map([
+    ['uhrSourceTitle', 'title'],
+    ['uhrSourcePublisher', 'publisher'],
+    ['uhrSourceUrl', 'url'],
+    ['uhrSourceRetrievedAt', 'retrievedDate'],
+  ]);
+  const summarizedSharedMetadataDriftFields = new Set();
+
+  for (const [field, expected] of sharedMetadataFields.entries()) {
+    const fieldIndex = QUESTION_BANK_CSV_HEADER.indexOf(field);
+    if (fieldIndex < 0 || !dataRows.length) continue;
+
+    const driftedRows = dataRows.filter((row) => row[fieldIndex] !== expected);
+    if (driftedRows.length === dataRows.length) {
+      summarizedSharedMetadataDriftFields.add(field);
+      fail(
+        `content/question-bank.csv ${field} metadata drift: ${driftedRows.length} rows disagree with content/uhr-section-map.json source.${sharedMetadataSourceKeys.get(
+          field,
+        )}`,
+      );
+    }
   }
 
   dataRows.forEach((row, index) => {
@@ -14938,10 +14985,10 @@ function validateQuestionBankCsvContract() {
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
       getQuestionProvenance(question),
-      uhrSectionMap?.source?.publisher,
     ];
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
+      if (summarizedSharedMetadataDriftFields.has(field)) return;
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
         reject(
           `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
@@ -14951,8 +14998,55 @@ function validateQuestionBankCsvContract() {
       }
     });
 
+    const publisherIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrSourcePublisher');
+    if (row[publisherIndex] === uhrSectionMap?.source?.publisher) {
+      questionBankCsvUhrSourcePublisherRowsValidated += 1;
+    }
+
+    const provenanceIndex = QUESTION_BANK_CSV_HEADER.indexOf('questionProvenance');
+    const provenance = row[provenanceIndex];
+    if (Object.hasOwn(questionBankCsvProvenanceCounts, provenance)) {
+      questionBankCsvProvenanceCounts[provenance] += 1;
+    }
+
     if (rowIsValid) questionBankCsvRowsValidated += 1;
   });
+
+  questionBankCsvUhrSourcePublisherParityValidated =
+    dataRows.length === questions.length &&
+    questionBankCsvUhrSourcePublisherRowsValidated === dataRows.length;
+}
+
+if (process.argv.includes('--focus-uhr-source-metadata')) {
+  validateUhrSourceMetadata();
+  exitWithValidationFailures();
+  printValidationSummary({
+    uhrSourceMetadataValidated,
+    uhrSourceRetrievedDateValidated,
+    uhrMapSourceExactSchemaKeysValidated,
+    uhrMapTextFieldsNormalizedValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-question-bank-csv')) {
+  validateUhrSourceMetadata();
+  validateQuestionBankCsvContract();
+  exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+  printValidationSummary({
+    questions: Array.isArray(questions) ? questions.length : 0,
+    publishedQuestions,
+    questionBankCsvHeaderColumnsValidated,
+    questionBankCsvUniqueHeaderNamesValidated,
+    questionBankCsvRowsValidated,
+    questionBankCsvProvenanceCounts,
+    questionBankCsvUhrSourcePublisherRowsValidated,
+    questionBankCsvUhrSourcePublisherParityValidated,
+  });
+  process.exit(0);
 }
 
 function criminalResponsibilityCurrentnessQuestionIds() {
@@ -15781,6 +15875,13 @@ function validateUhrSourceMetadata() {
     if (source.url !== EXPECTED_UHR_SOURCE.url) {
       reject(`UHR section map source URL must be ${EXPECTED_UHR_SOURCE.url}`);
     }
+    if (
+      !source.url.startsWith(
+        'https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+      )
+    ) {
+      reject('UHR section map source URL must be under the UHR education material path');
+    }
     if (!isIsoDate(source.retrievedDate)) {
       reject('UHR section map source retrievedDate must use YYYY-MM-DD');
     } else {
@@ -16608,7 +16709,12 @@ console.log(
       trueFalseQuestions,
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
+      questionBankCsvHeaderColumnsValidated,
+      questionBankCsvUniqueHeaderNamesValidated,
       questionBankCsvRowsValidated,
+      questionBankCsvProvenanceCounts,
+      questionBankCsvUhrSourcePublisherRowsValidated,
+      questionBankCsvUhrSourcePublisherParityValidated,
       criminalResponsibilityCurrentnessOfficialSourcesValidated,
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,
