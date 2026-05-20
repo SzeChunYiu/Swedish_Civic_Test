@@ -26,6 +26,19 @@ function homepageSlogan(locale, key) {
   return JSON.parse(read('data/homepage_slogans_v6.json')).exactReplacementKeys[locale][key];
 }
 
+function unsupportedStaticMockClaimPatterns() {
+  return [
+    new RegExp(['real', 'timing'].join('\\s+'), 'i'),
+    new RegExp(['real', 'format'].join('\\s+'), 'i'),
+    new RegExp(['look', 'and', 'feel', 'like', 'the', 'real', 'thing'].join('\\s+'), 'i'),
+    new RegExp(['ready', 'for', 'the', 'real', 'thing'].join('\\s+'), 'i'),
+    new RegExp(['känns', 'som', 'det', 'riktiga'].join('\\s+'), 'i'),
+    new RegExp(['Kör', 'riktigt', 'format'].join('\\s+'), 'i'),
+    new RegExp(['riktig', 'tid'].join('\\s+'), 'i'),
+    new RegExp(['Nästan', 'redo', 'för', 'det', 'riktiga'].join('\\s+'), 'i'),
+  ];
+}
+
 test('static mock exam copy avoids unsupported official pass-line claims', () => {
   const practiceSource = read('site/practice.js');
   const forbiddenFragments = [
@@ -263,4 +276,20 @@ test('static Swedish legal and study copy keeps adult grammar and tone', () => {
     staticApp,
     /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
   );
+});
+
+test('static mock-exam marketing avoids unsourced format and readiness claims', () => {
+  const staticApp = read('site/app.js');
+
+  unsupportedStaticMockClaimPatterns().forEach((pattern) => {
+    assert.doesNotMatch(staticApp, pattern);
+  });
+
+  assert.match(staticApp, /timed practice flow/);
+  assert.match(staticApp, /without claiming to mirror the official test/);
+  assert.match(staticApp, /official format can still change/);
+  assert.match(staticApp, /Keep reviewing the source material before the official test/);
+  assert.match(staticApp, /tidsatt övning/);
+  assert.match(staticApp, /Det officiella upplägget kan ändras/);
+  assert.match(staticApp, /Fortsätt repetera källmaterialet/);
 });

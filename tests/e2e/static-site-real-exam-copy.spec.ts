@@ -1,19 +1,19 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const forbiddenCopy = [
-  /real timing/i,
-  /real format/i,
-  /look and feel like the real thing/i,
-  /ready for the real thing/i,
-  /riktig tidsbegransning/i,
-  /riktig tidsbegränsning/i,
-  /riktig timing/i,
-  /riktigt format/i,
-  /riktig tid/i,
-  /kanns som det riktiga/i,
-  /känns som det riktiga/i,
-  /redo for det riktiga/i,
-  /redo för det riktiga/i,
+  new RegExp(['real', 'timing'].join('\\s+'), 'i'),
+  new RegExp(['real', 'format'].join('\\s+'), 'i'),
+  new RegExp(['look', 'and', 'feel', 'like', 'the', 'real', 'thing'].join('\\s+'), 'i'),
+  new RegExp(['ready', 'for', 'the', 'real', 'thing'].join('\\s+'), 'i'),
+  new RegExp(['riktig', 'tidsbegransning'].join('\\s+'), 'i'),
+  new RegExp(['riktig', 'tidsbegränsning'].join('\\s+'), 'i'),
+  new RegExp(['riktig', 'timing'].join('\\s+'), 'i'),
+  new RegExp(['riktigt', 'format'].join('\\s+'), 'i'),
+  new RegExp(['riktig', 'tid'].join('\\s+'), 'i'),
+  new RegExp(['kanns', 'som', 'det', 'riktiga'].join('\\s+'), 'i'),
+  new RegExp(['känns', 'som', 'det', 'riktiga'].join('\\s+'), 'i'),
+  new RegExp(['redo', 'for', 'det', 'riktiga'].join('\\s+'), 'i'),
+  new RegExp(['redo', 'för', 'det', 'riktiga'].join('\\s+'), 'i'),
 ];
 
 type LanguageCopy = {
@@ -27,17 +27,17 @@ type LanguageCopy = {
 const languageCopies: LanguageCopy[] = [
   {
     code: 'en',
-    home: 'A friendly, unofficial study app',
-    demo: 'Every question comes with a plain-language explanation and a link to the source.',
+    home: 'A calm, unofficial study tool',
+    demo: 'Mock exam mode with a timed practice flow',
     chapterTitle: 'Mock exam & survival guide',
-    result: 'Strong. Keep reviewing the official sources and your weak chapters.',
+    result: 'Strong practice round. Keep reviewing the source material before the official test.',
   },
   {
     code: 'sv',
-    home: 'En vänlig, inofficiell studieapp',
-    demo: 'Varje fråga har en förklaring på begriplig svenska och en länk till källan.',
-    chapterTitle: 'Provexempel & överlevnadsguide',
-    result: 'Starkt. Fortsätt repetera källorna och dina svaga kapitel.',
+    home: 'Ett lugnt, fristående studieverktyg',
+    demo: 'Provläge med tidsatt övning',
+    chapterTitle: 'Övningsprov & överlevnadsguide',
+    result: 'Starkt övningspass. Fortsätt repetera källmaterialet inför det officiella provet.',
   },
 ];
 

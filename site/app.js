@@ -124,7 +124,8 @@ const i18n = (window.i18n = {
       'Answer one question, read the explanation, and keep going. Hard questions come back later, so review feels manageable.',
     'demo.li1': '<b>Spaced repetition</b> resurfaces tricky questions on the right day.',
     'demo.li2': '<b>Plain-language explanations</b> — no legalese, no jargon-jungle.',
-    'demo.li3': '<b>Mock exam mode</b> with real timing, so test day feels familiar.',
+    'demo.li3':
+      '<b>Mock exam mode</b> with a timed practice flow, so longer sessions feel less stressful.',
     'qcard.chip': 'Chapter 3 · Q47',
     'qcard.q':
       'Which Swedish principle gives everyone the right to walk, swim, and pick berries on most land in nature?',
@@ -202,7 +203,7 @@ const i18n = (window.i18n = {
     'chap.11.m2': '~9 min',
     'chap.12.t': 'Mock exam & survival guide',
     'chap.12.d':
-      'Timed full-length exams that look and feel like the real thing. Plus a what-to-bring list.',
+      'Timed full-length practice exams that help you rehearse pacing without claiming to mirror the official test. Plus a what-to-bring note.',
     'chap.12.m1': '3 full mocks',
     'chap.12.m2': '60 min each',
     'chap.13.t': 'Traditions, holidays & everyday culture',
@@ -217,9 +218,9 @@ const i18n = (window.i18n = {
     'how.s2.t': 'Practice — smart drills',
     'how.s2.p':
       "Mistakes resurface on the right day. You'll be surprised how quickly Riksdagen stops sounding like furniture.",
-    'how.s3.t': 'Mock exam — full timing',
+    'how.s3.t': 'Mock exam — practice pacing',
     'how.s3.p':
-      'Run the real format under real timing. Test day becomes Tuesday with a worse chair.',
+      'Run a longer timed practice set and review it like a study session. The official format can still change.',
     'faq.eyebrow': 'Frequently, honestly asked',
     'faq.h1': "Questions you'd ask",
     'faq.h2': 'over coffee.',
@@ -513,7 +514,7 @@ const i18n = (window.i18n = {
       'Svara på en fråga, läs förklaringen och fortsätt. Svåra frågor kommer tillbaka senare, så repetitionen blir hanterbar.',
     'demo.li1': '<b>Repetition med intervall</b> tar fram svåra frågor på rätt dag.',
     'demo.li2': '<b>Begripliga förklaringar</b> — ingen juridiska, ingen byråkratdjungel.',
-    'demo.li3': '<b>Provläge</b> med riktig tidsbegränsning, så provdagen känns bekant.',
+    'demo.li3': '<b>Provläge</b> med tidsatt övning, så längre pass känns lugnare.',
     'qcard.chip': 'Kapitel 3 · F47',
     'qcard.q':
       'Vilken svensk princip ger alla rätt att gå, simma och plocka bär på det mesta av Sveriges mark?',
@@ -606,9 +607,9 @@ const i18n = (window.i18n = {
     'how.s2.t': 'Öva — smarta drills',
     'how.s2.p':
       'Misstag dyker upp igen på rätt dag. Du kommer bli förvånad över hur snabbt Riksdagen slutar låta som möbler.',
-    'how.s3.t': 'Provläge — realistisk tidskänsla',
+    'how.s3.t': 'Provläge — träningspass med tid',
     'how.s3.p':
-      'Öva med ett längre provupplägg och realistisk tidskänsla. Provdagen blir en tisdag med sämre stol.',
+      'Öva med ett längre tidsatt upplägg och gå igenom resultatet som en studieomgång. Det officiella upplägget kan ändras.',
     'faq.eyebrow': 'Ofta och uppriktigt ställda',
     'faq.h1': 'Frågor du skulle ställa',
     'faq.h2': 'över kaffe.',
@@ -1254,7 +1255,7 @@ const SMT_QUIZ_COPY = {
       pct === 100
         ? "Lysande! That's a perfect round."
         : pct >= 80
-          ? "Strong. You're almost ready for the real thing."
+          ? 'Strong practice round. Keep reviewing the source material before the official test.'
           : pct >= 60
             ? "Decent. A couple more rounds and you've got this."
             : pct >= 40
@@ -1278,7 +1279,7 @@ const SMT_QUIZ_COPY = {
       pct === 100
         ? 'Lysande! En perfekt runda.'
         : pct >= 80
-          ? 'Starkt. Nästan redo för det riktiga.'
+          ? 'Starkt övningspass. Fortsätt repetera källmaterialet inför det officiella provet.'
           : pct >= 60
             ? 'Hyfsat. Ett par till och du sitter med det.'
             : pct >= 40

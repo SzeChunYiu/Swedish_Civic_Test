@@ -3794,7 +3794,7 @@ const STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN = [
 const STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED = [
   'Repetition med intervall',
   'kort övning',
-  'realistisk tidskänsla',
+  'tidsatt övning',
 ];
 const STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN = [
   /gör ett\s+quiz/i,
