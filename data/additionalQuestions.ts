@@ -1566,20 +1566,17 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'Globalt samarbete', pageApprox: 39 },
     'Vad arbetar Sida för?',
-    'What does Sida work to do?',
+    'What is Sida responsible for?',
     [
       [
         'Att minska fattigdom och förtryck i världen',
-        'To reduce poverty and oppression in the world',
+        'Reducing poverty and oppression in the world',
       ],
-      ['Att döma brottmål i svenska domstolar', 'To judge criminal cases in Swedish courts'],
-      [
-        'Att besluta vem som får rösta i riksdagsval',
-        'To decide who may vote in Riksdag elections',
-      ],
+      ['Att döma brottmål i svenska domstolar', 'Judging criminal cases in Swedish courts'],
+      ['Att besluta vem som får rösta i riksdagsval', 'Deciding who may vote in Riksdag elections'],
       [
         'Att sända public service-program med reklam',
-        'To broadcast public-service programmes with advertising',
+        'Broadcasting public-service programmes with advertising',
       ],
     ],
     0,

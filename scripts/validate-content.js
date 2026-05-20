@@ -272,9 +272,12 @@ const QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
   /\bhigher education\b/i,
   /\bresearch at colleges and universities\b/i,
 ];
+const QUESTION_SIDA_WORK_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat does\s+Sida\s+work\s+to\s+do\b/i,
+];
 const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
-  /\bWhat is common to do on All Saints(?:’|') Day\b/i,
+  /\bWhat is common to do on New Year(?:’|’)s Eve\b/i,
+  /\bWhat is common to do on All Saints(?:’|’) Day\b/i,
 ];
 const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
 const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
@@ -4539,6 +4542,18 @@ function findQuestionStateWelfareCoverageOverlapIssue(question) {
   return missingSocialInsurance || null;
 }
 
+function findQuestionSidaWorkToDoEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_SIDA_WORK_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   return QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(question.questionEn),
@@ -6285,6 +6300,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} in Sweden are set ${lowerFirst(answer)}`;
   match = q.match(/^What support can (.+?) provide to (.+)$/i);
   if (match) return supportStatementEn(match[1], answer);
+  match = q.match(/^What is (.+?) responsible for$/i);
+  if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
   match = q.match(/^How does (.+?) help with (.+)$/i);
   if (match) {
     if (/^To\s+/i.test(answer)) {
@@ -7468,6 +7485,7 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionStateWelfareCoverageSplitValidated = 0;
+let questionSidaWorkToDoEnglishNaturalnessValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
@@ -17397,6 +17415,8 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const stateWelfareCoverageOverlapIssue =
         findQuestionStateWelfareCoverageOverlapIssue(question);
+      const sidaWorkToDoEnglishNaturalnessIssue =
+        findQuestionSidaWorkToDoEnglishNaturalnessIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -17455,6 +17475,11 @@ if (Array.isArray(questions)) {
         fail(`${label} overlaps q071/q156 state-welfare source coverage`);
       } else if (question.id === 'q071' || question.id === 'q156') {
         questionStateWelfareCoverageSplitValidated += 1;
+      }
+      if (sidaWorkToDoEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Sida English prompt wording`);
+      } else {
+        questionSidaWorkToDoEnglishNaturalnessValidated += 1;
       }
       if (traditionCommonToDoEnglishNaturalnessIssue) {
         fail(`${label} uses literal common-to-do English wording`);
@@ -17977,6 +18002,7 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
       questionStateWelfareCoverageSplitValidated,
+      questionSidaWorkToDoEnglishNaturalnessValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
