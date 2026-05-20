@@ -22,6 +22,8 @@ export type GuidedPracticePathCopy = {
 export type GuidedPracticePathStage = {
   accessibilityLabel: string;
   chapterRange: string;
+  cta: string;
+  ctaAccessibilityLabel: string;
   description: string;
   href: GuidedPracticePathHref;
   id: string;
@@ -68,7 +70,7 @@ export function GuidedPracticePath({
         </Link>
       </Card>
 
-      <Card accessible accessibilityLabel={copy.resumeAccessibilityLabel} style={styles.pathCard}>
+      <Card style={styles.pathCard}>
         {stages.map((stage) => (
           <View key={stage.id} style={styles.stageRow}>
             <View style={styles.stageHeading}>
@@ -82,6 +84,14 @@ export function GuidedPracticePath({
             <Text style={styles.stageRange}>{stage.chapterRange}</Text>
             <ProgressBar language={language} progress={stage.progress} />
             <Text style={styles.stageProgress}>{stage.progressLabel}</Text>
+            <Link
+              accessibilityLabel={stage.ctaAccessibilityLabel}
+              accessibilityRole="link"
+              href={stage.href}
+              style={styles.stageLink}
+            >
+              {stage.cta}
+            </Link>
           </View>
         ))}
         <Link
@@ -158,6 +168,18 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.micro.fontSize,
     lineHeight: typography.micro.lineHeight,
+  },
+  stageLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   primaryLink: {
     alignSelf: 'flex-start',
