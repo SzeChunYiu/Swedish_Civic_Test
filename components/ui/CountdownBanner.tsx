@@ -4,8 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import {
   CITIZENSHIP_RULES_EFFECTIVE_DATE,
-  CITIZENSHIP_TIMELINE_SOURCE_URLS,
-  CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE,
+  CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
   daysUntil,
   formatExamDate,
 } from '../../lib/learning/examDate';
@@ -22,50 +21,14 @@ type TimelineSourceLink = {
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (rulesDate: string, testDeadline: string) =>
-      `Nya medborgarskapsregler gäller från ${rulesDate}. Samhällskunskapsprovet väntas starta i augusti 2026, senast ${testDeadline}. Förbered dig nu.`,
-    sourceLabel: 'Officiella datumkällor:',
-    sourceLinks: [
-      {
-        accessibilityLabel: 'Öppna Migrationsverkets källa om de nya reglerna',
-        label: 'Migrationsverket',
-        sourceKey: 'rulesEffectiveDate',
-      },
-      {
-        accessibilityLabel: 'Öppna UHR:s källa om medborgarskapsprovet',
-        label: 'UHR',
-        sourceKey: 'civicKnowledgeTestStart',
-      },
-      {
-        accessibilityLabel: 'Öppna Regeringens källa om tidsplanen',
-        label: 'Regeringen',
-        sourceKey: 'civicKnowledgeTestDeadline',
-      },
-    ] satisfies TimelineSourceLink[],
+    body: (rulesDate: string, firstSittingDate: string) =>
+      `Nya medborgarskapsregler gäller från ${rulesDate}. Första samhällskunskapsprovet genomförs den ${firstSittingDate} i Stockholm. Förbered dig nu.`,
     untilLabel: 'tills nya reglerna',
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (rulesDate: string, testDeadline: string) =>
-      `New citizenship rules apply from ${rulesDate}. The civic-knowledge test is expected in August 2026, no later than ${testDeadline}. Start preparing now.`,
-    sourceLabel: 'Official date sources:',
-    sourceLinks: [
-      {
-        accessibilityLabel: 'Open the Swedish Migration Agency source about the new rules',
-        label: 'Migrationsverket',
-        sourceKey: 'rulesEffectiveDate',
-      },
-      {
-        accessibilityLabel: 'Open the UHR source about the civic-knowledge test',
-        label: 'UHR',
-        sourceKey: 'civicKnowledgeTestStart',
-      },
-      {
-        accessibilityLabel: 'Open the Government Offices source about the timeline',
-        label: 'Regeringen',
-        sourceKey: 'civicKnowledgeTestDeadline',
-      },
-    ] satisfies TimelineSourceLink[],
+    body: (rulesDate: string, firstSittingDate: string) =>
+      `New citizenship rules apply from ${rulesDate}. The first civic-knowledge test will be held on ${firstSittingDate} in Stockholm. Start preparing now.`,
     untilLabel: 'until new rules',
   },
 } as const;
@@ -95,10 +58,10 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
 
   const t = copy[language];
   const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
-  const testDeadlineString = formatExamDate(CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE, language);
+  const firstSittingDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, language);
   const resolvedAccessibilityLabel =
     accessibilityLabel ??
-    `${t.label(days)} ${t.untilLabel}. ${t.body(rulesDateString, testDeadlineString)}`;
+    `${t.label(days)} ${t.untilLabel}. ${t.body(rulesDateString, firstSittingDateString)}`;
 
   return (
     <View style={styles.banner}>
@@ -113,25 +76,7 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
         <Text style={styles.daysNumber}>{days}</Text>
         <Text style={styles.daysLabel}>{t.untilLabel}</Text>
       </View>
-      <View style={styles.contentBlock}>
-        <Text style={styles.body}>{t.body(rulesDateString, testDeadlineString)}</Text>
-        <View style={styles.sourceRow}>
-          <Text style={styles.sourceLabel}>{t.sourceLabel}</Text>
-          {t.sourceLinks.map((sourceLink) => (
-            <Link
-              key={sourceLink.sourceKey}
-              accessibilityLabel={sourceLink.accessibilityLabel}
-              accessibilityRole="link"
-              href={CITIZENSHIP_TIMELINE_SOURCE_URLS[sourceLink.sourceKey]}
-              rel="noreferrer"
-              style={styles.sourceLink}
-              target="_blank"
-            >
-              {sourceLink.label}
-            </Link>
-          ))}
-        </View>
-      </View>
+      <Text style={styles.body}>{t.body(rulesDateString, firstSittingDateString)}</Text>
     </View>
   );
 }
