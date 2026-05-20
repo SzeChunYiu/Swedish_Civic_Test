@@ -30,14 +30,37 @@ function readManifest() {
   return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 }
 
+function readRepoFile(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
 function sha256File(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
+
+test('visual smoke uses the shared blocking modal overlay locator', () => {
+  const browserLaunchSource = readRepoFile('tests/e2e/browserLaunch.ts');
+  const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
+
+  assert.match(browserLaunchSource, /export const blockingModalOverlayLocator/);
+  assert.match(browserLaunchSource, /\[role="dialog"\]\[aria-modal="true"\]/);
+  assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
+  assert.match(
+    visualSmokeSource,
+    /import \{ blockingModalOverlayLocator, dismissBlockingModals \} from '\.\/browserLaunch';/,
+  );
+  assert.match(visualSmokeSource, /page\.locator\(blockingModalOverlayLocator\)/);
+  assert.doesNotMatch(
+    visualSmokeSource,
+    /page\.locator\('\[role="dialog"\]\[aria-modal="true"\]'\)/,
+  );
+});
 
 test('visual smoke report records route-specific screenshots without launch overlays', () => {
   const manifest = readManifest();
   assert.match(manifest.viewport, /iPhone 12/);
   assert.match(manifest.launchOverlayPolicy, /dismisses the launch sponsor overlay/i);
+  assert.match(manifest.launchOverlayPolicy, /modal menu overlays/i);
   assert.match(manifest.duplicatePolicy, /duplicate screenshot hashes fail/i);
 
   const routes = manifest.routes || [];
