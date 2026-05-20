@@ -25,6 +25,7 @@ test('mock exam access TypeScript schema stays in parity with validator expectat
   assert.match(rewardedExamSource, /export type MockExamAccessReason =/);
   assert.match(rewardedExamSource, /\| 'access_read_failed';/);
   assert.match(rewardedExamSource, /export type MockExamAccessDecision = \{/);
+  assert.match(rewardedExamSource, /completedMockExamSessionIdsByDate: Record<string, string\[]>;/);
   assert.match(rewardedExamSource, /platform\?: AdRuntimePlatform \| string;/);
   assert.match(rewardedExamSource, /placement: typeof REWARDED_EXTRA_EXAM_PLACEMENT;/);
   assert.match(rewardedExamSource, /export interface MockExamAccessStorage/);

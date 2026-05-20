@@ -1125,6 +1125,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Nästa prov',
     'Sparat',
     'Sparar',
+    'Försök spara resultatet igen',
   ],
   en: [
     'Mock exam',
@@ -1157,6 +1158,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Next exam',
     'Saved',
     'Saving',
+    'Retry saving result',
   ],
 };
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
@@ -3483,6 +3485,11 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
     name: 'PersistedMockExamAccess',
     fields: [
       { name: 'completedMockExamsByDate', type: 'Record<string, number>', optional: false },
+      {
+        name: 'completedMockExamSessionIdsByDate',
+        type: 'Record<string, string[]>',
+        optional: false,
+      },
       { name: 'rewardedExtraExamCredits', type: 'number', optional: false },
     ],
   },
@@ -3490,6 +3497,11 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
     name: 'StoredMockExamAccessSnapshot',
     fields: [
       { name: 'completedMockExamsByDate', type: 'Record<string, number>', optional: false },
+      {
+        name: 'completedMockExamSessionIdsByDate',
+        type: 'Record<string, string[]>',
+        optional: false,
+      },
       { name: 'rewardedExtraExamCredits', type: 'number', optional: false },
       { name: 'completedMockExamsToday', type: 'number', optional: false },
       { name: 'dateKey', type: 'string', optional: false },
@@ -7567,6 +7579,16 @@ function validateExamSubmissionFinalityParity() {
     )
   ) {
     reject('next-exam control must stay disabled until the submitted completion is stored');
+  }
+  if (
+    !examRoute.includes('const [completionSaveStatus, setCompletionSaveStatus] = useState') ||
+    !examRoute.includes("setCompletionSaveStatus('failed')") ||
+    !examRoute.includes('retryCompletionSave') ||
+    !examRoute.includes('await recordExamCompletion({ sessionId: examSessionId });') ||
+    !examRoute.includes('onPress={saveExamCompletion}') ||
+    examRoute.includes('setCompletionRecorded(true)')
+  ) {
+    reject('completion write failures must expose retry without enabling next exam before storage');
   }
   if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
@@ -60,6 +60,7 @@ type ExamRouteCopy = {
   savingCompletion: string;
   selectedAnswerLabel: string;
   retryAccess: string;
+  retryCompletionSave: string;
   startExtraExam: string;
   startMockExam: string;
   startUnlockedExtraExam: string;
@@ -124,6 +125,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     savingCompletion: 'Sparar dagens övningsprov.',
     selectedAnswerLabel: 'Valt svar',
     retryAccess: 'Försök läsa övningsprovsstatus igen',
+    retryCompletionSave: 'Försök spara resultatet igen',
     startExtraExam: 'Lås upp extra prov',
     startMockExam: 'Starta övningsprov',
     startUnlockedExtraExam: 'Starta upplåst extra prov',
@@ -183,6 +185,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     savingCompletion: "Saving today's mock exam completion.",
     selectedAnswerLabel: 'Selected answer',
     retryAccess: 'Retry mock exam access check',
+    retryCompletionSave: 'Retry saving result',
     startExtraExam: 'Unlock extra exam',
     startMockExam: 'Start mock exam',
     startUnlockedExtraExam: 'Start unlocked extra exam',
@@ -217,12 +220,15 @@ export default function Screen() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [examUnlocked, setExamUnlocked] = useState(false);
-  const [completionRecorded, setCompletionRecorded] = useState(false);
+  const [completionSaveStatus, setCompletionSaveStatus] = useState<
+    'idle' | 'saving' | 'failed' | 'saved'
+  >('idle');
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
+  const isMountedRef = useRef(true);
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
@@ -237,6 +243,13 @@ export default function Screen() {
     refreshAccess,
   } = useMockExamAccess();
   const accessLoading = !accessReady || !entitlementsReady;
+  const completionRecorded = completionSaveStatus === 'saved';
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (submitted || remainingSeconds <= 0) return undefined;
@@ -301,10 +314,28 @@ export default function Screen() {
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
     setSubmitted(false);
-    setCompletionRecorded(false);
+    setCompletionSaveStatus('idle');
+    setAccessStatusMessage(null);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
+
+  const saveExamCompletion = useCallback(async () => {
+    if (completionSaveStatus === 'saving' || completionSaveStatus === 'saved') return;
+
+    setCompletionSaveStatus('saving');
+
+    try {
+      await recordExamCompletion({ sessionId: examSessionId });
+      if (!isMountedRef.current) return;
+      setCompletionSaveStatus('saved');
+      setAccessStatusMessage(null);
+    } catch {
+      if (!isMountedRef.current) return;
+      setCompletionSaveStatus('failed');
+      setAccessStatusMessage(copy.completionStoreFailure);
+    }
+  }, [completionSaveStatus, copy.completionStoreFailure, examSessionId, recordExamCompletion]);
 
   const handleStartAccessibleExam = useCallback(async () => {
     if (!canStartAccessibleExam || startingAccessibleExam) return;
@@ -359,9 +390,8 @@ export default function Screen() {
   ]);
 
   useEffect(() => {
-    if (!submitted || completionRecorded) return undefined;
+    if (!submitted || completionSaveStatus !== 'idle') return undefined;
 
-    let isMounted = true;
     recordMockExamSession({
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
@@ -370,27 +400,15 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion()
-      .then(() => {
-        if (isMounted) setCompletionRecorded(true);
-      })
-      .catch(() => {
-        if (!isMounted) return;
-        setCompletionRecorded(true);
-        setAccessStatusMessage(copy.completionStoreFailure);
-      });
-
-    return () => {
-      isMounted = false;
-    };
+    void saveExamCompletion();
+    return undefined;
   }, [
-    completionRecorded,
-    copy.completionStoreFailure,
+    completionSaveStatus,
     examSessionId,
-    recordExamCompletion,
     recordMockExamSession,
     resultCorrectCount,
     resultTotalCount,
+    saveExamCompletion,
     submitted,
   ]);
 
@@ -459,7 +477,11 @@ export default function Screen() {
             <Text accessibilityRole="header" style={styles.sectionTitle}>
               {copy.nextExamTitle}
             </Text>
-            <Badge tone={accessDecision.canStartExam ? 'green' : 'warm'}>
+            <Badge
+              tone={
+                completionRecorded ? 'green' : completionSaveStatus === 'failed' ? 'orange' : 'warm'
+              }
+            >
               {completionRecorded ? copy.savedBadge : copy.savingBadge}
             </Badge>
           </View>
@@ -468,6 +490,19 @@ export default function Screen() {
           </Text>
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
+          ) : null}
+          {completionSaveStatus === 'failed' ? (
+            <Button
+              aria-disabled={completionSaveStatus === 'saving'}
+              accessibilityLabel={copy.retryCompletionSave}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: completionSaveStatus === 'saving' }}
+              disabled={completionSaveStatus === 'saving'}
+              onPress={saveExamCompletion}
+              style={styles.actionButton}
+            >
+              {copy.retryCompletionSave}
+            </Button>
           ) : null}
           <Button
             aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}

@@ -485,6 +485,50 @@ test('mock exam access read failures fail closed until retry succeeds', () => {
   assert.match(examSource, /await refreshAccess\(\);/);
 });
 
+test('mock exam completion write failures retry without bypassing stored completion', () => {
+  const accessHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const saveCompletionStart = examSource.indexOf('const saveExamCompletion = useCallback');
+  const startNextExamStart = examSource.indexOf('const handleStartAccessibleExam = useCallback');
+  const saveCompletionSource = examSource.slice(saveCompletionStart, startNextExamStart);
+
+  assert.notEqual(saveCompletionStart, -1);
+  assert.notEqual(startNextExamStart, -1);
+  assert.match(accessHookSource, /completedMockExamSessionIdsByDate: \{\}/);
+  assert.match(
+    accessHookSource,
+    /const recordExamCompletion = useCallback\(\s*async \(\{ sessionId \}: \{ sessionId: string \}\) =>/,
+  );
+  assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ storage, sessionId \}\)/);
+  assert.match(examSource, /completionSaveStatus/);
+  assert.match(examSource, /retryCompletionSave/);
+  assert.match(examSource, /await recordExamCompletion\(\{ sessionId: examSessionId \}\);/);
+  assert.match(
+    examSource,
+    /setCompletionSaveStatus\('failed'\);\s*setAccessStatusMessage\(copy\.completionStoreFailure\);/,
+  );
+  assert.match(
+    examSource,
+    /completionSaveStatus === 'failed' \? \(\s*<Button[\s\S]*onPress=\{saveExamCompletion\}/,
+  );
+  assert.match(
+    examSource,
+    /disabled: !completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam/,
+  );
+  assert.match(
+    examSource,
+    /disabled=\{!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam\}/,
+  );
+  assert.doesNotMatch(examSource, /setCompletionRecorded\(true\)/);
+  assert.doesNotMatch(
+    saveCompletionSource.split('await recordExamCompletion({ sessionId: examSessionId });')[0],
+    /setAccessStatusMessage\(null\)/,
+  );
+});
+
 test('rewarded extra exam access honors real-ad consent readiness', () => {
   withEnv(
     {
@@ -592,19 +636,37 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.deepEqual(await getStoredMockExamAccess({ date: '2026-05-17T09:30:00.000Z', storage }), {
     completedMockExamsByDate: {},
+    completedMockExamSessionIdsByDate: {},
     completedMockExamsToday: 0,
     dateKey: '2026-05-17',
     rewardedExtraExamCredits: 0,
   });
 
-  await recordStoredMockExamCompletion({ date: '2026-05-17T10:00:00.000Z', storage });
+  await recordStoredMockExamCompletion({
+    date: '2026-05-17T10:00:00.000Z',
+    sessionId: 'mock-exam-2026-05-17-a',
+    storage,
+  });
+  const duplicateSnapshot = await recordStoredMockExamCompletion({
+    date: '2026-05-17T10:30:00.000Z',
+    sessionId: 'mock-exam-2026-05-17-a',
+    storage,
+  });
+
+  assert.equal(duplicateSnapshot.completedMockExamsToday, 1);
+
   const todaySnapshot = await recordStoredMockExamCompletion({
     date: '2026-05-17T11:00:00.000Z',
+    sessionId: 'mock-exam-2026-05-17-b',
     storage,
   });
 
   assert.equal(todaySnapshot.completedMockExamsToday, 2);
   assert.equal(todaySnapshot.completedMockExamsByDate['2026-05-17'], 2);
+  assert.deepEqual(todaySnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-2026-05-17-a',
+    'mock-exam-2026-05-17-b',
+  ]);
 
   const tomorrowSnapshot = await getStoredMockExamAccess({
     date: '2026-05-18T08:00:00.000Z',
@@ -613,6 +675,10 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.equal(tomorrowSnapshot.completedMockExamsToday, 0);
   assert.equal(tomorrowSnapshot.completedMockExamsByDate['2026-05-17'], 2);
+  assert.deepEqual(tomorrowSnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
+    'mock-exam-2026-05-17-a',
+    'mock-exam-2026-05-17-b',
+  ]);
 
   assert.equal(
     (
@@ -682,6 +748,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
     await recordStoredMockExamCompletion({
       date: '2026-05-18T09:00:00.000Z',
+      sessionId: 'mock-exam-web-2026-05-18-a',
       storage: webStorage,
     });
 
@@ -711,6 +778,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
     }),
     {
       completedMockExamsByDate: {},
+      completedMockExamSessionIdsByDate: {},
       completedMockExamsToday: 0,
       dateKey: '2026-05-17',
       rewardedExtraExamCredits: 0,
