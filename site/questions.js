@@ -33722,8 +33722,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One reason false information and hate can be a threat to democracy is that it can create conflicts and scare people away from democratic debate.",
-      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det kan skapa konflikter och skrämma människor från demokratisk debatt."
+      "en": "One reason is that It can create conflicts and scare people away from democratic debate.",
+      "sv": "En anledning är att Det kan skapa konflikter och skrämma människor från demokratisk debatt."
     },
     "opts": [
       {
@@ -33763,8 +33763,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One reason false information and hate can be a threat to democracy is that it automatically gives everyone more knowledge.",
-      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är att det gör att alla automatiskt får mer kunskap."
+      "en": "One reason is it automatically gives everyone more knowledge.",
+      "sv": "En anledning är det gör att alla automatiskt får mer kunskap."
     },
     "opts": [
       {
@@ -34081,8 +34081,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They sell advertising space or charge for a specific channel.",
-      "sv": "De säljer reklamplats eller tar betalt för en särskild kanal."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or charging for a specific channel.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller ta betalt för en särskild kanal."
     },
     "opts": [
       {
@@ -34121,8 +34121,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Through court fees from trials.",
-      "sv": "Genom domstolsavgifter från rättegångar."
+      "en": "Commercial radio and TV channels can earn income through court fees from trials.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom domstolsavgifter från rättegångar."
     },
     "opts": [
       {
@@ -34257,8 +34257,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They are often run by private companies and earn income from advertising.",
-      "sv": "De drivs ofta av privata företag och får inkomster genom reklam."
+      "en": "Media financed by advertising are often run by private companies and earn income from advertising.",
+      "sv": "Medier som finansieras med reklam drivs ofta av privata företag och får inkomster genom reklam."
     },
     "opts": [
       {
@@ -34297,8 +34297,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They may never sell advertising space.",
-      "sv": "De får aldrig sälja reklamplats."
+      "en": "Media financed by advertising may never sell advertising space.",
+      "sv": "Medier som finansieras med reklam får aldrig sälja reklamplats."
     },
     "opts": [
       {
@@ -34433,8 +34433,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They are also available online and updated with news several times per day.",
-      "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are also available online and updated with news several times per day.",
+      "sv": "Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag."
     },
     "opts": [
       {
@@ -34473,8 +34473,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They may be sold only as one copy per year.",
-      "sv": "De får bara säljas som ett exemplar per år."
+      "en": "Many newspapers may be sold only as one copy per year.",
+      "sv": "Många tidningar får bara säljas som ett exemplar per år."
     },
     "opts": [
       {
@@ -34609,8 +34609,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Anyone can create content there, and it is not always checked the same way as in other media.",
-      "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier."
+      "en": "On the web and in social media, anyone can create content, and it is not always checked the same way as in other media.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll, och det kontrolleras inte alltid som i andra medier."
     },
     "opts": [
       {
@@ -34649,8 +34649,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Only responsible publishers may write posts there.",
-      "sv": "Bara ansvariga utgivare får skriva inlägg där."
+      "en": "On the web and in social media, only responsible publishers may write posts.",
+      "sv": "På webben och i sociala medier får bara ansvariga utgivare skriva inlägg."
     },
     "opts": [
       {
@@ -34785,8 +34785,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason source is criticism needed when using media is that false information can spread quickly and affect people's opinions.",
-      "sv": "En anledning till att behövs källkritik när man använder medier är att falska uppgifter kan spridas snabbt och påverka människors åsikter."
+      "en": "One reason is that False information can spread quickly and affect people's opinions.",
+      "sv": "En anledning är att Falska uppgifter kan spridas snabbt och påverka människors åsikter."
     },
     "opts": [
       {
@@ -34825,8 +34825,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason source is criticism needed when using media is that everything that is published is always correct.",
-      "sv": "En anledning till att behövs källkritik när man använder medier är allt som publiceras är alltid korrekt."
+      "en": "One reason is that Everything that is published is always correct.",
+      "sv": "En anledning är allt som publiceras är alltid korrekt."
     },
     "opts": [
       {
