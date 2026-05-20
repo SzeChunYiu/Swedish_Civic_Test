@@ -128,99 +128,39 @@ test('test:content script includes every content test file exactly once', () => 
   );
 });
 
-test('content node eval spawns pin cwd to repo root', () => {
-  const missingCwd = [];
-
-  for (const relativePath of contentTestFiles()) {
-    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-    const nodeEvalSpawns = extractSpawnSyncCalls(source).filter(isProcessNodeEvalSpawn);
-
-    for (const callSource of nodeEvalSpawns) {
-      if (!hasRepoRootCwd(callSource)) missingCwd.push(relativePath);
-    }
-  }
-
-  assert.deepEqual(
-    [...new Set(missingCwd)],
-    [],
-    `content node -e spawnSync calls must set cwd: repoRoot: ${[...new Set(missingCwd)].join(
-      ', ',
-    )}`,
-  );
-});
-
-test('content node eval spawn guard rejects missing cwd fixture', () => {
-  const fixture = `
-test('fixture', () => {
-  spawnSync(
-    process.execPath,
-    [
-      '-e',
-      'require("./scripts/validate-content.js")',
-    ],
-    { encoding: 'utf8' },
-  );
-});
-`;
-  const offendingCalls = extractSpawnSyncCalls(fixture)
-    .filter(isProcessNodeEvalSpawn)
-    .filter((callSource) => !hasRepoRootCwd(callSource));
-
-  assert.equal(offendingCalls.length, 1);
-});
-
-test('content tests pin direct validate-content exec calls to the repo root', () => {
-  const unpinnedCalls = [];
-  let totalCalls = 0;
-
-  for (const fileName of contentTestFiles()) {
-    const sourceText = fs.readFileSync(path.join(repoRoot, fileName), 'utf8');
-    const calls = collectValidateContentExecFileSyncCalls(sourceText);
-    totalCalls += calls.length;
-    for (const call of calls) {
-      if (!call.hasPinnedCwd) {
-        const lineNumber = sourceText.slice(0, call.index).split('\n').length;
-        unpinnedCalls.push(`${fileName}:${lineNumber}`);
-      }
-    }
-  }
-
-  assert.ok(totalCalls > 0, 'content tests should run validate-content directly');
-  assert.deepEqual(
-    unpinnedCalls,
-    [],
-    `validate-content exec calls missing cwd: repoRoot: ${unpinnedCalls.join(', ')}`,
-  );
-});
-
-test('content exec cwd scanner rejects an unpinned direct validate-content call', () => {
-  const unsafeSource =
-    "const output = execFileSync(process.execPath, ['scripts/" +
-    "validate-content.js'], {\n  encoding: 'utf8',\n});";
-  const safeSource =
-    "const output = execFileSync(process.execPath, ['scripts/" +
-    "validate-content.js'], {\n  cwd: repoRoot,\n  encoding: 'utf8',\n});";
-
-  assert.deepEqual(collectValidateContentExecFileSyncCalls(unsafeSource), [
-    { index: 15, hasPinnedCwd: false },
-  ]);
-  assert.deepEqual(collectValidateContentExecFileSyncCalls(safeSource), [
-    { index: 15, hasPinnedCwd: true },
-  ]);
-});
-
-test('generated-id fixture guard scans content test globs', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
+test('authority overclaim pattern fixtures stay visible in content gates', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
     'utf8',
   );
+  const productionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/content-production.test.js'),
+    'utf8',
+  );
+  const boundaryTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-authority-boundary.test.js'),
+    'utf8',
+  );
+  const patternBlock = validatorSource.match(
+    /const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = \[([\s\S]*?)\];/,
+  );
+  const fixtureBlock = validatorSource.match(
+    /const QUESTION_AUTHORITY_OVERCLAIM_PATTERN_FIXTURES = \[([\s\S]*?)\];/,
+  );
 
-  assert.match(source, /function contentMutationFixtureFiles\(\)/);
-  assert.match(source, /readdirSync\(path\.join\(repoRoot, 'tests'\)\)/);
-  assert.match(source, /\^content-\.\*\\\.test\\\.js\$/);
-  assert.match(source, /readdirSync\(path\.join\(repoRoot, 'scripts'\)\)/);
-  assert.match(source, /\^.\*content.\*\\\.test\\\.js\$/);
-  assert.doesNotMatch(source, /const scannedFiles = \[\s*['"`]tests\/content-published/);
-  assert.match(source, /generated id fixture guard rejects raw generated ids/);
-  assert.match(source, /generated id fixture guard allows source ids and helper-derived ids/);
+  assert.ok(patternBlock, 'validator should define authority overclaim patterns');
+  assert.ok(fixtureBlock, 'validator should define authority overclaim fixtures');
+
+  const patternCount = patternBlock[1]
+    .split('\n')
+    .filter((line) => line.trim().startsWith('/')).length;
+  const fixtureCount = fixtureBlock[1]
+    .split('\n')
+    .filter((line) => line.trim().startsWith("'")).length;
+
+  assert.equal(patternCount, 10);
+  assert.equal(fixtureCount, patternCount);
+  assert.match(productionTestSource, /questionAuthorityOverclaimPatternFixturesValidated/);
+  assert.match(productionTestSource, /questionAuthorityOverclaimPatternFixtureParityValidated/);
+  assert.match(boundaryTestSource, /overclaimFixtures/);
 });

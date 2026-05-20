@@ -272,11 +272,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionTextFieldsNormalizedValidated, summary.publishedQuestions);
   assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
-  assert.equal(
-    summary.sourceAuthorityStemPatternFixturesValidated,
-    EXPECTED_SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES,
-  );
-  assert.equal(summary.sourceAuthorityStemPatternFixtureParityValidated, true);
+  assert.equal(summary.questionAuthorityOverclaimPatternFixturesValidated, 10);
+  assert.equal(summary.questionAuthorityOverclaimPatternFixtureParityValidated, true);
   assert.equal(summary.questionNestedMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionJudgementMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);

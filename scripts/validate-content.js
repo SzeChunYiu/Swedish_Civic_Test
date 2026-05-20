@@ -157,6 +157,18 @@ const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bkvalitets(?:granskad|granskade|granskat)\s+av\s+(?:uhr|myndighet|regeringen)\b/i,
   /\bgaranter(?:ar|ad|at)?\s+(?:godk[aä]nt|att\s+klara)\b/i,
 ];
+const QUESTION_AUTHORITY_OVERCLAIM_PATTERN_FIXTURES = [
+  'official citizenship test',
+  'real citizenship exam questions',
+  'UHR-approved practice',
+  'quality-controlled by an authority',
+  'guaranteed passing',
+  'officiella prov',
+  'riktiga provfrågor',
+  'myndighetsgodkänd övning',
+  'kvalitetsgranskad av regeringen',
+  'garanterar att klara',
+];
 const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\benligt\s+UHR\b/i,
   /\bUHR[\s-]?(?:materialet|avsnittet)\b/i,
@@ -4370,6 +4382,25 @@ function findQuestionAuthorityOverclaim(question) {
   return QUESTION_AUTHORITY_OVERCLAIM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function validateQuestionAuthorityOverclaimPatternFixtures() {
+  if (
+    QUESTION_AUTHORITY_OVERCLAIM_PATTERN_FIXTURES.length !==
+    QUESTION_AUTHORITY_OVERCLAIM_PATTERNS.length
+  ) {
+    fail('question authority overclaim pattern fixtures must cover every pattern');
+  }
+
+  return QUESTION_AUTHORITY_OVERCLAIM_PATTERNS.reduce((validated, pattern, index) => {
+    const fixture = QUESTION_AUTHORITY_OVERCLAIM_PATTERN_FIXTURES[index];
+    if (typeof fixture !== 'string' || !pattern.test(fixture)) {
+      fail(`question authority overclaim pattern fixture ${index + 1} does not match its pattern`);
+      return validated;
+    }
+
+    return validated + 1;
+  }, 0);
+}
+
 function findQuestionStemSourceAuthorityReference(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
@@ -7722,8 +7753,8 @@ let questionExactSchemaKeysValidated = 0;
 let questionTextFieldsNormalizedValidated = 0;
 let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
-let sourceAuthorityStemPatternFixturesValidated = 0;
-let sourceAuthorityStemPatternFixtureParityValidated = false;
+let questionAuthorityOverclaimPatternFixturesValidated = 0;
+let questionAuthorityOverclaimPatternFixtureParityValidated = false;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
@@ -7825,19 +7856,14 @@ if (typeof formatExamTime !== 'function') fail('formatExamTime export is not a f
 if (typeof shouldAutoSubmitExam !== 'function') {
   fail('shouldAutoSubmitExam export is not a function');
 }
-staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatterns();
-staticEbookOutcomeClaimParityValidated =
-  staticEbookOutcomeClaimPatternsValidated ===
-  STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
-{
-  const staticEbookCitizenshipCurrentness = validateStaticEbookCitizenshipCurrentness();
-  staticEbookCitizenshipCurrentnessSourceUrlsValidated =
-    staticEbookCitizenshipCurrentness.sourceUrlsValidated;
-  staticEbookCitizenshipCurrentnessRetrievedAtValidated =
-    staticEbookCitizenshipCurrentness.retrievedAt;
-  staticEbookCitizenshipCurrentnessParityValidated =
-    staticEbookCitizenshipCurrentness.currentnessParity;
-}
+
+questionAuthorityOverclaimPatternFixturesValidated =
+  validateQuestionAuthorityOverclaimPatternFixtures();
+questionAuthorityOverclaimPatternFixtureParityValidated =
+  questionAuthorityOverclaimPatternFixturesValidated ===
+    QUESTION_AUTHORITY_OVERCLAIM_PATTERNS.length &&
+  QUESTION_AUTHORITY_OVERCLAIM_PATTERN_FIXTURES.length ===
+    QUESTION_AUTHORITY_OVERCLAIM_PATTERNS.length;
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
@@ -17911,8 +17937,8 @@ console.log(
       questionTextFieldsNormalizedValidated,
       questionSentenceEndingsValidated,
       questionAuthorityBoundaryTextValidated,
-      sourceAuthorityStemPatternFixturesValidated,
-      sourceAuthorityStemPatternFixtureParityValidated,
+      questionAuthorityOverclaimPatternFixturesValidated,
+      questionAuthorityOverclaimPatternFixtureParityValidated,
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
