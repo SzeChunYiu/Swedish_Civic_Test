@@ -1485,6 +1485,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
+  assert.match(paywallSource, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.match(paywallSource, /if \(purchaseActionInFlightRef\.current\) return;/);
+  assert.match(paywallSource, /purchaseActionInFlightRef\.current = true;/);
+  assert.match(paywallSource, /purchaseActionInFlightRef\.current = false;/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
   assert.match(paywallSource, /updateEntitlements\(result\.entitlements\)/);
@@ -1515,6 +1519,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Provläget är redan annonsfritt/);
   assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
   assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
+  assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
+  assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = true;/);
+  assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = false;/);
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);

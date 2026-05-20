@@ -1244,7 +1244,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
 const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
 const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -12602,6 +12602,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let purchaseSource = '';
   let placementCtaSource = '';
+  let premiumBannerSource = '';
 
   function reject(message) {
     valid = false;
@@ -12610,6 +12611,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   try {
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+    premiumBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
     placementCtaSource = fs.readFileSync(
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
       'utf8',
@@ -12620,6 +12625,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
@@ -12731,6 +12737,21 @@ function validateRemoveAdsPurchaseRuntimeParity() {
           placementCtaSource,
         ),
       'RemoveAdsPlacementCta must expose localized pending, not_found, and restored status copy',
+    ],
+    [
+      /useRef/.test(premiumBannerSource) &&
+        /useRef/.test(placementCtaSource) &&
+        normalizedPremiumBannerSource.includes(
+          'const purchaseActionInFlightRef = useRef(false);',
+        ) &&
+        normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
+        normalizedPremiumBannerSource.includes('if (purchaseActionInFlightRef.current) return;') &&
+        normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
+        normalizedPremiumBannerSource.includes('purchaseActionInFlightRef.current = true;') &&
+        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
+        normalizedPremiumBannerSource.includes('purchaseActionInFlightRef.current = false;') &&
+        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
+      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
     ],
   ];
 

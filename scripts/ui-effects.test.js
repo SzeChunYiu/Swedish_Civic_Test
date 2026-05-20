@@ -1192,6 +1192,10 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /language = 'sv'/);
   assert.match(source, /const copy = premiumBannerCopy\[language\]/);
   assert.match(source, /const statusMessage = getStatusMessage/);
+  assert.match(source, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.match(source, /if \(purchaseActionInFlightRef\.current\) return;/);
+  assert.match(source, /purchaseActionInFlightRef\.current = true;/);
+  assert.match(source, /purchaseActionInFlightRef\.current = false;/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /bodyActive:/);
   assert.match(source, /bodyIdle: \(price\) =>/);
@@ -1219,6 +1223,10 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Annonser är avstängda på den här enheten\./);
   assert.match(source, /Tidsatta övningsprov är redan annonsfria/);
   assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
+  assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
+  assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = true;/);
+  assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = false;/);
   assert.doesNotMatch(placementCtaSource, /\bProv är redan annonsfria\b/);
   assert.doesNotMatch(placementCtaSource, /\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i);
   assert.doesNotMatch(source, /\bprov förblir annonsfria\b/i);
