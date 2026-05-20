@@ -7,8 +7,6 @@ import {
 } from '../quiz/questionText';
 
 type SpeakableQuestion = {
-  correctOptionId?: string;
-  explanationSv?: string;
   questionSv: string;
   options: QuestionOption[];
   correctOptionId?: string;
@@ -44,15 +42,25 @@ export function buildAnswerFeedbackSpeechText(
   if (!selectedOptionId || !question.correctOptionId) return '';
 
   const correctOption = question.options.find((option) => option.id === question.correctOptionId);
+  const selectedOption = question.options.find((option) => option.id === selectedOptionId);
+  const selectedOptionText = getQuestionOptionText(selectedOption, 'sv', 'det valda svaret');
+  const correctOptionText = getQuestionOptionText(
+    correctOption,
+    'sv',
+    'det markerade rätta svaret',
+  );
   const selectedIsCorrect = selectedOptionId === question.correctOptionId;
   const resultText = selectedIsCorrect
-    ? 'Rätt.'
-    : `Fel. Rätt svar är ${correctOption?.textSv ?? 'det markerade rätta svaret'}.`;
-  const explanationText = question.explanationSv
-    ? stripSourceAuthorityPhrasing(question.explanationSv) || question.explanationSv
-    : '';
+    ? `Du valde: ${selectedOptionText}. Det stämmer.`
+    : `Du valde: ${selectedOptionText}. Det rätta svaret är: ${correctOptionText}.`;
+  const explanationText = SOURCE_CITATION_REPLACEMENTS.reduce(
+    (current, replacement) => current.replace(replacement, ''),
+    stripSourceAuthorityPhrasing(
+      getQuestionExplanationText(question, 'sv', question.explanationSv ?? ''),
+    ),
+  ).trim();
 
-  return `${resultText} ${explanationText}`.trim();
+  return `${resultText}${explanationText ? ` Förklaring: ${explanationText}` : ''}`.trim();
 }
 
 export interface SpeakSwedishOptions {
