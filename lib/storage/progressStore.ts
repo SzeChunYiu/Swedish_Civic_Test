@@ -46,7 +46,7 @@ try {
   progressStorage = null;
 }
 
-type PersistedProgress = {
+export type PersistedProgress = {
   completedQuestionIds: string[];
   questionProgress: Record<string, QuestionProgress>;
   totalXp: number;
@@ -254,6 +254,10 @@ function normalizeProgress(value: unknown): PersistedProgress {
   };
 }
 
+export function normalizeImportedProgress(value: unknown): PersistedProgress {
+  return normalizeProgress(value);
+}
+
 function readProgress(): PersistedProgress {
   let rawProgress: string | undefined;
   try {
@@ -451,3 +455,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
     set(persistedProgress);
   },
 }));
+
+export function importProgressSnapshot(progress: PersistedProgress): void {
+  const normalizedProgress = normalizeImportedProgress(progress);
+  writeProgress(normalizedProgress);
+  useProgressStore.setState(normalizedProgress);
+}
