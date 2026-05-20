@@ -30,14 +30,51 @@ const sampleQuestion = {
   },
 };
 
+const chapterMeta = [
+  {
+    id: 1,
+    emoji: '01',
+    title: { en: 'Land of Sweden', sv: 'Landet Sverige' },
+  },
+  {
+    id: 2,
+    emoji: '02',
+    title: { en: 'History', sv: 'Historia' },
+  },
+];
+
+function staticMockQuestion({ id, chapterId = 1, tags = [], questionProvenance }) {
+  return {
+    ...sampleQuestion,
+    id,
+    chapterId,
+    q: {
+      en: `Question ${id}`,
+      sv: `Fråga ${id}`,
+    },
+    why: {
+      en: `Explanation ${id}`,
+      sv: `Förklaring ${id}`,
+    },
+    tags,
+    ...(questionProvenance ? { questionProvenance } : {}),
+  };
+}
+
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createRenderContext({ hash = '#/practice?c=1', language = 'en' } = {}) {
+function createRenderContext({
+  hash = '#/practice?c=1',
+  language = 'en',
+  mockConfig,
+  questions = [sampleQuestion],
+} = {}) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
   const storage = new Map([['smt_lang', language]]);
+  if (mockConfig) storage.set('smt_mock_cfg', JSON.stringify(mockConfig));
 
   function element(id) {
     if (!elements.has(id)) {
@@ -47,6 +84,13 @@ function createRenderContext({ hash = '#/practice?c=1', language = 'en' } = {}) 
         textContent: '',
         classList: { add() {}, remove() {}, toggle() {} },
         addEventListener() {},
+        closest() {
+          return {
+            querySelector() {
+              return { textContent: '' };
+            },
+          };
+        },
         querySelector() {
           return null;
         },
@@ -108,9 +152,9 @@ function createRenderContext({ hash = '#/practice?c=1', language = 'en' } = {}) 
     listeners.window.push({ type, handler });
   };
   sandbox.window.scrollTo = () => {};
-  sandbox.window.SMT_QUESTIONS = [sampleQuestion];
-  sandbox.window.SMT_CHAPTERS_META = [];
-  sandbox.window.smtPracticeFilterFor = () => [sampleQuestion];
+  sandbox.window.SMT_QUESTIONS = questions;
+  sandbox.window.SMT_CHAPTERS_META = chapterMeta;
+  sandbox.window.smtPracticeFilterFor = () => questions;
 
   vm.createContext(sandbox);
   return { sandbox, element };
@@ -215,4 +259,126 @@ test('static active Mock question renders citation and independent-study disclai
     html,
     /class="quiz__disclaimer">Independent study practice, not a real exam or an official UHR question\.<\/p>/,
   );
+});
+
+test('static Mock picker and landing counts use only direct UHR questions', () => {
+  const questions = [
+    staticMockQuestion({ id: 'q-uhr-1', chapterId: 1 }),
+    staticMockQuestion({ id: 'q-derived-tag', chapterId: 1, tags: ['published-variant'] }),
+    staticMockQuestion({ id: 'q-editorial-tag', chapterId: 1, tags: ['editorial'] }),
+    staticMockQuestion({ id: 'q-uhr-2', chapterId: 2, questionProvenance: 'uhr' }),
+    staticMockQuestion({ id: 'q-derived-provenance', chapterId: 2, questionProvenance: 'derived' }),
+  ];
+  const { sandbox, element } = createRenderContext({
+    hash: '#/mock',
+    language: 'en',
+    mockConfig: { count: 5, minutes: 30, chapters: 'all' },
+    questions,
+  });
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    [
+      'window.__pickedMockQuestionIds = pickMockQuestions().map((question) => question.id).sort();',
+      'renderMockLanding();',
+      '})();',
+    ].join('\n'),
+  );
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  assert.deepEqual(sandbox.window.__pickedMockQuestionIds, ['q-uhr-1', 'q-uhr-2']);
+  assert.match(element('mock-stage').innerHTML, /Max 2/);
+  assert.doesNotMatch(element('mock-stage').innerHTML, /Max 5/);
+});
+
+test('static Mock real exported bank excludes published-variant rows', () => {
+  const { sandbox } = createRenderContext({
+    hash: '#/mock',
+    language: 'en',
+    mockConfig: { count: 2000, minutes: 30, chapters: 'all' },
+    questions: [],
+  });
+  vm.runInContext(read('site/questions.js'), sandbox, { timeout: 3000 });
+  const expectedUhrCount = sandbox.window.SMT_QUESTIONS.filter(
+    (question) =>
+      !(question.tags || []).includes('published-variant') &&
+      !(question.tags || []).includes('editorial'),
+  ).length;
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    [
+      'window.__mockPool = mockQuestionPool();',
+      'window.__pickedMockQuestions = pickMockQuestions();',
+      '})();',
+    ].join('\n'),
+  );
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  assert.ok(expectedUhrCount > 0, 'expected direct UHR rows in the static bank');
+  assert.ok(
+    expectedUhrCount < sandbox.window.SMT_QUESTIONS.length,
+    'expected supplementary rows too',
+  );
+  assert.equal(sandbox.window.__mockPool.length, expectedUhrCount);
+  assert.equal(sandbox.window.__pickedMockQuestions.length, expectedUhrCount);
+  for (const question of sandbox.window.__pickedMockQuestions) {
+    assert.equal((question.tags || []).includes('published-variant'), false);
+    assert.equal((question.tags || []).includes('editorial'), false);
+  }
+});
+
+test('static Mock chapter-limited landing count excludes supplementary questions', () => {
+  const questions = [
+    staticMockQuestion({ id: 'q-uhr-1', chapterId: 1 }),
+    staticMockQuestion({ id: 'q-derived-tag', chapterId: 1, tags: ['published-variant'] }),
+    staticMockQuestion({ id: 'q-uhr-2', chapterId: 2 }),
+  ];
+  const { sandbox, element } = createRenderContext({
+    hash: '#/mock',
+    language: 'en',
+    mockConfig: { count: 5, minutes: 30, chapters: [1] },
+    questions,
+  });
+  const source = read('site/practice.js').replace(/\}\)\(\);\s*$/, 'renderMockLanding();\n})();');
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  assert.match(element('mock-stage').innerHTML, /Max 1/);
+  assert.doesNotMatch(element('mock-stage').innerHTML, /Max 2/);
+});
+
+test('static active and reviewed Mock questions never render supplementary rows', () => {
+  const questions = [
+    staticMockQuestion({ id: 'q-uhr-1', chapterId: 1 }),
+    staticMockQuestion({ id: 'q-derived-tag', chapterId: 1, tags: ['published-variant'] }),
+    staticMockQuestion({ id: 'q-derived-provenance', chapterId: 1, questionProvenance: 'derived' }),
+  ];
+  const { sandbox, element } = createRenderContext({
+    hash: '#/mock?run=1',
+    language: 'en',
+    mockConfig: { count: 5, minutes: 30, chapters: 'all' },
+    questions,
+  });
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    [
+      'MOCK.questions = pickMockQuestions();',
+      'MOCK.answers = MOCK.questions.map((question) => question.answer);',
+      'MOCK.startedAt = 123456;',
+      'MOCK.endsAt = Date.now() + 120000;',
+      'MOCK.submitted = false;',
+      'renderMockExam();',
+      'window.__activeMockHtml = document.getElementById("mock-stage").innerHTML;',
+      'MOCK.submitted = true;',
+      'renderMockResult();',
+      'window.__reviewedMockHtml = document.getElementById("mock-stage").innerHTML;',
+      '})();',
+    ].join('\n'),
+  );
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  assert.match(sandbox.window.__activeMockHtml, /Question q-uhr-1/);
+  assert.doesNotMatch(sandbox.window.__activeMockHtml, /Question q-derived-tag/);
+  assert.doesNotMatch(sandbox.window.__activeMockHtml, /Question q-derived-provenance/);
+  assert.match(element('mock-stage').innerHTML, /Question q-uhr-1/);
+  assert.doesNotMatch(sandbox.window.__reviewedMockHtml, /Question q-derived-tag/);
+  assert.doesNotMatch(sandbox.window.__reviewedMockHtml, /Question q-derived-provenance/);
 });
