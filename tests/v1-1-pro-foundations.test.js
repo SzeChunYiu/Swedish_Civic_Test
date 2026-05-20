@@ -680,6 +680,106 @@ test('perChapterProgress: accuracy + coverage computed per chapter', () => {
   assert.equal(history.accuracy, 1);
 });
 
+test('perChapterProgress: malformed chapter totals and non-boolean correctness stay bounded', () => {
+  const { perChapterProgress } = loadTs('lib/learning/dashboardStats.ts');
+  const chapters = [
+    { id: 'nan-count', questionCount: Number.NaN },
+    { id: 'negative-count', questionCount: -5 },
+    { id: 'fractional-count', questionCount: 2.5 },
+    { id: 'undersized-count', questionCount: 1 },
+    { id: 'valid-count', questionCount: 3 },
+  ];
+  const sessions = [
+    {
+      id: 's1',
+      mode: 'study',
+      questionIds: [],
+      startedAt: '2026-05-19T00:00:00.000Z',
+      answers: [
+        {
+          questionId: 'nan-1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:00:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'negative-1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:01:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'fractional-1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:02:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'small-1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:03:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'small-2',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:04:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'valid-1',
+          selectedOptionIds: [],
+          isCorrect: 'yes',
+          answeredAt: '2026-05-19T10:05:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'valid-2',
+          selectedOptionIds: [],
+          isCorrect: 1,
+          answeredAt: '2026-05-19T10:06:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'valid-3',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:07:00.000Z',
+          timeSpentSeconds: 5,
+        },
+      ],
+    },
+  ];
+  const result = perChapterProgress(progressWithSessions(sessions), chapters, {
+    'nan-1': 'nan-count',
+    'negative-1': 'negative-count',
+    'fractional-1': 'fractional-count',
+    'small-1': 'undersized-count',
+    'small-2': 'undersized-count',
+    'valid-1': 'valid-count',
+    'valid-2': 'valid-count',
+    'valid-3': 'valid-count',
+  });
+  const byId = new Map(result.map((bar) => [bar.chapterId, bar]));
+
+  assert.equal(byId.get('nan-count').coverage, 0);
+  assert.equal(byId.get('negative-count').coverage, 0);
+  assert.equal(byId.get('fractional-count').coverage, 0);
+  assert.equal(byId.get('undersized-count').coverage, 1);
+  assert.equal(byId.get('valid-count').coverage, 1);
+  assert.equal(byId.get('valid-count').accuracy, 1 / 3);
+  result.forEach((bar) => {
+    assert.equal(Number.isFinite(bar.coverage), true);
+    assert.ok(bar.coverage >= 0);
+    assert.ok(bar.coverage <= 1);
+  });
+});
+
 test('mockHistory + bestMockScore: returns only exam-mode completed sessions', () => {
   const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
   const sessions = [
