@@ -2073,6 +2073,20 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema guards generated statement-choice meta prompts and boilerplate', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /Vilket påstående är korrekt/);
+  assert.match(validatorSource, /Vilket påstående stämmer bäst/);
+  assert.match(validatorSource, /Which statement is correct/);
+  assert.match(validatorSource, /Which statement best matches/);
+  assert.match(validatorSource, /påståendet som motsvarar den uppgiften/);
+  assert.match(validatorSource, /statement that matches that fact/);
+});
+
 test('published question schema rejects generated true/false grammar-splice stems', () => {
   const result = spawnSync(
     process.execPath,

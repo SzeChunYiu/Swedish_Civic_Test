@@ -974,15 +974,11 @@ function falseStatementExplanationEn(source: PracticeQuestion): string {
 }
 
 function trueFalseSingleChoiceExplanationSv(source: PracticeQuestion): string {
-  return `${ensureSentence(
-    trueFalseSourceStatementSv(source, true),
-  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
+  return trueStatementExplanationSv(source);
 }
 
 function trueFalseSingleChoiceExplanationEn(source: PracticeQuestion): string {
-  return `${ensureSentence(
-    trueFalseSourceStatementEn(source, true),
-  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
+  return trueStatementExplanationEn(source);
 }
 
 function statementTopicSv(source: PracticeQuestion): string {
@@ -1066,30 +1062,68 @@ function generatedTrueFalseStatementEn(
 
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
+    return `Vilken uppgift stämmer om ${statementTopicSv(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
+  if (prompt) return prompt;
   return `Välj rätt alternativ: ${source.questionSv}`;
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Which statement best matches ${statementTopicEn(source)}?`;
+    return `Which fact is correct about ${statementTopicEn(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
+  if (prompt) return prompt;
   return `Choose the correct option: ${source.questionEn}`;
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
+    return `Vad gäller för ${statementTopicSv(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
+  if (prompt) return prompt;
   return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Which statement is correct about ${statementTopicEn(source)}?`;
+    return `What is correct about ${statementTopicEn(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
+  if (prompt) return prompt;
   return `Which answer best matches? ${source.questionEn}`;
+}
+
+function generatedSingleChoicePromptFromSourceSv(
+  source: PracticeQuestion,
+  variant: 'section-practice' | 'judgement',
+): string | null {
+  const q = stripFinalPunctuation(source.questionSv);
+  const match =
+    q.match(/^Vilket påstående stämmer om (.+)$/i) ??
+    q.match(/^Vilket påstående är korrekt om (.+)$/i) ??
+    q.match(/^Vilket påstående om (.+?) stämmer$/i);
+  if (!match) return null;
+  return variant === 'judgement'
+    ? `Vilken uppgift stämmer om ${match[1]}?`
+    : `Vad gäller för ${match[1]}?`;
+}
+
+function generatedSingleChoicePromptFromSourceEn(
+  source: PracticeQuestion,
+  variant: 'section-practice' | 'judgement',
+): string | null {
+  const q = stripFinalPunctuation(source.questionEn);
+  const match =
+    q.match(/^Which statement is correct about (.+)$/i) ??
+    q.match(/^Which statement about (.+?) is correct$/i) ??
+    q.match(/^Which statement best matches (.+)$/i);
+  if (!match) return null;
+  return variant === 'judgement'
+    ? `Which fact is correct about ${match[1]}?`
+    : `What is correct about ${match[1]}?`;
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {

@@ -142,8 +142,8 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     ),
   );
   assert.ok(singleChoiceVariants.every((question) => question.correctOptionId === 'a'));
-  assert.equal(derived[0].questionSv, 'Vilket påstående är korrekt om Sverige?');
-  assert.equal(derived[0].questionEn, 'Which statement is correct about Sweden?');
+  assert.equal(derived[0].questionSv, 'Vad gäller för Sverige?');
+  assert.equal(derived[0].questionEn, 'What is correct about Sweden?');
   assert.ok(
     singleChoiceVariants.every(
       (question) =>
@@ -162,13 +162,13 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     trueFalseVariants.map((question) => question.questionEn),
     ['Sweden is in the Nordic region.', 'Sweden is not in the Nordic region.'],
   );
-  assert.equal(derived[3].questionSv, 'Vilket påstående stämmer bäst om Sverige?');
-  assert.equal(derived[3].questionEn, 'Which statement best matches Sweden?');
+  assert.equal(derived[3].questionSv, 'Vilken uppgift stämmer om Sverige?');
+  assert.equal(derived[3].questionEn, 'Which fact is correct about Sweden?');
   assert.ok(
     singleChoiceVariants.every(
       (question) =>
-        !/Påståendet är sant|alternativet Sant|medan Falskt|That makes True correct|while False/i.test(
-          `${question.explanationSv} ${question.explanationEn}`,
+        !/Vilket påstående är korrekt|Vilket påstående stämmer bäst|Which statement is correct|Which statement best matches|Påståendet är sant|alternativet Sant|medan Falskt|påståendet som motsvarar den uppgiften|motsatsen inte stämmer|That makes True correct|while False|statement that matches that fact|opposite statement is not/i.test(
+          `${question.questionSv} ${question.questionEn} ${question.explanationSv} ${question.explanationEn}`,
         ),
     ),
   );

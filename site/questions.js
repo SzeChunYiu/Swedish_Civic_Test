@@ -7488,8 +7488,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about Sweden's northernmost part?",
-      "sv": "Vilket påstående är korrekt om Sveriges nordligaste del?"
+      "en": "What is correct about Sweden's northernmost part?",
+      "sv": "Vad gäller för Sveriges nordligaste del?"
     },
     "opts": [
       {
@@ -7511,8 +7511,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7615,8 +7615,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches Sweden's northernmost part?",
-      "sv": "Vilket påstående stämmer bäst om Sveriges nordligaste del?"
+      "en": "Which fact is correct about Sweden's northernmost part?",
+      "sv": "Vilken uppgift stämmer om Sveriges nordligaste del?"
     },
     "opts": [
       {
@@ -7638,8 +7638,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8199,8 +8199,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about the Gulf Stream and the North Atlantic Current?",
-      "sv": "Vilket påstående är korrekt om Golfströmmen och den Nordatlantiska strömmen?"
+      "en": "What is correct about the Gulf Stream and the North Atlantic Current?",
+      "sv": "Vad gäller för Golfströmmen och den Nordatlantiska strömmen?"
     },
     "opts": [
       {
@@ -8222,8 +8222,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has a mild climate compared with many other areas at the same latitude. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
+      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8326,8 +8326,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches the Gulf Stream and the North Atlantic Current?",
-      "sv": "Vilket påstående stämmer bäst om Golfströmmen och den Nordatlantiska strömmen?"
+      "en": "Which fact is correct about the Gulf Stream and the North Atlantic Current?",
+      "sv": "Vilken uppgift stämmer om Golfströmmen och den Nordatlantiska strömmen?"
     },
     "opts": [
       {
@@ -8349,8 +8349,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has a mild climate compared with many other areas at the same latitude. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
+      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11202,8 +11202,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about the Riksdag?",
-      "sv": "Vilket påstående är korrekt om Riksdagen?"
+      "en": "What is correct about the Riksdag?",
+      "sv": "Vad gäller för Riksdagen?"
     },
     "opts": [
       {
@@ -11225,8 +11225,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
+      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11330,8 +11330,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches the Riksdag?",
-      "sv": "Vilket påstående stämmer bäst om Riksdagen?"
+      "en": "Which fact is correct about the Riksdag?",
+      "sv": "Vilken uppgift stämmer om Riksdagen?"
     },
     "opts": [
       {
@@ -11353,8 +11353,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
+      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12082,8 +12082,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about the opposition?",
-      "sv": "Vilket påstående är korrekt om oppositionen?"
+      "en": "What is correct about the opposition?",
+      "sv": "Vad gäller för oppositionen?"
     },
     "opts": [
       {
@@ -12105,8 +12105,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Parties that do not support the government are called the opposition. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Partier som inte stödjer regeringen kallas opposition. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies. In the Riksdag, the governing parties and the opposition debate different proposals before members vote.",
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12210,8 +12210,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches the opposition?",
-      "sv": "Vilket påstående stämmer bäst om oppositionen?"
+      "en": "Which fact is correct about the opposition?",
+      "sv": "Vilken uppgift stämmer om oppositionen?"
     },
     "opts": [
       {
@@ -12233,8 +12233,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Parties that do not support the government are called the opposition. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Partier som inte stödjer regeringen kallas opposition. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies. In the Riksdag, the governing parties and the opposition debate different proposals before members vote.",
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12610,8 +12610,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about politicians in Sweden?",
-      "sv": "Vilket påstående är korrekt om politiker i Sverige?"
+      "en": "What is correct about politicians in Sweden?",
+      "sv": "Vad gäller för politiker i Sverige?"
     },
     "opts": [
       {
@@ -12633,8 +12633,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Politicians in Sweden do not have to follow the result of a referendum. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Politicians in Sweden do not have to follow the result of a referendum.",
+      "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12738,8 +12738,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches politicians in Sweden?",
-      "sv": "Vilket påstående stämmer bäst om politiker i Sverige?"
+      "en": "Which fact is correct about politicians in Sweden?",
+      "sv": "Vilken uppgift stämmer om politiker i Sverige?"
     },
     "opts": [
       {
@@ -12761,8 +12761,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Politicians in Sweden do not have to follow the result of a referendum. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Politicians in Sweden do not have to follow the result of a referendum.",
+      "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15426,8 +15426,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about a person who gives information to newspapers, radio, and TV?",
-      "sv": "Vilket påstående är korrekt om den som lämnar uppgifter till tidningar, radio och tv?"
+      "en": "What is correct about a person who gives information to newspapers, radio, and TV?",
+      "sv": "Vad gäller för den som lämnar uppgifter till tidningar, radio och tv?"
     },
     "opts": [
       {
@@ -15449,8 +15449,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "A person may provide information to newspapers, radio, and TV without being punished. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "A person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
+      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15554,8 +15554,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches a person who gives information to newspapers, radio, and TV?",
-      "sv": "Vilket påstående stämmer bäst om den som lämnar uppgifter till tidningar, radio och tv?"
+      "en": "Which fact is correct about a person who gives information to newspapers, radio, and TV?",
+      "sv": "Vilken uppgift stämmer om den som lämnar uppgifter till tidningar, radio och tv?"
     },
     "opts": [
       {
@@ -15577,8 +15577,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "A person may provide information to newspapers, radio, and TV without being punished. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "A person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
+      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15782,8 +15782,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about public service companies?",
-      "sv": "Vilket påstående är korrekt om public service-företag?"
+      "en": "What is correct about public service companies?",
+      "sv": "Vad gäller för public service-företag?"
     },
     "opts": [
       {
@@ -15805,8 +15805,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
+      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15910,8 +15910,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches public service companies?",
-      "sv": "Vilket påstående stämmer bäst om public service-företag?"
+      "en": "Which fact is correct about public service companies?",
+      "sv": "Vilken uppgift stämmer om public service-företag?"
     },
     "opts": [
       {
@@ -15933,8 +15933,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
+      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16310,8 +16310,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement is correct about the UN Universal Declaration of Human Rights?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "What is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Vad gäller för FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
@@ -16438,8 +16438,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement is correct about the UN Universal Declaration of Human Rights?",
-      "sv": "Välj rätt alternativ: Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Which fact is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Vilken uppgift stämmer om FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
@@ -20194,8 +20194,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about Swedish municipalities?",
-      "sv": "Vilket påstående är korrekt om Sveriges kommuner?"
+      "en": "What is correct about Swedish municipalities?",
+      "sv": "Vad gäller för Sveriges kommuner?"
     },
     "opts": [
       {
@@ -20217,8 +20217,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20322,8 +20322,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches Swedish municipalities?",
-      "sv": "Vilket påstående stämmer bäst om Sveriges kommuner?"
+      "en": "Which fact is correct about Swedish municipalities?",
+      "sv": "Vilken uppgift stämmer om Sveriges kommuner?"
     },
     "opts": [
       {
@@ -20345,8 +20345,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23190,8 +23190,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about Swedish total defence?",
-      "sv": "Vilket påstående är korrekt om det svenska totalförsvaret?"
+      "en": "What is correct about Swedish total defence?",
+      "sv": "Vad gäller för det svenska totalförsvaret?"
     },
     "opts": [
       {
@@ -23213,8 +23213,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is responsible for protecting the country and its residents. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence.",
+      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23318,8 +23318,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches Swedish total defence?",
-      "sv": "Vilket påstående stämmer bäst om det svenska totalförsvaret?"
+      "en": "Which fact is correct about Swedish total defence?",
+      "sv": "Vilken uppgift stämmer om det svenska totalförsvaret?"
     },
     "opts": [
       {
@@ -23341,8 +23341,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is responsible for protecting the country and its residents. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence.",
+      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23718,8 +23718,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about the Church of Sweden and the state in 2000?",
-      "sv": "Vilket påstående är korrekt om Svenska kyrkan och staten år 2000?"
+      "en": "What is correct about the Church of Sweden and the state in 2000?",
+      "sv": "Vad gäller för Svenska kyrkan och staten år 2000?"
     },
     "opts": [
       {
@@ -23741,8 +23741,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state and the Church of Sweden separated in 2000. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community.",
+      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23846,8 +23846,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches the Church of Sweden and the state in 2000?",
-      "sv": "Vilket påstående stämmer bäst om Svenska kyrkan och staten år 2000?"
+      "en": "Which fact is correct about the Church of Sweden and the state in 2000?",
+      "sv": "Vilken uppgift stämmer om Svenska kyrkan och staten år 2000?"
     },
     "opts": [
       {
@@ -23869,8 +23869,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state and the Church of Sweden separated in 2000. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community.",
+      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26398,8 +26398,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about the role of religion in Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om religionens roll i Sverige stämmer?"
+      "en": "What is correct about the role of religion in Sweden?",
+      "sv": "Vad gäller för religionens roll i Sverige?"
     },
     "opts": [
       {
@@ -26529,8 +26529,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement about the role of religion in Sweden is correct?",
-      "sv": "Välj rätt alternativ: Vilket påstående om religionens roll i Sverige stämmer?"
+      "en": "Which fact is correct about the role of religion in Sweden?",
+      "sv": "Vilken uppgift stämmer om religionens roll i Sverige?"
     },
     "opts": [
       {
@@ -26578,8 +26578,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about Judaism's history in Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om judendomens historia i Sverige stämmer?"
+      "en": "What is correct about Judaism's history in Sweden?",
+      "sv": "Vad gäller för judendomens historia i Sverige?"
     },
     "opts": [
       {
@@ -26709,8 +26709,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement about Judaism's history in Sweden is correct?",
-      "sv": "Välj rätt alternativ: Vilket påstående om judendomens historia i Sverige stämmer?"
+      "en": "Which fact is correct about Judaism's history in Sweden?",
+      "sv": "Vilken uppgift stämmer om judendomens historia i Sverige?"
     },
     "opts": [
       {
@@ -28938,8 +28938,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about Buddhists and Hindus in present-day Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om buddhister och hinduer i dagens Sverige stämmer?"
+      "en": "What is correct about Buddhists and Hindus in present-day Sweden?",
+      "sv": "Vad gäller för buddhister och hinduer i dagens Sverige?"
     },
     "opts": [
       {
@@ -29069,8 +29069,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement about Buddhists and Hindus in present-day Sweden is correct?",
-      "sv": "Välj rätt alternativ: Vilket påstående om buddhister och hinduer i dagens Sverige stämmer?"
+      "en": "Which fact is correct about Buddhists and Hindus in present-day Sweden?",
+      "sv": "Vilken uppgift stämmer om buddhister och hinduer i dagens Sverige?"
     },
     "opts": [
       {
@@ -29482,8 +29482,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about many public holidays in Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om många helgdagar i Sverige stämmer?"
+      "en": "What is correct about many public holidays in Sweden?",
+      "sv": "Vad gäller för många helgdagar i Sverige?"
     },
     "opts": [
       {
@@ -29613,8 +29613,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement about many public holidays in Sweden is correct?",
-      "sv": "Välj rätt alternativ: Vilket påstående om många helgdagar i Sverige stämmer?"
+      "en": "Which fact is correct about many public holidays in Sweden?",
+      "sv": "Vilken uppgift stämmer om många helgdagar i Sverige?"
     },
     "opts": [
       {
@@ -32554,8 +32554,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about Sweden?",
-      "sv": "Vilket påstående är korrekt om Sverige?"
+      "en": "What is correct about Sweden?",
+      "sv": "Vad gäller för Sverige?"
     },
     "opts": [
       {
@@ -32577,8 +32577,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32688,8 +32688,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which statement best matches Sweden?",
-      "sv": "Vilket påstående stämmer bäst om Sverige?"
+      "en": "Which fact is correct about Sweden?",
+      "sv": "Vilken uppgift stämmer om Sverige?"
     },
     "opts": [
       {
@@ -32711,8 +32711,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
-      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
+      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
     },
     "source": {
       "title": "Sverige i fokus",
