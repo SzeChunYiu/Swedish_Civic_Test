@@ -26,7 +26,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 98);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
@@ -34,49 +34,22 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
   assert.match(source, /computeReadinessFromQuestionProgress/);
-  assert.match(source, /countAnswerAttemptsForLocalDate/);
-  assert.match(
-    source,
-    /const answerAttempts = useProgressStore\(\(state\) => state\.answerAttempts\);/,
-  );
-  assert.match(source, /countAnswerAttemptsForLocalDate\(\{ answerAttempts, questionProgress \}\)/);
+  assert.match(source, /buildDailyChallenge\(\{ bank: questions \}\)/);
+  assert.match(source, /dailyChallengeBannerCopy\(dailyChallengeCompleted, language\)/);
+  assert.match(source, /href="\/practice\?mode=challenge"/);
   assert.match(
     source,
     /const mockExamSessions = useProgressStore\(\(state\) => state\.mockExamSessions\);/,
   );
-  assert.match(source, /answerAttempts,/);
+  assert.match(source, /dailyChallengeCompletions/);
   assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
-  assert.match(source, /Förberedelsesignal/);
-  assert.match(source, /Preparation signal/);
-  assert.match(source, /Väg från grund till provträning/);
-  assert.match(source, /Guided path from basics to exam practice/);
-  assert.match(source, /const guidedPathChapterGroups = \[/);
-  assert.match(source, /\{ id: 'beginner', chapterIds: \['ch01', 'ch02', 'ch03', 'ch04'\] \}/);
-  assert.match(
-    source,
-    /\{ id: 'builder', chapterIds: \['ch05', 'ch06', 'ch07', 'ch08', 'ch09'\] \}/,
-  );
-  assert.match(source, /\{ id: 'advanced', chapterIds: \['ch10', 'ch11', 'ch12', 'ch13'\] \}/);
-  assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
-  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
-  assert.match(source, /<GuidedPracticePath/);
-  assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
-  assert.match(source, /dailyProgress=\{progress\}/);
-  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
-  assert.match(
-    source,
-    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
-  );
-  assert.match(source, /: '\/exam';/);
-  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
-  assert.match(guidedPathSource, /href=\{stage\.href\}/);
-  assert.match(guidedPathSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
-  assert.match(guidedPathSource, /\{stage\.cta\}/);
-  assert.match(guidedPathSource, /href="\/practice"/);
-  assert.match(guidedPathSource, /minHeight: space\[6\]/);
+  assert.match(source, /Redoindikator/);
+  assert.match(source, /Readiness indicator/);
+  assert.match(source, /Starta dagens utmaning/);
+  assert.match(source, /Start today's challenge/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Smart study habits/);
   assert.match(source, /genomgång av frågor du missat/);
