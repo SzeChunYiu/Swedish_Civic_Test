@@ -25,7 +25,9 @@ async function answerEveryMockExamQuestion(page: Page) {
   }
 }
 
-test('mock exam completion retry keeps next exam locked until save succeeds', async ({ page }) => {
+test('mock exam completion retry keeps next exam locked without an exam-screen ad preview', async ({
+  page,
+}) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -41,7 +43,11 @@ test('mock exam completion retry keeps next exam locked until save succeeds', as
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expect(page.getByText('Övningsprov')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Övningsprov' }).first()).toBeVisible();
+  const start = page.getByLabel('Starta övningsprov');
+  await expect(start).toBeEnabled();
+  await start.click();
+
   await answerEveryMockExamQuestion(page);
 
   const submit = page.getByLabel('Skicka övningsprov');
@@ -68,15 +74,17 @@ test('mock exam completion retry keeps next exam locked until save succeeds', as
   );
   await expect(page.getByText('Sparat')).toBeVisible();
   await expect(
-    page.getByText('Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.'),
+    page.getByText(
+      'Dagens kostnadsfria övningsprov är använt. Extra prov låses upp utanför provläget.',
+    ),
   ).toBeVisible();
 
-  const extraExam = page.getByRole('button', { name: 'Lås upp extra prov' });
-  await expect(extraExam).toBeEnabled();
-  await extraExam.click();
-
+  await expect(page.getByText('Sponsrad förhandsvisning')).toHaveCount(0);
+  await expect(page.getByText('Slutför förhandsvisning')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Lås upp extra prov' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Starta övningsprov' })).toBeDisabled();
   await expect(page.getByText(`${totalQuestions}/${totalQuestions} besvarade`)).toHaveCount(0);
-  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toBeVisible();
+  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toHaveCount(0);
   await expect(page.getByText('Provresultat', { exact: true })).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);

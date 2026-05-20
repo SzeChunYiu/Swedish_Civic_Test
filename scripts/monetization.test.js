@@ -922,20 +922,16 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     nativeRewardedAdSource,
     /try \{[\s\S]*RewardedAd\.createForAdRequest[\s\S]*rewardedAd\.load\(\);[\s\S]*\} catch \{[\s\S]*status: hasShown \? 'show_failed' : 'failed_to_load'/,
   );
+  assert.doesNotMatch(examSource, /showRewardedExtraExamAd/);
+  assert.doesNotMatch(examSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.doesNotMatch(examSource, /rewardPreview/);
+  assert.doesNotMatch(examSource, /grantRewardedExamCredit/);
+  assert.doesNotMatch(examSource, /Complete sponsor preview/);
+  assert.doesNotMatch(examSource, /Slutför förhandsvisning/);
   assert.match(
     examSource,
-    /accessDecision\.canOfferRewardedAd \|\| accessDecision\.reason === 'consent_required'/,
+    /accessDecision\.reason === 'rewarded_exam_credit'\) \{[\s\S]*await consumeRewardedExamCredit\(\);/,
   );
-  assert.match(
-    examSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*return;[\s\S]*await grantRewardedExamCredit\(\);/,
-  );
-  assert.match(
-    examSource,
-    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
-  );
-  assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
-  assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);
 });
 
 test('ad rendering flag disables all placements even for free users', () => {
@@ -1910,10 +1906,15 @@ test('exam screen does not import ad components', () => {
   );
 
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
+  assert.doesNotMatch(examSource, /showRewardedExtraExamAd/);
+  assert.doesNotMatch(examSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.doesNotMatch(examSource, /rewardPreview/);
+  assert.doesNotMatch(examSource, /grantRewardedExamCredit/);
   assert.match(examSource, /useMockExamAccess/);
   assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
-  assert.match(examSource, /Unlock extra exam/);
+  assert.match(examSource, /consumeRewardedExamCredit/);
+  assert.match(examSource, /Start unlocked extra exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);
   assert.match(accessHookSource, /platform: Platform\.OS/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ storage, sessionId \}\)/);

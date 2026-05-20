@@ -1,13 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  findNodeHandle,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { ResultSummary } from '../../components/ResultSummary';
@@ -22,11 +14,6 @@ import { chapters } from '../../data/chapters';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
 import { buildExamDiagnostic } from '../../lib/learning/examDiagnostic';
-import {
-  showRewardedExtraExamAd,
-  type RewardedExtraExamAdStatus,
-} from '../../lib/monetization/rewardedAd';
-import { WEB_AD_FALLBACK_CONSENT_DECISION } from '../../lib/monetization/ads';
 import {
   buildExamChapterBreakdownItems,
   buildExamReviewItems,
@@ -63,20 +50,15 @@ type ExamRouteCopy = {
   progressTitle: string;
   questionNumber: (questionNumber: number) => string;
   questionReviewTitle: string;
-  rewardPreviewBody: string;
-  rewardPreviewButton: string;
-  rewardPreviewTitle: string;
   resultBadge: string;
   resultNote: string;
   resultSubtitle: string;
   reviewBadge: string;
-  rewardedAdStatus: Record<RewardedExtraExamAdStatus, string>;
   savedBadge: string;
   savingBadge: string;
   savingCompletion: string;
   selectedAnswerLabel: string;
   retryAccess: string;
-  startExtraExam: string;
   startMockExam: string;
   startUnlockedExtraExam: string;
   submitAccessibilityLabel: string;
@@ -93,12 +75,13 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       ads_unavailable: 'Extra övningsprov är inte tillgängliga just nu.',
       access_read_failed:
         'Det gick inte att läsa sparad övningsprovsstatus. Försök igen innan du startar.',
-      consent_required: 'Annonsmedgivande krävs innan ett extra prov kan låsas upp.',
+      consent_required:
+        'Annonsmedgivande hanteras utanför provläget innan extra prov kan låsas upp.',
       free_exam_available: 'Dagens kostnadsfria övningsprov är tillgängligt.',
       premium_unlimited_mock_exams: 'Obegränsade övningsprov är aktiva.',
       remove_ads_active: 'Dagens kostnadsfria övningsprov är använt. Belöningsannonser är dolda.',
       rewarded_ad_available:
-        'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
+        'Dagens kostnadsfria övningsprov är använt. Extra prov låses upp utanför provläget.',
       rewarded_exam_credit: 'Extra övningsprov är upplåst.',
     },
     accessTitle: 'Provåtkomst',
@@ -122,29 +105,16 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
-    rewardPreviewBody:
-      'Slutför den korta förhandsvisningen innan du låser upp ett extra övningsprov. Det här är inte ett riktigt prov och ger ingen officiell fördel.',
-    rewardPreviewButton: 'Slutför förhandsvisning',
-    rewardPreviewTitle: 'Sponsrad förhandsvisning',
     resultBadge: 'Övningsresultat',
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
     reviewBadge: 'Granska',
-    rewardedAdStatus: {
-      closed_without_reward: 'Det extra övningsprovet kräver att belöningsannonsen slutförs.',
-      earned_reward: 'Extra övningsprov upplåst.',
-      failed_to_load: 'Belöningsannonsen kunde inte laddas just nu.',
-      show_failed: 'Belöningsannonsen kunde inte visas just nu.',
-      timed_out: 'Belöningsannonsen hann löpa ut innan det extra provet låstes upp.',
-      unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
-    },
     savedBadge: 'Sparat',
     savingBadge: 'Sparar',
     savingCompletion: 'Sparar dagens övningsprov.',
     selectedAnswerLabel: 'Valt svar',
     retryAccess: 'Försök läsa övningsprovsstatus igen',
-    startExtraExam: 'Lås upp extra prov',
     startMockExam: 'Starta övningsprov',
     startUnlockedExtraExam: 'Starta upplåst extra prov',
     submitAccessibilityLabel: 'Skicka övningsprov',
@@ -158,11 +128,13 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     accessStatus: {
       ads_unavailable: 'Extra mock exams are unavailable right now.',
       access_read_failed: 'Stored mock exam access could not be read. Retry before starting.',
-      consent_required: 'Ad consent is needed before an extra exam can be unlocked.',
+      consent_required:
+        'Ad consent is handled outside exam mode before extra exams can be unlocked.',
       free_exam_available: 'Daily free mock exam available.',
       premium_unlimited_mock_exams: 'Unlimited mock exams active.',
       remove_ads_active: 'Daily free mock exam used. Rewarded ads are hidden.',
-      rewarded_ad_available: 'Daily free mock exam used. Extra exam available.',
+      rewarded_ad_available:
+        'Daily free mock exam used. Extra exams are unlocked outside exam mode.',
       rewarded_exam_credit: 'Extra mock exam unlocked.',
     },
     accessTitle: 'Exam access',
@@ -186,28 +158,15 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
-    rewardPreviewBody:
-      'Complete the short preview before unlocking an extra mock exam. This is not a real exam and does not provide any official advantage.',
-    rewardPreviewButton: 'Complete sponsor preview',
-    rewardPreviewTitle: 'Sponsored preview',
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
     reviewBadge: 'Review',
-    rewardedAdStatus: {
-      closed_without_reward: 'Extra mock exam unlock needs a completed rewarded ad.',
-      earned_reward: 'Extra mock exam unlocked.',
-      failed_to_load: 'Rewarded ad could not load right now.',
-      show_failed: 'Rewarded ad could not be shown right now.',
-      timed_out: 'Rewarded ad timed out before the extra exam unlocked.',
-      unavailable: 'Rewarded ad is unavailable on this device right now.',
-    },
     savedBadge: 'Saved',
     savingBadge: 'Saving',
     savingCompletion: "Saving today's mock exam completion.",
     selectedAnswerLabel: 'Selected answer',
     retryAccess: 'Retry mock exam access check',
-    startExtraExam: 'Unlock extra exam',
     startMockExam: 'Start mock exam',
     startUnlockedExtraExam: 'Start unlocked extra exam',
     submitAccessibilityLabel: 'Submit mock exam',
@@ -221,10 +180,6 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
 
 function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage): string {
   return examRouteCopy[language].accessStatus[reason];
-}
-
-function getRewardedAdStatusText(status: RewardedExtraExamAdStatus, language: AppLanguage): string {
-  return examRouteCopy[language].rewardedAdStatus[status];
 }
 
 export default function Screen() {
@@ -250,7 +205,6 @@ export default function Screen() {
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [focusedReviewQuestionId, setFocusedReviewQuestionId] = useState<string | null>(null);
-  const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
@@ -262,9 +216,7 @@ export default function Screen() {
     accessDecision,
     accessReady,
     consumeRewardedExamCredit,
-    entitlements,
     entitlementsReady,
-    grantRewardedExamCredit,
     recordExamCompletion,
     refreshAccess,
   } = useMockExamAccess();
@@ -293,16 +245,6 @@ export default function Screen() {
       setSubmitted(true);
     }
   }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
-
-  useEffect(() => {
-    if (examUnlocked || submitted || accessLoading) return;
-    if (accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit') {
-      const now = Date.now();
-      examStartedAtIsoRef.current = new Date(now).toISOString();
-      timingCheckpointMsRef.current = now;
-      setExamUnlocked(true);
-    }
-  }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
   const resultCorrectCount = result?.correctCount ?? 0;
@@ -345,49 +287,17 @@ export default function Screen() {
         : null,
     [questionChapterIndex, submittedExamSession],
   );
-  const shouldAttemptRewardedAd =
-    accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
-  const usesWebRewardPreview = Platform.OS === 'web' && shouldAttemptRewardedAd;
   const shouldRetryAccessRead = accessDecision.reason === 'access_read_failed';
   const startAccessibleExamLabel = shouldRetryAccessRead
     ? copy.retryAccess
-    : shouldAttemptRewardedAd
-      ? copy.startExtraExam
-      : accessDecision.reason === 'rewarded_exam_credit'
-        ? copy.startUnlockedExtraExam
-        : copy.startMockExam;
+    : accessDecision.reason === 'rewarded_exam_credit'
+      ? copy.startUnlockedExtraExam
+      : copy.startMockExam;
   const canStartAccessibleExam =
-    !accessLoading &&
-    (!usesWebRewardPreview || rewardPreviewCompleted) &&
-    (shouldRetryAccessRead ||
-      accessDecision.canStartExam ||
-      shouldAttemptRewardedAd ||
-      accessDecision.reason === 'rewarded_exam_credit');
+    !accessLoading && (shouldRetryAccessRead || accessDecision.canStartExam);
   const accessStatusText = accessLoading
     ? copy.checkingAccess
     : getAccessStatusText(accessDecision.reason, language);
-  const rewardPreviewPanel = usesWebRewardPreview ? (
-    <View style={styles.rewardPreviewCard}>
-      <Text accessibilityRole="header" style={styles.rewardPreviewTitle}>
-        {copy.rewardPreviewTitle}
-      </Text>
-      <Text style={styles.subtitle}>{copy.rewardPreviewBody}</Text>
-      <Button
-        accessibilityLabel={copy.rewardPreviewButton}
-        accessibilityRole="button"
-        accessibilityState={{ selected: rewardPreviewCompleted }}
-        disabled={rewardPreviewCompleted}
-        onPress={() => {
-          setRewardPreviewCompleted(true);
-          setAccessStatusMessage(null);
-        }}
-        style={styles.actionButton}
-        variant="secondary"
-      >
-        {copy.rewardPreviewButton}
-      </Button>
-    </View>
-  ) : null;
 
   const resetExamAttempt = useCallback(() => {
     const now = Date.now();
@@ -400,7 +310,6 @@ export default function Screen() {
     setSubmittedAt(null);
     setCompletionRecorded(false);
     setFocusedReviewQuestionId(null);
-    setRewardPreviewCompleted(false);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
@@ -453,21 +362,6 @@ export default function Screen() {
 
       if (accessDecision.reason === 'rewarded_exam_credit') {
         await consumeRewardedExamCredit();
-      } else if (shouldAttemptRewardedAd) {
-        const rewardedAdResult = await showRewardedExtraExamAd({
-          confirmReward: Platform.OS === 'web' ? () => rewardPreviewCompleted : undefined,
-          entitlements,
-          webConsentDecision: Platform.OS === 'web' ? WEB_AD_FALLBACK_CONSENT_DECISION : undefined,
-        });
-
-        if (rewardedAdResult.status !== 'earned_reward') {
-          setAccessStatusMessage(getRewardedAdStatusText(rewardedAdResult.status, language));
-          return;
-        }
-
-        await grantRewardedExamCredit();
-        await consumeRewardedExamCredit();
-        setRewardPreviewCompleted(false);
       } else if (!accessDecision.canStartExam) {
         setAccessStatusMessage(copy.extraExamUnavailable);
         return;
@@ -486,13 +380,8 @@ export default function Screen() {
     consumeRewardedExamCredit,
     copy.extraExamUnavailable,
     copy.unlockFailure,
-    entitlements,
-    grantRewardedExamCredit,
-    language,
     refreshAccess,
     resetExamAttempt,
-    rewardPreviewCompleted,
-    shouldAttemptRewardedAd,
     shouldRetryAccessRead,
     startingAccessibleExam,
   ]);
@@ -562,7 +451,6 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
-          {rewardPreviewPanel}
           <Button
             aria-disabled={!canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
@@ -620,7 +508,6 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
-          {rewardPreviewPanel}
           <Button
             aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
@@ -836,19 +723,6 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     gap: space[1.25],
     padding: space[2],
-  },
-  rewardPreviewCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1],
-    padding: space[1.5],
-  },
-  rewardPreviewTitle: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
   },
   statusText: {
     color: colors.warning,
