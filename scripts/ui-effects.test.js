@@ -1509,6 +1509,24 @@ test('home screen surfaces focused review copy and review action', () => {
   assert.match(source, /href="\/mistakes"/);
 });
 
+test('home screen surfaces a localized resume card from persisted progress', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /resumeWhereLeftOff/);
+  assert.match(source, /resumeBannerCopy/);
+  assert.match(source, /buildResumeProgress\(questionProgress\)/);
+  assert.match(source, /Senaste övning/);
+  assert.match(source, /Recent practice/);
+  assert.match(source, /Fortsätt \${chapterTitle}/);
+  assert.match(source, /Resume \${chapterTitle}/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
+  assert.match(source, /\{resumeCopy\.title\}/);
+  assert.match(source, /accessibilityLabel=\{resumeAccessibilityLabel\}/);
+  assert.match(source, /href=\{`\/chapter\/\$\{resumeChapter\.id\}`\}/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('home screen surfaces a guided civic readiness path', () => {
   const source = read('app/(tabs)/home.tsx');
   const componentSource = read('components/learning/GuidedPracticePath.tsx');
@@ -1565,9 +1583,11 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
   assert.match(source, /Smarta studievanor/);
+  assert.match(source, /Fortsätt där du slutade i \${chapterTitle}\. \${subtitle}/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
   assert.match(source, /Smart study habits/);
+  assert.match(source, /Continue where you left off in \${chapterTitle}\. \${subtitle}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1577,11 +1597,13 @@ test('home screen exposes dashboard card titles as headers', () => {
 
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /\{copy\.readinessTitle\}/);
+  assert.match(source, /\{resumeCopy\.title\}/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
-  assert.equal(headerMatches?.length, 3);
+  assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
