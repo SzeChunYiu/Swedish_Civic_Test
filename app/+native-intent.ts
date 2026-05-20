@@ -3,10 +3,12 @@ type RedirectSystemPathEvent = {
   path: string;
 };
 
-const APP_LINK_BASE = 'swedish-civic-test://app';
+const APP_LINK_BASE = 'almost-swedish://app';
 
 const staticRoutes = new Set([
   '/',
+  '/about-the-test',
+  '/dashboard',
   '/disclaimer',
   '/exam',
   '/home',
@@ -16,6 +18,7 @@ const staticRoutes = new Set([
   '/practice',
   '/privacy',
   '/profile',
+  '/search',
   '/settings',
   '/sources',
   '/support',

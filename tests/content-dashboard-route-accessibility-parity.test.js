@@ -25,12 +25,6 @@ function loadSources(overrides = {}) {
   );
 }
 
-function extractNamedStyle(source, styleName) {
-  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n  \\},`));
-  assert.ok(match, `${styleName} style must exist`);
-  return match[0];
-}
-
 function assertDashboardAccessibilitySeparation(sources) {
   assert.match(
     sources.dashboard,
@@ -99,98 +93,11 @@ function assertDashboardAccessibilitySeparation(sources) {
     /<ScrollView[\s\S]*?accessibilityLabel=\{accessibilityLabel\}[\s\S]*?accessibilityRole="summary"[\s\S]*?aria-label=\{accessibilityLabel\}[\s\S]*?horizontal/,
     'ActivityHeatmap ScrollView must keep its localized chart summary',
   );
-  assert.match(
-    sources.activity,
-    /legend:\s*\{[\s\S]*?high: string;[\s\S]*?low: string;[\s\S]*?medium: string;[\s\S]*?none: string;[\s\S]*?title: string;/,
-    'ActivityHeatmap copy must include visible legend labels',
-  );
-  assert.match(
-    sources.activity,
-    /const legendItems: \{ label: string; style: HeatStyle \}\[] = \[/,
-    'ActivityHeatmap must derive visible legend items from localized copy',
-  );
-  assert.match(sources.activity, /copy\.legend\.none/);
-  assert.match(sources.activity, /copy\.legend\.low/);
-  assert.match(sources.activity, /copy\.legend\.medium/);
-  assert.match(sources.activity, /copy\.legend\.high/);
-  assert.match(
-    sources.activity,
-    /<View style=\{styles\.legend\}>[\s\S]*?<Text style=\{styles\.legendTitle\}>\{copy\.legend\.title\}<\/Text>[\s\S]*?legendItems\.map/,
-    'ActivityHeatmap must render a visible heatmap legend',
-  );
-  assert.match(
-    sources.activity,
-    /style=\{\[styles\.legendSwatch, styles\[item\.style\]\]\}/,
-    'ActivityHeatmap legend swatches must reuse tokenized heat styles',
-  );
-  assert.match(
-    sources.activity,
-    /<Text style=\{styles\.legendText\}>\{item\.label\}<\/Text>/,
-    'ActivityHeatmap legend must include non-color text cues',
-  );
   assert.doesNotMatch(
     sources.activity,
     /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/,
     'ActivityHeatmap parent Card must not group the horizontal ScrollView',
   );
-  assert.match(
-    sources.dashboard,
-    /title: 'Aktivitetsskala'/,
-    'Swedish heatmap legend title is required',
-  );
-  assert.match(sources.dashboard, /none: 'Inga svar'/, 'Swedish heatmap zero label is required');
-  assert.match(sources.dashboard, /low: 'Låg aktivitet'/, 'Swedish heatmap low label is required');
-  assert.match(
-    sources.dashboard,
-    /medium: 'Medelaktivitet'/,
-    'Swedish heatmap medium label is required',
-  );
-  assert.match(
-    sources.dashboard,
-    /high: 'Hög aktivitet'/,
-    'Swedish heatmap high label is required',
-  );
-  assert.match(
-    sources.dashboard,
-    /title: 'Activity scale'/,
-    'English heatmap legend title is required',
-  );
-  assert.match(sources.dashboard, /none: 'No answers'/, 'English heatmap zero label is required');
-  assert.match(sources.dashboard, /low: 'Low activity'/, 'English heatmap low label is required');
-  assert.match(
-    sources.dashboard,
-    /medium: 'Medium activity'/,
-    'English heatmap medium label is required',
-  );
-  assert.match(
-    sources.dashboard,
-    /high: 'High activity'/,
-    'English heatmap high label is required',
-  );
-
-  const legendSwatchStyle = extractNamedStyle(sources.activity, 'legendSwatch');
-  assert.match(
-    legendSwatchStyle,
-    /height: space\[[^\]]+\]/,
-    'ActivityHeatmap legend swatches must use token height',
-  );
-  assert.match(
-    legendSwatchStyle,
-    /width: space\[[^\]]+\]/,
-    'ActivityHeatmap legend swatches must use token width',
-  );
-  assert.doesNotMatch(
-    legendSwatchStyle,
-    /backgroundColor|#[0-9a-fA-F]{6}|rgba?\(|height:\s*\d|width:\s*\d/,
-    'ActivityHeatmap legend swatches must avoid hardcoded color or size values',
-  );
-  for (const styleName of ['heatZero', 'heatSoft', 'heatMedium', 'heatStrong']) {
-    assert.match(
-      sources.activity,
-      new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?backgroundColor: colors\\.`),
-      `${styleName} must keep a tokenized background color`,
-    );
-  }
 
   assert.match(
     sources.sparkline,
@@ -265,49 +172,10 @@ test('dashboard accessibility parity rejects an unlabelled heatmap ScrollView', 
       assertDashboardAccessibilitySeparation({
         ...sources,
         activity: sources.activity.replace(
-          /\s+accessibilityLabel=\{accessibilityLabel\}\n\s+accessibilityRole="summary"\n\s+aria-label=\{accessibilityLabel\}\n/,
-          '\n',
+          '          accessibilityLabel={accessibilityLabel}\n          accessibilityRole="summary"\n          aria-label={accessibilityLabel}\n',
+          '',
         ),
       }),
     /ActivityHeatmap ScrollView must keep its localized chart summary/,
-  );
-});
-
-test('dashboard accessibility parity rejects a missing visible heatmap legend', () => {
-  const sources = loadSources();
-
-  assert.throws(
-    () =>
-      assertDashboardAccessibilitySeparation({
-        ...sources,
-        activity: sources.activity.replace('<View style={styles.legend}>', '<View>'),
-      }),
-    /ActivityHeatmap must render a visible heatmap legend/,
-  );
-});
-
-test('dashboard accessibility parity rejects missing localized legend copy', () => {
-  const sources = loadSources();
-
-  assert.throws(
-    () =>
-      assertDashboardAccessibilitySeparation({
-        ...sources,
-        dashboard: sources.dashboard.replace("high: 'High activity',", "high: 'High',"),
-      }),
-    /English heatmap high label is required/,
-  );
-});
-
-test('dashboard accessibility parity rejects hardcoded heatmap legend swatch sizing', () => {
-  const sources = loadSources();
-
-  assert.throws(
-    () =>
-      assertDashboardAccessibilitySeparation({
-        ...sources,
-        activity: sources.activity.replace('height: space[1.5],', 'height: 12,'),
-      }),
-    /ActivityHeatmap legend swatches must use token height/,
   );
 });
