@@ -85,6 +85,32 @@ test('provenance badge source note can be opened and dismissed accessibly', () =
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('language picker modal uses a hidden backdrop and explicit close control', () => {
+  const source = read('components/ui/LanguagePicker.tsx');
+
+  assert.match(source, /closeButtonLabel: 'Stäng'/);
+  assert.match(source, /closeButtonLabel: 'Close'/);
+  assert.match(
+    source,
+    /<Pressable\s+accessible=\{false\}\s+hitSlop=\{space\[1\]\}\s+importantForAccessibility="no"[\s\S]*?style=\{\(\{ pressed \}\) => \[styles\.backdrop,/,
+  );
+  assert.match(source, /<View style=\{styles\.header\}>/);
+  assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /style=\{\(\{ pressed \}\) => \[[\s\S]*styles\.closeButton,/);
+  assert.match(source, /<Text style=\{styles\.closeText\}>\{copy\.closeButtonLabel\}<\/Text>/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(
+    source,
+    /closeButtonPressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
+  );
+  assert.doesNotMatch(
+    source,
+    /<Pressable\s+accessibilityLabel=\{copy\.closeLabel\}\s+accessibilityRole="button"\s+hitSlop=\{space\[1\]\}\s+onPress=\{\(\) => setOpen\(false\)\}\s+style=\{\(\{ pressed \}\) => \[styles\.backdrop,/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('button derives an accessibility label from plain text children by default', () => {
   const source = read('components/ui/Button.tsx');
 

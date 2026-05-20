@@ -9,6 +9,7 @@ import { GlobeIcon } from './icons/GlobeIcon';
 type LanguagePickerCopy = {
   triggerLabel: (currentLabel: string) => string;
   closeLabel: string;
+  closeButtonLabel: string;
   menuLabel: string;
   title: string;
   subtitle: string;
@@ -20,6 +21,7 @@ const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
   sv: {
     triggerLabel: (currentLabel) => `Nuvarande språk ${currentLabel}. Öppna språkväljaren.`,
     closeLabel: 'Stäng språkväljaren',
+    closeButtonLabel: 'Stäng',
     menuLabel: 'Språkväljare',
     title: 'Välj språk',
     subtitle:
@@ -30,6 +32,7 @@ const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
   en: {
     triggerLabel: (currentLabel) => `Current language ${currentLabel}. Open language picker.`,
     closeLabel: 'Close language picker',
+    closeButtonLabel: 'Close',
     menuLabel: 'Language picker',
     title: 'Choose language',
     subtitle:
@@ -80,9 +83,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
 
       <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
         <Pressable
-          accessibilityLabel={copy.closeLabel}
-          accessibilityRole="button"
+          accessible={false}
           hitSlop={space[1]}
+          importantForAccessibility="no"
           onPress={() => setOpen(false)}
           style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
         >
@@ -93,7 +96,21 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
             onPress={(e) => e.stopPropagation()}
             style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
           >
-            <Text style={styles.title}>{copy.title}</Text>
+            <View style={styles.header}>
+              <Text style={styles.title}>{copy.title}</Text>
+              <Pressable
+                accessibilityLabel={copy.closeLabel}
+                accessibilityRole="button"
+                hitSlop={space[1]}
+                onPress={() => setOpen(false)}
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  pressed ? styles.closeButtonPressed : null,
+                ]}
+              >
+                <Text style={styles.closeText}>{copy.closeButtonLabel}</Text>
+              </Pressable>
+            </View>
             <Text style={styles.subtitle}>{copy.subtitle}</Text>
             <ScrollView style={styles.list}>
               {locales.map((opt) => {
@@ -187,11 +204,37 @@ const styles = StyleSheet.create({
   cardPressed: {
     transform: [{ scale: motion.pressedScale }],
   },
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space[1],
+    justifyContent: 'space-between',
+  },
   title: {
+    flex: 1,
     color: colors.text,
     fontFamily: typography.subHeading.fontFamily,
     fontSize: typography.subHeading.fontSize,
     fontWeight: typography.subHeading.fontWeight,
+  },
+  closeButton: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
+    justifyContent: 'center',
+    minHeight: space[6],
+    paddingHorizontal: space[1.5],
+  },
+  closeButtonPressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  closeText: {
+    color: colors.text,
+    fontFamily: typography.badge.fontFamily,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
   },
   subtitle: {
     color: colors.textMuted,
