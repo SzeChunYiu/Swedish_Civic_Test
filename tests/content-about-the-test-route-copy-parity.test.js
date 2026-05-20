@@ -14,10 +14,14 @@ const officialSourceUrls = [
 ];
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-about-the-test-route-copy'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -27,10 +31,11 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
 
-  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 38);
+  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 40);
   assert.equal(summary.aboutTheTestRouteCopyParityValidated, true);
   assert.equal(summary.aboutTheTestOfficialSourceUrlsValidated, officialSourceUrls.length);
   assert.equal(summary.aboutTheTestOfficialSourceRetrievedDateValidated, '2026-05-19');
+  assert.equal(summary.citizenshipRequirementsLimitedSeatCopyValidated, 4);
   assert.match(source, /const officialTestSourceNotes = \[/);
   assert.match(source, /const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -39,6 +44,10 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.match(source, /15 August 2026 in Stockholm/);
   assert.match(source, /brev från Migrationsverket/);
   assert.match(source, /letter from Migrationsverket/);
+  assert.match(source, /Antalet platser är begränsat/);
+  assert.match(source, /när platserna är fyllda går det inte längre att anmäla sig/);
+  assert.match(source, /Seats are limited/);
+  assert.match(source, /when the seats are filled, registration closes/);
   assert.match(source, /kostnadsfritt och ges som ett utprövningsprov med generös tid/);
   assert.match(source, /free of charge and is a trial sitting with generous time/);
   assert.match(
@@ -73,6 +82,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-about-the-test-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -109,6 +119,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-about-the-test-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -140,6 +151,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-about-the-test-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -154,5 +166,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /about-the-test route official source metadata must use retrievedDate 2026-05-19 for every source/,
+  );
+});
+
+test('about-the-test route copy parity rejects missing limited-seat warning', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Antalet platser är begränsat', 'Platser kan finnas')
+      .replace('Seats are limited', 'Seats may be available');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-about-the-test-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route must surface the limited-seat registration warning/,
   );
 });
