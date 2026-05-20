@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { seedFreshFirstRunSettingsLanguage } from './browserLaunch';
+
 test('launch sponsor modal exposes one named dialog on web', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -127,6 +129,43 @@ test('first-run about modal exposes only real guide actions on web', async ({ pa
   await page.keyboard.press('Escape');
   await expect(dialogs).toHaveCount(0);
   await expect(searchLink).toBeFocused();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('first-run about modal exposes English guide actions on web', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshFirstRunSettingsLanguage(page, 'en');
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+
+  const dialogs = page.locator('[role="dialog"][aria-modal="true"]');
+  const guideLink = page.getByRole('link', { name: 'Open the about-the-test guide' });
+  const skipGuideButtons = page.getByRole('button', { name: 'Skip the guide' });
+
+  await expect(dialogs).toHaveCount(1);
+  await expect(dialogs.first()).toHaveAttribute('aria-label', 'What is the citizenship test?');
+  await expect(page.getByRole('heading', { name: 'What is the citizenship test?' })).toBeVisible();
+  await expect(guideLink).toHaveCount(1);
+  await expect(guideLink).toBeFocused();
+  await expect(page.getByText('Read the guide')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Läs guiden om medborgarskapsprovet' })).toHaveCount(
+    0,
+  );
+
+  await expect(skipGuideButtons).toHaveCount(1);
+  const skipGuideBox = await skipGuideButtons.first().boundingBox();
+  expect(skipGuideBox).not.toBeNull();
+  expect(skipGuideBox?.width).toBeGreaterThanOrEqual(44);
+  expect(skipGuideBox?.height).toBeGreaterThanOrEqual(44);
+
+  await page.mouse.click(8, 8);
+  await expect(dialogs).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
