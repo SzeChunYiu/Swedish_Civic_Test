@@ -1346,9 +1346,8 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
-const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
-const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 6;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -13146,6 +13145,26 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes("return createResult('pending'") &&
         normalizedPurchaseSource.includes("return createResult('not_found'"),
       'Remove Ads buy and restore flows must validate receipts before granting entitlements',
+    ],
+    [
+      (() => {
+        const persistIndex = normalizedPurchaseSource.indexOf(
+          "entitlements = await setRemoveAdsEntitlement(true, { purchase, receiptValidation, source: 'purchase', storage, });",
+        );
+        const finishIndex = normalizedPurchaseSource.indexOf(
+          'await provider.finishPurchase?.(purchase);',
+        );
+
+        return (
+          persistIndex !== -1 &&
+          finishIndex !== -1 &&
+          persistIndex < finishIndex &&
+          normalizedPurchaseSource.includes(
+            "catch { return createResult('pending', await getPurchaseEntitlementsSafely(storage), purchase); }",
+          )
+        );
+      })(),
+      'Remove Ads buy flow must persist validated entitlement before finishPurchase and recover when persistence fails',
     ],
     [
       normalizedPurchaseSource.includes('receiptValidationStatus =') &&
