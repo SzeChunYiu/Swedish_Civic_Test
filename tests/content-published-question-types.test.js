@@ -99,6 +99,60 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.publishedQuestionTypesValidated, summary.publishedQuestions);
 });
 
+test('criminal-responsibility age copy is date-stamped to the current main-rule boundary', () => {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.criminalResponsibilityCurrentnessOfficialSourcesValidated, 3);
+  assert.equal(summary.criminalResponsibilityCurrentnessSourceMetadataValidated, true);
+  assert.equal(summary.criminalResponsibilityCurrentnessSourceRetrievedAt, '2026-05-20');
+  assert.equal(summary.criminalResponsibilityCurrentnessProposalEffectiveDate, '2026-08-02');
+  assert.equal(summary.criminalResponsibilityCurrentnessQuestionsValidated, 5);
+  assert.equal(summary.criminalResponsibilityCurrentnessParityValidated, true);
+});
+
+test('criminal-responsibility age copy rejects undated 13-year proposal wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet.',
+        'Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller.',
+      )
+      .replace(
+        'Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.',
+        'The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q044 criminal-responsibility age currentness uses stale proposal wording/,
+  );
+});
+
 test('mutation fixtures derive generated question ids from source ids', () => {
   const scannedFiles = contentMutationFixtureFiles();
 
