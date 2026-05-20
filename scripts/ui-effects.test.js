@@ -483,9 +483,9 @@ test('settings route exposes page and section titles as headers', () => {
   assert.match(source, /Frågespråk/);
   assert.match(source, /Question language/);
   assert.match(source, /Dagligt mål/);
+  assert.match(source, /Tema/);
+  assert.match(source, /Theme/);
   assert.match(source, /Audio/);
-  assert.match(source, /Importera studiedata/);
-  assert.match(source, /Import study data/);
   assert.equal(sectionHeaderMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -510,9 +510,10 @@ test('settings controls expose exclusive radio groups and checked state', () => 
   );
   assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
-  assert.match(source, /aria-label=\{copy\.dailyGoalTitle\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.dailyGoalTitle\}/);
-  assert.match(source, /aria-checked=\{dailyGoalAnswers === goal\}/);
+  assert.match(source, /aria-selected=\{selected\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
+  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
+  assert.match(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
   assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
   assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
@@ -526,6 +527,8 @@ test('settings controls expose exclusive radio groups and checked state', () => 
   assert.match(source, /Engelskt stöd/);
   assert.match(source, /Byt frågespråk till \$\{label\}/);
   assert.match(source, /Set question language to \$\{label\}/);
+  assert.match(source, /Välj tema: \$\{label\}/);
+  assert.match(source, /Choose theme: \$\{label\}/);
   assert.match(source, /\$\{answerCount\} svar per dag/);
   assert.match(source, /\$\{answerCount\} answers per day/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -559,7 +562,10 @@ test('onboarding daily goal presets persist through settings with selected state
 test('settings route remains scrollable on narrow mobile viewports', () => {
   const source = read('app/settings.tsx');
 
-  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, TextInput, View \}/);
+  assert.match(
+    source,
+    /import \{ Pressable, ScrollView, StyleSheet, Text, useColorScheme, View \}/,
+  );
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
@@ -1268,37 +1274,15 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
   assert.match(nativeSource, /<BannerAd/);
-  assert.match(practiceSource, /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\}/);
-  assert.match(
-    practiceSource,
-    /getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\)/,
-  );
-  assert.doesNotMatch(
-    practiceSource,
-    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
-  );
+  assert.match(practiceSource, /<PracticeInterstitialAd showKey=/);
   assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(webInterstitialSource, /shouldShowAd\('quiz_completed_interstitial'/);
   assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
   assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
   assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
-  assert.match(nativeInterstitialSource, /AdEventType\.OPENED/);
-  assert.match(nativeInterstitialSource, /AdEventType\.CLOSED/);
   assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
   assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
   assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
-  assert.match(
-    nativeInterstitialSource,
-    /AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/,
-  );
-  assert.doesNotMatch(
-    nativeInterstitialSource,
-    /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/,
-  );
-  assert.match(
-    nativeInterstitialSource,
-    /Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/,
-  );
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);

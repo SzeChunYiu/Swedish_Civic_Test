@@ -49,6 +49,14 @@ test('AUDIO_PLAYBACK_RATES: contains 0.5, 0.75, 1.0, 1.25', () => {
   }
 });
 
+test('THEME_MODE_VALUES: contains system, light, dark', () => {
+  const source = loadSource('lib/storage/accessibilityStore.ts');
+  assert.match(source, /THEME_MODE_VALUES/);
+  for (const mode of ['system', 'light', 'dark']) {
+    assert.ok(source.includes(`'${mode}'`), `accessibilityStore should declare theme mode ${mode}`);
+  }
+});
+
 test('accessibilityStore: invariant — no Pro-gate references in source', () => {
   const source = loadSource('lib/storage/accessibilityStore.ts');
   assert.ok(
@@ -98,6 +106,62 @@ test('accessibilityStore: successful writes persist values and clear warning', (
   assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 1.25);
   assert.equal(useAccessibilityStore.getState().persistenceWarning, null);
   assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 1.25);
+
+  useAccessibilityStore.getState().setThemeMode('dark');
+  assert.equal(useAccessibilityStore.getState().themeMode, 'dark');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning, null);
+  assert.equal(storage.values.get('a11y.themeMode.v1'), 'dark');
+});
+
+test('accessibilityStore: persisted theme mode hydrates and invalid values fall back to system', () => {
+  const darkStorage = createMemoryMMKV({ 'a11y.themeMode.v1': 'dark' });
+  const darkModule = loadTsWithStorage(repoRoot, 'lib/storage/accessibilityStore.ts', {
+    accessibility: darkStorage,
+  });
+  assert.equal(darkModule.useAccessibilityStore.getState().themeMode, 'dark');
+
+  const invalidStorage = createMemoryMMKV({ 'a11y.themeMode.v1': 'sepia' });
+  const invalidModule = loadTsWithStorage(repoRoot, 'lib/storage/accessibilityStore.ts', {
+    accessibility: invalidStorage,
+  });
+  assert.equal(invalidModule.useAccessibilityStore.getState().themeMode, 'system');
+});
+
+test('accessibilityStore: theme mode read failures fall back to system', () => {
+  const storage = {
+    getBoolean() {
+      return undefined;
+    },
+    getNumber() {
+      return undefined;
+    },
+    getString() {
+      throw new Error('theme read failed');
+    },
+    set() {},
+  };
+  const { useAccessibilityStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/accessibilityStore.ts',
+    {
+      accessibility: storage,
+    },
+  );
+
+  assert.equal(useAccessibilityStore.getState().themeMode, 'system');
+});
+
+test('RootLayout applies persisted theme mode to system chrome before screens render', () => {
+  const source = loadSource('app/_layout.tsx');
+  assert.match(source, /useColorScheme/);
+  assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
+  assert.match(source, /const themeColors = colorsForThemeMode\(themeMode, systemColorScheme\);/);
+  assert.match(source, /useSystemCanvasColor\(themeColors\.canvas\);/);
+  assert.match(source, /headerStyle: \{ backgroundColor: themeColors\.canvas \}/);
+  assert.match(
+    source,
+    /<StatusBar style=\{resolvedColorScheme === 'dark' \? 'light' : 'dark'\} \/>/,
+  );
 });
 
 test('speak.ts: speakSwedish accepts a rate option', () => {
@@ -119,4 +183,5 @@ test('settingsStore.ts: v1.0 pinned shape preserved (no a11y fields added there)
   assert.ok(!source.includes('easyReadFont'), 'a11y fields must NOT be in settingsStore');
   assert.ok(!source.includes('fontSizeStep'), 'a11y fields must NOT be in settingsStore');
   assert.ok(!source.includes('audioPlaybackRate'), 'a11y fields must NOT be in settingsStore');
+  assert.ok(!source.includes('themeMode'), 'a11y fields must NOT be in settingsStore');
 });

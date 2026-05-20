@@ -1,4 +1,12 @@
-export { colors } from './colors';
+export {
+  colors,
+  colorsForThemeMode,
+  darkColors,
+  lightColors,
+  resolveThemePreference,
+} from './colors';
+export type { ResolvedColorScheme, ThemeColors, ThemePreference } from './colors';
+export { flagColors, SWEDISH_FLAG_BLUE, SWEDISH_FLAG_GOLD } from './flag';
 export { motion } from './motion';
 export { radius } from './radius';
 export { shadows } from './shadows';

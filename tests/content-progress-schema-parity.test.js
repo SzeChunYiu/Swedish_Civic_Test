@@ -39,12 +39,14 @@ function resolveLocalTs(parentFilename, request) {
   );
 }
 
-function loadProgressHarness(progress) {
+function loadProgressStoreFromProgressStorage(
+  progressStorage,
+  readPersistedProgress = () => undefined,
+) {
   const progressStorePath = path.join(repoRoot, 'lib/storage/progressStore.ts');
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
   const originalTsExtension = require.extensions['.ts'];
-  const writes = [];
 
   Module._resolveFilename = function patchedResolve(request, parent, ...args) {
     if (request === 'react-native-mmkv' || request === 'zustand') return `__stub__:${request}`;
@@ -57,12 +59,7 @@ function loadProgressHarness(progress) {
   Module._load = function patchedLoad(request, parent, isMain) {
     if (request === 'react-native-mmkv') {
       return {
-        createMMKV: () => ({
-          getString: (key) => (key === 'progressState' ? JSON.stringify(progress) : undefined),
-          set: (key, value) => {
-            writes.push({ key, value, progress: JSON.parse(value) });
-          },
-        }),
+        createMMKV: () => progressStorage,
       };
     }
 
@@ -100,8 +97,12 @@ function loadProgressHarness(progress) {
       if (cacheKey.startsWith(path.join(repoRoot, 'lib/storage'))) delete require.cache[cacheKey];
       if (cacheKey.startsWith(path.join(repoRoot, 'lib/learning'))) delete require.cache[cacheKey];
     }
-    const { useProgressStore } = require(progressStorePath);
-    return { store: useProgressStore, writes };
+    const { importProgressSnapshot, useProgressStore } = require(progressStorePath);
+    return {
+      importProgressSnapshot,
+      useProgressStore,
+      readPersistedProgress,
+    };
   } finally {
     for (const cacheKey of Object.keys(require.cache)) {
       if (cacheKey.startsWith(path.join(repoRoot, 'lib/storage'))) delete require.cache[cacheKey];
@@ -117,33 +118,41 @@ function loadProgressHarness(progress) {
   }
 }
 
-function loadProgressFromStorage(progress) {
-  return loadProgressHarness(progress).store.getState();
+function loadProgressStoreFromStorage(progress) {
+  let persistedProgressJson = JSON.stringify(progress);
+
+  return loadProgressStoreFromProgressStorage(
+    {
+      getString: (key) => (key === 'progressState' ? persistedProgressJson : undefined),
+      set: (key, value) => {
+        if (key === 'progressState') persistedProgressJson = String(value);
+      },
+    },
+    () => JSON.parse(persistedProgressJson),
+  );
 }
 
-function persistedProgressFromStore(store) {
-  const state = store.getState();
+function loadProgressFromProgressStorage(progressStorage) {
+  return loadProgressStoreFromProgressStorage(progressStorage).useProgressStore.getState();
+}
+
+function loadProgressFromStorage(progress) {
+  return loadProgressFromProgressStorage({
+    getString: (key) => (key === 'progressState' ? JSON.stringify(progress) : undefined),
+    set: () => {},
+  });
+}
+
+function progressSnapshot(state) {
   return {
     completedQuestionIds: state.completedQuestionIds,
     questionProgress: state.questionProgress,
+    answerAttempts: state.answerAttempts,
     totalXp: state.totalXp,
     answerDates: state.answerDates,
     mockExamSessions: state.mockExamSessions,
     streakFreezeState: state.streakFreezeState,
   };
-}
-
-function assertLatestWriteMatchesStore(store, writes) {
-  assert.ok(writes.length > 0, 'mutation should persist progress');
-  assert.equal(writes[writes.length - 1].key, 'progressState');
-  const persisted = writes[writes.length - 1].progress;
-  assert.deepEqual(JSON.parse(JSON.stringify(persistedProgressFromStore(store))), persisted);
-  assert.doesNotMatch(
-    JSON.stringify(persisted),
-    /\b(?:null|Infinity|NaN)\b/,
-    'persisted progress should not serialize unsafe numeric sentinels',
-  );
-  return persisted;
 }
 
 test('progress question schema stays in parity with persisted progress records', () => {
@@ -201,19 +210,21 @@ test('progress question schema stays in parity with persisted progress records',
   assert.doesNotMatch(progressStore, /Math\.max\(0, item\.seenCount \?\? 0\)/);
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
   assert.match(progressStore, /calculateAnswerXp, calculateQuizCompletionXp/);
-  assert.match(progressStore, /const existingSession = safeState\.mockExamSessions\.find/);
+  assert.match(progressStore, /const existingSession = state\.mockExamSessions\.find/);
   assert.match(progressStore, /const completionXp = existingSession/);
-  assert.match(progressStore, /totalXp: safeState\.totalXp \+ completionXp,/);
+  assert.match(progressStore, /totalXp: state\.totalXp \+ completionXp,/);
+  assert.match(progressStore, /if \(typeof isCorrect !== 'boolean'\) return state;/);
   assert.match(
     progressStore,
     /setStreakFreezeState: \(streakFreezeState: StreakFreezeState\) => void;/,
   );
   assert.match(
     progressStore,
-    /progressStorage\?\.set\(progressStateKey, JSON\.stringify\(normalizedProgress\)\);/,
+    /function writeProgress\(progress: PersistedProgress\): PersistedProgress/,
   );
-  assert.match(progressStore, /const normalizedProgress = normalizeProgress\(progress\);/);
-  assert.match(progressStore, /return normalizedProgress;/);
+  assert.match(progressStore, /const serializedProgress = JSON\.stringify\(progress\);/);
+  assert.match(progressStore, /progressStorage\?\.set\(progressStateKey, serializedProgress\);/);
+  assert.match(progressStore, /return normalizeProgress\(JSON\.parse\(serializedProgress\)\);/);
 });
 
 test('progress hydration normalizes unsafe persisted numeric fields', () => {
@@ -317,6 +328,9 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(Object.hasOwn(state.questionProgress.q001, 'bookmarked'), false);
   assert.equal(state.questionProgress.q002.bookmarked, true);
   assert.equal(state.questionProgress.q003.bookmarked, false);
+  assert.deepEqual(state.answerAttempts, [
+    { questionId: 'q001', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
+  ]);
   assert.equal(state.totalXp, 0);
   assert.deepEqual(state.answerDates, ['2026-05-19']);
   assert.equal(state.mockExamSessions.length, 2);
@@ -339,111 +353,219 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.deepEqual(state.streakFreezeState.rescuedDayKeys, ['2026-05-18']);
 });
 
-test('progress mutations normalize returned state and persisted writes', () => {
-  const { store, writes } = loadProgressHarness({
-    completedQuestionIds: ['q001'],
+test('progress mutations return the same shape as persisted JSON readback', () => {
+  const { useProgressStore, readPersistedProgress } = loadProgressStoreFromStorage({
+    completedQuestionIds: [],
     questionProgress: {
-      qDirty: {
-        questionId: 'qDirty',
-        seenCount: 2,
-        correctCount: 1,
-        wrongCount: 1,
-        correctStreak: 1,
+      q001: {
+        questionId: 'q001',
+        seenCount: 0,
+        correctCount: 0,
+        wrongCount: 0,
+        correctStreak: 0,
       },
     },
-    totalXp: 5,
+    totalXp: 0,
     answerDates: [],
     mockExamSessions: [],
     streakFreezeState: {
       available: 1,
-      lastEarnedAt: '2026-05-18',
+      lastEarnedAt: '2026-05-19',
       lifetimeEarned: 1,
       lifetimeSpent: 0,
       rescuedDayKeys: [],
     },
   });
 
-  const dirtyState = store.getState();
-  dirtyState.completedQuestionIds = ['q001', 7, 'q001'];
-  dirtyState.totalXp = Number.POSITIVE_INFINITY;
-  dirtyState.questionProgress.qDirty = {
-    questionId: 'qDirty',
-    seenCount: Number.POSITIVE_INFINITY,
-    correctCount: 4.5,
-    wrongCount: -2,
-    correctStreak: 999,
-  };
-  dirtyState.mockExamSessions = [
-    {
-      sessionId: 'dirty',
-      score: Number.NaN,
-      completedAt: '2026-05-19T10:00:00.000Z',
-      correctCount: Number.POSITIVE_INFINITY,
-      totalCount: 3.5,
-    },
-  ];
-  dirtyState.streakFreezeState = {
-    available: Number.POSITIVE_INFINITY,
-    lastEarnedAt: 7,
-    lifetimeEarned: 2.5,
-    lifetimeSpent: -1,
-    rescuedDayKeys: ['2026-05-18', 7, '2026-05-18'],
-  };
+  function assertReturnedStateMatchesReadback() {
+    assert.deepEqual(
+      progressSnapshot(useProgressStore.getState()),
+      progressSnapshot(loadProgressFromStorage(readPersistedProgress())),
+    );
+  }
 
-  store.getState().recordAnswer('qDirty', true);
-  let persisted = assertLatestWriteMatchesStore(store, writes);
-  assert.equal(persisted.totalXp, 12);
-  assert.equal(persisted.questionProgress.qDirty.seenCount, 1);
-  assert.equal(persisted.questionProgress.qDirty.correctCount, 1);
-  assert.equal(persisted.questionProgress.qDirty.wrongCount, 0);
-  assert.equal(persisted.questionProgress.qDirty.correctStreak, 1);
-  assert.equal(persisted.mockExamSessions[0].score, 0);
-  assert.equal(persisted.mockExamSessions[0].correctCount, 0);
-  assert.equal(persisted.mockExamSessions[0].totalCount, 0);
-  assert.equal(persisted.streakFreezeState.available, 1);
-  assert.equal(persisted.streakFreezeState.lifetimeEarned, 1);
-  assert.equal(persisted.streakFreezeState.lifetimeSpent, 0);
-  assert.deepEqual(persisted.streakFreezeState.rescuedDayKeys, ['2026-05-18']);
-
-  store.getState().recordMockExamSession({
-    sessionId: 'exam-unsafe',
-    score: 2,
-    completedAt: '2026-05-19T11:00:00.000Z',
-    correctCount: 9.5,
-    totalCount: Number.POSITIVE_INFINITY,
-  });
-  persisted = assertLatestWriteMatchesStore(store, writes);
-  const unsafeExam = persisted.mockExamSessions.find(
-    (session) => session.sessionId === 'exam-unsafe',
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'lastAnsweredAt'),
+    false,
   );
-  assert.equal(unsafeExam.score, 1);
-  assert.equal(unsafeExam.correctCount, 0);
-  assert.equal(unsafeExam.totalCount, 0);
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'nextReviewAt'),
+    false,
+  );
 
-  store.getState().setStreakFreezeState({
-    available: 3,
-    lastEarnedAt: '2026-05-04',
-    lifetimeEarned: 7,
-    lifetimeSpent: -1,
-    rescuedDayKeys: ['2026-05-01', 7, '2026-05-01'],
+  useProgressStore.getState().toggleBookmark('q001');
+  assertReturnedStateMatchesReadback();
+  assert.equal(useProgressStore.getState().questionProgress.q001.bookmarked, true);
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'lastAnsweredAt'),
+    false,
+  );
+  assert.equal(
+    Object.hasOwn(useProgressStore.getState().questionProgress.q001, 'nextReviewAt'),
+    false,
+  );
+
+  useProgressStore.getState().toggleBookmark('q001');
+  assertReturnedStateMatchesReadback();
+  assert.equal(useProgressStore.getState().questionProgress.q001.bookmarked, false);
+
+  useProgressStore.getState().recordAnswer('q001', true);
+  assertReturnedStateMatchesReadback();
+  const answeredProgress = useProgressStore.getState().questionProgress.q001;
+  assert.match(answeredProgress.lastAnsweredAt, /^\d{4}-\d{2}-\d{2}T/);
+  assert.match(answeredProgress.nextReviewAt, /^\d{4}-\d{2}-\d{2}T/);
+  assert.equal(answeredProgress.bookmarked, false);
+  assert.equal(useProgressStore.getState().answerAttempts.length, 1);
+  assert.equal(useProgressStore.getState().answerAttempts[0].questionId, 'q001');
+  assert.equal(useProgressStore.getState().answerAttempts[0].isCorrect, true);
+  assert.match(useProgressStore.getState().answerAttempts[0].answeredAt, /^\d{4}-\d{2}-\d{2}T/);
+
+  useProgressStore.getState().markQuestionCompleted('q002');
+  assertReturnedStateMatchesReadback();
+  assert.ok(useProgressStore.getState().completedQuestionIds.includes('q002'));
+
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'mock-1',
+    score: 0.8,
+    answers: [
+      { questionId: 'q001', isCorrect: true, timeSpentSeconds: 12 },
+      { questionId: 'q002', isCorrect: false, timeSpentSeconds: 0 },
+    ],
+    correctCount: 16,
+    totalCount: 20,
   });
-  persisted = assertLatestWriteMatchesStore(store, writes);
-  assert.deepEqual(persisted.streakFreezeState, {
-    available: 3,
-    lastEarnedAt: '2026-05-04',
-    lifetimeEarned: 7,
-    lifetimeSpent: 0,
-    rescuedDayKeys: ['2026-05-01'],
+  assertReturnedStateMatchesReadback();
+  assert.equal(useProgressStore.getState().mockExamSessions[0].sessionId, 'mock-1');
+  assert.deepEqual(useProgressStore.getState().mockExamSessions[0].answers, [
+    { questionId: 'q001', isCorrect: true, timeSpentSeconds: 12 },
+    { questionId: 'q002', isCorrect: false, timeSpentSeconds: 0 },
+  ]);
+
+  useProgressStore.getState().resetProgress();
+  assertReturnedStateMatchesReadback();
+  assert.deepEqual(useProgressStore.getState().completedQuestionIds, []);
+  assert.deepEqual(useProgressStore.getState().questionProgress, {});
+  assert.deepEqual(useProgressStore.getState().answerAttempts, []);
+});
+
+test('progress import snapshot merges normalized local study data without replacing current progress', () => {
+  const { importProgressSnapshot, readPersistedProgress, useProgressStore } =
+    loadProgressStoreFromStorage({
+      completedQuestionIds: ['q001'],
+      questionProgress: {
+        q001: {
+          questionId: 'q001',
+          seenCount: 1,
+          correctCount: 1,
+          wrongCount: 0,
+          correctStreak: 1,
+        },
+      },
+      totalXp: 20,
+      answerDates: ['2026-05-18'],
+      mockExamSessions: [],
+      streakFreezeState: {
+        available: 1,
+        lastEarnedAt: '2026-05-18',
+        lifetimeEarned: 1,
+        lifetimeSpent: 0,
+        rescuedDayKeys: ['2026-05-17'],
+      },
+    });
+
+  const persisted = importProgressSnapshot({
+    completedQuestionIds: ['q002'],
+    questionProgress: {
+      q001: {
+        questionId: 'ignored',
+        seenCount: 3,
+        correctCount: 2,
+        wrongCount: 1,
+        correctStreak: 2,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+        bookmarked: true,
+      },
+      q002: {
+        seenCount: 1,
+        correctCount: 0,
+        wrongCount: 1,
+        correctStreak: 0,
+      },
+    },
+    totalXp: 50,
+    answerDates: ['2026-05-19'],
+    mockExamSessions: [
+      {
+        sessionId: 'mock-imported',
+        score: 0.5,
+        completedAt: '2026-05-19T12:00:00.000Z',
+        correctCount: 1,
+        totalCount: 2,
+        answers: [
+          { questionId: 'q001', isCorrect: true, timeSpentSeconds: 5 },
+          { questionId: 'q002', isCorrect: false, timeSpentSeconds: 9 },
+        ],
+      },
+    ],
+    streakFreezeState: {
+      available: 2,
+      lastEarnedAt: '2026-05-19',
+      lifetimeEarned: 2,
+      lifetimeSpent: 1,
+      rescuedDayKeys: ['2026-05-17', '2026-05-19'],
+    },
   });
 
-  store.getState().toggleBookmark('qDirty');
-  persisted = assertLatestWriteMatchesStore(store, writes);
-  assert.equal(typeof persisted.questionProgress.qDirty.bookmarked, 'boolean');
+  assert.deepEqual(persisted.completedQuestionIds, ['q001', 'q002']);
+  assert.equal(persisted.questionProgress.q001.seenCount, 3);
+  assert.equal(persisted.questionProgress.q001.bookmarked, true);
+  assert.equal(persisted.questionProgress.q002.wrongCount, 1);
+  assert.equal(persisted.totalXp, 50);
+  assert.deepEqual(persisted.answerDates, ['2026-05-18', '2026-05-19']);
+  assert.equal(persisted.mockExamSessions[0].sessionId, 'mock-imported');
+  assert.equal(persisted.streakFreezeState.available, 2);
+  assert.deepEqual(persisted.streakFreezeState.rescuedDayKeys, ['2026-05-17', '2026-05-19']);
+  assert.deepEqual(progressSnapshot(useProgressStore.getState()), progressSnapshot(persisted));
+  assert.deepEqual(progressSnapshot(loadProgressFromStorage(readPersistedProgress())), persisted);
+});
 
-  store.getState().markQuestionCompleted('qNew');
-  persisted = assertLatestWriteMatchesStore(store, writes);
-  assert.ok(persisted.completedQuestionIds.includes('qNew'));
-  assert.ok(persisted.completedQuestionIds.every((id) => typeof id === 'string'));
+test('progress hydration falls back when MMKV reads throw', () => {
+  const state = loadProgressFromProgressStorage({
+    getString() {
+      throw new Error('progress read failed');
+    },
+    set() {},
+  });
+
+  assert.deepEqual(state.completedQuestionIds, []);
+  assert.deepEqual(state.questionProgress, {});
+  assert.deepEqual(state.answerAttempts, []);
+  assert.equal(state.totalXp, 0);
+  assert.deepEqual(state.answerDates, []);
+  assert.deepEqual(state.mockExamSessions, []);
+  assert.equal(state.streakFreezeState.available, 1);
+  assert.equal(state.streakFreezeState.lifetimeEarned, 1);
+  assert.equal(state.streakFreezeState.lifetimeSpent, 0);
+  assert.deepEqual(state.streakFreezeState.rescuedDayKeys, []);
+});
+
+test('progress hydration falls back when MMKV reads throw', () => {
+  const state = loadProgressFromProgressStorage({
+    getString() {
+      throw new Error('progress read failed');
+    },
+    set() {},
+  });
+
+  assert.deepEqual(state.completedQuestionIds, []);
+  assert.deepEqual(state.questionProgress, {});
+  assert.equal(state.totalXp, 0);
+  assert.deepEqual(state.answerDates, []);
+  assert.deepEqual(state.mockExamSessions, []);
+  assert.equal(state.streakFreezeState.available, 1);
+  assert.equal(state.streakFreezeState.lifetimeEarned, 1);
+  assert.equal(state.streakFreezeState.lifetimeSpent, 0);
+  assert.deepEqual(state.streakFreezeState.rescuedDayKeys, []);
 });
 
 test('progress type schema parity rejects session optionality drift', () => {
@@ -514,19 +636,6 @@ test('progress store schema parity rejects raw bookmark hydration', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /question progress hydration must preserve only boolean bookmark values/,
-  );
-});
-
-test('progress store schema parity rejects raw bookmark hydration', () => {
-  const result = runValidationWithProgressStorePatch(
-    "...(typeof item.bookmarked === 'boolean' ? { bookmarked: item.bookmarked } : {}),",
-    'bookmarked: item.bookmarked,',
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /progress hydration must not use raw bookmark expression bookmarked: item\.bookmarked/,
   );
 });
 

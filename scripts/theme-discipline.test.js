@@ -55,6 +55,27 @@ function readColorTokens() {
   return colors;
 }
 
+function readObjectColorTokens(exportName) {
+  const source = read('lib/theme/colors.ts');
+  const objectMatch = source.match(
+    new RegExp(`export const ${exportName} = \\{([\\s\\S]*?)\\} as const`),
+  );
+  assert.ok(objectMatch, `${exportName} must be exported as a token object`);
+
+  const colors = {};
+  for (const match of objectMatch[1].matchAll(/(\w+):\s*'([^']+)'/g)) {
+    colors[match[1]] = match[2];
+  }
+  return colors;
+}
+
+function readThemeColorPalettes() {
+  return [
+    { label: 'light', colors: readColorTokens() },
+    { label: 'dark', colors: readObjectColorTokens('darkColors') },
+  ];
+}
+
 function relativeLuminance(color) {
   const match = /^#([0-9a-fA-F]{6})$/.exec(color || '');
   assert.ok(match, `${color} must be a 6-digit hex token for contrast checks`);
@@ -96,21 +117,20 @@ test('app and component styles use theme tokens instead of literal colors, spaci
 });
 
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
-  const colors = readColorTokens();
-
-  for (const [foreground, background] of REQUIRED_CONTRAST_PAIRS) {
-    const ratio = contrastRatio(colors[foreground], colors[background]);
-    assert.ok(
-      ratio >= 4.5,
-      `${foreground} on ${background} contrast ${ratio.toFixed(2)}:1 is below 4.5:1`,
-    );
+  for (const { label, colors } of readThemeColorPalettes()) {
+    for (const [foreground, background] of REQUIRED_CONTRAST_PAIRS) {
+      const ratio = contrastRatio(colors[foreground], colors[background]);
+      assert.ok(
+        ratio >= 4.5,
+        `${label} ${foreground} on ${background} contrast ${ratio.toFixed(2)}:1 is below 4.5:1`,
+      );
+    }
   }
 });
 
 test('disabled button tokens keep labels readable without wrapper opacity', () => {
   const appButtonSource = read('components/Button.tsx');
   const uiButtonSource = read('components/ui/Button.tsx');
-  const colors = readColorTokens();
 
   for (const [label, source] of [
     ['app Button', appButtonSource],
@@ -133,12 +153,16 @@ test('disabled button tokens keep labels readable without wrapper opacity', () =
     );
   }
 
-  assert.ok(colors.textMuted, 'theme textMuted token should be present');
-  assert.ok(colors.surfaceWarm, 'theme surfaceWarm token should be present');
+  for (const { label, colors } of readThemeColorPalettes()) {
+    assert.ok(colors.textMuted, `${label} theme textMuted token should be present`);
+    assert.ok(colors.surfaceWarm, `${label} theme surfaceWarm token should be present`);
 
-  const disabledLabelContrast = contrastRatio(colors.textMuted, colors.surfaceWarm);
-  assert.ok(
-    disabledLabelContrast >= MIN_BODY_TEXT_CONTRAST,
-    `disabled button label contrast ${disabledLabelContrast.toFixed(2)} should be at least ${MIN_BODY_TEXT_CONTRAST}:1`,
-  );
+    const disabledLabelContrast = contrastRatio(colors.textMuted, colors.surfaceWarm);
+    assert.ok(
+      disabledLabelContrast >= MIN_BODY_TEXT_CONTRAST,
+      `${label} disabled button label contrast ${disabledLabelContrast.toFixed(
+        2,
+      )} should be at least ${MIN_BODY_TEXT_CONTRAST}:1`,
+    );
+  }
 });
