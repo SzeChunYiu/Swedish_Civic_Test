@@ -4,7 +4,7 @@
 // each matching the official Sverige-i-fokus format/length."
 //
 // This file holds:
-//   - the format constants (question count, time limit, practice target)
+//   - the format constants (question count and time limit)
 //   - the metadata for the named mocks (id, label, difficulty, chapter mix)
 //   - selectors that materialize a mock from the live question bank
 //
@@ -15,8 +15,6 @@
 
 export const MOCK_EXAM_QUESTION_COUNT = 25;
 export const MOCK_EXAM_TIME_LIMIT_MINUTES = 30;
-/** Practice target used for internal diagnostics; not an official exam requirement. */
-export const MOCK_EXAM_PRACTICE_TARGET_ACCURACY = 0.7;
 
 export type MockExamDifficulty = 'easy' | 'medium' | 'hard' | 'mixed';
 
@@ -166,9 +164,7 @@ export function materializeMock(input: MaterializeMockInput): MaterializedMock |
 
   const seed =
     input.seedOverride ??
-    (descriptor.seed === -1
-      ? Math.floor(Math.random() * 0xffffffff)
-      : descriptor.seed);
+    (descriptor.seed === -1 ? Math.floor(Math.random() * 0xffffffff) : descriptor.seed);
   const rand = mulberry32(seed);
 
   const filtered =
