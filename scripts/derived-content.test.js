@@ -580,21 +580,21 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       id: 'q013',
       chapterId: 'ch02',
       type: 'single_choice',
-      questionSv: 'Vilket är ett sätt att påverka och delta i samhället?',
-      questionEn: 'Which is a way to influence and participate in society?',
+      questionSv: 'Hur kan människor påverka samhället och delta i demokratin?',
+      questionEn: 'How can people influence society and participate in democracy?',
       options: [
         {
           id: 'a',
-          textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
-          textEn: 'Contact politicians, demonstrate, or sign a petition',
+          textSv: 'Genom att kontakta politiker, demonstrera eller skriva på en namninsamling',
+          textEn: 'By contacting politicians, demonstrating, or signing a petition',
         },
         {
           id: 'b',
-          textSv: 'Förbjuda andra från att rösta i politiska val',
-          textEn: 'Ban others from voting in political elections',
+          textSv: 'Genom att förbjuda andra från att rösta i politiska val',
+          textEn: 'By banning others from voting in political elections',
         },
-        { id: 'c', textSv: 'Stoppa nyheter', textEn: 'Stop news' },
-        { id: 'd', textSv: 'Tysta föreningar', textEn: 'Silence associations' },
+        { id: 'c', textSv: 'Genom att stoppa nyheter', textEn: 'By stopping news' },
+        { id: 'd', textSv: 'Genom att tysta föreningar', textEn: 'By silencing associations' },
       ],
       correctOptionId: 'a',
       explanationSv: 'Det finns flera demokratiska sätt att delta.',
@@ -722,7 +722,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
+      'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
     ),
   );
   assert.ok(
