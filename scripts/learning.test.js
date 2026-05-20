@@ -537,7 +537,8 @@ test('spaced repetition schedules wrong answers soon and known answers later', (
 });
 
 test('badges unlock from progress milestones', () => {
-  const { deriveBadges } = loadAllTs('lib/learning/badges.ts');
+  const { deriveBadges, getAllBadges, getBadgeProgressHint, getBadgeTitle } =
+    loadAllTs('lib/learning/badges.ts');
 
   assert.deepEqual(
     deriveBadges({
@@ -547,5 +548,17 @@ test('badges unlock from progress milestones', () => {
       wrongAnswerCount: 1,
     }).map((badge) => badge.id),
     ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'],
+  );
+  assert.deepEqual(
+    getAllBadges().map((badge) => getBadgeTitle(badge, 'sv')),
+    ['Första övningen', 'Tre dagars svit', 'Nivå 2', 'Misstagsrepetition'],
+  );
+  assert.equal(
+    getBadgeProgressHint(
+      getAllBadges()[1],
+      { completedQuestionCount: 0, currentStreak: 2, level: 1, wrongAnswerCount: 0 },
+      'en',
+    ),
+    '2/3 streak days',
   );
 });

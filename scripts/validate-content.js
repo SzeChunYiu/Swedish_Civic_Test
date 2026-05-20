@@ -727,12 +727,9 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Svenska',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
-    'Inga märken ännu',
-    'Ändra mål, språk och ljud',
-    'Första övningen',
-    'Nivå 2',
-    'Misstagsrepetition',
-    'Tre dagars svit',
+    'Låst',
+    'Upplåst',
+    'Öppna inställningar',
   ],
   en: [
     'Local profile',
@@ -751,8 +748,9 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'English support',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
-    'No badges yet',
-    'Edit goal, language, and audio',
+    'Locked',
+    'Unlocked',
+    'Open settings',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -762,10 +760,12 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
-  [
-    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
-    'profile route must define localized badge-title overrides',
-  ],
+  ['getAllBadges,', 'profile route must render the full badge catalog'],
+  ['getBadgeTitle,', 'profile route must use localized badge titles from the catalog'],
+  ['getBadgeDescription,', 'profile route must use localized unlocked badge descriptions'],
+  ['getBadgeLockedHint,', 'profile route must use localized locked badge hints'],
+  ['getBadgeProgressHint,', 'profile route must show milestone progress hints'],
+  ['type BadgeInput,', 'profile route must type badge progress inputs'],
   [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
@@ -796,9 +796,17 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['style={styles.settingsLink}', 'profile settings shortcut must use the token target style'],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
+  ['const badgeInput: BadgeInput = {', 'profile badge milestones must use typed progress input'],
   [
-    'formatBadges(badges, language, copy.noBadges)',
-    'profile badge summary must use localized badge and empty-state copy',
+    'const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));',
+    'profile badge milestones must derive unlocked state from progress',
+  ],
+  ['<BadgeRow', 'profile must render badge milestones as rows instead of comma text'],
+  ['statusLabel={statusLabel}', 'profile badge rows must expose localized status labels'],
+  ['title={getBadgeTitle(badge, language)}', 'profile badge rows must localize titles'],
+  [
+    'progressHint={getBadgeProgressHint(badge, badgeInput, language)}',
+    'profile badge rows must show localized progress hints',
   ],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
@@ -14426,12 +14434,26 @@ function validateBadgeCatalog() {
         reject(`${label} id must use lowercase snake_case`);
       }
 
-      for (const field of ['title', 'description']) {
+      for (const field of [
+        'title',
+        'description',
+        'titleSv',
+        'titleEn',
+        'descriptionSv',
+        'descriptionEn',
+        'lockedHintSv',
+        'lockedHintEn',
+      ]) {
         if (!hasText(badge[field])) {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
           reject(`${label} ${field} must be trimmed and single-spaced`);
         }
+      }
+
+      if (badge.title !== badge.titleEn) reject(`${label} title must match titleEn`);
+      if (badge.description !== badge.descriptionEn) {
+        reject(`${label} description must match descriptionEn`);
       }
 
       const normalizedTitle = normalizeComparableText(badge.title);
@@ -14445,6 +14467,21 @@ function validateBadgeCatalog() {
         reject(`${label} duplicates badge description`);
       }
       if (normalizedDescription) seenDescriptions.add(normalizedDescription);
+
+      if (normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)) {
+        reject(`${label} titleSv must be localized separately from titleEn`);
+      }
+      if (
+        normalizeComparableText(badge.descriptionSv) ===
+        normalizeComparableText(badge.descriptionEn)
+      ) {
+        reject(`${label} descriptionSv must be localized separately from descriptionEn`);
+      }
+      if (
+        normalizeComparableText(badge.lockedHintSv) === normalizeComparableText(badge.lockedHintEn)
+      ) {
+        reject(`${label} lockedHintSv must be localized separately from lockedHintEn`);
+      }
     }
 
     if (valid) badgesValidated += 1;
