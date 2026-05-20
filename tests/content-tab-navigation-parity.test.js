@@ -24,6 +24,8 @@ test('tab navigation uses localized labels and suppresses placeholder glyph outp
   assert.equal(summary.tabNavigationParityValidated, true);
   assert.match(tabLayout, /tabBarAccessibilityLabel: title/);
   assert.match(tabLayout, /tabBarIcon: hiddenTabIcon/);
+  assert.match(tabLayout, /exam: 'Övningsprov'/);
+  assert.doesNotMatch(tabLayout, /exam:\s*'Prov'/);
   assert.match(tabLayout, /mistakes: 'Repetition'/);
   assert.match(tabLayout, /mistakes: 'Mistakes'/);
   assert.doesNotMatch(tabLayout, /mistakes:\s*'Misstag'/);
@@ -32,6 +34,37 @@ test('tab navigation uses localized labels and suppresses placeholder glyph outp
     /<Tabs\.Screen name="practice" options=\{getTabOptions\(copy\.practice\)\}/,
   );
   assert.doesNotMatch(tabLayout, /⏷/);
+});
+
+test('tab navigation parity rejects bare Swedish exam tab copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/_layout.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("exam: 'Övningsprov'", "exam: 'Prov'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}
+${result.stderr}`,
+    /bare Swedish exam tab copy/,
+  );
 });
 
 test('tab navigation parity rejects bare Swedish mistakes tab copy', () => {
