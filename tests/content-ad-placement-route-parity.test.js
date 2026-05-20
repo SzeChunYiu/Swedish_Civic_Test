@@ -23,12 +23,8 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const webBannerSource = fs.readFileSync(
+  const adBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-    'utf8',
-  );
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
     'utf8',
   );
   const nativeAdCardSource = fs.readFileSync(
@@ -74,17 +70,25 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(
     practiceSource,
-    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>\s*<AdBanner placement="quiz_completed_interstitial" \/>/,
+    /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
   );
-  assert.match(
-    mistakesSource,
-    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
-  );
-  assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
   assert.doesNotMatch(
-    examSource,
-    /AdBanner|NativeAd|Interstitial|LaunchPopupAd|RemoveAdsPlacementCta/i,
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
   );
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(adBannerSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    adBannerSource,
+    /shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/,
+  );
+  assert.match(nativeAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    nativeAdCardSource,
+    /shouldShowAd\(\s*'results_native',\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/,
+  );
+  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
 test('ad placement route parity rejects non-banner placements routed through AdBanner', () => {
@@ -416,9 +420,39 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/monetization/NativeAdCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
+      .replace(/,\\s*WEB_AD_FALLBACK_CONSENT_DECISION/g, '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /NativeAdCard must gate results_native through shouldShowAd with WEB_AD_FALLBACK_CONSENT_DECISION/,
+  );
+});
+
+test('ad placement route parity rejects web fallback consent drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
       .replace(
-        "!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)",
-        "!entitlementsReady",
+        "shouldShowAd(placement, resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION)",
+        "shouldShowAd(placement, resolvedEntitlements)",
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -432,7 +466,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /NativeAdCard must gate results_native through shouldShowAd/,
+    /AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd/,
   );
 });
 

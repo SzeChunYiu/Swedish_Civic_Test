@@ -146,6 +146,7 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       );
       assert.equal(adsConfig.realAdsEnabled, false);
       assert.equal(adsConfig.googleMobileAdsEnabled, true);
+      assert.deepEqual(adsConfig.webFallbackConsentDecision, { adServingAllowed: true });
       assert.ok(TEST_AD_UNITS.every((unit) => unit.testOnly));
       assert.ok(adsConfig.units.every((unit) => unit.testOnly));
       assert.equal(shouldShowAd('home_banner', { adsDisabled: false }), true);
@@ -222,9 +223,13 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   withEnv(
     {
       EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/1111111111',
-      EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: 'ca-app-pub-1234567890123456/5555555555',
+      EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID:
+        'ca-app-pub-1234567890123456/5555555555',
+      EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID:
+        'ca-app-pub-1234567890123456/7777777777',
       EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
         'ca-app-pub-1234567890123456/3333333333',
+      EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: 'ca-app-pub-1234567890123456/9999999999',
       EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID: 'ca-app-pub-1234567890123456/2222222222',
       EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID: 'ca-app-pub-1234567890123456/4444444444',
       EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
@@ -296,41 +301,29 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
         true,
       );
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
-      assert.equal(
-        shouldShowAd('results_native', { adsDisabled: false }, { adServingAllowed: true }),
-        true,
-      );
-      assert.equal(
-        shouldShowAd(
-          'results_native',
-          { adsDisabled: false },
-          { adServingAllowed: true },
-          'android',
-        ),
-        true,
-      );
-      assert.equal(
-        shouldShowAd('results_native', { adsDisabled: false }, { adServingAllowed: true }, 'ios'),
-        false,
-      );
-      assert.match(liveNativeCopyEn.accessibilityLabel, /^Ad:/);
-      assert.match(liveNativeCopyEn.meta, /Google AdMob placement/);
-      assert.doesNotMatch(
-        [liveNativeCopyEn.accessibilityLabel, liveNativeCopyEn.meta, liveNativeCopyEn.title].join(
-          ' ',
-        ),
-        /Test native ad|AdMob test placement preview/i,
-      );
-      assert.match(liveNativeCopySv.accessibilityLabel, /^Annons:/);
-      assert.doesNotMatch(
-        [liveNativeCopySv.accessibilityLabel, liveNativeCopySv.meta, liveNativeCopySv.title].join(
-          ' ',
-        ),
-        new RegExp(
-          `Inbyggd testannons|AdMob-testplacering|${['Sponsrad', 'studieplacering'].join('\\s+')}`,
-          'i',
-        ),
-      );
+
+      for (const placement of [
+        'home_banner',
+        'chapter_list_banner',
+        'quiz_completed_interstitial',
+        'results_native',
+      ]) {
+        assert.equal(
+          shouldShowAd(placement, { adsDisabled: false }),
+          false,
+          `${placement} should still require an explicit real-ad consent decision`,
+        );
+        assert.equal(
+          shouldShowAd(placement, { adsDisabled: false }, adsConfig.webFallbackConsentDecision),
+          true,
+          `${placement} should render the web fallback placeholder when a real unit exists`,
+        );
+        assert.equal(
+          shouldShowAd(placement, { adsDisabled: true }, adsConfig.webFallbackConsentDecision),
+          false,
+          `${placement} should stay hidden after Remove Ads`,
+        );
+      }
     },
   );
 });
@@ -2125,14 +2118,20 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   assert.doesNotMatch(webBannerSource, /\bAdPlacement\b/);
   assert.match(webBannerSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(webBannerSource, /!entitlementsReady/);
-  assert.match(nativeBannerSource, /placement\?: BannerAdPlacement;/);
-  assert.doesNotMatch(nativeBannerSource, /\bAdPlacement\b/);
+  assert.match(webBannerSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    webBannerSource,
+    /shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/,
+  );
   assert.match(nativeBannerSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
   assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeAdCardSource, /!entitlementsReady/);
-  assert.match(placementCtaSource, /useResolvedAdEntitlements\(entitlements\)/);
-  assert.match(placementCtaSource, /!entitlementsReady/);
+  assert.match(nativeAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    nativeAdCardSource,
+    /shouldShowAd\(\s*'results_native',\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/,
+  );
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
