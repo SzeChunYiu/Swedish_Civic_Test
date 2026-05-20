@@ -158,10 +158,12 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   };
 
   const handleSelect = (option: LocaleOption) => {
-    if (!option.available) return;
+    if (!option.available) {
+      return;
+    }
 
     setLanguage(option.fallback);
-    closePicker({ restoreFocus: true });
+    setOpen(false);
   };
 
   const handleMenuKeyDown = (event: WebKeyboardEvent) => {
