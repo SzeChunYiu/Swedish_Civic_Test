@@ -128,6 +128,7 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
+  assert.equal(summary.questionPoliticalPartyOptionShapeValidated, 3);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -1656,6 +1657,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q145 uses unnatural secret-ballot Swedish voting pronoun/,
+  );
+});
+
+test('political-party options keep one grammatical answer shape', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace('Makt att ersätta domstolarna', 'De ersätter domstolarna')
+      .replace('The power to replace the courts', 'They replace the courts');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q033 mixes political-party option grammar shapes/,
   );
 });
 
