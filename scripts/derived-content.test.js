@@ -756,13 +756,13 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'En anledning till att väljare röstar bakom en skärm i vallokalen är att rösterna ska räknas snabbare.',
       'One reason voters vote behind a screen at the polling station is that votes are counted faster.',
     ],
-    q318: [
-      'Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
-      'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.',
+    q333: [
+      'Från 15 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
+      'A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 15.',
     ],
-    q319: [
-      'Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
-      'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.',
+    q334: [
+      'Från 13 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott.',
+      'A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 13.',
     ],
     q326: [
       'Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess.',
