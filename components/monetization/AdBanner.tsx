@@ -29,7 +29,7 @@ export function AdBanner({
 
   return (
     <Card
-      accessibilityHint={`${copy.previewHint} ${copy.removeAdsHint}`}
+      accessibilityHint={`${copy.testHint} ${copy.removeAdsHint}`}
       accessibilityLabel={accessibilityLabel}
     >
       <Text style={styles.eyebrow}>Google AdMob</Text>

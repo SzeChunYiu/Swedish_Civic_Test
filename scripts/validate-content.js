@@ -7781,6 +7781,43 @@ function validateAdPlacementRouteParity() {
       reject(`${label} must not accept the full AdPlacement union`);
       sourceIsValid = false;
     }
+    if (
+      label === 'web AdBanner' &&
+      !/accessibilityHint=\{`\$\{copy\.testHint\} \$\{copy\.removeAdsHint\}`\}/.test(source)
+    ) {
+      reject('web AdBanner preview card must use the test/web-preview accessibility hint');
+      sourceIsValid = false;
+    }
+    if (label === 'native AdBanner') {
+      if (!source.includes('const unit = getAdUnit(placement);')) {
+        reject('native AdBanner must inspect the configured ad unit for hint copy');
+        sourceIsValid = false;
+      }
+      if (!/const adHint = unit\?\.testOnly \? copy\.testHint : copy\.liveHint;/.test(source)) {
+        reject('native AdBanner must derive live/test hint copy from unit.testOnly');
+        sourceIsValid = false;
+      }
+      if (!/accessibilityHint=\{`\$\{adHint\} \$\{copy\.removeAdsHint\}`\}/.test(source)) {
+        reject('native AdBanner must pass the derived live/test accessibility hint');
+        sourceIsValid = false;
+      }
+      if (/accessibilityHint=\{`\$\{copy\.(?:previewHint|testHint)\}/.test(source)) {
+        reject('native AdBanner must not hardcode preview/test hint copy for every BannerAd');
+        sourceIsValid = false;
+      }
+      if (!source.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+        reject('native AdBanner must resolve banner units by Platform.OS');
+        sourceIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner must gate banner visibility by Platform.OS');
+        sourceIsValid = false;
+      }
+    }
 
     if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
   }
@@ -8060,6 +8097,16 @@ function validateAdPlacementRouteParity() {
       ) {
         reject(
           `PracticeInterstitialAd web fallback must gate ${spec.placement} through shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (
+        !/accessibilityHint=\{`\$\{copy\.testHint\} \$\{copy\.removeAdsHint\}`\}/.test(
+          practiceInterstitialSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd web fallback must use the test/web-preview accessibility hint',
         );
         routeIsValid = false;
       }

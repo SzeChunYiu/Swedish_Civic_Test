@@ -1148,10 +1148,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
     /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
   );
   assert.match(webSource, /const accessibilityLabel = copy\.accessibilityLabel/);
-  assert.match(
-    webSource,
-    /accessibilityHint=\{`\$\{copy\.previewHint\} \$\{copy\.removeAdsHint\}`\}/,
-  );
+  assert.match(webSource, /accessibilityHint=\{`\$\{copy\.testHint\} \$\{copy\.removeAdsHint\}`\}/);
   assert.match(webSource, /<Card[\s\S]*accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(nativeSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /placement\?: BannerAdPlacement;/);
@@ -1159,11 +1156,11 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
+  assert.match(nativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(
-    nativeSource,
-    /accessibilityHint=\{`\$\{copy\.previewHint\} \$\{copy\.removeAdsHint\}`\}/,
-  );
+  assert.match(nativeSource, /const adHint = unit\?\.testOnly \? copy\.testHint : copy\.liveHint;/);
+  assert.match(nativeSource, /accessibilityHint=\{`\$\{adHint\} \$\{copy\.removeAdsHint\}`\}/);
+  assert.doesNotMatch(nativeSource, /accessibilityHint=\{`\$\{copy\.(?:previewHint|testHint)\}/);
   assert.match(
     nativeSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
@@ -1180,6 +1177,10 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   );
   assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(webInterstitialSource, /shouldShowAd\('quiz_completed_interstitial'/);
+  assert.match(
+    webInterstitialSource,
+    /accessibilityHint=\{`\$\{copy\.testHint\} \$\{copy\.removeAdsHint\}`\}/,
+  );
   assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
   assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
   assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
@@ -1205,8 +1206,12 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
   assert.match(copySource, /rewarded_extra_exam: 'Annons för extra övningsprov'/);
   assert.doesNotMatch(copySource, /\bAnnons för extra prov\b|\bextra prov\b/i);
+  assert.match(copySource, /liveHint: 'Sponsrad annons från Google AdMob\.'/);
+  assert.match(copySource, /testHint: 'Sponsrad annonsförhandsvisning med AdMob-testenhet\.'/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
+  assert.match(copySource, /liveHint: 'Sponsored ad from Google AdMob\.'/);
+  assert.match(copySource, /testHint: 'Sponsored ad preview with an AdMob test unit\.'/);
   assert.match(copySource, /AdMob test unit active - web preview/);
 });
 

@@ -30,7 +30,7 @@ export function PracticeInterstitialAd({
 
   return (
     <Card
-      accessibilityHint={`${copy.previewHint} ${copy.removeAdsHint}`}
+      accessibilityHint={`${copy.testHint} ${copy.removeAdsHint}`}
       accessibilityLabel={accessibilityLabel}
     >
       <Text style={styles.eyebrow}>Google AdMob</Text>

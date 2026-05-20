@@ -3,10 +3,11 @@ import type { AdPlacement, AdUnitConfig } from '../../types/monetization';
 
 type AdBannerCopy = {
   accessibilityLabel: (placementLabel: string, statusLabel: string) => string;
+  liveHint: string;
   liveStatus: string;
   placementLabels: Record<AdPlacement, string>;
-  previewHint: string;
   removeAdsHint: string;
+  testHint: string;
   testStatus: string;
 };
 
@@ -43,8 +44,9 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
       results_native: 'Annons i resultat och misstag',
       rewarded_extra_exam: 'Annons för extra övningsprov',
     },
-    previewHint: 'Sponsrad annonsförhandsvisning.',
+    liveHint: 'Sponsrad annons från Google AdMob.',
     removeAdsHint: 'Döljs när Ta bort annonser är aktivt.',
+    testHint: 'Sponsrad annonsförhandsvisning med AdMob-testenhet.',
     testStatus: 'AdMob-testannons aktiv - webbförhandsvisning',
   },
   en: {
@@ -59,8 +61,9 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
       results_native: 'Results and mistakes ad',
       rewarded_extra_exam: 'Extra exam ad',
     },
-    previewHint: 'Sponsored ad preview.',
+    liveHint: 'Sponsored ad from Google AdMob.',
     removeAdsHint: 'Hidden after Remove Ads is active.',
+    testHint: 'Sponsored ad preview with an AdMob test unit.',
     testStatus: 'AdMob test unit active - web preview',
   },
 };

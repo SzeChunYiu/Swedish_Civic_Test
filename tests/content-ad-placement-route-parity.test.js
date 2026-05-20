@@ -250,6 +250,39 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('ad placement route parity rejects native banners stuck on preview hints', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const adHint = unit?.testOnly ? copy.testHint : copy.liveHint;',
+        'const adHint = copy.testHint;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native AdBanner must derive live\/test hint copy from unit\.testOnly/,
+  );
+});
+
 test('ad placement route parity rejects practice interstitials routed through BannerAd', () => {
   const result = spawnSync(
     process.execPath,
