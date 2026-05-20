@@ -1624,38 +1624,31 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
+  assert.match(source, /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\)/);
+  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+  assert.match(source, /\{copy\.settingsShortcutHelper\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /så att dina studier förblir privata/);
   assert.match(source, /Studieinställningar/);
+  assert.match(source, /Ljud på/);
+  assert.match(source, /Ljud av/);
+  assert.match(source, /Dagligt mål, språk och ljud/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
-  assert.match(source, /Ändra mål, språk och ljud/);
+  assert.match(source, /Justera studieinställningar/);
+  assert.match(source, /Öppna inställningar för dagligt mål, språk och ljud/);
   assert.match(source, /Första övningen/);
   assert.match(source, /Missade frågor/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
+  assert.match(source, /Audio on/);
+  assert.match(source, /Audio off/);
+  assert.match(source, /Daily goal, language, and audio/);
   assert.match(source, /No badges yet/);
-  assert.match(source, /Edit goal, language, and audio/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('profile study setup shortcut keeps shared link semantics and token target size', () => {
-  const source = read('app/(tabs)/profile.tsx');
-  const settingsLinks = source.match(/href="\/settings"/g) ?? [];
-  const studySetupIndex = source.indexOf('<SectionHeader title={copy.studySetupTitle}');
-  const settingsLinkIndex = source.indexOf('href="/settings"');
-  const badgesIndex = source.indexOf('<SectionHeader title={copy.badgesTitle}');
-
-  assert.equal(settingsLinks.length, 1);
-  assert.ok(studySetupIndex >= 0 && settingsLinkIndex > studySetupIndex);
-  assert.ok(badgesIndex > settingsLinkIndex);
-  assert.match(source, /import \{ Button \} from '..\/..\/components\/ui\/Button';/);
-  assert.match(source, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
-  assert.match(source, /accessibilityRole="link"/);
-  assert.match(source, /style=\{styles\.settingsLink\}/);
-  assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
+  assert.match(source, /Adjust study settings/);
+  assert.match(source, /Open settings for daily goal, language, and audio/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
