@@ -292,10 +292,16 @@
       localStorage.setItem('smt_mock_cfg', JSON.stringify(cfg));
     } catch {}
   }
+  function isStaticMockUhrQuestion(question) {
+    return questionProvenance(question) === 'uhr';
+  }
+  function mockQuestionPool() {
+    return (window.SMT_QUESTIONS || []).filter(isStaticMockUhrQuestion);
+  }
 
   function pickMockQuestions() {
     const cfg = loadMockCfg();
-    let all = (window.SMT_QUESTIONS || []).slice();
+    let all = mockQuestionPool();
     if (cfg.chapters && cfg.chapters !== 'all' && Array.isArray(cfg.chapters)) {
       const set = new Set(cfg.chapters.map(Number));
       all = all.filter((q) => set.has(q.chapterId));
@@ -351,7 +357,7 @@
 
     const maxQ = Math.min(
       60,
-      (window.SMT_QUESTIONS || []).filter((q) => {
+      mockQuestionPool().filter((q) => {
         if (cfg.chapters === 'all' || !cfg.chapters) return true;
         return selectedChapters.includes(q.chapterId);
       }).length,
@@ -458,9 +464,7 @@
       const cfgNow = loadMockCfg();
       const sel =
         cfgNow.chapters === 'all' || !cfgNow.chapters ? allChapters : cfgNow.chapters.map(Number);
-      const available = (window.SMT_QUESTIONS || []).filter((q) =>
-        sel.includes(q.chapterId),
-      ).length;
+      const available = mockQuestionPool().filter((q) => sel.includes(q.chapterId)).length;
       const slider = document.getElementById('cfg-count');
       if (!slider) return;
       slider.max = String(Math.max(5, available));
