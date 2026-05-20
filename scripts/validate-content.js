@@ -1619,9 +1619,9 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
   {
-    label: 'question language section title',
+    label: 'study language section title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.questionLanguageTitle\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.studyLanguageTitle\}\s*<\/Text>/,
   },
   {
     label: 'audio section title',
@@ -1645,9 +1645,9 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Dagligt mål',
     'Stäng av ljud',
     'Slå på ljud',
-    'Byt frågespråk till ${label}',
-    'Frågespråk',
+    'Byt studiespråk till ${label}',
     'Ställ in dagligt mål till ${goal} svar',
+    'Studiespråk',
     'Styr studiespråk, ljud och ditt dagliga mål.',
     'Inställningar',
     'Svenska',
@@ -1663,15 +1663,21 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Daily goal',
     'Disable audio',
     'Enable audio',
-    'Set question language to ${label}',
-    'Question language',
+    'Set study language to ${label}',
     'Set daily goal to ${goal} answers',
+    'Study language',
     'Control study language, audio, and your daily goal.',
     'Settings',
     'Swedish',
     'English support',
   ],
 };
+const SETTINGS_LANGUAGE_STALE_LABELS = [
+  ['Fråge', 'språk'].join(''),
+  ['Byt fråge', 'språk till ${label}'].join(''),
+  ['Question ', 'language'].join(''),
+  ['Set question ', 'language to ${label}'].join(''),
+];
 const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   ['import type { AppLanguage }', 'settings route must import AppLanguage'],
   ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
@@ -1706,7 +1712,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   ['{copy.backToProfile}', 'settings back link must render localized copy'],
   ['{copy.title}', 'settings title must render localized copy'],
   ['{copy.subtitle}', 'settings subtitle must render localized copy'],
-  ['{copy.questionLanguageTitle}', 'settings language section must render localized copy'],
+  ['{copy.studyLanguageTitle}', 'settings language section must render localized copy'],
   [
     'accessibilityLabel={copy.languageAccessibilityLabel(label)}',
     'settings language buttons must expose localized accessibility copy',
@@ -8723,6 +8729,12 @@ function validateSettingsRouteCopyParity() {
     if (!settingsRoute.includes(snippet)) reject(message);
   });
 
+  SETTINGS_LANGUAGE_STALE_LABELS.forEach((label) => {
+    if (settingsRoute.includes(label)) {
+      reject(`settings route language copy still uses narrow label ${JSON.stringify(label)}`);
+    }
+  });
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -10176,10 +10188,10 @@ function validateLocalizationLanguageContract() {
   if (!settingsRoute.includes('Svenska') || !settingsRoute.includes('Engelskt stöd')) {
     reject('app/settings.tsx must expose Swedish labels for language buttons in Swedish mode');
   }
-  if (!settingsRoute.includes('Byt frågespråk till ${label}')) {
+  if (!settingsRoute.includes('Byt studiespråk till ${label}')) {
     reject('app/settings.tsx language buttons must expose Swedish accessibility text');
   }
-  if (!settingsRoute.includes('Set question language to ${label}')) {
+  if (!settingsRoute.includes('Set study language to ${label}')) {
     reject('app/settings.tsx language buttons must expose label-derived accessibility text');
   }
 

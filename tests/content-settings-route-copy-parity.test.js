@@ -37,6 +37,12 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
+  assert.match(source, /Studiespråk/);
+  assert.match(source, /Study language/);
+  assert.match(source, /Byt studiespråk till \$\{label\}/);
+  assert.match(source, /Set study language to \$\{label\}/);
+  assert.doesNotMatch(source, new RegExp(['Fråge', 'språk'].join('')));
+  assert.doesNotMatch(source, new RegExp(['Question ', 'language'].join('')));
 });
 
 test('settings route copy parity rejects bypassing the settings language', () => {
