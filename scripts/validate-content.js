@@ -248,6 +248,9 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\bn(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l\b/i,
   /\bmentioned\s+as\s+(?:historical\s+)?reasons\b/i,
 ];
+const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -4248,6 +4251,16 @@ function findQuestionStemSourceAuthorityReference(question) {
   return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionNestedMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
@@ -6936,6 +6949,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16105,6 +16119,8 @@ if (Array.isArray(questions)) {
       }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
+      const stateWelfareEnglishNaturalnessIssue =
+        findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
@@ -16134,6 +16150,11 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (stateWelfareEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted state-welfare English wording`);
+      } else {
+        questionStateWelfareEnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16600,6 +16621,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      questionStateWelfareEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

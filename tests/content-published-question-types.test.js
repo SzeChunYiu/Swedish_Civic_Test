@@ -13,6 +13,8 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
+const stateWelfareStiltedEnglishPattern =
+  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -151,6 +153,71 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q044 criminal-responsibility age currentness uses stale proposal wording/,
+  );
+});
+
+test('state welfare source and exports use natural social-insurance English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    stateWelfareStiltedEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => stateWelfareStiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const q156 = generatedSiteBank.find((question) => question.id === 'q156');
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q156, 'q156 should be published in the site bank');
+  assert.match(q156.q.en, /state-funded social insurance systems/);
+  assert.match(q156.why.en, /state funds social insurance systems/);
+});
+
+test('state welfare English naturalness guard rejects literal state-security wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
+        'Which state-funded security systems can provide financial support during illness, parenthood, or unemployment?',
+      )
+      .replace(
+        'The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance.',
+        'The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q156 uses stilted state-welfare English wording/,
   );
 });
 
