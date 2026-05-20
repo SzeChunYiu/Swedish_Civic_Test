@@ -308,6 +308,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
 ];
+const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -3869,6 +3870,16 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -5250,8 +5261,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(answer)} are common in many homes during ${match[1]}`;
   match = q.match(/^Which holiday ends (.+)$/i);
   if (match) return `${answer} ends ${match[1]}`;
-  match = q.match(/^What does the person who is Lucia usually wear in a Lucia procession$/i);
-  if (match) return `The person who is Lucia usually wears ${lowerFirst(answer)}`;
+  match = q.match(/^What does Lucia usually wear in a Lucia procession$/i);
+  if (match) return `Lucia usually wears ${lowerFirst(answer)}`;
   match = q.match(/^What is the church service early on the morning of 25 December called$/i);
   if (match)
     return `The church service early on the morning of 25 December is called ${englishCalledAnswer(
@@ -6351,6 +6362,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -13971,6 +13983,8 @@ if (Array.isArray(questions)) {
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+      const luciaRoleEnglishNaturalnessIssue =
+        findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -13996,6 +14010,11 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (luciaRoleEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Lucia role English wording`);
+      } else {
+        questionLuciaRoleEnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -14438,6 +14457,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      questionLuciaRoleEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

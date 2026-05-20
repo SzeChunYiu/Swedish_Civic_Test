@@ -1976,8 +1976,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which holiday ends (.+)$/i);
   if (match) return `${answer} ends ${match[1]}`;
 
-  match = q.match(/^What does the person who is Lucia usually wear in a Lucia procession$/i);
-  if (match) return `The person who is Lucia usually wears ${lowerFirst(answer)}`;
+  match = q.match(/^What does Lucia usually wear in a Lucia procession$/i);
+  if (match) return `Lucia usually wears ${lowerFirst(answer)}`;
 
   match = q.match(/^What is the church service early on the morning of 25 December called$/i);
   if (match)
