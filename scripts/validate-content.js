@@ -1161,13 +1161,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
     'Tillbaka till övning',
-    'Quizpass',
-    'Det finns inga quizfrågor ännu.',
+    'Frågepass',
+    'Det finns inga övningsfrågor ännu.',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    'Quizpass ${currentSessionId}',
+    'Frågepass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här quizfrågan',
+    'Försök igen med den här frågan',
   ],
   en: [
     'Back to Practice',
@@ -1237,8 +1237,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta quiz',
-    'Starta quiz för ${chapterTitle}',
+    'Starta övning',
+    'Starta övning för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -1250,6 +1250,12 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Start quiz for ${chapterTitle}',
   ],
 };
+const FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS = [
+  'Starta ' + 'quiz',
+  'Quiz' + 'pass',
+  'quiz' + 'frågor',
+  'quiz' + 'frågan',
+];
 const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
   ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
@@ -7573,6 +7579,12 @@ function validateQuizRouteCopyParity() {
     if (!quizRoute.includes(snippet)) reject(message);
   });
 
+  FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS.forEach((term) => {
+    if (quizRoute.includes(term)) {
+      reject('quiz route Swedish copy must avoid English quiz loanwords');
+    }
+  });
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -7848,6 +7860,12 @@ function validateChapterRouteCopyParity() {
 
   EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!chapterRoute.includes(snippet)) reject(message);
+  });
+
+  FORBIDDEN_APP_SV_QUIZ_LOAN_TERMS.forEach((term) => {
+    if (chapterRoute.includes(term)) {
+      reject('chapter route Swedish copy must avoid English quiz loanwords');
+    }
   });
 
   const seenLabels = new Set();
