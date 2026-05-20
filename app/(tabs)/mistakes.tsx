@@ -8,6 +8,7 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { questions } from '../../data/questions';
+import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -88,7 +89,7 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
 
   if (!option) return null;
 
-  return language === 'en' ? option.textEn : option.textSv;
+  return getQuestionOptionText(option, language);
 }
 
 export default function Screen() {
@@ -132,6 +133,7 @@ export default function Screen() {
               <ExplanationPanel
                 explanationEn={question.explanationEn}
                 explanationSv={question.explanationSv}
+                explanationText={question.explanationText}
                 language={language}
               />
               <UHRReferenceCard language={language} reference={question.uhrReference} />
@@ -189,6 +191,7 @@ export default function Screen() {
                 <ExplanationPanel
                   explanationEn={question.explanationEn}
                   explanationSv={question.explanationSv}
+                  explanationText={question.explanationText}
                   language={language}
                 />
                 <UHRReferenceCard language={language} reference={question.uhrReference} />

@@ -17,6 +17,7 @@ import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
+import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -137,8 +138,8 @@ export default function QuizSessionScreen() {
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
         questionId: question.id,
-        selectedOptionTextEn: selectedOption.textEn,
-        selectedOptionTextSv: selectedOption.textSv,
+        selectedOptionTextEn: getQuestionOptionText(selectedOption, 'en'),
+        selectedOptionTextSv: getQuestionOptionText(selectedOption, 'sv'),
       });
     }
   };
@@ -201,6 +202,7 @@ export default function QuizSessionScreen() {
           <ExplanationPanel
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}
+            explanationText={question.explanationText}
             language={language}
           />
           <FeedbackAudioButton

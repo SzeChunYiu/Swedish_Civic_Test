@@ -1,14 +1,21 @@
-import type { UHRReference } from '../../types/content';
+import { getLocale } from '../i18n/locales';
+import type { LocaleCode } from '../i18n/locales';
+import type { LocalizedContentText, QuestionOption, UHRReference } from '../../types/content';
 
 type QuestionTextSource = {
   questionEn?: string;
   questionSv?: string;
+  questionText?: Partial<LocalizedContentText>;
+  explanationEn?: string;
+  explanationSv?: string;
+  explanationText?: Partial<LocalizedContentText>;
   uhrReference?: UHRReference;
 };
 
-type QuestionTextLanguage = 'sv' | 'en';
+type QuestionTextLanguage = LocaleCode;
+type PrimaryQuestionTextLanguage = 'sv' | 'en';
 
-const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = {
+const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = {
   sv: 'Fråga saknas',
   en: 'Question unavailable',
 };
@@ -51,9 +58,12 @@ export function stripSourceAuthorityPhrasing(text?: string): string {
 export function getQuestionDisplayText(
   question: QuestionTextSource | undefined,
   language: QuestionTextLanguage,
-  fallback = QUESTION_DISPLAY_FALLBACKS[language],
+  fallback = QUESTION_DISPLAY_FALLBACKS[primaryLanguageFor(language)],
 ): string {
-  const rawText = language === 'en' ? question?.questionEn : question?.questionSv;
+  const rawText = resolveLocalizedText(question?.questionText, language, {
+    en: question?.questionEn,
+    sv: question?.questionSv,
+  });
   return stripSourceAuthorityPhrasing(rawText) || fallback;
 }
 
@@ -61,8 +71,12 @@ export function getQuestionTranslationText(
   question?: QuestionTextSource,
   language: QuestionTextLanguage = 'sv',
 ): string | undefined {
+  const translationLanguage: PrimaryQuestionTextLanguage = language === 'en' ? 'sv' : 'en';
   const translation = stripSourceAuthorityPhrasing(
-    language === 'en' ? question?.questionSv : question?.questionEn,
+    resolveLocalizedText(question?.questionText, translationLanguage, {
+      en: question?.questionEn,
+      sv: question?.questionSv,
+    }),
   );
   return translation || undefined;
 }
@@ -76,9 +90,60 @@ export function getQuestionSourceCitation(
   }
 
   const { chapter, pageApprox, section } = question.uhrReference;
-  return language === 'en'
+  return primaryLanguageFor(language) === 'en'
     ? `Source: Sverige i fokus, ${chapter}, ${section}, p. ${pageApprox}`
     : `Källa: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
+}
+
+export function getQuestionExplanationText(
+  question: QuestionTextSource | undefined,
+  language: QuestionTextLanguage,
+  fallback: string,
+): string {
+  return (
+    resolveLocalizedText(question?.explanationText, language, {
+      en: question?.explanationEn,
+      sv: question?.explanationSv,
+    }) || fallback
+  );
+}
+
+export function getQuestionOptionText(
+  option: QuestionOption | undefined,
+  language: QuestionTextLanguage,
+  fallback = '',
+): string {
+  return (
+    resolveLocalizedText(option?.text, language, {
+      en: option?.textEn,
+      sv: option?.textSv,
+    }) || fallback
+  );
+}
+
+function primaryLanguageFor(language: QuestionTextLanguage): PrimaryQuestionTextLanguage {
+  if (language === 'sv') return 'sv';
+  if (language === 'en') return 'en';
+  return getLocale(language).fallback === 'sv' ? 'sv' : 'en';
+}
+
+function resolveLocalizedText(
+  localizedText: Partial<LocalizedContentText> | undefined,
+  language: QuestionTextLanguage,
+  legacyText: Partial<Record<PrimaryQuestionTextLanguage, string>>,
+): string {
+  const primaryLanguage = primaryLanguageFor(language);
+  const candidates = [
+    localizedText?.[language],
+    localizedText?.[primaryLanguage],
+    primaryLanguage === 'en' ? legacyText.en : legacyText.sv,
+    localizedText?.sv,
+    localizedText?.en,
+    legacyText.sv,
+    legacyText.en,
+  ];
+
+  return candidates.find((candidate) => typeof candidate === 'string' && candidate.trim()) ?? '';
 }
 
 function capitalizeSentenceStart(text: string): string {

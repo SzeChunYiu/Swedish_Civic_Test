@@ -68,7 +68,11 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);
-  assert.match(helperSource, /fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/);
+  assert.match(
+    helperSource,
+    /fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
+  );
+  assert.match(helperSource, /resolveLocalizedText\(question\?\.questionText, language/);
 });
 
 test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {

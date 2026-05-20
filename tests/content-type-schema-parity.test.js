@@ -25,7 +25,13 @@ test('content TypeScript schema stays in parity with runtime validator expectati
     /export type QuestionType = 'single_choice' \| 'true_false' \| 'flashcard';/,
   );
   assert.match(contentTypes, /export type Difficulty = 'easy' \| 'medium' \| 'hard';/);
+  assert.match(
+    contentTypes,
+    /export type LocalizedContentText = Record<'sv' \| 'en', string> &\s*Partial<Record<LocaleCode, string>>;/,
+  );
   assert.match(contentTypes, /export interface PracticeQuestion/);
+  assert.match(contentTypes, /questionText\?: LocalizedContentText;/);
+  assert.match(contentTypes, /explanationText\?: LocalizedContentText;/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
   assert.match(contentTypes, /export interface GlossaryTerm/);

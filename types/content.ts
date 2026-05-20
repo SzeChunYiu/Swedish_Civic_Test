@@ -1,8 +1,13 @@
+import type { LocaleCode } from '../lib/i18n/locales';
+
 export type ReviewStatus = 'draft' | 'reviewed' | 'published';
 
 export type QuestionType = 'single_choice' | 'true_false' | 'flashcard';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
+
+export type LocalizedContentText = Record<'sv' | 'en', string> &
+  Partial<Record<LocaleCode, string>>;
 
 /**
  * Provenance of a question or content unit.
@@ -27,6 +32,7 @@ export interface QuestionOption {
   id: string;
   textSv: string;
   textEn: string;
+  text?: LocalizedContentText;
 }
 
 export interface PracticeQuestion {
@@ -35,10 +41,12 @@ export interface PracticeQuestion {
   type: QuestionType;
   questionSv: string;
   questionEn: string;
+  questionText?: LocalizedContentText;
   options: QuestionOption[];
   correctOptionId: string;
   explanationSv: string;
   explanationEn: string;
+  explanationText?: LocalizedContentText;
   uhrReference: UHRReference;
   difficulty: Difficulty;
   reviewStatus: ReviewStatus;

@@ -1,9 +1,17 @@
 import * as Speech from 'expo-speech';
 import type { QuestionOption } from '../../types/content';
-import { stripSourceAuthorityPhrasing } from '../quiz/questionText';
+import {
+  getQuestionDisplayText,
+  getQuestionOptionText,
+  stripSourceAuthorityPhrasing,
+} from '../quiz/questionText';
 
 type SpeakableQuestion = {
-  questionSv: string;
+  questionSv?: string;
+  questionText?: {
+    sv?: string;
+    en?: string;
+  };
   options: QuestionOption[];
 };
 
@@ -17,9 +25,12 @@ function optionLetter(index: number): string {
 }
 
 export function buildQuestionSpeechText(question: SpeakableQuestion): string {
-  const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;
+  const promptText = getQuestionDisplayText(question, 'sv', '');
   const optionText = question.options
-    .map((option, index) => `Alternativ ${optionLetter(index)}. ${option.textSv}.`)
+    .map(
+      (option, index) =>
+        `Alternativ ${optionLetter(index)}. ${getQuestionOptionText(option, 'sv')}.`,
+    )
     .join(' ');
   return `${promptText} ${optionText}`.trim();
 }
