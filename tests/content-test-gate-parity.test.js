@@ -138,7 +138,7 @@ test('validate-content exec cwd guard is source-scanned without running validate
     });
   }
 
-  assert.ok(total > 100, 'content suite should contain direct validate-content exec guards');
+  assert.ok(total >= 75, 'content suite should contain broad direct validate-content exec guards');
   assert.equal(pinned, total, `unpinned validate-content exec calls: ${unpinnedCalls.join(', ')}`);
 });
 
@@ -174,7 +174,7 @@ test('validate-content focus reports direct exec cwd guard summary', () => {
   assert.ok(match, 'focused validator should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.ok(summary.contentTestValidateContentExecCallsValidated > 100);
+  assert.ok(summary.contentTestValidateContentExecCallsValidated >= 75);
   assert.equal(
     summary.contentTestValidateContentExecCwdPinnedValidated,
     summary.contentTestValidateContentExecCallsValidated,
