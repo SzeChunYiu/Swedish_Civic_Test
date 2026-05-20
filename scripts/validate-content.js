@@ -1055,6 +1055,11 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Välj svaret ${optionText} för fråga ${questionNumber}',
     'Skicka övningsprov',
     'Skicka prov',
+    'Skicka med obesvarade frågor?',
+    'Du har ${unansweredCount} obesvarade frågor. Obesvarade frågor räknas som fel om du skickar provet nu.',
+    'Fortsätt svara',
+    'Skicka ändå',
+    'Skicka prov med ${unansweredCount} obesvarade frågor',
     'Provresultat',
     'Övningsresultat',
     'Kapitelöversikt',
@@ -1085,6 +1090,11 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Select answer ${optionText} for question ${questionNumber}',
     'Submit mock exam',
     'Submit exam',
+    'Submit with unanswered questions?',
+    'You have ${unansweredCount} unanswered questions. Unanswered questions count as incorrect if you submit now.',
+    'Keep answering',
+    'Submit anyway',
+    'Submit exam with ${unansweredCount} unanswered questions',
     'Exam result',
     'Mock exam result',
     'Chapter breakdown',
@@ -1135,6 +1145,17 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam submit control must expose localized accessibility labels',
   ],
   ['{copy.submitLabel}', 'exam submit control must render localized copy'],
+  [
+    'const unansweredCount = countUnansweredExamQuestions(examQuestions, answers);',
+    'exam route must derive unanswered count before partial submission',
+  ],
+  ['onPress={handleSubmitExam}', 'exam submit control must route through partial-submit guard'],
+  [
+    '{copy.partialSubmitBody(unansweredCount)}',
+    'exam partial-submit confirmation must render localized unanswered-count copy',
+  ],
+  ['{copy.cancelPartialSubmit}', 'exam partial-submit cancel action must render localized copy'],
+  ['{copy.confirmPartialSubmit}', 'exam partial-submit confirm action must render localized copy'],
   [
     "language === 'en' ? chapter.chapterNameEn : chapter.chapterNameSv",
     'exam chapter breakdown must use selected-language chapter names',
@@ -7440,6 +7461,17 @@ function validateExamSubmissionFinalityParity() {
   }
   if (examRoute.includes('onPress={() => setSubmitted(false)}')) {
     reject('exam result screen must not directly reopen submitted answers');
+  }
+  if (
+    !examRoute.includes(
+      'const unansweredCount = countUnansweredExamQuestions(examQuestions, answers);',
+    ) ||
+    !examRoute.includes('const canSubmit = examQuestions.length > 0;') ||
+    !examRoute.includes('if (unansweredCount > 0) {') ||
+    !examRoute.includes('setConfirmingPartialSubmit(true);') ||
+    !examRoute.includes('onPress={submitExam}')
+  ) {
+    reject('exam manual submission must confirm before submitting unanswered questions');
   }
   if (
     !examRoute.includes(

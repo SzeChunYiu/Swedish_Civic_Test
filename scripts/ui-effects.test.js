@@ -1195,6 +1195,8 @@ test('exam controls mirror selected and disabled state to web aria attributes', 
   );
   assert.match(source, /aria-selected=\{isSelected\}/);
   assert.match(source, /aria-disabled=\{!canSubmit\}/);
+  assert.match(source, /const canSubmit = examQuestions\.length > 0;/);
+  assert.match(source, /onPress=\{handleSubmitExam\}/);
   assert.match(
     source,
     /accessibilityLabel=\{copy\.answerAccessibilityLabel\(optionText, index \+ 1\)\}/,
@@ -1224,6 +1226,36 @@ test('exam auto-submits at timeout and explains unanswered scoring', () => {
   assert.match(source, /timeExpiredBadge: 'Time expired'/);
   assert.match(source, /Obesvarade frågor räknas som fel/);
   assert.match(source, /Unanswered questions count as incorrect/);
+});
+
+test('exam manual submit confirms unanswered questions before final submission', () => {
+  const source = read('app/(tabs)/exam.tsx');
+  const examGeneratorSource = read('lib/quiz/examGenerator.ts');
+
+  assert.match(source, /countUnansweredExamQuestions/);
+  assert.match(
+    source,
+    /const unansweredCount = countUnansweredExamQuestions\(examQuestions, answers\);/,
+  );
+  assert.match(
+    source,
+    /const \[confirmingPartialSubmit, setConfirmingPartialSubmit\] = useState\(false\);/,
+  );
+  assert.match(source, /const handleSubmitExam = useCallback\(\(\) => \{/);
+  assert.match(source, /if \(unansweredCount > 0\) \{/);
+  assert.match(source, /setConfirmingPartialSubmit\(true\);/);
+  assert.match(source, /submitExam\(\);/);
+  assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /\{copy\.partialSubmitTitle\}/);
+  assert.match(source, /\{copy\.partialSubmitBody\(unansweredCount\)\}/);
+  assert.match(source, /\{copy\.cancelPartialSubmit\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.partialSubmitAccessibilityLabel\(unansweredCount\)\}/,
+  );
+  assert.match(source, /\{copy\.confirmPartialSubmit\}/);
+  assert.match(examGeneratorSource, /export function countUnansweredExamQuestions/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('exam chapter breakdown uses chapter names instead of raw ids only', () => {
