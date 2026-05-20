@@ -25,6 +25,8 @@ const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
 const euCooperationMissingArticleEnglishPattern =
   /\bThe EU is political and economic cooperation between European countries\b/i;
+const goodFridayRemembersEnglishPattern =
+  /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
@@ -132,6 +134,7 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
+  assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -790,6 +793,95 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.match(output, /q103 uses literal First of May English wording/);
+});
+
+test('Good Friday source and exports use natural commemorates English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q101GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q101', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q101', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q101', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q101', 'judgement'),
+  ];
+  const q101Ids = ['q101', ...q101GeneratedIds];
+  const naturalExplanation =
+    "Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection";
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    goodFridayRemembersEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q101Ids.includes(question.id))
+    .filter((question) => goodFridayRemembersEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q101Ids.includes(question.id))
+    .filter((question) => goodFridayRemembersEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  for (const id of q101Ids) {
+    assert.match(
+      generatedSiteBank.find((question) => question.id === id)?.why.en ?? '',
+      new RegExp(naturalExplanation),
+    );
+    assert.match(
+      actualSiteBank.find((question) => question.id === id)?.why.en ?? '',
+      new RegExp(naturalExplanation),
+    );
+  }
+});
+
+test('Good Friday English naturalness guard rejects remembers wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      "Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection",
+      "Good Friday remembers Jesus' death and Easter Sunday his resurrection",
+    );
+  }
+  return contents;
+};
+const { buildSiteQuestionBank } = require('./scripts/export-site-question-bank.js');
+const bad = buildSiteQuestionBank().questions
+  .filter((question) =>
+    /Good Friday remembers Jesus' death and Easter Sunday his resurrection/i.test(question.why.en),
+  )
+  .map((question) => question.id);
+console.log(JSON.stringify(bad));
+if (!bad.includes('q101') || bad.length < 5) process.exit(1);
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.equal(result.status, 0, output);
+  assert.match(output, /q101/);
 });
 
 test('EU cooperation source and exports use natural English article', () => {

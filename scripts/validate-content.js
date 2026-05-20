@@ -469,6 +469,9 @@ const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
 const QUESTION_UMEA_DEMONYM_SWEDISH_NATURALNESS_PATTERNS = [/\bumebor\b/i];
+const QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i,
+];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -4659,6 +4662,16 @@ function findQuestionUmeaDemonymSwedishNaturalnessIssue(question) {
   return QUESTION_UMEA_DEMONYM_SWEDISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionGoodFridayEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -7486,6 +7499,7 @@ let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionUmeaDemonymSwedishNaturalnessValidated = 0;
+let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -15981,6 +15995,8 @@ if (Array.isArray(questions)) {
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
       const umeaDemonymSwedishNaturalnessIssue =
         findQuestionUmeaDemonymSwedishNaturalnessIssue(question);
+      const goodFridayEnglishNaturalnessIssue =
+        findQuestionGoodFridayEnglishNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -16021,6 +16037,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses nonstandard Umeå demonym Swedish wording`);
       } else {
         questionUmeaDemonymSwedishNaturalnessValidated += 1;
+      }
+      if (goodFridayEnglishNaturalnessIssue) {
+        fail(`${label} uses Good Friday remembers English wording`);
+      } else {
+        questionGoodFridayEnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16488,6 +16509,7 @@ console.log(
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
       questionUmeaDemonymSwedishNaturalnessValidated,
+      questionGoodFridayEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

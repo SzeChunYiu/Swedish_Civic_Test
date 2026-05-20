@@ -10419,7 +10419,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året.",
       "zh-Hant": "復活節在三月或四月的某個時間慶祝，並與耶穌受難日和復活節主日相關。耶穌受難日紀念耶穌的死亡，復活節主日紀念他的復活；將臨期、五一節和諸聖日屬於一年中的其他時期。",
       "zh-Hans": "复活节在三月或四月的某个时间庆祝，并与耶稣受难日和复活节主日相关。耶稣受难日纪念耶稣的死亡，复活节主日纪念他的复活；将临期、五一节和诸圣日属于一年中的其他时期。",
@@ -42613,7 +42613,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -42653,7 +42653,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -42693,7 +42693,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -42781,7 +42781,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
