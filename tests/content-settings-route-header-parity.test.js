@@ -28,7 +28,7 @@ test('settings route title and preference sections stay accessible as headers', 
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.questionLanguageTitle\}\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.studyLanguageTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
@@ -39,10 +39,10 @@ test('settings route title and preference sections stay accessible as headers', 
     /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   );
   assert.match(source, /Inställningar/);
-  assert.match(source, /Frågespråk/);
+  assert.match(source, /Studiespråk/);
   assert.match(source, /Dagligt mål/);
   assert.match(source, /Settings/);
-  assert.match(source, /Question language/);
+  assert.match(source, /Study language/);
   assert.match(source, /Daily goal/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
 });

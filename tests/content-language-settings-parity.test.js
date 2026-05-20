@@ -38,12 +38,44 @@ test('language settings stay in parity with supported localization languages', (
   assert.match(settingsStore, /export type AppLanguage = 'sv' \| 'en';/);
   assert.match(settingsRoute, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(settingsRoute, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
-  assert.match(settingsRoute, /Byt frågespråk till \$\{label\}/);
-  assert.match(settingsRoute, /Set question language to \$\{label\}/);
+  assert.match(settingsRoute, /Byt studiespråk till \$\{label\}/);
+  assert.match(settingsRoute, /Set study language to \$\{label\}/);
+  assert.doesNotMatch(settingsRoute, new RegExp(['Fr', 'å', 'ge', 'spr', 'å', 'k'].join('')));
+  assert.doesNotMatch(settingsRoute, new RegExp(['Question ', 'lang', 'uage'].join('')));
   assert.equal(summary.supportedLanguagesValidated, expectedLanguages.length);
   assert.equal(summary.localizationStrings, Object.keys(strings).length);
   assert.equal(summary.localizationStringsValidated, Object.keys(strings).length);
   assert.equal(summary.languageSettingsParityValidated, true);
+});
+
+test('language settings parity rejects narrow language-scope labels', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Studiespråk', ['Fr', 'å', 'ge', 'spr', 'å', 'k'].join(''));
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /language controls must describe the app-wide study language/,
+  );
 });
 
 test('language settings parity rejects supported-language drift', () => {

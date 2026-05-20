@@ -116,7 +116,7 @@ export async function dismissBlockingModals(page: Page): Promise<BlockingModalDi
   };
 }
 
-export async function selectQuestionLanguageInSettings(
+export async function selectStudyLanguageInSettings(
   page: Page,
   language: AppLanguage,
 ): Promise<void> {
@@ -125,10 +125,10 @@ export async function selectQuestionLanguageInSettings(
 
   const targetLanguageLabel =
     language === 'en'
-      ? /Byt frågespråk till Engelskt stöd|Set question language to English support/
-      : /Byt frågespråk till Svenska|Set question language to Swedish/;
+      ? /Byt studiespråk till Engelskt stöd|Set study language to English support/
+      : /Byt studiespråk till Svenska|Set study language to Swedish/;
   const selectedLanguageLabel =
-    language === 'en' ? 'Set question language to English support' : 'Byt frågespråk till Svenska';
+    language === 'en' ? 'Set study language to English support' : 'Byt studiespråk till Svenska';
 
   await page.getByLabel(targetLanguageLabel).click();
   await expect(page.getByLabel(selectedLanguageLabel)).toHaveAttribute('aria-selected', 'true');

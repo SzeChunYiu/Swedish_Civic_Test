@@ -6,12 +6,21 @@ async function useEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await page
-    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
+    .getByLabel(/Byt studiespråk till Engelskt stöd|Set study language to English support/)
     .click();
-  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
+  await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
     'aria-selected',
     'true',
   );
+}
+
+async function resetBrowserStorageOnce(page: Page) {
+  await page.addInitScript(() => {
+    if (window.sessionStorage.getItem('remove-ads-e2e-reset')) return;
+
+    window.localStorage.clear();
+    window.sessionStorage.setItem('remove-ads-e2e-reset', 'true');
+  });
 }
 
 async function expectReachableButton(locator: Locator) {

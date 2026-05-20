@@ -67,7 +67,7 @@ test('answer option feedback reveals the correct answer after a wrong selection'
   });
 });
 
-test('answer option feedback labels follow the selected question language', () => {
+test('answer option feedback labels follow the selected study language', () => {
   const { getAnswerOptionFeedback } = loadTs('lib/quiz/answerValidation.ts');
   const question = {
     id: 'q1',

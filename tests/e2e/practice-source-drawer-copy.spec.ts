@@ -9,10 +9,10 @@ async function switchQuestionLanguage(page: Page, language: 'sv' | 'en') {
 
   const label =
     language === 'sv'
-      ? /Byt frågespråk till Svenska|Set question language to Swedish/
-      : /Byt frågespråk till Engelskt stöd|Set question language to English support/;
+      ? /Byt studiespråk till Svenska|Set study language to Swedish/
+      : /Byt studiespråk till Engelskt stöd|Set study language to English support/;
   const selectedLabel =
-    language === 'sv' ? 'Byt frågespråk till Svenska' : 'Set question language to English support';
+    language === 'sv' ? 'Byt studiespråk till Svenska' : 'Set study language to English support';
 
   await page.getByLabel(label).click();
   await expect(page.getByLabel(selectedLabel)).toHaveAttribute('aria-selected', 'true');

@@ -11,9 +11,9 @@ async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await page
-    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
+    .getByLabel(/Byt studiespråk till Engelskt stöd|Set study language to English support/)
     .click();
-  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
+  await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
     'aria-selected',
     'true',
   );
@@ -22,8 +22,8 @@ async function enableEnglishSupport(page: Page) {
 async function enableSwedish(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page.getByLabel(/Byt frågespråk till Svenska|Set question language to Swedish/).click();
-  await expect(page.getByLabel('Byt frågespråk till Svenska')).toHaveAttribute(
+  await page.getByLabel(/Byt studiespråk till Svenska|Set study language to Swedish/).click();
+  await expect(page.getByLabel('Byt studiespråk till Svenska')).toHaveAttribute(
     'aria-selected',
     'true',
   );
@@ -141,7 +141,21 @@ async function expectTapTargetAtLeast44(locator: Locator, label: string) {
   expect(box!.height, `${label} height`).toBeGreaterThanOrEqual(44);
 }
 
-test('practice audio control follows the selected question language', async ({ page }) => {
+async function openPracticeQuestion(page: Page, language: AppLanguage) {
+  await openRouteWithLanguage(page, '/practice', language);
+
+  const startPractice = page
+    .getByRole('button', {
+      name: /Starta övning med alla synliga frågor|Start practice with all visible questions/,
+    })
+    .first();
+
+  if (await startPractice.isVisible().catch(() => false)) {
+    await startPractice.click();
+  }
+}
+
+test('practice audio control follows the selected study language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {

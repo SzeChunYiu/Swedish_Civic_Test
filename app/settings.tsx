@@ -18,7 +18,7 @@ type SettingsCopy = {
   disableAudioAccessibilityLabel: string;
   enableAudioAccessibilityLabel: string;
   languageAccessibilityLabel: (label: string) => string;
-  questionLanguageTitle: string;
+  studyLanguageTitle: string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
   subtitle: string;
   title: string;
@@ -42,8 +42,40 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
     enableAudioAccessibilityLabel: 'Slå på ljud',
-    languageAccessibilityLabel: (label) => `Byt frågespråk till ${label}`,
-    questionLanguageTitle: 'Frågespråk',
+    confirmImport: 'Bekräfta import',
+    confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
+    importErrorMessage: (code) => {
+      if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
+      if (code === 'invalid_json') return 'JSON kunde inte läsas.';
+      if (code === 'invalid_schema') return 'Importen har fel format eller okända toppnivåfält.';
+      if (code === 'unsupported_version') return 'Importversionen stöds inte.';
+      if (code === 'purchase_fields_rejected') {
+        return 'Importen innehåller köp-, kvitto- eller IAP-fält. Ta bort dem och återställ köp via appbutiken.';
+      }
+      return 'Importen innehåller inga stödda studiedata.';
+    },
+    importPasteLabel: 'Klistra in JSON-export',
+    importPastePlaceholder: 'Klistra in exporten här',
+    importPreview: 'Förhandsgranska import',
+    importPreviewAccessibilityLabel: 'Förhandsgranska lokal studiedataimport',
+    importPurchasesNote:
+      'Köp, kvitton och IAP-data importeras inte. Använd appbutikens återställning för köp.',
+    importReset: 'Återställ importfält',
+    importSectionSubtitle:
+      'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
+    importSuccess: 'Importen är klar.',
+    importSummaryBookmarks: (count) => `${count} bokmärken`,
+    importSummaryCompletedQuestions: (count) => `${count} frågor med sparad progression`,
+    importSummaryFsrsDays: (count) => `${count} dagar med FSRS-repetition`,
+    importSummaryFsrsCards: (count) => `${count} FSRS-repetitionskort`,
+    importSummaryMockExams: (count) => `${count} provhistorikposter`,
+    importSummarySettings: (count) => `${count} inställningar`,
+    importSummaryStreakFreeze: 'Studiesvit och frysstatus ingår',
+    importSummaryTitle: 'Sammanfattning före import',
+    importSummaryWrongAnswers: (count) => `${count} granskningar av fel svar`,
+    importTitle: 'Importera studiedata',
+    languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
+    studyLanguageTitle: 'Studiespråk',
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
     subtitle: 'Styr studiespråk, ljud och ditt dagliga mål.',
     title: 'Inställningar',
@@ -65,8 +97,41 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
     enableAudioAccessibilityLabel: 'Enable audio',
-    languageAccessibilityLabel: (label) => `Set question language to ${label}`,
-    questionLanguageTitle: 'Question language',
+    confirmImport: 'Confirm import',
+    confirmImportAccessibilityLabel: 'Confirm local study data import',
+    importErrorMessage: (code) => {
+      if (code === 'empty_input') return 'Paste JSON before previewing.';
+      if (code === 'invalid_json') return 'JSON could not be read.';
+      if (code === 'invalid_schema')
+        return 'The import has the wrong format or unknown top-level fields.';
+      if (code === 'unsupported_version') return 'This import version is not supported.';
+      if (code === 'purchase_fields_rejected') {
+        return 'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.';
+      }
+      return 'The import does not contain supported study data.';
+    },
+    importPasteLabel: 'Paste JSON export',
+    importPastePlaceholder: 'Paste the export here',
+    importPreview: 'Preview import',
+    importPreviewAccessibilityLabel: 'Preview local study data import',
+    importPurchasesNote:
+      'Purchases, receipts, and IAP data are not imported. Use the app store restore flow for purchases.',
+    importReset: 'Reset import field',
+    importSectionSubtitle:
+      'Paste a local study data export in JSON format. You will see a summary before anything is written.',
+    importSuccess: 'Import complete.',
+    importSummaryBookmarks: (count) => `${count} bookmarks`,
+    importSummaryCompletedQuestions: (count) => `${count} questions with saved progress`,
+    importSummaryFsrsDays: (count) => `${count} FSRS review days`,
+    importSummaryFsrsCards: (count) => `${count} FSRS review cards`,
+    importSummaryMockExams: (count) => `${count} mock exam history entries`,
+    importSummarySettings: (count) => `${count} settings`,
+    importSummaryStreakFreeze: 'Study streak and freeze status included',
+    importSummaryTitle: 'Summary before import',
+    importSummaryWrongAnswers: (count) => `${count} wrong-answer reviews`,
+    importTitle: 'Import study data',
+    languageAccessibilityLabel: (label) => `Set study language to ${label}`,
+    studyLanguageTitle: 'Study language',
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
     subtitle: 'Control study language, audio, and your daily goal.',
     title: 'Settings',
@@ -124,9 +189,14 @@ export default function Screen() {
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.questionLanguageTitle}
+          {copy.studyLanguageTitle}
         </Text>
-        <View style={styles.row}>
+        <View
+          aria-label={copy.studyLanguageTitle}
+          accessibilityLabel={copy.studyLanguageTitle}
+          accessibilityRole="radiogroup"
+          style={styles.row}
+        >
           {[
             renderLanguageButton('sv', 'Swedish', 'Svenska'),
             renderLanguageButton('en', 'English support', 'Engelskt stöd'),

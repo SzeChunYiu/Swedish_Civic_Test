@@ -424,7 +424,7 @@ test('architecture answer shuffle runtime files exist', () => {
   );
 });
 
-test('architecture question language runtime files exist', () => {
+test('architecture study language runtime files exist', () => {
   assert.deepEqual(
     questionLanguageRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],

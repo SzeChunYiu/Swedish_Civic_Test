@@ -412,11 +412,11 @@ test('settings route exposes page and section titles as headers', () => {
 
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /\{copy\.title\}/);
-  assert.match(source, /\{copy\.questionLanguageTitle\}/);
+  assert.match(source, /\{copy\.studyLanguageTitle\}/);
   assert.match(source, /Inställningar/);
   assert.match(source, /Settings/);
-  assert.match(source, /Frågespråk/);
-  assert.match(source, /Question language/);
+  assert.match(source, /Studiespråk/);
+  assert.match(source, /Study language/);
   assert.match(source, /Dagligt mål/);
   assert.match(source, /Audio/);
   assert.equal(sectionHeaderMatches?.length, 3);
@@ -444,8 +444,8 @@ test('settings controls mirror selected and checked state to web aria attributes
   assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
   assert.match(source, /Svenska/);
   assert.match(source, /Engelskt stöd/);
-  assert.match(source, /Byt frågespråk till \$\{label\}/);
-  assert.match(source, /Set question language to \$\{label\}/);
+  assert.match(source, /Byt studiespråk till \$\{label\}/);
+  assert.match(source, /Set study language to \$\{label\}/);
   assert.match(source, /\$\{answerCount\} svar per dag/);
   assert.match(source, /\$\{answerCount\} answers per day/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);

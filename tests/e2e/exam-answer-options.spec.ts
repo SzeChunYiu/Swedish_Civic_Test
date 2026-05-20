@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { dismissBlockingModals, selectQuestionLanguageInSettings } from './browserLaunch';
+import { dismissBlockingModals, selectStudyLanguageInSettings } from './browserLaunch';
 
 const totalQuestions = 20;
 const minimumTargetSizePx = 44;
@@ -38,7 +38,7 @@ test('mock exam English answer options expose radio state through submit and rev
 }) => {
   const consoleErrors = collectConsoleErrors(page);
 
-  await selectQuestionLanguageInSettings(page, 'en');
+  await selectStudyLanguageInSettings(page, 'en');
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
