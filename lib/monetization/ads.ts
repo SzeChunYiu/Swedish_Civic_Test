@@ -1,10 +1,7 @@
 import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types/monetization';
-import { readRealAdUnitOverrides } from './adUnitsReal';
 import type { AdConsentDecision } from './consent';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
-
-export type AdRuntimePlatform = 'ios' | 'android' | 'web' | string;
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
 type AdUnitEnvValues = Record<AdPlacement, { android?: string; ios?: string }>;
@@ -37,7 +34,6 @@ function normalizeEnvString(value: string | undefined): string | undefined {
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
 
 const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
-const REAL_AD_UNIT_OVERRIDES = readRealAdUnitOverrides();
 
 const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   app_open_launch: {
@@ -140,9 +136,8 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
   const envValues = REAL_AD_UNIT_ENV_VALUES[unit.placement];
-  const override = REAL_AD_UNIT_OVERRIDES[unit.placement];
-  const androidUnitId = normalizeEnvString(override?.androidUnitId ?? envValues.android);
-  const iosUnitId = normalizeEnvString(override?.iosUnitId ?? envValues.ios);
+  const androidUnitId = normalizeEnvString(envValues.android);
+  const iosUnitId = normalizeEnvString(envValues.ios);
 
   return {
     ...unit,
@@ -165,34 +160,25 @@ export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   consentDecision?: AdConsentGate,
-  platform?: AdRuntimePlatform,
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
   const unit = getAdUnit(placement);
-  if (!unit?.enabled) return false;
-  if (REAL_ADS_ENABLED && platform === 'ios') return Boolean(unit.iosUnitId);
-  if (REAL_ADS_ENABLED && platform === 'android') return Boolean(unit.androidUnitId);
-  return true;
+  return Boolean(unit?.enabled);
 }
 
 export function shouldShowLaunchPopupAd({
   alreadyShownThisLaunch,
   consentDecision,
   entitlements,
-  platform,
 }: {
   alreadyShownThisLaunch: boolean;
   consentDecision?: AdConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
-  platform?: AdRuntimePlatform;
 }): boolean {
-  return (
-    !alreadyShownThisLaunch &&
-    shouldShowAd('app_open_launch', entitlements, consentDecision, platform)
-  );
+  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
 }
 
 function pathMatchesRoute(pathname: string, route: string): boolean {
@@ -219,10 +205,7 @@ export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
-  realUnitOverrideEnvKey: 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON',
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
-  realUnitEnvValues: REAL_AD_UNIT_ENV_VALUES,
-  realUnitOverrides: REAL_AD_UNIT_OVERRIDES,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
   units: getConfiguredAdUnits(),
