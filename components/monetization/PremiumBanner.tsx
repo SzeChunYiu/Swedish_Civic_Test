@@ -24,12 +24,14 @@ type PremiumBannerCopy = {
   bodyIdle: (price: string) => string;
   buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
+  buyHint: string;
   buyIdle: (price: string) => string;
   buying: string;
   eyebrowActive: string;
   eyebrowIdle: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
+  restoreHint: string;
   restoreIdle: string;
   restoring: string;
   statusAccessibilityLabel: (message: string) => string;
@@ -47,6 +49,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     buyAccessibilityHint:
       'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
+    buyHint: 'Startar ett engångsköp som tar bort annonser från studieskärmar.',
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
@@ -54,6 +57,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     restoreAccessibilityHint:
       'Kontrollerar om Ta bort annonser redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
+    restoreHint: 'Kontrollerar om Ta bort annonser redan har köpts.',
     restoreIdle: 'Återställ',
     restoring: 'Återställer...',
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
@@ -76,6 +80,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     buyAccessibilityHint:
       'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
+    buyHint: 'Starts a one-time purchase that removes ads from study screens.',
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
@@ -83,6 +88,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     restoreAccessibilityHint:
       'Checks whether Remove Ads was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
+    restoreHint: 'Checks whether Remove Ads has already been purchased.',
     restoreIdle: 'Restore',
     restoring: 'Restoring...',
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
@@ -103,6 +109,17 @@ function getStatusMessage(status: PurchaseUiStatus, copy: PremiumBannerCopy): st
   return copy.statusMessages[status];
 }
 
+/**
+ * Defaults: Swedish copy, local purchase runtime derived from the current
+ * `adsDisabled` entitlement, and visible Buy/Restore actions.
+ */
+export interface PremiumBannerProps {
+  entitlements: PremiumEntitlements;
+  language?: AppLanguage;
+  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
+  runtimeOptions?: PurchaseRuntimeOptions;
+}
+
 function getVisibleStatus(adsDisabled: boolean, status: PurchaseUiStatus): PurchaseUiStatus {
   if (!adsDisabled) return status;
   return status === 'restored' ? 'restored' : 'purchased';
@@ -113,12 +130,7 @@ export function PremiumBanner({
   language = 'sv',
   onEntitlementsChange,
   runtimeOptions,
-}: {
-  entitlements: PremiumEntitlements;
-  language?: AppLanguage;
-  onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
-  runtimeOptions?: PurchaseRuntimeOptions;
-}) {
+}: PremiumBannerProps) {
   const copy = premiumBannerCopy[language];
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(() => {
     if (runtimeOptions) return runtimeOptions;
@@ -237,7 +249,7 @@ const styles = StyleSheet.create({
     marginTop: space[0.5],
   },
   actionButton: {
-    minWidth: 128,
+    minWidth: space[15],
   },
   status: {
     color: colors.textMuted,
