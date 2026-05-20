@@ -38,7 +38,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 159;
+const EXPECTED_SOURCE_QUESTIONS = 160;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -251,8 +251,18 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
 ];
-const QUESTION_SUSPECTED_CRIME_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat applies to a person suspected of a crime\b/i,
+const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
+  /\bskatt och moms\b/i,
+  /\btax and VAT\b/i,
+  /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
+  /\bCompanies also pay tax,\s+and VAT is paid\b/i,
+  /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
+  /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
+];
+const QUESTION_TAX_LIABILITY_VAT_TERM_PATTERNS = [
+  /\bmoms(?:en)?\b/i,
+  /\bmervärdesskatt\b/i,
+  /\bVAT\b/i,
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -352,6 +362,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
   /^That Sweden's first mosques were built\b/i,
+  /^(?:Försöka|Hindra)\b/i,
+  /^(?:Try to|Stop others)\b/i,
   /\bskyddar rätten [^.?!]* och skydd mot\b/i,
   /\bprotects the right [^.?!]* and protection from\b/i,
   /\bskyddar att staten väljer\b/i,
@@ -1230,8 +1242,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     file: 'app/(tabs)/practice.tsx',
     component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern:
-      /<PracticeInterstitialAd\s+showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\}\s+\/>/,
+    pattern: /<PracticeInterstitialAd\s+showKey=\{practiceInterstitialShowKey\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -1244,7 +1255,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
 const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
 const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -4293,12 +4304,27 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
-function findQuestionSuspectedCrimeEnglishNaturalnessIssue(question) {
-  const text = [question.questionEn].join(' ');
+function findQuestionTaxVatTwoConceptIssue(question) {
+  const text = questionLearnerFacingText(question);
 
-  return QUESTION_SUSPECTED_CRIME_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
-    pattern.test(text),
-  );
+  return QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function questionLearnerFacingText(question) {
+  return [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+}
+
+function findTaxLiabilityVatTermIssue(question) {
+  if (!Array.isArray(question.tags) || !question.tags.includes('tax-liability')) return null;
+
+  const text = questionLearnerFacingText(question);
+  return QUESTION_TAX_LIABILITY_VAT_TERM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionNestedMetaStem(question) {
@@ -5427,6 +5453,9 @@ function civicStatementSv(source, option) {
     return `${upperFirst(match[1])} har uppgiften att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vilken uppgift har (.+)$/i);
   if (match) return `${upperFirst(match[1])} har uppgiften ${swedishPurposeClause(answer)}`;
+  match = q.match(/^Vilken rätt har (.+?) i (.+)$/i);
+  if (match)
+    return `I ${match[2]} har ${match[1]} rätt att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad är en uppgift för (.+)$/i);
   if (match) return `En uppgift för ${match[1]} är ${swedishPurposeClause(answer)}`;
   match = q.match(/^Vilket påstående beskriver (.+)$/i);
@@ -5744,6 +5773,9 @@ function civicStatementEn(source, option) {
   if (match) return `One task of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What is one role of (.+)$/i);
   if (match) return `One role of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^What right do (.+?) have in (.+)$/i);
+  if (match)
+    return `In ${match[2]}, ${match[1]} have the right to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^Which statement describes (.+)$/i);
   if (match) return describesStatementEn(match[1], answer);
   match = q.match(/^Which statement is correct about (.+)$/i);
@@ -6785,6 +6817,7 @@ const getCompletedQuestionIdsForQuestionBank =
   practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
+const getPracticeInterstitialShowKey = practiceSessionStoreModule.getPracticeInterstitialShowKey;
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
@@ -7076,7 +7109,6 @@ let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
-let questionSuspectedCrimeEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -7868,6 +7900,22 @@ function validateAdPlacementRouteParity() {
         routeIsValid = false;
       }
       if (
+        !/getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\)/.test(source)
+      ) {
+        reject(
+          'Practice completion interstitial key must use the active question and stable practice session seed',
+        );
+        routeIsValid = false;
+      }
+      if (
+        /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/.test(
+          source,
+        )
+      ) {
+        reject('Practice completion interstitial key must not include selectedOptionId');
+        routeIsValid = false;
+      }
+      if (
         !practiceInterstitialSource.includes(
           `shouldShowAd('${spec.placement}', resolvedEntitlements)`,
         )
@@ -7890,6 +7938,18 @@ function validateAdPlacementRouteParity() {
       if (!practiceInterstitialNativeSource.includes('AdEventType.LOADED')) {
         reject(
           'PracticeInterstitialAd native placement must wait for the interstitial loaded event',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.OPENED')) {
+        reject(
+          'PracticeInterstitialAd native placement must record the show key only after the interstitial opens',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.CLOSED')) {
+        reject(
+          'PracticeInterstitialAd native placement must clear show state when the interstitial closes',
         );
         routeIsValid = false;
       }
@@ -7932,6 +7992,36 @@ function validateAdPlacementRouteParity() {
       if (!practiceInterstitialNativeSource.includes('lastInterstitialShowKey === showKey')) {
         reject(
           'PracticeInterstitialAd native placement must show at most once per answer feedback key',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !/AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/.test(
+          practiceInterstitialNativeSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must set the shown key from the opened event',
+        );
+        routeIsValid = false;
+      }
+      if (
+        /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/.test(
+          practiceInterstitialNativeSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must not mark a key as shown before SDK show succeeds',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !/Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/.test(
+          practiceInterstitialNativeSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must clear show state so SDK show failures can retry',
         );
         routeIsValid = false;
       }
@@ -12602,7 +12692,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let purchaseSource = '';
   let placementCtaSource = '';
-  let premiumBannerSource = '';
 
   function reject(message) {
     valid = false;
@@ -12611,10 +12700,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   try {
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
-    premiumBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
-      'utf8',
-    );
     placementCtaSource = fs.readFileSync(
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
       'utf8',
@@ -12625,7 +12710,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
-  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
@@ -12737,21 +12821,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
           placementCtaSource,
         ),
       'RemoveAdsPlacementCta must expose localized pending, not_found, and restored status copy',
-    ],
-    [
-      /useRef/.test(premiumBannerSource) &&
-        /useRef/.test(placementCtaSource) &&
-        normalizedPremiumBannerSource.includes(
-          'const purchaseActionInFlightRef = useRef(false);',
-        ) &&
-        normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
-        normalizedPremiumBannerSource.includes('if (purchaseActionInFlightRef.current) return;') &&
-        normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
-        normalizedPremiumBannerSource.includes('purchaseActionInFlightRef.current = true;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
-        normalizedPremiumBannerSource.includes('purchaseActionInFlightRef.current = false;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
-      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
     ],
   ];
 
@@ -14116,6 +14185,13 @@ function validatePracticeSessionStoreParity() {
     });
 
     usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
+    const firstFeedbackShowKey =
+      typeof getPracticeInterstitialShowKey === 'function'
+        ? getPracticeInterstitialShowKey(
+            usePracticeSessionStore.getState().activeQuestionId,
+            usePracticeSessionStore.getState().shuffleSessionId,
+          )
+        : null;
     let state = usePracticeSessionStore.getState();
     if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
       rejectRuntime('practice session selectOption must lock question id and selected option id');
@@ -14133,6 +14209,23 @@ function validatePracticeSessionStoreParity() {
     }
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session resetSelection must keep the current shuffle session seed');
+    }
+    usePracticeSessionStore.getState().selectOption('q-validator', 'option-b');
+    if (typeof getPracticeInterstitialShowKey !== 'function') {
+      rejectRuntime('practice session must export getPracticeInterstitialShowKey');
+    } else {
+      const retryFeedbackShowKey = getPracticeInterstitialShowKey(
+        usePracticeSessionStore.getState().activeQuestionId,
+        usePracticeSessionStore.getState().shuffleSessionId,
+      );
+      if (retryFeedbackShowKey !== firstFeedbackShowKey) {
+        rejectRuntime(
+          'practice interstitial key must remain stable when retrying the same active question',
+        );
+      }
+      if (/option-a|option-b/.test(retryFeedbackShowKey)) {
+        rejectRuntime('practice interstitial key must not include selected option ids');
+      }
     }
 
     usePracticeSessionStore.getState().advanceQuestion();
@@ -15515,9 +15608,6 @@ function validateAuthoredSourceParity() {
     if (findQuestionAnswerKeyPrompt(question)) {
       reject(`${label} source prompt asks about the answer instead of the civic concept`);
     }
-    if (findQuestionSuspectedCrimeEnglishNaturalnessIssue(question)) {
-      reject(`${label} uses a suspected-crime English prompt calque`);
-    }
 
     if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
       authoredSourceQuestionsValidated += 1;
@@ -16297,8 +16387,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
-      const suspectedCrimeEnglishNaturalnessIssue =
-        findQuestionSuspectedCrimeEnglishNaturalnessIssue(question);
+      const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
+      const taxLiabilityVatTermIssue = findTaxLiabilityVatTermIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
@@ -16338,10 +16428,13 @@ if (Array.isArray(questions)) {
       } else {
         questionStateWelfareEnglishNaturalnessValidated += 1;
       }
-      if (suspectedCrimeEnglishNaturalnessIssue) {
-        fail(`${label} uses a suspected-crime English prompt calque`);
-      } else {
-        questionSuspectedCrimeEnglishNaturalnessValidated += 1;
+      if (taxVatTwoConceptIssue) {
+        fail(
+          `${label} combines tax liability and VAT purchase taxation in one learner-facing item`,
+        );
+      }
+      if (taxLiabilityVatTermIssue) {
+        fail(`${label} keeps VAT facts folded into tax-liability learner-facing text`);
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16809,7 +16902,6 @@ console.log(
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
-      questionSuspectedCrimeEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

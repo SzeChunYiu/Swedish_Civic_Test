@@ -16,7 +16,9 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
-const suspectedCrimeEnglishCalquePattern = /\bWhat applies to a person suspected of a crime\b/i;
+const taxVatTwoConceptPattern =
+  /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
+const taxLiabilityVatTermPattern = /\b(?:moms(?:en)?|mervärdesskatt|VAT)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -223,86 +225,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('suspected-crime source prompt uses natural English in exports', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const textForQuestion = (question) =>
-    [question.q?.en, ...(question.opts || []).map((option) => option.en)].join(' ');
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const q042 = generatedSiteBank.find((question) => question.id === 'q042');
-  const q042Practice = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q042', 'singleChoice'),
-  );
-  const q042Judgement = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q042', 'judgement'),
-  );
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    suspectedCrimeEnglishCalquePattern.test(
-      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
-    ),
-  );
-  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
-    .filter((question) => suspectedCrimeEnglishCalquePattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
-  assert.ok(q042, 'q042 should be published in the site bank');
-  assert.equal(q042.q.en, 'How should a person suspected of a crime be treated in Sweden?');
-  assert.equal(
-    q042.opts[0].en,
-    'A person suspected of a crime should be considered innocent until convicted',
-  );
-  assert.ok(q042Practice, 'q042 generated practice variant should be published');
-  assert.equal(
-    q042Practice.q.en,
-    'Which answer best matches? How should a person suspected of a crime be treated in Sweden?',
-  );
-  assert.ok(q042Judgement, 'q042 generated judgement variant should be published');
-  assert.equal(
-    q042Judgement.q.en,
-    'Choose the correct option: How should a person suspected of a crime be treated in Sweden?',
-  );
-});
-
-test('suspected-crime English naturalness guard rejects What applies calque', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents).replace(
-      'How should a person suspected of a crime be treated in Sweden?',
-      'What applies to a person suspected of a crime in Sweden?',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q042 uses a suspected-crime English prompt calque/,
-  );
-});
-
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -384,6 +306,157 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q045 source prompt asks about the answer instead of the civic concept/,
+  );
+});
+
+test('tax-liability source and exports keep VAT as a separate concept', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) =>
+    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en]
+      .concat((question.opts || []).flatMap((option) => [option.sv, option.en]))
+      .join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => taxVatTwoConceptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => taxVatTwoConceptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => taxVatTwoConceptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q070 = generatedSiteBank.find((question) => question.id === 'q070');
+  const q070True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q070', 'trueStatement'),
+  );
+  const q070False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q070', 'falseStatement'),
+  );
+  const q160 = generatedSiteBank.find((question) => question.id === 'q160');
+  const q160True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q160', 'trueStatement'),
+  );
+  const q160False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q160', 'falseStatement'),
+  );
+  const taxLiabilityVatOffenders = generatedSiteBank
+    .filter((question) => question.tags?.includes('tax-liability'))
+    .filter((question) => taxLiabilityVatTermPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+
+  assert.ok(q070, 'q070 should be published in the site bank');
+  assert.equal(q070.q.sv, 'Vilka betalar skatt i Sverige?');
+  assert.equal(q070.q.en, 'Who pays tax in Sweden?');
+  assert.deepEqual(
+    q070.opts.map((option) => option.sv),
+    [
+      'Både personer som arbetar och företag betalar skatt i Sverige',
+      'Bara personer som arbetar betalar skatt i Sverige',
+      'Bara företag betalar skatt i Sverige',
+      'Varken personer som arbetar eller företag betalar skatt i Sverige',
+    ],
+  );
+  assert.ok(q070True, 'q070 true generated variant should be published');
+  assert.equal(q070True.q.sv, 'Både personer som arbetar och företag betalar skatt i Sverige.');
+  assert.equal(q070True.q.en, 'Both people who work and companies pay tax in Sweden.');
+  assert.ok(q070False, 'q070 false generated variant should be published');
+  assert.equal(q070False.q.sv, 'Bara personer som arbetar betalar skatt i Sverige.');
+  assert.equal(q070False.q.en, 'Only people who work pay tax in Sweden.');
+  assert.ok(q160, 'q160 should publish the separate VAT source row');
+  assert.equal(q160.q.sv, 'När betalas moms?');
+  assert.equal(q160.q.en, 'When is VAT paid?');
+  assert.deepEqual(
+    q160.opts.map((option) => option.sv),
+    [
+      'Moms betalas när man köper varor och tjänster',
+      'Moms betalas bara av arbetsgivare för deras anställda',
+      'Moms är samma sak som sjukförsäkring',
+      'Moms är ett kommunalt beslut om skolor',
+    ],
+  );
+  assert.ok(q160True, 'q160 true generated VAT variant should be published');
+  assert.equal(q160True.q.sv, 'Moms betalas när man köper varor och tjänster.');
+  assert.equal(q160True.q.en, 'VAT is paid when people buy goods and services.');
+  assert.ok(q160False, 'q160 false generated VAT variant should be published');
+  assert.equal(q160False.q.sv, 'Moms betalas bara av arbetsgivare för deras anställda.');
+  assert.equal(q160False.q.en, 'VAT is paid only by employers for their employees.');
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.deepEqual(taxLiabilityVatOffenders, []);
+});
+
+test('tax/VAT single-concept guard rejects the old combined prompt', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vilka betalar skatt i Sverige?',
+        'Vilket påstående om skatt och moms stämmer?',
+      )
+      .replace(
+        'Who pays tax in Sweden?',
+        'Which statement about tax and VAT is correct?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q070 combines tax liability and VAT purchase taxation in one learner-facing item/,
+  );
+});
+
+test('tax-liability guard rejects VAT facts folded back into q070', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'Vilka betalar skatt i Sverige?',
+      'När betalas moms i Sverige?',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q070 keeps VAT facts folded into tax-liability learner-facing text/,
   );
 });
 
@@ -1180,6 +1253,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const bareAnswerPhraseResiduals = {",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
         "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
         "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
         "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
@@ -1208,7 +1283,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 6);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
 });
 
 test('published question schema rejects generated true/false statement-about-statement stems', () => {

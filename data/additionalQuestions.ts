@@ -3156,4 +3156,28 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['human-rights', 'un', 'articles'],
     'easy',
   ),
+  single(
+    'q160',
+    'ch09',
+    { chapter: 'Välfärdssamhället', section: 'Skatter för Sveriges välfärd', pageApprox: 30 },
+    'När betalas moms?',
+    'When is VAT paid?',
+    [
+      [
+        'Moms betalas när man köper varor och tjänster',
+        'VAT is paid when people buy goods and services',
+      ],
+      [
+        'Moms betalas bara av arbetsgivare för deras anställda',
+        'VAT is paid only by employers for their employees',
+      ],
+      ['Moms är samma sak som sjukförsäkring', 'VAT is the same thing as sickness insurance'],
+      ['Moms är ett kommunalt beslut om skolor', 'VAT is a municipal decision about schools'],
+    ],
+    0,
+    'Moms, eller mervärdesskatt, är en skatt som betalas när man köper varor och tjänster. Arbetsgivaravgifter betalas av arbetsgivare för deras anställda, och sjukförsäkring är ett stöd inom välfärden.',
+    'VAT is a tax paid when people buy goods and services. Employer contributions are paid by employers for their employees, and sickness insurance is a welfare benefit.',
+    ['taxes', 'vat', 'moms', 'goods-and-services'],
+    'easy',
+  ),
 ];
