@@ -1082,6 +1082,8 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vad gäller för ${statementTopicSv(source)}?`;
   }
+  const locationMatch = stripFinalPunctuation(source.questionSv).match(/^Var ligger (.+)$/i);
+  if (locationMatch) return `I vilken del av världen ligger ${locationMatch[1]}?`;
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
   return `Vilket svar stämmer bäst? ${source.questionSv}`;
@@ -1091,6 +1093,8 @@ function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `What is correct about ${statementTopicEn(source)}?`;
   }
+  const locationMatch = stripFinalPunctuation(source.questionEn).match(/^Where is (.+) located$/i);
+  if (locationMatch) return `In which part of the world is ${locationMatch[1]} located?`;
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
   return `Which answer best matches? ${source.questionEn}`;

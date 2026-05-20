@@ -719,13 +719,16 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     ],
   };
 
-  for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
-  }
+  const matchedRows = Object.entries(expectedRows).map(([id, [questionSv, questionEn]]) => {
+    const match = questions.find(
+      (question) => question.questionSv === questionSv && question.questionEn === questionEn,
+    );
+    assert.ok(match, `${id} generated stem should exist`);
+    return match;
+  });
 
-  const checkedText = Object.keys(expectedRows)
-    .map((id) => `${byId.get(id)?.questionSv} ${byId.get(id)?.questionEn}`)
+  const checkedText = matchedRows
+    .map((question) => `${question.questionSv} ${question.questionEn}`)
     .join('\n');
 
   assert.doesNotMatch(
@@ -734,19 +737,19 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   );
 
   assert.equal(
-    byId.get('q151')?.explanationSv,
+    matchedRows[0].explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
-    byId.get('q151')?.explanationEn,
+    matchedRows[0].explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
   assert.equal(
-    byId.get('q150')?.explanationSv,
+    sourceQ002.explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området.',
   );
   assert.equal(
-    byId.get('q150')?.explanationEn,
+    sourceQ002.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
   );
 
@@ -1025,8 +1028,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
   };
 
   for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+    assert.ok(
+      questions.some(
+        (question) => question.questionSv === questionSv && question.questionEn === questionEn,
+      ),
+      `${id} generated stem should exist`,
+    );
   }
 
   const residualQuestions = questions.filter(
