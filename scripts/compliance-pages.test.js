@@ -256,6 +256,23 @@ test('static learner-facing slogans avoid pass and passport outcome promises', (
   }
 });
 
+test('static buddy tips avoid unsupported answer-pattern shortcuts', () => {
+  const buddiesSource = read('site/buddies.js');
+  const forbiddenBuddyTipPatterns = [
+    /shorter\s+one\s+usually/i,
+    /shorter\s+answer/i,
+    /longer\s+answer/i,
+    /short\s+option/i,
+    /det\s+kortare\s+(?:är|ar)\s+oftast/i,
+    /l[aä]ngre\s+svar/i,
+    /kort(?:a|are)\s+alternativ/i,
+  ];
+
+  forbiddenBuddyTipPatterns.forEach((pattern) => {
+    assert.doesNotMatch(buddiesSource, pattern);
+  });
+});
+
 test('static footer copy avoids unsupported team credential claims', () => {
   assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
   assert.deepEqual(
