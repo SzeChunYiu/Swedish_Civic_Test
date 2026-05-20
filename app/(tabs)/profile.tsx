@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
+import { ProPaywall } from '../../components/monetization/ProPaywall';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -51,7 +52,7 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     completedMetric: 'klara',
     dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
     dashboardCta: 'Visa översikt',
-    dashboardSubtitle: 'Aktivitet, kapitelprogress och XP visas på en egen sida.',
+    dashboardSubtitle: 'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
     dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
@@ -232,6 +233,13 @@ export default function Screen() {
           language={language}
           onEntitlementsChange={setMonetizationEntitlements}
           runtimeOptions={purchaseRuntime}
+        />
+      ) : null}
+      {entitlementsReady ? (
+        <ProPaywall
+          alreadyAdFree={monetizationEntitlements.adsDisabled}
+          language={language}
+          onEntitlementsChange={(nextEntitlements) => setMonetizationEntitlements(nextEntitlements)}
         />
       ) : null}
       <ComplianceLinks />

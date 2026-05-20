@@ -15,14 +15,15 @@ export interface PricingWedgeProps {
 
 const copy = {
   sv: {
-    proof: (q: number, c: number) => `${q} övningsfrågor i ${c} kapitel`,
+    proof: (q: number, c: number) => `Hela frågebanken: ${q} övningsfrågor i ${c} kapitel`,
     pitch: (price: string) =>
-      `Ta bort annonser för ${price} en gång. Ingen prenumeration, och tidsatta övningsprov är alltid annonsfria.`,
+      `Alla frågor är gratis. Ta bort annonser för ${price} en gång - ingen prenumeration, och tidsatta övningsprov är alltid annonsfria.`,
   },
   en: {
-    proof: (q: number, c: number) => `${q} practice questions across ${c} chapters`,
+    proof: (q: number, c: number) =>
+      `Full question bank stays free: ${q} practice questions across ${c} chapters`,
     pitch: (price: string) =>
-      `Remove ads forever for ${price}, one time. No subscription, and exams stay ad-free.`,
+      `All questions stay free. Remove ads forever for ${price}, one time - no subscription, and exams stay ad-free.`,
   },
 } as const;
 

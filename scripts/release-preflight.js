@@ -136,8 +136,8 @@ const v11ScopeSurfacePaths = [
 
 const removeAdsDeviceQaPath =
   process.env.RELEASE_PREFLIGHT_DEVICE_QA_PATH || 'reports/release-ads-iap-device-qa.md';
-const removeAdsStep3Command =
-  'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
+const removeAdsStep3StructuralGate =
+  'Remove Ads structural gate: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
 const releaseScopeOverrideId = 'release-scope-v11';
 const removeAdsDeviceQaChecks = [
   'AdMob test ads rendered on study screens',
@@ -226,18 +226,7 @@ function removeAdsV1AcceptanceFindings() {
   if (/REAL_ADS_ENABLED_FOR_V1\s*=\s*false/.test(adsSource)) {
     findings.push('GOAL step 1 is red: REAL_ADS_ENABLED_FOR_V1 is still hardcoded false.');
   }
-  if (!purchasesSource) {
-    findings.push('GOAL step 3 is red: lib/monetization/purchases.ts is missing.');
-  } else if (!/restore/i.test(purchasesSource)) {
-    findings.push('GOAL step 3 is red: purchases.ts does not mention restore.');
-  }
-  if (!anyRepoFileMatches(['app', 'components', 'lib'], /remove.?ads/i)) {
-    findings.push('GOAL step 3 is red: remove-ads wiring is not visible in app/components/lib.');
-  }
-  const step3Result = spawnSync('sh', ['-c', removeAdsStep3Command], { encoding: 'utf8' });
-  if (step3Result.status !== 0) {
-    findings.push(`GOAL step 3 exact command is red: ${removeAdsStep3Command}`);
-  }
+  findings.push(...removeAdsStep3StructuralFindings(purchasesSource));
   if (!exists('publishing/public-site/app-ads.txt')) {
     findings.push('GOAL step 4 is red: publishing/public-site/app-ads.txt is missing.');
   }
@@ -293,6 +282,54 @@ function removeAdsV1AcceptanceFindings() {
       );
     }
   }
+
+  return findings;
+}
+
+function removeAdsStep3StructuralFindings(purchasesSource) {
+  const findings = [];
+
+  if (!purchasesSource) {
+    return ['GOAL step 3 structural gate is red: lib/monetization/purchases.ts is missing.'];
+  }
+
+  const normalizedPurchasesSource = purchasesSource.replace(/\s+/g, ' ');
+  const step3Checks = [
+    [
+      /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
+        purchasesSource,
+      ),
+      'Remove Ads product id must be an exported reverse-DNS removeads identifier',
+    ],
+    [
+      /export\s+const\s+REMOVE_ADS_PRICE_LABEL\s*=\s*['"]29 SEK['"]/.test(purchasesSource),
+      'Remove Ads price label must stay 29 SEK',
+    ],
+    [
+      normalizedPurchasesSource.includes(
+        'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+      ),
+      'buyRemoveAds must request REMOVE_ADS_PRODUCT_ID',
+    ],
+    [
+      normalizedPurchasesSource.includes(
+        'const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
+      ),
+      'restoreRemoveAdsPurchase must restore REMOVE_ADS_PRODUCT_ID',
+    ],
+    [
+      /export\s+async\s+function\s+restoreRemoveAdsPurchase\b/.test(purchasesSource),
+      'restoreRemoveAdsPurchase must remain exported',
+    ],
+    [
+      anyRepoFileMatches(['app', 'components', 'lib'], /remove[-_\s]?ads/i),
+      'Remove Ads wiring must be visible in app/components/lib',
+    ],
+  ];
+
+  step3Checks.forEach(([isValid, message]) => {
+    if (!isValid) findings.push(`GOAL step 3 structural gate is red: ${message}.`);
+  });
 
   return findings;
 }
@@ -370,7 +407,7 @@ function releaseScopeOverrideGate(manualEvidence) {
     `v1.1 runtime/test surfaces are present before v1.0 Remove Ads acceptance is closed: ${v11Surfaces.join(
       ', ',
     )}. Remove Ads findings: ${removeAdsFindings.join(' ')}`,
-    `Close v1.0 Remove Ads acceptance first (${removeAdsStep3Command}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
+    `Close v1.0 Remove Ads acceptance first (${removeAdsStep3StructuralGate}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
   );
 }
 
@@ -1211,9 +1248,15 @@ function commandSucceeds(command, args) {
   const result = spawnSync(command, args, { encoding: 'utf8' });
   return {
     ok: result.status === 0,
-    stdout: result.stdout.trim(),
-    stderr: result.stderr.trim(),
+    stdout: result.stdout.trimEnd(),
+    stderr: result.stderr.trimEnd(),
   };
+}
+
+function commandEvidence(result, fallback = '') {
+  const streams = [result.stderr, result.stdout].filter(Boolean);
+  const combined = [...new Set(streams)].join('\n');
+  return combined || fallback;
 }
 
 function skippedExternalCheck(command, args) {
@@ -1506,35 +1549,35 @@ function buildReport() {
       'expo-doctor',
       'Expo Doctor native dependency checks',
       expoDoctor.ok ? 'READY' : 'BLOCKED',
-      expoDoctor.ok ? expoDoctor.stdout : expoDoctor.stderr || expoDoctor.stdout,
+      expoDoctor.ok ? expoDoctor.stdout : commandEvidence(expoDoctor),
       'Run `npm exec -- expo-doctor` and fix any Expo/native dependency findings.',
     ),
     gate(
       'web-export',
       'Web production export smoke',
       webExport.ok ? 'READY' : 'BLOCKED',
-      webExport.ok ? webExport.stdout : webExport.stderr || webExport.stdout,
+      webExport.ok ? webExport.stdout : commandEvidence(webExport),
       'Run `npm run release:web-export-smoke` and fix any Expo web export errors.',
     ),
     gate(
       'native-prebuild',
       'Android/iOS native prebuild smoke',
       nativePrebuild.ok ? 'READY' : 'BLOCKED',
-      nativePrebuild.ok ? nativePrebuild.stdout : nativePrebuild.stderr || nativePrebuild.stdout,
+      nativePrebuild.ok ? nativePrebuild.stdout : commandEvidence(nativePrebuild),
       'Run `npm run release:native-prebuild-smoke` and fix any Expo native prebuild warnings or errors.',
     ),
     gate(
       'eas-cli',
       'Pinned npx EAS CLI',
       easVersion.ok ? 'READY' : 'BLOCKED',
-      easVersion.ok ? easVersion.stdout : easVersion.stderr || easVersion.stdout,
+      easVersion.ok ? easVersion.stdout : commandEvidence(easVersion),
       'Run `npx --yes eas-cli@18.13.0 --version`.',
     ),
     gate(
       'eas-auth',
       'Expo/EAS authentication',
       easWhoami.ok ? 'READY' : 'BLOCKED',
-      easWhoami.ok ? easWhoami.stdout : easWhoami.stderr || easWhoami.stdout || 'Not logged in',
+      easWhoami.ok ? easWhoami.stdout : commandEvidence(easWhoami, 'Not logged in'),
       'Log in to Expo/EAS or provide an approved Expo token, then rerun `npx --yes eas-cli@18.13.0 whoami`.',
     ),
     evidenceGate(

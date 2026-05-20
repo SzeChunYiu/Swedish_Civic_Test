@@ -43,6 +43,22 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
+const factboxSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+];
+const unsupportedFactboxPatterns = [
+  /Facts you'll see on the test/i,
+  /what you'll see on the test/i,
+  /\b69%\s+is\s+forest/i,
+  /\b9%\s+lake/i,
+  /35\s*000\s+km\s+of\s+coastline/i,
+  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /historically commits\s+~?1%\s+of\s+GNI/i,
+  /Citizenship test starts:\s*6 June 2026/i,
+];
 
 function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -148,6 +164,12 @@ function assertNoUnsupportedPracticalTestClaim(value) {
   }
 }
 
+function assertNoUnsupportedFactboxClaim(value) {
+  for (const pattern of unsupportedFactboxPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
 function hasUnsupportedEbookSourcePromise(value) {
   return [
     /source-backed\s+chapters/i,
@@ -174,6 +196,7 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoStaleEbookCopy(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
+  assertNoUnsupportedFactboxClaim(source);
   assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
 });
 
@@ -184,6 +207,27 @@ test('static ebook does not promise source-backed footnotes without citation cov
     hasUnsupportedEbookSourcePromise(source) && !hasEbookCitationCoverage(source),
     false,
     'ebook source-backed or footnoted claims need ebook citation metadata or Sources-page coverage',
+  );
+});
+
+test('static ebook source notes have dedicated compact readable styling', () => {
+  const styles = readSiteFile('site/styles.css');
+
+  assert.match(
+    styles,
+    /\.ebook__factbox \.ebook__source-note \{[^}]*margin: 12px 0 0;[^}]*padding-top: 10px;[^}]*border-top: 1px solid var\(--line\);[^}]*color: var\(--ink-soft\);[^}]*font-size: 12\.5px;[^}]*line-height: 1\.5;/s,
+  );
+  assert.match(
+    styles,
+    /\.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--blue-deep\);[^}]*text-decoration: underline;[^}]*text-underline-offset: 2px;/s,
+  );
+  assert.match(
+    styles,
+    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note \{[^}]*color: var\(--ink-soft\) !important;[^}]*border-top-color: var\(--line\);/s,
+  );
+  assert.match(
+    styles,
+    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--gold\) !important;/s,
   );
 });
 
@@ -207,6 +251,8 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assertNoUnsupportedEbookOutcomeClaim(swedishHtml);
     assertNoUnsupportedPracticalTestClaim(englishHtml);
     assertNoUnsupportedPracticalTestClaim(swedishHtml);
+    assertNoUnsupportedFactboxClaim(englishHtml);
+    assertNoUnsupportedFactboxClaim(swedishHtml);
 
     assert.match(englishHtml, /ebook__study-actions/);
     assert.match(swedishHtml, /ebook__study-actions/);
@@ -245,10 +291,12 @@ test('static ebook renders every chapter with Swedish and English body parity', 
         assert.match(swedishHtml, /Kapitel 12 · [OÖ]vningsprov/);
         assert.match(swedishHtml, /Starta [oö]vningsprov/);
       } else {
-        assert.match(englishHtml, /Facts you'll see on the test/);
+        assert.match(englishHtml, /Facts to review/);
         assert.match(swedishHtml, /Det viktigaste/);
         assert.match(swedishHtml, /Plugga smart/);
-        assert.match(swedishHtml, /Fakta att kunna/);
+        assert.match(swedishHtml, /Fakta att repetera/);
+        assert.match(englishHtml, /Sources accessed 2026-05-19/);
+        assert.match(swedishHtml, /Källor hämtade 2026-05-19/);
       }
     }
 
@@ -267,6 +315,34 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.doesNotMatch(swedishHtml, /Chapter highlights/);
     assert.doesNotMatch(swedishHtml, /Next study steps/);
   }
+});
+
+test('static ebook factboxes carry retrieved source notes for current and quantitative facts', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+
+  assert.match(source, /const EBOOK_FACTBOX_SOURCE_NOTES = Object\.freeze\(/);
+  assert.match(source, /function ebookFactBox\(lang, heading, facts/);
+  assert.match(source, /retrievedDate: '2026-05-19'/);
+  factboxSourceUrls.forEach((url) => assert.match(source, new RegExp(url)));
+  assertNoUnsupportedFactboxClaim(source);
+
+  const natureEn = renderChapter(harness, 'en', '7');
+  const natureSv = renderChapter(harness, 'sv', '7');
+  assert.match(natureEn, /Statistics Sweden land-use statistics/);
+  assert.match(natureSv, /SCB markanvändningsstatistik/);
+  assertNoUnsupportedFactboxClaim(natureEn);
+  assertNoUnsupportedFactboxClaim(natureSv);
+
+  const moneyEn = renderChapter(harness, 'en', '9');
+  const moneySv = renderChapter(harness, 'sv', '9');
+  assert.match(moneyEn, /Sveriges Riksbank history/);
+  assert.match(moneySv, /Riksbankens historik/);
+
+  const worldEn = renderChapter(harness, 'en', '10');
+  const worldSv = renderChapter(harness, 'sv', '10');
+  assert.match(worldEn, /Government Offices: Sweden is a NATO member/);
+  assert.match(worldSv, /Regeringskansliet: Sverige är medlem i Nato/);
 });
 
 test('static ebook chapter 12 keeps practical test claims current and sourced', () => {

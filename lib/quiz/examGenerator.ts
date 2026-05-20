@@ -1,6 +1,6 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
 import { isUhrQuestion } from '../content/provenance';
-import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
+import { hashString, shuffleQuestionOptionsForSession } from './answerOptionShuffle';
 
 export type ExamOptions = {
   questionCount?: number;
@@ -43,6 +43,7 @@ export type ExamReviewItem = {
 };
 
 export type ExamAutoSubmitState = {
+  examActive: boolean;
   remainingSeconds: number;
   submitted: boolean;
   questionCount: number;
@@ -56,11 +57,12 @@ export function formatExamTime(remainingSeconds: number): string {
 }
 
 export function shouldAutoSubmitExam({
+  examActive,
   remainingSeconds,
   submitted,
   questionCount,
 }: ExamAutoSubmitState): boolean {
-  return !submitted && questionCount > 0 && remainingSeconds <= 0;
+  return examActive && !submitted && questionCount > 0 && remainingSeconds <= 0;
 }
 
 function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
@@ -69,6 +71,19 @@ function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
     Boolean(question.uhrReference?.chapter) &&
     isUhrQuestion(question)
   );
+}
+
+function rotateBucketForSession(
+  bucket: PracticeQuestion[],
+  chapterId: string,
+  sessionId: string,
+): PracticeQuestion[] {
+  if (bucket.length < 2) return bucket;
+
+  const offset = hashString(`${sessionId}:${chapterId}:question-rotation`) % bucket.length;
+  if (offset === 0) return bucket;
+
+  return [...bucket.slice(offset), ...bucket.slice(0, offset)];
 }
 
 export function generateExam(
@@ -84,13 +99,16 @@ export function generateExam(
     chapterBuckets.set(question.chapterId, bucket);
   }
 
+  const sessionBuckets = [...chapterBuckets.entries()].map(([chapterId, bucket]) =>
+    rotateBucketForSession(bucket, chapterId, sessionId),
+  );
   const selected: PracticeQuestion[] = [];
   let round = 0;
 
   while (selected.length < targetCount) {
     let addedQuestionThisRound = false;
 
-    for (const bucket of chapterBuckets.values()) {
+    for (const bucket of sessionBuckets) {
       const question = bucket[round];
       if (!question) continue;
 
