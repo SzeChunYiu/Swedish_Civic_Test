@@ -974,6 +974,9 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     component: 'AdBanner',
     placement: 'quiz_completed_interstitial',
     pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    removeAdsComponent: 'RemoveAdsPlacementCta',
+    removeAdsPattern:
+      /<RemoveAdsPlacementCta\s+placement="quiz_completed_interstitial"\s+\/>\s*<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -7061,6 +7064,19 @@ function validateAdPlacementRouteParity() {
     if (!safePlacements.includes(spec.placement)) {
       reject(`adsConfig.safePlacements must include routed placement ${spec.placement}`);
       routeIsValid = false;
+    }
+
+    if (spec.removeAdsComponent && spec.removeAdsPattern) {
+      if (!source.includes(`components/monetization/${spec.removeAdsComponent}`)) {
+        reject(
+          `${spec.file} must import ${spec.removeAdsComponent} from the monetization components`,
+        );
+        routeIsValid = false;
+      }
+      if (!spec.removeAdsPattern.test(source)) {
+        reject(`${spec.file} must render ${spec.removeAdsComponent} adjacent to ${spec.placement}`);
+        routeIsValid = false;
+      }
     }
 
     if (typeof shouldShowAd === 'function') {

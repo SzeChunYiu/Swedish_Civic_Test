@@ -896,7 +896,7 @@ test('remove-ads placement CTA stays adjacent, localized, and entitlement-gated'
   assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(source, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(source, /!entitlementsReady \|\| !shouldShowAd\(placement, resolvedEntitlements\)/);
-  assert.match(source, /href="\/profile"/);
+  assert.match(source, /href="\/profile\?focus=remove-ads"/);
   assert.match(source, /Öppna Ta bort annonser/);
   assert.match(source, /Open Remove Ads/);
   assert.match(

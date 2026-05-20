@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
@@ -17,6 +17,8 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
+  audioEnabledBadge: string;
+  audioMutedBadge: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
@@ -29,6 +31,7 @@ type ProfileCopy = {
   openSettingsAccessibilityLabel: string;
   openSettingsHint: string;
   questionsHelper: string;
+  removeAdsFocusCue: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -39,6 +42,8 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
+    audioEnabledBadge: 'Ljud på',
+    audioMutedBadge: 'Ljud av',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
@@ -49,7 +54,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     noBadges: 'Inga märken ännu',
     openSettings: 'Öppna inställningar',
     openSettingsAccessibilityLabel: 'Öppna inställningar',
+    openSettingsHint: 'Ändra dagligt mål, språk och ljud.',
     questionsHelper: 'frågor',
+    removeAdsFocusCue:
+      'Ta bort annonser är markerat här så att knapparna för köp och återställning är lätta att hitta.',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -59,6 +67,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
+    audioEnabledBadge: 'Audio on',
+    audioMutedBadge: 'Audio off',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
@@ -69,7 +79,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     noBadges: 'No badges yet',
     openSettings: 'Open settings',
     openSettingsAccessibilityLabel: 'Open settings',
+    openSettingsHint: 'Change daily goal, language, and audio.',
     questionsHelper: 'questions',
+    removeAdsFocusCue:
+      'Remove Ads is highlighted here so the buy and restore buttons are easy to find.',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -100,6 +113,7 @@ function formatBadges(
 }
 
 export default function Screen() {
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
   const {
     entitlements: monetizationEntitlements,
     purchaseRuntime,
@@ -110,8 +124,11 @@ export default function Screen() {
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
+  const audioBadge = audioEnabled ? copy.audioEnabledBadge : copy.audioMutedBadge;
+  const removeAdsFocused = focus === 'remove-ads';
   const level = calculateLevel(totalXp);
   const currentStreak = calculateStreak(answerDates);
   const wrongAnswerCount = Object.values(questionProgress).reduce(
@@ -156,15 +173,30 @@ export default function Screen() {
         <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
+      <View
+        nativeID="remove-ads-paywall"
+        style={[styles.removeAdsSection, removeAdsFocused ? styles.removeAdsFocused : null]}
+      >
+        {removeAdsFocused ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            aria-live="polite"
+            style={styles.removeAdsFocusCue}
+          >
+            {copy.removeAdsFocusCue}
+          </Text>
+        ) : null}
+        <PremiumBanner
+          entitlements={monetizationEntitlements}
+          language={language}
+          onEntitlementsChange={setMonetizationEntitlements}
+          runtimeOptions={purchaseRuntime}
+        />
+      </View>
       <ComplianceLinks />
 
       <Link
+        accessibilityHint={copy.openSettingsHint}
         accessibilityLabel={copy.openSettingsAccessibilityLabel}
         accessibilityRole="link"
         href="/settings"
@@ -194,6 +226,21 @@ const styles = StyleSheet.create({
     fontSize: typography.sectionTitle.fontSize,
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
+  },
+  removeAdsSection: {
+    gap: space[1],
+  },
+  removeAdsFocused: {
+    borderColor: colors.accent,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    padding: space[1],
+  },
+  removeAdsFocusCue: {
+    color: colors.accent,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
   },
   settingsLink: {
     alignSelf: 'flex-start',

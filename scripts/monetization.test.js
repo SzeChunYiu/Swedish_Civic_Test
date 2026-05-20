@@ -1270,6 +1270,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
@@ -1292,7 +1296,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(placementCtaSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(placementCtaSource, /shouldShowAd\(placement, resolvedEntitlements\)/);
-  assert.match(placementCtaSource, /href="\/profile"/);
+  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
   assert.match(placementCtaSource, /Open Remove Ads/);
   assert.match(placementCtaSource, /Öppna Ta bort annonser/);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
@@ -1301,6 +1305,15 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>\s*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(profileSource, /useRemoveAdsEntitlements/);
+  assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
+  assert.match(learnSource, /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>/);
+  assert.match(
+    practiceSource,
+    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>/,
+  );
+  assert.match(mistakesSource, /<RemoveAdsPlacementCta placement="results_native" \/>/);
+  assert.match(profileSource, /useRemoveAdsEntitlements/);
+  assert.match(profileSource, /focus === 'remove-ads'/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });

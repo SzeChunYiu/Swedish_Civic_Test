@@ -64,7 +64,7 @@ export function RemoveAdsPlacementCta({ entitlements, placement }: RemoveAdsPlac
       <Link
         accessibilityLabel={copy.accessibilityLabel(placementLabel, REMOVE_ADS_PRICE_LABEL)}
         accessibilityRole="link"
-        href="/profile"
+        href="/profile?focus=remove-ads"
         onPressIn={() => setIsPressed(true)}
         onPressOut={() => setIsPressed(false)}
         style={[styles.link, isPressed ? styles.linkPressed : null]}
