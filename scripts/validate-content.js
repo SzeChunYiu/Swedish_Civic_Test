@@ -2841,7 +2841,8 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'disabled accessibility state follows playback guard',
-    pattern: /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/,
+    pattern:
+      /accessibilityState=\{\{ disabled: !canPlayAudio, busy: isSpeaking, selected: isSpeaking \}\}/,
   },
   {
     label: 'disabled interaction follows playback guard',
@@ -2849,7 +2850,8 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'trimmed speech playback',
-    pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
+    pattern:
+      /if \(!canPlayAudio\) return;[\s\S]*if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*return;[\s\S]*setActiveSpeechText\(speechText\);[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onError: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*onStopped: \(\) => resetSpeakingState\(speechRunId\),[\s\S]*\}\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
