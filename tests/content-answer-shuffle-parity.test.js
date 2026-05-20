@@ -25,6 +25,10 @@ test('answer shuffle content parity validates P0 distribution coverage', () => {
     summary.publishedQuestions,
   );
   assert.equal(summary.answerShuffleSeedDistributionsValidated, 50);
+  assert.equal(
+    summary.answerShuffleSessionMovementQuestionsValidated,
+    summary.answerShuffleSingleChoiceQuestionsValidated,
+  );
   assert.equal(summary.answerShuffleDistributionParityValidated, true);
 });
 
@@ -58,4 +62,33 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /answer shuffle correct positions exceed|answer shuffle distribution is unbalanced/,
   );
+});
+
+test('answer shuffle content parity rejects a session-insensitive shuffle', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/quiz/answerOptionShuffle.ts')) {
+    return String(contents).replace(
+      /hashString\\(\\\`\\$\\{question\\.id\\}:\\$\\{sessionId\\}\\\`\\)/,
+      'hashString(' + String.fromCharCode(96) + '$' + '{question.id}:static-session' + String.fromCharCode(96) + ')',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /answer shuffle ignores the session seed/);
 });
