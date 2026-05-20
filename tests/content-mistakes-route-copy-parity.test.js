@@ -39,6 +39,8 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /const copy = mistakesCopy\[language\];/);
   assert.match(source, /Här samlas frågor du vill öva på igen, med förklaring, källhänvisning/);
   assert.match(source, /Sparad till senare övning/);
+  assert.match(source, /Inga missade frågor ännu/);
+  assert.doesNotMatch(source, /Inga misstag ännu/);
   assert.match(source, /Frågor att öva på/);
   assert.match(source, /Ditt senaste svar/);
   assert.match(source, /Review wrong answers with the question, explanation, source reference/);
@@ -68,6 +70,36 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(
     source,
     /\{copy\.wrongAnswers\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\)\}/,
+  );
+});
+
+test('mistakes route copy parity rejects the stale Swedish empty-state title', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("'Inga missade frågor ännu'", "'Inga misstag ännu'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /mistakes route is missing sv copy "Inga missade frågor ännu"/,
   );
 });
 

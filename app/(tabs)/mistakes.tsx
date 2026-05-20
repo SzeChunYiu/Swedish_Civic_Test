@@ -74,7 +74,7 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
     emptyText: 'När du missar en övningsfråga visas den här.',
-    emptyTitle: 'Inga misstag ännu',
+    emptyTitle: 'Inga missade frågor ännu',
     mistakeBadge: 'Missade frågor',
     mistakeTitle: 'Frågor att öva på',
     selectedWrongAnswerLabel: 'Ditt senaste svar',
