@@ -19,7 +19,7 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 60);
+  assert.equal(summary.examRouteCopyLabelsValidated, 66);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);

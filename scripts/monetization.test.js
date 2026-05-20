@@ -748,6 +748,9 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
   );
   const defaultResult = await showRewardedExtraExamAd();
+  const confirmedWebResult = await showRewardedExtraExamAd({
+    confirmReward: () => true,
+  });
   const removeAdsResult = await showRewardedExtraExamAd({
     entitlements: { adsDisabled: true },
   });
@@ -764,7 +767,8 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.deepEqual(defaultResult, {
+  assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
+  assert.deepEqual(confirmedWebResult, {
     reward: {
       amount: 1,
       type: 'extra_mock_exam',
@@ -800,7 +804,7 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   assert.match(
     examSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{ entitlements \}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*await grantRewardedExamCredit\(\);/,
+    /const usesWebRewardPreview = Platform\.OS === 'web' && shouldAttemptRewardedAd;[\s\S]*const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*await grantRewardedExamCredit\(\);/,
   );
 });
 
