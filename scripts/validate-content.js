@@ -400,6 +400,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bmeans it gives\b/i,
   /\binnebär att den ger\b/i,
   /\bfrom (?:13|15) years\b/i,
+  /^En anledning är\b/i,
+  /^One reason is\b/i,
   /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
   /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
   /^En anledning är(?: att)? (?:skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)\b/i,
@@ -3389,10 +3391,10 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'nameSv', type: 'string', optional: false },
       { name: 'nameEn', type: 'string', optional: false },
-      { name: 'nameText', type: 'LocalizedContentText', optional: true },
+      { name: 'nameText', type: 'LocalizedContentTextOverrides', optional: true },
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
-      { name: 'descriptionText', type: 'LocalizedContentText', optional: true },
+      { name: 'descriptionText', type: 'LocalizedContentTextOverrides', optional: true },
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
@@ -7075,6 +7077,7 @@ function validateQuestionSchema(question, index) {
 const chapters = loadTs('data/chapters.ts', 'chapters');
 const questionModule = loadTs('data/questions.ts');
 const baseQuestions = questionModule.baseQuestions;
+const localizedAdditionalQuestions = questionModule.localizedAdditionalQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
@@ -7542,6 +7545,9 @@ if (process.argv.includes('--focus-static-head-metadata')) {
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
+if (!Array.isArray(localizedAdditionalQuestions)) {
+  fail('localizedAdditionalQuestions export is not an array');
+}
 if (!Array.isArray(glossaryTerms)) fail('glossaryTerms export is not an array');
 if (!Array.isArray(questions)) fail('questions export is not an array');
 if (!Array.isArray(sourceQuestions)) fail('sourceQuestions export is not an array');
@@ -14877,6 +14883,7 @@ function validateAuthoredSourceParity() {
   if (
     !Array.isArray(baseQuestions) ||
     !Array.isArray(additionalQuestions) ||
+    !Array.isArray(localizedAdditionalQuestions) ||
     !Array.isArray(sourceQuestions)
   ) {
     return;
@@ -14895,7 +14902,7 @@ function validateAuthoredSourceParity() {
     EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
   );
 
-  const authoredQuestions = [...baseQuestions, ...additionalQuestions];
+  const authoredQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
     fail(
       `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
