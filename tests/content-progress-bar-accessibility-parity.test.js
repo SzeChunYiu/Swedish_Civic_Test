@@ -19,12 +19,15 @@ test('shared ProgressBar keeps visual progress and accessibility values in parit
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/ProgressBar.tsx'), 'utf8');
 
-  assert.equal(summary.progressBarAccessibilityRulesValidated, 17);
+  assert.equal(summary.progressBarAccessibilityRulesValidated, 22);
   assert.equal(summary.progressBarAccessibilityParityValidated, true);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
+  assert.match(source, /export interface ProgressBarProps \{/);
+  assert.match(source, /presentationOnly\?: boolean;/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
   assert.match(source, /`\$\{progressPercent\} percent complete`/);
+  assert.match(source, /presentationOnly = false,/);
   assert.match(source, /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/);
   assert.match(source, /const progressPercent = Math\.round\(clampedProgress \* 100\);/);
   assert.match(source, /const copy = progressBarCopy\[language\];/);
@@ -32,6 +35,11 @@ test('shared ProgressBar keeps visual progress and accessibility values in parit
     source,
     /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   );
+  assert.match(source, /if \(presentationOnly\) \{/);
+  assert.match(source, /aria-hidden/);
+  assert.match(source, /accessibilityElementsHidden/);
+  assert.match(source, /accessibilityRole="none"/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /aria-valuenow=\{progressPercent\}/);
   assert.match(source, /aria-valuetext=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole="progressbar"/);
@@ -56,7 +64,7 @@ test('route and chapter progress bars receive the selected settings language', (
     ],
     [
       'components/learning/ChapterCard.tsx',
-      /<ProgressBar language=\{language\} progress=\{progress\} \/>/,
+      /<ProgressBar\s+language=\{language\}\s+presentationOnly=\{progressPresentationOnly\}\s+progress=\{progress\}\s+\/>/,
     ],
   ];
 
@@ -64,6 +72,36 @@ test('route and chapter progress bars receive the selected settings language', (
     const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
     assert.match(source, pattern, `${relativePath} should pass language to ProgressBar`);
   }
+});
+
+test('ProgressBar accessibility parity rejects missing presentation-only hiding', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/ui/ProgressBar.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('importantForAccessibility="no-hide-descendants"', 'importantForAccessibility="auto"');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /ProgressBar missing presentation-only hidden from accessibility tree for accessibility parity/,
+  );
 });
 
 test('ProgressBar accessibility parity rejects unclamped native value drift', () => {
