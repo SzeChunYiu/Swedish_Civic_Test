@@ -29,18 +29,30 @@ Swedish.
 
 ## Current status
 
-| Locale | Picker available | Corpus/style guide | App strings | Question content | Native review | Release gate |
-|---|---:|---|---|---|---|---|
-| `sv` | yes | source locale | complete | complete | source | allowed |
-| `en` | yes | complete round 1 | complete | complete | needs final reader review before major rewrite | allowed |
-| `ar` | no | complete round 1 | not started | not started | missing | blocked |
-| `fa` | no | complete round 1 | not started | not started | missing | blocked |
-| `so` | no | complete round 1 | not started | not started | missing | blocked |
-| `ti` | no | complete round 1 | not started | not started | missing | blocked |
-| `pl` | no | complete round 1 | not started | not started | missing | blocked |
-| `tr` | no | complete round 1 | not started | not started | missing | blocked |
-| `zh-Hans` | no | complete round 1 | not started | not started | missing | blocked |
-| `zh-Hant` | no | complete round 1 | not started | not started | missing | blocked |
+| Locale | Picker available | Corpus/style guide | Locale workspace | App strings | Question content | Native review | Release gate |
+|---|---:|---|---|---|---|---|---|
+| `sv` | yes | source locale | not required | complete | complete | source | allowed |
+| `en` | yes | complete round 1 | style-guide embedded | complete | complete | needs final reader review before major rewrite | allowed |
+| `ar` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+| `fa` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+| `so` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+| `ti` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+| `pl` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+| `tr` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+| `zh-Hans` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+| `zh-Hant` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not started | not started | missing | blocked |
+
+## Corpus-only locale workspaces
+
+These languages have source corpus/style-guide material and phase-1
+glossary/phrasebook/audit workspaces, but they are not in `lib/i18n/locales.ts`
+and therefore are intentionally absent from `readiness.json` until a future
+picker/runtime decision adds them:
+
+| Locale | Runtime picker | Corpus/style guide | Locale workspace | Release status |
+|---|---:|---|---|---|
+| `ckb` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not eligible for enablement |
+| `uk` | no | complete round 1 | phase-1 glossary/phrasebook/audit | not eligible for enablement |
 
 ## Next implementation order
 
