@@ -141,19 +141,19 @@ export interface QuestionProgressReadinessInput {
   now?: Date;
 }
 
-function scoreReadinessComponents({
-  accuracy,
-  coverage,
-  recency,
-  mockAvg,
-  hasMocks,
-}: {
-  accuracy: number;
-  coverage: number;
-  recency: number;
-  mockAvg: number;
-  hasMocks: boolean;
-}): number {
+export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
+  const now = input.now ?? new Date();
+
+  const accuracy = rollingAccuracy(input.progress, now);
+  const coverage = chapterCoverage(input.progress, input.chapters, input.questionChapterIndex);
+  const recency = recencyFromProgressEvents(input.progress, now);
+  const mockAvg = mockAverage(input.progress);
+  const mocks = mockHistory(input.progress);
+
+  // Weights: accuracy is the strongest signal, coverage second, recency third,
+  // mocks substitute for accuracy once they exist (mocks ARE accuracy on the
+  // exam format). When no mocks, weight redistributes to accuracy.
+  const hasMocks = mocks.some((mock) => mock.score !== null);
   const weights = hasMocks
     ? { accuracy: 0.35, coverage: 0.25, recency: 0.1, mock: 0.3 }
     : { accuracy: 0.55, coverage: 0.3, recency: 0.15, mock: 0 };

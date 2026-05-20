@@ -125,6 +125,19 @@ export interface MockHistoryEntry {
   durationMs: number | null;
 }
 
+function validTimestampMs(value: string | undefined): number | null {
+  if (!value) return null;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time) ? time : null;
+}
+
+export function normalizeMockScore(score: number | undefined): number | null {
+  if (typeof score !== 'number') return null;
+  if (!Number.isFinite(score)) return null;
+  if (score < 0 || score > 1) return null;
+  return score;
+}
+
 export function mockHistory(progress: UserProgress): MockHistoryEntry[] {
   const out: MockHistoryEntry[] = [];
   for (const session of progress.sessions ?? []) {
@@ -132,7 +145,7 @@ export function mockHistory(progress: UserProgress): MockHistoryEntry[] {
     if (!session.completedAt) continue;
     out.push({
       sessionId: session.id,
-      score: typeof session.score === 'number' ? session.score : null,
+      score: normalizeMockScore(session.score),
       completedAt: session.completedAt,
       durationMs:
         session.startedAt && session.completedAt

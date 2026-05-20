@@ -254,6 +254,23 @@ test('generateWeeklyRecap: counts mock exams completed this week with best score
       score: 0.85,
     },
     {
+      id: 'over-range',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-21T11:00:00.000Z',
+      completedAt: '2026-05-21T12:00:00.000Z',
+      score: 1.4,
+    },
+    {
+      id: 'scoreless',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-21T12:00:00.000Z',
+      completedAt: '2026-05-21T13:00:00.000Z',
+    },
+    {
       id: 'e3',
       mode: 'exam',
       questionIds: [],
@@ -267,7 +284,7 @@ test('generateWeeklyRecap: counts mock exams completed this week with best score
     progress: makeProgress(sessions),
     now: new Date('2026-05-22T12:00:00.000Z'),
   });
-  assert.equal(recap.mockExamsTaken, 2);
+  assert.equal(recap.mockExamsTaken, 4);
   assert.equal(recap.bestMockScore, 0.85);
 });
 
@@ -537,6 +554,103 @@ test('mockHistory + bestMockScore: returns only exam-mode completed sessions', (
   assert.equal(bestMockScore(progressWithSessions(sessions)), 0.85);
 });
 
+test('mockHistory + bestMockScore: ignore invalid completions and invalid score ranges', () => {
+  const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
+  const sessions = [
+    {
+      id: 'valid',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T09:00:00.000Z',
+      completedAt: '2026-05-19T09:30:00.000Z',
+      score: 0.7,
+    },
+    {
+      id: 'invalid-start',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: 'not-a-date',
+      completedAt: '2026-05-19T10:00:00.000Z',
+      score: 0.75,
+    },
+    {
+      id: 'backwards',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T12:00:00.000Z',
+      completedAt: '2026-05-19T11:00:00.000Z',
+      score: 0.8,
+    },
+    {
+      id: 'invalid-completed',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T09:00:00.000Z',
+      completedAt: 'not-a-date',
+      score: 0.99,
+    },
+    {
+      id: 'nan-score',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T11:30:00.000Z',
+      completedAt: '2026-05-19T12:00:00.000Z',
+      score: Number.NaN,
+    },
+    {
+      id: 'over-range',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T12:30:00.000Z',
+      completedAt: '2026-05-19T13:00:00.000Z',
+      score: 1.4,
+    },
+    {
+      id: 'negative',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T13:30:00.000Z',
+      completedAt: '2026-05-19T14:00:00.000Z',
+      score: -0.2,
+    },
+    {
+      id: 'scoreless',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-19T14:30:00.000Z',
+      completedAt: '2026-05-19T15:00:00.000Z',
+    },
+  ];
+  const progress = progressWithSessions(sessions);
+  const history = mockHistory(progress);
+
+  assert.deepEqual(
+    history.map((entry) => ({
+      durationMs: entry.durationMs,
+      score: entry.score,
+      sessionId: entry.sessionId,
+    })),
+    [
+      { durationMs: 30 * 60 * 1000, score: 0.7, sessionId: 'valid' },
+      { durationMs: null, score: 0.75, sessionId: 'invalid-start' },
+      { durationMs: null, score: 0.8, sessionId: 'backwards' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'nan-score' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'over-range' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'negative' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'scoreless' },
+    ],
+  );
+  assert.equal(bestMockScore(progress), 0.8);
+});
+
 test('timeOfDayPattern: 24 hourly bins, accuracy per hour', () => {
   const { timeOfDayPattern } = loadTs('lib/learning/dashboardStats.ts');
   const sessions = [
@@ -685,6 +799,138 @@ test('computeReadinessScore: idle 30 days drags recency to 0', () => {
     now: new Date('2026-05-19T12:00:00.000Z'),
   });
   assert.equal(result.components.recency, 0);
+});
+
+test('computeReadinessScore: exam answers feed mock average, not practice accuracy', () => {
+  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+  const examAnswers = [
+    ...Array.from({ length: 32 }, () => true),
+    ...Array.from({ length: 8 }, () => false),
+  ].map((isCorrect, index) => ({
+    questionId: `exam-${index}`,
+    selectedOptionIds: [],
+    isCorrect,
+    answeredAt: '2026-05-19T10:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
+
+  const result = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'mock-with-answers',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: examAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.components.accuracy, 0);
+  assert.equal(result.components.mockAverage, 0.8);
+});
+
+test('computeReadinessScore: invalid mock scores do not activate mock weighting', () => {
+  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+  const result = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'over-range',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T12:00:00.000Z',
+        score: 1.4,
+        answers: [],
+      },
+      {
+        id: 'scoreless',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T12:00:00.000Z',
+        completedAt: '2026-05-19T12:00:00.000Z',
+        answers: [],
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.components.mockAverage, 0);
+  assert.equal(result.score, 15);
+});
+
+test('computeReadinessScore: mock recency uses completedAt instead of exam answer rows', () => {
+  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+  const recentExamAnswers = Array.from({ length: 40 }, (_, index) => ({
+    questionId: `exam-${index}`,
+    selectedOptionIds: [],
+    isCorrect: index < 32,
+    answeredAt: '2026-05-19T10:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  const scoreOnlyMock = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'score-only-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: [],
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const countedMock = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'counted-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const invalidCompletedAt = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'invalid-completed-at-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: 'not-a-date',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+
+  assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
+  assert.ok(scoreOnlyMock.components.recency > 0.99);
+  assert.equal(countedMock.components.accuracy, 0);
+  assert.equal(invalidCompletedAt.components.recency, 0);
+  assert.equal(invalidCompletedAt.components.accuracy, 0);
 });
 
 // -------------------------------------------------------- Calibration

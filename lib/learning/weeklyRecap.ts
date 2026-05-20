@@ -9,6 +9,7 @@
 // just finished.
 
 import { getLocalDateKey } from './streaks';
+import { normalizeMockScore } from './dashboardStats';
 import type { QuizSession, UserProgress, UserQuestionProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -150,8 +151,9 @@ function countMocks(
     if (!session.completedAt) continue;
     if (!isWithin(session.completedAt, start, end)) continue;
     count += 1;
-    if (typeof session.score === 'number') {
-      best = best === null ? session.score : Math.max(best, session.score);
+    const score = normalizeMockScore(session.score);
+    if (score !== null) {
+      best = best === null ? score : Math.max(best, score);
     }
   }
   return { count, bestScore: best };

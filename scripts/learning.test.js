@@ -254,7 +254,7 @@ test('readiness mock recency uses completion metadata without depending on synth
   assert.equal(countedMock.components.accuracy, 0);
 });
 
-test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
+test('dashboard mock history ignores invalid completions and normalizes score range', () => {
   const { bestMockScore, mockHistory } = loadAllTs('lib/learning/dashboardStats.ts');
   const progress = {
     totalXp: 0,
@@ -290,20 +290,116 @@ test('dashboard mock history ignores invalid completions and nulls invalid durat
         completedAt: 'not-a-date',
         score: 0.99,
       },
+      {
+        id: 'over-range',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T12:00:00.000Z',
+        completedAt: '2026-05-20T12:30:00.000Z',
+        score: 1.4,
+      },
+      {
+        id: 'negative',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T13:00:00.000Z',
+        completedAt: '2026-05-20T13:30:00.000Z',
+        score: -0.2,
+      },
+      {
+        id: 'infinite',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T14:00:00.000Z',
+        completedAt: '2026-05-20T14:30:00.000Z',
+        score: Number.POSITIVE_INFINITY,
+      },
+      {
+        id: 'scoreless',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T15:00:00.000Z',
+        completedAt: '2026-05-20T15:30:00.000Z',
+      },
     ],
   };
 
   assert.deepEqual(
     mockHistory(progress).map((entry) => ({
       durationMs: entry.durationMs,
+      score: entry.score,
       sessionId: entry.sessionId,
     })),
     [
-      { durationMs: 45 * 60 * 1000, sessionId: 'valid' },
-      { durationMs: null, sessionId: 'backwards' },
+      { durationMs: 45 * 60 * 1000, score: 0.72, sessionId: 'valid' },
+      { durationMs: null, score: 0.81, sessionId: 'backwards' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'over-range' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'negative' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'infinite' },
+      { durationMs: 30 * 60 * 1000, score: null, sessionId: 'scoreless' },
     ],
   );
   assert.equal(bestMockScore(progress), 0.81);
+});
+
+test('readiness and weekly recap ignore invalid mock score values', () => {
+  const { computeReadinessScore } = loadAllTs('lib/learning/readiness.ts');
+  const { generateWeeklyRecap } = loadAllTs('lib/learning/weeklyRecap.ts');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'over-range',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T08:00:00.000Z',
+        completedAt: '2026-05-20T09:00:00.000Z',
+        score: 1.4,
+      },
+      {
+        id: 'nan-score',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T09:00:00.000Z',
+        completedAt: '2026-05-20T10:00:00.000Z',
+        score: Number.NaN,
+      },
+      {
+        id: 'scoreless',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T10:00:00.000Z',
+        completedAt: '2026-05-20T12:00:00.000Z',
+      },
+    ],
+  };
+
+  const readiness = computeReadinessScore({
+    progress,
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+  assert.equal(readiness.components.mockAverage, 0);
+  assert.equal(readiness.score, 15);
+
+  const recap = generateWeeklyRecap({
+    progress,
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+  assert.equal(recap.mockExamsTaken, 3);
+  assert.equal(recap.bestMockScore, null);
 });
 
 test('mock exam completion XP is awarded once per stored session', () => {
