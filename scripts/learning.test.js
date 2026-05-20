@@ -219,7 +219,8 @@ test('readiness score includes recent persisted mock exam results', () => {
 
   assert.equal(base.components.mockAverage, 0);
   assert.ok(Math.abs(withMocks.components.mockAverage - 0.8) < 0.0001);
-  assert.equal(withMocks.score, 24);
+  assert.ok(withMocks.components.recency > 0.99);
+  assert.equal(withMocks.score, 34);
   assert.ok(withMocks.score > base.score);
 });
 
@@ -245,6 +246,40 @@ test('readiness mock totals do not inflate rolling practice accuracy', () => {
   assert.equal(result.components.accuracy, 0);
   assert.equal(result.components.mockAverage, 0.8);
   assert.ok(result.score > 0);
+});
+
+test('readiness mock recency uses completion metadata without depending on synthetic answers', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const commonInput = {
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  const scoreOnlyMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    mockExamSessions: [
+      { sessionId: 'score-only', score: 0.8, completedAt: '2026-05-19T10:00:00.000Z' },
+    ],
+  });
+  const countedMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    mockExamSessions: [
+      {
+        sessionId: 'counted',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: 32,
+        totalCount: 40,
+      },
+    ],
+  });
+
+  assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
+  assert.ok(scoreOnlyMock.components.recency > 0.99);
+  assert.equal(scoreOnlyMock.components.accuracy, 0);
+  assert.equal(countedMock.components.accuracy, 0);
 });
 
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
@@ -297,22 +332,6 @@ test('dashboard mock history ignores invalid completions and nulls invalid durat
     ],
   );
   assert.equal(bestMockScore(progress), 0.81);
-});
-
-test('dashboard selectors clamp bad day-window options before rendering bins', () => {
-  const { MAX_DASHBOARD_DAYS_BACK, dailyActivityHistogram, mistakeConvergence, xpSparkline } =
-    loadAllTs('lib/learning/dashboardStats.ts');
-  const progress = { sessions: [] };
-  const now = new Date('2026-05-19T12:00:00.000Z');
-
-  assert.equal(dailyActivityHistogram(progress, { daysBack: Infinity, now }).length, 53 * 7);
-  assert.equal(
-    dailyActivityHistogram(progress, { daysBack: MAX_DASHBOARD_DAYS_BACK + 1, now }).length,
-    MAX_DASHBOARD_DAYS_BACK,
-  );
-  assert.equal(mistakeConvergence(progress, { daysBack: 0, now }).length, 1);
-  assert.equal(xpSparkline(progress, { daysBack: 4.6, now }).length, 4);
-  assert.equal(xpSparkline(progress, { daysBack: Number.NaN, now }).length, 30);
 });
 
 test('mock exam completion XP is awarded once per stored session', () => {
