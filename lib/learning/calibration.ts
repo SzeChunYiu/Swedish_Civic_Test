@@ -9,7 +9,9 @@
 // Pure function — no React, no storage. Consumers: app/calibration.tsx
 // (Pro screen) and the FSRS grade-mapping bridge.
 
-export type ConfidenceRating = 1 | 2 | 3 | 4 | 5;
+import type { ConfidenceRating } from '../../types/progress';
+
+export type { ConfidenceRating };
 
 export interface ConfidenceAnswerEvent {
   questionId: string;

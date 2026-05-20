@@ -6,6 +6,7 @@ import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
+import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPicker';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -16,6 +17,7 @@ import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getQuestionOptionText } from '../../lib/quiz/questionText';
@@ -24,6 +26,7 @@ import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { ConfidenceRating } from '../../types/progress';
 
 type QuizSessionCopy = {
   backToPractice: string;
@@ -93,15 +96,22 @@ export default function QuizSessionScreen() {
     [normalizedSessionId, pickedQuestion],
   );
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
+    null,
+  );
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
+    useProLifetimeEntitlements();
+  const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
   const copy = quizSessionCopy[language];
 
   useEffect(() => {
     setSelectedOptionId(null);
+    setSelectedConfidenceRating(null);
   }, [normalizedSessionId, question?.id]);
 
   if (!question) {
@@ -132,9 +142,12 @@ export default function QuizSessionScreen() {
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
+    const answerConfidenceRating = confidenceRatingEnabled
+      ? (selectedConfidenceRating ?? undefined)
+      : undefined;
 
     setSelectedOptionId(optionId);
-    recordAnswer(question.id, optionIsCorrect);
+    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating);
 
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
@@ -143,6 +156,10 @@ export default function QuizSessionScreen() {
         selectedOptionTextSv: getQuestionOptionText(selectedOption, 'sv'),
       });
     }
+  };
+  const handleTryAgain = () => {
+    setSelectedOptionId(null);
+    setSelectedConfidenceRating(null);
   };
 
   return (
@@ -163,6 +180,14 @@ export default function QuizSessionScreen() {
         language={language}
         text={buildQuestionSpeechText(question)}
       />
+      {confidenceRatingEnabled ? (
+        <ConfidenceRatingPicker
+          disabled={hasSelectedAnswer}
+          language={language}
+          onChange={setSelectedConfidenceRating}
+          value={selectedConfidenceRating}
+        />
+      ) : null}
 
       <View style={styles.options}>
         {question.options.map((option) => {
@@ -223,7 +248,7 @@ export default function QuizSessionScreen() {
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               accessibilityState={{ disabled: false }}
-              onPress={() => setSelectedOptionId(null)}
+              onPress={handleTryAgain}
               style={styles.actionButton}
               variant="secondary"
             >
