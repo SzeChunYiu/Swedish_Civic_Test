@@ -454,7 +454,9 @@ test('settings route exposes page and section titles as headers', () => {
   assert.match(source, /Question language/);
   assert.match(source, /Dagligt mål/);
   assert.match(source, /Audio/);
-  assert.equal(sectionHeaderMatches?.length, 3);
+  assert.match(source, /Importera studiedata/);
+  assert.match(source, /Import study data/);
+  assert.equal(sectionHeaderMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -604,7 +606,7 @@ test('settings controls use token pressed feedback on all direct controls', () =
 test('settings route remains scrollable on narrow mobile viewports', () => {
   const source = read('app/settings.tsx');
 
-  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
+  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, TextInput, View \}/);
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
