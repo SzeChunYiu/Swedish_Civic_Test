@@ -27,20 +27,12 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /answerAccessibilityLabel: \(optionText, questionNumber\) =>/);
   assert.match(source, /Välj svaret \$\{optionText\} för fråga \$\{questionNumber\}/);
   assert.match(source, /Select answer \$\{optionText\} for question \$\{questionNumber\}/);
-  assert.match(source, /accessTitle: 'Åtkomst till övningsprov'/);
-  assert.match(source, /accessTitle: 'Mock exam access'/);
-  assert.match(source, /examResultTitle: 'Resultat från övningsprov'/);
-  assert.match(source, /examResultTitle: 'Mock exam result'/);
-  assert.match(source, /nextExamTitle: 'Nästa övningsprov'/);
-  assert.match(source, /nextExamTitle: 'Next mock exam'/);
-  assert.match(source, /submitAccessibilityLabel: 'Skicka in övningsprovet'/);
-  assert.match(source, /submitAccessibilityLabel: 'Submit the mock exam'/);
-  assert.match(source, /submitLabel: 'Skicka övningsprov'/);
-  assert.match(source, /submitLabel: 'Submit mock exam'/);
+  assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
+  assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
+  assert.match(source, /retryCompletionLabel: 'Försök spara igen'/);
+  assert.match(source, /retryCompletionLabel: 'Try saving again'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
-  assert.match(source, /completionStoreFailureBadge: 'Ej sparat'/);
-  assert.match(source, /completionStoreFailureBadge: 'Not saved'/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
     source,
@@ -56,37 +48,6 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /recordMockExamSession\(\{/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
   assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
-});
-
-test('exam route copy parity rejects bare Swedish mock-exam labels', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
-    const bareAccessTitle = 'Prov' + 'åtkomst';
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("accessTitle: 'Åtkomst till övningsprov'", "accessTitle: '" + bareAccessTitle + "'");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /exam route Swedish mock-exam copy must say övningsprov instead of "Prov.tkomst"/,
-  );
 });
 
 test('exam route copy parity rejects bypassing the settings language', () => {

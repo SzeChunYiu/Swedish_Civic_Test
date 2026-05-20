@@ -567,6 +567,52 @@ test('mock exam access persistence stores daily completions and rewarded credits
   );
 });
 
+test('mock exam completion write failures do not unlock the next free exam', async () => {
+  const { recordStoredMockExamCompletion } = loadTs('lib/monetization/rewardedExam.ts');
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  let writeAttempts = 0;
+  const rejectingWriteStorage = {
+    async getItemAsync() {
+      return null;
+    },
+    async setItemAsync() {
+      writeAttempts += 1;
+      throw new Error('mock completion write failed');
+    },
+  };
+
+  await assert.rejects(
+    recordStoredMockExamCompletion({
+      date: '2026-05-17T10:00:00.000Z',
+      storage: rejectingWriteStorage,
+    }),
+    /mock completion write failed/,
+  );
+
+  assert.equal(writeAttempts, 1);
+  assert.match(examSource, /const \[completionWriteFailed, setCompletionWriteFailed\]/);
+  assert.match(
+    examSource,
+    /completionRecorded \|\|\s*\(completionWriteFailed && accessDecision\.reason === 'premium_unlimited_mock_exams'\)/,
+  );
+  assert.match(
+    examSource,
+    /if \(!submitted \|\| completionRecorded \|\| completionWriteFailed\) return undefined;/,
+  );
+  assert.match(
+    examSource,
+    /const handleRetryCompletionWrite = useCallback\(async \(\) => \{[\s\S]*await recordExamCompletion\(\);[\s\S]*setCompletionRecorded\(true\);[\s\S]*setCompletionWriteFailed\(false\);/,
+  );
+  assert.match(examSource, /setCompletionWriteFailed\(true\);/);
+  assert.match(examSource, /\{copy\.retryCompletionLabel\}/);
+  assert.match(examSource, /disabled=\{completionRetrying\}/);
+  assert.doesNotMatch(examSource, /\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\)/);
+  assert.match(
+    examSource,
+    /disabled=\{\s*!nextExamCompletionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\|\|\s*completionRetrying\s*\}/,
+  );
+});
+
 test('rewarded extra exam credit is granted only after an earned ad reward', async () => {
   const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
   const { showRewardedExtraExamAd: showUnavailableRewardedExtraExamAd } = withEnv(

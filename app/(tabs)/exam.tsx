@@ -39,7 +39,6 @@ type ExamRouteCopy = {
   chapterBreakdownTitle: string;
   checkingAccess: string;
   completionStoreFailure: string;
-  completionStoreFailureBadge: string;
   correctAnswerLabel: string;
   correctBadge: string;
   correctCount: (correctCount: number, totalCount: number) => string;
@@ -56,6 +55,7 @@ type ExamRouteCopy = {
   resultSubtitle: string;
   reviewBadge: string;
   rewardedAdStatus: Record<RewardedExtraExamAdStatus, string>;
+  retryCompletionLabel: string;
   savedBadge: string;
   savingBadge: string;
   savingCompletion: string;
@@ -92,7 +92,6 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     chapterBreakdownTitle: 'Kapitelöversikt',
     checkingAccess: 'Kontrollerar provåtkomst.',
     completionStoreFailure: 'Provresultatet kunde inte sparas på den här enheten.',
-    completionStoreFailureBadge: 'Ej sparat',
     correctAnswerLabel: 'Rätt svar',
     correctBadge: 'Rätt',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
@@ -118,6 +117,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       timed_out: 'Belöningsannonsen hann löpa ut innan det extra provet låstes upp.',
       unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
     },
+    retryCompletionLabel: 'Försök spara igen',
     savedBadge: 'Sparat',
     savingBadge: 'Sparar',
     savingCompletion: 'Sparar dagens övningsprov.',
@@ -151,7 +151,6 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     chapterBreakdownTitle: 'Chapter breakdown',
     checkingAccess: 'Checking mock exam access.',
     completionStoreFailure: 'Mock exam completion could not be stored on this device.',
-    completionStoreFailureBadge: 'Not saved',
     correctAnswerLabel: 'Correct answer',
     correctBadge: 'Correct',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
@@ -176,6 +175,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       timed_out: 'Rewarded ad timed out before the extra exam unlocked.',
       unavailable: 'Rewarded ad is unavailable on this device right now.',
     },
+    retryCompletionLabel: 'Try saving again',
     savedBadge: 'Saved',
     savingBadge: 'Saving',
     savingCompletion: "Saving today's mock exam completion.",
@@ -216,6 +216,7 @@ export default function Screen() {
   const [examUnlocked, setExamUnlocked] = useState(false);
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [completionWriteFailed, setCompletionWriteFailed] = useState(false);
+  const [completionRetrying, setCompletionRetrying] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
@@ -289,13 +290,16 @@ export default function Screen() {
   const accessStatusText = accessLoading
     ? copy.checkingAccess
     : getAccessStatusText(accessDecision.reason, language);
-  const completionAccessConfirmed =
-    completionRecorded || accessDecision.reason === 'premium_unlimited_mock_exams';
-  const completionStatusText = completionAccessConfirmed
-    ? accessStatusText
+  const nextExamCompletionAccessConfirmed =
+    completionRecorded ||
+    (completionWriteFailed && accessDecision.reason === 'premium_unlimited_mock_exams');
+  const nextExamStatusText = completionRetrying
+    ? copy.savingCompletion
     : completionWriteFailed
       ? copy.completionStoreFailure
-      : copy.savingCompletion;
+      : completionRecorded
+        ? accessStatusText
+        : copy.savingCompletion;
 
   const resetExamAttempt = useCallback(() => {
     setExamAttemptIndex((current) => current + 1);
@@ -303,7 +307,7 @@ export default function Screen() {
     setSubmitted(false);
     setCompletionRecorded(false);
     setCompletionWriteFailed(false);
-    setAccessStatusMessage(null);
+    setCompletionRetrying(false);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
@@ -353,10 +357,28 @@ export default function Screen() {
     startingAccessibleExam,
   ]);
 
+  const handleRetryCompletionWrite = useCallback(async () => {
+    if (completionRecorded || completionRetrying) return;
+
+    setCompletionRetrying(true);
+    setAccessStatusMessage(null);
+
+    try {
+      await recordExamCompletion();
+      setCompletionRecorded(true);
+      setCompletionWriteFailed(false);
+    } catch {
+      setCompletionWriteFailed(true);
+    } finally {
+      setCompletionRetrying(false);
+    }
+  }, [completionRecorded, completionRetrying, recordExamCompletion]);
+
   useEffect(() => {
-    if (!submitted || completionRecorded) return undefined;
+    if (!submitted || completionRecorded || completionWriteFailed) return undefined;
 
     let isMounted = true;
+    setAccessStatusMessage(null);
     recordMockExamSession({
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
@@ -368,13 +390,12 @@ export default function Screen() {
     void recordExamCompletion()
       .then(() => {
         if (!isMounted) return;
-        setCompletionWriteFailed(false);
         setCompletionRecorded(true);
+        setCompletionWriteFailed(false);
       })
       .catch(() => {
         if (!isMounted) return;
         setCompletionWriteFailed(true);
-        setAccessStatusMessage(null);
       });
 
     return () => {
@@ -382,7 +403,7 @@ export default function Screen() {
     };
   }, [
     completionRecorded,
-    copy.completionStoreFailure,
+    completionWriteFailed,
     examSessionId,
     recordExamCompletion,
     recordMockExamSession,
@@ -456,30 +477,48 @@ export default function Screen() {
             <Text accessibilityRole="header" style={styles.sectionTitle}>
               {copy.nextExamTitle}
             </Text>
-            <Badge tone={completionAccessConfirmed ? 'green' : 'warm'}>
-              {completionRecorded
-                ? copy.savedBadge
-                : completionWriteFailed
-                  ? copy.completionStoreFailureBadge
-                  : copy.savingBadge}
+            <Badge tone={accessDecision.canStartExam ? 'green' : 'warm'}>
+              {completionRecorded ? copy.savedBadge : copy.savingBadge}
             </Badge>
           </View>
-          <Text style={styles.subtitle}>{completionStatusText}</Text>
-          {accessStatusMessage ? (
+          <Text style={styles.subtitle}>{nextExamStatusText}</Text>
+          {accessStatusMessage && !completionWriteFailed ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
+          ) : null}
+          {completionWriteFailed ? (
+            <Button
+              aria-disabled={completionRetrying}
+              accessibilityLabel={copy.retryCompletionLabel}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: completionRetrying }}
+              disabled={completionRetrying}
+              onPress={handleRetryCompletionWrite}
+              style={styles.actionButton}
+            >
+              {copy.retryCompletionLabel}
+            </Button>
           ) : null}
           <Button
             aria-disabled={
-              !completionAccessConfirmed || !canStartAccessibleExam || startingAccessibleExam
+              !nextExamCompletionAccessConfirmed ||
+              !canStartAccessibleExam ||
+              startingAccessibleExam ||
+              completionRetrying
             }
             accessibilityLabel={startAccessibleExamLabel}
             accessibilityRole="button"
             accessibilityState={{
               disabled:
-                !completionAccessConfirmed || !canStartAccessibleExam || startingAccessibleExam,
+                !nextExamCompletionAccessConfirmed ||
+                !canStartAccessibleExam ||
+                startingAccessibleExam ||
+                completionRetrying,
             }}
             disabled={
-              !completionAccessConfirmed || !canStartAccessibleExam || startingAccessibleExam
+              !nextExamCompletionAccessConfirmed ||
+              !canStartAccessibleExam ||
+              startingAccessibleExam ||
+              completionRetrying
             }
             onPress={handleStartAccessibleExam}
             style={styles.actionButton}

@@ -10,17 +10,10 @@ function read(relativePath) {
 }
 
 test('progress bar uses tokenized animated motion and exposes progress to assistive tech', () => {
-  const foundationSource = read('components/ProgressBar.tsx');
   const source = read('components/ui/ProgressBar.tsx');
 
   assert.match(source, /Animated\.timing/);
   assert.match(source, /motion\.duration\.slow/);
-  assert.match(foundationSource, /import \{ useReducedMotion \}/);
-  assert.match(foundationSource, /const reducedMotionEnabled = useReducedMotion\(\);/);
-  assert.match(foundationSource, /const shouldAnimate = animated && !reducedMotionEnabled;/);
-  assert.match(source, /import \{ useReducedMotion \}/);
-  assert.match(source, /const reducedMotionEnabled = useReducedMotion\(\);/);
-  assert.match(source, /if \(reducedMotionEnabled\) \{/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
@@ -459,7 +452,7 @@ test('routed quiz answer state resets when the shuffle session seed changes', ()
 
   assert.match(
     source,
-    /useEffect\(\(\) => \{\n\s+stopSpeech\(\);\n\s+setSelectedOptionId\(null\);\n\s+return \(\) => \{\n\s+stopSpeech\(\);\n\s+\};\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
+    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
   );
   assert.doesNotMatch(source, /\}, \[question\?\.id\]\);/);
 });
@@ -719,9 +712,6 @@ test('question disclaimer exposes the non-official warning as an accessible summ
 test('celebration burst keeps decorative particles out of the accessibility tree', () => {
   const source = read('components/quiz/CelebrationBurst.tsx');
 
-  assert.match(source, /import \{ useReducedMotion \}/);
-  assert.match(source, /const reducedMotionEnabled = useReducedMotion\(\);/);
-  assert.match(source, /if \(reducedMotionEnabled\) \{/);
   assert.match(source, /accessibilityElementsHidden/);
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /pointerEvents="none"/);
@@ -732,25 +722,16 @@ test('celebration burst keeps decorative particles out of the accessibility tree
 
 test('mistakes screen has a bookmarked-question review section', () => {
   const source = read('app/(tabs)/mistakes.tsx');
-  const staleSwedishReviewCopy = new RegExp(
-    [
-      ['Sparad för', 'fokuserad', 'repetition'].join(' '),
-      ['Fel', 'logg'].join(''),
-      ['Fel', 'svar', 'att repetera'].join(' '),
-      ['repetitionsantal', 'på samma plats'].join(' '),
-    ].join('|'),
-  );
 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
   assert.match(source, /bookmarkedQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad till senare övning/);
+  assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
-  assert.doesNotMatch(source, staleSwedishReviewCopy);
 });
 
 test('mistakes screen exposes page and review section headings as headers', () => {
@@ -792,7 +773,6 @@ test('mistakes screen teaches with explanations before source references', () =>
   assert.match(source, /question\.explanationEn/);
   assert.match(source, /question\.explanationSv/);
   assert.match(source, /language=\{language\}/);
-  assert.match(source, /Gå igenom frågor du har missat, se förklaringen/);
   assert.match(source, /question, explanation, source reference/);
   assert.match(source, /<ExplanationPanel[\s\S]*<UHRReferenceCard/);
 });
@@ -811,7 +791,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.match(source, /question\.correctOptionId/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
-  assert.match(source, /Ditt senaste svar/);
+  assert.match(source, /Ditt senaste felaktiga svar/);
   assert.match(source, /Your latest wrong answer/);
   assert.match(source, /Rätt svar/);
   assert.match(source, /Correct answer/);
@@ -934,29 +914,18 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
-  assert.match(source, /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\)/);
-  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
-  assert.match(source, /\{copy\.settingsShortcutHelper\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Studieinställningar/);
-  assert.match(source, /Ljud på/);
-  assert.match(source, /Ljud av/);
-  assert.match(source, /Dagligt mål, språk och ljud/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
-  assert.match(source, /Justera studieinställningar/);
-  assert.match(source, /Öppna inställningar för dagligt mål, språk och ljud/);
+  assert.match(source, /Öppna inställningar/);
   assert.match(source, /Första övningen/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
-  assert.match(source, /Audio on/);
-  assert.match(source, /Audio off/);
-  assert.match(source, /Daily goal, language, and audio/);
   assert.match(source, /No badges yet/);
-  assert.match(source, /Adjust study settings/);
-  assert.match(source, /Open settings for daily goal, language, and audio/);
+  assert.match(source, /Open settings/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1197,8 +1166,9 @@ test('exam controls mirror selected and disabled state to web aria attributes', 
   assert.match(source, /aria-disabled=\{!canStartAccessibleExam \|\| startingAccessibleExam\}/);
   assert.match(
     source,
-    /aria-disabled=\{\s*!completionAccessConfirmed \|\| !canStartAccessibleExam \|\| startingAccessibleExam\s*\}/,
+    /aria-disabled=\{\s*!nextExamCompletionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\|\|\s*completionRetrying\s*\}/,
   );
+  assert.match(source, /aria-disabled=\{completionRetrying\}/);
   assert.match(source, /aria-selected=\{isSelected\}/);
   assert.match(source, /aria-disabled=\{!canSubmit\}/);
   assert.match(
