@@ -4,7 +4,7 @@ import type { Page } from '@playwright/test';
 import { markAboutTheTestSeen, seedSettingsLanguage, type AppLanguage } from './browserLaunch';
 
 const removeAdsStorageKey = 'monetization.removeAds.adsDisabled.v1';
-const removeAdsProductId = 'com.billyyiu.swedishcivictest.removeads';
+const removeAdsProductId = 'com.billyyiu.almostswedish.removeads';
 const entitlementHydrationDelayMs = 4000;
 
 type RemoveAdsDelayWindow = Window &
