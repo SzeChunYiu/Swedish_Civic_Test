@@ -29,6 +29,14 @@ function runDispatcher(args, env) {
   });
 }
 
+function runPackageTest(args, env) {
+  return spawnSync('npm', ['test', '--', ...args], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env,
+  });
+}
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
 
@@ -56,6 +64,47 @@ test('monetization selector runs only the focused monetization suite', () => {
     const fullResult = runDispatcher([], env);
     assert.equal(fullResult.status, 0, fullResult.stderr || fullResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:all\n');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('package npm test selector enters the dispatcher before running suites', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-package-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    npm_config_loglevel: 'silent',
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runPackageTest(['monetization'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('unsupported npm test selectors fail before running any suite', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const result = runDispatcher(['bogus'], env);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /Unsupported npm test selector: bogus/);
+    assert.match(result.stderr, /monetization -> npm run test:monetization/);
+    assert.equal(fs.existsSync(npmLog), false);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
