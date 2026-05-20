@@ -3275,4 +3275,134 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['elderly-care', 'municipal-welfare', 'home-care', 'adapted-housing'],
     'easy',
   ),
+  single(
+    'q160',
+    'ch11',
+    { chapter: 'Sverige och omvärlden', section: 'Förenta nationerna', pageApprox: 39 },
+    'Vilket påstående beskriver ett syfte med Förenta nationerna (FN)?',
+    'Which statement describes one purpose of the United Nations (UN)?',
+    [
+      [
+        'FN arbetar för fred och säkerhet i världen',
+        'The UN works for peace and security in the world',
+      ],
+      [
+        'FN bestämmer svenska kommuners budgetar',
+        'The UN decides the budgets of Swedish municipalities',
+      ],
+      ['FN ersätter Sveriges domstolar', 'The UN replaces Sweden’s courts'],
+      [
+        'FN väljer Sveriges riksdag vart fjärde år',
+        'The UN elects Sweden’s Riksdag every four years',
+      ],
+    ],
+    0,
+    'Sverige är medlem i FN. FN arbetar bland annat för fred och säkerhet, för att lösa konflikter och stoppa krig samt för mänskliga rättigheter och friheter.',
+    'Sweden is a member of the UN. The UN works, among other things, for peace and security, to resolve conflicts and stop wars, and for human rights and freedoms.',
+    ['united-nations', 'peace-and-security', 'human-rights', 'global-cooperation'],
+  ),
+  single(
+    'q161',
+    'ch11',
+    { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
+    'Vilket påstående beskriver EU-samarbetet?',
+    'Which statement describes EU cooperation?',
+    [
+      [
+        'EU-länder fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna',
+        'EU countries make joint decisions and create laws that apply in member countries',
+      ],
+      [
+        'Varje EU-land slutar ha egna kommuner',
+        'Each EU country stops having its own municipalities',
+      ],
+      [
+        'Europarådet bestämmer alla EU-länders valresultat',
+        'The Council of Europe decides every EU country’s election results',
+      ],
+      ['FN ersätter EU-ländernas regeringar', 'The UN replaces the governments of EU countries'],
+    ],
+    0,
+    'EU-länderna samarbetar inom flera områden, till exempel jordbruk, ekonomi, miljö, handel och migration. De fattar gemensamma beslut och tar fram lagar som gäller i medlemsländerna.',
+    'EU countries cooperate in several areas, such as agriculture, the economy, the environment, trade, and migration. They make joint decisions and create laws that apply in member countries.',
+    ['eu', 'joint-decisions', 'member-countries', 'european-cooperation'],
+  ),
+  single(
+    'q162',
+    'ch11',
+    { chapter: 'Sverige och omvärlden', section: 'Den långa fredens historia', pageApprox: 40 },
+    'Hur agerade Sverige under kalla kriget i förhållande till Nato?',
+    'How did Sweden act toward NATO during the Cold War?',
+    [
+      [
+        'Sverige fortsatte att vara neutralt och stod utanför Nato',
+        'Sweden continued to be neutral and stayed outside NATO',
+      ],
+      ['Sverige lämnade EU för att gå med i Nato', 'Sweden left the EU to join NATO'],
+      [
+        'Sverige styrde både Danmark och Norge genom Nato',
+        'Sweden governed both Denmark and Norway through NATO',
+      ],
+      ['Sverige avskaffade sitt militära försvar', 'Sweden abolished its military defence'],
+    ],
+    0,
+    'Efter andra världskriget delades Europa av kalla kriget. Danmark och Norge gick med i Nato, medan Sverige fortsatte att vara neutralt och valde att stå utanför Nato.',
+    'After the Second World War, Europe was divided by the Cold War. Denmark and Norway joined NATO, while Sweden continued to be neutral and chose to stay outside NATO.',
+    ['cold-war', 'neutrality', 'nato', 'security-policy'],
+  ),
+  single(
+    'q163',
+    'ch11',
+    { chapter: 'Sverige och omvärlden', section: 'Sveriges försvar', pageApprox: 40 },
+    'Vilket påstående beskriver totalförsvarsplikt i Sverige?',
+    'Which statement describes total-defence duty in Sweden?',
+    [
+      [
+        'Personer som bor i Sverige och är 16 till 70 år kan behöva hjälpa till att försvara landet',
+        'People who live in Sweden and are aged 16 to 70 may need to help defend the country',
+      ],
+      [
+        'Bara yrkessoldater får hjälpa samhället vid kris',
+        'Only professional soldiers may help society during a crisis',
+      ],
+      [
+        'Alla invånare genomför automatiskt militär grundutbildning',
+        'All residents automatically complete basic military training',
+      ],
+      [
+        'Kommunerna ansvarar ensamma för Sveriges försvar',
+        'Municipalities alone are responsible for Sweden’s defence',
+      ],
+    ],
+    0,
+    'Alla som bor i Sverige och är mellan 16 och 70 år kan bli tvungna att hjälpa till att försvara landet om det behövs. Det kallas totalförsvarsplikt och hör till Sveriges totalförsvar.',
+    'Everyone who lives in Sweden and is between ages 16 and 70 may be required to help defend the country if needed. This is called total-defence duty and belongs to Sweden’s total defence.',
+    ['total-defence-duty', 'defence', 'residents', '16-to-70'],
+  ),
+  single(
+    'q164',
+    'ch11',
+    { chapter: 'Sverige och omvärlden', section: 'Det civila försvaret', pageApprox: 41 },
+    'Vilket påstående beskriver det civila försvaret vid krig eller kris?',
+    'Which statement describes civil defence during war or crisis?',
+    [
+      [
+        'Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera',
+        'Important activities such as school, work, and health care can continue to function',
+      ],
+      [
+        'Politiska val ersätts med militära beslut',
+        'Political elections are replaced with military decisions',
+      ],
+      [
+        'Bara Försvarsmakten ansvarar för samhällets motståndskraft',
+        'Only the Swedish Armed Forces are responsible for society’s resilience',
+      ],
+      ['EU bestämmer varje skolas dagliga schema', 'The EU decides every school’s daily timetable'],
+    ],
+    0,
+    'Det civila försvaret innebär att fler än militären ska kunna möta hot och utmaningar. Det ska bidra till att samhällsviktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, kan fortsätta fungera vid krig eller kris.',
+    'Civil defence means that more than the military should be able to meet threats and challenges. It should help important social functions, such as school, work, and health care, continue during war or crisis.',
+    ['civil-defence', 'crisis-preparedness', 'health-care', 'school'],
+  ),
 ];
