@@ -237,6 +237,34 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
+test('question speech text focused content validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-speech-text-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused question speech validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.questionSpeechTextQuestionsValidated, summary.publishedQuestions);
+  assert.ok(summary.questionSpeechTextOptionsValidated > 0);
+  assert.equal(summary.questionSpeechTextParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'speechRuntimeParityValidated'),
+    false,
+  );
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
+    false,
+  );
+});
+
 test('XP rules focused content validation runs only its parity summary', () => {
   const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-xp-rules'], {
     cwd: repoRoot,

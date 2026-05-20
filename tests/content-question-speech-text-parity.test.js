@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -95,15 +95,22 @@ function expectedSpeechText(question) {
   return `${questionText} ${optionText}`.trim();
 }
 
-test('question speech text stays in parity with every published Swedish option', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+function runFocusedValidation() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-speech-text-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
+  assert.ok(match, 'focused validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
 
-  const summary = JSON.parse(match[0]);
+test('question speech text stays in parity with every published Swedish option', () => {
+  const summary = runFocusedValidation();
   const { questions } = loadTs('data/questions.ts');
   const { buildQuestionSpeechText } = loadTs('lib/audio/speak.ts');
   const expectedOptionCount = questions.reduce(
@@ -118,4 +125,79 @@ test('question speech text stays in parity with every published Swedish option',
   assert.equal(summary.questionSpeechTextParityValidated, true);
   assert.equal(buildQuestionSpeechText(sample), expectedSpeechText(sample));
   assert.doesNotMatch(buildQuestionSpeechText(sample), /Enligt UHR-materialet/i);
+});
+
+test('focused speech parity reports source-authority leakage with the speech prompt message', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("questionSv: 'Var ligger Sverige?'", "questionSv: 'Enligt UHR-materialet, Var ligger Sverige?'");
+  }
+  if (normalizedPath.endsWith('/lib/audio/speak.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;',
+        'const promptText = question.questionSv;'
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-question-speech-text-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 speech text must start with the display-safe Swedish question prompt/,
+  );
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /answerFeedbackRuntimeParity/);
+});
+
+test('focused speech parity reports missing option fragments directly', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/audio/speak.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const optionText = question.options',
+        'const optionText = question.options.slice(0, 0)'
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-question-speech-text-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 speech text is missing option fragment Alternativ A\. I Norden i norra Europa\./,
+  );
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /speechRuntimeParity/);
 });
