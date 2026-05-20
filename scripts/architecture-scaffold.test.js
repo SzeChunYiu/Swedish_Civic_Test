@@ -212,6 +212,7 @@ const monetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
+  'components/monetization/RemoveAdsPlacementCta.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',

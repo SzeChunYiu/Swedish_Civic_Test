@@ -49,7 +49,6 @@ export interface PurchaseRuntimeOptions {
 }
 
 export interface NativePurchaseProviderOptions {
-  loadIap?: () => Promise<NativeIapModule>;
   purchaseTimeoutMs?: number;
 }
 
@@ -120,13 +119,12 @@ function normalizePurchases(value: unknown): RemoveAdsPurchaseRecord[] {
 }
 
 function isRemoveAdsPurchase(purchase: RemoveAdsPurchaseRecord): boolean {
-  return isPurchaseForProduct(purchase, REMOVE_ADS_PRODUCT_ID);
-}
-
-function isPurchaseForProduct(purchase: RemoveAdsPurchaseRecord, productId: string): boolean {
-  if (purchase.productId === productId) return true;
+  if (purchase.productId === REMOVE_ADS_PRODUCT_ID) return true;
   if (!isRecord(purchase.raw)) return false;
-  return Array.isArray(purchase.raw.ids) && purchase.raw.ids.some((id) => id === productId);
+  return (
+    Array.isArray(purchase.raw.ids) &&
+    purchase.raw.ids.some((productId) => productId === REMOVE_ADS_PRODUCT_ID)
+  );
 }
 
 function createResult(
@@ -261,12 +259,11 @@ export async function getPurchaseEntitlements({
 }
 
 export function createNativePurchaseProvider({
-  loadIap: loadNativeIapModule = loadNativeIap,
   purchaseTimeoutMs = 30000,
 }: NativePurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
   let iapPromise: Promise<NativeIapModule> | undefined;
   const getIap = () => {
-    iapPromise ??= loadNativeIapModule();
+    iapPromise ??= loadNativeIap();
     return iapPromise;
   };
 
@@ -295,9 +292,7 @@ export function createNativePurchaseProvider({
         let settled = false;
         const subscriptions = [
           iap.purchaseUpdatedListener((purchase) => {
-            const matched = normalizePurchases(purchase).find((candidate) =>
-              isPurchaseForProduct(candidate, productId),
-            );
+            const matched = normalizePurchases(purchase).find(isRemoveAdsPurchase);
             if (matched) settle(undefined, matched);
           }),
           iap.purchaseErrorListener((error) => {
@@ -332,20 +327,16 @@ export function createNativePurchaseProvider({
             type: 'in-app',
           })
           .then((requestResult) => {
-            const matched = normalizePurchases(requestResult).find((purchase) =>
-              isPurchaseForProduct(purchase, productId),
-            );
+            const matched = normalizePurchases(requestResult).find(isRemoveAdsPurchase);
             if (matched) settle(undefined, matched);
           })
           .catch((error: unknown) => settle(error));
       });
     },
-    async restorePurchases(productIds) {
+    async restorePurchases() {
       const iap = await getIap();
       await iap.restorePurchases();
-      return normalizePurchases(await iap.getAvailablePurchases()).filter((purchase) =>
-        productIds.some((productId) => isPurchaseForProduct(purchase, productId)),
-      );
+      return normalizePurchases(await iap.getAvailablePurchases()).filter(isRemoveAdsPurchase);
     },
   };
 }
