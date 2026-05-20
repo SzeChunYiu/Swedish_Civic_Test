@@ -431,6 +431,139 @@ export const zhHansUiPreview = {
       },
     },
   },
+
+  remainingHighFrequencyRoutes: {
+    onboarding: {
+      eyebrow: '欢迎',
+      title: '轻松准备瑞典社会知识考试',
+      subtitle: '一个独立的小学习助手，用来每天练习、做模拟考试、复习错题。',
+      steps: [
+        '学习瑞典社会知识概念，需要时可参考英语辅助。',
+        '用带 UHR 参考信息的问题和解析练习。',
+        '无需账号，进度只保存在本设备上。',
+      ],
+      dailyGoalTitle: '选择一个容易坚持的每日目标',
+      dailyGoalSubtitle: '先从容易保持的节奏开始。以后可以随时修改。',
+      dailyGoalPresets: {
+        10: {
+          label: '轻松',
+          summary: '每天 10 题',
+          helper: '适合刚开始、想低压力建立习惯的时候。',
+          accessibilityLabel: '选择轻松每日目标：10 题',
+        },
+        20: {
+          label: '稳定',
+          summary: '每天 20 题',
+          helper: '适合多数日子都能保持的学习节奏。',
+          accessibilityLabel: '选择稳定每日目标：20 题',
+        },
+        40: {
+          label: '加强',
+          summary: '每天 40 题',
+          helper: '适合临近模拟考试、想多练一轮的时候。',
+          accessibilityLabel: '选择加强每日目标：40 题',
+        },
+      },
+      startStudying: '开始学习',
+      startStudyingAccessibilityLabel: '开始学习',
+      adjustSettings: '调整设置',
+      adjustSettingsAccessibilityLabel: '打开设置',
+      decideLater: '稍后再决定',
+      decideLaterAccessibilityLabel: '不选择每日目标，继续使用应用',
+    },
+    aboutTheTest: {
+      eyebrow: '关于考试',
+      title: '瑞典公民身份社会知识考试是什么？',
+      subtitle:
+        'UHR 介绍的第一场考试考查瑞典社会基础知识，计划于 2026 年 8 月 15 日在斯德哥尔摩举行。',
+      sections: {
+        what: {
+          title: '这是什么考试？',
+          body: '公民身份考试是由 UHR 负责的知识考试。第一部分是社会知识。瑞典语考试会在之后推出。',
+        },
+        who: {
+          title: '谁需要参加？',
+          body: '瑞典移民局决定谁可以参加考试。只有收到瑞典移民局来信后才能报名；知识要求也可能用参加考试以外的方式满足。',
+        },
+        format: {
+          title: '第一场考试目前已知什么？',
+          body: 'UHR 已确认第一场考试日期为 2026 年 8 月 15 日，地点在斯德哥尔摩。具体时间、地点、调整安排和实务准备信息会稍后公布。',
+        },
+        material: {
+          title: '本应用依据什么材料？',
+          body: '本应用的 UHR 模式依据学习材料《Sverige i fokus》。我们的练习题不是 UHR 考题；UHR 说明，其他机构或个人制作的网上练习题没有经过 UHR 质量审核。',
+        },
+        independence: {
+          title: '这是 myndighet 出品吗？',
+          body: '不是。本应用是独立学习工具，不代表 UHR、瑞典国家教育署或瑞典移民局。这里的问题不是真实考试题。',
+        },
+      },
+      openPractice: '开始练习',
+      openPracticeAccessibilityLabel: '打开练习模式',
+      backHome: '返回首页',
+      backHomeAccessibilityLabel: '返回首页',
+    },
+    support: {
+      title: '支持和反馈',
+      whatToReportTitle: '可以反馈什么',
+      whatToReportBody:
+        '如果发现内容错误、瑞典语表述不清、资料来源链接失效、语音问题或学习流程错误，可以发送支持消息。',
+      noPersonalDataTitle: '不要包含个人数据',
+      noPersonalDataBody:
+        '请不要在支持消息中写入姓名、个人身份号码、案件编号、移民案件细节或其他敏感私人信息。',
+      independentStudyToolTitle: '独立学习工具',
+      independentStudyToolBody:
+        '支持可以帮助处理应用功能和内容修正，但不能提供官方考试答案、移民建议或 myndighet 决定。',
+      publicSupportPageTitle: '公开支持页面',
+      openSupportPageAccessibilityLabel: '打开公开支持页面',
+      questionReportContextTitle: '问题反馈上下文',
+      questionReportContextBody: '发送反馈时可以使用这些上下文。它只包含应用中的题目信息。',
+      noPersonalDataWarning: '不要在反馈中加入姓名、个人身份号码、案件编号或其他个人数据。',
+      labels: {
+        questionId: '题目 ID',
+        source: '资料来源',
+        activeLanguage: '当前语言',
+        screen: '页面',
+        selectedAnswer: '已选答案',
+        missingValue: '暂无',
+      },
+    },
+    sources: {
+      title: '资料来源',
+      primaryStudyMaterialTitle: '主要学习材料',
+      primaryStudyMaterialBody:
+        'Sverige i fokus。公民身份考试学习材料。瑞典社会基础知识。第一版。UHR 学习材料：',
+      questionReferencesTitle: '题目参考信息',
+      questionReferencesBody:
+        '每道练习题都会显示一行资料来源，包含 UHR 章节、小节和大致页码。资料来源与题干分开显示，方便你回到学习材料核对。',
+      authorityBoundariesTitle: '与 myndighet 的界限',
+      authorityBoundariesBody:
+        'UHR 的考试说明页写明，UHR 制作了学习材料；网上练习题可能由其他个人或公司制作，UHR 不为其背书，也没有经过 UHR 或其他 myndighet 的质量审核。本应用保持同样界限：这里是独立练习内容。',
+      openEducationMaterialAccessibilityLabel: '打开 UHR 学习材料',
+      openAuthorityBoundarySourceAccessibilityLabel: '打开 UHR 关于公民身份考试的页面',
+    },
+    search: {
+      eyebrow: '可搜索参考',
+      title: '搜索术语、章节和解释',
+      subtitle: '用于查找关键社会知识词语的简明词表，提供瑞典语和英语解释。',
+      sectionTitle: '社会知识术语',
+      sectionSubtitle: '查找核心词语，并打开题库中使用这个词的章节。',
+      searchLabel: '搜索术语',
+      searchPlaceholder: '搜索民主、市镇、福利……',
+      searchInputAccessibilityLabel: '搜索社会知识术语',
+      searchCardAccessibilityLabel: '搜索社会知识术语和章节关联',
+      clearSearch: '清空搜索',
+      clearSearchAccessibilityLabel: '清空搜索框',
+      allTermsSummaryTemplate: '共有 {count} 个社会知识参考术语',
+      filteredSummaryTemplate: '显示 {visibleCount}/{totalCount} 个社会知识参考术语',
+      emptyTitle: '没有匹配的术语',
+      emptyBody: '可以换一个词、myndighet 名称或章节名再试。',
+      openChapterAccessibilityLabelTemplate: '打开章节：{chapterName}',
+      termAccessibilityTemplate: '{primaryTerm}。{explanation}。关联章节：{chapterName}。',
+      browseChapters: '浏览章节',
+      browseChaptersAccessibilityLabel: '前往全部章节',
+    },
+  },
   languagePicker: {
     triggerLabelTemplate: '当前语言为 {currentLabel}。打开语言选择器。',
     closeLabel: '关闭语言选择器',
