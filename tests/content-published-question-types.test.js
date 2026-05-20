@@ -3793,6 +3793,57 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
+test('published question schema rejects generated media and local-party answer fragments', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const generatedAnswerFragments = {",
+        "  [generatedFixtureId('q150', 1)]: { questionSv: 'De säljer reklamplats eller tar betalt för en särskild kanal.', questionEn: 'They sell advertising space or charge for a specific channel.' },",
+        "  [generatedFixtureId('q150', 2)]: { questionSv: 'Genom domstolsavgifter från rättegångar.', questionEn: 'Through court fees from trials.' },",
+        "  [generatedFixtureId('q151', 1)]: { questionSv: 'De drivs ofta av privata företag och får inkomster genom reklam.', questionEn: 'They are often run by private companies and earn income from advertising.' },",
+        "  [generatedFixtureId('q151', 2)]: { questionSv: 'De får aldrig sälja reklamplats.', questionEn: 'They may never sell advertising space.' },",
+        "  [generatedFixtureId('q152', 1)]: { questionSv: 'De finns också på internet och uppdateras med nyheter flera gånger per dag.', questionEn: 'They are also available online and updated with news several times per day.' },",
+        "  [generatedFixtureId('q152', 2)]: { questionSv: 'De får bara säljas som ett exemplar per år.', questionEn: 'They may be sold only as one copy per year.' },",
+        "  [generatedFixtureId('q169', 1)]: { questionSv: 'De kan ha politik bara för den egna kommunen eller regionen.' },",
+        "  [generatedFixtureId('q169', 2)]: { questionSv: 'De måste alltid vara partier i riksdagen.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  generatedAnswerFragments[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...generatedAnswerFragments[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
+});
+
 test('published question schema rejects generated proportional-party referent splices', () => {
   const result = spawnSync(
     process.execPath,

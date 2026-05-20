@@ -55322,8 +55322,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They sell advertising space or charge for a specific channel.",
-      "sv": "De säljer reklamplats eller tar betalt för en särskild kanal."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or charging for a specific channel.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller ta betalt för en särskild kanal."
     },
     "opts": [
       {
@@ -55362,8 +55362,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Through court fees from trials.",
-      "sv": "Genom domstolsavgifter från rättegångar."
+      "en": "Commercial radio and TV channels can earn income through court fees from trials.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom domstolsavgifter från rättegångar."
     },
     "opts": [
       {
@@ -55578,8 +55578,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They are often run by private companies and earn income from advertising.",
-      "sv": "De drivs ofta av privata företag och får inkomster genom reklam."
+      "en": "Media financed by advertising are often run by private companies and earn income from advertising.",
+      "sv": "Medier som finansieras med reklam drivs ofta av privata företag och får inkomster genom reklam."
     },
     "opts": [
       {
@@ -55618,8 +55618,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They may never sell advertising space.",
-      "sv": "De får aldrig sälja reklamplats."
+      "en": "Media financed by advertising may never sell advertising space.",
+      "sv": "Medier som finansieras med reklam får aldrig sälja reklamplats."
     },
     "opts": [
       {
@@ -55834,8 +55834,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They are also available online and updated with news several times per day.",
-      "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are also available online and updated with news several times per day.",
+      "sv": "Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag."
     },
     "opts": [
       {
@@ -55874,8 +55874,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They may be sold only as one copy per year.",
-      "sv": "De får bara säljas som ett exemplar per år."
+      "en": "Many newspapers may be sold only as one copy per year.",
+      "sv": "Många tidningar får bara säljas som ett exemplar per år."
     },
     "opts": [
       {
@@ -56090,8 +56090,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Anyone can create content there, and it is not always checked the same way as in other media.",
-      "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier."
+      "en": "On the web and in social media, anyone can create content, and it is not always checked the same way as in other media.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll, och det kontrolleras inte alltid som i andra medier."
     },
     "opts": [
       {
@@ -56130,8 +56130,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Only responsible publishers may write posts there.",
-      "sv": "Bara ansvariga utgivare får skriva inlägg där."
+      "en": "On the web and in social media, only responsible publishers may write posts.",
+      "sv": "På webben och i sociala medier får bara ansvariga utgivare skriva inlägg."
     },
     "opts": [
       {
@@ -60236,7 +60236,7 @@
     "type": "true_false",
     "q": {
       "en": "Special parties in municipal and regional elections can have policies only for their own municipality or region.",
-      "sv": "De kan ha politik bara för den egna kommunen eller regionen."
+      "sv": "Särskilda partier i kommun- och regionval kan ha politik bara för den egna kommunen eller regionen."
     },
     "opts": [
       {
@@ -60277,7 +60277,7 @@
     "type": "true_false",
     "q": {
       "en": "Special parties in municipal and regional elections must always be parties in the Riksdag.",
-      "sv": "De måste alltid vara partier i riksdagen."
+      "sv": "Särskilda partier i kommun- och regionval måste alltid vara partier i riksdagen."
     },
     "opts": [
       {

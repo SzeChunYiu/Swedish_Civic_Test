@@ -723,6 +723,72 @@ function conditionalPartyOutcomeEn(context: string, condition: string, answer: s
   return `In ${context}, ${lowerFirst(answer)} if ${condition}`;
 }
 
+function commercialMediaIncomeStatementSv(subject: string, answer: string): string {
+  if (/^De\s+säljer\b/i.test(answer)) {
+    const method = answer
+      .replace(/^De\s+/i, '')
+      .replace(/^säljer\b/i, 'sälja')
+      .replace(/\btar\s+betalt\b/i, 'ta betalt');
+    return `${upperFirst(subject)} kan få inkomster genom att ${lowerFirst(method)}`;
+  }
+  if (/^Genom\b/i.test(answer)) {
+    return `${upperFirst(subject)} kan få inkomster ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+
+function commercialMediaIncomeStatementEn(subject: string, answer: string): string {
+  if (/^They\s+sell\b/i.test(answer)) {
+    const method = answer
+      .replace(/^They\s+/i, '')
+      .replace(/^sell\b/i, 'selling')
+      .replace(/\bcharge\b/i, 'charging');
+    return `${upperFirst(subject)} can earn income by ${lowerFirst(method)}`;
+  }
+  if (/^(?:Through|By)\b/i.test(answer)) {
+    return `${upperFirst(subject)} can earn income ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+
+function webSocialMediaStatementSv(answer: string): string {
+  if (/^Vem som helst kan skapa innehåll där\b/i.test(answer)) {
+    return answer.replace(
+      /^Vem som helst kan skapa innehåll där/i,
+      'På webben och i sociala medier kan vem som helst skapa innehåll',
+    );
+  }
+  if (/^Bara ansvariga utgivare får skriva inlägg där$/i.test(answer)) {
+    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
+  }
+  if (/^Allt innehåll godkänns först av staten$/i.test(answer)) {
+    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
+  }
+  if (/^Innehållet är alltid mer pålitligt än nyheter i tidningar$/i.test(answer)) {
+    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
+  }
+  return answer;
+}
+
+function webSocialMediaStatementEn(answer: string): string {
+  if (/^Anyone can create content there\b/i.test(answer)) {
+    return answer.replace(
+      /^Anyone can create content there/i,
+      'On the web and in social media, anyone can create content',
+    );
+  }
+  if (/^Only responsible publishers may write posts there$/i.test(answer)) {
+    return 'On the web and in social media, only responsible publishers may write posts';
+  }
+  if (/^All content is first approved by the state$/i.test(answer)) {
+    return 'On the web and in social media, all content is first approved by the state';
+  }
+  if (/^The content is always more reliable than news in newspapers$/i.test(answer)) {
+    return 'Content on the web and in social media is always more reliable than news in newspapers';
+  }
+  return answer;
+}
+
 function stripTrueFalsePromptSv(value: string): string {
   return stripFinalPunctuation(value.replace(/^Sant eller falskt:\s*/i, ''));
 }
@@ -1185,6 +1251,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
+  match = q.match(/^Hur kan (.+?) få inkomster$/i);
+  if (match) return commercialMediaIncomeStatementSv(match[1], answer);
+
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
   if (match)
     return `${upperFirst(match[1])} underlättar ${match[2]} genom att ${lowerFirst(
@@ -1241,7 +1310,19 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket påstående beskriver (.+)$/i);
   if (match) return describesStatementSv(match[1], answer);
 
+  match = q.match(/^Vad kännetecknar (.+)$/i);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+
+  match = q.match(/^Hur publiceras många tidningar i dag$/i);
+  if (match) return replaceLeadingSwedishSubject('många tidningar', answer);
+
+  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
+  if (match) return webSocialMediaStatementSv(answer);
+
   match = q.match(/^Vilket påstående stämmer om (.+)$/i);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+
+  match = q.match(/^Vilket påstående om (.+?) är korrekt$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
   match = q.match(/^Vilken är (.+)$/i);
@@ -1645,6 +1726,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
 
+  match = q.match(/^How can (.+?) earn income$/i);
+  if (match) return commercialMediaIncomeStatementEn(match[1], answer);
+
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
   if (match) {
     const method = /^By\s+/i.test(answer)
@@ -1702,6 +1786,15 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Which statement describes (.+)$/i);
   if (match) return describesStatementEn(match[1], answer);
+
+  match = q.match(/^What characterizes (.+)$/i);
+  if (match) return replaceLeadingEnglishSubject(match[1], answer);
+
+  match = q.match(/^How are many newspapers published today$/i);
+  if (match) return replaceLeadingEnglishSubject('many newspapers', answer);
+
+  match = q.match(/^What is important to remember about the web and social media$/i);
+  if (match) return webSocialMediaStatementEn(answer);
 
   match = q.match(/^Which statement is correct about (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
