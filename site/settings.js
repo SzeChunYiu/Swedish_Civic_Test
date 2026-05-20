@@ -38,6 +38,28 @@
     try { const v = localStorage.getItem(key); return v == null ? fallback : v; } catch { return fallback; }
   }
   function lsSet(key, v) { try { localStorage.setItem(key, v); } catch {} }
+  function lsHas(key) { try { return localStorage.getItem(key) != null; } catch { return false; } }
+  function systemPrefersReducedMotion() {
+    try {
+      return (
+        typeof matchMedia === "function" &&
+        matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    } catch {
+      return false;
+    }
+  }
+  function effectiveMotionReduction() {
+    const saved = ls("smt_motion", null);
+    if (saved === "reduce") return true;
+    if (saved === "") return false;
+    return systemPrefersReducedMotion();
+  }
+  function emitMotionChange(on) {
+    try {
+      window.dispatchEvent(new CustomEvent("smt:motionchange", { detail: { reduced: !!on } }));
+    } catch {}
+  }
 
   // -------- APPLY HELPERS --------
 
@@ -59,9 +81,10 @@
     document.documentElement.style.fontSize = (16 * (parseInt(s, 10) / 100)) + "px";
     lsSet("smt_textsize", s);
   }
-  function applyMotion(on) {
+  function applyMotion(on, opts = {}) {
     document.documentElement.setAttribute("data-motion", on ? "reduce" : "");
-    lsSet("smt_motion", on ? "reduce" : "");
+    if (opts.persist !== false) lsSet("smt_motion", on ? "reduce" : "");
+    emitMotionChange(on);
   }
   function applyAurora(on) {
     document.documentElement.setAttribute("data-aurora", on ? "on" : "off");
@@ -115,7 +138,7 @@
     setPalette(ls("smt_palette", "flag"));
     setSegment("language",  ls("smt_lang", "en"));
     setSegment("textsize",  ls("smt_textsize", "100"));
-    setCheckbox("motion",   ls("smt_motion", "") === "reduce");
+    setCheckbox("motion",   effectiveMotionReduction());
     setCheckbox("aurora",   ls("smt_aurora", "on") !== "off");
     setCheckbox("flagcross", ls("smt_flagcross", "1") === "1");
     setCheckbox("buddyshow", ls("smt_buddy_hidden", "") !== "1");
@@ -212,13 +235,16 @@
     applyTheme(ls("smt_theme", "auto"));
     applyPalette(ls("smt_palette", "flag"));
     applyTextSize(ls("smt_textsize", "100"));
-    applyMotion(ls("smt_motion", "") === "reduce");
+    applyMotion(effectiveMotionReduction(), { persist: lsHas("smt_motion") });
     applyAurora(ls("smt_aurora", "on") !== "off");
     applyFlagcross(ls("smt_flagcross", "1") === "1");
 
     // listen for system theme change when on auto
     matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => {
       if (ls("smt_theme", "auto") === "auto") applyTheme("auto");
+    });
+    matchMedia("(prefers-reduced-motion: reduce)").addEventListener?.("change", () => {
+      if (!lsHas("smt_motion")) applyMotion(systemPrefersReducedMotion(), { persist: false });
     });
   });
 
