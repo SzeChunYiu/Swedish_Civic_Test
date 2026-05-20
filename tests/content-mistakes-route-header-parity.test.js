@@ -33,13 +33,11 @@ test('mistakes route title, review sections, and empty state stay accessible as 
     source,
     /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   );
+  assert.match(source, /title: copy\.bookmarkedTitle/);
+  assert.match(source, /title: copy\.mistakeTitle/);
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.bookmarkedTitle\}\s*<\/Text>/,
-  );
-  assert.match(
-    source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.mistakeTitle\}\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{section\.title\}\s*<\/Text>/,
   );
   assert.match(
     source,

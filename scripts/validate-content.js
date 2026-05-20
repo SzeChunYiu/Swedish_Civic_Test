@@ -853,14 +853,11 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
     '<Text style={styles.subtitle}>{copy.subtitle}</Text>',
     'mistakes subtitle must render localized copy',
   ],
-  [
-    '<Badge tone="blue">{copy.bookmarkedBadge}</Badge>',
-    'bookmarked badge must render localized copy',
-  ],
-  ['{copy.bookmarkedTitle}', 'bookmarked title must render localized copy'],
+  ['badge: copy.bookmarkedBadge', 'bookmarked badge must render localized copy'],
+  ['title: copy.bookmarkedTitle', 'bookmarked title must render localized copy'],
   ['{copy.bookmarkedMeta}', 'bookmarked metadata must render localized copy'],
-  ['<Badge tone="orange">{copy.mistakeBadge}</Badge>', 'mistake badge must render localized copy'],
-  ['{copy.mistakeTitle}', 'mistake title must render localized copy'],
+  ['badge: copy.mistakeBadge', 'mistake badge must render localized copy'],
+  ['title: copy.mistakeTitle', 'mistake title must render localized copy'],
   [
     '{copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}',
     'wrong-count metadata must render localized copy',
@@ -1458,14 +1455,13 @@ const EXPECTED_MISTAKES_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,
   },
   {
-    label: 'bookmarked questions section title',
+    label: 'virtualized review section header',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.bookmarkedTitle\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{section\.title\}\s*<\/Text>/,
   },
   {
-    label: 'wrong answers section title',
-    pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.mistakeTitle\}\s*<\/Text>/,
+    label: 'review section localized titles',
+    pattern: /title: copy\.bookmarkedTitle,[\s\S]*title: copy\.mistakeTitle,/,
   },
   {
     label: 'empty-state title',
