@@ -17,7 +17,7 @@ import { createNewCard, gradeCard, isDue, sortByDueAscending } from '../learning
 import { getLocalDateKey } from '../learning/streaks';
 import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
@@ -37,19 +37,62 @@ export interface PersistedReviews {
 }
 
 const EMPTY: PersistedReviews = { byId: {}, gradedPerDay: {} };
+const MAX_GRADED_REVIEWS_PER_DAY = 10000;
+const reviewStates = new Set(['new', 'learning', 'review', 'relearning']);
 
-function isReviewCard(value: unknown): value is ReviewCard {
+function isCanonicalIsoTimestamp(value: string): boolean {
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date.toISOString() === value;
+}
+
+function isCanonicalDayKey(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function isSafeReviewQuestionId(questionId: unknown): questionId is string {
+  return (
+    typeof questionId === 'string' &&
+    questionId.trim() === questionId &&
+    questionId.length > 0 &&
+    isSafeImportedMapKey(questionId)
+  );
+}
+
+function assertSafeReviewQuestionId(questionId: string): void {
+  if (!isSafeReviewQuestionId(questionId)) {
+    throw new TypeError('Review questionId must be a non-empty safe string.');
+  }
+}
+
+function isReviewCardForId(id: string, value: unknown): value is ReviewCard {
+  if (!isSafeReviewQuestionId(id)) return false;
   if (!value || typeof value !== 'object') return false;
   const v = value as Partial<ReviewCard>;
   return (
-    typeof v.questionId === 'string' &&
+    v.questionId === id &&
+    isSafeReviewQuestionId(v.questionId) &&
     typeof v.difficulty === 'number' &&
+    Number.isFinite(v.difficulty) &&
+    v.difficulty >= 1 &&
+    v.difficulty <= 10 &&
     typeof v.stability === 'number' &&
+    Number.isFinite(v.stability) &&
+    v.stability >= 1 &&
+    v.stability <= 365 * 5 &&
     typeof v.reps === 'number' &&
+    Number.isInteger(v.reps) &&
+    v.reps >= 0 &&
     typeof v.lapses === 'number' &&
+    Number.isInteger(v.lapses) &&
+    v.lapses >= 0 &&
     typeof v.state === 'string' &&
-    (v.lastReviewAt === null || typeof v.lastReviewAt === 'string') &&
-    typeof v.dueAt === 'string'
+    reviewStates.has(v.state) &&
+    (v.lastReviewAt === null ||
+      (typeof v.lastReviewAt === 'string' && isCanonicalIsoTimestamp(v.lastReviewAt))) &&
+    typeof v.dueAt === 'string' &&
+    isCanonicalIsoTimestamp(v.dueAt)
   );
 }
 
@@ -59,15 +102,20 @@ function normalize(value: unknown): PersistedReviews {
   const byId: Record<string, ReviewCard> = {};
   if (candidate.byId && typeof candidate.byId === 'object') {
     for (const [id, card] of Object.entries(candidate.byId)) {
-      if (!isSafeImportedMapKey(id)) continue;
-      if (isReviewCard(card)) byId[id] = card;
+      if (isReviewCardForId(id, card)) byId[id] = card;
     }
   }
   const gradedPerDay: Record<string, number> = {};
   if (candidate.gradedPerDay && typeof candidate.gradedPerDay === 'object') {
     for (const [day, count] of Object.entries(candidate.gradedPerDay)) {
       if (!isSafeImportedMapKey(day)) continue;
-      if (typeof count === 'number' && Number.isFinite(count) && count >= 0) {
+      if (
+        isCanonicalDayKey(day) &&
+        typeof count === 'number' &&
+        Number.isInteger(count) &&
+        count >= 0 &&
+        count <= MAX_GRADED_REVIEWS_PER_DAY
+      ) {
         gradedPerDay[day] = count;
       }
     }
@@ -79,13 +127,19 @@ export function normalizeImportedReviewState(value: unknown): PersistedReviews {
   return normalize(value);
 }
 
-function read(): PersistedReviews {
-  const raw = reviewStorage?.getString(REVIEW_STORE_KEY);
-  if (!raw) return EMPTY;
+type InitialReviewState = PersistedReviews & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
+};
+
+function read(): InitialReviewState {
+  const result = readRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, () =>
+    reviewStorage?.getString(REVIEW_STORE_KEY),
+  );
+  if (!result.value) return { ...EMPTY, persistenceWarning: result.warning };
   try {
-    return normalize(JSON.parse(raw));
+    return { ...normalize(JSON.parse(result.value)), persistenceWarning: result.warning };
   } catch {
-    return EMPTY;
+    return { ...EMPTY, persistenceWarning: null };
   }
 }
 
@@ -120,8 +174,8 @@ const initial = read();
 
 export const useReviewStore = create<ReviewState>((set, get) => ({
   ...initial,
-  persistenceWarning: null,
   ensureCard: (questionId, now) => {
+    assertSafeReviewQuestionId(questionId);
     const existing = get().byId[questionId];
     if (existing) return existing;
     const card = createNewCard(questionId, now);
@@ -136,6 +190,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     return card;
   },
   grade: (questionId, grade, now = new Date().toISOString()) => {
+    assertSafeReviewQuestionId(questionId);
     const state = get();
     const existing = state.byId[questionId] ?? createNewCard(questionId, now);
     const next = gradeCard(existing, grade, now);
