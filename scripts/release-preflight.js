@@ -1248,8 +1248,8 @@ function commandSucceeds(command, args) {
   const result = spawnSync(command, args, { encoding: 'utf8' });
   return {
     ok: result.status === 0,
-    stdout: result.stdout.trim(),
-    stderr: result.stderr.trim(),
+    stdout: result.stdout.trimEnd(),
+    stderr: result.stderr.trimEnd(),
   };
 }
 
