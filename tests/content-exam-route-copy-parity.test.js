@@ -19,7 +19,7 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 62);
+  assert.equal(summary.examRouteCopyLabelsValidated, 66);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -31,10 +31,6 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
-  assert.match(source, /rewardPreviewAction: 'Slutför förhandsvisning'/);
-  assert.match(source, /rewardPreviewAction: 'Complete preview'/);
-  assert.match(source, /\{copy\.rewardPreviewTitle\}/);
-  assert.match(source, /\{copy\.rewardPreviewBody\}/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
     source,
@@ -43,6 +39,13 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
+  assert.match(
+    source,
+    /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,
+  );
+  assert.match(source, /recordMockExamSession\(\{/);
+  assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
+  assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
 });
 
 test('exam route copy parity rejects bypassing the settings language', () => {

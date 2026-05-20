@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
-import { ResultSummary } from '../../components/ResultSummary';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -49,15 +47,17 @@ type ExamRouteCopy = {
   heroSubtitle: (durationMinutes: number, questionCount: number) => string;
   mockExamTitle: string;
   nextExamTitle: string;
+  officialDetailsNote: string;
+  practiceLineReachedBadge: string;
+  practiceLineReviewBadge: string;
+  practiceLineStatus: (percent: number, thresholdPercent: number) => string;
+  practiceLineSummary: (thresholdPercent: number) => string;
   progressTitle: string;
   questionNumber: (questionNumber: number) => string;
   questionReviewTitle: string;
   resultBadge: string;
   resultNote: string;
   resultSubtitle: string;
-  rewardPreviewAction: string;
-  rewardPreviewBody: string;
-  rewardPreviewTitle: string;
   reviewBadge: string;
   rewardedAdStatus: Record<RewardedExtraExamAdStatus, string>;
   savedBadge: string;
@@ -105,6 +105,14 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     mockExamTitle: 'Övningsprov',
     nextExamTitle: 'Nästa prov',
+    officialDetailsNote:
+      'UHR har inte publicerat exakt antal frågor, provtid eller godkändgräns för det officiella provet.',
+    practiceLineReachedBadge: 'Övningsnivå nådd',
+    practiceLineReviewBadge: 'Fortsätt öva',
+    practiceLineStatus: (percent, thresholdPercent) =>
+      `${percent} % rätt · appens övningsgräns är ${thresholdPercent} %`,
+    practiceLineSummary: (thresholdPercent) =>
+      `Övningsgräns ${thresholdPercent} % i den här simuleringen`,
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
@@ -112,10 +120,6 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
-    rewardPreviewAction: 'Slutför förhandsvisning',
-    rewardPreviewBody:
-      'På webben låser du upp ett extra övningsprov genom att slutföra den här förhandsvisningen. Det är en annonsförhandsvisning, inte ett officiellt eller betalt prov.',
-    rewardPreviewTitle: 'Förhandsvisning för extra prov',
     reviewBadge: 'Granska',
     rewardedAdStatus: {
       closed_without_reward: 'Det extra övningsprovet kräver att belöningsannonsen slutförs.',
@@ -167,16 +171,20 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
     mockExamTitle: 'Mock exam',
     nextExamTitle: 'Next exam',
+    officialDetailsNote:
+      "UHR has not published the official test's exact question count, time limit, or pass line.",
+    practiceLineReachedBadge: 'Practice line reached',
+    practiceLineReviewBadge: 'Keep practicing',
+    practiceLineStatus: (percent, thresholdPercent) =>
+      `${percent}% correct · app practice line is ${thresholdPercent}%`,
+    practiceLineSummary: (thresholdPercent) =>
+      `Practice line ${thresholdPercent}% in this simulation`,
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
-    rewardPreviewAction: 'Complete preview',
-    rewardPreviewBody:
-      'On web, an extra mock exam unlocks only after this preview is completed. It is an ad preview, not an official or paid exam.',
-    rewardPreviewTitle: 'Extra exam preview',
     reviewBadge: 'Review',
     rewardedAdStatus: {
       closed_without_reward: 'Extra mock exam unlock needs a completed rewarded ad.',
@@ -201,6 +209,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     unlockFailure: 'Extra mock exam could not be unlocked right now.',
   },
 };
+
+const PRACTICE_PASS_THRESHOLD_PERCENT = 75;
 
 function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage): string {
   return examRouteCopy[language].accessStatus[reason];
@@ -276,6 +286,7 @@ export default function Screen() {
   const result = submitted ? scoreExam(examQuestions, answers) : null;
   const resultCorrectCount = result?.correctCount ?? 0;
   const resultTotalCount = result?.totalCount ?? 0;
+  const practiceLineReached = Boolean(result && result.percent >= PRACTICE_PASS_THRESHOLD_PERCENT);
   const chapterBreakdown = result
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
@@ -285,11 +296,8 @@ export default function Screen() {
   const endedByTime = Boolean(result && remainingSeconds <= 0);
   const shouldAttemptRewardedAd =
     accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
-  const usesWebRewardPreview = Platform.OS === 'web' && shouldAttemptRewardedAd;
   const startAccessibleExamLabel = shouldAttemptRewardedAd
-    ? usesWebRewardPreview
-      ? copy.rewardPreviewAction
-      : copy.startExtraExam
+    ? copy.startExtraExam
     : accessDecision.reason === 'rewarded_exam_credit'
       ? copy.startUnlockedExtraExam
       : copy.startMockExam;
@@ -321,10 +329,7 @@ export default function Screen() {
       if (accessDecision.reason === 'rewarded_exam_credit') {
         await consumeRewardedExamCredit();
       } else if (shouldAttemptRewardedAd) {
-        const rewardedAdResult = await showRewardedExtraExamAd({
-          confirmReward: usesWebRewardPreview ? () => true : undefined,
-          entitlements,
-        });
+        const rewardedAdResult = await showRewardedExtraExamAd({ entitlements });
 
         if (rewardedAdResult.status !== 'earned_reward') {
           setAccessStatusMessage(getRewardedAdStatusText(rewardedAdResult.status, language));
@@ -357,7 +362,6 @@ export default function Screen() {
     resetExamAttempt,
     shouldAttemptRewardedAd,
     startingAccessibleExam,
-    usesWebRewardPreview,
   ]);
 
   useEffect(() => {
@@ -372,7 +376,7 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion(examSessionId)
+    void recordExamCompletion()
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -414,14 +418,6 @@ export default function Screen() {
             {copy.accessTitle}
           </Text>
           <Text style={styles.subtitle}>{accessStatusText}</Text>
-          {usesWebRewardPreview ? (
-            <View style={styles.rewardPreviewCard}>
-              <Text accessibilityRole="header" style={styles.rewardPreviewTitle}>
-                {copy.rewardPreviewTitle}
-              </Text>
-              <Text style={styles.rewardPreviewBody}>{copy.rewardPreviewBody}</Text>
-            </View>
-          ) : null}
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
@@ -445,7 +441,11 @@ export default function Screen() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Badge tone={endedByTime ? 'orange' : 'blue'}>
+          <Badge
+            tone={
+              result.percent >= PRACTICE_PASS_THRESHOLD_PERCENT && !endedByTime ? 'green' : 'orange'
+            }
+          >
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
           </Badge>
           <Text accessibilityRole="header" style={styles.title}>
@@ -457,14 +457,25 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <ResultSummary
-          correctCount={result.correctCount}
-          languageOverride={language}
-          metricLabel={copy.correctCount(result.correctCount, result.totalCount)}
-          status={endedByTime ? 'review' : undefined}
-          subtitle={copy.resultNote}
-          totalCount={result.totalCount}
-        />
+        <View style={styles.resultCard}>
+          <Text style={styles.metric}>{result.percent}%</Text>
+          <Text style={styles.subtitle}>
+            {copy.correctCount(result.correctCount, result.totalCount)}
+          </Text>
+          <View style={styles.resultStatusRow}>
+            <Badge tone={practiceLineReached ? 'green' : 'orange'}>
+              {practiceLineReached ? copy.practiceLineReachedBadge : copy.practiceLineReviewBadge}
+            </Badge>
+            <Text style={styles.resultStatusText}>
+              {copy.practiceLineStatus(result.percent, PRACTICE_PASS_THRESHOLD_PERCENT)}
+            </Text>
+          </View>
+          <Text style={styles.resultNote}>
+            {copy.practiceLineSummary(PRACTICE_PASS_THRESHOLD_PERCENT)}
+          </Text>
+          <Text style={styles.resultNote}>{copy.officialDetailsNote}</Text>
+          <Text style={styles.resultNote}>{copy.resultNote}</Text>
+        </View>
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -477,14 +488,6 @@ export default function Screen() {
           <Text style={styles.subtitle}>
             {completionRecorded ? accessStatusText : copy.savingCompletion}
           </Text>
-          {completionRecorded && usesWebRewardPreview ? (
-            <View style={styles.rewardPreviewCard}>
-              <Text accessibilityRole="header" style={styles.rewardPreviewTitle}>
-                {copy.rewardPreviewTitle}
-              </Text>
-              <Text style={styles.rewardPreviewBody}>{copy.rewardPreviewBody}</Text>
-            </View>
-          ) : null}
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
@@ -606,20 +609,21 @@ export default function Screen() {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <OptionCard
+                <Pressable
                   key={option.id}
-                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isSelected, selected: isSelected }}
-                  label={optionText}
-                  languageOverride={language}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
                   onPress={() =>
                     setAnswers((current) => ({ ...current, [question.id]: option.id }))
                   }
-                  state={isSelected ? 'selected' : 'idle'}
-                />
+                  style={[styles.option, isSelected ? styles.optionSelected : null]}
+                >
+                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
+                    {optionText}
+                  </Text>
+                </Pressable>
               );
             })}
           </View>
@@ -692,25 +696,6 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  rewardPreviewCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[0.5],
-    padding: space[1.5],
-  },
-  rewardPreviewTitle: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.body.lineHeight,
-  },
-  rewardPreviewBody: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
   questionCard: {
     borderColor: colors.border,
     borderRadius: radius.card,
@@ -738,8 +723,54 @@ const styles = StyleSheet.create({
   options: {
     gap: space[1],
   },
+  option: {
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space[1.5],
+  },
+  optionSelected: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueText,
+  },
+  optionText: {
+    color: colors.textSoft,
+    fontSize: typography.navButton.fontSize,
+  },
+  optionTextSelected: {
+    color: colors.badgeBlueText,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
   actionButton: {
     minHeight: space[5] + space[0.5],
+  },
+  resultCard: {
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    gap: space[1],
+    padding: space[2],
+  },
+  metric: {
+    color: colors.text,
+    fontSize: typography.subHeadingLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  resultNote: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  resultStatusRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  resultStatusText: {
+    color: colors.text,
+    flex: 1,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
   },
   breakdownRow: {
     alignItems: 'center',
