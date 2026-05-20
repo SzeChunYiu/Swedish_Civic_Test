@@ -3,12 +3,12 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 const gitignorePath = path.join(repoRoot, '.gitignore');
 const screenshotDir = path.join(repoRoot, 'reports/2026-05-15-uiux-screenshots');
 const manifestPath = path.join(screenshotDir, 'manifest.json');
-const visualSmokeSpecPath = path.join(repoRoot, 'tests/e2e/visual-smoke.spec.ts');
 const expectedRoutes = [
   '/',
   '/onboarding',
@@ -40,6 +40,18 @@ function sha256File(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
+function loadTs(relativePath) {
+  const filePath = path.join(repoRoot, relativePath);
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const mod = { exports: {} };
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  return mod.exports;
+}
+
 test('visual smoke uses the shared blocking modal overlay locator', () => {
   const browserLaunchSource = readRepoFile('tests/e2e/browserLaunch.ts');
   const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
@@ -60,9 +72,17 @@ test('visual smoke uses the shared blocking modal overlay locator', () => {
 
 test('visual smoke report records route-specific screenshots without launch overlays', () => {
   const manifest = readManifest();
+  const { resolveVisualSmokeOutput } = loadTs('tests/e2e/visualSmokeOutput.ts');
+  const committedBaselineOutput = resolveVisualSmokeOutput({
+    cwd: repoRoot,
+    env: { VISUAL_SMOKE_UPDATE_BASELINE: '1' },
+  });
+
   assert.match(manifest.viewport, /iPhone 12/);
-  assert.match(manifest.outputPolicy, /tmp\/visual-smoke-uiux-screenshots/);
-  assert.match(manifest.outputPolicy, /VISUAL_SMOKE_UPDATE_BASELINE=1/);
+  assert.equal(manifest.outputMode, committedBaselineOutput.mode);
+  assert.equal(manifest.outputPolicy, committedBaselineOutput.outputPolicy);
+  assert.equal(manifest.writesCommittedBaseline, true);
+  assert.equal(manifest.writesCommittedBaseline, committedBaselineOutput.writesCommittedBaseline);
   assert.match(manifest.launchOverlayPolicy, /dismisses the launch sponsor overlay/i);
   assert.match(manifest.launchOverlayPolicy, /modal menu overlays/i);
   assert.match(manifest.duplicatePolicy, /duplicate screenshot hashes fail/i);
@@ -110,33 +130,41 @@ test('visual smoke report records route-specific screenshots without launch over
   assert.deepEqual(unexplainedDuplicates, []);
 });
 
-test('visual smoke runtime output defaults to ignored temp artifacts', () => {
-  const source = fs.readFileSync(visualSmokeSpecPath, 'utf8');
+test('visual smoke output resolver defaults to ignored temp artifacts', () => {
+  const {
+    VISUAL_SMOKE_BASELINE_RELATIVE_DIR,
+    VISUAL_SMOKE_RUNTIME_RELATIVE_DIR,
+    resolveVisualSmokeOutput,
+  } = loadTs('tests/e2e/visualSmokeOutput.ts');
   const gitignore = fs.readFileSync(gitignorePath, 'utf8');
 
+  const defaultOutput = resolveVisualSmokeOutput({ cwd: repoRoot, env: {} });
+  assert.equal(defaultOutput.mode, 'runtime-temp');
+  assert.equal(defaultOutput.relativeDir, VISUAL_SMOKE_RUNTIME_RELATIVE_DIR);
+  assert.equal(defaultOutput.dir, path.join(repoRoot, VISUAL_SMOKE_RUNTIME_RELATIVE_DIR));
+  assert.equal(defaultOutput.writesCommittedBaseline, false);
+  assert.match(defaultOutput.outputPolicy, /tmp\/visual-smoke-uiux-screenshots/);
+  assert.match(defaultOutput.outputPolicy, /VISUAL_SMOKE_UPDATE_BASELINE=1/);
+
+  const nonOptInOutput = resolveVisualSmokeOutput({
+    cwd: repoRoot,
+    env: { VISUAL_SMOKE_UPDATE_BASELINE: 'true' },
+  });
+  assert.equal(nonOptInOutput.mode, 'runtime-temp');
+  assert.equal(nonOptInOutput.writesCommittedBaseline, false);
+
+  const refreshOutput = resolveVisualSmokeOutput({
+    cwd: repoRoot,
+    env: { VISUAL_SMOKE_UPDATE_BASELINE: '1' },
+  });
+  assert.equal(refreshOutput.mode, 'committed-baseline-refresh');
+  assert.equal(refreshOutput.relativeDir, VISUAL_SMOKE_BASELINE_RELATIVE_DIR);
+  assert.equal(refreshOutput.dir, path.join(repoRoot, VISUAL_SMOKE_BASELINE_RELATIVE_DIR));
+  assert.equal(refreshOutput.writesCommittedBaseline, true);
   assert.match(
-    source,
-    /const baselineScreenshotDir = path\.resolve\('reports\/2026-05-15-uiux-screenshots'\);/,
+    refreshOutput.outputPolicy,
+    /intentionally refreshes the committed reports\/2026-05-15-uiux-screenshots baseline/,
   );
-  assert.match(
-    source,
-    /const runtimeScreenshotDir = path\.resolve\('tmp\/visual-smoke-uiux-screenshots'\);/,
-  );
-  assert.match(
-    source,
-    /const refreshCommittedBaseline = process\.env\.VISUAL_SMOKE_UPDATE_BASELINE === '1';/,
-  );
-  assert.match(
-    source,
-    /const screenshotDir = refreshCommittedBaseline \? baselineScreenshotDir : runtimeScreenshotDir;/,
-  );
-  assert.match(
-    source,
-    /Default visual-smoke runs must not write into the committed screenshot baseline/,
-  );
-  assert.match(
-    source,
-    /Set VISUAL_SMOKE_UPDATE_BASELINE=1 only when intentionally refreshing the committed reports\/2026-05-15-uiux-screenshots baseline\./,
-  );
+
   assert.match(gitignore, /^tmp\/$/m);
 });
