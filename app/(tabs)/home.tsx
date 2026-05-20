@@ -1,4 +1,5 @@
 import { Link } from 'expo-router';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
@@ -26,7 +27,8 @@ import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
-import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
+import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
+import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -62,6 +64,7 @@ type HomeCopy = {
   dashboardLink: string;
   dailyChallengeAccessibilityLabel: (title: string, subtitle: string, completed: boolean) => string;
   dailyChallengeCta: (completed: boolean) => string;
+  dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -102,6 +105,7 @@ type HomeCopy = {
   startPractice: string;
   startPracticeAccessibilityLabel: string;
   startPracticeSet: string;
+  streakFreezeBadge: string;
   studyLoopItems: StudyLoopItemCopy[];
   studyLoopSubtitle: string;
   studyLoopTitle: string;
@@ -122,6 +126,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         completed ? 'Dagens utmaning är redan klar.' : 'Starta dagens utmaning.'
       }`,
     dailyChallengeCta: (completed) => (completed ? 'Öva igen' : 'Starta utmaningen'),
+    dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
     dashboardLink: 'Visa framsteg',
     dayStreakHelper: 'daglig vana',
@@ -223,6 +228,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
     startPracticeSet: 'Starta en 5-minutersövning',
+    streakFreezeBadge: 'Svitskydd',
     studyLoopItems: [
       {
         label: 'Korta pass',
@@ -262,6 +268,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         completed ? "Today's challenge is already complete." : "Start today's challenge."
       }`,
     dailyChallengeCta: (completed) => (completed ? 'Practise again' : 'Start challenge'),
+    dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dashboardAccessibilityLabel: 'Open progress dashboard',
     dashboardLink: 'View dashboard',
     dayStreakHelper: 'daily habit',
@@ -365,6 +372,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
     startPracticeSet: 'Start a 5-minute practice set',
+    streakFreezeBadge: 'Streak freeze',
     studyLoopItems: [
       {
         label: 'Bite-size practice',
@@ -408,6 +416,8 @@ export default function Screen() {
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
+  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
+  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
@@ -417,7 +427,20 @@ export default function Screen() {
   const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
   const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
-  const currentStreak = calculateStreak(answerDates);
+  const streakWithFreeze = useMemo(
+    () =>
+      calculateStreakWithFreeze({
+        activeDayKeys: answerDates,
+        freezeState: streakFreezeState,
+      }),
+    [answerDates, streakFreezeState],
+  );
+  const currentStreak = streakWithFreeze.streakDays;
+  const streakRescueMessage = freezeBannerCopy(streakWithFreeze, language);
+  const dayStreakHelper =
+    currentStreak > 0 && streakWithFreeze.freezeState.available > 0
+      ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
+      : copy.dayStreakHelper;
   const level = calculateLevel(totalXp);
   const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
   const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;
@@ -438,6 +461,10 @@ export default function Screen() {
     readinessDetails,
   );
   const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
+
+  useEffect(() => {
+    setStreakFreezeState(streakWithFreeze.freezeState);
+  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
 
   return (
     <ScreenShell
@@ -577,12 +604,14 @@ export default function Screen() {
           tone="blue"
           helper={copy.xpBasedHelper}
         />
-        <MetricCard
-          label={copy.dayStreakMetric}
-          value={currentStreak}
-          helper={copy.dayStreakHelper}
-        />
+        <MetricCard label={copy.dayStreakMetric} value={currentStreak} helper={dayStreakHelper} />
       </View>
+      {streakRescueMessage ? (
+        <Card accessible accessibilityLabel={streakRescueMessage} style={styles.streakFreezeCard}>
+          <Badge tone="warm">{copy.streakFreezeBadge}</Badge>
+          <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
+        </Card>
+      ) : null}
       <View style={styles.statsRow}>
         <MetricCard
           label={copy.weakChaptersMetric}
@@ -785,6 +814,14 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     gap: space[1.5],
+  },
+  streakFreezeCard: {
+    gap: space[1],
+  },
+  streakFreezeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   feedbackCard: {
     gap: space[1],

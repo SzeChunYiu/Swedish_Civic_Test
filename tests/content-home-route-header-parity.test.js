@@ -41,7 +41,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
@@ -51,6 +51,22 @@ test('home route title and dashboard card headings stay accessible as headers', 
     source,
     /const mockExamSessions = useProgressStore\(\(state\) => state\.mockExamSessions\);/,
   );
+  assert.match(
+    source,
+    /const streakFreezeState = useProgressStore\(\(state\) => state\.streakFreezeState\);/,
+  );
+  assert.match(
+    source,
+    /const setStreakFreezeState = useProgressStore\(\(state\) => state\.setStreakFreezeState\);/,
+  );
+  assert.match(source, /calculateStreakWithFreeze\(\{/);
+  assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
+  assert.match(source, /helper=\{dayStreakHelper\}/);
+  assert.match(source, /<Badge tone="warm">\{copy\.streakFreezeBadge\}<\/Badge>/);
+  assert.match(source, /\$\{count\} svitskydd redo/);
+  assert.match(source, /\$\{count\} streak freeze ready/);
+  assert.match(source, /Svitskydd/);
+  assert.match(source, /Streak freeze/);
   assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
