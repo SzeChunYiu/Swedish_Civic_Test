@@ -721,6 +721,9 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Frågor skrivna utifrån UHR:s studiematerial Sverige i fokus. Övningsprovet använder bara UHR-hänvisade frågor.',
     'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+    'Dagens utmaning',
+    '${remainingSeconds} sekunder kvar',
+    'Tiden är ute. Försök igen för att starta om dagens utmaning.',
   ],
   en: [
     '5-minute practice',
@@ -747,6 +750,9 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     "Questions written from UHR's study material Sverige i fokus. The mock exam uses only UHR-referenced questions.",
     'Variant of an app-authored, UHR-referenced practice question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
     'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
+    'Daily challenge',
+    '${remainingSeconds} seconds left',
+    "Time is up. Try again to restart today's challenge.",
   ],
 };
 const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
@@ -765,16 +771,19 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     'practice route must select copy from settings language',
   ],
   ['<Text>{copy.emptyTitle}</Text>', 'empty state must render localized copy'],
-  ['<Badge>{copy.badge}</Badge>', 'practice badge must render localized copy'],
+  [
+    '<Badge>{isChallengeMode ? copy.challengeBadge : copy.badge}</Badge>',
+    'practice badge must render localized copy',
+  ],
   ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
   ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
   [
-    '() => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
+    '() => getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds)',
     'completed-question metadata must scope persisted progress to the visible question bank',
   ],
   ['visibleCompletedQuestionIds,', 'practice selection must use visible completed-question ids'],
   [
-    '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
+    'copy.completedQuestions(visibleCompletedQuestionIds.length)',
     'completed-question metadata must render localized copy',
   ],
   [
@@ -7581,6 +7590,8 @@ const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
+const getCompletedQuestionIdsForQuestionBank =
+  practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -10245,6 +10256,10 @@ function validatePracticeRouteCopyParity() {
   EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!practiceRoute.includes(snippet)) reject(message);
   });
+
+  if (/about-the-sources/i.test(practiceRoute)) {
+    reject('source drawer copy must not contain hyphenated about-the-sources');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_PRACTICE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -14509,7 +14524,11 @@ function validatePracticeScoringRules() {
 }
 
 function validatePracticeFlowParity() {
-  if (!Array.isArray(questions) || typeof getPracticeQuestionForSession !== 'function') {
+  if (
+    !Array.isArray(questions) ||
+    typeof getPracticeQuestionForSession !== 'function' ||
+    typeof getCompletedQuestionIdsForQuestionBank !== 'function'
+  ) {
     return;
   }
 
@@ -14602,7 +14621,23 @@ function validatePracticeFlowParity() {
     }
   });
 
-  if (valid && practiceFlowCasesValidated === cases.length) {
+  const scopedCompletedQuestionIds = getCompletedQuestionIdsForQuestionBank(
+    [firstQuestion, secondQuestion],
+    [thirdQuestion.id],
+  );
+  const expectedScopedCompletedQuestionIds = [];
+  if (!jsonEqual(scopedCompletedQuestionIds, expectedScopedCompletedQuestionIds)) {
+    valid = false;
+    fail(
+      `practice flow completion outside visible bank is ignored scoped completed ids returned ${JSON.stringify(
+        scopedCompletedQuestionIds,
+      )}, expected ${JSON.stringify(expectedScopedCompletedQuestionIds)}`,
+    );
+  } else {
+    practiceFlowCasesValidated += 1;
+  }
+
+  if (valid && practiceFlowCasesValidated === cases.length + 1) {
     practiceFlowParityValidated = true;
   }
 }
@@ -16211,6 +16246,29 @@ if (process.argv.includes('--focus-chapter-localized-text')) {
     chapterTextFieldsNormalizedValidated,
     chapterExactSchemaKeysValidated,
     chapterLocalizedTextMapsValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-practice-route-copy-parity')) {
+  validatePracticeRouteCopyParity();
+  validateProvenanceAuthorityCopyBoundary();
+  exitWithValidationFailures();
+  printValidationSummary({
+    practiceRouteCopyLabelsValidated,
+    practiceRouteCopyParityValidated,
+    provenanceAuthorityCopyFilesValidated,
+    provenanceAuthorityCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-practice-flow-parity')) {
+  validatePracticeFlowParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    practiceFlowCasesValidated,
+    practiceFlowParityValidated,
   });
   process.exit(0);
 }
