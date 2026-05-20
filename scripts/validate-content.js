@@ -6087,6 +6087,7 @@ const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizati
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
+const routerShellManifest = loadTs('lib/scaffold/routerShellManifest.ts');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
@@ -6156,6 +6157,8 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let routerShellMetadataLanguagesValidated = 0;
+let routerShellMetadataNaturalnessValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -8648,6 +8651,53 @@ function validateOnboardingRouteCopyParity() {
   );
   if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
     onboardingRouteCopyParityValidated = true;
+  }
+}
+
+function validateRouterShellMetadataNaturalness() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const descriptions = routerShellManifest.expoRouterWebDocumentMetaDescriptions;
+  if (!Array.isArray(descriptions)) {
+    reject('router shell manifest web document meta descriptions must be an array');
+    return;
+  }
+
+  const svDescription = descriptions.find((entry) => entry && entry.language === 'sv');
+  const enDescription = descriptions.find((entry) => entry && entry.language === 'en');
+
+  if (!svDescription || typeof svDescription.description !== 'string') {
+    reject('router shell manifest must include Swedish web document metadata');
+  } else {
+    routerShellMetadataLanguagesValidated += 1;
+    if (!svDescription.description.includes('övningar som fungerar utan uppkoppling')) {
+      reject('router shell Swedish metadata must describe offline practice in natural Swedish');
+    }
+    const swedishMetadataLoanwordPattern = new RegExp(
+      `\\b(?:${['offline', 'quiz'].join('')}|quiz(?:pass|frågor|frågan)?)\\b`,
+      'i',
+    );
+    if (swedishMetadataLoanwordPattern.test(svDescription.description)) {
+      reject('router shell Swedish metadata must not expose quiz loanwords');
+    }
+  }
+
+  if (!enDescription || typeof enDescription.description !== 'string') {
+    reject('router shell manifest must include English web document metadata');
+  } else {
+    routerShellMetadataLanguagesValidated += 1;
+    if (!enDescription.description.includes('offline quizzes')) {
+      reject('router shell English metadata should preserve the established quiz wording');
+    }
+  }
+
+  if (valid && routerShellMetadataLanguagesValidated === 2) {
+    routerShellMetadataNaturalnessValidated = true;
   }
 }
 
@@ -13921,6 +13971,7 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
+validateRouterShellMetadataNaturalness();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -14068,6 +14119,8 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      routerShellMetadataLanguagesValidated,
+      routerShellMetadataNaturalnessValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
