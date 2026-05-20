@@ -2121,8 +2121,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Kristendom',
       pageApprox: 43,
     },
-    'Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?',
-    'Which Christian churches or communities are mentioned as examples in Sweden today?',
+    'Vilka kristna kyrkor och samfund finns i dagens Sverige?',
+    'Which Christian churches and communities exist in Sweden today?',
     [
       [
         'Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor',
@@ -2149,8 +2149,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Hinduism och buddhism',
       pageApprox: 43,
     },
-    'Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?',
-    'What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?',
+    'Vilket exempel beskriver kontakter med hinduer och buddhister i Sverige under 1900-talet?',
+    'Which example describes contacts with Hindus and Buddhists in Sweden during the 20th century?',
     [
       [
         'Resor till Asien och ökat intresse för meditation och yoga',
@@ -2337,8 +2337,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q121',
     'ch12',
     { chapter: 'En sekulär stat och ett mångreligiöst land', section: 'Islam', pageApprox: 44 },
-    'Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?',
-    'Which branches within Islam are mentioned as examples in Swedish Muslim congregations?',
+    'Vilka riktningar inom islam finns i svenska muslimska församlingar?',
+    'Which branches within Islam are found in Swedish Muslim congregations?',
     [
       ['Sunni och shia', 'Sunni and Shia'],
       ['Katolska och ortodoxa kyrkor', 'Catholic and Orthodox churches'],
@@ -2410,8 +2410,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q124',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Sveriges nationaldag', pageApprox: 46 },
-    'Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?',
-    "Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
+    'Vilken händelse från 1523 kopplas till Sveriges nationaldag den 6 juni?',
+    "Which event from 1523 is linked to Sweden's National Day on 6 June?",
     [
       ['Gustav Vasa valdes till svensk kung', 'Gustav Vasa was elected king of Sweden'],
       ['Sverige gick med i EU', 'Sweden joined the EU'],

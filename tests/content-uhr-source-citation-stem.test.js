@@ -22,6 +22,8 @@ const BANNED = [
   /(?:the\s+)?UHR\s+(?:material|section)/i,
   /st(?:ä|a)mmer\s+b(?:ä|a)st\s+enligt\s+UHR/i,
   /best matches (?:the\s+)?UHR section/i,
+  /nämns\s+som\s+(?:exempel|en\s+anledning)/i,
+  /mentioned\s+as\s+(?:an?\s+example|examples?|a\s+reason)/i,
 ];
 
 function parseCsv(text) {
