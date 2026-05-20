@@ -17,6 +17,7 @@ import {
   type ProLifetimePurchaseStatus,
   type ProLifetimeRuntimeOptions,
 } from '../../lib/monetization/proLifetimePurchase';
+import { REMOVE_ADS_PRICE_LABEL } from '../../lib/monetization/purchases';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import type { ProTierEntitlements } from '../../types/monetization';
@@ -52,15 +53,14 @@ type ProPaywallCopy = {
 
 const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
   sv: {
-    body: 'Pro är ett separat engångsköp för avancerad repetition, studieplanering och fler språkstöd. Ta bort annonser för 29 kr finns kvar som en egen enklare väg.',
+    body: `Pro är ett separat engångsköp för avancerad repetition, studieplanering och fler språkstöd. Ta bort annonser för ${REMOVE_ADS_PRICE_LABEL} finns kvar som en egen enklare väg.`,
     columnHeader: 'Funktion',
     excluded: 'Ingår inte',
     hideComparison: 'Dölj Pro-jämförelse',
     included: 'Ingår',
     includedAccessibilityLabel: 'Ingår i nivån',
     priceAccessibilityLabel: (column) => `${column.labelSv}: ${column.priceSv}`,
-    primaryAccessibilityHint:
-      'Köper Pro Lifetime för avancerade studiefunktioner. Ta bort annonser för 29 kronor finns kvar separat.',
+    primaryAccessibilityHint: `Köper Pro Lifetime för avancerade studiefunktioner. Ta bort annonser för ${REMOVE_ADS_PRICE_LABEL} finns kvar separat.`,
     restoring: 'Återställer...',
     restoreAccessibilityHint: 'Kontrollerar om Pro redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ Pro-köp',
@@ -92,15 +92,14 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     upgrading: 'Köper...',
   },
   en: {
-    body: 'Pro is a separate one-time purchase for advanced review, study planning, and broader language support. Remove Ads for 29 SEK stays available as its own simpler path.',
+    body: `Pro is a separate one-time purchase for advanced review, study planning, and broader language support. Remove Ads for ${REMOVE_ADS_PRICE_LABEL} stays available as its own simpler path.`,
     columnHeader: 'Feature',
     excluded: 'Not included',
     hideComparison: 'Hide Pro comparison',
     included: 'Included',
     includedAccessibilityLabel: 'Included in this tier',
     priceAccessibilityLabel: (column) => `${column.labelEn}: ${column.priceEn}`,
-    primaryAccessibilityHint:
-      'Buys Pro Lifetime for advanced study features. Remove Ads for 29 SEK remains separate.',
+    primaryAccessibilityHint: `Buys Pro Lifetime for advanced study features. Remove Ads for ${REMOVE_ADS_PRICE_LABEL} remains separate.`,
     restoring: 'Restoring...',
     restoreAccessibilityHint: 'Checks whether Pro was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Pro purchase',
