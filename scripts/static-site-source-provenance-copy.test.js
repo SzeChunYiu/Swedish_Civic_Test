@@ -95,6 +95,21 @@ function staticFaqSection(indexHtml) {
   return faqMatch[0];
 }
 
+function listTextFiles(relativePath) {
+  const absolutePath = path.join(repoRoot, relativePath);
+  const stats = fs.statSync(absolutePath);
+  if (stats.isFile()) return [relativePath];
+
+  return fs
+    .readdirSync(absolutePath, { withFileTypes: true })
+    .flatMap((entry) => listTextFiles(path.join(relativePath, entry.name)))
+    .filter((file) => /\.(?:js|ts|tsx)$/.test(file));
+}
+
+function joinedSource(paths) {
+  return paths.map((file) => `\n--- ${file} ---\n${read(file)}`).join('\n');
+}
+
 const unsupportedPracticalTestClaimPatterns = [
   phrasePattern('Format of ', 'the real test'),
   phrasePattern('multiple-choice ', 'and timed'),
@@ -224,6 +239,36 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
 
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+});
+
+test('static companion copy rejects answer-pattern hacks and answer-manipulation jokes', () => {
+  const companionCopy = joinedSource(['site/buddies.js', 'site/extras.js']);
+  const guardedSources = joinedSource([
+    'site/buddies.js',
+    'site/extras.js',
+    ...listTextFiles('scripts'),
+    ...listTextFiles('tests'),
+  ]);
+
+  [
+    phrasePattern('shorter ', 'one ', 'usually'),
+    phrasePattern('det ', 'kortare'),
+    phrasePattern('\\bkortare\\b(?:\\s+\\S+){0,6}\\s+', 'fel'),
+    phrasePattern('switched ', 'two ', 'answer ', 'letters'),
+    phrasePattern('answer', '[-\\s]*', 'letter ', 'trick'),
+    phrasePattern('answer ', 'length'),
+    phrasePattern('tamp', 'er'),
+    phrasePattern('manipul', 'era'),
+    phrasePattern('\\bbytte\\b(?:\\s+\\S+){0,6}\\s+', 's', 'var'),
+    phrasePattern('svars', 'bokstav'),
+  ].forEach((pattern) => assert.doesNotMatch(guardedSources, pattern));
+
+  [
+    phrasePattern('Pass ', 'the test'),
+    phrasePattern('Earn ', 'the passport'),
+    phrasePattern('Klara ', 'provet'),
+    phrasePattern('Få ', 'passet'),
+  ].forEach((pattern) => assert.doesNotMatch(companionCopy, pattern));
 });
 
 test('static ebook practical test copy is backed by current UHR source metadata', () => {
