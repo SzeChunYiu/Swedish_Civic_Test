@@ -1,57 +1,94 @@
 import { StyleSheet, Text, View } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
 
 import { colors, radius, space, typography } from '../../lib/theme';
+import { Badge } from '../ui/Badge';
 
 /**
- * Defaults: renders a non-pressable badge milestone row with a grouped
- * accessibility summary derived from the localized title and description.
+ * Defaults: locked rows use the warm muted style, unlocked rows use the success
+ * status badge, and the whole row exposes a single summary label for screen
+ * readers. Pass localized strings for every visible field.
  */
 export interface BadgeRowProps {
-  accessibilityLabel?: string;
-  description: string;
-  style?: StyleProp<ViewStyle>;
   title: string;
+  description: string;
+  progressHint: string;
+  statusLabel: string;
+  unlocked?: boolean;
+  accessibilityLabel?: string;
 }
 
-export function BadgeRow({ accessibilityLabel, description, style, title }: BadgeRowProps) {
-  const badgeAccessibilityLabel = accessibilityLabel ?? `${title}. ${description}`;
+export function BadgeRow({
+  title,
+  description,
+  progressHint,
+  statusLabel,
+  unlocked = false,
+  accessibilityLabel,
+}: BadgeRowProps) {
+  const rowAccessibilityLabel =
+    accessibilityLabel ?? `${title}. ${statusLabel}. ${description}. ${progressHint}`;
 
   return (
     <View
       accessible
-      accessibilityLabel={badgeAccessibilityLabel}
+      accessibilityLabel={rowAccessibilityLabel}
       accessibilityRole="summary"
-      style={[styles.row, style]}
+      style={[styles.row, unlocked ? styles.unlockedRow : styles.lockedRow]}
     >
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <View style={styles.textStack}>
+        <Text style={[styles.title, unlocked ? null : styles.lockedText]}>{title}</Text>
+        <Text style={[styles.description, unlocked ? null : styles.lockedText]}>{description}</Text>
+        <Text style={styles.progress}>{progressHint}</Text>
+      </View>
+      <Badge tone={unlocked ? 'green' : 'warm'} accessibilityLabel={statusLabel}>
+        {statusLabel}
+      </Badge>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   row: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.small,
+    borderRadius: radius.card,
     borderWidth: space.hairline,
-    gap: space[0.5],
+    flexDirection: 'row',
+    gap: space[1.5],
+    justifyContent: 'space-between',
+    minHeight: space[8],
     paddingHorizontal: space[1.5],
     paddingVertical: space[1.25],
   },
+  unlockedRow: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+  },
+  lockedRow: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+  },
+  textStack: {
+    flex: 1,
+    gap: space[0.5],
+  },
   title: {
     color: colors.text,
-    fontFamily: typography.bodySemibold.fontFamily,
     fontSize: typography.bodySemibold.fontSize,
     fontWeight: typography.bodySemibold.fontWeight,
     lineHeight: typography.bodySemibold.lineHeight,
   },
   description: {
     color: colors.textSecondary,
-    fontFamily: typography.captionLight.fontFamily,
     fontSize: typography.captionLight.fontSize,
     fontWeight: typography.captionLight.fontWeight,
     lineHeight: typography.captionLight.lineHeight,
+  },
+  progress: {
+    color: colors.textMuted,
+    fontSize: typography.micro.fontSize,
+    fontWeight: typography.micro.fontWeight,
+    lineHeight: typography.micro.lineHeight,
+  },
+  lockedText: {
+    color: colors.textMuted,
   },
 });
