@@ -745,3 +745,4 @@ CLAIMED AUTHORED-EXPLANATION-OPTION-WRONG-NATURALNESS-1 by billy-laptop-old-2859
 CLAIMED UIUX-HOME-LINK-TARGETS-1 by pane3-uiux-3604517 2026-05-20T05:47:49Z
 CLAIMED DERIVED-GENERATOR-TEMPLATE-SINGLE-SOURCE-1 by pane4-data-integrity-3625009 2026-05-20T05:50:26Z
 CLAIMED STATIC-FOOTER-TEST-TAKER-CLAIM-GUARD-1 by pane2-setup-3653000 2026-05-20T05:55:00Z (takeover: old remote branch is 626 commits behind origin/main with a large unrelated diff; current origin/main still publishes unsourced footer test-taker credential claims)
+CLAIMED UIUX-COMPLIANCE-LINK-TARGETS-1 by pane3-uiux-3663111 2026-05-20T05:56:06Z
