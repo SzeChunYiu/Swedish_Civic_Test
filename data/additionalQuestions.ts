@@ -1983,8 +1983,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       section: 'Hinduism och buddhism',
       pageApprox: 43,
     },
-    'Vad finns på olika platser i Sverige för buddhister och hinduer?',
-    'What exists in different places in Sweden for Buddhists and Hindus?',
+    'Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?',
+    'What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?',
     [
       [
         'Buddhistiska och hinduiska församlingar och tempel',

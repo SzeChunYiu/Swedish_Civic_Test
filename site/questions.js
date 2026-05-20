@@ -2002,8 +2002,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer describes an important role of free media in a democracy?",
-      "sv": "Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "What important roles do free media play in a democracy?",
+      "sv": "Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -3278,8 +3278,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which services are examples of municipal welfare?",
-      "sv": "Vilka verksamheter är exempel på kommunal välfärd?"
+      "en": "Which answer gives examples of municipal welfare?",
+      "sv": "Vilket svar ger exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -4874,8 +4874,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What exists in different places in Sweden for Buddhists and Hindus?",
-      "sv": "Vad finns på olika platser i Sverige för buddhister och hinduer?"
+      "en": "What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?",
+      "sv": "Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?"
     },
     "opts": [
       {
@@ -13186,8 +13186,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "In a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.",
-      "sv": "I ett proportionellt val får partiet 20 procent av platserna om ett parti får 20 procent av rösterna."
+      "en": "In a proportional election, a party that receives 20 percent of the votes receives 20 percent of the seats.",
+      "sv": "I ett proportionellt val får ett parti som får 20 procent av rösterna 20 procent av platserna."
     },
     "opts": [
       {
@@ -13226,8 +13226,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "In a proportional election, the party receives all seats if a party receives 20 percent of the votes.",
-      "sv": "I ett proportionellt val får partiet alla platser om ett parti får 20 procent av rösterna."
+      "en": "In a proportional election, a party that receives 20 percent of the votes receives all seats.",
+      "sv": "I ett proportionellt val får ett parti som får 20 procent av rösterna alla platser."
     },
     "opts": [
       {
@@ -15074,8 +15074,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer describes an important role of free media in a democracy?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "Which answer best matches? What important roles do free media play in a democracy?",
+      "sv": "Vilket svar stämmer bäst? Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -15122,8 +15122,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "An important role of free media in a democracy is to inform, enable public debate, and scrutinize people with power.",
-      "sv": "En viktig uppgift för fria medier i en demokrati är att informera, möjliggöra samhällsdebatt och granska personer med makt."
+      "en": "In a democracy, free media play important roles: informing, enabling public debate, and scrutinizing people with power.",
+      "sv": "I en demokrati har fria medier viktiga uppgifter: att informera, möjliggöra samhällsdebatt och granska personer med makt."
     },
     "opts": [
       {
@@ -15162,8 +15162,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Free media in a democracy should replace political elections.",
-      "sv": "Fria medier i en demokrati ska ersätta politiska val."
+      "en": "In a democracy, free media should replace political elections.",
+      "sv": "I en demokrati ska fria medier ersätta politiska val."
     },
     "opts": [
       {
@@ -15202,8 +15202,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which answer describes an important role of free media in a democracy?",
-      "sv": "Välj rätt alternativ: Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "Choose the correct option: What important roles do free media play in a democracy?",
+      "sv": "Välj rätt alternativ: Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -17771,7 +17771,7 @@
     "type": "true_false",
     "q": {
       "en": "It is permitted to marry a person of the same sex.",
-      "sv": "Äktenskap mellan personer av samma kön i Sverige är tillåtet att gifta sig med en person av samma kön."
+      "sv": "Äktenskap mellan personer av samma kön är tillåtet i Sverige."
     },
     "opts": [
       {
@@ -17811,7 +17811,7 @@
     "type": "true_false",
     "q": {
       "en": "It is prohibited to marry a person of the same sex.",
-      "sv": "Äktenskap mellan personer av samma kön i Sverige är förbjudet att gifta sig med en person av samma kön."
+      "sv": "Äktenskap mellan personer av samma kön är förbjudet i Sverige."
     },
     "opts": [
       {
@@ -20018,8 +20018,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which services are examples of municipal welfare?",
-      "sv": "Vilket svar stämmer bäst? Vilka verksamheter är exempel på kommunal välfärd?"
+      "en": "Which answer best matches? Which answer gives examples of municipal welfare?",
+      "sv": "Vilket svar stämmer bäst? Vilket svar ger exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -20146,8 +20146,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which services are examples of municipal welfare?",
-      "sv": "Välj rätt alternativ: Vilka verksamheter är exempel på kommunal välfärd?"
+      "en": "Choose the correct option: Which answer gives examples of municipal welfare?",
+      "sv": "Välj rätt alternativ: Vilket svar ger exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -26218,8 +26218,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What exists in different places in Sweden for Buddhists and Hindus?",
-      "sv": "Vilket svar stämmer bäst? Vad finns på olika platser i Sverige för buddhister och hinduer?"
+      "en": "Which answer best matches? What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?"
     },
     "opts": [
       {
@@ -26267,8 +26267,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.",
-      "sv": "På olika platser i Sverige finns buddhistiska och hinduiska församlingar och tempel för buddhister och hinduer."
+      "en": "Buddhist and Hindu congregations and temples exist in Sweden.",
+      "sv": "Buddhistiska och hinduiska församlingar och tempel finns i Sverige."
     },
     "opts": [
       {
@@ -26308,8 +26308,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "In different places in Sweden, there are government agencies that choose religion for Buddhists and Hindus.",
-      "sv": "På olika platser i Sverige finns statliga myndigheter som väljer religion för buddhister och hinduer."
+      "en": "Government agencies that choose religion exist in Sweden.",
+      "sv": "Statliga myndigheter som väljer religion finns i Sverige."
     },
     "opts": [
       {
@@ -26349,8 +26349,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What exists in different places in Sweden for Buddhists and Hindus?",
-      "sv": "Välj rätt alternativ: Vad finns på olika platser i Sverige för buddhister och hinduer?"
+      "en": "Choose the correct option: What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?"
     },
     "opts": [
       {
@@ -28484,8 +28484,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Jews gained the right to become Sweden’s largest religious group.",
-      "sv": "Judar fick rätt att bli Sveriges största religiösa grupp."
+      "en": "Jews became Sweden’s largest religious group in the 18th century.",
+      "sv": "Judar blev Sveriges största religiösa grupp på 1700-talet."
     },
     "opts": [
       {
