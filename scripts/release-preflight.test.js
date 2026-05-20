@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
+const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
@@ -8,6 +9,7 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const appAdsUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 
 function storeRecordReadyEvidence(extra = '') {
@@ -143,6 +145,22 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
   );
 }
 
+function withPublicUrlServer(handler, callback) {
+  const server = http.createServer(handler);
+  return new Promise((resolve, reject) => {
+    server.listen(0, '127.0.0.1', async () => {
+      const { port } = server.address();
+      try {
+        resolve(await callback(`http://127.0.0.1:${port}`));
+      } catch (error) {
+        reject(error);
+      } finally {
+        server.close();
+      }
+    });
+  });
+}
+
 function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
   const releaseScopeOverride =
     options.includeReleaseScopeOverride === false
@@ -197,6 +215,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
             status: 'READY',
             evidence:
               'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/, Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/, and app-ads.txt URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt verified over HTTPS.',
+            evidence: `Support URL ${supportUrl}, Privacy Policy URL ${privacyUrl}, and app-ads.txt URL ${appAdsUrl} verified over HTTPS and entered in both store records.`,
           },
           'device-screenshots': {
             status: 'READY',
@@ -342,6 +361,7 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
             label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
             evidence: 'Support, Privacy Policy, and app-ads URLs returned HTTP 200.',
+            evidence: 'Support, Privacy Policy, and app-ads.txt URLs returned HTTP 200.',
             nextAction: 'Enter URLs in both store records.',
           },
         ],
@@ -377,7 +397,7 @@ test('release blocker snapshot command writes issue-ready blocker report from pr
     report,
     /\| `eas-auth` \| Expo\/EAS authentication \| Not logged in \| Log in to Expo\/EAS/,
   );
-  assert.doesNotMatch(report, /\| `public-urls` \| Public support and privacy URLs \|/);
+  assert.doesNotMatch(report, /\| `public-urls` \| Public support, privacy, and app-ads URLs \|/);
   assert.match(report, /## Ready gates/);
   assert.match(report, /`public-urls`/);
 });
@@ -404,7 +424,7 @@ test('release completion audit command maps objective to preflight evidence befo
             id: 'public-urls',
             label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
-            evidence: 'SzeChunYiu Pages returned HTTP 200.',
+            evidence: 'SzeChunYiu Pages and app-ads.txt returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
           },
         ],
@@ -467,7 +487,7 @@ test('release issue update draft command writes tracker-ready status comment', (
             id: 'public-urls',
             label: 'Public support, privacy, and app-ads URLs',
             status: 'READY',
-            evidence: 'SzeChunYiu Pages returned HTTP 200.',
+            evidence: 'SzeChunYiu Pages and app-ads.txt returned HTTP 200.',
             nextAction: 'Enter URLs in store records.',
           },
         ],
@@ -1470,6 +1490,60 @@ test('release preflight blocks stale public URL evidence when live check fails',
   const publicUrls = report.gates.find((gate) => gate.id === 'public-urls');
   assert.equal(publicUrls.status, 'BLOCKED');
   assert.match(publicUrls.evidence, /live URL check failed/i);
+});
+
+test('release preflight blocks public app-ads evidence when hosted seller line is missing', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-app-ads-url-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  writeFakeReleaseCommands(tmpDir);
+
+  await withPublicUrlServer(
+    (request, response) => {
+      if (request.url === '/support/' || request.url === '/privacy/') {
+        response.writeHead(200, { 'content-type': 'text/html' });
+        response.end('<html>ok</html>');
+        return;
+      }
+
+      response.writeHead(404, { 'content-type': 'text/plain' });
+      response.end('missing app-ads');
+    },
+    async (baseUrl) => {
+      const localSupportUrl = `${baseUrl}/support/`;
+      const localPrivacyUrl = `${baseUrl}/privacy/`;
+      const localAppAdsUrl = `${baseUrl}/app-ads.txt`;
+      writeAllReadyEvidence(evidencePath, {
+        'store-records': {
+          status: 'READY',
+          evidence: [
+            'App Store Connect and Google Play Console records exist for com.billyyiu.swedishcivictest.',
+            `Support URL ${localSupportUrl} and Privacy Policy URL ${localPrivacyUrl} entered in both stores.`,
+            `AdMob app ${adMobAppId} is configured for ad-supported v1.0 and app-ads.txt is reviewed.`,
+          ].join(' '),
+        },
+        'public-urls': {
+          status: 'READY',
+          evidence: `Support URL ${localSupportUrl}, Privacy Policy URL ${localPrivacyUrl}, and app-ads.txt URL ${localAppAdsUrl} verified over HTTPS.`,
+        },
+      });
+
+      const report = runPreflight({
+        expectedStatus: 1,
+        env: {
+          PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+          RELEASE_PREFLIGHT_APP_ADS_URL: localAppAdsUrl,
+          RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+          RELEASE_PREFLIGHT_PRIVACY_URL: localPrivacyUrl,
+          RELEASE_PREFLIGHT_SUPPORT_URL: localSupportUrl,
+        },
+      });
+
+      const publicUrls = report.gates.find((gate) => gate.id === 'public-urls');
+      assert.equal(publicUrls.status, 'BLOCKED');
+      assert.match(publicUrls.evidence, /app-ads\.txt/i);
+      assert.match(publicUrls.evidence, /live URL check failed/i);
+    },
+  );
 });
 
 test('release preflight blocks READY manual gates with weak evidence', () => {

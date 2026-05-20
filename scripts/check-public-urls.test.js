@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const test = require('node:test');
 
-const { checkUrls } = require('./check-public-urls');
+const { checkUrls, readAppAdsSellerLine } = require('./check-public-urls');
 
 function withServer(handler, callback) {
   const server = http.createServer(handler);
@@ -85,6 +85,32 @@ test('public URL checker rejects app-ads text drift', async () => {
       assert.equal(result.ok, false);
       assert.match(result.actualText, /pub-0000000000000000/);
       assert.match(result.expectedText, /pub-2451892671779738/);
+test('public URL checker requires hosted app-ads seller line to match local file', async () => {
+  const expectedText = readAppAdsSellerLine('publishing/public-site/app-ads.txt');
+
+  await withServer(
+    (request, response) => {
+      response.writeHead(200, { 'content-type': 'text/plain' });
+      response.end(request.url === '/app-ads.txt' ? expectedText : 'ok');
+    },
+    async (baseUrl) => {
+      const [result] = await checkUrls([{ expectedText, url: `${baseUrl}/app-ads.txt` }]);
+      assert.equal(result.ok, true);
+      assert.equal(result.bodyMatches, true);
+    },
+  );
+
+  await withServer(
+    (_request, response) => {
+      response.writeHead(200, { 'content-type': 'text/plain' });
+      response.end('google.com, pub-wrong, DIRECT, f08c47fec0942fa0');
+    },
+    async (baseUrl) => {
+      const [result] = await checkUrls([{ expectedText, url: `${baseUrl}/app-ads.txt` }]);
+      assert.equal(result.ok, false);
+      assert.equal(result.status, 200);
+      assert.equal(result.bodyMatches, false);
+      assert.match(result.error, /did not match expected text/);
     },
   );
 });

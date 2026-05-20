@@ -11,9 +11,29 @@ const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/rel
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const appAdsUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
+const supportUrl =
+  process.env.RELEASE_PREFLIGHT_SUPPORT_URL ||
+  'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+const privacyUrl =
+  process.env.RELEASE_PREFLIGHT_PRIVACY_URL ||
+  'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const appAdsUrl =
+  process.env.RELEASE_PREFLIGHT_APP_ADS_URL ||
+  'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
+const appAdsPath = 'publishing/public-site/app-ads.txt';
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
-  : [supportUrl, privacyUrl];
+  : [supportUrl, privacyUrl, appAdsUrl];
+const publicUrlCheckArgs = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
+  ? ['scripts/check-public-urls.js', ...publicUrls]
+  : [
+      'scripts/check-public-urls.js',
+      supportUrl,
+      privacyUrl,
+      '--expect-app-ads-file',
+      appAdsUrl,
+      appAdsPath,
+    ];
 
 const evidenceRequirements = {
   'eas-build-artifacts': [
@@ -1602,11 +1622,14 @@ function publicUrlsGate(manualEvidence) {
     'Public support, privacy, and app-ads URLs',
     'Static pages/files exist locally, but no hosted HTTPS URL evidence is recorded.',
     'Host the static pages and app-ads file, verify public HTTPS access, and enter support/privacy URLs in both store records.',
+    'Static pages exist locally, but no hosted HTTPS URL evidence is recorded.',
+    'Host the static pages, verify public HTTPS access, and enter URLs in both store records.',
     {
       requiredArtifactMissing:
         exists('publishing/public-site/support/index.html') &&
         exists('publishing/public-site/privacy/index.html') &&
         exists('publishing/public-site/app-ads.txt')
+        exists(appAdsPath)
           ? null
           : 'Local static support/privacy/app-ads files are missing from publishing/public-site.',
     },
@@ -1633,6 +1656,7 @@ function publicUrlsGate(manualEvidence) {
     appAdsUrl,
     'publishing/public-site/app-ads.txt',
   ]);
+  const liveCheck = commandSucceeds(process.execPath, publicUrlCheckArgs);
   if (liveCheck.ok) {
     return gate(
       manualGate.id,
@@ -1650,7 +1674,7 @@ function publicUrlsGate(manualEvidence) {
     `Recorded public URL evidence exists, but live URL check failed: ${
       liveCheck.stderr || liveCheck.stdout || 'no checker output'
     }`,
-    'Restore public support/privacy URLs or update the recorded URLs and rerun `npm run release:preflight`.',
+    'Restore public support/privacy/app-ads URLs or update the recorded URLs and rerun `npm run release:preflight`.',
   );
 }
 
