@@ -1086,7 +1086,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 6;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -11442,6 +11442,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
         normalizedPurchaseSource.includes('receiptValidation,'),
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
+    ],
+    [
+      /const persistenceResult = await persistValidatedRemoveAdsEntitlement\(\{[\s\S]*source:\s*'purchase',[\s\S]*\}\);[\s\S]*if \(!persistenceResult\.persisted\) \{[\s\S]*return createResult\('persistence_failed',[\s\S]*\);[\s\S]*\}[\s\S]*await provider\.finishPurchase\?\.\(purchase\);[\s\S]*return createResult\('purchased', persistenceResult\.entitlements, purchase\);/.test(
+        purchaseSource,
+      ),
+      'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
     ],
   ];
 
