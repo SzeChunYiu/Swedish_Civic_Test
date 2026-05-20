@@ -22,6 +22,7 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
+const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -589,6 +590,92 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q070 combines tax liability and VAT purchase taxation in one learner-facing item/,
+  );
+});
+
+test('succession source and exports use a natural VAT distractor clause', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const textForQuestion = (question) =>
+    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en]
+      .concat((question.opts || []).flatMap((option) => [option.sv, option.en]))
+      .join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q038OldVatDistractorPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => q038OldVatDistractorPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q038OldVatDistractorPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const q038 = generatedSiteBank.find((question) => question.id === 'q038');
+  const q038SectionPractice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q038', 'singleChoice'),
+  );
+
+  assert.ok(q038, 'q038 should be published in the site bank');
+  assert.ok(q038SectionPractice, 'q038 section-practice generated variant should be published');
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(
+    q038.opts.some(
+      (option) =>
+        option.sv === 'När moms betalas på varor och tjänster' &&
+        option.en === 'When VAT is paid on goods and services',
+    ),
+    'q038 should publish the natural VAT distractor clause',
+  );
+  assert.ok(
+    q038SectionPractice.opts.some(
+      (option) =>
+        option.sv === 'När moms betalas på varor och tjänster' &&
+        option.en === 'When VAT is paid on goods and services',
+    ),
+    'q038 generated variants should inherit the natural VAT distractor clause',
+  );
+});
+
+test('succession VAT distractor guard rejects the old answer-fragment wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'När moms betalas på varor och tjänster',
+        'Vilka varor som har moms',
+      )
+      .replace(
+        'When VAT is paid on goods and services',
+        'Which goods have VAT',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q038 uses the old q038 VAT distractor wording/,
   );
 });
 
