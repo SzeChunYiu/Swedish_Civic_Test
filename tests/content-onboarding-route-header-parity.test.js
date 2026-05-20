@@ -37,6 +37,8 @@ test('onboarding route title stays accessible as a header', () => {
   );
   assert.match(source, /const copy = onboardingCopy\[language\];/);
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
+  assert.match(source, /genomgång av frågor du missat/);
+  assert.doesNotMatch(source, /repetition av misstag|upprepning av misstag/i);
   assert.match(
     source,
     /Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor\./,
@@ -243,4 +245,37 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /onboarding route is missing sv copy/);
+});
+
+test('onboarding route copy parity rejects Swedish mistake-repetition wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'genomgång av frågor du missat',
+        'repetition av misstag',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding route Swedish mistake-review copy must describe reviewing missed questions/,
+  );
 });
