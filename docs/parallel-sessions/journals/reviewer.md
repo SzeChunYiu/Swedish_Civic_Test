@@ -3896,6 +3896,6 @@ Verification (commands + result):
 Workspace contract: pass with environment caveat - no product source edited; unrelated tracked and untracked artifacts in the shared checkout were left untouched.
 Findings queued: `codex-tasks/validator.txt` item `REVIEWER-UX-MOTION-A11Y-UTILS-1`.
 Evidence: UIUX board U17-U19 and `codex-tasks/uiux-motion-a11y.txt` require motion/a11y utility libraries, but current main has no `lib/motion/` or `lib/a11y/` directories and no matching runtime imports or exports.
-PR (number + merged?): pending at handoff commit time.
+PR (number + merged?): #1521 merged yes, squash `6ff7b29`.
 Accepted by worker? yes
 Next suggested validator action: route MOTION-A11Y to implement the missing utilities and rerun UIUX gates in an environment where Expo and node test commands complete.
