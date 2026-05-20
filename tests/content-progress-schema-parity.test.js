@@ -149,6 +149,7 @@ function progressSnapshot(state) {
     totalXp: state.totalXp,
     answerDates: state.answerDates,
     answerHistory: state.answerHistory,
+    dailyChallengeCompletions: state.dailyChallengeCompletions,
     mockExamSessions: state.mockExamSessions,
     streakFreezeState: state.streakFreezeState,
   };
@@ -177,7 +178,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 15);
+  assert.equal(summary.progressStoreFieldsValidated, 17);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.match(progressTypes, /export interface UserQuestionProgress/);
   assert.match(
@@ -234,6 +235,37 @@ test('progress question schema stays in parity with persisted progress records',
     /return \{ \.\.\.normalizeProgress\(JSON\.parse\(serializedProgress\)\), persistenceWarning \};/,
   );
   assert.match(progressStore, /clearPersistenceWarning: \(\) => void;/);
+});
+
+test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fields', () => {
+  const progressTypes = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
+  const progressStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+  const expectedFields = [
+    'dayKey: string;',
+    'questionIds: string[];',
+    'correctCount: number;',
+    'totalCount: number;',
+    'score: number;',
+    'timeSpentSeconds: number;',
+    'completedAt: string;',
+  ];
+
+  assert.match(progressTypes, /export interface DailyChallengeCompletion \{/);
+  assert.match(progressStore, /export type DailyChallengeProgress = \{/);
+  for (const field of expectedFields) {
+    assert.match(progressTypes, new RegExp(field.replace('[]', '\\[\\]')));
+    assert.match(progressStore, new RegExp(field.replace('[]', '\\[\\]')));
+  }
+  assert.match(
+    progressTypes,
+    /dailyChallengeCompletions: Record<string, DailyChallengeCompletion>;/,
+  );
+  assert.match(progressStore, /dailyChallengeCompletions: Record<string, DailyChallengeProgress>;/);
+  assert.match(progressStore, /function normalizeDailyChallengeProgress\(value: unknown\)/);
+  assert.match(progressStore, /recordDailyChallengeCompletion: \(completion\) =>/);
 });
 
 test('progress hydration normalizes unsafe persisted numeric fields', () => {

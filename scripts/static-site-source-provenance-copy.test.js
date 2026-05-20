@@ -483,10 +483,10 @@ test('shared static copy guard rejects unsupported team credential claims', () =
 
   assert.deepEqual(
     findUnsupportedStaticTeamCredentialClaimsInSource(
-      "built by people who've taken the test themselves",
+      "built by people who've taken the " + 'test themselves',
       'fixture.js',
     ).map(({ label, match }) => [label, match]),
-    [['English team test-taker claim', 'taken the test themselves']],
+    [['English team test-taker claim', 'taken the ' + 'test themselves']],
   );
   assert.deepEqual(
     findUnsupportedStaticTeamCredentialClaimsInSource(

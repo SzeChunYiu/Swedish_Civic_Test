@@ -1,6 +1,74 @@
 # GOAL — Swedish_Civic_Test
 
-Updated: 2026-05-17 09:10 by billy (operator)
+Updated: 2026-05-20 23:05 by billy (operator) — added Source-Provenance Contract
+
+## Source-Provenance Contract (P0 — every release)
+
+Every user-visible piece of factual content MUST carry a visible provenance
+marker telling the user where it came from. This is non-negotiable because
+the bank is currently 169 UHR-cited + 676 editorially derived (~80% non-UHR),
+and the app's app-store posture is "unofficial study tool" — users must
+never be misled into believing derived content is from UHR.
+
+### Questions (DONE in PR #1927, regression bar)
+
+- Schema field `questionProvenance` ∈ {`uhr`, `derived`, `editorial`}.
+- `site/practice.js` renders a `provenanceBadge()` on every question.
+- Unmarked questions fall back to `derived` (NOT `uhr`).
+- Setting `smt_question_sources` ∈ {`all`, `uhr`} restricts pool. UI in
+  Settings → Question sources. Mock + practice + mix all respect it.
+
+### Ebook (TO DO — worker iterations must close this gap)
+
+The ebook currently renders a single global "Editorial" badge per chapter
+(`renderEbookProvenanceBadge` in `site/ebook.js`). That's not enough. Each
+chapter is a mix of UHR-paraphrased material and original editorial
+commentary, and the user has no way to tell which is which.
+
+Required per chapter:
+
+1. **Per-fact-box source citations** (mostly done via `ebookFactBox(lang,
+   heading, facts, sourceKeys)` — sourceKeys map into
+   `EBOOK_FACTBOX_SOURCE_NOTES` with `label`+`url`+`retrievedDate`). Audit
+   every existing fact box; every numeric fact / agency name / law citation
+   MUST pass a non-default `sourceKeys` array (no silent default to
+   `uhrStudyMaterial`).
+
+2. **Per-section provenance footnotes**. Each prose section in a chapter
+   needs one of: `[UHR §x.y, p.N]` (paraphrases Sverige i fokus) /
+   `[SCB, retrieved 2026-05-19]` / `[editorial commentary]`. Render as
+   superscript footnote markers in the body and a footnote list at the
+   chapter foot. Reuse the `sourceLink()` helper.
+
+3. **Chapter-level provenance label**. Replace the single Editorial badge
+   with a per-chapter mix label like "Sources: UHR (12 cites) · SCB (2) ·
+   Riksbank (1) · Editorial (3)" so a user sees the citation density before
+   they start reading. Pull counts from the rendered footnote list.
+
+4. **Acceptance test**:
+
+   ```bash
+   # No chapter renders a fact box without a non-default sourceKeys.
+   ! grep -nE "ebookFactBox\([^,]+,[^,]+,[^,]+\)\s*\)" site/ebook.js
+   # Every chapter exposes at least one non-UHR source key (proves
+   # heterogeneity is shown, not faked).
+   for ch in 1 2 3 4 5 6 7 8 9 10 11 12 13; do
+     node -e "/* render chapter $ch, assert footnote list has ≥1 entry */"
+   done
+   ```
+
+5. **Worker rule**: any ebook content commit (`site/ebook.js`,
+   `content/ebook/*`) that adds a paragraph without also adding a footnote
+   citation is REJECTED by the MANAGER as undocumented content.
+
+### Sources page copy (DONE in PR #1927, regression bar)
+
+`/sources` page accurately states the 169 / 676 split and tells users about
+the UHR-only setting. Workers must keep these numbers in sync with reality
+when the question bank grows — `npm test -- content-sources-page-parity`
+gates this.
+
+
 
 ## Sprint target (≤7 days)
 

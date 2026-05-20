@@ -174,3 +174,102 @@ test('local study data import rejects purchase fields before any snapshot writes
   assert.equal(storageById.reviews.values.size, 0);
   assert.equal(storageById.settings.values.size, 0);
 });
+
+test('local study data import ignores unsafe imported map keys with the shared guard', () => {
+  const storageById = createStorageById();
+  const { previewLocalStudyDataImport } = loadImportModule(storageById);
+  const unsafeKeys = ['__proto__', 'constructor', 'prototype'];
+  const unsafeProgressEntry = JSON.stringify({
+    seenCount: 1,
+    correctCount: 1,
+    wrongCount: 0,
+    correctStreak: 1,
+    bookmarked: true,
+  });
+  const unsafeMistakeReview = JSON.stringify({
+    answeredAt: '2026-05-20T08:05:00.000Z',
+    selectedOptionTextEn: 'Unsafe answer',
+    selectedOptionTextSv: 'Fel svar',
+  });
+  const unsafeReviewCard = (questionId) => JSON.stringify(validReviewCard(questionId));
+  const rawPayload = `{
+    "version": 1,
+    "progress": {
+      "completedQuestionIds": ["q001"],
+      "questionProgress": {
+        "q001": ${unsafeProgressEntry},
+        "__proto__": ${unsafeProgressEntry},
+        "constructor": ${unsafeProgressEntry},
+        "prototype": ${unsafeProgressEntry}
+      }
+    },
+    "mistakeReview": {
+      "wrongAnswerReviews": {
+        "q001": ${unsafeMistakeReview},
+        "__proto__": ${unsafeMistakeReview},
+        "constructor": ${unsafeMistakeReview},
+        "prototype": ${unsafeMistakeReview}
+      }
+    },
+    "reviews": {
+      "byId": {
+        "q001": ${unsafeReviewCard('q001')},
+        "__proto__": ${unsafeReviewCard('__proto__')},
+        "constructor": ${unsafeReviewCard('constructor')},
+        "prototype": ${unsafeReviewCard('prototype')}
+      },
+      "gradedPerDay": {
+        "2026-05-20": 2,
+        "__proto__": 9,
+        "constructor": 9,
+        "prototype": 9
+      }
+    }
+  }`;
+
+  const previewResult = previewLocalStudyDataImport(rawPayload);
+  assert.equal(previewResult.ok, true);
+  const { mistakeReview, progress, reviews, summary } = previewResult.preview;
+
+  assert.deepEqual(Object.keys(progress.questionProgress), ['q001']);
+  assert.deepEqual(Object.keys(mistakeReview.wrongAnswerReviews), ['q001']);
+  assert.deepEqual(Object.keys(reviews.byId), ['q001']);
+  assert.deepEqual(reviews.gradedPerDay, { '2026-05-20': 2 });
+  assert.equal(summary.bookmarkedQuestionCount, 1);
+  assert.equal(summary.wrongAnswerReviewCount, 1);
+  assert.equal(summary.fsrsReviewCardCount, 1);
+  assert.equal(summary.gradedReviewDayCount, 1);
+
+  for (const map of [
+    progress.questionProgress,
+    mistakeReview.wrongAnswerReviews,
+    reviews.byId,
+    reviews.gradedPerDay,
+  ]) {
+    assert.equal(Object.getPrototypeOf(map), Object.prototype);
+    for (const unsafeKey of unsafeKeys) {
+      assert.equal(Object.prototype.hasOwnProperty.call(map, unsafeKey), false);
+    }
+  }
+});
+
+test('local study data import map-key safety is shared by all storage normalizers', () => {
+  const helperSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/importKeySafety.ts'),
+    'utf8',
+  );
+  assert.match(helperSource, /export function isSafeImportedMapKey/);
+  assert.match(helperSource, /'__proto__'/);
+  assert.match(helperSource, /'constructor'/);
+  assert.match(helperSource, /'prototype'/);
+
+  for (const relativePath of [
+    'lib/storage/progressStore.ts',
+    'lib/storage/mistakeReviewStore.ts',
+    'lib/storage/reviewStore.ts',
+  ]) {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    assert.match(source, /isSafeImportedMapKey/);
+    assert.doesNotMatch(source, /new Set\(\[['"]__proto__['"]/);
+  }
+});

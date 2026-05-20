@@ -148,14 +148,14 @@
         en: [
           "Pace yourself. I've been carved from one piece of wood since the 1700s — and even *I* take breaks.",
           'Study a little, check the source, and tell people the horse kept you company.',
-          "When two answers sound right, the shorter one usually isn't.",
+          'When two answers sound right, slow down and read the whole option.',
           'My hometown is Mora. Lots of horses, not many beaches.',
           "Tap an option, even if you're guessing. Wrong answers come back later.",
         ],
         sv: [
           'Ta det lugnt. Jag har varit en träklump sedan 1700-talet — *jag* tar paus.',
           'Plugga lite, kolla källan och säg att hästen höll dig sällskap.',
-          'När två svar verkar rätt — det kortare är oftast fel.',
+          'När två svar verkar rätt — sakta ner och läs hela alternativet.',
           'Min hemstad är Mora. Mycket hästar, få sandstränder.',
           'Tryck på ett alternativ även när du gissar. Fel svar kommer tillbaka senare.',
         ],

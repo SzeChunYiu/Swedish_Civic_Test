@@ -35,17 +35,57 @@
   function sourceCitation(question) {
     const sv = lang() === 'sv';
     const source = question && question.source;
-    if (!source) return tr({ sv: 'Källhänvisning saknas', en: 'Source citation unavailable', 'zh-Hans': '缺少资料来源标注', 'zh-Hant': '缺少資料來源標註', ar: 'لا تتوفر إشارة إلى المصدر', ckb: 'ئاماژە بە سەرچاوە بەردەست نییە', fa: 'ارجاع به منبع در دسترس نیست', pl: 'Brak źródła', so: 'Tixraac lama hayo', ti: 'ምንጪ የለን', tr: 'Kaynak gösterimi yok', uk: 'Джерело недоступне' });
+    if (!source)
+      return tr({
+        sv: 'Källhänvisning saknas',
+        en: 'Source citation unavailable',
+        'zh-Hans': '缺少资料来源标注',
+        'zh-Hant': '缺少資料來源標註',
+        ar: 'لا تتوفر إشارة إلى المصدر',
+        ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
+        fa: 'ارجاع به منبع در دسترس نیست',
+        pl: 'Brak źródła',
+        so: 'Tixraac lama hayo',
+        ti: 'ምንጪ የለን',
+        tr: 'Kaynak gösterimi yok',
+        uk: 'Джерело недоступне',
+      });
     const title = source.title || 'Sverige i fokus';
     if (!source.chapter || !source.section || source.page === undefined || source.page === null) {
-      return tr({ sv: 'Källhänvisning saknas', en: 'Source citation unavailable', 'zh-Hans': '缺少资料来源标注', 'zh-Hant': '缺少資料來源標註', ar: 'لا تتوفر إشارة إلى المصدر', ckb: 'ئاماژە بە سەرچاوە بەردەست نییە', fa: 'ارجاع به منبع در دسترس نیست', pl: 'Brak źródła', so: 'Tixraac lama hayo', ti: 'ምንጪ የለን', tr: 'Kaynak gösterimi yok', uk: 'Джерело недоступне' });
+      return tr({
+        sv: 'Källhänvisning saknas',
+        en: 'Source citation unavailable',
+        'zh-Hans': '缺少资料来源标注',
+        'zh-Hant': '缺少資料來源標註',
+        ar: 'لا تتوفر إشارة إلى المصدر',
+        ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
+        fa: 'ارجاع به منبع در دسترس نیست',
+        pl: 'Brak źródła',
+        so: 'Tixraac lama hayo',
+        ti: 'ምንጪ የለን',
+        tr: 'Kaynak gösterimi yok',
+        uk: 'Джерело недоступне',
+      });
     }
     return sv
       ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
       : `Source: ${title}, ${source.chapter}, ${source.section}, p. ${source.page}`;
   }
   function questionReviewDisclaimer() {
-    return tr({ sv: 'Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga.', en: 'Independent study practice, not a real exam or an official UHR question.', 'zh-Hans': '独立练习，并非真正的考试，也不是官方 UHR 试题。', 'zh-Hant': '獨立練習，並非真正的考試，也不是官方 UHR 試題。', ar: 'تدريب مستقل، وليس اختبارًا حقيقيًا ولا سؤالًا رسميًا من UHR.', ckb: 'مەشقی سەربەخۆیە، نەک تاقیکردنەوەیەکی ڕاستەقینە یان پرسیارێکی فەرمیی UHR.', fa: 'تمرین مستقل است، نه یک آزمون واقعی و نه یک سؤال رسمی UHR.', pl: 'Niezależne ćwiczenie, nie prawdziwy egzamin ani oficjalne pytanie UHR.', so: 'Tababar madaxbannaan, ma aha imtixaan dhab ah ama su\'aal rasmi ah oo UHR.', ti: 'ናጻ ልምምድ፣ ናይ ሓቂ ፈተና ወይ ወግዓዊ ሕቶ UHR ኣይኮነን።', tr: 'Bağımsız alıştırma; gerçek bir sınav veya resmî bir UHR sorusu değildir.', uk: 'Незалежне тренування, не справжній іспит і не офіційне питання UHR.' });
+    return tr({
+      sv: 'Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga.',
+      en: 'Independent study practice, not a real exam or an official UHR question.',
+      'zh-Hans': '独立练习，并非真正的考试，也不是官方 UHR 试题。',
+      'zh-Hant': '獨立練習，並非真正的考試，也不是官方 UHR 試題。',
+      ar: 'تدريب مستقل، وليس اختبارًا حقيقيًا ولا سؤالًا رسميًا من UHR.',
+      ckb: 'مەشقی سەربەخۆیە، نەک تاقیکردنەوەیەکی ڕاستەقینە یان پرسیارێکی فەرمیی UHR.',
+      fa: 'تمرین مستقل است، نه یک آزمون واقعی و نه یک سؤال رسمی UHR.',
+      pl: 'Niezależne ćwiczenie, nie prawdziwy egzamin ani oficjalne pytanie UHR.',
+      so: "Tababar madaxbannaan, ma aha imtixaan dhab ah ama su'aal rasmi ah oo UHR.",
+      ti: 'ናጻ ልምምድ፣ ናይ ሓቂ ፈተና ወይ ወግዓዊ ሕቶ UHR ኣይኮነን።',
+      tr: 'Bağımsız alıştırma; gerçek bir sınav veya resmî bir UHR sorusu değildir.',
+      uk: 'Незалежне тренування, не справжній іспит і не офіційне питання UHR.',
+    });
   }
   const provenanceCopy = {
     uhr: {
@@ -73,14 +113,74 @@
     const tags = Array.isArray(question && question.tags) ? question.tags : [];
     if (tags.includes('editorial')) return 'editorial';
     if (tags.includes('published-variant')) return 'derived';
-    return 'uhr';
+    // Unmarked questions are treated as derived (NOT 'uhr') so we never
+    // silently mislabel non-official content as official. Editorial fix
+    // 2026-05-20: bank is currently 169 uhr / 676 derived / 13 unmarked.
+    return 'derived';
   }
+  // ---- Question-source filter (user-controllable) ----------------------
+  // Setting key: 'smt_question_sources'.
+  //   'uhr'         → only questions with provenance === 'uhr' (official UHR
+  //                   "Sverige i fokus" citations). ~169 questions.
+  //   'all' (default) → entire bank (uhr + derived + editorial). ~858 questions.
+  // Exposed as window.smtSetQuestionSources so settings.js can mutate it.
+  function questionSourcesPref() {
+    try {
+      const v = localStorage.getItem('smt_question_sources');
+      return v === 'uhr' ? 'uhr' : 'all';
+    } catch {
+      return 'all';
+    }
+  }
+  function questionMatchesSourcePref(question) {
+    return questionSourcesPref() === 'all' || questionProvenance(question) === 'uhr';
+  }
+  window.smtQuestionSourcesPref = questionSourcesPref;
+  window.smtQuestionMatchesSourcePref = questionMatchesSourcePref;
+  window.smtSetQuestionSources = function (mode) {
+    const v = mode === 'uhr' ? 'uhr' : 'all';
+    try {
+      localStorage.setItem('smt_question_sources', v);
+    } catch {}
+    // Re-render current view so the filter takes effect immediately.
+    if (typeof window.smtQuizRender === 'function') {
+      try {
+        window.smtQuizRender();
+      } catch {}
+    }
+  };
   function provenanceBadge(question) {
     const sv = lang() === 'sv';
     const provenance = questionProvenance(question);
     const copy = provenanceCopy[provenance][sv ? 'sv' : 'en'] || provenanceCopy[provenance].en;
-    const ariaPrefix = tr({ sv: 'Källtyp', en: 'Provenance', 'zh-Hans': '来源类型', 'zh-Hant': '來源類型', ar: 'نوع المصدر', ckb: 'جۆری سەرچاوە', fa: 'نوع منبع', pl: 'Typ źródła', so: 'Nooca ilaha', ti: 'ዓይነት ምንጪ', tr: 'Kaynak türü', uk: 'Тип джерела' });
-    const notePrefix = tr({ sv: 'Källanteckning', en: 'Source note', 'zh-Hans': '来源备注', 'zh-Hant': '來源備註', ar: 'ملاحظة المصدر', ckb: 'تێبینیی سەرچاوە', fa: 'یادداشت منبع', pl: 'Notatka o źródle', so: 'Qoraal ilaha', ti: 'መዘክር ምንጪ', tr: 'Kaynak notu', uk: 'Примітка до джерела' });
+    const ariaPrefix = tr({
+      sv: 'Källtyp',
+      en: 'Provenance',
+      'zh-Hans': '来源类型',
+      'zh-Hant': '來源類型',
+      ar: 'نوع المصدر',
+      ckb: 'جۆری سەرچاوە',
+      fa: 'نوع منبع',
+      pl: 'Typ źródła',
+      so: 'Nooca ilaha',
+      ti: 'ዓይነት ምንጪ',
+      tr: 'Kaynak türü',
+      uk: 'Тип джерела',
+    });
+    const notePrefix = tr({
+      sv: 'Källanteckning',
+      en: 'Source note',
+      'zh-Hans': '来源备注',
+      'zh-Hant': '來源備註',
+      ar: 'ملاحظة المصدر',
+      ckb: 'تێبینیی سەرچاوە',
+      fa: 'یادداشت منبع',
+      pl: 'Notatka o źródle',
+      so: 'Qoraal ilaha',
+      ti: 'መዘክር ምንጪ',
+      tr: 'Kaynak notu',
+      uk: 'Примітка до джерела',
+    });
     const label = escapeHtml(copy.label);
     const note = escapeHtml(`${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`);
     return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
@@ -266,9 +366,20 @@
         <h2 class="hub__h2">${tr({ sv: 'Välj kapitel', en: 'Pick a chapter', 'zh-Hans': '选择章节', 'zh-Hant': '選擇章節', ar: 'اختر فصلًا', ckb: 'بەشێک هەڵبژێرە', fa: 'یک فصل را انتخاب کنید', pl: 'Wybierz rozdział', so: 'Dooro cutub', ti: 'ምዕራፍ ምረጽ', tr: 'Bir bölüm seçin', uk: 'Виберіть розділ' })}</h2>
         <div class="hub__grid">${cards}</div>
 
-        <p class="hub__hint">${
-          tr({ sv: 'Tips: Övning lagrar dina framsteg lokalt. Inget konto behövs.', en: 'Tip: progress is saved on this device. No account needed.', 'zh-Hans': '提示：练习进度仅保存在本设备上，无需账户。', 'zh-Hant': '提示：練習進度只會儲存在這台裝置上，無需帳戶。', ar: 'نصيحة: يُحفَظ تقدمك على هذا الجهاز. لا حاجة إلى حساب.', ckb: 'ئامۆژگاری: پێشکەوتنت لەسەر ئەم ئامێرە پاشەکەوت دەکرێت. پێویست بە هەژمار نییە.', fa: 'نکته: پیشرفت شما روی این دستگاه ذخیره می‌شود. به حساب کاربری نیازی نیست.', pl: 'Wskazówka: postępy są zapisywane na tym urządzeniu. Konto nie jest potrzebne.', so: 'Talo: horumarka waxaa lagu kaydiyaa qalabkan. Akoon looma baahna.', ti: 'ምኽሪ፦ ምዕባለ ኣብዚ መሳርሒ ይቕመጥ። ኣካውንት ኣየድልን።', tr: 'İpucu: ilerleme bu cihazda kaydedilir. Hesap gerekmez.', uk: 'Підказка: прогрес зберігається на цьому пристрої. Обліковий запис не потрібен.' })
-        }</p>
+        <p class="hub__hint">${tr({
+          sv: 'Tips: Övning lagrar dina framsteg lokalt. Inget konto behövs.',
+          en: 'Tip: progress is saved on this device. No account needed.',
+          'zh-Hans': '提示：练习进度仅保存在本设备上，无需账户。',
+          'zh-Hant': '提示：練習進度只會儲存在這台裝置上，無需帳戶。',
+          ar: 'نصيحة: يُحفَظ تقدمك على هذا الجهاز. لا حاجة إلى حساب.',
+          ckb: 'ئامۆژگاری: پێشکەوتنت لەسەر ئەم ئامێرە پاشەکەوت دەکرێت. پێویست بە هەژمار نییە.',
+          fa: 'نکته: پیشرفت شما روی این دستگاه ذخیره می‌شود. به حساب کاربری نیازی نیست.',
+          pl: 'Wskazówka: postępy są zapisywane na tym urządzeniu. Konto nie jest potrzebne.',
+          so: 'Talo: horumarka waxaa lagu kaydiyaa qalabkan. Akoon looma baahna.',
+          ti: 'ምኽሪ፦ ምዕባለ ኣብዚ መሳርሒ ይቕመጥ። ኣካውንት ኣየድልን።',
+          tr: 'İpucu: ilerleme bu cihazda kaydedilir. Hesap gerekmez.',
+          uk: 'Підказка: прогрес зберігається на цьому пристрої. Обліковий запис не потрібен.',
+        })}</p>
       </div>
     `;
   }
@@ -297,7 +408,11 @@
     return questionProvenance(question) === 'uhr';
   }
   function mockQuestionPool() {
-    return (window.SMT_QUESTIONS || []).filter(isStaticMockUhrQuestion);
+    // Mock exam respects the user's source preference. Default 'all' means
+    // the mock pool is the full bank; 'uhr' restricts to ~169 UHR-cited
+    // questions ("real-exam-style" subset).
+    const all = window.SMT_QUESTIONS || [];
+    return questionSourcesPref() === 'uhr' ? all.filter(isStaticMockUhrQuestion) : all.slice();
   }
 
   function pickMockQuestions() {
@@ -401,14 +516,25 @@
           <h1 class="practice__title">
             <span>${tr({ sv: 'Bygg ditt övningsprov.', en: 'Build your practice round.', 'zh-Hans': '自定义你的练习。', 'zh-Hant': '自訂你的練習。', ar: 'كوّن جولة تدريبك.', ckb: 'خولی مەشقی خۆت دروست بکە.', fa: 'دور تمرین خود را بسازید.', pl: 'Zbuduj swoją rundę ćwiczeniową.', so: 'Dhis wareeggaaga tababarka.', ti: 'ዙር ልምምድካ ስራሕ።', tr: 'Alıştırma turunu oluşturun.', uk: 'Створіть свій тренувальний раунд.' })}</span>
           </h1>
-          <p class="mock-landing__lede">${
-            tr({ sv: 'Välj antal frågor, tid och vilka kapitel du vill testas på. Vi blandar och slumpar resten.', en: 'Pick the question count, timer, and which chapters to include. We\'ll shuffle the rest.', 'zh-Hans': '选择题目数量、时间，以及想要测验的章节。其余部分由我们打乱并随机抽取。', 'zh-Hant': '選擇題目數量、時間，以及想要測驗的章節。其餘部分由我們打亂並隨機抽取。', ar: 'اختر عدد الأسئلة والمؤقّت والفصول التي تريد تضمينها. سنخلط البقية ونرتّبها عشوائيًا.', ckb: 'ژمارەی پرسیارەکان، کاتژمێر و ئەو بەشانەی دەتەوێت لەخۆیان بگرن هەڵبژێرە. ئێمە ئەوانی تر تێکەڵ و هەڕەمەکی دەکەین.', fa: 'تعداد سؤال‌ها، زمان‌سنج و فصل‌هایی را که می‌خواهید گنجانده شوند انتخاب کنید. ما بقیه را به‌هم می‌زنیم و تصادفی می‌چینیم.', pl: 'Wybierz liczbę pytań, czas i rozdziały, z których chcesz być sprawdzany. Resztę wymieszamy i wylosujemy.', so: 'Dooro tirada su\'aalaha, waqtiga iyo cutubyada aad rabto in lagugu imtixaamo. Inta kale waannu isku qaspaynaa oo random ka dhignaa.', ti: 'ቍጽሪ ሕቶታት፣ ግዜን ኣየኖት ምዕራፋት ክትፍተን ከም እትደሊን ምረጽ። ነቲ ዝተረፈ ንሕና ነሕውሶን ብrandom ንመርጾን።', tr: 'Soru sayısını, süreyi ve hangi bölümlerden sınanmak istediğinizi seçin. Gerisini biz karıştırıp rastgele seçeriz.', uk: 'Виберіть кількість питань, час і розділи, з яких хочете перевіритися. Решту ми перемішаємо й виберемо випадково.' })
-          }</p>
+          <p class="mock-landing__lede">${tr({
+            sv: 'Välj antal frågor, tid och vilka kapitel du vill testas på. Vi blandar och slumpar resten.',
+            en: "Pick the question count, timer, and which chapters to include. We'll shuffle the rest.",
+            'zh-Hans': '选择题目数量、时间，以及想要测验的章节。其余部分由我们打乱并随机抽取。',
+            'zh-Hant': '選擇題目數量、時間，以及想要測驗的章節。其餘部分由我們打亂並隨機抽取。',
+            ar: 'اختر عدد الأسئلة والمؤقّت والفصول التي تريد تضمينها. سنخلط البقية ونرتّبها عشوائيًا.',
+            ckb: 'ژمارەی پرسیارەکان، کاتژمێر و ئەو بەشانەی دەتەوێت لەخۆیان بگرن هەڵبژێرە. ئێمە ئەوانی تر تێکەڵ و هەڕەمەکی دەکەین.',
+            fa: 'تعداد سؤال‌ها، زمان‌سنج و فصل‌هایی را که می‌خواهید گنجانده شوند انتخاب کنید. ما بقیه را به‌هم می‌زنیم و تصادفی می‌چینیم.',
+            pl: 'Wybierz liczbę pytań, czas i rozdziały, z których chcesz być sprawdzany. Resztę wymieszamy i wylosujemy.',
+            so: "Dooro tirada su'aalaha, waqtiga iyo cutubyada aad rabto in lagugu imtixaamo. Inta kale waannu isku qaspaynaa oo random ka dhignaa.",
+            ti: 'ቍጽሪ ሕቶታት፣ ግዜን ኣየኖት ምዕራፋት ክትፍተን ከም እትደሊን ምረጽ። ነቲ ዝተረፈ ንሕና ነሕውሶን ብrandom ንመርጾን።',
+            tr: 'Soru sayısını, süreyi ve hangi bölümlerden sınanmak istediğinizi seçin. Gerisini biz karıştırıp rastgele seçeriz.',
+            uk: 'Виберіть кількість питань, час і розділи, з яких хочете перевіритися. Решту ми перемішаємо й виберемо випадково.',
+          })}</p>
 
           <div class="mock-cfg">
             <div class="mock-cfg__row">
               <label class="mock-cfg__label">
-                <span>${tr({ sv: 'Frågor', en: 'Questions', 'zh-Hans': '题目', 'zh-Hant': '題目', ar: 'الأسئلة', ckb: 'پرسیارەکان', fa: 'سؤال‌ها', pl: 'Pytania', so: 'Su\'aalaha', ti: 'ሕቶታት', tr: 'Sorular', uk: 'Питання' })}</span>
+                <span>${tr({ sv: 'Frågor', en: 'Questions', 'zh-Hans': '题目', 'zh-Hant': '題目', ar: 'الأسئلة', ckb: 'پرسیارەکان', fa: 'سؤال‌ها', pl: 'Pytania', so: "Su'aalaha", ti: 'ሕቶታት', tr: 'Sorular', uk: 'Питання' })}</span>
                 <output id="cfg-count-out">${cfg.count}</output>
               </label>
               <input type="range" id="cfg-count" min="5" max="${maxQ}" step="1" value="${Math.min(cfg.count, maxQ)}" />
@@ -437,7 +563,7 @@
 
             <div class="mock-cfg__meta">
               <span><b>${tr({ sv: 'Övningspoäng', en: 'Result', 'zh-Hans': '练习成绩', 'zh-Hant': '練習成績', ar: 'النتيجة', ckb: 'ئەنجام', fa: 'نتیجه', pl: 'Wynik ćwiczenia', so: 'Natiijada tababarka', ti: 'ውጽኢት ልምምድ', tr: 'Alıştırma puanı', uk: 'Результат тренування' })}</b> ${tr({ sv: '% rätt', en: 'percent correct', 'zh-Hans': '% 正确', 'zh-Hant': '% 正確', ar: '٪ صحيحة', ckb: '٪ ڕاست', fa: '٪ درست', pl: '% poprawnych', so: '% sax ah', ti: '% ቅኑዕ', tr: '% doğru', uk: '% правильних' })}</span>
-              <span><b>${tr({ sv: 'Ingen återkoppling', en: 'Practice timer only', 'zh-Hans': '无反馈', 'zh-Hant': '無回饋', ar: 'مؤقّت تدريب فقط', ckb: 'تەنها کاتژمێری مەشق', fa: 'فقط زمان‌سنج تمرین', pl: 'Brak informacji zwrotnej', so: 'Jawaab celin ma jirto', ti: 'ዝኾነ ግብረ መልሲ የለን', tr: 'Geri bildirim yok', uk: 'Без зворотного зв\'язку' })}</b> ${tr({ sv: 'förrän inlämnat', en: 'not official exam timing', 'zh-Hans': '提交前不显示', 'zh-Hant': '提交前不顯示', ar: 'ليس توقيت اختبار رسمي', ckb: 'کاتبەندیی تاقیکردنەوەی فەرمی نییە', fa: 'زمان‌بندی آزمون رسمی نیست', pl: 'do momentu oddania', so: 'ilaa la gudbiyo', ti: 'ክሳብ ዝቐርብ', tr: 'teslim edilene kadar', uk: 'доки не здано' })}</span>
+              <span><b>${tr({ sv: 'Ingen återkoppling', en: 'Practice timer only', 'zh-Hans': '无反馈', 'zh-Hant': '無回饋', ar: 'مؤقّت تدريب فقط', ckb: 'تەنها کاتژمێری مەشق', fa: 'فقط زمان‌سنج تمرین', pl: 'Brak informacji zwrotnej', so: 'Jawaab celin ma jirto', ti: 'ዝኾነ ግብረ መልሲ የለን', tr: 'Geri bildirim yok', uk: "Без зворотного зв'язку" })}</b> ${tr({ sv: 'förrän inlämnat', en: 'not official exam timing', 'zh-Hans': '提交前不显示', 'zh-Hant': '提交前不顯示', ar: 'ليس توقيت اختبار رسمي', ckb: 'کاتبەندیی تاقیکردنەوەی فەرمی نییە', fa: 'زمان‌بندی آزمون رسمی نیست', pl: 'do momentu oddania', so: 'ilaa la gudbiyo', ti: 'ክሳብ ዝቐርብ', tr: 'teslim edilene kadar', uk: 'доки не здано' })}</span>
               <span><b>${tr({ sv: 'Lokalt sparat', en: 'Saved locally', 'zh-Hans': '已保存在本地', 'zh-Hant': '已儲存在本地', ar: 'محفوظ محليًا', ckb: 'بە شێوەی ناوخۆیی پاشەکەوت کراوە', fa: 'ذخیره‌شده به‌صورت محلی', pl: 'Zapisano lokalnie', so: 'Maxalli ahaan loo kaydiyay', ti: 'ኣብ መሳርሒ ተቐሚጡ', tr: 'Cihaza kaydedildi', uk: 'Збережено локально' })}</b></span>
             </div>
           </div>
@@ -469,7 +595,22 @@
       if (parseInt(slider.value, 10) > available) slider.value = String(available);
       out1.textContent = slider.value;
       const hint = slider.closest('.mock-cfg__row').querySelector('.mock-cfg__hint');
-      if (hint) hint.textContent = (tr({ sv: 'Max ', en: 'Max ', 'zh-Hans': '最长 ', 'zh-Hant': '最長 ', ar: 'الحد الأقصى ', ckb: 'زۆرترین ', fa: 'بیشینه ', pl: 'Maks. ', so: 'Ugu badnaan ', ti: 'ዝለዓለ ', tr: 'Maks. ', uk: 'Макс. ' })) + available;
+      if (hint)
+        hint.textContent =
+          tr({
+            sv: 'Max ',
+            en: 'Max ',
+            'zh-Hans': '最长 ',
+            'zh-Hant': '最長 ',
+            ar: 'الحد الأقصى ',
+            ckb: 'زۆرترین ',
+            fa: 'بیشینه ',
+            pl: 'Maks. ',
+            so: 'Ugu badnaan ',
+            ti: 'ዝለዓለ ',
+            tr: 'Maks. ',
+            uk: 'Макс. ',
+          }) + available;
       if (startBtn) {
         startBtn.classList.toggle('is-disabled', available < 5);
       }
@@ -481,7 +622,22 @@
       saveMockCfg(Object.assign(cur, { count: parseInt(e.target.value, 10) }));
     });
     document.getElementById('cfg-min').addEventListener('input', (e) => {
-      out2.textContent = e.target.value + (tr({ sv: ' min', en: ' min', 'zh-Hans': ' 分钟', 'zh-Hant': ' 分鐘', ar: ' دقيقة', ckb: ' خولەک', fa: ' دقیقه', pl: ' min', so: ' daq', ti: ' ደቒቓ', tr: ' dk', uk: ' хв' }));
+      out2.textContent =
+        e.target.value +
+        tr({
+          sv: ' min',
+          en: ' min',
+          'zh-Hans': ' 分钟',
+          'zh-Hant': ' 分鐘',
+          ar: ' دقيقة',
+          ckb: ' خولەک',
+          fa: ' دقیقه',
+          pl: ' min',
+          so: ' daq',
+          ti: ' ደቒቓ',
+          tr: ' dk',
+          uk: ' хв',
+        });
       const cur = loadMockCfg();
       saveMockCfg(Object.assign(cur, { minutes: parseInt(e.target.value, 10) }));
     });
@@ -601,7 +757,7 @@
           <button class="btn btn--ghost btn--sm" id="mock-submit">${tr({ sv: 'Lämna in', en: 'Submit', 'zh-Hans': '交卷', 'zh-Hant': '交卷', ar: 'إرسال', ckb: 'ناردن', fa: 'ثبت', pl: 'Oddaj', so: 'Gudbi', ti: 'ኣረክብ', tr: 'Gönder', uk: 'Здати' })}</button>
         </header>
 
-        <div class="mock-grid" aria-label="${tr({ sv: 'Frågenavigering', en: 'Question navigation', 'zh-Hans': '题目导航', 'zh-Hant': '題目導覽', ar: 'التنقّل بين الأسئلة', ckb: 'گەشتکردن لە پرسیارەکاندا', fa: 'پیمایش سؤال‌ها', pl: 'Nawigacja po pytaniach', so: 'Hagista su\'aalaha', ti: 'ምልጋብ ሕቶታት', tr: 'Soru gezinmesi', uk: 'Навігація по питаннях' })}">${dots}</div>
+        <div class="mock-grid" aria-label="${tr({ sv: 'Frågenavigering', en: 'Question navigation', 'zh-Hans': '题目导航', 'zh-Hant': '題目導覽', ar: 'التنقّل بين الأسئلة', ckb: 'گەشتکردن لە پرسیارەکاندا', fa: 'پیمایش سؤال‌ها', pl: 'Nawigacja po pytaniach', so: "Hagista su'aalaha", ti: 'ምልጋብ ሕቶታት', tr: 'Soru gezinmesi', uk: 'Навігація по питаннях' })}">${dots}</div>
 
         <div class="mock-card">
           <div class="quiz__crumb">Ch ${q.chapterId}</div>
@@ -681,13 +837,28 @@
         const picked = MOCK.answers[i];
         const isCorrect = picked === q.answer;
         const selectedText =
-          picked === null ? (tr({ sv: 'Inte besvarad', en: 'Not answered', 'zh-Hans': '未作答', 'zh-Hant': '未作答', ar: 'غير مُجاب عنها', ckb: 'وەڵام نەدراوە', fa: 'پاسخ‌داده‌نشده', pl: 'Bez odpowiedzi', so: 'Lama jawaabin', ti: 'ኣይተመለሰን', tr: 'Yanıtlanmadı', uk: 'Без відповіді' })) : tr(q.opts[picked]);
+          picked === null
+            ? tr({
+                sv: 'Inte besvarad',
+                en: 'Not answered',
+                'zh-Hans': '未作答',
+                'zh-Hant': '未作答',
+                ar: 'غير مُجاب عنها',
+                ckb: 'وەڵام نەدراوە',
+                fa: 'پاسخ‌داده‌نشده',
+                pl: 'Bez odpowiedzi',
+                so: 'Lama jawaabin',
+                ti: 'ኣይተመለሰን',
+                tr: 'Yanıtlanmadı',
+                uk: 'Без відповіді',
+              })
+            : tr(q.opts[picked]);
         const correctText = tr(q.opts[q.answer]);
         return `
         <details class="mock-review__item ${isCorrect ? 'is-correct' : 'is-wrong'}">
           <summary>
-            <span>${tr({ sv: 'Fråga', en: 'Question', 'zh-Hans': '题目', 'zh-Hant': '題目', ar: 'سؤال', ckb: 'پرسیار', fa: 'سؤال', pl: 'Pytanie', so: 'Su\'aal', ti: 'ሕቶ', tr: 'Soru', uk: 'Питання' })} ${i + 1}</span>
-            <b>${isCorrect ? (tr({ sv: 'Rätt', en: 'Correct', 'zh-Hans': '答对', 'zh-Hant': '答對', ar: 'صحيحة', ckb: 'ڕاست', fa: 'درست', pl: 'Poprawnie', so: 'Sax', ti: 'ቅኑዕ', tr: 'Doğru', uk: 'Правильно' })) : tr({ sv: 'Fel', en: 'Needs review', 'zh-Hans': '答错', 'zh-Hant': '答錯', ar: 'بحاجة إلى مراجعة', ckb: 'پێویستی بە پێداچوونەوە هەیە', fa: 'نیازمند مرور', pl: 'Błędnie', so: 'Khalad', ti: 'ጌጋ', tr: 'Yanlış', uk: 'Неправильно' })}</b>
+            <span>${tr({ sv: 'Fråga', en: 'Question', 'zh-Hans': '题目', 'zh-Hant': '題目', ar: 'سؤال', ckb: 'پرسیار', fa: 'سؤال', pl: 'Pytanie', so: "Su'aal", ti: 'ሕቶ', tr: 'Soru', uk: 'Питання' })} ${i + 1}</span>
+            <b>${isCorrect ? tr({ sv: 'Rätt', en: 'Correct', 'zh-Hans': '答对', 'zh-Hant': '答對', ar: 'صحيحة', ckb: 'ڕاست', fa: 'درست', pl: 'Poprawnie', so: 'Sax', ti: 'ቅኑዕ', tr: 'Doğru', uk: 'Правильно' }) : tr({ sv: 'Fel', en: 'Needs review', 'zh-Hans': '答错', 'zh-Hant': '答錯', ar: 'بحاجة إلى مراجعة', ckb: 'پێویستی بە پێداچوونەوە هەیە', fa: 'نیازمند مرور', pl: 'Błędnie', so: 'Khalad', ti: 'ጌጋ', tr: 'Yanlış', uk: 'Неправильно' })}</b>
           </summary>
           <div class="mock-review__body">
             <p class="mock-review__q">${escapeHtml(tr(q.q))}</p>
@@ -720,8 +891,8 @@
         <p class="mock-result__pct">${pct}% — ${correct}/${total} ${tr({ sv: 'rätt', en: 'correct', 'zh-Hans': '答对', 'zh-Hant': '答對', ar: 'صحيحة', ckb: 'ڕاست', fa: 'درست', pl: 'poprawnie', so: 'sax', ti: 'ቅኑዕ', tr: 'doğru', uk: 'правильно' })}</p>
 
         <ul class="result-chapters">${chapterRows}</ul>
-        <section class="mock-review" aria-label="${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: 'Dib u eegista su\'aalaha', ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}">
-          <h3>${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: 'Dib u eegista su\'aalaha', ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}</h3>
+        <section class="mock-review" aria-label="${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}">
+          <h3>${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}</h3>
           ${reviewRows}
         </section>
 
@@ -766,8 +937,8 @@
     const c = activePracticeChapter();
     if (!c) return null;
     if (c === 'mix') {
-      // random 10 from any chapter
-      const all = (window.SMT_QUESTIONS || []).slice();
+      // random 10 from any chapter, respecting source preference
+      const all = (window.SMT_QUESTIONS || []).filter(questionMatchesSourcePref);
       for (let i = all.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [all[i], all[j]] = [all[j], all[i]];
@@ -776,7 +947,9 @@
     }
     const chId = parseInt(c, 10);
     if (isNaN(chId)) return null;
-    return (window.SMT_QUESTIONS || []).filter((q) => q.chapterId === chId);
+    return (window.SMT_QUESTIONS || [])
+      .filter((q) => q.chapterId === chId)
+      .filter(questionMatchesSourcePref);
   };
 
   // re-render hub when we return to /practice without ?c=
@@ -839,7 +1012,20 @@
         ? sv
           ? `Du har ${unanswered} obesvarade frågor. Lämna in ändå?`
           : `You have ${unanswered} unanswered questions. Submit anyway?`
-        : tr({ sv: 'Lämna in?', en: 'Submit?', 'zh-Hans': '确认交卷？', 'zh-Hant': '確認交卷？', ar: 'إرسال؟', ckb: 'بنێردرێت؟', fa: 'ثبت شود؟', pl: 'Oddać?', so: 'Ma gudbinaysaa?', ti: 'ይቐርብ?', tr: 'Gönderilsin mi?', uk: 'Здати?' });
+        : tr({
+            sv: 'Lämna in?',
+            en: 'Submit?',
+            'zh-Hans': '确认交卷？',
+            'zh-Hant': '確認交卷？',
+            ar: 'إرسال؟',
+            ckb: 'بنێردرێت؟',
+            fa: 'ثبت شود؟',
+            pl: 'Oddać?',
+            so: 'Ma gudbinaysaa?',
+            ti: 'ይቐርብ?',
+            tr: 'Gönderilsin mi?',
+            uk: 'Здати?',
+          });
       if (confirm(msg)) submitMock();
       return;
     }

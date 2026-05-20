@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------
-   Sveriges Medborgartest — public site
+   Almost Swedish — public site
    Palette: Swedish flag blue + gold, warm-cream paper, deep navy.
    Type: Bricolage Grotesque (display), Manrope (body),
          Instrument Serif italic (flourish accents).
@@ -1653,6 +1653,14 @@ p.deck {
 .ebook__factbox { margin: 26px 0; padding: 18px 20px; background: var(--paper-warm); border: 1px solid var(--line); border-radius: 14px; }
 .ebook__factbox h4 { font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); margin: 0 0 6px; }
 .ebook__factbox p { margin: 0; font-size: 15px; }
+.ebook__source-note { margin-top: 10px !important; color: var(--ink-soft) !important; font-size: 13px !important; }
+.ebook__provenance-badge { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 26px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper-warm); color: var(--ink-soft); font-size: 13px; }
+.ebook__provenance-badge span { color: var(--blue); font-weight: 700; }
+.ebook__footnote-ref { font-family: var(--mono); font-size: 11px; line-height: 1; margin-left: 3px; }
+.ebook__footnotes { margin: 34px 0 20px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper-warm); }
+.ebook__footnotes h2 { margin: 0 0 10px !important; padding: 0 !important; border: 0 !important; font-size: 18px !important; }
+.ebook__footnote-list { margin: 0; }
+.ebook__footnote-list li { color: var(--ink-soft); font-size: 14px; }
 
 .ebook__study-actions { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; margin: 34px 0 10px; padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .ebook__study-actions p { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; line-height: 1.55; }

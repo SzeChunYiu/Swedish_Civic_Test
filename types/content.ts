@@ -9,6 +9,8 @@ export type Difficulty = 'easy' | 'medium' | 'hard';
 export type LocalizedContentText = Record<'sv' | 'en', string> &
   Partial<Record<LocaleCode, string>>;
 
+export type LocalizedContentTextOverrides = Partial<Record<LocaleCode, string>>;
+
 /**
  * Provenance of a question or content unit.
  * - 'uhr': directly traceable to UHR's *Sverige i fokus* PDF
@@ -57,10 +59,10 @@ export interface Chapter {
   id: string;
   nameSv: string;
   nameEn: string;
-  nameText?: LocalizedContentText;
+  nameText?: LocalizedContentTextOverrides;
   descriptionSv: string;
   descriptionEn: string;
-  descriptionText?: LocalizedContentText;
+  descriptionText?: LocalizedContentTextOverrides;
   questionCount: number;
 }
 

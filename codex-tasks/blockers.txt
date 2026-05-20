@@ -219,3 +219,10 @@ gated: cwd-based `csup staff --scenario=resume --dry-run` held every
 configured host on `reason=lunarc_requires_slurm_station`, explicit
 `csup staff civic-test` still cannot resolve the project config, and
 `csup factory-audit civic-test` remains RED `missing:project_config`.
+
+codex-manager-content-0 blocker 2026-05-20T17:09:08Z:
+`COMPLIANCE-ROUTE-LINK-FOCUSED-PARITY-GATE-1` is blocked on current
+`origin/main` because `tests/content-compliance-route-link-parity.test.js` and
+the route-link component contract are not present yet. They are owned by the
+separately claimed `COMPLIANCE-ROUTE-LINK-COMPONENT-GUARD-1`; do not duplicate
+that scope. Resume the focused validator gate after the component guard lands.
