@@ -8,8 +8,8 @@ const minimumTargetSizePx = 44;
 
 const homeActionLinks = [
   {
-    label: 'Starta ett mockprov för att kontrollera din redoindikator',
-    name: 'readiness CTA',
+    label: 'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+    name: 'preparation signal CTA',
   },
   {
     label: 'Starta den rekommenderade övningen',
