@@ -3961,7 +3961,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What does the Council of Europe work for?",
+      "en": "What does the Council of Europe promote?",
       "sv": "Vad arbetar Europarådet för?"
     },
     "opts": [
@@ -3984,7 +3984,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -22662,7 +22662,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the Council of Europe work for?",
+      "en": "Which answer best matches? What does the Council of Europe promote?",
       "sv": "Vilket svar stämmer bäst? Vad arbetar Europarådet för?"
     },
     "opts": [
@@ -22685,7 +22685,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -22710,7 +22710,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer."
     },
     "opts": [
@@ -22725,7 +22725,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -22750,7 +22750,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "The Council of Europe works only for agricultural policy.",
+      "en": "The Council of Europe promotes only agricultural policy.",
       "sv": "Europarådet arbetar endast för jordbrukspolitik."
     },
     "opts": [
@@ -22765,7 +22765,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
@@ -22790,7 +22790,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does the Council of Europe work for?",
+      "en": "Choose the correct option: What does the Council of Europe promote?",
       "sv": "Välj rätt alternativ: Vad arbetar Europarådet för?"
     },
     "opts": [
@@ -22813,7 +22813,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN."
     },
     "source": {
