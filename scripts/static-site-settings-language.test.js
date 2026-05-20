@@ -43,6 +43,26 @@ const chapterMeta = [
   },
 ];
 
+const staticLanguageOptions = [
+  { value: 'en', label: 'English' },
+  { value: 'sv', label: 'Svenska' },
+  { value: 'zh-Hans', label: '简体中文' },
+  { value: 'zh-Hant', label: '繁體中文' },
+  { value: 'ar', label: 'العربية' },
+  { value: 'so', label: 'Soomaali' },
+];
+
+const translatedKeys = [
+  'brand',
+  'nav.home',
+  'nav.mock',
+  'hero.cta1',
+  'consent.title',
+  'settings.title',
+  'footer.honest.p',
+  'terms.h1a',
+];
+
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
@@ -55,10 +75,26 @@ function createRenderContext({ hash, language = 'en' }) {
     ['smt_mock_cfg', JSON.stringify({ count: 5, minutes: 30, chapters: [1] })],
   ]);
   let reloadCount = 0;
+  const translatedNodes = new Map(
+    translatedKeys.map((key) => [key, { dataset: { i18n: key }, innerHTML: '' }]),
+  );
 
-  const settingButtons = ['en', 'sv'].map((value) => ({
+  function makeClassList() {
+    const values = new Set();
+    return {
+      contains(name) {
+        return values.has(name);
+      },
+      toggle(name, on) {
+        if (on) values.add(name);
+        else values.delete(name);
+      },
+    };
+  }
+
+  const settingButtons = staticLanguageOptions.map(({ value }) => ({
     dataset: { val: value },
-    classList: { toggle() {} },
+    classList: makeClassList(),
   }));
 
   function element(id) {
@@ -120,7 +156,10 @@ function createRenderContext({ hash, language = 'en' }) {
       body: { style: {} },
       documentElement: {
         lang: language,
-        setAttribute() {},
+        dir: language === 'ar' ? 'rtl' : 'ltr',
+        setAttribute(name, value) {
+          this[name] = value;
+        },
         style: { setProperty() {} },
       },
       createElement() {
@@ -137,6 +176,7 @@ function createRenderContext({ hash, language = 'en' }) {
       },
       querySelectorAll(selector) {
         if (selector === '[data-set="language"] button') return settingButtons;
+        if (selector === '[data-i18n]') return [...translatedNodes.values()];
         return [];
       },
       addEventListener(type, handler) {
@@ -196,16 +236,23 @@ function createRenderContext({ hash, language = 'en' }) {
         .forEach((entry) => entry.handler({ target }));
     },
     element,
+    languageButton(value) {
+      return settingButtons.find((button) => button.dataset.val === value);
+    },
     get reloadCount() {
       return reloadCount;
     },
     sandbox,
     storage,
+    translatedText(key) {
+      return translatedNodes.get(key)?.innerHTML ?? '';
+    },
   };
 }
 
 function loadScripts(context, practiceInjection = '') {
   vm.runInContext(read('site/app.js'), context.sandbox, { timeout: 3000 });
+  vm.runInContext(read('site/i18n-extras.js'), context.sandbox, { timeout: 3000 });
   const practiceSource = practiceInjection
     ? read('site/practice.js').replace(/\}\)\(\);\s*$/, `${practiceInjection}\n})();`)
     : read('site/practice.js');
@@ -227,6 +274,79 @@ function assertNoMockOfficialPassLineCopy(html) {
     assert.doesNotMatch(html, pattern);
   }
 }
+test('Settings language selector exposes every shipped static dictionary', () => {
+  const indexHtml = read('site/index.html');
+  const settingsSource = read('site/settings.js');
+
+  for (const option of staticLanguageOptions) {
+    assert.ok(
+      indexHtml.includes(`data-val="${option.value}"`),
+      `${option.value} should be selectable from Settings`,
+    );
+    assert.ok(indexHtml.includes(option.label), `${option.value} should use its native label`);
+  }
+
+  assert.match(settingsSource, /group === ['"]language['"]/);
+  assert.match(settingsSource, /window\.smtSetLanguage/);
+});
+
+test('extra Settings languages rerender high-frequency UI with English fallback', () => {
+  const context = createRenderContext({ hash: '#/', language: 'sv' });
+  loadScripts(context);
+
+  context.clickSettingsLanguage('sv');
+  assert.equal(context.translatedText('terms.h1a'), 'Enkla regler,');
+
+  context.clickSettingsLanguage('zh-Hans');
+  assert.equal(context.storage.get('smt_lang'), 'zh-Hans');
+  assert.equal(context.sandbox.document.documentElement.lang, 'zh-Hans');
+  assert.equal(context.sandbox.document.documentElement.dir, 'ltr');
+  assert.equal(context.reloadCount, 0);
+  assert.equal(context.languageButton('zh-Hans').classList.contains('is-on'), true);
+  assert.equal(context.translatedText('brand'), 'Almost Swedish');
+  assert.equal(context.translatedText('nav.home'), '首页');
+  assert.equal(context.translatedText('nav.mock'), '模拟考');
+  assert.equal(context.translatedText('settings.title'), '设置');
+  assert.equal(context.translatedText('consent.title'), 'Cookie,刚刚好。');
+  assert.equal(context.translatedText('hero.cta1'), '开始练习 →');
+  assert.equal(context.translatedText('terms.h1a'), 'Plain rules,');
+
+  context.clickSettingsLanguage('ar');
+  assert.equal(context.storage.get('smt_lang'), 'ar');
+  assert.equal(context.sandbox.document.documentElement.lang, 'ar');
+  assert.equal(context.sandbox.document.documentElement.dir, 'rtl');
+  assert.equal(context.languageButton('ar').classList.contains('is-on'), true);
+  assert.equal(context.languageButton('zh-Hans').classList.contains('is-on'), false);
+  assert.equal(context.translatedText('nav.home'), 'الرئيسية');
+  assert.equal(context.translatedText('settings.title'), 'الإعدادات');
+  assert.equal(context.translatedText('consent.title'), 'ملفات تعريف الارتباط، باعتدال.');
+  assert.equal(
+    context.translatedText('footer.honest.p'),
+    'غير رسمي. مستقل. لا ينتمي إلى UHR أو Skolverket أو Migrationsverket أو الحكومة السويدية.',
+  );
+});
+
+test('extra static dictionaries avoid pass/passport outcome slogans', () => {
+  const extras = read('site/i18n-extras.js');
+  const staleOutcomeSnippets = [
+    '通过测试',
+    '拿到护照',
+    '通過測試',
+    '拿到護照',
+    'اجتز الاختبار',
+    'احصل على الجواز',
+    'Imtixaanka uga gud',
+    'Hel baasaboorka',
+  ];
+
+  for (const snippet of staleOutcomeSnippets) {
+    assert.equal(
+      extras.includes(snippet),
+      false,
+      `extra dictionary should not expose "${snippet}"`,
+    );
+  }
+});
 
 test('Settings language change rerenders an active Practice question without reload', () => {
   const context = createRenderContext({ hash: '#/practice?c=1', language: 'en' });
