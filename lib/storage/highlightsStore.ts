@@ -163,9 +163,62 @@ export interface AddHighlightInput {
   note?: string;
 }
 
+function normalizeNoteInput(value: unknown): string | undefined | null {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string') return null;
+  return value.length <= maxHighlightNoteLength ? value : value.slice(0, maxHighlightNoteLength);
+}
+
+function normalizeAddHighlightInput(input: AddHighlightInput): AddHighlightInput | null {
+  if (!input || typeof input !== 'object') return null;
+  const candidate = input as Partial<AddHighlightInput>;
+  const note = normalizeNoteInput(candidate.note);
+  if (
+    !isNonEmptyString(candidate.chapterId) ||
+    !isNonEmptyString(candidate.blockId) ||
+    !isValidOffset(candidate.startOffset) ||
+    !isValidOffset(candidate.endOffset) ||
+    candidate.endOffset <= candidate.startOffset ||
+    !isHighlightColor(candidate.color) ||
+    note === null
+  ) {
+    return null;
+  }
+
+  return {
+    chapterId: candidate.chapterId.trim(),
+    blockId: candidate.blockId.trim(),
+    startOffset: candidate.startOffset,
+    endOffset: candidate.endOffset,
+    color: candidate.color,
+    note,
+  };
+}
+
+function normalizeHighlightPatch(
+  patch: Partial<Pick<Highlight, 'color' | 'note'>>,
+): Partial<Pick<Highlight, 'color' | 'note'>> | null {
+  if (!patch || typeof patch !== 'object') return null;
+  const candidate = patch as Partial<Record<'color' | 'note', unknown>>;
+  const normalized: Partial<Pick<Highlight, 'color' | 'note'>> = {};
+
+  if ('color' in candidate) {
+    if (!isHighlightColor(candidate.color)) return null;
+    normalized.color = candidate.color;
+  }
+
+  if ('note' in candidate && candidate.note !== undefined) {
+    const note = normalizeNoteInput(candidate.note);
+    if (note === null) return null;
+    normalized.note = note;
+  }
+
+  return Object.keys(normalized).length > 0 ? normalized : null;
+}
+
 interface HighlightsState extends PersistedHighlights {
   persistenceWarning: RecoverablePersistenceWarning | null;
-  addHighlight: (input: AddHighlightInput) => Highlight;
+  addHighlight: (input: AddHighlightInput) => Highlight | null;
   updateHighlight: (id: string, patch: Partial<Pick<Highlight, 'color' | 'note'>>) => void;
   removeHighlight: (id: string) => void;
   clearChapter: (chapterId: string) => void;
@@ -179,22 +232,24 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
   ...initial.state,
   persistenceWarning: initial.persistenceWarning,
   addHighlight: (input) => {
+    const normalizedInput = normalizeAddHighlightInput(input);
+    if (!normalizedInput) return null;
     const now = new Date().toISOString();
     const highlight: Highlight = {
       id: genId(),
-      chapterId: input.chapterId,
-      blockId: input.blockId,
-      startOffset: input.startOffset,
-      endOffset: input.endOffset,
-      color: input.color,
-      note: input.note,
+      chapterId: normalizedInput.chapterId,
+      blockId: normalizedInput.blockId,
+      startOffset: normalizedInput.startOffset,
+      endOffset: normalizedInput.endOffset,
+      color: normalizedInput.color,
+      note: normalizedInput.note,
       createdAt: now,
       updatedAt: now,
     };
     set((state) => {
-      const existing = state.byChapter[input.chapterId] ?? [];
+      const existing = state.byChapter[normalizedInput.chapterId] ?? [];
       const next = {
-        byChapter: { ...state.byChapter, [input.chapterId]: [...existing, highlight] },
+        byChapter: { ...state.byChapter, [normalizedInput.chapterId]: [...existing, highlight] },
       };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
@@ -202,6 +257,8 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     return highlight;
   },
   updateHighlight: (id, patch) => {
+    const normalizedPatch = normalizeHighlightPatch(patch);
+    if (!normalizedPatch) return;
     set((state) => {
       const byChapter: Record<string, Highlight[]> = {};
       let touched = false;
@@ -211,8 +268,8 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
           touched = true;
           return {
             ...h,
-            color: patch.color ?? h.color,
-            note: patch.note !== undefined ? patch.note : h.note,
+            color: normalizedPatch.color ?? h.color,
+            note: normalizedPatch.note !== undefined ? normalizedPatch.note : h.note,
             updatedAt: new Date().toISOString(),
           };
         });

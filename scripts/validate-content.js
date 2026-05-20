@@ -7419,6 +7419,8 @@ let reviewStoreHydrationCasesValidated = 0;
 let reviewStoreHydrationParityValidated = false;
 let highlightsStoreHydrationCasesValidated = 0;
 let highlightsStoreHydrationValidated = false;
+let highlightsStoreWriteInputCasesValidated = 0;
+let highlightsStoreWriteInputValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -13012,6 +13014,85 @@ function validateHighlightsStoreHydrationEvidence() {
   if (valid && highlightsStoreHydrationCasesValidated === requiredFixtureSnippets.length) {
     highlightsStoreHydrationValidated = true;
   }
+
+  const requiredWriteInputStoreSnippets = [
+    [
+      'function normalizeNoteInput(value: unknown): string | undefined | null',
+      'highlights runtime writes must normalize optional notes',
+    ],
+    [
+      'function normalizeAddHighlightInput(input: AddHighlightInput): AddHighlightInput | null',
+      'highlights addHighlight must validate runtime input before persistence',
+    ],
+    [
+      'function normalizeHighlightPatch( patch: Partial<Pick<Highlight,',
+      'highlights updateHighlight must validate runtime patch input before persistence',
+    ],
+    [
+      'value.slice(0, maxHighlightNoteLength)',
+      'highlights runtime writes must truncate oversized notes before persistence',
+    ],
+    [
+      'const normalizedInput = normalizeAddHighlightInput(input);',
+      'addHighlight must call the runtime input guard',
+    ],
+    ['if (!normalizedInput) return null;', 'addHighlight must reject invalid runtime input'],
+    [
+      'const normalizedPatch = normalizeHighlightPatch(patch);',
+      'updateHighlight must call the runtime patch guard',
+    ],
+    ['if (!normalizedPatch) return;', 'updateHighlight must reject invalid runtime patches'],
+  ];
+
+  requiredWriteInputStoreSnippets.forEach(([snippet, message]) => {
+    if (!normalizedStore.includes(snippet)) {
+      reject(message);
+      return;
+    }
+    highlightsStoreWriteInputCasesValidated += 1;
+  });
+
+  const requiredWriteInputFixtureSnippets = [
+    [
+      "test('highlights store: invalid add inputs are rejected before persistence'",
+      'invalid add input fixture',
+    ],
+    ["chapterId: ''", 'blank chapter runtime fixture'],
+    ["blockId: ' '", 'blank block runtime fixture'],
+    ['startOffset: 1.5', 'fractional runtime offset fixture'],
+    ['endOffset: Number.POSITIVE_INFINITY', 'non-finite runtime offset fixture'],
+    ["color: 'orange'", 'invalid runtime color fixture'],
+    ['note: null', 'invalid runtime note fixture'],
+    [
+      "assert.equal(storage.values.has('ebook.highlights.v1'), false);",
+      'no invalid write assertion',
+    ],
+    [
+      "test('highlights store: add and update normalize allowed runtime input boundaries'",
+      'valid boundary normalization fixture',
+    ],
+    ["note: 'A'.repeat(2001)", 'oversized add note fixture'],
+    ['assert.equal(highlight.note.length, 2000);', 'oversized add note truncation assertion'],
+    ["updateHighlight(highlight.id, { color: 'orange' })", 'invalid update color fixture'],
+    ["updateHighlight(highlight.id, { color: 'pink' })", 'valid update color fixture'],
+    ["updateHighlight(highlight.id, { note: 'B'.repeat(2001) })", 'oversized update note fixture'],
+  ];
+
+  requiredWriteInputFixtureSnippets.forEach(([snippet, message]) => {
+    if (!normalizedTest.includes(snippet)) {
+      reject(`highlights store write-input fixture missing ${message}`);
+      return;
+    }
+    highlightsStoreWriteInputCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    highlightsStoreWriteInputCasesValidated ===
+      requiredWriteInputStoreSnippets.length + requiredWriteInputFixtureSnippets.length
+  ) {
+    highlightsStoreWriteInputValidated = true;
+  }
 }
 
 function validateContentTypeSchemaParity() {
@@ -17713,6 +17794,8 @@ console.log(
       reviewStoreHydrationParityValidated,
       highlightsStoreHydrationCasesValidated,
       highlightsStoreHydrationValidated,
+      highlightsStoreWriteInputCasesValidated,
+      highlightsStoreWriteInputValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
