@@ -596,30 +596,90 @@
     "type": "single_choice",
     "q": {
       "en": "What is the name of Sweden's highest mountain?",
-      "sv": "Vad heter Sveriges högsta berg?"
+      "sv": "Vad heter Sveriges högsta berg?",
+      "zh-Hant": "瑞典最高的山叫什麼？",
+      "zh-Hans": "瑞典最高的山叫什么？",
+      "ar": "ما اسم أعلى جبل في السويد؟",
+      "ckb": "ناوی بەرزترین چیای سوید چییە؟",
+      "fa": "نام بلندترین کوه سوئد چیست؟",
+      "pl": "Jak nazywa się najwyższa góra Szwecji?",
+      "so": "Buurta ugu dheer Iswiidhan maxaa la yiraahdaa?",
+      "ti": "ስም እቲ ዝለዓለ እምባ ሽወደን እንታይ እዩ?",
+      "tr": "İsveç’in en yüksek dağının adı nedir?",
+      "uk": "Як називається найвища гора Швеції?"
     },
     "opts": [
       {
         "en": "Kebnekaise",
-        "sv": "Kebnekaise"
+        "sv": "Kebnekaise",
+        "zh-Hant": "Kebnekaise",
+        "zh-Hans": "Kebnekaise",
+        "ar": "Kebnekaise",
+        "ckb": "Kebnekaise",
+        "fa": "Kebnekaise",
+        "pl": "Kebnekaise",
+        "so": "Kebnekaise",
+        "ti": "Kebnekaise",
+        "tr": "Kebnekaise",
+        "uk": "Kebnekaise"
       },
       {
         "en": "Smygehuk",
-        "sv": "Smygehuk"
+        "sv": "Smygehuk",
+        "zh-Hant": "Smygehuk",
+        "zh-Hans": "Smygehuk",
+        "ar": "Smygehuk",
+        "ckb": "Smygehuk",
+        "fa": "Smygehuk",
+        "pl": "Smygehuk",
+        "so": "Smygehuk",
+        "ti": "Smygehuk",
+        "tr": "Smygehuk",
+        "uk": "Smygehuk"
       },
       {
         "en": "Treriksröset",
-        "sv": "Treriksröset"
+        "sv": "Treriksröset",
+        "zh-Hant": "Treriksröset",
+        "zh-Hans": "Treriksröset",
+        "ar": "Treriksröset",
+        "ckb": "Treriksröset",
+        "fa": "Treriksröset",
+        "pl": "Treriksröset",
+        "so": "Treriksröset",
+        "ti": "Treriksröset",
+        "tr": "Treriksröset",
+        "uk": "Treriksröset"
       },
       {
         "en": "Mälaren",
-        "sv": "Mälaren"
+        "sv": "Mälaren",
+        "zh-Hant": "Mälaren",
+        "zh-Hans": "Mälaren",
+        "ar": "Mälaren",
+        "ckb": "Mälaren",
+        "fa": "Mälaren",
+        "pl": "Mälaren",
+        "so": "Mälaren",
+        "ti": "Mälaren",
+        "tr": "Mälaren",
+        "uk": "Mälaren"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden's highest mountain is Kebnekaise, at about 2,000 metres. It is in the mountain region called fjällen, part of the Scandinavian Mountains along the border with Norway.",
-      "sv": "Sveriges högsta berg heter Kebnekaise och är cirka 2 000 meter högt. Det ligger i fjällen, den del av bergskedjan Skanderna som går längs gränsen mot Norge."
+      "sv": "Sveriges högsta berg heter Kebnekaise och är cirka 2 000 meter högt. Det ligger i fjällen, den del av bergskedjan Skanderna som går längs gränsen mot Norge.",
+      "zh-Hant": "瑞典最高的山是 Kebnekaise，高約 2,000 公尺。它位於山區 fjällen，也就是沿挪威邊界延伸的斯堪地那維亞山脈的一部分。",
+      "zh-Hans": "瑞典最高的山是 Kebnekaise，高约 2,000 米。它位于山地地区 fjällen，也就是沿挪威边界延伸的斯堪的纳维亚山脉的一部分。",
+      "ar": "أعلى جبل في السويد هو Kebnekaise، ويبلغ ارتفاعه نحو 2000 متر. يقع في منطقة الجبال المعروفة باسم fjällen، وهي جزء من جبال إسكندنافيا الممتدة على الحدود مع النرويج.",
+      "ckb": "بەرزترین چیای سوید Kebnekaise ـە و نزیکەی ٢٠٠٠ مەتر بەرزە. ئەو لە ناوچەی چیاکان کە fjällen پێی دەوترێت هەیە، بەشێک لە چیای سکاندیناڤیا کە بە سنووری نەرویجدا دەڕوات.",
+      "fa": "بلندترین کوه سوئد Kebnekaise است و حدود ۲۰۰۰ متر ارتفاع دارد. این کوه در منطقه کوهستانی fjällen قرار دارد، بخشی از رشته‌کوه اسکاندیناوی که در امتداد مرز نروژ کشیده شده است.",
+      "pl": "Najwyższa góra Szwecji nazywa się Kebnekaise i ma około 2000 metrów wysokości. Leży w górskim regionie zwanym fjällen, części Gór Skandynawskich wzdłuż granicy z Norwegią.",
+      "so": "Buurta ugu dheer Iswiidhan waa Kebnekaise, dhererkeeduna waa qiyaastii 2,000 mitir. Waxay ku taallaa aagga buuraha ee loo yaqaan fjällen, qayb ka mid ah Buuraha Scandinavian ee ku teedsan xadka Norway.",
+      "ti": "እቲ ዝለዓለ እምባ ሽወደን Kebnekaise ይበሃል፣ ብግምት 2,000 ሜትር ቁመት ኣለዎ። ኣብቲ fjällen ዝበሃል ናይ እምባታት ክልል ይርከብ፣ እዚ ድማ ኣብ ዶብ ኖርወይ ዘሎ ክፋል ናይ እምባታት ስካንዲናቪያ እዩ።",
+      "tr": "İsveç’in en yüksek dağı Kebnekaise’dir ve yaklaşık 2000 metre yüksekliktedir. Norveç sınırı boyunca uzanan İskandinav Dağları’nın bir parçası olan fjällen adlı dağlık bölgede yer alır.",
+      "uk": "Найвища гора Швеції — Kebnekaise, її висота близько 2000 метрів. Вона розташована в гірському регіоні fjällen, частині Скандинавських гір уздовж кордону з Норвегією."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -642,30 +702,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which are Sweden's three largest lakes?",
-      "sv": "Vilka är Sveriges tre största sjöar?"
+      "sv": "Vilka är Sveriges tre största sjöar?",
+      "zh-Hant": "瑞典最大的三座湖是哪三座？",
+      "zh-Hans": "瑞典最大的三座湖是哪三座？",
+      "ar": "ما أكبر ثلاث بحيرات في السويد؟",
+      "ckb": "سێ گەورەترین دەریاچەی سوید کامانەن؟",
+      "fa": "سه دریاچه بزرگ سوئد کدام‌اند؟",
+      "pl": "Które są trzema największymi jeziorami Szwecji?",
+      "so": "Saddexda haro ee ugu waaweyn Iswiidhan waa kuwee?",
+      "ti": "ሰለስተ ዝዓበያ ቃላያት ሽወደን ኣየኖት እየን?",
+      "tr": "İsveç’in en büyük üç gölü hangileridir?",
+      "uk": "Які три озера є найбільшими у Швеції?"
     },
     "opts": [
       {
         "en": "Vänern, Vättern, and Mälaren",
-        "sv": "Vänern, Vättern och Mälaren"
+        "sv": "Vänern, Vättern och Mälaren",
+        "zh-Hant": "Vänern、Vättern 和 Mälaren",
+        "zh-Hans": "Vänern、Vättern 和 Mälaren",
+        "ar": "Vänern وVättern وMälaren",
+        "ckb": "Vänern و Vättern و Mälaren",
+        "fa": "Vänern، Vättern و Mälaren",
+        "pl": "Vänern, Vättern i Mälaren",
+        "so": "Vänern, Vättern iyo Mälaren",
+        "ti": "Vänern፣ Vätternን Mälarenን",
+        "tr": "Vänern, Vättern ve Mälaren",
+        "uk": "Vänern, Vättern і Mälaren"
       },
       {
         "en": "The Baltic Sea, Kattegat, and Skagerrak",
-        "sv": "Östersjön, Kattegatt och Skagerrak"
+        "sv": "Östersjön, Kattegatt och Skagerrak",
+        "zh-Hant": "波羅的海、Kattegat 和 Skagerrak",
+        "zh-Hans": "波罗的海、Kattegat 和 Skagerrak",
+        "ar": "بحر البلطيق وKattegat وSkagerrak",
+        "ckb": "دەریای بەڵتیک و Kattegat و Skagerrak",
+        "fa": "دریای بالتیک، Kattegat و Skagerrak",
+        "pl": "Morze Bałtyckie, Kattegat i Skagerrak",
+        "so": "Badda Baltic, Kattegat iyo Skagerrak",
+        "ti": "ባሕሪ ባልቲክ፣ Kattegatን Skagerrakን",
+        "tr": "Baltık Denizi, Kattegat ve Skagerrak",
+        "uk": "Балтійське море, Kattegat і Skagerrak"
       },
       {
         "en": "Gotland, Öland, and Orust",
-        "sv": "Gotland, Öland och Orust"
+        "sv": "Gotland, Öland och Orust",
+        "zh-Hant": "Gotland、Öland 和 Orust",
+        "zh-Hans": "Gotland、Öland 和 Orust",
+        "ar": "Gotland وÖland وOrust",
+        "ckb": "Gotland و Öland و Orust",
+        "fa": "Gotland، Öland و Orust",
+        "pl": "Gotlandia, Olandia i Orust",
+        "so": "Gotland, Öland iyo Orust",
+        "ti": "Gotland፣ Ölandን Orustን",
+        "tr": "Gotland, Öland ve Orust",
+        "uk": "Gotland, Öland і Orust"
       },
       {
         "en": "Stockholm, Gothenburg, and Malmö",
-        "sv": "Stockholm, Göteborg och Malmö"
+        "sv": "Stockholm, Göteborg och Malmö",
+        "zh-Hant": "Stockholm、Göteborg 和 Malmö",
+        "zh-Hans": "Stockholm、Göteborg 和 Malmö",
+        "ar": "Stockholm وGöteborg وMalmö",
+        "ckb": "Stockholm و Göteborg و Malmö",
+        "fa": "Stockholm، Göteborg و Malmö",
+        "pl": "Stockholm, Göteborg i Malmö",
+        "so": "Stockholm, Göteborg iyo Malmö",
+        "ti": "Stockholm፣ Göteborgን Malmöን",
+        "tr": "Stockholm, Göteborg ve Malmö",
+        "uk": "Стокгольм, Гетеборг і Мальме"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden has many lakes throughout the country, and the three largest are Vänern, Vättern, and Mälaren. The other choices list sea areas, islands, or cities instead of lakes.",
-      "sv": "Sverige har många sjöar spridda över hela landet, och de tre största är Vänern, Vättern och Mälaren. De andra alternativen räknar upp havsområden, öar eller städer i stället för sjöar."
+      "sv": "Sverige har många sjöar spridda över hela landet, och de tre största är Vänern, Vättern och Mälaren. De andra alternativen räknar upp havsområden, öar eller städer i stället för sjöar.",
+      "zh-Hant": "瑞典全國有許多湖泊，最大的三座是 Vänern、Vättern 和 Mälaren。其他選項列出的是海域、島嶼或城市，而不是湖泊。",
+      "zh-Hans": "瑞典全国有许多湖泊，最大的三座是 Vänern、Vättern 和 Mälaren。其他选项列出的是海域、岛屿或城市，而不是湖泊。",
+      "ar": "توجد في السويد بحيرات كثيرة في أنحاء البلاد، وأكبر ثلاث هي Vänern وVättern وMälaren. أما الخيارات الأخرى فتذكر مناطق بحرية أو جزرًا أو مدنًا بدلًا من البحيرات.",
+      "ckb": "لە سەرانسەری سوید دەریاچەی زۆر هەیە، و سێ گەورەترینیان Vänern و Vättern و Mälaren ن. هەڵبژاردەکانی تر ناوچەی دەریایی، دوورگە یان شار دەژمێرن نەک دەریاچە.",
+      "fa": "در سراسر سوئد دریاچه‌های زیادی وجود دارد و سه دریاچه بزرگ آن Vänern، Vättern و Mälaren هستند. گزینه‌های دیگر به جای دریاچه، ناحیه‌های دریایی، جزیره‌ها یا شهرها را فهرست می‌کنند.",
+      "pl": "W całej Szwecji jest wiele jezior, a trzy największe to Vänern, Vättern i Mälaren. Pozostałe odpowiedzi wymieniają obszary morskie, wyspy albo miasta zamiast jezior.",
+      "so": "Iswiidhan waxay leedahay harooyin badan oo dalka oo dhan ku kala yaal, saddexda ugu waaweynna waa Vänern, Vättern iyo Mälaren. Xulashooyinka kale waxay taxayaan meelo badeed, jasiirado ama magaalooyin halkii ay ka ahaan lahaayeen harooyin.",
+      "ti": "ሽወደን ኣብ ሙሉእ ሃገር ብዙሓት ቃላያት ኣለዋ፣ ሰለስተ ዝዓበያ ድማ Vänern፣ Vätternን Mälarenን እየን። እቶም ካልኦት ምርጫታት ክልላት ባሕሪ፣ ደሴታት ወይ ከተማታት ይጠቕሱ እምበር ቃላያት ኣይኮኑን።",
+      "tr": "İsveç’in dört bir yanında birçok göl vardır ve en büyük üçü Vänern, Vättern ve Mälaren’dir. Diğer seçenekler göller yerine deniz alanlarını, adaları veya şehirleri sayar.",
+      "uk": "У Швеції багато озер по всій країні, а три найбільші — Vänern, Vättern і Mälaren. Інші варіанти перелічують морські райони, острови або міста, а не озера."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -690,30 +810,90 @@
     "type": "single_choice",
     "q": {
       "en": "Approximately how many people live in Sweden?",
-      "sv": "Ungefär hur många människor bor i Sverige?"
+      "sv": "Ungefär hur många människor bor i Sverige?",
+      "zh-Hant": "瑞典大約有多少人口？",
+      "zh-Hans": "瑞典大约有多少人口？",
+      "ar": "كم يبلغ عدد سكان السويد تقريبًا؟",
+      "ckb": "نزیکەی چەند کەس لە سوید دەژین؟",
+      "fa": "تقریباً چند نفر در سوئد زندگی می‌کنند؟",
+      "pl": "Około ilu ludzi mieszka w Szwecji?",
+      "so": "Qiyaastii imisa qof ayaa ku nool Iswiidhan?",
+      "ti": "ብግምት ክንደይ ሰባት ኣብ ሽወደን ይነብሩ?",
+      "tr": "İsveç’te yaklaşık kaç kişi yaşar?",
+      "uk": "Приблизно скільки людей живе у Швеції?"
     },
     "opts": [
       {
         "en": "Almost 11 million",
-        "sv": "Nästan 11 miljoner"
+        "sv": "Nästan 11 miljoner",
+        "zh-Hant": "將近 1,100 萬",
+        "zh-Hans": "将近 1100 万",
+        "ar": "نحو 11 مليونًا",
+        "ckb": "نزیکەی ١١ ملیۆن",
+        "fa": "نزدیک به ۱۱ میلیون",
+        "pl": "Prawie 11 milionów",
+        "so": "Ku dhowaad 11 milyan",
+        "ti": "ቀረባ 11 ሚልዮን",
+        "tr": "Neredeyse 11 milyon",
+        "uk": "Майже 11 мільйонів"
       },
       {
         "en": "Almost 1 million",
-        "sv": "Nästan 1 miljon"
+        "sv": "Nästan 1 miljon",
+        "zh-Hant": "將近 100 萬",
+        "zh-Hans": "将近 100 万",
+        "ar": "نحو مليون واحد",
+        "ckb": "نزیکەی ١ ملیۆن",
+        "fa": "نزدیک به ۱ میلیون",
+        "pl": "Prawie 1 milion",
+        "so": "Ku dhowaad 1 milyan",
+        "ti": "ቀረባ 1 ሚልዮን",
+        "tr": "Neredeyse 1 milyon",
+        "uk": "Майже 1 мільйон"
       },
       {
         "en": "About 50 million",
-        "sv": "Cirka 50 miljoner"
+        "sv": "Cirka 50 miljoner",
+        "zh-Hant": "約 5,000 萬",
+        "zh-Hans": "约 5000 万",
+        "ar": "نحو 50 مليونًا",
+        "ckb": "نزیکەی ٥٠ ملیۆن",
+        "fa": "حدود ۵۰ میلیون",
+        "pl": "Około 50 milionów",
+        "so": "Qiyaastii 50 milyan",
+        "ti": "ብግምት 50 ሚልዮን",
+        "tr": "Yaklaşık 50 milyon",
+        "uk": "Близько 50 мільйонів"
       },
       {
         "en": "About 100 million",
-        "sv": "Cirka 100 miljoner"
+        "sv": "Cirka 100 miljoner",
+        "zh-Hant": "約 1 億",
+        "zh-Hans": "约 1 亿",
+        "ar": "نحو 100 مليون",
+        "ckb": "نزیکەی ١٠٠ ملیۆن",
+        "fa": "حدود ۱۰۰ میلیون",
+        "pl": "Około 100 milionów",
+        "so": "Qiyaastii 100 milyan",
+        "ti": "ብግምት 100 ሚልዮን",
+        "tr": "Yaklaşık 100 milyon",
+        "uk": "Близько 100 мільйонів"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Almost 11 million people live in Sweden. The population is not evenly distributed: most people live in the southern part of the country and along the coasts.",
-      "sv": "Det bor nästan 11 miljoner människor i Sverige. Befolkningen är inte jämnt fördelad: de flesta bor i den södra delen av landet och längs kusterna."
+      "sv": "Det bor nästan 11 miljoner människor i Sverige. Befolkningen är inte jämnt fördelad: de flesta bor i den södra delen av landet och längs kusterna.",
+      "zh-Hant": "瑞典有將近 1,100 萬人口。人口分布並不平均：多數人住在南部和沿海地區。",
+      "zh-Hans": "瑞典有将近 1100 万人口。人口分布并不平均：多数人住在南部和沿海地区。",
+      "ar": "يعيش في السويد نحو 11 مليون شخص. ولا يتوزع السكان بالتساوي؛ فمعظم الناس يعيشون في جنوب البلاد وعلى طول السواحل.",
+      "ckb": "نزیکەی ١١ ملیۆن کەس لە سوید دەژین. دانیشتووان بە یەکسانی دابەش نەبوون: زۆربەی خەڵک لە بەشی باشووری وڵات و بە درێژایی کەنارەکان دەژین.",
+      "fa": "نزدیک به ۱۱ میلیون نفر در سوئد زندگی می‌کنند. جمعیت به طور یکنواخت پخش نشده است: بیشتر مردم در بخش جنوبی کشور و در امتداد ساحل‌ها زندگی می‌کنند.",
+      "pl": "W Szwecji mieszka prawie 11 milionów ludzi. Ludność nie jest rozmieszczona równomiernie: większość mieszka w południowej części kraju i wzdłuż wybrzeży.",
+      "so": "Ku dhowaad 11 milyan oo qof ayaa ku nool Iswiidhan. Dadku si siman uma kala firdhsana: dadka badankood waxay ku nool yihiin qaybta koonfureed ee dalka iyo xeebaha.",
+      "ti": "ቀረባ 11 ሚልዮን ሰባት ኣብ ሽወደን ይነብሩ። ህዝቢ ብማዕረ ኣይተዘርግሐን፤ ብዙሓት ሰባት ኣብ ደቡባዊ ክፍሊ ሃገርን ኣብ ገምገማት ባሕሪን ይነብሩ።",
+      "tr": "İsveç’te neredeyse 11 milyon insan yaşar. Nüfus eşit dağılmamıştır; çoğu kişi ülkenin güneyinde ve kıyılar boyunca yaşar.",
+      "uk": "У Швеції живе майже 11 мільйонів людей. Населення розподілене нерівномірно: більшість живе в південній частині країни та вздовж узбереж."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -736,30 +916,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which natural resources are important in Sweden?",
-      "sv": "Vilka naturresurser är viktiga i Sverige?"
+      "sv": "Vilka naturresurser är viktiga i Sverige?",
+      "zh-Hant": "哪些自然資源對瑞典很重要？",
+      "zh-Hans": "哪些自然资源对瑞典很重要？",
+      "ar": "ما الموارد الطبيعية المهمة في السويد؟",
+      "ckb": "کام سەرچاوە سروشتییەکان لە سوید گرنگن؟",
+      "fa": "کدام منابع طبیعی در سوئد مهم هستند؟",
+      "pl": "Które zasoby naturalne są ważne w Szwecji?",
+      "so": "Khayraadka dabiiciga ah ee muhiimka u ah Iswiidhan waa kuwee?",
+      "ti": "ኣብ ሽወደን ኣገደስቲ ዝኾኑ ባህርያዊ ሃብትታት ኣየኖት እዮም?",
+      "tr": "İsveç’te hangi doğal kaynaklar önemlidir?",
+      "uk": "Які природні ресурси важливі у Швеції?"
     },
     "opts": [
       {
         "en": "Iron ore and other minerals, forest, agricultural land, and water",
-        "sv": "Järnmalm och andra mineraler, skog, jordbruksmark och vatten"
+        "sv": "Järnmalm och andra mineraler, skog, jordbruksmark och vatten",
+        "zh-Hant": "鐵礦和其他礦物、森林、農地和水",
+        "zh-Hans": "铁矿和其他矿物、森林、农业用地和水",
+        "ar": "خام الحديد ومعادن أخرى، والغابات، والأراضي الزراعية، والمياه",
+        "ckb": "کانزای ئاسن و کانزاکانی تر، دارستان، زەوی کشتوکاڵی و ئاو",
+        "fa": "سنگ آهن و دیگر کانی‌ها، جنگل، زمین کشاورزی و آب",
+        "pl": "Ruda żelaza i inne minerały, lasy, grunty rolne i woda",
+        "so": "Macdanta birta iyo macdano kale, kaymo, dhul beereed iyo biyo",
+        "ti": "ብረት ማዕድንን ካልኦት ማዕድናትን፣ ዱር፣ መሬት ሕርሻን ማይን",
+        "tr": "Demir cevheri ve diğer mineraller, orman, tarım arazisi ve su",
+        "uk": "Залізна руда та інші мінерали, ліси, сільськогосподарські землі й вода"
       },
       {
         "en": "Oil, natural gas, desert land, and tropical rain",
-        "sv": "Olja, naturgas, ökenmark och tropiskt regn"
+        "sv": "Olja, naturgas, ökenmark och tropiskt regn",
+        "zh-Hant": "石油、天然氣、沙漠土地和熱帶雨水",
+        "zh-Hans": "石油、天然气、沙漠土地和热带雨水",
+        "ar": "النفط والغاز الطبيعي والأراضي الصحراوية والأمطار الاستوائية",
+        "ckb": "نەوت، گازی سروشتی، زەوی بیابانی و بارانی گەرمەسێری",
+        "fa": "نفت، گاز طبیعی، زمین بیابانی و باران استوایی",
+        "pl": "Ropa, gaz ziemny, pustynie i tropikalne deszcze",
+        "so": "Saliid, gaas dabiici ah, dhul saxare ah iyo roob kulaylaha",
+        "ti": "ነዳዲ፣ ባህርያዊ ጋዝ፣ ምድረ በዳን ትሮፒካዊ ዝናብን",
+        "tr": "Petrol, doğal gaz, çöl arazisi ve tropik yağmur",
+        "uk": "Нафта, природний газ, пустельні землі й тропічні дощі"
       },
       {
         "en": "Coal, diamond mines, volcanic soil, and palm trees",
-        "sv": "Kol, diamantgruvor, vulkanjord och palmer"
+        "sv": "Kol, diamantgruvor, vulkanjord och palmer",
+        "zh-Hant": "煤、鑽石礦、火山土和棕櫚樹",
+        "zh-Hans": "煤、钻石矿、火山土和棕榈树",
+        "ar": "الفحم ومناجم الألماس والتربة البركانية وأشجار النخيل",
+        "ckb": "خەڵوز، کانەکانی ئەڵماس، خاکی گڕکان و دارخورما",
+        "fa": "زغال‌سنگ، معدن‌های الماس، خاک آتشفشانی و نخل‌ها",
+        "pl": "Węgiel, kopalnie diamentów, gleby wulkaniczne i palmy",
+        "so": "Dhuxul, macdanta dheemanka, ciid foolkaano iyo geedo timireed",
+        "ti": "ከሰል፣ ማዕድን ኣልማዝ፣ መሬት እሳተ ገሞራን ፓልምን",
+        "tr": "Kömür, elmas madenleri, volkanik toprak ve palmiyeler",
+        "uk": "Вугілля, алмазні шахти, вулканічний ґрунт і пальми"
       },
       {
         "en": "Rice fields, cotton plantations, coral reefs, and tides",
-        "sv": "Risfält, bomullsplantager, korallrev och tidvatten"
+        "sv": "Risfält, bomullsplantager, korallrev och tidvatten",
+        "zh-Hant": "稻田、棉花種植園、珊瑚礁和潮汐",
+        "zh-Hans": "稻田、棉花种植园、珊瑚礁和潮汐",
+        "ar": "حقول الأرز ومزارع القطن والشعاب المرجانية والمد والجزر",
+        "ckb": "کێڵگەی برنج، کشتەزاری پەمۆ، قەڵغانی مرجان و هەڵکشانی ئاو",
+        "fa": "شالیزارها، کشتزارهای پنبه، صخره‌های مرجانی و جزر و مد",
+        "pl": "Pola ryżowe, plantacje bawełny, rafy koralowe i pływy",
+        "so": "Beeraha bariiska, beeraha suufka, reefs coral ah iyo hirarka badda",
+        "ti": "ማሳታት ሩዝ፣ ተኽሊ ጡጥ፣ ኮራል ሪፍን ማዕበል ባሕርን",
+        "tr": "Pirinç tarlaları, pamuk plantasyonları, mercan resifleri ve gelgitler",
+        "uk": "Рисові поля, бавовняні плантації, коралові рифи й припливи"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser.",
+      "zh-Hant": "瑞典擁有多種重要自然資源：鐵礦和其他礦物、森林、農地和水。石油、天然氣、沙漠土地、熱帶雨水等並不能描述瑞典的重要自然資源。",
+      "zh-Hans": "瑞典拥有多种重要自然资源：铁矿和其他矿物、森林、农业用地和水。石油、天然气、沙漠土地、热带雨水等并不能描述瑞典的重要自然资源。",
+      "ar": "السويد غنية بعدة موارد طبيعية مهمة: خام الحديد ومعادن أخرى، والغابات، والأراضي الزراعية، والمياه. أما النفط والغاز الطبيعي والأراضي الصحراوية والأمطار الاستوائية وما شابهها فلا تصف الموارد الطبيعية المهمة في السويد.",
+      "ckb": "سوید بە چەند سەرچاوەی سروشتی گرنگ دەوڵەمەندە: کانزای ئاسن و کانزاکانی تر، دارستان، زەوی کشتوکاڵی و ئاو. نەوت، گازی سروشتی، زەوی بیابانی، بارانی گەرمەسێری و شتی هاوشێوە سەرچاوە سروشتییە گرنگەکانی سوید وەسف ناکەن.",
+      "fa": "سوئد از چند منبع طبیعی مهم برخوردار است: سنگ آهن و دیگر کانی‌ها، جنگل، زمین کشاورزی و آب. نفت، گاز طبیعی، زمین بیابانی، باران استوایی و موارد مشابه منابع طبیعی مهم سوئد را توصیف نمی‌کنند.",
+      "pl": "Szwecja jest bogata w kilka ważnych zasobów naturalnych: rudę żelaza i inne minerały, lasy, grunty rolne i wodę. Ropa, gaz ziemny, pustynie, tropikalne deszcze i podobne rzeczy nie opisują ważnych zasobów naturalnych Szwecji.",
+      "so": "Iswiidhan waxay hodan ku tahay khayraad dabiici ah oo muhiim ah: macdanta birta iyo macdano kale, kaymo, dhul beereed iyo biyo. Saliid, gaas dabiici ah, dhul saxare ah, roob kulaylaha iyo wax la mid ah ma tilmaamayaan khayraadka dabiiciga ah ee muhiimka u ah Iswiidhan.",
+      "ti": "ሽወደን ብብዙሓት ኣገደስቲ ባህርያዊ ሃብትታት ሃብታም እያ፤ ብረት ማዕድንን ካልኦት ማዕድናትን፣ ዱር፣ መሬት ሕርሻን ማይን። ነዳዲ፣ ባህርያዊ ጋዝ፣ ምድረ በዳ፣ ትሮፒካዊ ዝናብን ተመሳሳሊ ነገራትን ኣገደስቲ ባህርያዊ ሃብትታት ሽወደን ኣይገልጹን።",
+      "tr": "İsveç birçok önemli doğal kaynak bakımından zengindir: demir cevheri ve diğer mineraller, ormanlar, tarım arazileri ve su. Petrol, doğal gaz, çöl arazisi, tropik yağmur ve benzeri şeyler İsveç’in önemli doğal kaynaklarını anlatmaz.",
+      "uk": "Швеція багата на кілька важливих природних ресурсів: залізну руду та інші мінерали, ліси, сільськогосподарські землі й воду. Нафта, природний газ, пустельні землі, тропічні дощі та подібні речі не описують важливі природні ресурси Швеції."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9020,19 +9260,59 @@
     "opts": [
       {
         "en": "Kebnekaise",
-        "sv": "Kebnekaise"
+        "sv": "Kebnekaise",
+        "zh-Hant": "Kebnekaise",
+        "zh-Hans": "Kebnekaise",
+        "ar": "Kebnekaise",
+        "ckb": "Kebnekaise",
+        "fa": "Kebnekaise",
+        "pl": "Kebnekaise",
+        "so": "Kebnekaise",
+        "ti": "Kebnekaise",
+        "tr": "Kebnekaise",
+        "uk": "Kebnekaise"
       },
       {
         "en": "Smygehuk",
-        "sv": "Smygehuk"
+        "sv": "Smygehuk",
+        "zh-Hant": "Smygehuk",
+        "zh-Hans": "Smygehuk",
+        "ar": "Smygehuk",
+        "ckb": "Smygehuk",
+        "fa": "Smygehuk",
+        "pl": "Smygehuk",
+        "so": "Smygehuk",
+        "ti": "Smygehuk",
+        "tr": "Smygehuk",
+        "uk": "Smygehuk"
       },
       {
         "en": "Treriksröset",
-        "sv": "Treriksröset"
+        "sv": "Treriksröset",
+        "zh-Hant": "Treriksröset",
+        "zh-Hans": "Treriksröset",
+        "ar": "Treriksröset",
+        "ckb": "Treriksröset",
+        "fa": "Treriksröset",
+        "pl": "Treriksröset",
+        "so": "Treriksröset",
+        "ti": "Treriksröset",
+        "tr": "Treriksröset",
+        "uk": "Treriksröset"
       },
       {
         "en": "Mälaren",
-        "sv": "Mälaren"
+        "sv": "Mälaren",
+        "zh-Hant": "Mälaren",
+        "zh-Hans": "Mälaren",
+        "ar": "Mälaren",
+        "ckb": "Mälaren",
+        "fa": "Mälaren",
+        "pl": "Mälaren",
+        "so": "Mälaren",
+        "ti": "Mälaren",
+        "tr": "Mälaren",
+        "uk": "Mälaren"
       }
     ],
     "answer": 0,
@@ -9148,19 +9428,59 @@
     "opts": [
       {
         "en": "Kebnekaise",
-        "sv": "Kebnekaise"
+        "sv": "Kebnekaise",
+        "zh-Hant": "Kebnekaise",
+        "zh-Hans": "Kebnekaise",
+        "ar": "Kebnekaise",
+        "ckb": "Kebnekaise",
+        "fa": "Kebnekaise",
+        "pl": "Kebnekaise",
+        "so": "Kebnekaise",
+        "ti": "Kebnekaise",
+        "tr": "Kebnekaise",
+        "uk": "Kebnekaise"
       },
       {
         "en": "Smygehuk",
-        "sv": "Smygehuk"
+        "sv": "Smygehuk",
+        "zh-Hant": "Smygehuk",
+        "zh-Hans": "Smygehuk",
+        "ar": "Smygehuk",
+        "ckb": "Smygehuk",
+        "fa": "Smygehuk",
+        "pl": "Smygehuk",
+        "so": "Smygehuk",
+        "ti": "Smygehuk",
+        "tr": "Smygehuk",
+        "uk": "Smygehuk"
       },
       {
         "en": "Treriksröset",
-        "sv": "Treriksröset"
+        "sv": "Treriksröset",
+        "zh-Hant": "Treriksröset",
+        "zh-Hans": "Treriksröset",
+        "ar": "Treriksröset",
+        "ckb": "Treriksröset",
+        "fa": "Treriksröset",
+        "pl": "Treriksröset",
+        "so": "Treriksröset",
+        "ti": "Treriksröset",
+        "tr": "Treriksröset",
+        "uk": "Treriksröset"
       },
       {
         "en": "Mälaren",
-        "sv": "Mälaren"
+        "sv": "Mälaren",
+        "zh-Hant": "Mälaren",
+        "zh-Hans": "Mälaren",
+        "ar": "Mälaren",
+        "ckb": "Mälaren",
+        "fa": "Mälaren",
+        "pl": "Mälaren",
+        "so": "Mälaren",
+        "ti": "Mälaren",
+        "tr": "Mälaren",
+        "uk": "Mälaren"
       }
     ],
     "answer": 0,
@@ -9196,19 +9516,59 @@
     "opts": [
       {
         "en": "Vänern, Vättern, and Mälaren",
-        "sv": "Vänern, Vättern och Mälaren"
+        "sv": "Vänern, Vättern och Mälaren",
+        "zh-Hant": "Vänern、Vättern 和 Mälaren",
+        "zh-Hans": "Vänern、Vättern 和 Mälaren",
+        "ar": "Vänern وVättern وMälaren",
+        "ckb": "Vänern و Vättern و Mälaren",
+        "fa": "Vänern، Vättern و Mälaren",
+        "pl": "Vänern, Vättern i Mälaren",
+        "so": "Vänern, Vättern iyo Mälaren",
+        "ti": "Vänern፣ Vätternን Mälarenን",
+        "tr": "Vänern, Vättern ve Mälaren",
+        "uk": "Vänern, Vättern і Mälaren"
       },
       {
         "en": "The Baltic Sea, Kattegat, and Skagerrak",
-        "sv": "Östersjön, Kattegatt och Skagerrak"
+        "sv": "Östersjön, Kattegatt och Skagerrak",
+        "zh-Hant": "波羅的海、Kattegat 和 Skagerrak",
+        "zh-Hans": "波罗的海、Kattegat 和 Skagerrak",
+        "ar": "بحر البلطيق وKattegat وSkagerrak",
+        "ckb": "دەریای بەڵتیک و Kattegat و Skagerrak",
+        "fa": "دریای بالتیک، Kattegat و Skagerrak",
+        "pl": "Morze Bałtyckie, Kattegat i Skagerrak",
+        "so": "Badda Baltic, Kattegat iyo Skagerrak",
+        "ti": "ባሕሪ ባልቲክ፣ Kattegatን Skagerrakን",
+        "tr": "Baltık Denizi, Kattegat ve Skagerrak",
+        "uk": "Балтійське море, Kattegat і Skagerrak"
       },
       {
         "en": "Gotland, Öland, and Orust",
-        "sv": "Gotland, Öland och Orust"
+        "sv": "Gotland, Öland och Orust",
+        "zh-Hant": "Gotland、Öland 和 Orust",
+        "zh-Hans": "Gotland、Öland 和 Orust",
+        "ar": "Gotland وÖland وOrust",
+        "ckb": "Gotland و Öland و Orust",
+        "fa": "Gotland، Öland و Orust",
+        "pl": "Gotlandia, Olandia i Orust",
+        "so": "Gotland, Öland iyo Orust",
+        "ti": "Gotland፣ Ölandን Orustን",
+        "tr": "Gotland, Öland ve Orust",
+        "uk": "Gotland, Öland і Orust"
       },
       {
         "en": "Stockholm, Gothenburg, and Malmö",
-        "sv": "Stockholm, Göteborg och Malmö"
+        "sv": "Stockholm, Göteborg och Malmö",
+        "zh-Hant": "Stockholm、Göteborg 和 Malmö",
+        "zh-Hans": "Stockholm、Göteborg 和 Malmö",
+        "ar": "Stockholm وGöteborg وMalmö",
+        "ckb": "Stockholm و Göteborg و Malmö",
+        "fa": "Stockholm، Göteborg و Malmö",
+        "pl": "Stockholm, Göteborg i Malmö",
+        "so": "Stockholm, Göteborg iyo Malmö",
+        "ti": "Stockholm፣ Göteborgን Malmöን",
+        "tr": "Stockholm, Göteborg ve Malmö",
+        "uk": "Стокгольм, Гетеборг і Мальме"
       }
     ],
     "answer": 0,
@@ -9330,19 +9690,59 @@
     "opts": [
       {
         "en": "Vänern, Vättern, and Mälaren",
-        "sv": "Vänern, Vättern och Mälaren"
+        "sv": "Vänern, Vättern och Mälaren",
+        "zh-Hant": "Vänern、Vättern 和 Mälaren",
+        "zh-Hans": "Vänern、Vättern 和 Mälaren",
+        "ar": "Vänern وVättern وMälaren",
+        "ckb": "Vänern و Vättern و Mälaren",
+        "fa": "Vänern، Vättern و Mälaren",
+        "pl": "Vänern, Vättern i Mälaren",
+        "so": "Vänern, Vättern iyo Mälaren",
+        "ti": "Vänern፣ Vätternን Mälarenን",
+        "tr": "Vänern, Vättern ve Mälaren",
+        "uk": "Vänern, Vättern і Mälaren"
       },
       {
         "en": "The Baltic Sea, Kattegat, and Skagerrak",
-        "sv": "Östersjön, Kattegatt och Skagerrak"
+        "sv": "Östersjön, Kattegatt och Skagerrak",
+        "zh-Hant": "波羅的海、Kattegat 和 Skagerrak",
+        "zh-Hans": "波罗的海、Kattegat 和 Skagerrak",
+        "ar": "بحر البلطيق وKattegat وSkagerrak",
+        "ckb": "دەریای بەڵتیک و Kattegat و Skagerrak",
+        "fa": "دریای بالتیک، Kattegat و Skagerrak",
+        "pl": "Morze Bałtyckie, Kattegat i Skagerrak",
+        "so": "Badda Baltic, Kattegat iyo Skagerrak",
+        "ti": "ባሕሪ ባልቲክ፣ Kattegatን Skagerrakን",
+        "tr": "Baltık Denizi, Kattegat ve Skagerrak",
+        "uk": "Балтійське море, Kattegat і Skagerrak"
       },
       {
         "en": "Gotland, Öland, and Orust",
-        "sv": "Gotland, Öland och Orust"
+        "sv": "Gotland, Öland och Orust",
+        "zh-Hant": "Gotland、Öland 和 Orust",
+        "zh-Hans": "Gotland、Öland 和 Orust",
+        "ar": "Gotland وÖland وOrust",
+        "ckb": "Gotland و Öland و Orust",
+        "fa": "Gotland، Öland و Orust",
+        "pl": "Gotlandia, Olandia i Orust",
+        "so": "Gotland, Öland iyo Orust",
+        "ti": "Gotland፣ Ölandን Orustን",
+        "tr": "Gotland, Öland ve Orust",
+        "uk": "Gotland, Öland і Orust"
       },
       {
         "en": "Stockholm, Gothenburg, and Malmö",
-        "sv": "Stockholm, Göteborg och Malmö"
+        "sv": "Stockholm, Göteborg och Malmö",
+        "zh-Hant": "Stockholm、Göteborg 和 Malmö",
+        "zh-Hans": "Stockholm、Göteborg 和 Malmö",
+        "ar": "Stockholm وGöteborg وMalmö",
+        "ckb": "Stockholm و Göteborg و Malmö",
+        "fa": "Stockholm، Göteborg و Malmö",
+        "pl": "Stockholm, Göteborg i Malmö",
+        "so": "Stockholm, Göteborg iyo Malmö",
+        "ti": "Stockholm፣ Göteborgን Malmöን",
+        "tr": "Stockholm, Göteborg ve Malmö",
+        "uk": "Стокгольм, Гетеборг і Мальме"
       }
     ],
     "answer": 0,
@@ -9380,19 +9780,59 @@
     "opts": [
       {
         "en": "Almost 11 million",
-        "sv": "Nästan 11 miljoner"
+        "sv": "Nästan 11 miljoner",
+        "zh-Hant": "將近 1,100 萬",
+        "zh-Hans": "将近 1100 万",
+        "ar": "نحو 11 مليونًا",
+        "ckb": "نزیکەی ١١ ملیۆن",
+        "fa": "نزدیک به ۱۱ میلیون",
+        "pl": "Prawie 11 milionów",
+        "so": "Ku dhowaad 11 milyan",
+        "ti": "ቀረባ 11 ሚልዮን",
+        "tr": "Neredeyse 11 milyon",
+        "uk": "Майже 11 мільйонів"
       },
       {
         "en": "Almost 1 million",
-        "sv": "Nästan 1 miljon"
+        "sv": "Nästan 1 miljon",
+        "zh-Hant": "將近 100 萬",
+        "zh-Hans": "将近 100 万",
+        "ar": "نحو مليون واحد",
+        "ckb": "نزیکەی ١ ملیۆن",
+        "fa": "نزدیک به ۱ میلیون",
+        "pl": "Prawie 1 milion",
+        "so": "Ku dhowaad 1 milyan",
+        "ti": "ቀረባ 1 ሚልዮን",
+        "tr": "Neredeyse 1 milyon",
+        "uk": "Майже 1 мільйон"
       },
       {
         "en": "About 50 million",
-        "sv": "Cirka 50 miljoner"
+        "sv": "Cirka 50 miljoner",
+        "zh-Hant": "約 5,000 萬",
+        "zh-Hans": "约 5000 万",
+        "ar": "نحو 50 مليونًا",
+        "ckb": "نزیکەی ٥٠ ملیۆن",
+        "fa": "حدود ۵۰ میلیون",
+        "pl": "Około 50 milionów",
+        "so": "Qiyaastii 50 milyan",
+        "ti": "ብግምት 50 ሚልዮን",
+        "tr": "Yaklaşık 50 milyon",
+        "uk": "Близько 50 мільйонів"
       },
       {
         "en": "About 100 million",
-        "sv": "Cirka 100 miljoner"
+        "sv": "Cirka 100 miljoner",
+        "zh-Hant": "約 1 億",
+        "zh-Hans": "约 1 亿",
+        "ar": "نحو 100 مليون",
+        "ckb": "نزیکەی ١٠٠ ملیۆن",
+        "fa": "حدود ۱۰۰ میلیون",
+        "pl": "Około 100 milionów",
+        "so": "Qiyaastii 100 milyan",
+        "ti": "ብግምት 100 ሚልዮን",
+        "tr": "Yaklaşık 100 milyon",
+        "uk": "Близько 100 мільйонів"
       }
     ],
     "answer": 0,
@@ -9508,19 +9948,59 @@
     "opts": [
       {
         "en": "Almost 11 million",
-        "sv": "Nästan 11 miljoner"
+        "sv": "Nästan 11 miljoner",
+        "zh-Hant": "將近 1,100 萬",
+        "zh-Hans": "将近 1100 万",
+        "ar": "نحو 11 مليونًا",
+        "ckb": "نزیکەی ١١ ملیۆن",
+        "fa": "نزدیک به ۱۱ میلیون",
+        "pl": "Prawie 11 milionów",
+        "so": "Ku dhowaad 11 milyan",
+        "ti": "ቀረባ 11 ሚልዮን",
+        "tr": "Neredeyse 11 milyon",
+        "uk": "Майже 11 мільйонів"
       },
       {
         "en": "Almost 1 million",
-        "sv": "Nästan 1 miljon"
+        "sv": "Nästan 1 miljon",
+        "zh-Hant": "將近 100 萬",
+        "zh-Hans": "将近 100 万",
+        "ar": "نحو مليون واحد",
+        "ckb": "نزیکەی ١ ملیۆن",
+        "fa": "نزدیک به ۱ میلیون",
+        "pl": "Prawie 1 milion",
+        "so": "Ku dhowaad 1 milyan",
+        "ti": "ቀረባ 1 ሚልዮን",
+        "tr": "Neredeyse 1 milyon",
+        "uk": "Майже 1 мільйон"
       },
       {
         "en": "About 50 million",
-        "sv": "Cirka 50 miljoner"
+        "sv": "Cirka 50 miljoner",
+        "zh-Hant": "約 5,000 萬",
+        "zh-Hans": "约 5000 万",
+        "ar": "نحو 50 مليونًا",
+        "ckb": "نزیکەی ٥٠ ملیۆن",
+        "fa": "حدود ۵۰ میلیون",
+        "pl": "Około 50 milionów",
+        "so": "Qiyaastii 50 milyan",
+        "ti": "ብግምት 50 ሚልዮን",
+        "tr": "Yaklaşık 50 milyon",
+        "uk": "Близько 50 мільйонів"
       },
       {
         "en": "About 100 million",
-        "sv": "Cirka 100 miljoner"
+        "sv": "Cirka 100 miljoner",
+        "zh-Hant": "約 1 億",
+        "zh-Hans": "约 1 亿",
+        "ar": "نحو 100 مليون",
+        "ckb": "نزیکەی ١٠٠ ملیۆن",
+        "fa": "حدود ۱۰۰ میلیون",
+        "pl": "Około 100 milionów",
+        "so": "Qiyaastii 100 milyan",
+        "ti": "ብግምት 100 ሚልዮን",
+        "tr": "Yaklaşık 100 milyon",
+        "uk": "Близько 100 мільйонів"
       }
     ],
     "answer": 0,
@@ -9556,19 +10036,59 @@
     "opts": [
       {
         "en": "Iron ore and other minerals, forest, agricultural land, and water",
-        "sv": "Järnmalm och andra mineraler, skog, jordbruksmark och vatten"
+        "sv": "Järnmalm och andra mineraler, skog, jordbruksmark och vatten",
+        "zh-Hant": "鐵礦和其他礦物、森林、農地和水",
+        "zh-Hans": "铁矿和其他矿物、森林、农业用地和水",
+        "ar": "خام الحديد ومعادن أخرى، والغابات، والأراضي الزراعية، والمياه",
+        "ckb": "کانزای ئاسن و کانزاکانی تر، دارستان، زەوی کشتوکاڵی و ئاو",
+        "fa": "سنگ آهن و دیگر کانی‌ها، جنگل، زمین کشاورزی و آب",
+        "pl": "Ruda żelaza i inne minerały, lasy, grunty rolne i woda",
+        "so": "Macdanta birta iyo macdano kale, kaymo, dhul beereed iyo biyo",
+        "ti": "ብረት ማዕድንን ካልኦት ማዕድናትን፣ ዱር፣ መሬት ሕርሻን ማይን",
+        "tr": "Demir cevheri ve diğer mineraller, orman, tarım arazisi ve su",
+        "uk": "Залізна руда та інші мінерали, ліси, сільськогосподарські землі й вода"
       },
       {
         "en": "Oil, natural gas, desert land, and tropical rain",
-        "sv": "Olja, naturgas, ökenmark och tropiskt regn"
+        "sv": "Olja, naturgas, ökenmark och tropiskt regn",
+        "zh-Hant": "石油、天然氣、沙漠土地和熱帶雨水",
+        "zh-Hans": "石油、天然气、沙漠土地和热带雨水",
+        "ar": "النفط والغاز الطبيعي والأراضي الصحراوية والأمطار الاستوائية",
+        "ckb": "نەوت، گازی سروشتی، زەوی بیابانی و بارانی گەرمەسێری",
+        "fa": "نفت، گاز طبیعی، زمین بیابانی و باران استوایی",
+        "pl": "Ropa, gaz ziemny, pustynie i tropikalne deszcze",
+        "so": "Saliid, gaas dabiici ah, dhul saxare ah iyo roob kulaylaha",
+        "ti": "ነዳዲ፣ ባህርያዊ ጋዝ፣ ምድረ በዳን ትሮፒካዊ ዝናብን",
+        "tr": "Petrol, doğal gaz, çöl arazisi ve tropik yağmur",
+        "uk": "Нафта, природний газ, пустельні землі й тропічні дощі"
       },
       {
         "en": "Coal, diamond mines, volcanic soil, and palm trees",
-        "sv": "Kol, diamantgruvor, vulkanjord och palmer"
+        "sv": "Kol, diamantgruvor, vulkanjord och palmer",
+        "zh-Hant": "煤、鑽石礦、火山土和棕櫚樹",
+        "zh-Hans": "煤、钻石矿、火山土和棕榈树",
+        "ar": "الفحم ومناجم الألماس والتربة البركانية وأشجار النخيل",
+        "ckb": "خەڵوز، کانەکانی ئەڵماس، خاکی گڕکان و دارخورما",
+        "fa": "زغال‌سنگ، معدن‌های الماس، خاک آتشفشانی و نخل‌ها",
+        "pl": "Węgiel, kopalnie diamentów, gleby wulkaniczne i palmy",
+        "so": "Dhuxul, macdanta dheemanka, ciid foolkaano iyo geedo timireed",
+        "ti": "ከሰል፣ ማዕድን ኣልማዝ፣ መሬት እሳተ ገሞራን ፓልምን",
+        "tr": "Kömür, elmas madenleri, volkanik toprak ve palmiyeler",
+        "uk": "Вугілля, алмазні шахти, вулканічний ґрунт і пальми"
       },
       {
         "en": "Rice fields, cotton plantations, coral reefs, and tides",
-        "sv": "Risfält, bomullsplantager, korallrev och tidvatten"
+        "sv": "Risfält, bomullsplantager, korallrev och tidvatten",
+        "zh-Hant": "稻田、棉花種植園、珊瑚礁和潮汐",
+        "zh-Hans": "稻田、棉花种植园、珊瑚礁和潮汐",
+        "ar": "حقول الأرز ومزارع القطن والشعاب المرجانية والمد والجزر",
+        "ckb": "کێڵگەی برنج، کشتەزاری پەمۆ، قەڵغانی مرجان و هەڵکشانی ئاو",
+        "fa": "شالیزارها، کشتزارهای پنبه، صخره‌های مرجانی و جزر و مد",
+        "pl": "Pola ryżowe, plantacje bawełny, rafy koralowe i pływy",
+        "so": "Beeraha bariiska, beeraha suufka, reefs coral ah iyo hirarka badda",
+        "ti": "ማሳታት ሩዝ፣ ተኽሊ ጡጥ፣ ኮራል ሪፍን ማዕበል ባሕርን",
+        "tr": "Pirinç tarlaları, pamuk plantasyonları, mercan resifleri ve gelgitler",
+        "uk": "Рисові поля, бавовняні плантації, коралові рифи й припливи"
       }
     ],
     "answer": 0,
@@ -9687,19 +10207,59 @@
     "opts": [
       {
         "en": "Iron ore and other minerals, forest, agricultural land, and water",
-        "sv": "Järnmalm och andra mineraler, skog, jordbruksmark och vatten"
+        "sv": "Järnmalm och andra mineraler, skog, jordbruksmark och vatten",
+        "zh-Hant": "鐵礦和其他礦物、森林、農地和水",
+        "zh-Hans": "铁矿和其他矿物、森林、农业用地和水",
+        "ar": "خام الحديد ومعادن أخرى، والغابات، والأراضي الزراعية، والمياه",
+        "ckb": "کانزای ئاسن و کانزاکانی تر، دارستان، زەوی کشتوکاڵی و ئاو",
+        "fa": "سنگ آهن و دیگر کانی‌ها، جنگل، زمین کشاورزی و آب",
+        "pl": "Ruda żelaza i inne minerały, lasy, grunty rolne i woda",
+        "so": "Macdanta birta iyo macdano kale, kaymo, dhul beereed iyo biyo",
+        "ti": "ብረት ማዕድንን ካልኦት ማዕድናትን፣ ዱር፣ መሬት ሕርሻን ማይን",
+        "tr": "Demir cevheri ve diğer mineraller, orman, tarım arazisi ve su",
+        "uk": "Залізна руда та інші мінерали, ліси, сільськогосподарські землі й вода"
       },
       {
         "en": "Oil, natural gas, desert land, and tropical rain",
-        "sv": "Olja, naturgas, ökenmark och tropiskt regn"
+        "sv": "Olja, naturgas, ökenmark och tropiskt regn",
+        "zh-Hant": "石油、天然氣、沙漠土地和熱帶雨水",
+        "zh-Hans": "石油、天然气、沙漠土地和热带雨水",
+        "ar": "النفط والغاز الطبيعي والأراضي الصحراوية والأمطار الاستوائية",
+        "ckb": "نەوت، گازی سروشتی، زەوی بیابانی و بارانی گەرمەسێری",
+        "fa": "نفت، گاز طبیعی، زمین بیابانی و باران استوایی",
+        "pl": "Ropa, gaz ziemny, pustynie i tropikalne deszcze",
+        "so": "Saliid, gaas dabiici ah, dhul saxare ah iyo roob kulaylaha",
+        "ti": "ነዳዲ፣ ባህርያዊ ጋዝ፣ ምድረ በዳን ትሮፒካዊ ዝናብን",
+        "tr": "Petrol, doğal gaz, çöl arazisi ve tropik yağmur",
+        "uk": "Нафта, природний газ, пустельні землі й тропічні дощі"
       },
       {
         "en": "Coal, diamond mines, volcanic soil, and palm trees",
-        "sv": "Kol, diamantgruvor, vulkanjord och palmer"
+        "sv": "Kol, diamantgruvor, vulkanjord och palmer",
+        "zh-Hant": "煤、鑽石礦、火山土和棕櫚樹",
+        "zh-Hans": "煤、钻石矿、火山土和棕榈树",
+        "ar": "الفحم ومناجم الألماس والتربة البركانية وأشجار النخيل",
+        "ckb": "خەڵوز، کانەکانی ئەڵماس، خاکی گڕکان و دارخورما",
+        "fa": "زغال‌سنگ، معدن‌های الماس، خاک آتشفشانی و نخل‌ها",
+        "pl": "Węgiel, kopalnie diamentów, gleby wulkaniczne i palmy",
+        "so": "Dhuxul, macdanta dheemanka, ciid foolkaano iyo geedo timireed",
+        "ti": "ከሰል፣ ማዕድን ኣልማዝ፣ መሬት እሳተ ገሞራን ፓልምን",
+        "tr": "Kömür, elmas madenleri, volkanik toprak ve palmiyeler",
+        "uk": "Вугілля, алмазні шахти, вулканічний ґрунт і пальми"
       },
       {
         "en": "Rice fields, cotton plantations, coral reefs, and tides",
-        "sv": "Risfält, bomullsplantager, korallrev och tidvatten"
+        "sv": "Risfält, bomullsplantager, korallrev och tidvatten",
+        "zh-Hant": "稻田、棉花種植園、珊瑚礁和潮汐",
+        "zh-Hans": "稻田、棉花种植园、珊瑚礁和潮汐",
+        "ar": "حقول الأرز ومزارع القطن والشعاب المرجانية والمد والجزر",
+        "ckb": "کێڵگەی برنج، کشتەزاری پەمۆ، قەڵغانی مرجان و هەڵکشانی ئاو",
+        "fa": "شالیزارها، کشتزارهای پنبه، صخره‌های مرجانی و جزر و مد",
+        "pl": "Pola ryżowe, plantacje bawełny, rafy koralowe i pływy",
+        "so": "Beeraha bariiska, beeraha suufka, reefs coral ah iyo hirarka badda",
+        "ti": "ማሳታት ሩዝ፣ ተኽሊ ጡጥ፣ ኮራል ሪፍን ማዕበል ባሕርን",
+        "tr": "Pirinç tarlaları, pamuk plantasyonları, mercan resifleri ve gelgitler",
+        "uk": "Рисові поля, бавовняні плантації, коралові рифи й припливи"
       }
     ],
     "answer": 0,
