@@ -7077,12 +7077,12 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "How can a welfare service be private and still tax-funded?",
+      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue?",
       "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
     },
     "opts": [
       {
-        "en": "A private company can provide the service while tax revenue pays for it",
+        "en": "A private company can provide the service while tax revenue funds it",
         "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
       },
       {
@@ -34686,12 +34686,12 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "How can a welfare service be private and still tax-funded ...?",
+      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue ...?",
       "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad ...?"
     },
     "opts": [
       {
-        "en": "A private company can provide the service while tax revenue pays for it",
+        "en": "A private company can provide the service while tax revenue funds it",
         "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
       },
       {
@@ -34735,7 +34735,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "A private company can provide the service while tax revenue pays for it.",
+      "en": "A private company can provide the service while tax revenue funds it.",
       "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den."
     },
     "opts": [
@@ -34817,12 +34817,12 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: How can a welfare service be private and still tax-funded?",
+      "en": "Choose the correct option: How can a welfare service be provided by a private company but still be funded by tax revenue?",
       "sv": "Välj rätt alternativ: Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
     },
     "opts": [
       {
-        "en": "A private company can provide the service while tax revenue pays for it",
+        "en": "A private company can provide the service while tax revenue funds it",
         "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
       },
       {
