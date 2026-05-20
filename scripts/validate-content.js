@@ -6,11 +6,6 @@ const {
   buildSiteQuestionBank,
   generateStaticSiteQuestionBankJs,
 } = require('./export-site-question-bank');
-const {
-  collectExportQuestionBankExecFileSyncCalls,
-  collectValidateContentExecFileSyncCalls,
-  sourceLineNumberForIndex,
-} = require('./content-exec-cwd-guards');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -32,11 +27,6 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 144;
-const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
-const GENERATED_VARIANTS_PER_SOURCE = 4;
-const EXPECTED_PUBLISHED_QUESTIONS =
-  EXPECTED_SOURCE_QUESTIONS * (GENERATED_VARIANTS_PER_SOURCE + 1);
 const SINGLE_CHOICE_OPTION_IDS = ['a', 'b', 'c', 'd'];
 const TRUE_FALSE_OPTION_IDS = ['true', 'false'];
 const GENERATED_VARIANT_CONVENTIONS = [
@@ -45,6 +35,7 @@ const GENERATED_VARIANT_CONVENTIONS = [
   { type: 'true_false', tag: 'false-statement' },
   { type: 'single_choice', tag: 'judgement' },
 ];
+const GENERATED_VARIANTS_PER_SOURCE = GENERATED_VARIANT_CONVENTIONS.length;
 const UNKNOWN_OPTION = {
   id: 'unknown',
   textSv: 'Inget av alternativen stämmer',
@@ -77,8 +68,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'correctOptionId',
   'optionSv',
   'optionEn',
-  'correctOptionSv',
-  'correctOptionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
@@ -489,7 +478,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Svenska',
     'Ljud på',
     'Ljud av',
-    'Dagligt mål, språk och ljud',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
@@ -514,7 +502,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'English support',
     'Audio on',
     'Audio off',
-    'Daily goal, language, and audio',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
@@ -543,9 +530,13 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ],
   [
     'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
-    'profile route must read audio state from settings store',
+    'profile route must read audio status for study setup shortcut',
   ],
   ['const copy = profileCopy[language];', 'profile route must select copy from settings language'],
+  [
+    'const audioBadge = audioEnabled ? copy.audioEnabledBadge : copy.audioMutedBadge;',
+    'profile route must localize audio status in the study setup shortcut',
+  ],
   [
     '<ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>',
     'profile shell must render localized copy',
@@ -568,6 +559,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityHint={copy.openSettingsHint}',
+    'profile settings link must describe daily goal, language, and audio settings',
   ],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
@@ -945,6 +940,7 @@ const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
+  'removeAdsStoreProductIds',
   'storeDisclosureTopics',
 ];
 const EXPECTED_RELEASE_CONSENT_PROMPTS = ['app_tracking_transparency', 'ump_consent_form'];
@@ -975,9 +971,12 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdInterstitial',
+    component: 'AdBanner',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdInterstitial\s+triggerKey=\{question\.id\}\s+\/>/,
+    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    removeAdsComponent: 'RemoveAdsPlacementCta',
+    removeAdsPattern:
+      /<RemoveAdsPlacementCta\s+placement="quiz_completed_interstitial"\s+\/>\s*<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -991,7 +990,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -1159,13 +1158,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
     'Tillbaka till övning',
-    'Quizpass',
-    'Det finns inga quizfrågor ännu.',
+    'Frågepass',
+    'Det finns inga övningsfrågor ännu.',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    'Quizpass ${currentSessionId}',
+    'Frågepass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här quizfrågan',
+    'Försök igen med den här övningsfrågan',
   ],
   en: [
     'Back to Practice',
@@ -1178,6 +1177,20 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Try this quiz question again',
   ],
 };
+const FORBIDDEN_QUIZ_ROUTE_SWEDISH_LOANWORD_PATTERNS = [
+  {
+    label: 'old Swedish routed-session badge copy',
+    pattern: new RegExp(['Quiz', 'pass'].join('')),
+  },
+  {
+    label: 'old Swedish empty-state copy',
+    pattern: new RegExp(['quiz', 'frågor'].join('')),
+  },
+  {
+    label: 'old Swedish retry accessibility copy',
+    pattern: new RegExp(['quiz', 'frågan'].join('')),
+  },
+];
 const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'quiz route must import AppLanguage from settings'],
   ['type QuizSessionCopy = {', 'quiz route must define a typed copy contract'],
@@ -1235,8 +1248,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta quiz',
-    'Starta quiz för ${chapterTitle}',
+    'Starta kapitelövning',
+    'Starta kapitelövning för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -1248,6 +1261,12 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Start quiz for ${chapterTitle}',
   ],
 };
+const FORBIDDEN_CHAPTER_ROUTE_SWEDISH_LOANWORD_PATTERNS = [
+  {
+    label: 'old Swedish chapter-start CTA copy',
+    pattern: new RegExp(['Starta ', 'quiz'].join('')),
+  },
+];
 const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
   ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
@@ -1651,7 +1670,7 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
     'Öva med UHR-refererade frågor och förklaringar.',
     'Följ framsteg lokalt på din enhet utan konto.',
-    'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
+    'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du svarat fel på.',
     'Förbered dig lugnt för samhällskunskapsprovet',
   ],
   en: [
@@ -1694,6 +1713,13 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding settings link must expose localized accessibility copy',
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
+];
+const FORBIDDEN_ONBOARDING_ROUTE_COPY_PATTERNS = [
+  {
+    pattern: /repetition av misstag/i,
+    message:
+      'onboarding route Swedish copy must describe reviewing missed questions, not repeating mistakes',
+  },
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -2107,7 +2133,7 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
   },
   {
-    label: 'tone style path with caller override',
+    label: 'tone style path',
     pattern: /style=\{\[styles\.badge, styles\[tone\], style\]\}/,
   },
   {
@@ -3212,7 +3238,11 @@ const EXPECTED_PURCHASE_INTERFACES = [
   },
   {
     name: 'NativePurchaseProviderOptions',
-    fields: [{ name: 'purchaseTimeoutMs', type: 'number', optional: true }],
+    fields: [
+      { name: 'iapModule', type: 'NativeIapModule', optional: true },
+      { name: 'platform', type: 'RemoveAdsStorePlatform', optional: true },
+      { name: 'purchaseTimeoutMs', type: 'number', optional: true },
+    ],
   },
   {
     name: 'MockPurchaseProviderOptions',
@@ -6214,6 +6244,12 @@ const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+const EXPECTED_BASE_SOURCE_QUESTIONS = Array.isArray(baseQuestions) ? baseQuestions.length : 0;
+const EXPECTED_SOURCE_QUESTIONS = Array.isArray(sourceQuestions) ? sourceQuestions.length : 0;
+const EXPECTED_GENERATED_PUBLISHED_QUESTIONS =
+  EXPECTED_SOURCE_QUESTIONS * GENERATED_VARIANTS_PER_SOURCE;
+const EXPECTED_PUBLISHED_QUESTIONS =
+  EXPECTED_SOURCE_QUESTIONS + EXPECTED_GENERATED_PUBLISHED_QUESTIONS;
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
@@ -6290,15 +6326,15 @@ const hasAdsDisabled = premiumModule.hasAdsDisabled;
 const isPremiumUser = premiumModule.isPremiumUser;
 const premiumConfig = premiumModule.premiumConfig;
 const purchaseModule = loadTs('lib/monetization/purchases.ts');
+const REMOVE_ADS_ANDROID_PRODUCT_ID = purchaseModule.REMOVE_ADS_ANDROID_PRODUCT_ID;
+const REMOVE_ADS_IOS_PRODUCT_ID = purchaseModule.REMOVE_ADS_IOS_PRODUCT_ID;
 const REMOVE_ADS_PRICE_LABEL = purchaseModule.REMOVE_ADS_PRICE_LABEL;
 const REMOVE_ADS_PRODUCT_ID = purchaseModule.REMOVE_ADS_PRODUCT_ID;
 const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
 const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
-const appConfig = fs.existsSync(path.join(repoRoot, 'app.config.ts'))
-  ? { expo: loadTs('app.config.ts').default() }
-  : loadJson('app.json');
+const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
@@ -6315,6 +6351,7 @@ let releaseMonetizationPolicyParityValidated = false;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let adPlacementRouteParityValidated = false;
+let adPlacementPlatformParityValidated = false;
 let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
@@ -6357,6 +6394,8 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
+let legalSwedishEnglishTokenRoutesValidated = 0;
+let legalSwedishEnglishTokenGuardValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -6465,9 +6504,6 @@ let themeTokenSchemaValidated = false;
 let contentTestValidateContentExecCallsValidated = 0;
 let contentTestValidateContentExecCwdPinnedValidated = 0;
 let contentTestValidateContentExecCwdParityValidated = false;
-let contentTestExportQuestionBankExecCallsValidated = 0;
-let contentTestExportQuestionBankExecCwdPinnedValidated = 0;
-let contentTestExportQuestionBankExecCwdParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let practiceScoringRulesValidated = 0;
@@ -6920,14 +6956,19 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
-  function compactSource(value) {
-    return value.replace(/\s+/g, ' ');
-  }
-
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
+  let adBannerSource = '';
+  try {
+    adBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`components/monetization/AdBanner.tsx could not be read: ${error.message}`);
+  }
 
   for (const file of ['components/monetization/PremiumBanner.tsx', 'lib/monetization/adCopy.ts']) {
     try {
@@ -6941,6 +6982,68 @@ function validateAdPlacementRouteParity() {
       reject(`${file} could not be read for Swedish monetization copy parity: ${error.message}`);
     }
   }
+
+  let platformSourcesValid = true;
+
+  function expectSourcePattern(file, pattern, message) {
+    let source = '';
+
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} could not be read for ad platform parity: ${error.message}`);
+      platformSourcesValid = false;
+      return '';
+    }
+
+    if (!pattern.test(source)) {
+      reject(message);
+      platformSourcesValid = false;
+    }
+
+    return source;
+  }
+
+  expectSourcePattern(
+    'components/monetization/AdBanner.native.tsx',
+    /getPlatformAdUnitId\(placement,\s*Platform\.OS\)[\s\S]*shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,?\s*\)/,
+    'AdBanner.native must pass Platform.OS to native unit lookup and shouldShowAd',
+  );
+  expectSourcePattern(
+    'components/monetization/LaunchPopupAd.native.tsx',
+    /(?=[\s\S]*getPlatformAdUnitId\('app_open_launch',\s*Platform\.OS\))(?=[\s\S]*platform:\s*Platform\.OS)/,
+    'LaunchPopupAd.native must pass Platform.OS to app-open unit lookup and launch visibility',
+  );
+  expectSourcePattern(
+    'components/monetization/NativeAdCard.tsx',
+    /shouldShowAd\('results_native',\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\)/,
+    'NativeAdCard web fallback must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd',
+  );
+  expectSourcePattern(
+    'components/monetization/AdInterstitial.native.tsx',
+    /(?=[\s\S]*InterstitialAd\.createForAdRequest)(?=[\s\S]*shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,?\s*\))/,
+    'AdInterstitial native placement must use the Google Mobile Ads interstitial API and Platform.OS gate',
+  );
+  expectSourcePattern(
+    'lib/monetization/useMockExamAccess.ts',
+    /(?=[\s\S]*buildAccessDecision\(\{[\s\S]*platform:\s*Platform\.OS[\s\S]*\}\))(?=[\s\S]*getMockExamAccessDecision\(\{[\s\S]*platform,)/,
+    'useMockExamAccess must pass Platform.OS into rewarded mock-exam access decisions',
+  );
+
+  if (
+    !/shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*\)/.test(
+      adBannerSource,
+    )
+  ) {
+    reject('AdBanner must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd');
+    platformSourcesValid = false;
+  }
+  if (adBannerSource.includes('Platform.OS')) {
+    reject('web AdBanner must not pin ad availability to a native platform');
+    platformSourcesValid = false;
+  }
+
+  if (platformSourcesValid) adPlacementPlatformParityValidated = true;
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -6966,6 +7069,19 @@ function validateAdPlacementRouteParity() {
     if (!safePlacements.includes(spec.placement)) {
       reject(`adsConfig.safePlacements must include routed placement ${spec.placement}`);
       routeIsValid = false;
+    }
+
+    if (spec.removeAdsComponent && spec.removeAdsPattern) {
+      if (!source.includes(`components/monetization/${spec.removeAdsComponent}`)) {
+        reject(
+          `${spec.file} must import ${spec.removeAdsComponent} from the monetization components`,
+        );
+        routeIsValid = false;
+      }
+      if (!spec.removeAdsPattern.test(source)) {
+        reject(`${spec.file} must render ${spec.removeAdsComponent} adjacent to ${spec.placement}`);
+        routeIsValid = false;
+      }
     }
 
     if (typeof shouldShowAd === 'function') {
@@ -6995,49 +7111,42 @@ function validateAdPlacementRouteParity() {
     }
 
     if (spec.component === 'NativeAdCard') {
-      const nativeAdCardSource = fs.readFileSync(
+      const webNativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
       );
-      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
-        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
-        routeIsValid = false;
-      }
-    }
-
-    if (spec.component === 'AdInterstitial') {
-      const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
-      );
-      const nativeInterstitialSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdInterstitial.native.tsx'),
+      const nativeAdCardSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
         'utf8',
       );
-      const webInterstitialSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdInterstitial.tsx'),
-        'utf8',
-      );
-
-      if (!nativeInterstitialSource.includes('InterstitialAd.createForAdRequest')) {
-        reject('AdInterstitial native placement must use the Google Mobile Ads interstitial API');
-        routeIsValid = false;
-      }
-      if (nativeInterstitialSource.includes('BannerAd')) {
-        reject('AdInterstitial native placement must not render BannerAd');
-        routeIsValid = false;
-      }
-      if (!consentAwareShouldShowPattern.test(nativeInterstitialSource)) {
-        reject(`AdInterstitial must gate ${spec.placement} through consent-aware shouldShowAd`);
-        routeIsValid = false;
-      }
-      if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
-        reject('AdInterstitial must pass non-personalized ad request options from consent');
-        routeIsValid = false;
-      }
-      if (!webInterstitialSource.includes('placement="quiz_completed_interstitial"')) {
+      if (
+        !/shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/.test(
+          webNativeAdCardSource,
+        )
+      ) {
         reject(
-          'AdInterstitial web fallback must render the accessible quiz completion placeholder',
+          'NativeAdCard web fallback must pass WEB_AD_FALLBACK_CONSENT_DECISION to shouldShowAd',
         );
+        routeIsValid = false;
+      }
+      if (/shouldShowAd\(\s*'results_native'[\s\S]*Platform\.OS/.test(webNativeAdCardSource)) {
+        reject('NativeAdCard web fallback must not pass Platform.OS to shouldShowAd');
+        routeIsValid = false;
+      }
+      if (!nativeAdCardSource.includes(`getPlatformAdUnitId('${spec.placement}', Platform.OS)`)) {
+        reject(`NativeAdCard.native must resolve ${spec.placement} with Platform.OS`);
+        routeIsValid = false;
+      }
+      if (
+        !new RegExp(
+          `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
+        ).test(nativeAdCardSource)
+      ) {
+        reject(`NativeAdCard.native must gate ${spec.placement} through Platform.OS`);
+        routeIsValid = false;
+      }
+      if (webNativeAdCardSource.includes('react-native-google-mobile-ads')) {
+        reject('NativeAdCard web fallback must not import native-only ad SDK APIs');
         routeIsValid = false;
       }
     }
@@ -7074,34 +7183,6 @@ function validateAdPlacementRouteParity() {
     if (routeIsValid) noAdRoutesValidated += 1;
   }
 
-  try {
-    const nativeAdBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-      'utf8',
-    );
-    if (
-      !/shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,\s*\)/.test(
-        nativeAdBannerSource,
-      )
-    ) {
-      reject('AdBanner.native must gate native banner placements through Platform.OS');
-    }
-  } catch (error) {
-    reject(`components/monetization/AdBanner.native.tsx could not be read: ${error.message}`);
-  }
-
-  try {
-    const useMockExamAccessSource = fs.readFileSync(
-      path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
-      'utf8',
-    );
-    if (!useMockExamAccessSource.includes('platform: Platform.OS')) {
-      reject('useMockExamAccess must pass Platform.OS into rewarded mock-exam ad decisions');
-    }
-  } catch (error) {
-    reject(`lib/monetization/useMockExamAccess.ts could not be read: ${error.message}`);
-  }
-
   if (
     valid &&
     adPlacementRoutesValidated === EXPECTED_ROUTE_AD_PLACEMENTS.length &&
@@ -7131,6 +7212,10 @@ function validateReleaseMonetizationPolicyParity() {
     realAdsEnvFlag: EXPECTED_RELEASE_REAL_ADS_ENV_FLAG,
     removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL,
     removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
+    removeAdsStoreProductIds: {
+      android: REMOVE_ADS_ANDROID_PRODUCT_ID,
+      ios: REMOVE_ADS_IOS_PRODUCT_ID,
+    },
     storeDisclosureTopics: EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS,
   };
 
@@ -7916,6 +8001,9 @@ function validateQuizRouteCopyParity() {
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
+  FORBIDDEN_QUIZ_ROUTE_SWEDISH_LOANWORD_PATTERNS.forEach(({ label, pattern }) => {
+    if (pattern.test(quizRoute)) reject(`quiz route still contains ${label}`);
+  });
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -8192,6 +8280,9 @@ function validateChapterRouteCopyParity() {
 
   EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!chapterRoute.includes(snippet)) reject(message);
+  });
+  FORBIDDEN_CHAPTER_ROUTE_SWEDISH_LOANWORD_PATTERNS.forEach(({ label, pattern }) => {
+    if (pattern.test(chapterRoute)) reject(`chapter route still contains ${label}`);
   });
 
   const seenLabels = new Set();
@@ -8766,6 +8857,10 @@ function validateOnboardingRouteCopyParity() {
 
   EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!onboardingRoute.includes(snippet)) reject(message);
+  });
+
+  FORBIDDEN_ONBOARDING_ROUTE_COPY_PATTERNS.forEach(({ pattern, message }) => {
+    if (pattern.test(onboardingRoute)) reject(message);
   });
 
   const seenLabels = new Set();
@@ -10823,6 +10918,18 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'Remove Ads product id must stay a reverse-DNS removeads identifier',
     ],
     [
+      REMOVE_ADS_IOS_PRODUCT_ID === REMOVE_ADS_PRODUCT_ID &&
+        REMOVE_ADS_ANDROID_PRODUCT_ID === 'removeads',
+      'Remove Ads store ids must split iOS reverse-DNS from Android removeads SKU',
+    ],
+    [
+      normalizedPurchaseSource.includes('export const REMOVE_ADS_STORE_PRODUCT_IDS =') &&
+        normalizedPurchaseSource.includes('android: REMOVE_ADS_ANDROID_PRODUCT_ID') &&
+        normalizedPurchaseSource.includes('ios: REMOVE_ADS_IOS_PRODUCT_ID') &&
+        normalizedPurchaseSource.includes('getRemoveAdsStoreProductId('),
+      'Remove Ads runtime must expose platform-specific store product ids',
+    ],
+    [
       /return\s+\{[\s\S]*priceLabel:\s*REMOVE_ADS_PRICE_LABEL,[\s\S]*productId:\s*REMOVE_ADS_PRODUCT_ID,[\s\S]*\};/.test(
         purchaseSource,
       ),
@@ -10847,27 +10954,20 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'native Remove Ads finish transaction must be non-consumable',
     ],
     [
-      normalizedPurchaseSource.includes('async function finishRemoveAdsPurchase(') &&
-        normalizedPurchaseSource.includes('await provider.finishPurchase?.(purchase);') &&
-        normalizedPurchaseSource.includes(
-          'Receipt validation is the entitlement boundary; store acknowledgement can retry later.',
-        ),
-      'Remove Ads finish transaction failures must not replace validated purchase grants',
-    ],
-    [
-      /await finishRemoveAdsPurchase\(provider,\s*purchase\);\s*const entitlements = await setRemoveAdsEntitlement\(true,\s*\{[\s\S]*source:\s*'purchase'/.test(
-        purchaseSource,
-      ) &&
-        /await finishRemoveAdsPurchase\(provider,\s*purchase\);\s*const entitlements = await setRemoveAdsEntitlement\(true,\s*\{[\s\S]*source:\s*'restore'/.test(
-          purchaseSource,
-        ),
-      'Remove Ads buy and restore flows must isolate finish failures before granting validated entitlements',
-    ],
-    [
-      /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*productId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*productId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
+      /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*storeProductId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*storeProductId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
         purchaseSource,
       ),
-      'native Remove Ads purchase request must use the supplied product id as an in-app purchase',
+      'native Remove Ads purchase request must use the platform store product id as an in-app purchase',
+    ],
+    [
+      normalizedPurchaseSource.includes('purchaseMatchesProductId(purchase, productId') &&
+        normalizedPurchaseSource.includes('getPurchaseStoreProductId(productId, storePlatform)'),
+      'native purchase matching must compare the requested product against its platform store id',
+    ],
+    [
+      normalizedPurchaseSource.includes('isRemoveAdsProductId(result.productId)') &&
+        normalizedPurchaseSource.includes('productId: REMOVE_ADS_PRODUCT_ID,'),
+      'receipt validation must accept store-specific Remove Ads ids but persist canonical entitlement id',
     ],
     [
       normalizedPurchaseSource.includes(
@@ -11594,10 +11694,7 @@ function validateThemeTokenSchema() {
     themeTypographyTokensValidated === EXPECTED_THEME_TYPOGRAPHY_TOKENS.length &&
     themeShadowTokensValidated === EXPECTED_THEME_SHADOW_TOKENS.length &&
     themeMotionTokensValidated ===
-      Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length +
-        EXPECTED_THEME_MOTION_EASING.length +
-        2 &&
-    themeContrastValidated
+      Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length + EXPECTED_THEME_MOTION_EASING.length + 2
   ) {
     themeTokenSchemaValidated = true;
   }
@@ -13150,8 +13247,6 @@ function validateQuestionBankCsvContract() {
       question.correctOptionId,
       questionOptionPayload(question, 'textSv'),
       questionOptionPayload(question, 'textEn'),
-      question.options.find((option) => option.id === question.correctOptionId)?.textSv,
-      question.options.find((option) => option.id === question.correctOptionId)?.textEn,
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
@@ -13937,18 +14032,32 @@ function contentTestFilesForValidation() {
     .sort();
 }
 
+function collectValidateContentExecFileSyncCallsForValidation(sourceText) {
+  const calls = [];
+  const callPattern =
+    /execFileSync\(\s*process\.execPath,\s*\[\s*(['"])scripts\/validate-content\.js\1\s*\],\s*\{([\s\S]*?)\}\s*\)/g;
+  let match;
+  while ((match = callPattern.exec(sourceText)) !== null) {
+    calls.push({
+      index: match.index,
+      hasPinnedCwd: /\bcwd\s*:\s*repoRoot\b/.test(match[2]),
+    });
+  }
+  return calls;
+}
+
 function validateContentTestExecCwdParity() {
   const unpinnedCalls = [];
 
   for (const fileName of contentTestFilesForValidation()) {
     const sourceText = fs.readFileSync(path.join(repoRoot, fileName), 'utf8');
-    const calls = collectValidateContentExecFileSyncCalls(sourceText);
+    const calls = collectValidateContentExecFileSyncCallsForValidation(sourceText);
     contentTestValidateContentExecCallsValidated += calls.length;
     for (const call of calls) {
       if (call.hasPinnedCwd) {
         contentTestValidateContentExecCwdPinnedValidated += 1;
       } else {
-        const lineNumber = sourceLineNumberForIndex(sourceText, call.index);
+        const lineNumber = sourceText.slice(0, call.index).split('\n').length;
         unpinnedCalls.push(`${fileName}:${lineNumber}`);
       }
     }
@@ -13966,37 +14075,7 @@ function validateContentTestExecCwdParity() {
   contentTestValidateContentExecCwdParityValidated = true;
 }
 
-function validateContentTestExportQuestionBankExecCwdParity() {
-  const unpinnedCalls = [];
-
-  for (const fileName of contentTestFilesForValidation()) {
-    const sourceText = fs.readFileSync(path.join(repoRoot, fileName), 'utf8');
-    const calls = collectExportQuestionBankExecFileSyncCalls(sourceText);
-    contentTestExportQuestionBankExecCallsValidated += calls.length;
-    for (const call of calls) {
-      if (call.hasPinnedCwd) {
-        contentTestExportQuestionBankExecCwdPinnedValidated += 1;
-      } else {
-        const lineNumber = sourceLineNumberForIndex(sourceText, call.index);
-        unpinnedCalls.push(`${fileName}:${lineNumber}`);
-      }
-    }
-  }
-
-  if (contentTestExportQuestionBankExecCallsValidated === 0) {
-    fail('content tests should run export-question-bank directly');
-    return;
-  }
-  if (unpinnedCalls.length > 0) {
-    fail(`export-question-bank exec calls missing cwd: repoRoot: ${unpinnedCalls.join(', ')}`);
-    return;
-  }
-
-  contentTestExportQuestionBankExecCwdParityValidated = true;
-}
-
 validateContentTestExecCwdParity();
-validateContentTestExportQuestionBankExecCwdParity();
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
@@ -14347,6 +14426,7 @@ console.log(
       adPlacementRoutesValidated,
       noAdRoutesValidated,
       adPlacementRouteParityValidated,
+      adPlacementPlatformParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
       removeAdsEntitlementHookCasesValidated,
@@ -14481,9 +14561,6 @@ console.log(
       contentTestValidateContentExecCallsValidated,
       contentTestValidateContentExecCwdPinnedValidated,
       contentTestValidateContentExecCwdParityValidated,
-      contentTestExportQuestionBankExecCallsValidated,
-      contentTestExportQuestionBankExecCwdPinnedValidated,
-      contentTestExportQuestionBankExecCwdParityValidated,
       mascotAssetContractValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,

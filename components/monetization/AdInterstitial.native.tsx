@@ -29,6 +29,7 @@ export function AdInterstitial({
         'quiz_completed_interstitial',
         resolvedEntitlements,
         mobileAdsConsent.decision.consentDecision,
+        Platform.OS,
       )
     ) {
       return undefined;

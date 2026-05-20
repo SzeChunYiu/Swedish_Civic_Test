@@ -1,29 +1,21 @@
+import type { PlatformOSType } from 'react-native';
+
 import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types/monetization';
 import type { AdConsentDecision } from './consent';
-import { getRealAdUnitOverride, readRealAdUnitOverrides } from './adUnitsReal';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
+export type AdRuntimePlatform = PlatformOSType;
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
-type AdUnitEnvValues = Record<
-  AdPlacement,
-  { android: string | undefined; ios: string | undefined }
->;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
-export type AdRuntimePlatform = 'ios' | 'android' | 'web' | string;
 
-export const WEB_AD_FALLBACK_CONSENT_DECISION: AdConsentGate = {
-  adServingAllowed: true,
-};
+export const WEB_AD_FALLBACK_CONSENT_DECISION: AdConsentGate = { adServingAllowed: true };
 
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',
   '/quiz',
   '/disclaimer',
-  '/about-the-test',
-  '/citizenship-requirements',
-  '/onboarding',
   '/privacy',
   '/sources',
   '/support',
@@ -38,49 +30,14 @@ function readBooleanFlag(value: string | undefined, defaultValue: boolean): bool
   return defaultValue;
 }
 
-function readEnvString(value: string | undefined): string | undefined {
-  const normalizedValue = value?.trim();
-  return normalizedValue ? normalizedValue : undefined;
-}
-
-export const REAL_AD_UNIT_ENV_VALUES: AdUnitEnvValues = {
-  app_open_launch: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID),
-  },
-  chapter_list_banner: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID),
-  },
-  home_banner: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID),
-  },
-  quiz_completed_interstitial: {
-    android: readEnvString(
-      process.env.EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID,
-    ),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID),
-  },
-  results_native: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID),
-  },
-  rewarded_extra_exam: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID),
-  },
-};
-
-function getRealAdUnitEnvValue(placement: AdPlacement, platform: 'android' | 'ios') {
-  const value = REAL_AD_UNIT_ENV_VALUES[placement][platform];
+function readEnvString(key: string): string | undefined {
+  const value = process.env[key]?.trim();
   return value ? value : undefined;
 }
 
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
 
 const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
-const REAL_AD_UNIT_OVERRIDES = readRealAdUnitOverrides();
 
 const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   app_open_launch: {
@@ -155,9 +112,9 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 ];
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
-  const override = getRealAdUnitOverride(unit.placement, REAL_AD_UNIT_OVERRIDES);
-  const androidUnitId = override?.androidUnitId ?? getRealAdUnitEnvValue(unit.placement, 'android');
-  const iosUnitId = override?.iosUnitId ?? getRealAdUnitEnvValue(unit.placement, 'ios');
+  const envKeys = REAL_AD_UNIT_ENV_KEYS[unit.placement];
+  const androidUnitId = readEnvString(envKeys.android);
+  const iosUnitId = readEnvString(envKeys.ios);
 
   return {
     ...unit,
@@ -168,12 +125,36 @@ export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
   };
 });
 
+function getAdUnitIdForPlatform(
+  unit: AdUnitConfig,
+  platform?: AdRuntimePlatform,
+): string | undefined {
+  if (platform === 'ios') return unit.iosUnitId;
+  if (platform === 'android') return unit.androidUnitId;
+  return unit.androidUnitId ?? unit.iosUnitId;
+}
+
+function isAdUnitAvailableForPlatform(
+  unit: AdUnitConfig | undefined,
+  platform?: AdRuntimePlatform,
+): boolean {
+  if (!unit?.enabled) return false;
+  return Boolean(getAdUnitIdForPlatform(unit, platform));
+}
+
 export function getConfiguredAdUnits(): AdUnitConfig[] {
   return REAL_ADS_ENABLED ? REAL_AD_UNITS : TEST_AD_UNITS;
 }
 
 export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
   return getConfiguredAdUnits().find((unit) => unit.placement === placement);
+}
+
+export function isAdPlacementAvailableOnPlatform(
+  placement: AdPlacement,
+  platform?: AdRuntimePlatform,
+): boolean {
+  return isAdUnitAvailableForPlatform(getAdUnit(placement), platform);
 }
 
 export function shouldShowAd(
@@ -186,11 +167,7 @@ export function shouldShowAd(
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
-  const unit = getAdUnit(placement);
-  if (!unit?.enabled) return false;
-  if (REAL_ADS_ENABLED && platform === 'ios') return Boolean(unit.iosUnitId);
-  if (REAL_ADS_ENABLED && platform === 'android') return Boolean(unit.androidUnitId);
-  return true;
+  return isAdPlacementAvailableOnPlatform(placement, platform);
 }
 
 export function shouldShowLaunchPopupAd({
@@ -221,23 +198,18 @@ export function shouldSuppressLaunchPopupAdForPath(pathname: string): boolean {
 
 export function getPlatformAdUnitId(
   placement: AdPlacement,
-  platform: 'ios' | 'android' | 'web' | string,
+  platform: AdRuntimePlatform,
 ): string | undefined {
   const unit = getAdUnit(placement);
-  if (!unit) return undefined;
-  if (platform === 'ios') return unit.iosUnitId;
-  if (platform === 'android') return unit.androidUnitId;
-  return unit.androidUnitId ?? unit.iosUnitId;
+  return unit ? getAdUnitIdForPlatform(unit, platform) : undefined;
 }
 
 export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
-  webFallbackConsentDecision: WEB_AD_FALLBACK_CONSENT_DECISION,
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
-  realUnitOverrides: REAL_AD_UNIT_OVERRIDES,
-  realUnitEnvValues: REAL_AD_UNIT_ENV_VALUES,
+  webFallbackConsentDecision: WEB_AD_FALLBACK_CONSENT_DECISION,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
   units: getConfiguredAdUnits(),
