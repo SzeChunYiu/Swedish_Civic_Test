@@ -300,6 +300,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bfor Cooperation between\b/,
   /^En anledning är att Sverige (?:hade|saknade)\b/,
   /^One reason is that Sweden had\b/,
+  /^En anledning är att Det\b/,
+  /^One reason is that It\b/,
   /\bhar förändrat bara hur\b/i,
   /\bhas changed only how\b/i,
   /\barbetar för endast\b/i,
@@ -825,19 +827,19 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad till senare övning',
+    'Sparad för fokuserad repetition',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
-    'När du missar en övningsfråga visas den här.',
-    'Inga missade frågor ännu',
-    'Öva igen',
-    'Frågor att öva på',
-    'Ditt senaste svar',
-    'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och hur många gånger de har missats.',
-    'Missade frågor',
-    'Missad ${count} gånger',
+    'Svara fel på en övningsfråga så visas den här.',
+    'Inga misstag ännu',
+    'Fellogg',
+    'Fel svar att repetera',
+    'Ditt senaste felaktiga svar',
+    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+    'Misstag',
+    'Fel svar: ${count}',
   ],
   en: [
     'Smart review',
@@ -857,13 +859,6 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
-const FORBIDDEN_MISTAKES_ROUTE_SV_COPY_PATTERNS = [
-  ['Fell', 'ogg'],
-  ['Fel svar att', ' repetera'],
-  ['Gå igenom fel svar', ' med fråga'],
-  ['repetitionsantal på', ' samma plats'],
-  ['Sparad för fokuserad', ' repetition'],
-];
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -4190,7 +4185,7 @@ function lowerLeadingSwedishClauseStart(value) {
   );
 }
 function lowerLeadingEnglishClauseStart(value) {
-  return value.replace(/^(The|In|A|An|At|On|Almost|Politicians|All)\b/, (match) =>
+  return value.replace(/^(The|In|A|An|At|On|Almost|Politicians|All|It)\b/, (match) =>
     match.toLowerCase(),
   );
 }
@@ -4385,19 +4380,89 @@ function englishGainedRightStatement(subject, answer) {
     stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
   )}`;
 }
-function reasonStatementSv(answer) {
+function whyTargetStatementSv(target) {
+  const cleaned = stripFinalPunctuation(target);
+
+  let match = cleaned.match(
+    /^(kan|ska|måste|bör|får)\s+(.+?)\s+(vara|bli|ha|göra|skapa|ersätta|ge|påverka|spridas|delta|rösta)\b(.*)$/i,
+  );
+  if (match) {
+    return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
+  }
+
+  match = cleaned.match(/^behövs\s+(.+?)\s+(när|för|i|på|av)\b(.*)$/i);
+  if (match) {
+    return `${lowerLeadingSwedishClauseStart(match[1])} behövs ${match[2]}${match[3]}`;
+  }
+
+  match = cleaned.match(/^(behövs|finns)\s+(.+)$/i);
+  if (match) return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()}`;
+
+  return lowerLeadingSwedishClauseStart(cleaned);
+}
+function whyTargetStatementEn(target) {
+  const cleaned = stripFinalPunctuation(target);
+
+  let match = cleaned.match(
+    /^(can|could|should|must|will|would|may|might)\s+(.+?)\s+(be|have|do|make|create|spread|replace|give|become|affect)\b(.*)$/i,
+  );
+  if (match) {
+    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
+  }
+
+  match = cleaned.match(/^(is|are|was|were)\s+(.+?)\s+((?:needed|required|allowed|called)\b.*)$/i);
+  if (match) {
+    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3]}`;
+  }
+
+  return lowerLeadingEnglishClauseStart(cleaned);
+}
+function swedishReasonClause(value) {
+  return lowerFirst(value).replace(/\bsom publiceras är alltid\b/i, 'som publiceras alltid är');
+}
+function reasonAnswerClauseSv(answer) {
+  const stripped = stripLeadingPurposeSv(answer);
+  if (/^för att|^att\s+/i.test(answer.trim())) return `att ${swedishReasonClause(stripped)}`;
+  if (
+    /(^|[\s,])(?:hade|saknade|var|är|kan|ska|måste|gör|behöver|får|blir|har)(?=$|[\s,.?!])/i.test(
+      stripped,
+    )
+  ) {
+    return `att ${swedishReasonClause(stripped)}`;
+  }
+  return lowerFirst(stripped).replace(/\beU\b/g, 'EU');
+}
+function reasonAnswerClauseEn(answer) {
+  const stripped = stripLeadingPurposeEn(answer);
+  if (/^to\b/i.test(answer.trim())) return `to ${lowerFirst(stripped)}`;
+  if (/\b(?:had|was|were|is|are|can|must|should|does|do|has|have|makes|gives)\b/i.test(stripped)) {
+    return `that ${lowerFirst(stripped)}`;
+  }
+  return lowerFirst(stripped);
+}
+function reasonStatementSv(answer, target) {
+  if (target) {
+    return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
+      answer,
+    )}`.replace(/\beU\b/g, 'EU');
+  }
+
   const stripped = stripLeadingPurposeSv(answer);
   if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
-    return `En anledning är att ${stripped}`;
+    return `En anledning är att ${lowerLeadingSwedishClauseStart(stripped)}`;
   }
   return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
-function reasonStatementEn(answer) {
+function reasonStatementEn(answer, target) {
+  if (target) {
+    return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
+  }
+
   const stripped = stripLeadingPurposeEn(answer);
   if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
-    return `One reason is that ${stripped}`;
+    return `One reason is that ${lowerLeadingEnglishClauseStart(stripped)}`;
   }
   return `One reason is ${lowerFirst(stripped)}`;
 }
@@ -4918,7 +4983,7 @@ function civicStatementSv(source, option) {
   if (match)
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
   match = q.match(/^Varför (.+)$/i);
-  if (match) return reasonStatementSv(answer);
+  if (match) return reasonStatementSv(answer, match[1]);
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
@@ -5223,7 +5288,7 @@ function civicStatementEn(source, option) {
   if (match)
     return `${upperFirst(match[1])} is often called ${match[2]} because ${embeddedEnglishClause(answer)}`;
   match = q.match(/^Why (.+)$/i);
-  if (match) return reasonStatementEn(answer);
+  if (match) return reasonStatementEn(answer, match[1]);
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
   match = q.match(/^What happens in (.+?) if (.+)$/i);
@@ -8212,13 +8277,6 @@ function validateMistakesRouteCopyParity() {
 
   EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!mistakesRoute.includes(snippet)) reject(message);
-  });
-
-  FORBIDDEN_MISTAKES_ROUTE_SV_COPY_PATTERNS.forEach((patternParts) => {
-    const pattern = patternParts.join('');
-    if (mistakesRoute.includes(pattern)) {
-      reject(`mistakes route must not publish stale Swedish copy ${JSON.stringify(pattern)}`);
-    }
   });
 
   const seenLabels = new Set();

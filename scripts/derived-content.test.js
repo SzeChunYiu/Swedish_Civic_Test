@@ -493,6 +493,38 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       tags: ['participation'],
     },
     {
+      id: 'q014',
+      chapterId: 'ch02',
+      type: 'single_choice',
+      questionSv: 'Varför kan falsk information påverka demokratin?',
+      questionEn: 'Why can false information affect democracy?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Det kan skapa konflikter och skrämma människor från debatt',
+          textEn: 'It can create conflicts and scare people away from debate',
+        },
+        {
+          id: 'b',
+          textSv: 'Det gör alla källor mer pålitliga',
+          textEn: 'It makes all sources more reliable',
+        },
+        { id: 'c', textSv: 'Det förbjuder kritik', textEn: 'It bans criticism' },
+        { id: 'd', textSv: 'Det stoppar alla nyheter', textEn: 'It stops all news' },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Falsk information kan skada den demokratiska debatten.',
+      explanationEn: 'False information can harm democratic debate.',
+      uhrReference: {
+        chapter: 'Sveriges demokratiska system',
+        section: 'Hot mot demokratin',
+        pageApprox: 11,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['democracy', 'false-information'],
+    },
+    {
       id: 'q030',
       chapterId: 'ch04',
       type: 'single_choice',
@@ -575,7 +607,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is that so|have they|har de/i,
+    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is that (?:so|It)|En anledning är att Det|have they|har de/i,
   );
   assert.doesNotMatch(text, /are The/);
   assert.ok(
@@ -607,6 +639,16 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   assert.ok(
     text.includes(
       'One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'En anledning till att falsk information kan påverka demokratin är att det kan skapa konflikter och skrämma människor från debatt.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'One reason false information can affect democracy is that it can create conflicts and scare people away from debate.',
     ),
   );
   assert.ok(

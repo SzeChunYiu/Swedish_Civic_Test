@@ -2756,6 +2756,16 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
+test('published question schema guards capitalized generated reason clauses', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /\/\^En anledning är att Det\\b\//);
+  assert.match(validatorSource, /\/\^One reason is that It\\b\//);
+});
+
 test('published question schema rejects residual q306-q355 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
