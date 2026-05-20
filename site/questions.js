@@ -45,7 +45,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -74,8 +73,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. That makes True correct, while False contradicts the fact.",
-      "sv": "Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -83,7 +82,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -129,7 +127,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -176,7 +173,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -222,7 +218,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -252,8 +247,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
-      "sv": "Påståendet är sant: Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
+      "en": "Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
+      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -261,7 +256,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -307,7 +301,6 @@
       "section": "Fjäll",
       "page": 6
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -353,7 +346,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -401,7 +393,6 @@
       "section": "Befolkning",
       "page": 7
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -447,7 +438,6 @@
       "section": "Naturresurser",
       "page": 7
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -494,7 +484,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -540,7 +529,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -586,7 +574,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -632,7 +619,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -678,7 +664,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -724,7 +709,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -770,7 +754,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -816,7 +799,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -862,7 +844,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -908,7 +889,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -954,7 +934,6 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -1000,7 +979,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1029,8 +1007,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: the Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
-      "sv": "Påståendet är sant: riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
+      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
+      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1038,7 +1016,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1084,7 +1061,6 @@
       "section": "Myndigheter",
       "page": 13
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -1130,7 +1106,6 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -1176,7 +1151,6 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -1222,7 +1196,6 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -1251,8 +1224,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies, and in the Riksdag the governing parties and the opposition debate different proposals before members vote.",
-      "sv": "Påståendet är sant: partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik, och i riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
+      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies. In the Riksdag, the governing parties and the opposition debate different proposals before members vote.",
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1260,7 +1233,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -1306,7 +1278,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -1352,7 +1323,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -1390,7 +1360,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -1436,7 +1405,6 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -1482,7 +1450,6 @@
       "section": "Politiska partier",
       "page": 15
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -1528,7 +1495,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -1574,7 +1540,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -1620,7 +1585,6 @@
       "section": "Grundlagarna",
       "page": 16
     },
-    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -1666,7 +1630,6 @@
       "section": "Regeringsformen",
       "page": 16
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -1712,7 +1675,6 @@
       "section": "Successionsordningen",
       "page": 16
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -1758,7 +1720,6 @@
       "section": "Allemansrätten",
       "page": 17
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -1804,7 +1765,6 @@
       "section": "Rättsväsendet",
       "page": 17
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -1850,7 +1810,6 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -1896,7 +1855,6 @@
       "section": "Domstolar",
       "page": 18
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -1942,7 +1900,6 @@
       "section": "Polisen",
       "page": 18
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -1988,7 +1945,6 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -2034,7 +1990,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -2080,7 +2035,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -2109,8 +2063,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: a person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
-      "sv": "Påståendet är sant: en person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
+      "en": "A person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
+      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2118,7 +2072,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -2164,7 +2117,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -2194,8 +2146,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true. Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
-      "sv": "Påståendet är sant. Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
+      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
+      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2203,7 +2155,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -2249,7 +2200,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -2295,7 +2245,6 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -2341,7 +2290,6 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -2387,7 +2335,6 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -2433,7 +2380,6 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -2480,7 +2426,6 @@
       "section": "Sexköpslagen",
       "page": 24
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -2526,7 +2471,6 @@
       "section": "Barns rättigheter",
       "page": 24
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -2572,7 +2516,6 @@
       "section": "Barns rättigheter",
       "page": 25
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -2618,7 +2561,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -2664,7 +2606,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -2710,7 +2651,6 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -2756,7 +2696,6 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -2802,7 +2741,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -2848,7 +2786,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -2894,7 +2831,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -2940,7 +2876,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -2986,7 +2921,6 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -3032,7 +2966,6 @@
       "section": "A-kassan",
       "page": 29
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -3078,7 +3011,6 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -3125,7 +3057,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -3171,7 +3102,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -3217,7 +3147,6 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -3264,7 +3193,6 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -3310,7 +3238,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -3339,8 +3266,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home, so the statement is true.",
-      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet, så påståendet är sant."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3348,7 +3275,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -3394,7 +3320,6 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -3440,7 +3365,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -3487,7 +3411,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -3533,7 +3456,6 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -3579,7 +3501,6 @@
       "section": "Folkrörelserna",
       "page": 33
     },
-    "questionProvenance": "uhr",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -3625,7 +3546,6 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -3671,7 +3591,6 @@
       "section": "Den svenska modellen",
       "page": 35
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -3717,7 +3636,6 @@
       "section": "Rekordåren",
       "page": 36
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -3763,7 +3681,6 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -3809,7 +3726,6 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -3855,7 +3771,6 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -3901,7 +3816,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -3947,7 +3861,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -3993,7 +3906,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -4039,7 +3951,6 @@
       "section": "Globalt samarbete",
       "page": 39
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -4085,7 +3996,6 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -4114,8 +4024,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence, so the statement is true.",
-      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret, därför är påståendet sant."
+      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence.",
+      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4123,7 +4033,6 @@
       "section": "Sveriges försvar",
       "page": 40
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -4169,7 +4078,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -4215,7 +4123,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -4244,8 +4151,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community; that makes the statement true.",
-      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund; därför är påståendet sant."
+      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community.",
+      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4253,7 +4160,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -4299,7 +4205,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -4345,7 +4250,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -4391,7 +4295,6 @@
       "section": "Nyår",
       "page": 45
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -4437,7 +4340,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -4484,7 +4386,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -4531,7 +4432,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -4578,7 +4478,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -4624,7 +4523,6 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -4671,7 +4569,6 @@
       "section": "Första maj",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -4718,7 +4615,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -4765,7 +4661,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -4812,7 +4707,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -4859,7 +4753,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -4906,7 +4799,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -4953,7 +4845,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -5000,7 +4891,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -5047,7 +4937,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -5094,7 +4983,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -5141,7 +5029,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5188,7 +5075,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -5236,7 +5122,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -5283,7 +5168,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -5330,7 +5214,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5378,7 +5261,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -5427,7 +5309,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -5474,7 +5355,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -5521,7 +5401,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -5568,7 +5447,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -5616,7 +5494,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -5663,7 +5540,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -5710,7 +5586,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -5758,7 +5633,6 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -5805,7 +5679,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -5852,7 +5725,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -5899,7 +5771,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -5946,7 +5817,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -5993,7 +5863,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -6041,7 +5910,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -6088,7 +5956,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -6136,7 +6003,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -6183,7 +6049,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -6230,7 +6095,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -6278,7 +6142,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -6325,7 +6188,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6372,7 +6234,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6419,7 +6280,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -6466,7 +6326,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -6513,7 +6372,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6543,8 +6401,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The statement is true: Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
-      "sv": "Påståendet är sant: Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
+      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6552,7 +6410,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -6600,7 +6457,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -6647,7 +6503,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6693,7 +6548,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6739,7 +6593,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -6785,7 +6638,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -6832,7 +6684,6 @@
       "section": "Segregation och integration",
       "page": 11
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -6852,26 +6703,26 @@
     },
     "opts": [
       {
-        "en": "They sell advertising space or charge for a specific channel",
-        "sv": "De säljer reklamplats eller tar betalt för en särskild kanal"
+        "en": "Commercial channels can sell advertising space or charge for particular channels",
+        "sv": "Kommersiella kanaler kan sälja reklamplats eller ta betalt för särskilda kanaler"
       },
       {
-        "en": "Through court fees from trials",
-        "sv": "Genom domstolsavgifter från rättegångar"
+        "en": "All commercial channels are always financed through tax",
+        "sv": "Alla kommersiella kanaler finansieras alltid genom skatt"
       },
       {
-        "en": "Through membership fees to trade unions",
-        "sv": "Genom medlemsavgifter till fackförbund"
+        "en": "Commercial channels earn income when authorities decide every news item",
+        "sv": "Kommersiella kanaler får inkomster när myndigheter bestämmer varje nyhet"
       },
       {
-        "en": "By municipalities deciding their programmes",
-        "sv": "Genom att kommunerna bestämmer deras program"
+        "en": "Commercial channels can earn income only by publishing authority decisions",
+        "sv": "Kommersiella kanaler får bara inkomster genom att publicera myndighetsbeslut"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
-      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a particular channel. This differs from public service broadcasting, which is financed in another way.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att se en särskild kanal. Det skiljer dem från public service, som finansieras på ett annat sätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6879,8 +6730,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
-    "questionProvenance": "uhr",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "commercial-media",
       "advertising",
@@ -6893,31 +6743,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What characterizes media financed by advertising?",
-      "sv": "Vad kännetecknar medier som finansieras med reklam?"
+      "en": "Which statement often describes advertising-funded media?",
+      "sv": "Vilket påstående beskriver ofta reklamfinansierade medier?"
     },
     "opts": [
       {
-        "en": "They are often run by private companies and earn income from advertising",
-        "sv": "De drivs ofta av privata företag och får inkomster genom reklam"
+        "en": "Advertising-funded media are often run by private companies and earn income from advertising",
+        "sv": "Reklamfinansierade medier drivs ofta av privata företag och får inkomster från reklam"
       },
       {
-        "en": "They may never sell advertising space",
-        "sv": "De får aldrig sälja reklamplats"
+        "en": "Advertising-funded media may never exist on the internet",
+        "sv": "Reklamfinansierade medier får aldrig finnas på internet"
       },
       {
-        "en": "They replace the mission of public-service companies",
-        "sv": "De ersätter public service-företagens uppdrag"
+        "en": "Advertising-funded media may only make programs for schools",
+        "sv": "Reklamfinansierade medier får bara göra program för skolor"
       },
       {
-        "en": "They consist only of government agencies",
-        "sv": "De består bara av statliga myndigheter"
+        "en": "Advertising-funded media must always be government agencies",
+        "sv": "Reklamfinansierade medier måste alltid vara myndigheter"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
-      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+      "en": "Media financed by advertising are often run by private companies. Daily and evening newspapers may be distributed locally or nationwide, and they can also earn income by selling advertising space.",
+      "sv": "Medier som finansieras med reklam drivs ofta av privata företag. Dagstidningar och kvällstidningar kan säljas lokalt eller i hela landet, och de kan också få inkomster genom att sälja reklamplats."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6925,11 +6775,10 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "private-media",
-      "advertising-funded",
+      "advertising-funded-media",
       "newspapers"
     ]
   },
@@ -6939,31 +6788,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "How are many newspapers published today?",
-      "sv": "Hur publiceras många tidningar i dag?"
+      "en": "How have many newspapers changed with the internet?",
+      "sv": "Hur har många tidningar förändrats med internet?"
     },
     "opts": [
       {
-        "en": "They are also available online and updated with news several times per day",
-        "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag"
+        "en": "Many newspapers are available online and updated with news several times a day",
+        "sv": "Många tidningar finns på internet och uppdateras med nyheter flera gånger per dag"
       },
       {
-        "en": "They may be sold only as one copy per year",
-        "sv": "De får bara säljas som ett exemplar per år"
+        "en": "Newspapers may only be published once a year",
+        "sv": "Tidningar får bara komma ut en gång om året"
       },
       {
-        "en": "They may be distributed only within one residential building",
-        "sv": "De får bara spridas inom ett enda bostadshus"
+        "en": "Newspapers have stopped writing about local news",
+        "sv": "Tidningar har slutat skriva om lokala nyheter"
       },
       {
-        "en": "They may not write about local or national news",
-        "sv": "De får inte skriva om lokala eller nationella nyheter"
+        "en": "Newspapers must always be secret",
+        "sv": "Tidningar måste alltid vara hemliga"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
-      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are now also available on the internet and can be updated with news several times a day. This does not mean that printed papers, local news, or subscriptions automatically disappear.",
+      "sv": "Många tidningar finns i dag också på internet och kan uppdateras med nyheter flera gånger per dag. Det betyder inte att papperstidningar, lokala nyheter eller prenumerationer automatiskt försvinner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6971,12 +6820,11 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
       "newspapers",
-      "online-news",
-      "local-national-media"
+      "internet-news",
+      "media-change"
     ]
   },
   {
@@ -6985,31 +6833,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is important to remember about the web and social media?",
-      "sv": "Vad är viktigt att komma ihåg om webben och sociala medier?"
+      "en": "Why does content on social media require extra attention?",
+      "sv": "Varför behöver man vara extra uppmärksam på innehåll i sociala medier?"
     },
     "opts": [
       {
-        "en": "Anyone can create content there, and it is not always checked the same way as in other media",
-        "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier"
+        "en": "Anyone can create content on social media, and it is not checked in the same way",
+        "sv": "Vem som helst kan skapa innehåll i sociala medier och det kontrolleras inte på samma sätt"
       },
       {
-        "en": "Only responsible publishers may write posts there",
-        "sv": "Bara ansvariga utgivare får skriva inlägg där"
+        "en": "All content on social media is always reviewed by a responsible publisher",
+        "sv": "Allt innehåll i sociala medier granskas alltid av en ansvarig utgivare"
       },
       {
-        "en": "All content is first approved by the state",
-        "sv": "Allt innehåll godkänns först av staten"
+        "en": "Only public service broadcasters may publish on social media",
+        "sv": "Bara public service får publicera i sociala medier"
       },
       {
-        "en": "The content is always more reliable than news in newspapers",
-        "sv": "Innehållet är alltid mer pålitligt än nyheter i tidningar"
+        "en": "It is always forbidden to share information on social media",
+        "sv": "Det är alltid förbjudet att dela information i sociala medier"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
-      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+      "en": "On the web and in social media, anyone can create content. Because that content is not checked in the same way as in other media, readers need to pay attention to what is accurate.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras innehållet inte på samma sätt som i andra medier, och läsaren behöver själv vara uppmärksam på vad som stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7017,12 +6865,11 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
-    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
-      "web",
       "social-media",
-      "content-control"
+      "web-content",
+      "media-literacy"
     ]
   },
   {
@@ -7031,31 +6878,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Why is source criticism needed when using media?",
-      "sv": "Varför behövs källkritik när man använder medier?"
+      "en": "Why is source criticism important when taking in information?",
+      "sv": "Varför är källkritik viktigt när man tar del av information?"
     },
     "opts": [
       {
-        "en": "False information can spread quickly and affect people's opinions",
+        "en": "False information can spread quickly and influence people's opinions",
         "sv": "Falska uppgifter kan spridas snabbt och påverka människors åsikter"
       },
       {
-        "en": "Everything that is published is always correct",
-        "sv": "Allt som publiceras är alltid korrekt"
+        "en": "All information in media is always correct",
+        "sv": "All information i medier är alltid korrekt"
       },
       {
-        "en": "Source criticism means never reading news",
-        "sv": "Källkritik betyder att man aldrig ska läsa nyheter"
+        "en": "One never needs to check who is saying something",
+        "sv": "Man behöver aldrig kontrollera vem som säger något"
       },
       {
-        "en": "Only printed books need to be checked",
-        "sv": "Bara tryckta böcker behöver kontrolleras"
+        "en": "Social media contain only information from authorities",
+        "sv": "Sociala medier innehåller bara myndighetsinformation"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
-      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+      "en": "Source criticism is needed because information can come from many different sources and not everything published is correct. False information can spread quickly and influence people's opinions, so information needs to be reviewed and checked.",
+      "sv": "Källkritik behövs eftersom information kan komma från många olika källor och allt som publiceras inte är korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver granska och kontrollera information."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7063,7 +6910,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "uhr",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -7109,7 +6955,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7149,7 +6994,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7189,7 +7033,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7237,7 +7080,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7253,8 +7095,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about Sweden's northernmost part is correct?",
-      "sv": "Vilken uppgift om Sveriges nordligaste del är korrekt?"
+      "en": "Which statement is correct about Sweden's northernmost part?",
+      "sv": "Vilket påstående är korrekt om Sveriges nordligaste del?"
     },
     "opts": [
       {
@@ -7266,18 +7108,18 @@
         "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7285,7 +7127,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7316,8 +7157,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7325,7 +7166,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7355,8 +7195,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7364,7 +7204,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7380,8 +7219,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What is true about Sweden's northernmost part?",
-      "sv": "Vad stämmer om Sveriges nordligaste del?"
+      "en": "Which statement best matches Sweden's northernmost part?",
+      "sv": "Vilket påstående stämmer bäst om Sveriges nordligaste del?"
     },
     "opts": [
       {
@@ -7393,18 +7232,18 @@
         "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
-      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln."
+      "en": "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7412,7 +7251,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7460,7 +7298,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7501,7 +7338,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7542,7 +7378,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7591,7 +7426,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -7640,7 +7474,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7680,7 +7513,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7720,7 +7552,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7768,7 +7599,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7816,7 +7646,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7857,7 +7686,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7898,7 +7726,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7947,7 +7774,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -7964,8 +7790,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about Sweden's climate is correct?",
-      "sv": "Vilken uppgift om Sveriges klimat är korrekt?"
+      "en": "Which statement is correct about the Gulf Stream and the North Atlantic Current?",
+      "sv": "Vilket påstående är korrekt om Golfströmmen och den Nordatlantiska strömmen?"
     },
     "opts": [
       {
@@ -7977,18 +7803,18 @@
         "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
-      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
+      "en": "Sweden has a mild climate compared with many other areas at the same latitude. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7996,7 +7822,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8036,7 +7861,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8066,8 +7890,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Gulf Stream and the North Atlantic Current help make Sweden's climate mild. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
+      "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8075,7 +7899,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8091,8 +7914,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What is true about Sweden's climate?",
-      "sv": "Vad stämmer om Sveriges klimat?"
+      "en": "Which statement best matches the Gulf Stream and the North Atlantic Current?",
+      "sv": "Vilket påstående stämmer bäst om Golfströmmen och den Nordatlantiska strömmen?"
     },
     "opts": [
       {
@@ -8104,18 +7927,18 @@
         "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
-      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
+      "en": "Sweden has a mild climate compared with many other areas at the same latitude. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8123,7 +7946,6 @@
       "section": "Geografi, klimat och natur",
       "page": 5
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "climate",
@@ -8171,7 +7993,6 @@
       "section": "Fjäll",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8211,7 +8032,6 @@
       "section": "Fjäll",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8251,7 +8071,6 @@
       "section": "Fjäll",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8299,7 +8118,6 @@
       "section": "Fjäll",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8347,7 +8165,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8389,7 +8206,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8431,7 +8247,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8481,7 +8296,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -8531,7 +8345,6 @@
       "section": "Befolkning",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8571,7 +8384,6 @@
       "section": "Befolkning",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8611,7 +8423,6 @@
       "section": "Befolkning",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8659,7 +8470,6 @@
       "section": "Befolkning",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "population",
@@ -8707,7 +8517,6 @@
       "section": "Naturresurser",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8748,7 +8557,6 @@
       "section": "Naturresurser",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8789,7 +8597,6 @@
       "section": "Naturresurser",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8838,7 +8645,6 @@
       "section": "Naturresurser",
       "page": 7
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "natural-resources",
@@ -8887,7 +8693,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8927,7 +8732,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -8967,7 +8771,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9015,7 +8818,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9063,7 +8865,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9103,7 +8904,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9143,7 +8943,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9191,7 +8990,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9239,7 +9037,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9279,7 +9076,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9319,7 +9115,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9367,7 +9162,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "participation",
@@ -9415,7 +9209,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9455,7 +9248,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9495,7 +9287,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9543,7 +9334,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -9591,7 +9381,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9631,7 +9420,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9671,7 +9459,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9719,7 +9506,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -9767,7 +9553,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9807,7 +9592,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9847,7 +9631,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9895,7 +9678,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "riksdag",
@@ -9943,7 +9725,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -9983,7 +9764,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10023,7 +9803,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10071,7 +9850,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10119,7 +9897,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10159,7 +9936,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10199,7 +9975,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10247,7 +10022,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10295,7 +10069,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10335,7 +10108,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10375,7 +10147,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10423,7 +10194,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "voting-age",
@@ -10471,7 +10241,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10511,7 +10280,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10551,7 +10319,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10599,7 +10366,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "referendum",
@@ -10647,7 +10413,6 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10687,7 +10452,6 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10727,7 +10491,6 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10775,7 +10538,6 @@
       "section": "Landet styrs på olika nivåer",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "government",
@@ -10823,7 +10585,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10863,7 +10624,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10903,7 +10663,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10951,7 +10710,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -10967,8 +10725,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about the Riksdag is correct?",
-      "sv": "Vilken uppgift om Riksdagen är korrekt?"
+      "en": "Which statement is correct about the Riksdag?",
+      "sv": "Vilket påstående är korrekt om Riksdagen?"
     },
     "opts": [
       {
@@ -10980,18 +10738,18 @@
         "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
-      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
+      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10999,7 +10757,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11039,7 +10796,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11070,8 +10826,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Riksdag chooses the prime minister. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Riksdagen väljer statsminister. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "The Riksdag chooses the prime minister.",
+      "sv": "Riksdagen väljer statsminister."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11079,7 +10835,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11095,8 +10850,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is true about the Riksdag?",
-      "sv": "Vad stämmer om Riksdagen?"
+      "en": "Which statement best matches the Riksdag?",
+      "sv": "Vilket påstående stämmer bäst om Riksdagen?"
     },
     "opts": [
       {
@@ -11108,18 +10863,18 @@
         "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. The prime minister then chooses the government ministers.",
-      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därefter väljer statsministern ministrarna i regeringen."
+      "en": "The Riksdag chooses the prime minister, who is given the task of forming a government. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Riksdagen väljer statsminister, som får i uppdrag att bilda regering. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11127,7 +10882,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -11175,7 +10929,6 @@
       "section": "Myndigheter",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11215,7 +10968,6 @@
       "section": "Myndigheter",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11255,7 +11007,6 @@
       "section": "Myndigheter",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11303,7 +11054,6 @@
       "section": "Myndigheter",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "agencies",
@@ -11351,7 +11101,6 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11391,7 +11140,6 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11431,7 +11179,6 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11479,7 +11226,6 @@
       "section": "Regioner och kommuner",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -11527,7 +11273,6 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11567,7 +11312,6 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11607,7 +11351,6 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11655,7 +11398,6 @@
       "section": "Kommunernas ansvar",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipality",
@@ -11703,7 +11445,6 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11743,7 +11484,6 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11783,7 +11523,6 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11831,7 +11570,6 @@
       "section": "Sveriges statsskick",
       "page": 13
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "monarchy",
@@ -11847,8 +11585,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about the opposition is correct?",
-      "sv": "Vilken uppgift om oppositionen är korrekt?"
+      "en": "Which statement is correct about the opposition?",
+      "sv": "Vilket påstående är korrekt om oppositionen?"
     },
     "opts": [
       {
@@ -11860,18 +11598,18 @@
         "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies. In the Riksdag, the governing parties and the opposition debate different proposals before members vote.",
-      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
+      "en": "Parties that do not support the government are called the opposition. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11879,7 +11617,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -11910,8 +11647,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies, and in the Riksdag the governing parties and the opposition debate different proposals before members vote.",
-      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik, och i riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
+      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies. In the Riksdag, the governing parties and the opposition debate different proposals before members vote.",
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11919,7 +11656,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -11950,8 +11686,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The opposition should scrutinize the government’s work and propose alternative policies. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Oppositionen ska granska regeringens arbete och föreslå annan politik. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "The opposition should scrutinize the government’s work and propose alternative policies.",
+      "sv": "Oppositionen ska granska regeringens arbete och föreslå annan politik."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11959,7 +11695,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -11975,8 +11710,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is true about the opposition?",
-      "sv": "Vad stämmer om oppositionen?"
+      "en": "Which statement best matches the opposition?",
+      "sv": "Vilket påstående stämmer bäst om oppositionen?"
     },
     "opts": [
       {
@@ -11988,18 +11723,18 @@
         "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Parties that do not support the government are called the opposition. The opposition scrutinizes the government’s work and proposes alternative policies. In the Riksdag, the governing parties and the opposition debate different proposals before members vote.",
-      "sv": "Partier som inte stödjer regeringen kallas opposition. Oppositionen granskar regeringens arbete och föreslår annan politik. I riksdagen debatterar regeringspartierna och oppositionen olika förslag innan ledamöterna röstar."
+      "en": "Parties that do not support the government are called the opposition. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Partier som inte stödjer regeringen kallas opposition. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12007,7 +11742,6 @@
       "section": "Staten",
       "page": 12
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "opposition",
@@ -12055,7 +11789,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12095,7 +11828,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12135,7 +11867,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12183,7 +11914,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elections",
@@ -12231,7 +11961,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12271,7 +12000,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12311,7 +12039,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12359,7 +12086,6 @@
       "section": "Val och röstning",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "voting-rights",
@@ -12375,8 +12101,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about politicians in Sweden is correct?",
-      "sv": "Vilken uppgift om politiker i Sverige är korrekt?"
+      "en": "Which statement is correct about politicians in Sweden?",
+      "sv": "Vilket påstående är korrekt om politiker i Sverige?"
     },
     "opts": [
       {
@@ -12388,18 +12114,18 @@
         "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
+      "en": "Politicians in Sweden do not have to follow the result of a referendum. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12407,7 +12133,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12447,7 +12172,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12487,7 +12211,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12503,8 +12226,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "What is true about politicians in Sweden?",
-      "sv": "Vad stämmer om politiker i Sverige?"
+      "en": "Which statement best matches politicians in Sweden?",
+      "sv": "Vilket påstående stämmer bäst om politiker i Sverige?"
     },
     "opts": [
       {
@@ -12516,18 +12239,18 @@
         "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
+      "en": "Politicians in Sweden do not have to follow the result of a referendum. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Politiker i Sverige behöver inte följa resultatet av en folkomröstning. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12535,7 +12258,6 @@
       "section": "Folkomröstningar",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "referendum",
@@ -12583,7 +12305,6 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12623,7 +12344,6 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12663,7 +12383,6 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12711,7 +12430,6 @@
       "section": "Så här går det till att rösta",
       "page": 14
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secret-ballot",
@@ -12759,7 +12477,6 @@
       "section": "Politiska partier",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12799,7 +12516,6 @@
       "section": "Politiska partier",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12839,7 +12555,6 @@
       "section": "Politiska partier",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12887,7 +12602,6 @@
       "section": "Politiska partier",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "political-parties",
@@ -12935,7 +12649,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -12975,7 +12688,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -13015,7 +12727,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -13063,7 +12774,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "proportional-elections",
@@ -13111,7 +12821,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13151,7 +12860,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13191,7 +12899,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13239,7 +12946,6 @@
       "section": "Proportionella val",
       "page": 15
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "riksdag",
@@ -13287,7 +12993,6 @@
       "section": "Grundlagarna",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13327,7 +13032,6 @@
       "section": "Grundlagarna",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13367,7 +13071,6 @@
       "section": "Grundlagarna",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13415,7 +13118,6 @@
       "section": "Grundlagarna",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "constitutional-laws",
@@ -13463,7 +13165,6 @@
       "section": "Regeringsformen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13503,7 +13204,6 @@
       "section": "Regeringsformen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13543,7 +13243,6 @@
       "section": "Regeringsformen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13591,7 +13290,6 @@
       "section": "Regeringsformen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "instrument-of-government",
@@ -13639,7 +13337,6 @@
       "section": "Successionsordningen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13679,7 +13376,6 @@
       "section": "Successionsordningen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13719,7 +13415,6 @@
       "section": "Successionsordningen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13767,7 +13462,6 @@
       "section": "Successionsordningen",
       "page": 16
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "succession",
@@ -13815,7 +13509,6 @@
       "section": "Allemansrätten",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13855,7 +13548,6 @@
       "section": "Allemansrätten",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13895,7 +13587,6 @@
       "section": "Allemansrätten",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13943,7 +13634,6 @@
       "section": "Allemansrätten",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "right-of-public-access",
@@ -13991,7 +13681,6 @@
       "section": "Rättsväsendet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14031,7 +13720,6 @@
       "section": "Rättsväsendet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14071,7 +13759,6 @@
       "section": "Rättsväsendet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14119,7 +13806,6 @@
       "section": "Rättsväsendet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "justice-system",
@@ -14167,7 +13853,6 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14207,7 +13892,6 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14247,7 +13931,6 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14295,7 +13978,6 @@
       "section": "Rättssäkerhet",
       "page": 17
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "legal-certainty",
@@ -14343,7 +14025,6 @@
       "section": "Domstolar",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14383,7 +14064,6 @@
       "section": "Domstolar",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14423,7 +14103,6 @@
       "section": "Domstolar",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14471,7 +14150,6 @@
       "section": "Domstolar",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "courts",
@@ -14519,7 +14197,6 @@
       "section": "Polisen",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14559,7 +14236,6 @@
       "section": "Polisen",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14599,7 +14275,6 @@
       "section": "Polisen",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14647,7 +14322,6 @@
       "section": "Polisen",
       "page": 18
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "police",
@@ -14695,7 +14369,6 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14735,7 +14408,6 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14775,7 +14447,6 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14823,7 +14494,6 @@
       "section": "Straffmyndighet och belastningsregister",
       "page": 19
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "criminal-responsibility",
@@ -14871,7 +14541,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -14911,7 +14580,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -14951,7 +14619,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -14999,7 +14666,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "free-media",
@@ -15047,7 +14713,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15087,7 +14752,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15127,7 +14791,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15175,7 +14838,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-access",
@@ -15191,8 +14853,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about a person who gives information to newspapers, radio, and TV is correct?",
-      "sv": "Vilken uppgift om den som lämnar uppgifter till tidningar, radio och tv är korrekt?"
+      "en": "Which statement is correct about a person who gives information to newspapers, radio, and TV?",
+      "sv": "Vilket påstående är korrekt om den som lämnar uppgifter till tidningar, radio och tv?"
     },
     "opts": [
       {
@@ -15204,18 +14866,18 @@
         "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "A person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
-      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
+      "en": "A person may provide information to newspapers, radio, and TV without being punished. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15223,7 +14885,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15263,7 +14924,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15294,8 +14954,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "A person who gives information to newspapers, radio, and TV has the right to be anonymous. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "A person who gives information to newspapers, radio, and TV has the right to be anonymous.",
+      "sv": "Den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15303,7 +14963,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15319,8 +14978,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is true about a person who gives information to newspapers, radio, and TV?",
-      "sv": "Vad stämmer om den som lämnar uppgifter till tidningar, radio och tv?"
+      "en": "Which statement best matches a person who gives information to newspapers, radio, and TV?",
+      "sv": "Vilket påstående stämmer bäst om den som lämnar uppgifter till tidningar, radio och tv?"
     },
     "opts": [
       {
@@ -15332,18 +14991,18 @@
         "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "A person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.",
-      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan."
+      "en": "A person may provide information to newspapers, radio, and TV without being punished. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15351,7 +15010,6 @@
       "section": "Fria medier",
       "page": 20
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-protection",
@@ -15399,7 +15057,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15440,7 +15097,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15481,7 +15137,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15530,7 +15185,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-service",
@@ -15547,8 +15201,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about public service companies is correct?",
-      "sv": "Vilken uppgift om public service-företag är korrekt?"
+      "en": "Which statement is correct about public service companies?",
+      "sv": "Vilket påstående är korrekt om public service-företag?"
     },
     "opts": [
       {
@@ -15560,18 +15214,18 @@
         "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
-      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
+      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15579,7 +15233,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15619,7 +15272,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15650,8 +15302,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Public service companies should be independent of political and other interests. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Public service-företag ska vara oberoende av politiska och andra intressen. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Public service companies should be independent of political and other interests.",
+      "sv": "Public service-företag ska vara oberoende av politiska och andra intressen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15659,7 +15311,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15675,8 +15326,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is true about public service companies?",
-      "sv": "Vad stämmer om public service-företag?"
+      "en": "Which statement best matches public service companies?",
+      "sv": "Vilket påstående stämmer bäst om public service-företag?"
     },
     "opts": [
       {
@@ -15688,18 +15339,18 @@
         "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.",
-      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten."
+      "en": "Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15707,7 +15358,6 @@
       "section": "Public service",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-service",
@@ -15755,7 +15405,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15795,7 +15444,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15835,7 +15483,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15883,7 +15530,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -15931,7 +15577,6 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -15971,7 +15616,6 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -16011,7 +15655,6 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -16059,7 +15702,6 @@
       "section": "Mänskliga rättigheter gäller alla",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "un",
@@ -16075,8 +15717,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is true about the UN Universal Declaration of Human Rights?",
-      "sv": "Vilket svar stämmer bäst? Vad stämmer om FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Which answer best matches? Which statement is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
@@ -16107,7 +15749,6 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16147,7 +15788,6 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16187,7 +15827,6 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16203,8 +15842,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is true about the UN Universal Declaration of Human Rights?",
-      "sv": "Välj rätt alternativ: Vad stämmer om FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Choose the correct option: Which statement is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
@@ -16235,7 +15874,6 @@
       "section": "FN:s förklaring om de mänskliga rättigheterna",
       "page": 22
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "human-rights",
@@ -16283,7 +15921,6 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16323,7 +15960,6 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16363,7 +15999,6 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16411,7 +16046,6 @@
       "section": "Jämställdhet mellan könen",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "gender-equality",
@@ -16459,7 +16093,6 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16500,7 +16133,6 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16541,7 +16173,6 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16590,7 +16221,6 @@
       "section": "Könsrelaterat våld och förtryck",
       "page": 23
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "violence",
@@ -16639,7 +16269,6 @@
       "section": "Sexköpslagen",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16679,7 +16308,6 @@
       "section": "Sexköpslagen",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16719,7 +16347,6 @@
       "section": "Sexköpslagen",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16767,7 +16394,6 @@
       "section": "Sexköpslagen",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sex-purchase-law",
@@ -16815,7 +16441,6 @@
       "section": "Barns rättigheter",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16855,7 +16480,6 @@
       "section": "Barns rättigheter",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16895,7 +16519,6 @@
       "section": "Barns rättigheter",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16943,7 +16566,6 @@
       "section": "Barns rättigheter",
       "page": 24
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -16991,7 +16613,6 @@
       "section": "Barns rättigheter",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17031,7 +16652,6 @@
       "section": "Barns rättigheter",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17071,7 +16691,6 @@
       "section": "Barns rättigheter",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17119,7 +16738,6 @@
       "section": "Barns rättigheter",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "children-rights",
@@ -17167,7 +16785,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17207,7 +16824,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17247,7 +16863,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17295,7 +16910,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "national-minorities",
@@ -17343,7 +16957,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17383,7 +16996,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17423,7 +17035,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17471,7 +17082,6 @@
       "section": "Nationella minoriteter och urfolk",
       "page": 25
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sami-parliament",
@@ -17519,7 +17129,6 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17559,7 +17168,6 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17599,7 +17207,6 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17647,7 +17254,6 @@
       "section": "Hbtqi-personer",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hbtqi",
@@ -17695,7 +17301,6 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17735,7 +17340,6 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17775,7 +17379,6 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17823,7 +17426,6 @@
       "section": "Arbetet mot diskriminering",
       "page": 26
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "equality-ombudsman",
@@ -17871,7 +17473,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17911,7 +17512,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17951,7 +17551,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -17999,7 +17598,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "public-sector",
@@ -18047,7 +17645,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18087,7 +17684,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18127,7 +17723,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18175,7 +17770,6 @@
       "section": "Så fungerar arbetsmarknaden",
       "page": 27
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "private-sector",
@@ -18223,7 +17817,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18263,7 +17856,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18303,7 +17895,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18351,7 +17942,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "unions",
@@ -18399,7 +17989,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18439,7 +18028,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18479,7 +18067,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18527,7 +18114,6 @@
       "section": "Arbetsmarknadens parter",
       "page": 28
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "wages",
@@ -18575,7 +18161,6 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18615,7 +18200,6 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18655,7 +18239,6 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18703,7 +18286,6 @@
       "section": "Lagar och regler på arbetsmarknaden",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "labour-law",
@@ -18751,7 +18333,6 @@
       "section": "A-kassan",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18791,7 +18372,6 @@
       "section": "A-kassan",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18831,7 +18411,6 @@
       "section": "A-kassan",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18879,7 +18458,6 @@
       "section": "A-kassan",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "a-kassa",
@@ -18927,7 +18505,6 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -18968,7 +18545,6 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -19009,7 +18585,6 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -19058,7 +18633,6 @@
       "section": "Privatekonomi i Sverige",
       "page": 29
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-finance",
@@ -19107,7 +18681,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19147,7 +18720,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19187,7 +18759,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19235,7 +18806,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "welfare",
@@ -19251,8 +18821,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is true about tax and VAT?",
-      "sv": "Vilket svar stämmer bäst? Vad stämmer om skatt och moms?"
+      "en": "Which answer best matches? Which statement about tax and VAT is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om skatt och moms stämmer?"
     },
     "opts": [
       {
@@ -19283,7 +18853,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19323,7 +18892,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19363,7 +18931,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19379,8 +18946,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is true about tax and VAT?",
-      "sv": "Välj rätt alternativ: Vad stämmer om skatt och moms?"
+      "en": "Choose the correct option: Which statement about tax and VAT is correct?",
+      "sv": "Välj rätt alternativ: Vilket påstående om skatt och moms stämmer?"
     },
     "opts": [
       {
@@ -19411,7 +18978,6 @@
       "section": "Skatter för Sveriges välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "taxes",
@@ -19459,7 +19025,6 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19500,7 +19065,6 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19541,7 +19105,6 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19590,7 +19153,6 @@
       "section": "Statligt finansierad välfärd",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "state-welfare",
@@ -19639,7 +19201,6 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19679,7 +19240,6 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19719,7 +19279,6 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19767,7 +19326,6 @@
       "section": "Regionerna ansvarar för sjukvården",
       "page": 30
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "regions",
@@ -19815,7 +19373,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19855,7 +19412,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19895,7 +19451,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19943,7 +19498,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "municipal-welfare",
@@ -19959,8 +19513,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about Swedish municipalities is correct?",
-      "sv": "Vilken uppgift om Sveriges kommuner är korrekt?"
+      "en": "Which statement is correct about Swedish municipalities?",
+      "sv": "Vilket påstående är korrekt om Sveriges kommuner?"
     },
     "opts": [
       {
@@ -19972,18 +19526,18 @@
         "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
-      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19991,7 +19545,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20023,7 +19576,7 @@
     "answer": 0,
     "why": {
       "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
-      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Enligt svensk lag ska kommuner erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20031,7 +19584,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20062,8 +19614,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Swedish municipalities must offer older people support and help. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Sveriges kommuner ska erbjuda äldre personer stöd och hjälp. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Swedish municipalities must offer older people support and help.",
+      "sv": "Sveriges kommuner ska erbjuda äldre personer stöd och hjälp."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20071,7 +19623,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20087,8 +19638,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What is true about Swedish municipalities?",
-      "sv": "Vad stämmer om Sveriges kommuner?"
+      "en": "Which statement best matches Swedish municipalities?",
+      "sv": "Vilket påstående stämmer bäst om Sveriges kommuner?"
     },
     "opts": [
       {
@@ -20100,18 +19651,18 @@
         "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
-      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
+      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20119,7 +19670,6 @@
       "section": "Kommunerna har ett stort ansvar",
       "page": 31
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "elderly-care",
@@ -20167,7 +19717,6 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20207,7 +19756,6 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20247,7 +19795,6 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20295,7 +19842,6 @@
       "section": "Från jordbrukssamhälle till industrisamhälle",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "modern-history",
@@ -20343,7 +19889,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20384,7 +19929,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20425,7 +19969,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20474,7 +20017,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "population-growth",
@@ -20523,7 +20065,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20563,7 +20104,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20603,7 +20143,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20651,7 +20190,6 @@
       "section": "Befolkningsökning",
       "page": 32
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "emigration",
@@ -20699,7 +20237,6 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20739,7 +20276,6 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20779,7 +20315,6 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20827,7 +20362,6 @@
       "section": "Sveriges väg till demokrati",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "1809",
@@ -20875,7 +20409,6 @@
       "section": "Folkrörelserna",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20915,7 +20448,6 @@
       "section": "Folkrörelserna",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -20955,7 +20487,6 @@
       "section": "Folkrörelserna",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -21003,7 +20534,6 @@
       "section": "Folkrörelserna",
       "page": 33
     },
-    "questionProvenance": "derived",
     "difficulty": "hard",
     "tags": [
       "popular-movements",
@@ -21051,7 +20581,6 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21091,7 +20620,6 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21131,7 +20659,6 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21179,7 +20706,6 @@
       "section": "Demokratins genombrott",
       "page": 34
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "suffrage",
@@ -21227,7 +20753,6 @@
       "section": "Den svenska modellen",
       "page": 35
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21267,7 +20792,6 @@
       "section": "Den svenska modellen",
       "page": 35
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21307,7 +20831,6 @@
       "section": "Den svenska modellen",
       "page": 35
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21355,7 +20878,6 @@
       "section": "Den svenska modellen",
       "page": 35
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "saltsjobaden",
@@ -21403,7 +20925,6 @@
       "section": "Rekordåren",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21443,7 +20964,6 @@
       "section": "Rekordåren",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21483,7 +21003,6 @@
       "section": "Rekordåren",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21531,7 +21050,6 @@
       "section": "Rekordåren",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "record-years",
@@ -21579,7 +21097,6 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21619,7 +21136,6 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21659,7 +21175,6 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21707,7 +21222,6 @@
       "section": "Sverige blir ett invandrarland",
       "page": 36
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "million-programme",
@@ -21755,7 +21269,6 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21795,7 +21308,6 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21835,7 +21347,6 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21883,7 +21394,6 @@
       "section": "Digital revolution och globalisering",
       "page": 38
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "digital-revolution",
@@ -21931,7 +21441,6 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -21971,7 +21480,6 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -22011,7 +21519,6 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -22059,7 +21566,6 @@
       "section": "Nordiskt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nordic-cooperation",
@@ -22107,7 +21613,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22147,7 +21652,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22187,7 +21691,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22235,7 +21738,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eu",
@@ -22283,7 +21785,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22323,7 +21824,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22363,7 +21863,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22411,7 +21910,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "eu",
@@ -22459,7 +21957,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22499,7 +21996,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22539,7 +22035,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22587,7 +22082,6 @@
       "section": "EU och Europarådet",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "council-of-europe",
@@ -22635,7 +22129,6 @@
       "section": "Globalt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22675,7 +22168,6 @@
       "section": "Globalt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22715,7 +22207,6 @@
       "section": "Globalt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22763,7 +22254,6 @@
       "section": "Globalt samarbete",
       "page": 39
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "sida",
@@ -22811,7 +22301,6 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22851,7 +22340,6 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22891,7 +22379,6 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22939,7 +22426,6 @@
       "section": "Efter kalla krigets slut",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "nato",
@@ -22955,8 +22441,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about Swedish total defence is correct?",
-      "sv": "Vilken uppgift om det svenska totalförsvaret är korrekt?"
+      "en": "Which statement is correct about Swedish total defence?",
+      "sv": "Vilket påstående är korrekt om det svenska totalförsvaret?"
     },
     "opts": [
       {
@@ -22968,18 +22454,18 @@
         "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence.",
-      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
+      "en": "Sweden is responsible for protecting the country and its residents. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22987,7 +22473,6 @@
       "section": "Sveriges försvar",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -23027,7 +22512,6 @@
       "section": "Sveriges försvar",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -23058,8 +22542,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Swedish total defence includes both military defence and civil defence. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Swedish total defence includes both military defence and civil defence.",
+      "sv": "Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23067,7 +22551,6 @@
       "section": "Sveriges försvar",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -23083,8 +22566,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What is true about Swedish total defence?",
-      "sv": "Vad stämmer om det svenska totalförsvaret?"
+      "en": "Which statement best matches Swedish total defence?",
+      "sv": "Vilket påstående stämmer bäst om det svenska totalförsvaret?"
     },
     "opts": [
       {
@@ -23096,18 +22579,18 @@
         "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is responsible for protecting the country and its residents. Swedish total defence includes both military defence and civil defence.",
-      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Det svenska totalförsvaret omfattar både det militära försvaret och det civila försvaret."
+      "en": "Sweden is responsible for protecting the country and its residents. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sverige ansvarar för att skydda landet och dess invånare. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23115,7 +22598,6 @@
       "section": "Sveriges försvar",
       "page": 40
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "total-defence",
@@ -23163,7 +22645,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23203,7 +22684,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23243,7 +22723,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23291,7 +22770,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "secular-state",
@@ -23339,7 +22817,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23379,7 +22856,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23419,7 +22895,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23467,7 +22942,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -23483,8 +22957,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about the Church of Sweden and the state in 2000 is correct?",
-      "sv": "Vilken uppgift om Svenska kyrkan och staten år 2000 är korrekt?"
+      "en": "Which statement is correct about the Church of Sweden and the state in 2000?",
+      "sv": "Vilket påstående är korrekt om Svenska kyrkan och staten år 2000?"
     },
     "opts": [
       {
@@ -23496,18 +22970,18 @@
         "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community.",
-      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund."
+      "en": "The state and the Church of Sweden separated in 2000. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23515,7 +22989,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23555,7 +23028,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23586,8 +23058,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated. Therefore the statement in the question is false, so False is correct.",
-      "sv": "År 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "In 2000, the Church of Sweden became one faith community among several when the state and the Church of Sweden separated.",
+      "sv": "År 2000 blev Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23595,7 +23067,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23611,8 +23082,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What is true about the Church of Sweden and the state in 2000?",
-      "sv": "Vad stämmer om Svenska kyrkan och staten år 2000?"
+      "en": "Which statement best matches the Church of Sweden and the state in 2000?",
+      "sv": "Vilket påstående stämmer bäst om Svenska kyrkan och staten år 2000?"
     },
     "opts": [
       {
@@ -23624,18 +23095,18 @@
         "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The state and the Church of Sweden separated in 2000. The Church of Sweden then became one faith community among several in society, while still being Sweden's largest Christian faith community.",
-      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Då blev Svenska kyrkan ett av flera trossamfund i samhället, samtidigt som Svenska kyrkan fortfarande är Sveriges största kristna samfund."
+      "en": "The state and the Church of Sweden separated in 2000. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Staten och Svenska kyrkan skildes åt år 2000. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23643,7 +23114,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "church-of-sweden",
@@ -23691,7 +23161,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23731,7 +23200,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23771,7 +23239,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23819,7 +23286,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "church-of-sweden",
@@ -23867,7 +23333,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23907,7 +23372,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23947,7 +23411,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -23995,7 +23458,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -24043,7 +23505,6 @@
       "section": "Nyår",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -24083,7 +23544,6 @@
       "section": "Nyår",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -24123,7 +23583,6 @@
       "section": "Nyår",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -24171,7 +23630,6 @@
       "section": "Nyår",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-year",
@@ -24219,7 +23677,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24260,7 +23717,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24301,7 +23757,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24350,7 +23805,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "national-day",
@@ -24399,7 +23853,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24440,7 +23893,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24481,7 +23933,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24530,7 +23981,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -24579,7 +24029,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24620,7 +24069,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24661,7 +24109,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24710,7 +24157,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -24759,7 +24205,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24799,7 +24244,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24839,7 +24283,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24887,7 +24330,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -24935,7 +24377,6 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -24976,7 +24417,6 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -25017,7 +24457,6 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -25066,7 +24505,6 @@
       "section": "Valborgsmässoafton",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "walpurgis-night",
@@ -25115,7 +24553,6 @@
       "section": "Första maj",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25156,7 +24593,6 @@
       "section": "Första maj",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25197,7 +24633,6 @@
       "section": "Första maj",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25246,7 +24681,6 @@
       "section": "Första maj",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "first-of-may",
@@ -25295,7 +24729,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25336,7 +24769,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25377,7 +24809,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25426,7 +24857,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -25475,7 +24905,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25516,7 +24945,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25557,7 +24985,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25606,7 +25033,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -25655,7 +25081,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25696,7 +25121,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25737,7 +25161,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25786,7 +25209,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -25835,7 +25257,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25876,7 +25297,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25917,7 +25337,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -25966,7 +25385,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -26015,7 +25433,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -26056,7 +25473,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -26097,7 +25513,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -26146,7 +25561,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -26163,8 +25577,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is true about the role of religion in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad stämmer om religionens roll i Sverige?"
+      "en": "Which answer best matches? Which statement about the role of religion in Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om religionens roll i Sverige stämmer?"
     },
     "opts": [
       {
@@ -26195,7 +25609,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26236,7 +25649,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26277,7 +25689,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26294,8 +25705,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is true about the role of religion in Sweden?",
-      "sv": "Välj rätt alternativ: Vad stämmer om religionens roll i Sverige?"
+      "en": "Choose the correct option: Which statement about the role of religion in Sweden is correct?",
+      "sv": "Välj rätt alternativ: Vilket påstående om religionens roll i Sverige stämmer?"
     },
     "opts": [
       {
@@ -26326,7 +25737,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religionens-roll",
@@ -26343,8 +25753,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is true about Judaism's history in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad stämmer om judendomens historia i Sverige?"
+      "en": "Which answer best matches? Which statement about Judaism's history in Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om judendomens historia i Sverige stämmer?"
     },
     "opts": [
       {
@@ -26375,7 +25785,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26416,7 +25825,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26457,7 +25865,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26474,8 +25881,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is true about Judaism's history in Sweden?",
-      "sv": "Välj rätt alternativ: Vad stämmer om judendomens historia i Sverige?"
+      "en": "Choose the correct option: Which statement about Judaism's history in Sweden is correct?",
+      "sv": "Välj rätt alternativ: Vilket påstående om judendomens historia i Sverige stämmer?"
     },
     "opts": [
       {
@@ -26506,7 +25913,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -26555,7 +25961,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26596,7 +26001,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26637,7 +26041,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26686,7 +26089,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "religious-education",
@@ -26735,7 +26137,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26776,7 +26177,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26817,7 +26217,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26866,7 +26265,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -26915,7 +26313,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26956,7 +26353,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -26997,7 +26393,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27046,7 +26441,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27095,7 +26489,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -27137,7 +26530,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -27179,7 +26571,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -27229,7 +26620,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "hinduism",
@@ -27279,7 +26669,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27320,7 +26709,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27361,7 +26749,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27410,7 +26797,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "religious-freedom",
@@ -27459,7 +26845,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27500,7 +26885,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27541,7 +26925,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27590,7 +26973,6 @@
       "section": "Religionsfrihet",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "instrument-of-government",
@@ -27639,7 +27021,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27681,7 +27062,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27723,7 +27103,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27773,7 +27152,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27823,7 +27201,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27866,7 +27243,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27909,7 +27285,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -27960,7 +27335,6 @@
       "section": "Religionens roll",
       "page": 42
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christianity",
@@ -28011,7 +27385,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -28052,7 +27425,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -28093,7 +27465,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -28142,7 +27513,6 @@
       "section": "Kristendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christianity",
@@ -28191,7 +27561,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28232,7 +27601,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28273,7 +27641,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28322,7 +27689,6 @@
       "section": "Judendom",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "judaism",
@@ -28371,7 +27737,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28412,7 +27777,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28453,7 +27817,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28502,7 +27865,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "islam",
@@ -28551,7 +27913,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28593,7 +27954,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28635,7 +27995,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28685,7 +28044,6 @@
       "section": "Islam",
       "page": 44
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "islam",
@@ -28703,8 +28061,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is true about Buddhists and Hindus in present-day Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad stämmer om buddhister och hinduer i dagens Sverige?"
+      "en": "Which answer best matches? Which statement about Buddhists and Hindus in present-day Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om buddhister och hinduer i dagens Sverige stämmer?"
     },
     "opts": [
       {
@@ -28735,7 +28093,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28776,7 +28133,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28817,7 +28173,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28834,8 +28189,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is true about Buddhists and Hindus in present-day Sweden?",
-      "sv": "Välj rätt alternativ: Vad stämmer om buddhister och hinduer i dagens Sverige?"
+      "en": "Choose the correct option: Which statement about Buddhists and Hindus in present-day Sweden is correct?",
+      "sv": "Välj rätt alternativ: Vilket påstående om buddhister och hinduer i dagens Sverige stämmer?"
     },
     "opts": [
       {
@@ -28866,7 +28221,6 @@
       "section": "Hinduism och buddhism",
       "page": 43
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "hinduism",
@@ -28915,7 +28269,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28956,7 +28309,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -28997,7 +28349,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -29046,7 +28397,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -29095,7 +28445,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -29137,7 +28486,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -29179,7 +28527,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -29229,7 +28576,6 @@
       "section": "Midsommar",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "midsummer",
@@ -29247,8 +28593,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is true about many public holidays in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad stämmer om många helgdagar i Sverige?"
+      "en": "Which answer best matches? Which statement about many public holidays in Sweden is correct?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående om många helgdagar i Sverige stämmer?"
     },
     "opts": [
       {
@@ -29279,7 +28625,6 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29320,7 +28665,6 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29361,7 +28705,6 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29378,8 +28721,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is true about many public holidays in Sweden?",
-      "sv": "Välj rätt alternativ: Vad stämmer om många helgdagar i Sverige?"
+      "en": "Choose the correct option: Which statement about many public holidays in Sweden is correct?",
+      "sv": "Välj rätt alternativ: Vilket påstående om många helgdagar i Sverige stämmer?"
     },
     "opts": [
       {
@@ -29410,7 +28753,6 @@
       "section": "Några traditionella högtider under året",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "public-holidays",
@@ -29459,7 +28801,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29500,7 +28841,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29541,7 +28881,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29590,7 +28929,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "eid-al-fitr",
@@ -29639,7 +28977,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29680,7 +29017,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29721,7 +29057,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29770,7 +29105,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "nouruz-newroz",
@@ -29819,7 +29153,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29860,7 +29193,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29901,7 +29233,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29950,7 +29281,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -29999,7 +29329,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -30040,7 +29369,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -30081,7 +29409,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -30130,7 +29457,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "christmas",
@@ -30179,7 +29505,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -30221,7 +29546,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -30263,7 +29587,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -30313,7 +29636,6 @@
       "section": "Påsk",
       "page": 45
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "easter",
@@ -30363,7 +29685,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30404,7 +29725,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30445,7 +29765,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30494,7 +29813,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30543,7 +29861,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30585,7 +29902,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30627,7 +29943,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30677,7 +29992,6 @@
       "section": "Sveriges nationaldag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "national-day",
@@ -30727,7 +30041,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30768,7 +30081,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30809,7 +30121,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30858,7 +30169,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -30907,7 +30217,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30948,7 +30257,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -30989,7 +30297,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -31038,7 +30345,6 @@
       "section": "Advent",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "advent",
@@ -31087,7 +30393,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -31129,7 +30434,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -31171,7 +30475,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -31221,7 +30524,6 @@
       "section": "Alla helgons dag",
       "page": 46
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
@@ -31271,7 +30573,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31312,7 +30613,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31353,7 +30653,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31402,7 +30701,6 @@
       "section": "Nya traditioner",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "new-traditions",
@@ -31451,7 +30749,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31492,7 +30789,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31533,7 +30829,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31582,7 +30877,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31631,7 +30925,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31672,7 +30965,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31713,7 +31005,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31762,7 +31053,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31779,8 +31069,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is true about Christmas celebrations in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad stämmer om julfirande i Sverige?"
+      "en": "Which answer best matches? Which statement is correct about Christmas celebrations in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om julfirande i Sverige?"
     },
     "opts": [
       {
@@ -31811,7 +31101,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31852,7 +31141,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31893,7 +31181,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31910,8 +31197,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is true about Christmas celebrations in Sweden?",
-      "sv": "Välj rätt alternativ: Vad stämmer om julfirande i Sverige?"
+      "en": "Choose the correct option: Which statement is correct about Christmas celebrations in Sweden?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om julfirande i Sverige?"
     },
     "opts": [
       {
@@ -31942,7 +31229,6 @@
       "section": "Jul",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "christmas",
@@ -31991,7 +31277,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -32032,7 +31317,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -32073,7 +31357,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -32122,7 +31405,6 @@
       "section": "Lucia",
       "page": 47
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "lucia",
@@ -32171,7 +31453,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32212,7 +31493,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32253,7 +31533,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32302,7 +31581,6 @@
       "section": "Skogar, sjöar och öar",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32319,8 +31597,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact about Sweden's major parts is correct?",
-      "sv": "Vilken uppgift om Sveriges landsdelar är korrekt?"
+      "en": "Which statement is correct about Sweden?",
+      "sv": "Vilket påstående är korrekt om Sverige?"
     },
     "opts": [
       {
@@ -32332,18 +31610,18 @@
         "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
-      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32351,7 +31629,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32393,7 +31670,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32426,8 +31702,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is usually divided into Götaland, Svealand, and Norrland. Therefore the statement in the question is false, so False is correct.",
-      "sv": "Sverige brukar delas in i Götaland, Svealand och Norrland. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer."
+      "en": "Sweden is usually divided into Götaland, Svealand, and Norrland.",
+      "sv": "Sverige brukar delas in i Götaland, Svealand och Norrland."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32435,7 +31711,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32453,8 +31728,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What is true about Sweden's major parts?",
-      "sv": "Vad stämmer om Sveriges landsdelar?"
+      "en": "Which statement best matches Sweden?",
+      "sv": "Vilket påstående stämmer bäst om Sverige?"
     },
     "opts": [
       {
@@ -32466,18 +31741,18 @@
         "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "Both descriptions are correct",
-        "sv": "Båda beskrivningarna är korrekta"
+        "en": "Both statements are correct",
+        "sv": "Båda påståendena är korrekta"
       },
       {
-        "en": "Neither description is correct",
-        "sv": "Ingen av beskrivningarna är korrekt"
+        "en": "Neither statement is correct",
+        "sv": "Inget av påståendena är korrekt"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Götaland is in southern Sweden, Svealand in central Sweden, and Norrland in northern Sweden; Norrland covers more than half of the country's area.",
-      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Götaland ligger i södra Sverige, Svealand i mellersta Sverige och Norrland i norra Sverige; Norrland omfattar mer än hälften av landets yta."
+      "en": "Sweden is usually divided into the three major parts Götaland, Svealand, and Norrland. Therefore the statement that matches that fact is correct, while the opposite statement is not.",
+      "sv": "Sverige brukar delas in i de tre landsdelarna Götaland, Svealand och Norrland. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32485,7 +31760,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "geography",
@@ -32535,7 +31809,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32576,7 +31849,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32617,7 +31889,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32666,7 +31937,6 @@
       "section": "Sveriges indelning",
       "page": 6
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "geography",
@@ -32715,7 +31985,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32755,7 +32024,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32795,7 +32063,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32843,7 +32110,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32891,7 +32157,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32931,7 +32196,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -32971,7 +32235,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -33019,7 +32282,6 @@
       "section": "Demokrati betyder folkstyre",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -33067,7 +32329,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -33107,7 +32368,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -33147,7 +32407,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -33195,7 +32454,6 @@
       "section": "En stark demokrati",
       "page": 10
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "democracy",
@@ -33243,7 +32501,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -33284,7 +32541,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -33325,7 +32581,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -33374,7 +32629,6 @@
       "section": "Hot mot demokratin",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "democracy",
@@ -33423,7 +32677,6 @@
       "section": "Segregation och integration",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33464,7 +32717,6 @@
       "section": "Segregation och integration",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33505,7 +32757,6 @@
       "section": "Segregation och integration",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33554,7 +32805,6 @@
       "section": "Segregation och integration",
       "page": 11
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "integration",
@@ -33576,26 +32826,26 @@
     },
     "opts": [
       {
-        "en": "They sell advertising space or charge for a specific channel",
-        "sv": "De säljer reklamplats eller tar betalt för en särskild kanal"
+        "en": "Commercial channels can sell advertising space or charge for particular channels",
+        "sv": "Kommersiella kanaler kan sälja reklamplats eller ta betalt för särskilda kanaler"
       },
       {
-        "en": "Through court fees from trials",
-        "sv": "Genom domstolsavgifter från rättegångar"
+        "en": "All commercial channels are always financed through tax",
+        "sv": "Alla kommersiella kanaler finansieras alltid genom skatt"
       },
       {
-        "en": "Through membership fees to trade unions",
-        "sv": "Genom medlemsavgifter till fackförbund"
+        "en": "Commercial channels earn income when authorities decide every news item",
+        "sv": "Kommersiella kanaler får inkomster när myndigheter bestämmer varje nyhet"
       },
       {
-        "en": "By municipalities deciding their programmes",
-        "sv": "Genom att kommunerna bestämmer deras program"
+        "en": "Commercial channels can earn income only by publishing authority decisions",
+        "sv": "Kommersiella kanaler får bara inkomster genom att publicera myndighetsbeslut"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
-      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a particular channel. This differs from public service broadcasting, which is financed in another way.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att se en särskild kanal. Det skiljer dem från public service, som finansieras på ett annat sätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33603,8 +32853,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "commercial-media",
       "advertising",
@@ -33619,8 +32868,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They sell advertising space or charge for a specific channel.",
-      "sv": "De säljer reklamplats eller tar betalt för en särskild kanal."
+      "en": "Commercial channels can sell advertising space or charge for particular channels.",
+      "sv": "Kommersiella kanaler kan sälja reklamplats eller ta betalt för särskilda kanaler."
     },
     "opts": [
       {
@@ -33634,8 +32883,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
-      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a particular channel. This differs from public service broadcasting, which is financed in another way.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att se en särskild kanal. Det skiljer dem från public service, som finansieras på ett annat sätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33643,8 +32892,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "commercial-media",
       "advertising",
@@ -33659,8 +32907,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Through court fees from trials.",
-      "sv": "Genom domstolsavgifter från rättegångar."
+      "en": "All commercial channels are always financed through tax.",
+      "sv": "Alla kommersiella kanaler finansieras alltid genom skatt."
     },
     "opts": [
       {
@@ -33674,8 +32922,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
-      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a particular channel. This differs from public service broadcasting, which is financed in another way.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att se en särskild kanal. Det skiljer dem från public service, som finansieras på ett annat sätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33683,8 +32931,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "commercial-media",
       "advertising",
@@ -33704,26 +32951,26 @@
     },
     "opts": [
       {
-        "en": "They sell advertising space or charge for a specific channel",
-        "sv": "De säljer reklamplats eller tar betalt för en särskild kanal"
+        "en": "Commercial channels can sell advertising space or charge for particular channels",
+        "sv": "Kommersiella kanaler kan sälja reklamplats eller ta betalt för särskilda kanaler"
       },
       {
-        "en": "Through court fees from trials",
-        "sv": "Genom domstolsavgifter från rättegångar"
+        "en": "All commercial channels are always financed through tax",
+        "sv": "Alla kommersiella kanaler finansieras alltid genom skatt"
       },
       {
-        "en": "Through membership fees to trade unions",
-        "sv": "Genom medlemsavgifter till fackförbund"
+        "en": "Commercial channels earn income when authorities decide every news item",
+        "sv": "Kommersiella kanaler får inkomster när myndigheter bestämmer varje nyhet"
       },
       {
-        "en": "By municipalities deciding their programmes",
-        "sv": "Genom att kommunerna bestämmer deras program"
+        "en": "Commercial channels can earn income only by publishing authority decisions",
+        "sv": "Kommersiella kanaler får bara inkomster genom att publicera myndighetsbeslut"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
-      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a particular channel. This differs from public service broadcasting, which is financed in another way.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att se en särskild kanal. Det skiljer dem från public service, som finansieras på ett annat sätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33731,8 +32978,7 @@
       "section": "Olika slags medier",
       "page": 21
     },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "commercial-media",
       "advertising",
@@ -33747,31 +32993,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What characterizes media financed by advertising?",
-      "sv": "Vilket svar stämmer bäst? Vad kännetecknar medier som finansieras med reklam?"
+      "en": "Which answer best matches? Which statement often describes advertising-funded media?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver ofta reklamfinansierade medier?"
     },
     "opts": [
       {
-        "en": "They are often run by private companies and earn income from advertising",
-        "sv": "De drivs ofta av privata företag och får inkomster genom reklam"
+        "en": "Advertising-funded media are often run by private companies and earn income from advertising",
+        "sv": "Reklamfinansierade medier drivs ofta av privata företag och får inkomster från reklam"
       },
       {
-        "en": "They may never sell advertising space",
-        "sv": "De får aldrig sälja reklamplats"
+        "en": "Advertising-funded media may never exist on the internet",
+        "sv": "Reklamfinansierade medier får aldrig finnas på internet"
       },
       {
-        "en": "They replace the mission of public-service companies",
-        "sv": "De ersätter public service-företagens uppdrag"
+        "en": "Advertising-funded media may only make programs for schools",
+        "sv": "Reklamfinansierade medier får bara göra program för skolor"
       },
       {
-        "en": "They consist only of government agencies",
-        "sv": "De består bara av statliga myndigheter"
+        "en": "Advertising-funded media must always be government agencies",
+        "sv": "Reklamfinansierade medier måste alltid vara myndigheter"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
-      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+      "en": "Media financed by advertising are often run by private companies. Daily and evening newspapers may be distributed locally or nationwide, and they can also earn income by selling advertising space.",
+      "sv": "Medier som finansieras med reklam drivs ofta av privata företag. Dagstidningar och kvällstidningar kan säljas lokalt eller i hela landet, och de kan också få inkomster genom att sälja reklamplats."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33779,11 +33025,10 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
-      "advertising-funded",
+      "advertising-funded-media",
       "newspapers",
       "published-variant",
       "section-practice"
@@ -33795,8 +33040,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They are often run by private companies and earn income from advertising.",
-      "sv": "De drivs ofta av privata företag och får inkomster genom reklam."
+      "en": "Advertising-funded media are often run by private companies and earn income from advertising.",
+      "sv": "Reklamfinansierade medier drivs ofta av privata företag och får inkomster från reklam."
     },
     "opts": [
       {
@@ -33810,8 +33055,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
-      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+      "en": "Media financed by advertising are often run by private companies. Daily and evening newspapers may be distributed locally or nationwide, and they can also earn income by selling advertising space.",
+      "sv": "Medier som finansieras med reklam drivs ofta av privata företag. Dagstidningar och kvällstidningar kan säljas lokalt eller i hela landet, och de kan också få inkomster genom att sälja reklamplats."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33819,11 +33064,10 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
-      "advertising-funded",
+      "advertising-funded-media",
       "newspapers",
       "published-variant",
       "true-false"
@@ -33835,8 +33079,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They may never sell advertising space.",
-      "sv": "De får aldrig sälja reklamplats."
+      "en": "Advertising-funded media may never exist on the internet.",
+      "sv": "Reklamfinansierade medier får aldrig finnas på internet."
     },
     "opts": [
       {
@@ -33850,8 +33094,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
-      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+      "en": "Media financed by advertising are often run by private companies. Daily and evening newspapers may be distributed locally or nationwide, and they can also earn income by selling advertising space.",
+      "sv": "Medier som finansieras med reklam drivs ofta av privata företag. Dagstidningar och kvällstidningar kan säljas lokalt eller i hela landet, och de kan också få inkomster genom att sälja reklamplats."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33859,11 +33103,10 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
-      "advertising-funded",
+      "advertising-funded-media",
       "newspapers",
       "published-variant",
       "false-statement"
@@ -33875,31 +33118,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What characterizes media financed by advertising?",
-      "sv": "Välj rätt alternativ: Vad kännetecknar medier som finansieras med reklam?"
+      "en": "Choose the correct option: Which statement often describes advertising-funded media?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver ofta reklamfinansierade medier?"
     },
     "opts": [
       {
-        "en": "They are often run by private companies and earn income from advertising",
-        "sv": "De drivs ofta av privata företag och får inkomster genom reklam"
+        "en": "Advertising-funded media are often run by private companies and earn income from advertising",
+        "sv": "Reklamfinansierade medier drivs ofta av privata företag och får inkomster från reklam"
       },
       {
-        "en": "They may never sell advertising space",
-        "sv": "De får aldrig sälja reklamplats"
+        "en": "Advertising-funded media may never exist on the internet",
+        "sv": "Reklamfinansierade medier får aldrig finnas på internet"
       },
       {
-        "en": "They replace the mission of public-service companies",
-        "sv": "De ersätter public service-företagens uppdrag"
+        "en": "Advertising-funded media may only make programs for schools",
+        "sv": "Reklamfinansierade medier får bara göra program för skolor"
       },
       {
-        "en": "They consist only of government agencies",
-        "sv": "De består bara av statliga myndigheter"
+        "en": "Advertising-funded media must always be government agencies",
+        "sv": "Reklamfinansierade medier måste alltid vara myndigheter"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
-      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
+      "en": "Media financed by advertising are often run by private companies. Daily and evening newspapers may be distributed locally or nationwide, and they can also earn income by selling advertising space.",
+      "sv": "Medier som finansieras med reklam drivs ofta av privata företag. Dagstidningar och kvällstidningar kan säljas lokalt eller i hela landet, och de kan också få inkomster genom att sälja reklamplats."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33907,11 +33150,10 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "private-media",
-      "advertising-funded",
+      "advertising-funded-media",
       "newspapers",
       "published-variant",
       "judgement"
@@ -33923,31 +33165,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How are many newspapers published today?",
-      "sv": "Vilket svar stämmer bäst? Hur publiceras många tidningar i dag?"
+      "en": "Which answer best matches? How have many newspapers changed with the internet?",
+      "sv": "Vilket svar stämmer bäst? Hur har många tidningar förändrats med internet?"
     },
     "opts": [
       {
-        "en": "They are also available online and updated with news several times per day",
-        "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag"
+        "en": "Many newspapers are available online and updated with news several times a day",
+        "sv": "Många tidningar finns på internet och uppdateras med nyheter flera gånger per dag"
       },
       {
-        "en": "They may be sold only as one copy per year",
-        "sv": "De får bara säljas som ett exemplar per år"
+        "en": "Newspapers may only be published once a year",
+        "sv": "Tidningar får bara komma ut en gång om året"
       },
       {
-        "en": "They may be distributed only within one residential building",
-        "sv": "De får bara spridas inom ett enda bostadshus"
+        "en": "Newspapers have stopped writing about local news",
+        "sv": "Tidningar har slutat skriva om lokala nyheter"
       },
       {
-        "en": "They may not write about local or national news",
-        "sv": "De får inte skriva om lokala eller nationella nyheter"
+        "en": "Newspapers must always be secret",
+        "sv": "Tidningar måste alltid vara hemliga"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
-      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are now also available on the internet and can be updated with news several times a day. This does not mean that printed papers, local news, or subscriptions automatically disappear.",
+      "sv": "Många tidningar finns i dag också på internet och kan uppdateras med nyheter flera gånger per dag. Det betyder inte att papperstidningar, lokala nyheter eller prenumerationer automatiskt försvinner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33955,12 +33197,11 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
-      "online-news",
-      "local-national-media",
+      "internet-news",
+      "media-change",
       "published-variant",
       "section-practice"
     ]
@@ -33971,8 +33212,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They are also available online and updated with news several times per day.",
-      "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are available online and updated with news several times a day.",
+      "sv": "Många tidningar finns på internet och uppdateras med nyheter flera gånger per dag."
     },
     "opts": [
       {
@@ -33986,8 +33227,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
-      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are now also available on the internet and can be updated with news several times a day. This does not mean that printed papers, local news, or subscriptions automatically disappear.",
+      "sv": "Många tidningar finns i dag också på internet och kan uppdateras med nyheter flera gånger per dag. Det betyder inte att papperstidningar, lokala nyheter eller prenumerationer automatiskt försvinner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -33995,12 +33236,11 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
-      "online-news",
-      "local-national-media",
+      "internet-news",
+      "media-change",
       "published-variant",
       "true-false"
     ]
@@ -34011,8 +33251,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "They may be sold only as one copy per year.",
-      "sv": "De får bara säljas som ett exemplar per år."
+      "en": "Newspapers may only be published once a year.",
+      "sv": "Tidningar får bara komma ut en gång om året."
     },
     "opts": [
       {
@@ -34026,8 +33266,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
-      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are now also available on the internet and can be updated with news several times a day. This does not mean that printed papers, local news, or subscriptions automatically disappear.",
+      "sv": "Många tidningar finns i dag också på internet och kan uppdateras med nyheter flera gånger per dag. Det betyder inte att papperstidningar, lokala nyheter eller prenumerationer automatiskt försvinner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34035,12 +33275,11 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
-      "online-news",
-      "local-national-media",
+      "internet-news",
+      "media-change",
       "published-variant",
       "false-statement"
     ]
@@ -34051,31 +33290,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: How are many newspapers published today?",
-      "sv": "Välj rätt alternativ: Hur publiceras många tidningar i dag?"
+      "en": "Choose the correct option: How have many newspapers changed with the internet?",
+      "sv": "Välj rätt alternativ: Hur har många tidningar förändrats med internet?"
     },
     "opts": [
       {
-        "en": "They are also available online and updated with news several times per day",
-        "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag"
+        "en": "Many newspapers are available online and updated with news several times a day",
+        "sv": "Många tidningar finns på internet och uppdateras med nyheter flera gånger per dag"
       },
       {
-        "en": "They may be sold only as one copy per year",
-        "sv": "De får bara säljas som ett exemplar per år"
+        "en": "Newspapers may only be published once a year",
+        "sv": "Tidningar får bara komma ut en gång om året"
       },
       {
-        "en": "They may be distributed only within one residential building",
-        "sv": "De får bara spridas inom ett enda bostadshus"
+        "en": "Newspapers have stopped writing about local news",
+        "sv": "Tidningar har slutat skriva om lokala nyheter"
       },
       {
-        "en": "They may not write about local or national news",
-        "sv": "De får inte skriva om lokala eller nationella nyheter"
+        "en": "Newspapers must always be secret",
+        "sv": "Tidningar måste alltid vara hemliga"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
-      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
+      "en": "Many newspapers are now also available on the internet and can be updated with news several times a day. This does not mean that printed papers, local news, or subscriptions automatically disappear.",
+      "sv": "Många tidningar finns i dag också på internet och kan uppdateras med nyheter flera gånger per dag. Det betyder inte att papperstidningar, lokala nyheter eller prenumerationer automatiskt försvinner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34083,12 +33322,11 @@
       "section": "Privat- och reklamfinansierade medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
       "newspapers",
-      "online-news",
-      "local-national-media",
+      "internet-news",
+      "media-change",
       "published-variant",
       "judgement"
     ]
@@ -34099,31 +33337,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is important to remember about the web and social media?",
-      "sv": "Vilket svar stämmer bäst? Vad är viktigt att komma ihåg om webben och sociala medier?"
+      "en": "Which answer best matches? Why does content on social media require extra attention?",
+      "sv": "Vilket svar stämmer bäst? Varför behöver man vara extra uppmärksam på innehåll i sociala medier?"
     },
     "opts": [
       {
-        "en": "Anyone can create content there, and it is not always checked the same way as in other media",
-        "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier"
+        "en": "Anyone can create content on social media, and it is not checked in the same way",
+        "sv": "Vem som helst kan skapa innehåll i sociala medier och det kontrolleras inte på samma sätt"
       },
       {
-        "en": "Only responsible publishers may write posts there",
-        "sv": "Bara ansvariga utgivare får skriva inlägg där"
+        "en": "All content on social media is always reviewed by a responsible publisher",
+        "sv": "Allt innehåll i sociala medier granskas alltid av en ansvarig utgivare"
       },
       {
-        "en": "All content is first approved by the state",
-        "sv": "Allt innehåll godkänns först av staten"
+        "en": "Only public service broadcasters may publish on social media",
+        "sv": "Bara public service får publicera i sociala medier"
       },
       {
-        "en": "The content is always more reliable than news in newspapers",
-        "sv": "Innehållet är alltid mer pålitligt än nyheter i tidningar"
+        "en": "It is always forbidden to share information on social media",
+        "sv": "Det är alltid förbjudet att dela information i sociala medier"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
-      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+      "en": "On the web and in social media, anyone can create content. Because that content is not checked in the same way as in other media, readers need to pay attention to what is accurate.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras innehållet inte på samma sätt som i andra medier, och läsaren behöver själv vara uppmärksam på vad som stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34131,12 +33369,11 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
-      "web",
       "social-media",
-      "content-control",
+      "web-content",
+      "media-literacy",
       "published-variant",
       "section-practice"
     ]
@@ -34147,8 +33384,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Anyone can create content there, and it is not always checked the same way as in other media.",
-      "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier."
+      "en": "One reason is that Anyone can create content on social media, and it is not checked in the same way.",
+      "sv": "En anledning är att Vem som helst kan skapa innehåll i sociala medier och det kontrolleras inte på samma sätt."
     },
     "opts": [
       {
@@ -34162,8 +33399,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
-      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+      "en": "On the web and in social media, anyone can create content. Because that content is not checked in the same way as in other media, readers need to pay attention to what is accurate.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras innehållet inte på samma sätt som i andra medier, och läsaren behöver själv vara uppmärksam på vad som stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34171,12 +33408,11 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
-      "web",
       "social-media",
-      "content-control",
+      "web-content",
+      "media-literacy",
       "published-variant",
       "true-false"
     ]
@@ -34187,8 +33423,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Only responsible publishers may write posts there.",
-      "sv": "Bara ansvariga utgivare får skriva inlägg där."
+      "en": "One reason is that All content on social media is always reviewed by a responsible publisher.",
+      "sv": "En anledning är allt innehåll i sociala medier granskas alltid av en ansvarig utgivare."
     },
     "opts": [
       {
@@ -34202,8 +33438,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
-      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+      "en": "On the web and in social media, anyone can create content. Because that content is not checked in the same way as in other media, readers need to pay attention to what is accurate.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras innehållet inte på samma sätt som i andra medier, och läsaren behöver själv vara uppmärksam på vad som stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34211,12 +33447,11 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
-      "web",
       "social-media",
-      "content-control",
+      "web-content",
+      "media-literacy",
       "published-variant",
       "false-statement"
     ]
@@ -34227,31 +33462,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is important to remember about the web and social media?",
-      "sv": "Välj rätt alternativ: Vad är viktigt att komma ihåg om webben och sociala medier?"
+      "en": "Choose the correct option: Why does content on social media require extra attention?",
+      "sv": "Välj rätt alternativ: Varför behöver man vara extra uppmärksam på innehåll i sociala medier?"
     },
     "opts": [
       {
-        "en": "Anyone can create content there, and it is not always checked the same way as in other media",
-        "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier"
+        "en": "Anyone can create content on social media, and it is not checked in the same way",
+        "sv": "Vem som helst kan skapa innehåll i sociala medier och det kontrolleras inte på samma sätt"
       },
       {
-        "en": "Only responsible publishers may write posts there",
-        "sv": "Bara ansvariga utgivare får skriva inlägg där"
+        "en": "All content on social media is always reviewed by a responsible publisher",
+        "sv": "Allt innehåll i sociala medier granskas alltid av en ansvarig utgivare"
       },
       {
-        "en": "All content is first approved by the state",
-        "sv": "Allt innehåll godkänns först av staten"
+        "en": "Only public service broadcasters may publish on social media",
+        "sv": "Bara public service får publicera i sociala medier"
       },
       {
-        "en": "The content is always more reliable than news in newspapers",
-        "sv": "Innehållet är alltid mer pålitligt än nyheter i tidningar"
+        "en": "It is always forbidden to share information on social media",
+        "sv": "Det är alltid förbjudet att dela information i sociala medier"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
-      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
+      "en": "On the web and in social media, anyone can create content. Because that content is not checked in the same way as in other media, readers need to pay attention to what is accurate.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras innehållet inte på samma sätt som i andra medier, och läsaren behöver själv vara uppmärksam på vad som stämmer."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34259,12 +33494,11 @@
       "section": "Webb och sociala medier",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "medium",
     "tags": [
-      "web",
       "social-media",
-      "content-control",
+      "web-content",
+      "media-literacy",
       "published-variant",
       "judgement"
     ]
@@ -34275,31 +33509,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why is source criticism needed when using media?",
-      "sv": "Vilket svar stämmer bäst? Varför behövs källkritik när man använder medier?"
+      "en": "Which answer best matches? Why is source criticism important when taking in information?",
+      "sv": "Vilket svar stämmer bäst? Varför är källkritik viktigt när man tar del av information?"
     },
     "opts": [
       {
-        "en": "False information can spread quickly and affect people's opinions",
+        "en": "False information can spread quickly and influence people's opinions",
         "sv": "Falska uppgifter kan spridas snabbt och påverka människors åsikter"
       },
       {
-        "en": "Everything that is published is always correct",
-        "sv": "Allt som publiceras är alltid korrekt"
+        "en": "All information in media is always correct",
+        "sv": "All information i medier är alltid korrekt"
       },
       {
-        "en": "Source criticism means never reading news",
-        "sv": "Källkritik betyder att man aldrig ska läsa nyheter"
+        "en": "One never needs to check who is saying something",
+        "sv": "Man behöver aldrig kontrollera vem som säger något"
       },
       {
-        "en": "Only printed books need to be checked",
-        "sv": "Bara tryckta böcker behöver kontrolleras"
+        "en": "Social media contain only information from authorities",
+        "sv": "Sociala medier innehåller bara myndighetsinformation"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
-      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+      "en": "Source criticism is needed because information can come from many different sources and not everything published is correct. False information can spread quickly and influence people's opinions, so information needs to be reviewed and checked.",
+      "sv": "Källkritik behövs eftersom information kan komma från många olika källor och allt som publiceras inte är korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver granska och kontrollera information."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34307,7 +33541,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -34323,7 +33556,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason is that False information can spread quickly and affect people's opinions.",
+      "en": "One reason is that False information can spread quickly and influence people's opinions.",
       "sv": "En anledning är att Falska uppgifter kan spridas snabbt och påverka människors åsikter."
     },
     "opts": [
@@ -34338,8 +33571,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
-      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+      "en": "Source criticism is needed because information can come from many different sources and not everything published is correct. False information can spread quickly and influence people's opinions, so information needs to be reviewed and checked.",
+      "sv": "Källkritik behövs eftersom information kan komma från många olika källor och allt som publiceras inte är korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver granska och kontrollera information."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34347,7 +33580,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -34363,8 +33595,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "One reason is that Everything that is published is always correct.",
-      "sv": "En anledning är allt som publiceras är alltid korrekt."
+      "en": "One reason is that All information in media is always correct.",
+      "sv": "En anledning är all information i medier är alltid korrekt."
     },
     "opts": [
       {
@@ -34378,8 +33610,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
-      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+      "en": "Source criticism is needed because information can come from many different sources and not everything published is correct. False information can spread quickly and influence people's opinions, so information needs to be reviewed and checked.",
+      "sv": "Källkritik behövs eftersom information kan komma från många olika källor och allt som publiceras inte är korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver granska och kontrollera information."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34387,7 +33619,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
@@ -34403,31 +33634,31 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Why is source criticism needed when using media?",
-      "sv": "Välj rätt alternativ: Varför behövs källkritik när man använder medier?"
+      "en": "Choose the correct option: Why is source criticism important when taking in information?",
+      "sv": "Välj rätt alternativ: Varför är källkritik viktigt när man tar del av information?"
     },
     "opts": [
       {
-        "en": "False information can spread quickly and affect people's opinions",
+        "en": "False information can spread quickly and influence people's opinions",
         "sv": "Falska uppgifter kan spridas snabbt och påverka människors åsikter"
       },
       {
-        "en": "Everything that is published is always correct",
-        "sv": "Allt som publiceras är alltid korrekt"
+        "en": "All information in media is always correct",
+        "sv": "All information i medier är alltid korrekt"
       },
       {
-        "en": "Source criticism means never reading news",
-        "sv": "Källkritik betyder att man aldrig ska läsa nyheter"
+        "en": "One never needs to check who is saying something",
+        "sv": "Man behöver aldrig kontrollera vem som säger något"
       },
       {
-        "en": "Only printed books need to be checked",
-        "sv": "Bara tryckta böcker behöver kontrolleras"
+        "en": "Social media contain only information from authorities",
+        "sv": "Sociala medier innehåller bara myndighetsinformation"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
-      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
+      "en": "Source criticism is needed because information can come from many different sources and not everything published is correct. False information can spread quickly and influence people's opinions, so information needs to be reviewed and checked.",
+      "sv": "Källkritik behövs eftersom information kan komma från många olika källor och allt som publiceras inte är korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver granska och kontrollera information."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34435,7 +33666,6 @@
       "section": "Källkritik",
       "page": 21
     },
-    "questionProvenance": "derived",
     "difficulty": "easy",
     "tags": [
       "source-criticism",
