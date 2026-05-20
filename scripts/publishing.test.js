@@ -17,6 +17,71 @@ function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
 }
 
+function staleSeparatedWords(...words) {
+  return new RegExp(words.join('[\\s_-]+'), 'i');
+function staleNativeIdentifierPattern() {
+  return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+}
+
+function disabledGoogleMobileAdsPattern() {
+  return new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i');
+}
+
+function deferredRealAdsDisabledPattern() {
+  return new RegExp(['deferred', 'real', 'ads', 'disabled'].join('[-\\s]+'), 'i');
+}
+
+function oldRealAdsDisabledFlagPattern() {
+  return new RegExp(['REAL_ADS', 'ENABLED_FOR_V1=false'].join('_'), 'i');
+}
+
+function assertNoLegacyAdsPosture(source) {
+  [
+    oldRealAdsDisabledFlagPattern(),
+    deferredRealAdsDisabledPattern(),
+    staleWords('real', 'ads', 'disabled'),
+    staleWords('real', 'ads', 'remain', 'disabled'),
+    staleWords('AdMob', 'is', 'deferred'),
+    disabledGoogleMobileAdsPattern(),
+  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
+}
+
+function assertNoStalePublicPrivacyPosture(source) {
+  [
+    staleWords('no', 'user', 'data', 'is', 'collected'),
+    staleWords('no', 'user', 'data', 'is', 'shared'),
+    staleWords('no', 'user', 'data', 'collected'),
+    staleWords('no', 'user', 'data', 'shared'),
+    staleWords('real', 'ad', 'rendering', 'is', 'disabled'),
+    staleWords('real', 'ads', 'disabled'),
+    staleWords('Data', 'Not', 'Collected'),
+    staleToken('REAL_ADS', 'ENABLED_FOR_V1'),
+  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
+}
+
+function assertNoStaleReleaseInstructionPosture(source) {
+  [
+    staleSeparatedWords('real', 'ads', 'disabled'),
+    staleSeparatedWords('deferred', 'real', 'ads', 'disabled'),
+    staleWords('disabled', 'Google', 'Mobile', 'Ads'),
+    new RegExp(`${['REAL_ADS', 'ENABLED_FOR_V1'].join('_')}\\s*=\\s*false`, 'i'),
+  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
+}
+
+function assertCurrentPublicPrivacyPosture(source, options = {}) {
+  const requiresAtt = options.requiresAtt ?? true;
+
+  assert.match(source, /Google Mobile Ads|AdMob/i);
+  assert.match(source, /Remove Ads/i);
+  assert.match(source, /29 SEK/i);
+  if (requiresAtt) {
+    assert.match(source, /App Tracking Transparency|ATT/i);
+  }
+  assert.match(source, /Google UMP consent|UMP consent/i);
+  assert.match(source, /local[\s\S]{0,80}device|stored locally on the device/i);
+  assertNoStalePublicPrivacyPosture(source);
+}
+
 function parseExternalBlockerRows(markdown) {
   return markdown
     .split('\n')
@@ -145,6 +210,23 @@ test('post-EAS-auth runbook covers build, device, and store evidence sequence', 
   assert.match(runbook, /reports\/release-evidence-YYYY-MM-DD\.md/);
   assert.match(runbook, /scripts\/update-release-gate\.js/);
   assert.match(runbook, /--gate android-device-audio/);
+});
+
+test('active release instructions describe the ad-supported Remove Ads posture', () => {
+  const activeReleaseInstructions = [
+    read('publishing/post-eas-auth-runbook.md'),
+    read('reports/external-release-blockers.md'),
+    read('scripts/write-release-owner-action-packet.js'),
+  ].join('\n');
+
+  assert.match(activeReleaseInstructions, /AdMob app (record|readiness)/i);
+  assert.match(activeReleaseInstructions, /Google Mobile Ads/i);
+  assert.match(activeReleaseInstructions, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(activeReleaseInstructions, /Remove Ads/i);
+  assert.match(activeReleaseInstructions, /29 SEK/i);
+  assert.match(activeReleaseInstructions, /App Tracking Transparency|ATT/i);
+  assert.match(activeReleaseInstructions, /Google UMP|UMP consent|ATT\/UMP/i);
+  assertNoStaleReleaseInstructionPosture(activeReleaseInstructions);
 });
 
 test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
