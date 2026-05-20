@@ -1,5 +1,5 @@
 import { Link, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Card } from '../components/ui/Card';
@@ -27,8 +27,15 @@ export default function SearchScreen() {
   const searchParams = useLocalSearchParams<SearchRouteParams>();
   const routeQuery = getRouteSearchQuery(searchParams);
   const [query, setQuery] = useState(() => routeQuery);
+  const previousRouteQueryRef = useRef(routeQuery);
   const language = useSettingsStore((state) => state.language);
   const copy = searchRouteCopy[language];
+  useEffect(() => {
+    if (previousRouteQueryRef.current === routeQuery) return;
+
+    previousRouteQueryRef.current = routeQuery;
+    setQuery(routeQuery);
+  }, [routeQuery]);
   const termsWithChapters = useMemo(
     () =>
       glossaryTerms.map((term) => ({
