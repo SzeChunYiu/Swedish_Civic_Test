@@ -689,7 +689,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 6;
+const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 20;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
@@ -7750,6 +7750,9 @@ const dashboardStatsModule = loadTs('lib/learning/dashboardStats.ts');
 const perChapterProgress = dashboardStatsModule.perChapterProgress;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
+const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
+const calculateStreakWithFreeze = streakWithFreezeModule.calculateStreakWithFreeze;
+const refillFreezes = streakWithFreezeModule.refillFreezes;
 const mockExamLibraryModule = loadTs('lib/learning/mockExamLibrary.ts');
 const MOCK_EXAM_LIBRARY = mockExamLibraryModule.MOCK_EXAM_LIBRARY;
 const xpModule = loadTs('lib/learning/xp.ts');
@@ -8758,6 +8761,10 @@ if (!Array.isArray(spacedRepetitionSchedule)) {
 }
 if (typeof getNextReviewAt !== 'function') fail('getNextReviewAt export is not a function');
 if (typeof calculateStreak !== 'function') fail('calculateStreak export is not a function');
+if (typeof calculateStreakWithFreeze !== 'function') {
+  fail('calculateStreakWithFreeze export is not a function');
+}
+if (typeof refillFreezes !== 'function') fail('refillFreezes export is not a function');
 if (typeof calculateAnswerXp !== 'function') fail('calculateAnswerXp export is not a function');
 if (typeof calculateQuizCompletionXp !== 'function') {
   fail('calculateQuizCompletionXp export is not a function');
@@ -15966,9 +15973,23 @@ function validateSpacedRepetitionSchedule() {
 }
 
 function validateStreakRules() {
-  if (typeof calculateStreak !== 'function') return;
+  if (
+    typeof calculateStreak !== 'function' ||
+    typeof calculateStreakWithFreeze !== 'function' ||
+    typeof refillFreezes !== 'function'
+  ) {
+    return;
+  }
 
   const today = '2026-05-15';
+  const streakFreezeNow = new Date('2026-05-19T12:00:00.000Z');
+  const malformedFreezeState = {
+    available: 1,
+    lastEarnedAt: 'not-a-date',
+    lifetimeEarned: 1,
+    lifetimeSpent: 0,
+    rescuedDayKeys: ['bad-key', '2026-05-17'],
+  };
   const cases = [
     {
       label: 'empty answer history',
@@ -16004,6 +16025,44 @@ function validateStreakRules() {
       label: 'future-only answers',
       actual: () => calculateStreak(['2026-05-16'], today),
       expected: 0,
+    },
+    {
+      label: 'streakWithFreeze ignores malformed active day keys',
+      actual: () =>
+        calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-19', '2026-05-18T08:00:00.000Z', 7, '2026-02-30'],
+          freezeState: malformedFreezeState,
+          today: '2026-05-19',
+          now: streakFreezeNow,
+        }).streakDays,
+      expected: 3,
+    },
+    {
+      label: 'streakWithFreeze falls back from invalid today',
+      actual: () =>
+        calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-19', '2026-05-18'],
+          freezeState: malformedFreezeState,
+          today: 'not-a-date',
+          now: streakFreezeNow,
+        }).streakDays,
+      expected: 3,
+    },
+    {
+      label: 'refillFreezes repairs invalid lastEarnedAt',
+      actual: () => refillFreezes(malformedFreezeState, streakFreezeNow).lastEarnedAt,
+      expected: '2026-05-18',
+    },
+    {
+      label: 'refillFreezes rejects invalid now corruption',
+      actual: () => {
+        const lastEarnedAt = refillFreezes(
+          malformedFreezeState,
+          new Date('not-a-date'),
+        ).lastEarnedAt;
+        return /^\d{4}-\d{2}-\d{2}$/.test(lastEarnedAt) && !/NaN|not-a-date/.test(lastEarnedAt);
+      },
+      expected: true,
     },
   ];
 

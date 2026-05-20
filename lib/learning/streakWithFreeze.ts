@@ -22,6 +22,7 @@
 import { getLocalDateKey } from './streaks';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export interface StreakFreezeState {
   /** Number of freezes available right now. 0..MAX_STOCKPILE. */
@@ -43,13 +44,18 @@ const MAX_STOCKPILE = 4;
 const FREEZES_PER_WEEK = 1;
 
 export function createInitialFreezeState(now: Date = new Date()): StreakFreezeState {
+  const safeNow = safeDate(now);
   return {
     available: FREEZES_PER_WEEK,
-    lastEarnedAt: getLocalDateKey(startOfWeek(now)),
+    lastEarnedAt: getLocalDateKey(startOfWeek(safeNow)),
     lifetimeEarned: FREEZES_PER_WEEK,
     lifetimeSpent: 0,
     rescuedDayKeys: [],
   };
+}
+
+function safeDate(value: unknown): Date {
+  return value instanceof Date && Number.isFinite(value.getTime()) ? value : new Date();
 }
 
 function startOfWeek(date: Date): Date {
@@ -58,6 +64,23 @@ function startOfWeek(date: Date): Date {
   const offsetToMonday = (dayOfWeek + 6) % 7;
   d.setDate(d.getDate() - offsetToMonday);
   return d;
+}
+
+function normalizeDayKey(value: unknown): string | null {
+  if (value instanceof Date && Number.isFinite(value.getTime())) return getLocalDateKey(value);
+  if (typeof value !== 'string') return null;
+
+  const dateKey = value.trim().slice(0, 10);
+  if (!DATE_KEY_PATTERN.test(dateKey)) return null;
+
+  const [year, month, day] = dateKey.split('-').map(Number);
+  const normalized = new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10);
+  return normalized === dateKey ? dateKey : null;
+}
+
+function normalizeDayKeyList(values: unknown): string[] {
+  if (!Array.isArray(values)) return [];
+  return Array.from(new Set(values.map(normalizeDayKey).filter((key): key is string => !!key)));
 }
 
 function previousDayKey(dayKey: string): string {
@@ -70,11 +93,19 @@ function previousDayKey(dayKey: string): string {
  * earn. Pure — returns a new state, does not mutate.
  */
 export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
-  const currentWeekStartKey = getLocalDateKey(startOfWeek(now));
-  if (currentWeekStartKey <= state.lastEarnedAt) return state;
+  const currentWeekStartKey = getLocalDateKey(startOfWeek(safeDate(now)));
+  const lastEarnedAt = normalizeDayKey(state.lastEarnedAt);
+
+  if (!lastEarnedAt) {
+    return { ...state, lastEarnedAt: currentWeekStartKey };
+  }
+
+  if (currentWeekStartKey <= lastEarnedAt) {
+    return lastEarnedAt === state.lastEarnedAt ? state : { ...state, lastEarnedAt };
+  }
 
   // Use noon UTC anchors so DST shifts don't change the rounded week count.
-  const lastNoon = new Date(`${state.lastEarnedAt}T12:00:00.000Z`).getTime();
+  const lastNoon = new Date(`${lastEarnedAt}T12:00:00.000Z`).getTime();
   const currentNoon = new Date(`${currentWeekStartKey}T12:00:00.000Z`).getTime();
   const weeksSince = Math.max(1, Math.round((currentNoon - lastNoon) / (7 * DAY_MS)));
 
@@ -119,10 +150,12 @@ export interface StreakWithFreezeResult {
  */
 export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakWithFreezeResult {
   const refilled = refillFreezes(input.freezeState, input.now ?? new Date());
-  const today = input.today ?? getLocalDateKey(input.now ?? new Date());
-  const activeSet = new Set(input.activeDayKeys.map((d) => d.slice(0, 10)));
+  const today =
+    normalizeDayKey(input.today) ?? normalizeDayKey(input.now) ?? getLocalDateKey(new Date());
+  const activeSet = new Set(normalizeDayKeyList(input.activeDayKeys));
+  const previousRescuedDayKeys = normalizeDayKeyList(refilled.rescuedDayKeys);
   // Also include previously-rescued days so streaks stay intact across calls.
-  for (const rescued of refilled.rescuedDayKeys) activeSet.add(rescued);
+  for (const rescued of previousRescuedDayKeys) activeSet.add(rescued);
 
   let cursor = activeSet.has(today) ? today : previousDayKey(today);
   let streak = 0;
@@ -148,7 +181,7 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
     cursor = previous;
   }
 
-  const newRescuedKeys = [...refilled.rescuedDayKeys, ...rescuedThisRun];
+  const newRescuedKeys = [...previousRescuedDayKeys, ...rescuedThisRun];
 
   return {
     streakDays: streak,
