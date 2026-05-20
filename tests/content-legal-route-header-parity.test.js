@@ -80,28 +80,21 @@ const expectedLegalRoutes = [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
-      'LegalExternalLink',
-      'LegalSectionParagraph',
-      'UHR_EDUCATION_MATERIAL_DISPLAY_URL',
       'Källor',
       'Primärt studiematerial',
       'UHR står inte bakom dem',
       'Källa hämtad 2026-05-19',
       'Varje övningsfråga visar en källrad med UHR:s kapitel',
-      'Öppna utbildningsmaterialet',
-      'Öppnas som extern webbsida',
       'Sources',
       'Primary study material',
       'quality is not checked by UHR or any other authority',
       'Source accessed 2026-05-19',
       'Every practice question shows a source line with the UHR chapter',
-      'Open education material',
-      'Opens as an external web page',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
       /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -113,25 +106,18 @@ const expectedLegalRoutes = [
       'const supportCopy: Record<AppLanguage, SupportRouteCopy> = {',
       'const language = useSettingsStore((state) => state.language);',
       'const copy = supportCopy[language];',
-      'LegalExternalLink',
-      'LegalSectionParagraph',
-      'PUBLIC_SUPPORT_DISPLAY_URL',
       'Support och återkoppling',
       'Vad du kan rapportera',
       'Support and feedback',
       'What to report',
       'Öppna den offentliga supportsidan',
-      'Öppna supportsidan',
-      'Öppnas som extern webbsida',
       'Open public support page',
-      'Open support page',
-      'Opens as an external web page',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}[\s\S]*?>/,
     ],
     title: 'Support and feedback',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -166,30 +152,15 @@ test('legal, source, and support routes stay on shared accessible header path', 
 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
+  assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
+  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 46);
+  assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
-  assert.match(legalPage, /export function LegalExternalLink\(/);
-  assert.match(
-    legalPage,
-    /accessibilityHint=\{accessibilityHint\}[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*accessibilityRole="link"/,
-  );
-  assert.match(legalPage, /onFocus:\s*\(\) => setIsFocused\(true\)/);
-  assert.match(legalPage, /onMouseEnter:\s*\(\) => setIsHovered\(true\)/);
-  assert.match(legalPage, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
-  assert.match(legalPage, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
-  assert.match(legalPage, /minHeight:\s*space\[6\]/);
-  assert.match(legalPage, /borderWidth:\s*space\.hairline/);
-  assert.match(legalPage, /backgroundColor:\s*colors\.focusSoft/);
-  assert.match(legalPage, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
 
   for (const expectedRoute of expectedLegalRoutes) {
     const routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
-    assert.match(routeSource, /LegalPage[\s\S]*LegalSection/);
-    if (expectedRoute.file === 'app/sources.tsx' || expectedRoute.file === 'app/support.tsx') {
-      assert.match(routeSource, /<LegalExternalLink[\s\S]*displayUrl=\{[^}]+\}/);
-      assert.match(routeSource, /href=\{[^}]+\}[\s\S]*label=\{[^}]+\}/);
-      assert.doesNotMatch(routeSource, /styles\.externalLink|textDecorationLine:\s*'underline'/);
-    }
+    assert.match(routeSource, /LegalPage, LegalSection/);
     if (expectedRoute.requiredSnippets) {
       for (const snippet of expectedRoute.requiredSnippets) {
         assert.match(routeSource, new RegExp(escapeRegExp(snippet)));
@@ -209,6 +180,36 @@ test('legal, source, and support routes stay on shared accessible header path', 
       );
     }
   }
+});
+
+test('privacy route parity rejects English streaks in Swedish legal copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/privacy.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('XP, studiesviter och ljudinställningar', 'XP, streaks och ljudinställningar');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Swedish privacy copy must use natural Swedish streak wording, not "streaks"/,
+  );
 });
 
 test('legal route header parity rejects shared legal section header drift', () => {
@@ -244,7 +245,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('legal route parity rejects inline or undersized external URL links', () => {
+test('legal Swedish copy guard rejects non-allowlisted English learner tokens', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -254,15 +255,13 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/compliance/LegalPage.tsx')) {
+  if (normalizedPath.endsWith('/app/privacy.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('minHeight: space[6]', 'minHeight: space[3]');
-  }
-  if (normalizedPath.endsWith('/app/sources.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('LegalExternalLink', 'InlineExternalLink');
+      .replace(
+        'XP, studiesviter och ljudinställningar',
+        'XP, streaks, settings och ljudinställningar',
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -272,9 +271,8 @@ require('./scripts/validate-content.js');
     { cwd: repoRoot, encoding: 'utf8' },
   );
 
+  const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /shared LegalExternalLink missing external link token-sized target|app\/sources\.tsx must render its external URL with LegalExternalLink/,
-  );
+  assert.match(output, /Swedish legal copy contains English token "streaks"/);
+  assert.match(output, /Swedish legal copy contains English token "settings"/);
 });

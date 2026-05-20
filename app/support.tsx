@@ -1,24 +1,16 @@
-import {
-  LegalExternalLink,
-  LegalPage,
-  LegalSection,
-  LegalSectionParagraph,
-} from '../components/compliance/LegalPage';
+import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, typography } from '../lib/theme';
 
 const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
-const PUBLIC_SUPPORT_DISPLAY_URL = PUBLIC_SUPPORT_URL.replace(/^https:\/\//, '').replace(/\/$/, '');
 
 type LegalRouteSectionCopy = {
   body: string;
+  sourceLabel?: string;
   title: string;
 };
 
 type SupportRouteCopy = {
   openSupportPageAccessibilityLabel: string;
-  openSupportPageHint: string;
-  openSupportPageLabel: string;
   sections: {
     whatToReport: LegalRouteSectionCopy;
     noPersonalData: LegalRouteSectionCopy;
@@ -31,8 +23,6 @@ type SupportRouteCopy = {
 const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
   sv: {
     openSupportPageAccessibilityLabel: 'Öppna den offentliga supportsidan',
-    openSupportPageHint: 'Öppnas som extern webbsida',
-    openSupportPageLabel: 'Öppna supportsidan',
     sections: {
       whatToReport: {
         body: 'Skicka ett supportmeddelande om du hittar ett innehållsfel, oklar svensk formulering, trasig källreferens, ett ljudproblem eller ett fel i studieflödet.',
@@ -48,6 +38,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       },
       publicSupportPage: {
         body: 'Skicka återkoppling via den offentliga supportsidan:',
+        sourceLabel: 'Offentlig supportsida',
         title: 'Offentlig supportsida',
       },
     },
@@ -55,8 +46,6 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
   },
   en: {
     openSupportPageAccessibilityLabel: 'Open public support page',
-    openSupportPageHint: 'Opens as an external web page',
-    openSupportPageLabel: 'Open support page',
     sections: {
       whatToReport: {
         body: 'Send a support note if you find a content issue, confusing Swedish wording, a broken source reference, an audio problem, or a bug in the study flow.',
@@ -72,6 +61,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       },
       publicSupportPage: {
         body: 'Send feedback through the public support page:',
+        sourceLabel: 'Public support page',
         title: 'Public support page',
       },
     },
@@ -94,25 +84,17 @@ export default function Screen() {
       <LegalSection title={copy.sections.independentStudyTool.title}>
         {copy.sections.independentStudyTool.body}
       </LegalSection>
-      <LegalSection title={copy.sections.publicSupportPage.title}>
-        <LegalSectionParagraph>{copy.sections.publicSupportPage.body}</LegalSectionParagraph>
+      <LegalSection
+        title={copy.sections.publicSupportPage.title}
+        body={copy.sections.publicSupportPage.body}
+      >
         <LegalExternalLink
           accessibilityLabel={copy.openSupportPageAccessibilityLabel}
-          accessibilityHint={copy.openSupportPageHint}
-          displayUrl={PUBLIC_SUPPORT_DISPLAY_URL}
+          destination={PUBLIC_SUPPORT_URL}
           href={PUBLIC_SUPPORT_URL}
-          label={copy.openSupportPageLabel}
+          label={copy.openSupportPageAccessibilityLabel}
         />
       </LegalSection>
     </LegalPage>
   );
 }
-
-const styles = StyleSheet.create({
-  externalLink: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'underline',
-  },
-});
