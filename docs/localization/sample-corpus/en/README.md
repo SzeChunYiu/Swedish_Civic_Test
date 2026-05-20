@@ -24,9 +24,10 @@ Clear learner-facing public information; avoid legalese unless the source requir
 - Error encouragement should reassure and teach; never shame the learner.
 - Source labels must say the app is based on/reference material, not an official exam authority.
 - Institution names should teach the Swedish term when the term itself matters.
+- See `style-guide.md` for source-locale wording, glossary, UI patterns, humor boundaries, and the word-by-word audit gate.
 
 ## Next tasks
 
-1. Add native-speaker observations after reading the sources directly.
-2. Add glossary terms with source URLs before translating UI or questions.
-3. Add humor/tone examples that are newly authored, not copied.
+1. Use the English style guide before translating app strings or questions into other locales.
+2. Re-check time-sensitive citizenship requirements on the live Swedish Migration Agency page before release.
+3. Add newly authored humor/tone examples only when they can also be localized safely.
