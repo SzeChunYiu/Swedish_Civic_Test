@@ -1073,8 +1073,18 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     assert.doesNotMatch(question.questionEn, /there are buddhist and Hindu/, question.id);
     assert.doesNotMatch(question.questionEn, /^(?:By|Apply|Leave|Live)\b/i, question.id);
     assert.doesNotMatch(
+      question.questionEn,
+      /^(?:They\s+(?:sell|are|may|can|must)|Through)\b|\bthere\.$/i,
+      question.id,
+    );
+    assert.doesNotMatch(
       question.questionSv,
       /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
+      question.id,
+    );
+    assert.doesNotMatch(
+      question.questionSv,
+      /^(?:De\s+(?:säljer|drivs|får|finns|kan|måste)|Genom)\b|\bdär\.$/i,
       question.id,
     );
   });
