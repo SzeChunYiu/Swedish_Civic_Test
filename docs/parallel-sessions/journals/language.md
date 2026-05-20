@@ -7,3 +7,13 @@ Verification (commands + result): `git diff --check` -> pass; glossary term grep
 PR (number + merged?): not opened; verification blocked by typecheck timeout.
 Accepted by worker? blocked
 Next suggested validator action: Re-run `npm run typecheck` in a fully provisioned checkout and, if green, commit/PR the zh-Hans bootstrap artifacts.
+
+Lane: LANGUAGE
+Host/branch: codex/localization-source-pack-20260520
+Role type and manager: operator implementation round; manager/validator follow-up needed for native review
+Task / checklist item: seed shared localization research shelf and per-language source sample folders before translation work
+Changed artifacts: docs/localization/README.md; docs/localization/source-materials.md; docs/localization/sample-corpus/{ar,fa,so,ti,ckb,en,pl,uk,zh-Hans,zh-Hant}/README.md; docs/localization/sample-corpus/{ar,fa,so,ti,ckb,en,pl,uk,zh-Hans,zh-Hant}/sources.tsv; docs/parallel-sessions/language.md
+Verification (commands + result): `git diff --check` -> pass; line-count audit -> all new docs under 200 lines; source-copy audit -> no long copied passages, only links/source cards/newly-authored micro-samples.
+PR (number + merged?): pending in this round
+Accepted by worker? self-reviewed, needs future native-speaker expansion per language before translation atoms ship
+Next suggested validator action: assign one native/source-expansion atom per language, starting with zh-Hans audit and Somali/Arabic official-source glossary expansion.
