@@ -208,7 +208,7 @@ const i18n = (window.i18n = {
     'chap.13.t': 'Traditions, holidays & everyday culture',
     'how.eyebrow': 'How it works',
     'how.h1': 'Study lagom.',
-    'how.h2': 'Pass big.',
+    'how.h2': 'Practise smart.',
     'how.deck':
       'Three modes, one app. Use them in any order — most people end up cycling through all three the week before the exam.',
     'how.s1.t': 'Learn — short chapters',
@@ -389,7 +389,7 @@ const i18n = (window.i18n = {
     'sources.s5.p2':
       'See a question that disagrees with its cited source? <a href="#/support">Tell us</a> — corrections are usually live within a week.',
     'footer.brag1': 'Study lagom.',
-    'footer.brag2': 'Pass big.',
+    'footer.brag2': 'Practise smart.',
     'footer.h.app': 'The app',
     'footer.app.1': 'Why it exists',
     'footer.app.2': 'Try a question',
@@ -549,7 +549,7 @@ const i18n = (window.i18n = {
     'chap.13.t': 'Traditioner, helgdagar & vardagskultur',
     'how.eyebrow': 'Så funkar det',
     'how.h1': 'Plugga lagom.',
-    'how.h2': 'Klara stort.',
+    'how.h2': 'Öva smart.',
     'how.deck':
       'Tre lägen, en app. Använd i valfri ordning — de flesta cyklar genom alla tre veckan innan provet.',
     'how.s1.t': 'Lär — korta kapitel',
@@ -726,7 +726,7 @@ const i18n = (window.i18n = {
     'sources.s5.p2':
       'Ser du en fråga som inte stämmer med sin källa? <a href="#/support">Berätta för oss</a> — rättelser är oftast live inom en vecka.',
     'footer.brag1': 'Plugga lagom.',
-    'footer.brag2': 'Klara stort.',
+    'footer.brag2': 'Öva smart.',
     'footer.h.app': 'Appen',
     'footer.app.1': 'Varför den finns',
     'footer.app.2': 'Testa en fråga',

@@ -16,6 +16,15 @@ function read(relativePath) {
 function readAppName() {
   return JSON.parse(read('app.json')).expo.name;
 }
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function homepageSlogan(locale, key) {
+  return JSON.parse(read('data/homepage_slogans_v6.json')).exactReplacementKeys[locale][key];
+}
+
 test('static mock exam copy avoids unsupported official pass-line claims', () => {
   const practiceSource = read('site/practice.js');
   const forbiddenFragments = [
@@ -160,13 +169,16 @@ test('static site brand copy matches app identity', () => {
 
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
-  assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
-  assert.match(read('site/index.html'), /data-i18n="footer\.t1">Study the material\./);
+  assert.doesNotMatch(read('site/index.html'), /Study,\s*fika,\s*pass\./);
   const siteAppSource = read('site/app.js');
-  assert.match(siteAppSource, /['"]hero\.h1a['"]:\s*['"]Study the material\.['"]/);
-  assert.match(siteAppSource, /['"]hero\.h1b['"]:\s*['"]Practice with sources\.['"]/);
-  assert.match(siteAppSource, /['"]hero\.h1a['"]:\s*['"]Plugga materialet\.['"]/);
-  assert.match(siteAppSource, /['"]hero\.h1b['"]:\s*['"]Öva med källor\.['"]/);
+  for (const [locale, keys] of Object.entries({
+    en: ['hero.h1a', 'hero.h1b', 'hero.h1c', 'footer.t1', 'footer.t2'],
+    sv: ['hero.h1a', 'hero.h1b', 'hero.h1c', 'footer.t1', 'footer.t2'],
+  })) {
+    for (const key of keys) {
+      assert.match(siteAppSource, new RegExp(escapeRegExp(homepageSlogan(locale, key))));
+    }
+  }
 });
 
 test('static head metadata description is neutral and non-empty', () => {

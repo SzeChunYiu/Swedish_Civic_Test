@@ -26,6 +26,7 @@ const UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS = Object.freeze([
   { label: 'English pass-big slogan', pattern: /Pass big\./ },
   { label: 'English dancing-queen pass slogan', pattern: /Pass like a dancing queen\./ },
   { label: 'English pulla pass slogan', pattern: /Pass with pulla\./ },
+  { label: 'English study-fika-pass title', pattern: /Study,\s*fika,\s*pass\./ },
   { label: 'Swedish klara-provet slogan', pattern: /Klara provet\./ },
   { label: 'Swedish fa-passet slogan', pattern: /Få passet\./ },
   { label: 'Swedish klara-stort slogan', pattern: /Klara stort\./ },

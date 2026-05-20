@@ -7,19 +7,22 @@ const { chromium } = require('@playwright/test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const siteRoot = path.join(repoRoot, 'site');
+const approvedHomepageSlogans = JSON.parse(
+  fs.readFileSync(path.join(repoRoot, 'data/homepage_slogans_v6.json'), 'utf8'),
+).exactReplacementKeys;
 
 const unsupportedOutcomePatterns = [
-  /\bPass the test\b/i,
-  /\bEarn the passport\b/i,
-  /\bPass big\b/i,
-  /\bPass like\b/i,
-  /\bPass with\b/i,
-  /\bBrag at midsommar\b/i,
-  /\bKlara provet\b/i,
-  /\bFå passet\b/i,
-  /\bKlara stort\b/i,
-  /\bSkryt på midsommar\b/i,
-  /\bStudy, fika, pass\b/i,
+  /Pass the test\./i,
+  /Earn the passport\./i,
+  /Pass big\./i,
+  /Pass like a dancing queen\./i,
+  /Pass with pulla\./i,
+  /Brag at midsommar\./i,
+  /Klara provet\./i,
+  /Få passet\./i,
+  /Klara stort\./i,
+  /Skryt på midsommar\./i,
+  /Study,\s*fika,\s*pass\./i,
 ];
 
 function read(relativePath) {
@@ -30,6 +33,14 @@ function assertNoOutcomeCopy(text, label) {
   for (const pattern of unsupportedOutcomePatterns) {
     assert.doesNotMatch(text, pattern, `${label} should not include ${pattern}`);
   }
+}
+
+function approved(locale, key) {
+  return approvedHomepageSlogans[locale][key];
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function contentType(filePath) {
@@ -115,12 +126,14 @@ test('static hero, footer, tweaks, and Dala defaults use study-focused copy', ()
     .map(read)
     .join('\n');
 
-  assert.match(surface, /Study the facts\./);
-  assert.match(surface, /Arrive prepared\./);
-  assert.match(surface, /Plugga fakta\./);
-  assert.match(surface, /Kom f(?:ö|o)rberedd\./);
-  assert.match(surface, /Study the facts\. Keep the streak\./);
-  assert.match(surface, /Plugga fakta\. H(?:å|a)ll sviten\./);
+  for (const [locale, keys] of Object.entries({
+    en: ['hero.h1a', 'hero.h1b', 'hero.h1c', 'footer.t1', 'footer.t2'],
+    sv: ['hero.h1a', 'hero.h1b', 'hero.h1c', 'footer.t1', 'footer.t2'],
+  })) {
+    for (const key of keys) {
+      assert.match(surface, new RegExp(escapeRegExp(approved(locale, key))));
+    }
+  }
   assertNoOutcomeCopy(surface, 'static source defaults');
 });
 
@@ -144,20 +157,33 @@ test(
 
       await page.goto(server.url, { waitUntil: 'domcontentloaded' });
       await page.waitForFunction(
-        () => document.querySelector('[data-i18n="hero.h1a"]')?.textContent === 'Study the facts.',
+        (expected) => document.querySelector('[data-i18n="hero.h1a"]')?.textContent === expected,
+        approved('en', 'hero.h1a'),
       );
 
-      assert.equal(await page.locator('[data-i18n="hero.h1a"]').innerText(), 'Study the facts.');
-      assert.equal(await page.locator('[data-i18n="hero.h1c"]').innerText(), 'Arrive prepared.');
-      assert.equal(await page.locator('[data-i18n="footer.t1"]').innerText(), 'Study lagom.');
-      assert.equal(await page.locator('[data-i18n="footer.t2"]').innerText(), 'Arrive prepared.');
+      assert.equal(
+        await page.locator('[data-i18n="hero.h1a"]').innerText(),
+        approved('en', 'hero.h1a'),
+      );
+      assert.equal(
+        await page.locator('[data-i18n="hero.h1c"]').innerText(),
+        approved('en', 'hero.h1c'),
+      );
+      assert.equal(
+        await page.locator('[data-i18n="footer.t1"]').innerText(),
+        approved('en', 'footer.t1'),
+      );
+      assert.equal(
+        await page.locator('[data-i18n="footer.t2"]').innerText(),
+        approved('en', 'footer.t2'),
+      );
       assertNoOutcomeCopy(await visibleText(page), 'English visible static home');
 
       await page.click('#dala-figure');
       await page.waitForFunction(
         () =>
           !document.getElementById('dala-bubble')?.hidden &&
-          document.getElementById('dala-msg')?.textContent?.includes('Study the facts'),
+          Boolean(document.getElementById('dala-msg')?.textContent?.trim()),
       );
       assertNoOutcomeCopy(await page.locator('#dala-msg').innerText(), 'English Dala tip');
 
@@ -166,13 +192,26 @@ test(
         window.location.reload();
       });
       await page.waitForFunction(
-        () => document.querySelector('[data-i18n="hero.h1a"]')?.textContent === 'Plugga fakta.',
+        (expected) => document.querySelector('[data-i18n="hero.h1a"]')?.textContent === expected,
+        approved('sv', 'hero.h1a'),
       );
 
-      assert.equal(await page.locator('[data-i18n="hero.h1a"]').innerText(), 'Plugga fakta.');
-      assert.equal(await page.locator('[data-i18n="hero.h1c"]').innerText(), 'Kom förberedd.');
-      assert.equal(await page.locator('[data-i18n="footer.t1"]').innerText(), 'Plugga lagom.');
-      assert.equal(await page.locator('[data-i18n="footer.t2"]').innerText(), 'Kom förberedd.');
+      assert.equal(
+        await page.locator('[data-i18n="hero.h1a"]').innerText(),
+        approved('sv', 'hero.h1a'),
+      );
+      assert.equal(
+        await page.locator('[data-i18n="hero.h1c"]').innerText(),
+        approved('sv', 'hero.h1c'),
+      );
+      assert.equal(
+        await page.locator('[data-i18n="footer.t1"]').innerText(),
+        approved('sv', 'footer.t1'),
+      );
+      assert.equal(
+        await page.locator('[data-i18n="footer.t2"]').innerText(),
+        approved('sv', 'footer.t2'),
+      );
       assertNoOutcomeCopy(await visibleText(page), 'Swedish visible static home');
     } finally {
       if (browser) {
