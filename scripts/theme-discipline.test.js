@@ -168,9 +168,28 @@ test('disabled button tokens keep labels readable without wrapper opacity', () =
   }
 });
 
-test('theme content validation parser keeps one contrast pair declaration', () => {
+test('form fields and primary button controls consume dedicated radius tokens', () => {
+  const appButtonSource = read('components/Button.tsx');
+  const uiButtonSource = read('components/ui/Button.tsx');
+  const searchSource = read('app/search.tsx');
+  const settingsSource = read('app/settings.tsx');
+
+  assert.match(appButtonSource, /base:\s*\{[^}]*borderRadius:\s*radius\.button/);
+  assert.match(uiButtonSource, /button:\s*\{[^}]*borderRadius:\s*radius\.button/);
+  assert.match(searchSource, /searchInput:\s*\{[^}]*borderRadius:\s*radius\.input/);
+  assert.match(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.input/);
+  assert.match(settingsSource, /secondaryButton:\s*\{[^}]*borderRadius:\s*radius\.button/);
+  assert.match(settingsSource, /outlineButton:\s*\{[^}]*borderRadius:\s*radius\.button/);
+
+  assert.doesNotMatch(appButtonSource, /base:\s*\{[^}]*borderRadius:\s*radius\.card/);
+  assert.doesNotMatch(uiButtonSource, /button:\s*\{[^}]*borderRadius:\s*radius\.card/);
+  assert.doesNotMatch(searchSource, /searchInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
+  assert.doesNotMatch(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
+});
+
+test('theme content validation parser keeps one token schema validator', () => {
   const source = fs.readFileSync(path.join(ROOT, 'scripts/validate-content.js'), 'utf8');
-  const declarationCount = [...source.matchAll(/const EXPECTED_THEME_CONTRAST_PAIRS = \[/g)].length;
+  const declarationCount = [...source.matchAll(/function validateThemeTokenSchema\(\)/g)].length;
 
   assert.equal(declarationCount, 1);
   assert.doesNotThrow(() =>

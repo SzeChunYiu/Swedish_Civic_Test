@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     borderColor: colors.border,
-    borderRadius: radius.card,
+    borderRadius: radius.button,
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: 'center',
     minHeight: 44,

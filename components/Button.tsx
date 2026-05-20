@@ -115,7 +115,7 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     alignItems: 'center',
-    borderRadius: radius.card,
+    borderRadius: radius.button,
     borderWidth: space.hairline,
     flexDirection: 'row',
     gap: space[1],

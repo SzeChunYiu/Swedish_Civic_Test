@@ -3168,9 +3168,11 @@ const EXPECTED_THEME_SPACE_VALUES = {
   15: 120,
 };
 const EXPECTED_THEME_RADIUS_VALUES = {
+  input: 4,
   micro: 4,
   subtle: 5,
   small: 8,
+  button: 12,
   card: 12,
   large: 16,
   pill: 9999,

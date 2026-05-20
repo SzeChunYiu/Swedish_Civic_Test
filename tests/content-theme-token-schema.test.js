@@ -18,7 +18,7 @@ test('theme token schema validates the exported design-token catalog', () => {
 
   assert.equal(summary.themeColorTokensValidated, 37);
   assert.equal(summary.themeSpaceTokensValidated, 24);
-  assert.equal(summary.themeRadiusTokensValidated, 7);
+  assert.equal(summary.themeRadiusTokensValidated, 9);
   assert.equal(summary.themeTypographyTokensValidated, 22);
   assert.equal(summary.themeShadowTokensValidated, 2);
   assert.equal(summary.themeMotionTokensValidated, 7);
@@ -64,6 +64,31 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.1 expected 8, found -8/);
+});
+
+test('theme token schema rejects control radius token drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/radius.ts')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace('const button = 12;', 'const button = 16;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /theme radius\.button expected 12, found 16/);
 });
 
 test('theme token schema rejects low contrast semantic text pairs', () => {

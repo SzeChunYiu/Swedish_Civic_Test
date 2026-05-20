@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   searchInput: {
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: radius.card,
+    borderRadius: radius.input,
     borderWidth: space.hairline,
     color: colors.text,
     fontSize: typography.body.fontSize,
