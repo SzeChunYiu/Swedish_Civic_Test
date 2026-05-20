@@ -251,6 +251,10 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
 ];
+const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
+  /\bWhat is common to do on All Saints(?:’|') Day\b/i,
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4299,6 +4303,12 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
+  return QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(question.questionEn),
+  );
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -4675,6 +4685,19 @@ function englishCommonToDoStatement(timePhrase, answer) {
     return `On ${time}, it is common to ${activity}`;
   }
   return `On ${time}, ${activity} are common`;
+}
+function englishCommonCelebrationMode(answer) {
+  const activity = stripLeadingPurposeEn(answer).trim();
+  const celebrateMatch = activity.match(/^celebrate with (.+)$/i);
+  if (celebrateMatch) return `with ${lowerFirst(celebrateMatch[1])}`;
+  if (
+    /^(?:celebrate|eat|light|open|hold|wear|serve|welcome|arrange|gather|dance|sing|go)\b/i.test(
+      activity,
+    )
+  ) {
+    return `by ${englishGerundPhrase(activity)}`;
+  }
+  return `with ${lowerFirst(activity)}`;
 }
 function swedishHabitualPredicate(answer) {
   return lowerFirst(answer).replace(/\barrangerar\b/i, 'arrangera');
@@ -5907,6 +5930,11 @@ function civicStatementEn(source, option) {
   }
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
+  match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
+  if (match)
+    return `${match[1]} is commonly ${match[2].toLowerCase()} ${englishCommonCelebrationMode(
+      answer,
+    )}`;
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)
     return `On ${stripTrailingComma(match[1])}, families commonly ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -7093,6 +7121,7 @@ let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
+let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16371,6 +16400,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
+      const traditionCommonToDoEnglishNaturalnessIssue =
+        findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
@@ -16410,6 +16441,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted state-welfare English wording`);
       } else {
         questionStateWelfareEnglishNaturalnessValidated += 1;
+      }
+      if (traditionCommonToDoEnglishNaturalnessIssue) {
+        fail(`${label} uses literal common-to-do English wording`);
+      } else {
+        questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -16882,6 +16918,7 @@ console.log(
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
+      questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

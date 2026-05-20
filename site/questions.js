@@ -4359,7 +4359,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "en": "How is New Year’s Eve on 31 December commonly celebrated in Sweden?",
       "sv": "Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -4686,7 +4686,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is common to do on All Saints’ Day in Sweden?",
+      "en": "How is All Saints’ Day commonly observed in Sweden?",
       "sv": "Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [
@@ -24246,7 +24246,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "en": "Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?",
       "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -24294,7 +24294,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.",
+      "en": "New Year’s Eve on 31 December is commonly celebrated with parties and dinners and at night with fireworks.",
       "sv": "På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier."
     },
     "opts": [
@@ -24334,7 +24334,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On New Year’s Eve, 31 December, large bonfires and spring songs are common.",
+      "en": "New Year’s Eve on 31 December is commonly celebrated with large bonfires and spring songs.",
       "sv": "På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger."
     },
     "opts": [
@@ -24374,7 +24374,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "en": "Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?",
       "sv": "Välj rätt alternativ: Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -25498,7 +25498,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is common to do on All Saints’ Day in Sweden?",
+      "en": "Which answer best matches? How is All Saints’ Day commonly observed in Sweden?",
       "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [
@@ -25547,7 +25547,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On All Saints’ Day, it is common to light candles on graves to remember and honour people who have died.",
+      "en": "All Saints’ Day is commonly observed by lighting candles on graves to remember and honour people who have died.",
       "sv": "På Alla helgons dag är det vanligt att tända ljus på gravar för att minnas och hedra dem som har dött."
     },
     "opts": [
@@ -25588,7 +25588,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On All Saints’ Day, it is common to open an Advent calendar every day until Christmas Eve.",
+      "en": "All Saints’ Day is commonly observed by opening an Advent calendar every day until Christmas Eve.",
       "sv": "På Alla helgons dag är det vanligt att öppna en adventskalender varje dag fram till julafton."
     },
     "opts": [
@@ -25629,7 +25629,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is common to do on All Saints’ Day in Sweden?",
+      "en": "Choose the correct option: How is All Saints’ Day commonly observed in Sweden?",
       "sv": "Välj rätt alternativ: Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [

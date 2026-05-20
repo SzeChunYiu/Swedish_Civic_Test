@@ -1102,11 +1102,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q097', 'trueStatement')]: [
       'På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier.',
-      'On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.',
+      'New Year’s Eve on 31 December is commonly celebrated with parties and dinners and at night with fireworks.',
     ],
     [generatedQuestionId(sourceQuestions, 'q097', 'falseStatement')]: [
       'På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger.',
-      'On New Year’s Eve, 31 December, large bonfires and spring songs are common.',
+      'New Year’s Eve on 31 December is commonly celebrated with large bonfires and spring songs.',
     ],
     [generatedQuestionId(sourceQuestions, 'q098', 'falseStatement')]: [
       'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer.',
@@ -1123,6 +1123,14 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     [generatedQuestionId(sourceQuestions, 'q102', 'trueStatement')]: [
       'Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
       'Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q104', 'trueStatement')]: [
+      'På Alla helgons dag är det vanligt att tända ljus på gravar för att minnas och hedra dem som har dött.',
+      'All Saints’ Day is commonly observed by lighting candles on graves to remember and honour people who have died.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q104', 'falseStatement')]: [
+      'På Alla helgons dag är det vanligt att öppna en adventskalender varje dag fram till julafton.',
+      'All Saints’ Day is commonly observed by opening an Advent calendar every day until Christmas Eve.',
     ],
     [generatedQuestionId(sourceQuestions, 'q105', 'trueStatement')]: [
       'Advent infaller de fyra söndagarna före juldagen den 25 december.',

@@ -16,6 +16,8 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
+const traditionCommonToDoEnglishPattern =
+  /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const generatedIdLiteralPatterns = [
@@ -222,6 +224,104 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /q156 uses stilted state-welfare English wording/,
   );
+});
+
+test('tradition prompts avoid literal common-to-do English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    traditionCommonToDoEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => traditionCommonToDoEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q097 = generatedSiteBank.find((question) => question.id === 'q097');
+  const q104 = generatedSiteBank.find((question) => question.id === 'q104');
+  const q097SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q097', 'singleChoice'),
+  );
+  const q097Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q097', 'judgement'),
+  );
+  const q104SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q104', 'singleChoice'),
+  );
+  const q104Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q104', 'judgement'),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q097, 'q097 should be published in the site bank');
+  assert.ok(q104, 'q104 should be published in the site bank');
+  assert.equal(q097.q.en, 'How is New Year’s Eve on 31 December commonly celebrated in Sweden?');
+  assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
+  assert.equal(
+    q097SingleChoice?.q.en,
+    'Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+  );
+  assert.equal(
+    q097Judgement?.q.en,
+    'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+  );
+  assert.equal(
+    q104SingleChoice?.q.en,
+    'Which answer best matches? How is All Saints’ Day commonly observed in Sweden?',
+  );
+  assert.equal(
+    q104Judgement?.q.en,
+    'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
+  );
+});
+
+test('tradition common-to-do guard rejects literal English prompts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+        'What is common to do on New Year’s Eve, 31 December, in Sweden?',
+      )
+      .replace(
+        'How is All Saints’ Day commonly observed in Sweden?',
+        'What is common to do on All Saints’ Day in Sweden?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q097 uses literal common-to-do English wording/);
+  assert.match(output, /q104 uses literal common-to-do English wording/);
+  assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 6, output);
 });
 
 test('free-media source prompts ask the civic concept directly in exports', () => {
