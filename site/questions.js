@@ -36,8 +36,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -120,8 +120,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -167,8 +167,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -438,8 +438,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -485,8 +485,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -531,8 +531,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -623,8 +623,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -761,8 +761,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -882,11 +882,11 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna behöver inte följa resultatet"
+        "sv": "Politikerna måste inte följa resultatet"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna är skyldiga att följa resultatet"
+        "sv": "Politikerna måste alltid följa resultatet"
       },
       {
         "en": "Referendums may only be held nationally",
@@ -899,8 +899,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -991,8 +991,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1075,8 +1075,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1121,8 +1121,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1167,8 +1167,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1213,8 +1213,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1297,8 +1297,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1382,7 +1382,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1956,8 +1956,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
-      "sv": "Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
+      "en": "From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -1979,8 +1979,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2309,31 +2309,31 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "In which year was the UN Universal Declaration of Human Rights presented?",
-      "sv": "Vilket år presenterades FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Which statement is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
-        "en": "1948",
-        "sv": "1948"
+        "en": "It was presented in 1948 and contains 30 articles",
+        "sv": "Den presenterades 1948 och innehåller 30 artiklar"
       },
       {
-        "en": "1918",
-        "sv": "1918"
+        "en": "It was presented in 1918 and applies only to Europe",
+        "sv": "Den presenterades 1918 och gäller bara Europa"
       },
       {
-        "en": "1945",
-        "sv": "1945"
+        "en": "It says that only citizens have rights",
+        "sv": "Den säger att bara medborgare har rättigheter"
       },
       {
-        "en": "2020",
-        "sv": "2020"
+        "en": "It is only about vacation from work",
+        "sv": "Den handlar bara om semester från arbetet"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The UN presented the Universal Declaration of Human Rights in 1948. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
-      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
+      "en": "The UN presented the Universal Declaration of Human Rights in 1948, and it contains 30 articles. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
+      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948, och den innehåller 30 artiklar. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2917,8 +2917,8 @@
         "sv": "Genom förhandlingar mellan arbetsmarknadens parter"
       },
       {
-        "en": "By the state deciding all wages",
-        "sv": "Genom att staten bestämmer alla löner"
+        "en": "By the state alone",
+        "sv": "Av staten ensam"
       },
       {
         "en": "Through municipal elections every four years",
@@ -2931,8 +2931,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state setting all wages.",
-      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte genom att staten sätter alla löner."
+      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state alone.",
+      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte av staten ensam."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3005,12 +3005,12 @@
     },
     "opts": [
       {
-        "en": "It can pay money to unemployed members",
-        "sv": "Den kan betala ut pengar till arbetslösa medlemmar"
+        "en": "It can pay unemployment benefits to members",
+        "sv": "Den kan betala ut arbetslöshetsersättning till medlemmar"
       },
       {
-        "en": "An authority that judges work environment crimes",
-        "sv": "En myndighet som dömer i arbetsmiljöbrott"
+        "en": "A government agency that inspects work environments",
+        "sv": "En myndighet som kontrollerar arbetsmiljöer"
       },
       {
         "en": "It sets all wages in Sweden",
@@ -3023,8 +3023,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Unemployment insurance can give an unemployed person income while they are looking for work. A-kassan is an economic association that pays money to unemployed members, but compensation requires, among other things, enough work during a set period and active job seeking.",
-      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan är en ekonomisk förening som betalar ut pengar till arbetslösa medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
+      "en": "Unemployment insurance can provide income while a person is looking for work. A-kassan can pay unemployment benefits to members, but compensation requires, among other things, enough work during a set period and active job seeking.",
+      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan kan betala ut arbetslöshetsersättning till medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3255,8 +3255,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3708,8 +3708,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3800,8 +3800,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3846,8 +3846,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3938,8 +3938,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4030,8 +4030,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4160,8 +4160,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4206,8 +4206,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4290,8 +4290,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4336,8 +4336,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4382,8 +4382,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -5109,8 +5109,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which Christian churches or communities are mentioned as examples in Sweden today?",
-      "sv": "Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
+      "en": "Which Christian churches or communities exist in Sweden today?",
+      "sv": "Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -5156,8 +5156,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -5165,22 +5165,22 @@
         "sv": "Resor till Asien och ökat intresse för meditation och yoga"
       },
       {
-        "en": "That Sweden's first mosques were built during the 1970s",
-        "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
+        "en": "The building of Sweden's first mosques during the 1970s",
+        "sv": "Byggandet av Sveriges första moskéer under 1970-talet"
       },
       {
-        "en": "That National Day became a public holiday through a Riksdag decision",
-        "sv": "Att nationaldagen blev helgdag genom riksdagsbeslut"
+        "en": "National Day becoming a public holiday through a Riksdag decision",
+        "sv": "Nationaldagen som helgdag genom ett riksdagsbeslut"
       },
       {
-        "en": "That the Church of Sweden and the state separated in 2000",
-        "sv": "Att Svenska kyrkan och staten skildes åt år 2000"
+        "en": "The Church of Sweden's separation from the state in 2000",
+        "sv": "Svenska kyrkans separation från staten år 2000"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -5489,8 +5489,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
-      "sv": "Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
+      "en": "Which branches of Islam are found in Swedish Muslim congregations?",
+      "sv": "Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -5631,8 +5631,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
-      "sv": "Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
+      "en": "What happened on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
@@ -6504,8 +6504,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7308,52 +7308,6 @@
   },
   {
     "id": "q160",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "single_choice",
-    "q": {
-      "en": "How many articles does the UN Universal Declaration of Human Rights contain?",
-      "sv": "Hur många artiklar innehåller FN:s förklaring om de mänskliga rättigheterna?"
-    },
-    "opts": [
-      {
-        "en": "30 articles",
-        "sv": "30 artiklar"
-      },
-      {
-        "en": "20 articles",
-        "sv": "20 artiklar"
-      },
-      {
-        "en": "10 articles",
-        "sv": "10 artiklar"
-      },
-      {
-        "en": "50 articles",
-        "sv": "50 artiklar"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Universal Declaration of Human Rights contains 30 articles. The articles describe rights that apply to all people.",
-      "sv": "Förklaringen om de mänskliga rättigheterna innehåller 30 artiklar. Artiklarna beskriver rättigheter som gäller alla människor."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "FN:s förklaring om de mänskliga rättigheterna",
-      "page": 22
-    },
-    "questionProvenance": "uhr",
-    "difficulty": "easy",
-    "tags": [
-      "human-rights",
-      "un",
-      "articles"
-    ]
-  },
-  {
-    "id": "q161",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7381,8 +7335,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7401,7 +7355,7 @@
     ]
   },
   {
-    "id": "q162",
+    "id": "q161",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7421,8 +7375,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7441,7 +7395,7 @@
     ]
   },
   {
-    "id": "q163",
+    "id": "q162",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7461,8 +7415,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7481,7 +7435,7 @@
     ]
   },
   {
-    "id": "q164",
+    "id": "q163",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7509,8 +7463,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt."
+      "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7529,7 +7483,7 @@
     ]
   },
   {
-    "id": "q165",
+    "id": "q164",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7577,7 +7531,7 @@
     ]
   },
   {
-    "id": "q166",
+    "id": "q165",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7616,7 +7570,7 @@
     ]
   },
   {
-    "id": "q167",
+    "id": "q166",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7656,7 +7610,7 @@
     ]
   },
   {
-    "id": "q168",
+    "id": "q167",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7704,7 +7658,7 @@
     ]
   },
   {
-    "id": "q169",
+    "id": "q168",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7732,8 +7686,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7753,7 +7707,7 @@
     ]
   },
   {
-    "id": "q170",
+    "id": "q169",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7773,8 +7727,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7794,7 +7748,7 @@
     ]
   },
   {
-    "id": "q171",
+    "id": "q170",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7814,8 +7768,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7835,7 +7789,7 @@
     ]
   },
   {
-    "id": "q172",
+    "id": "q171",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7863,8 +7817,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
-      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt."
+      "en": "Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.",
+      "sv": "Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7884,7 +7838,7 @@
     ]
   },
   {
-    "id": "q173",
+    "id": "q172",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7912,8 +7866,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7932,7 +7886,7 @@
     ]
   },
   {
-    "id": "q174",
+    "id": "q173",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7952,8 +7906,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7972,7 +7926,7 @@
     ]
   },
   {
-    "id": "q175",
+    "id": "q174",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7992,8 +7946,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8012,7 +7966,7 @@
     ]
   },
   {
-    "id": "q176",
+    "id": "q175",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8040,8 +7994,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8060,7 +8014,7 @@
     ]
   },
   {
-    "id": "q177",
+    "id": "q176",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8109,7 +8063,7 @@
     ]
   },
   {
-    "id": "q178",
+    "id": "q177",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8150,7 +8104,7 @@
     ]
   },
   {
-    "id": "q179",
+    "id": "q178",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8191,7 +8145,7 @@
     ]
   },
   {
-    "id": "q180",
+    "id": "q179",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8240,7 +8194,7 @@
     ]
   },
   {
-    "id": "q181",
+    "id": "q180",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8288,7 +8242,7 @@
     ]
   },
   {
-    "id": "q182",
+    "id": "q181",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8327,7 +8281,7 @@
     ]
   },
   {
-    "id": "q183",
+    "id": "q182",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8367,7 +8321,7 @@
     ]
   },
   {
-    "id": "q184",
+    "id": "q183",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8415,7 +8369,7 @@
     ]
   },
   {
-    "id": "q185",
+    "id": "q184",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8463,7 +8417,7 @@
     ]
   },
   {
-    "id": "q186",
+    "id": "q185",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8503,7 +8457,7 @@
     ]
   },
   {
-    "id": "q187",
+    "id": "q186",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8543,7 +8497,7 @@
     ]
   },
   {
-    "id": "q188",
+    "id": "q187",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8591,7 +8545,7 @@
     ]
   },
   {
-    "id": "q189",
+    "id": "q188",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8641,7 +8595,7 @@
     ]
   },
   {
-    "id": "q190",
+    "id": "q189",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8683,7 +8637,7 @@
     ]
   },
   {
-    "id": "q191",
+    "id": "q190",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8725,7 +8679,7 @@
     ]
   },
   {
-    "id": "q192",
+    "id": "q191",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8775,7 +8729,7 @@
     ]
   },
   {
-    "id": "q193",
+    "id": "q192",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8823,7 +8777,7 @@
     ]
   },
   {
-    "id": "q194",
+    "id": "q193",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8863,7 +8817,7 @@
     ]
   },
   {
-    "id": "q195",
+    "id": "q194",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8903,7 +8857,7 @@
     ]
   },
   {
-    "id": "q196",
+    "id": "q195",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8951,7 +8905,7 @@
     ]
   },
   {
-    "id": "q197",
+    "id": "q196",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8979,8 +8933,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9000,7 +8954,7 @@
     ]
   },
   {
-    "id": "q198",
+    "id": "q197",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -9020,8 +8974,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9041,7 +8995,7 @@
     ]
   },
   {
-    "id": "q199",
+    "id": "q198",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -9061,8 +9015,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9082,7 +9036,7 @@
     ]
   },
   {
-    "id": "q200",
+    "id": "q199",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -9110,8 +9064,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
-      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser."
+      "en": "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "sv": "Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9131,7 +9085,7 @@
     ]
   },
   {
-    "id": "q201",
+    "id": "q200",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9159,8 +9113,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9179,7 +9133,7 @@
     ]
   },
   {
-    "id": "q202",
+    "id": "q201",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9199,8 +9153,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9219,7 +9173,7 @@
     ]
   },
   {
-    "id": "q203",
+    "id": "q202",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9239,8 +9193,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9259,7 +9213,7 @@
     ]
   },
   {
-    "id": "q204",
+    "id": "q203",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9287,8 +9241,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.",
-      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans."
+      "en": "Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.",
+      "sv": "Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9307,7 +9261,7 @@
     ]
   },
   {
-    "id": "q205",
+    "id": "q204",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9335,8 +9289,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9355,7 +9309,7 @@
     ]
   },
   {
-    "id": "q206",
+    "id": "q205",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9375,8 +9329,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9395,7 +9349,7 @@
     ]
   },
   {
-    "id": "q207",
+    "id": "q206",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9415,8 +9369,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9435,7 +9389,7 @@
     ]
   },
   {
-    "id": "q208",
+    "id": "q207",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9463,8 +9417,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.",
-      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt."
+      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9483,7 +9437,7 @@
     ]
   },
   {
-    "id": "q209",
+    "id": "q208",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9531,7 +9485,7 @@
     ]
   },
   {
-    "id": "q210",
+    "id": "q209",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9571,7 +9525,7 @@
     ]
   },
   {
-    "id": "q211",
+    "id": "q210",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9611,7 +9565,7 @@
     ]
   },
   {
-    "id": "q212",
+    "id": "q211",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9659,7 +9613,7 @@
     ]
   },
   {
-    "id": "q213",
+    "id": "q212",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9687,8 +9641,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9707,7 +9661,7 @@
     ]
   },
   {
-    "id": "q214",
+    "id": "q213",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9727,8 +9681,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9747,7 +9701,7 @@
     ]
   },
   {
-    "id": "q215",
+    "id": "q214",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9767,8 +9721,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9787,7 +9741,7 @@
     ]
   },
   {
-    "id": "q216",
+    "id": "q215",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9815,8 +9769,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.",
-      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker."
+      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -9835,7 +9789,7 @@
     ]
   },
   {
-    "id": "q217",
+    "id": "q216",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9883,7 +9837,7 @@
     ]
   },
   {
-    "id": "q218",
+    "id": "q217",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9923,7 +9877,7 @@
     ]
   },
   {
-    "id": "q219",
+    "id": "q218",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9963,7 +9917,7 @@
     ]
   },
   {
-    "id": "q220",
+    "id": "q219",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -10011,7 +9965,7 @@
     ]
   },
   {
-    "id": "q221",
+    "id": "q220",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10059,7 +10013,7 @@
     ]
   },
   {
-    "id": "q222",
+    "id": "q221",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10099,7 +10053,7 @@
     ]
   },
   {
-    "id": "q223",
+    "id": "q222",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10139,7 +10093,7 @@
     ]
   },
   {
-    "id": "q224",
+    "id": "q223",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10187,7 +10141,7 @@
     ]
   },
   {
-    "id": "q225",
+    "id": "q224",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10215,8 +10169,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10235,7 +10189,7 @@
     ]
   },
   {
-    "id": "q226",
+    "id": "q225",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10255,8 +10209,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10275,7 +10229,7 @@
     ]
   },
   {
-    "id": "q227",
+    "id": "q226",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10295,8 +10249,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10315,7 +10269,7 @@
     ]
   },
   {
-    "id": "q228",
+    "id": "q227",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10343,8 +10297,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.",
-      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
+      "en": "The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.",
+      "sv": "Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10363,7 +10317,7 @@
     ]
   },
   {
-    "id": "q229",
+    "id": "q228",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10411,7 +10365,7 @@
     ]
   },
   {
-    "id": "q230",
+    "id": "q229",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10451,7 +10405,7 @@
     ]
   },
   {
-    "id": "q231",
+    "id": "q230",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10491,7 +10445,7 @@
     ]
   },
   {
-    "id": "q232",
+    "id": "q231",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10539,7 +10493,7 @@
     ]
   },
   {
-    "id": "q233",
+    "id": "q232",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10587,7 +10541,7 @@
     ]
   },
   {
-    "id": "q234",
+    "id": "q233",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10627,7 +10581,7 @@
     ]
   },
   {
-    "id": "q235",
+    "id": "q234",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10667,7 +10621,7 @@
     ]
   },
   {
-    "id": "q236",
+    "id": "q235",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10715,7 +10669,7 @@
     ]
   },
   {
-    "id": "q237",
+    "id": "q236",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10726,11 +10680,11 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna behöver inte följa resultatet"
+        "sv": "Politikerna måste inte följa resultatet"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna är skyldiga att följa resultatet"
+        "sv": "Politikerna måste alltid följa resultatet"
       },
       {
         "en": "Referendums may only be held nationally",
@@ -10743,8 +10697,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10763,13 +10717,13 @@
     ]
   },
   {
-    "id": "q238",
+    "id": "q237",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
       "en": "That referendums in Sweden are advisory means politicians do not have to follow the result.",
-      "sv": "Rådgivande folkomröstningar i Sverige betyder att politiker inte behöver följa resultatet."
+      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet."
     },
     "opts": [
       {
@@ -10783,8 +10737,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10803,13 +10757,13 @@
     ]
   },
   {
-    "id": "q239",
+    "id": "q238",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
       "en": "That referendums in Sweden are advisory means politicians must always follow the result.",
-      "sv": "Rådgivande folkomröstningar i Sverige betyder att politiker är skyldiga att följa resultatet."
+      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste alltid följa resultatet."
     },
     "opts": [
       {
@@ -10823,8 +10777,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10843,7 +10797,7 @@
     ]
   },
   {
-    "id": "q240",
+    "id": "q239",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10854,11 +10808,11 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna behöver inte följa resultatet"
+        "sv": "Politikerna måste inte följa resultatet"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna är skyldiga att följa resultatet"
+        "sv": "Politikerna måste alltid följa resultatet"
       },
       {
         "en": "Referendums may only be held nationally",
@@ -10871,8 +10825,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
+      "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10891,7 +10845,7 @@
     ]
   },
   {
-    "id": "q241",
+    "id": "q240",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10939,7 +10893,7 @@
     ]
   },
   {
-    "id": "q242",
+    "id": "q241",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10979,7 +10933,7 @@
     ]
   },
   {
-    "id": "q243",
+    "id": "q242",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11019,7 +10973,7 @@
     ]
   },
   {
-    "id": "q244",
+    "id": "q243",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11067,7 +11021,7 @@
     ]
   },
   {
-    "id": "q245",
+    "id": "q244",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11095,8 +11049,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11115,7 +11069,7 @@
     ]
   },
   {
-    "id": "q246",
+    "id": "q245",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11135,8 +11089,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11155,7 +11109,7 @@
     ]
   },
   {
-    "id": "q247",
+    "id": "q246",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11175,8 +11129,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11195,7 +11149,7 @@
     ]
   },
   {
-    "id": "q248",
+    "id": "q247",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11223,8 +11177,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Therefore the option about laws and state money is correct; public transport, the head of state, and criminal investigations belong to other parts of society.",
-      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Därför är alternativet om lagar och statens pengar rätt; kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
+      "en": "Members of the Riksdag decide laws, the state budget, and how the state's money should be used. Public transport, the head of state, and criminal investigations belong to other parts of society.",
+      "sv": "Riksdagens ledamöter beslutar om lagar, statens budget och hur statens pengar ska användas. Kollektivtrafik, statschef och brottsutredningar hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11243,7 +11197,7 @@
     ]
   },
   {
-    "id": "q249",
+    "id": "q248",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11291,7 +11245,7 @@
     ]
   },
   {
-    "id": "q250",
+    "id": "q249",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11331,7 +11285,7 @@
     ]
   },
   {
-    "id": "q251",
+    "id": "q250",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11371,7 +11325,7 @@
     ]
   },
   {
-    "id": "q252",
+    "id": "q251",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11419,7 +11373,7 @@
     ]
   },
   {
-    "id": "q253",
+    "id": "q252",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11447,8 +11401,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11467,7 +11421,7 @@
     ]
   },
   {
-    "id": "q254",
+    "id": "q253",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11487,8 +11441,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11507,7 +11461,7 @@
     ]
   },
   {
-    "id": "q255",
+    "id": "q254",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11527,8 +11481,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11547,7 +11501,7 @@
     ]
   },
   {
-    "id": "q256",
+    "id": "q255",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11575,8 +11529,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions, so the option about decisions and rules is correct.",
-      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner, därför är alternativet om beslut och regler rätt."
+      "en": "The government carries out its work through government agencies. Agencies put decisions into practice and must follow the law and the government's instructions.",
+      "sv": "Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11595,7 +11549,7 @@
     ]
   },
   {
-    "id": "q257",
+    "id": "q256",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11623,8 +11577,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11643,7 +11597,7 @@
     ]
   },
   {
-    "id": "q258",
+    "id": "q257",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11663,8 +11617,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11683,7 +11637,7 @@
     ]
   },
   {
-    "id": "q259",
+    "id": "q258",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11703,8 +11657,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11723,7 +11677,7 @@
     ]
   },
   {
-    "id": "q260",
+    "id": "q259",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11751,8 +11705,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. That makes health care correct; courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
-      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Därför är hälso- och sjukvård rätt; domstolar, grundlagar och statsminister hör till andra delar av samhället."
+      "en": "Sweden is divided into 21 regions. Their main responsibility is health care, but they also ensure public transport is available and are responsible for county museums. Courts, constitutional laws, and appointing the prime minister belong to other parts of society.",
+      "sv": "Sverige är indelat i 21 regioner. Regionernas främsta uppgift är hälso- och sjukvården, men de ser också till att det finns kollektivtrafik och ansvarar för länsmuseer. Domstolar, grundlagar och statsminister hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11771,7 +11725,7 @@
     ]
   },
   {
-    "id": "q261",
+    "id": "q260",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11799,8 +11753,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11819,7 +11773,7 @@
     ]
   },
   {
-    "id": "q262",
+    "id": "q261",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11839,8 +11793,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11859,7 +11813,7 @@
     ]
   },
   {
-    "id": "q263",
+    "id": "q262",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11879,8 +11833,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11899,7 +11853,7 @@
     ]
   },
   {
-    "id": "q264",
+    "id": "q263",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11927,8 +11881,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. That makes the local-services option correct; ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
-      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Därför är servicealternativet rätt; ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
+      "en": "Municipalities are responsible for much of the service residents use in everyday life, including water and sewage, care for older people and children, snow removal, park maintenance, and adult education. Ambassadors, EU laws, and succession to the throne belong to other levels or areas.",
+      "sv": "Kommunerna ansvarar för mycket av den service som invånarna använder i vardagen, till exempel vatten och avlopp, omsorg för äldre och barn, snöröjning, parkskötsel och vuxenutbildning. Ambassadörer, EU-lagar och tronföljd hör till andra nivåer eller områden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11947,7 +11901,7 @@
     ]
   },
   {
-    "id": "q265",
+    "id": "q264",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11975,8 +11929,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -11995,7 +11949,7 @@
     ]
   },
   {
-    "id": "q266",
+    "id": "q265",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -12015,8 +11969,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12035,7 +11989,7 @@
     ]
   },
   {
-    "id": "q267",
+    "id": "q266",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -12055,8 +12009,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12075,7 +12029,7 @@
     ]
   },
   {
-    "id": "q268",
+    "id": "q267",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -12103,8 +12057,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. That makes the head-of-state-without-political-power option correct; the other alternatives give the monarch political power that does not belong to Sweden's form of government.",
-      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. Därför är alternativet om statschef utan politisk makt rätt; de andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
+      "en": "Sweden is a constitutional monarchy: the head of state is a king or queen without political power, and the king functions as a symbol of Sweden. The other alternatives give the monarch political power that does not belong to Sweden's form of government.",
+      "sv": "Sverige är en konstitutionell monarki: statschefen är en kung eller drottning utan politisk makt, och kungen fungerar som en symbol för Sverige. De andra alternativen ger monarken politisk makt som inte hör till Sveriges statsskick."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12123,7 +12077,7 @@
     ]
   },
   {
-    "id": "q269",
+    "id": "q268",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -12171,7 +12125,7 @@
     ]
   },
   {
-    "id": "q270",
+    "id": "q269",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -12211,7 +12165,7 @@
     ]
   },
   {
-    "id": "q271",
+    "id": "q270",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -12251,7 +12205,7 @@
     ]
   },
   {
-    "id": "q272",
+    "id": "q271",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -12299,7 +12253,7 @@
     ]
   },
   {
-    "id": "q273",
+    "id": "q272",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12327,8 +12281,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12347,7 +12301,7 @@
     ]
   },
   {
-    "id": "q274",
+    "id": "q273",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12367,8 +12321,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12387,7 +12341,7 @@
     ]
   },
   {
-    "id": "q275",
+    "id": "q274",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12407,8 +12361,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12427,7 +12381,7 @@
     ]
   },
   {
-    "id": "q276",
+    "id": "q275",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12455,8 +12409,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years, so every four years is correct.",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år, så alternativet vart fjärde år är rätt."
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held every four years. This differs from European Parliament elections, which are held every five years.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige hålls vart fjärde år. Det skiljer sig från valet till Europaparlamentet, som hålls vart femte år."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12475,7 +12429,7 @@
     ]
   },
   {
-    "id": "q277",
+    "id": "q276",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12523,7 +12477,7 @@
     ]
   },
   {
-    "id": "q278",
+    "id": "q277",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12563,7 +12517,7 @@
     ]
   },
   {
-    "id": "q279",
+    "id": "q278",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12603,7 +12557,7 @@
     ]
   },
   {
-    "id": "q280",
+    "id": "q279",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12651,7 +12605,7 @@
     ]
   },
   {
-    "id": "q281",
+    "id": "q280",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12699,7 +12653,7 @@
     ]
   },
   {
-    "id": "q282",
+    "id": "q281",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12739,7 +12693,7 @@
     ]
   },
   {
-    "id": "q283",
+    "id": "q282",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12760,7 +12714,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12779,7 +12733,7 @@
     ]
   },
   {
-    "id": "q284",
+    "id": "q283",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12827,7 +12781,7 @@
     ]
   },
   {
-    "id": "q285",
+    "id": "q284",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12875,7 +12829,7 @@
     ]
   },
   {
-    "id": "q286",
+    "id": "q285",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12915,7 +12869,7 @@
     ]
   },
   {
-    "id": "q287",
+    "id": "q286",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12955,7 +12909,7 @@
     ]
   },
   {
-    "id": "q288",
+    "id": "q287",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13003,7 +12957,7 @@
     ]
   },
   {
-    "id": "q289",
+    "id": "q288",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13051,7 +13005,7 @@
     ]
   },
   {
-    "id": "q290",
+    "id": "q289",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13091,7 +13045,7 @@
     ]
   },
   {
-    "id": "q291",
+    "id": "q290",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13131,7 +13085,7 @@
     ]
   },
   {
-    "id": "q292",
+    "id": "q291",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13179,7 +13133,7 @@
     ]
   },
   {
-    "id": "q293",
+    "id": "q292",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13227,7 +13181,7 @@
     ]
   },
   {
-    "id": "q294",
+    "id": "q293",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13267,7 +13221,7 @@
     ]
   },
   {
-    "id": "q295",
+    "id": "q294",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13307,7 +13261,7 @@
     ]
   },
   {
-    "id": "q296",
+    "id": "q295",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13355,7 +13309,7 @@
     ]
   },
   {
-    "id": "q297",
+    "id": "q296",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13403,7 +13357,7 @@
     ]
   },
   {
-    "id": "q298",
+    "id": "q297",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13443,7 +13397,7 @@
     ]
   },
   {
-    "id": "q299",
+    "id": "q298",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -13483,7 +13437,7 @@
     ]
   },
   {
-    "id": "q300",
+    "id": "q299",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -13531,7 +13485,7 @@
     ]
   },
   {
-    "id": "q301",
+    "id": "q300",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13579,7 +13533,7 @@
     ]
   },
   {
-    "id": "q302",
+    "id": "q301",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13619,7 +13573,7 @@
     ]
   },
   {
-    "id": "q303",
+    "id": "q302",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13659,7 +13613,7 @@
     ]
   },
   {
-    "id": "q304",
+    "id": "q303",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13707,7 +13661,7 @@
     ]
   },
   {
-    "id": "q305",
+    "id": "q304",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13755,7 +13709,7 @@
     ]
   },
   {
-    "id": "q306",
+    "id": "q305",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13795,7 +13749,7 @@
     ]
   },
   {
-    "id": "q307",
+    "id": "q306",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13835,7 +13789,7 @@
     ]
   },
   {
-    "id": "q308",
+    "id": "q307",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13883,7 +13837,7 @@
     ]
   },
   {
-    "id": "q309",
+    "id": "q308",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13931,7 +13885,7 @@
     ]
   },
   {
-    "id": "q310",
+    "id": "q309",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13971,7 +13925,7 @@
     ]
   },
   {
-    "id": "q311",
+    "id": "q310",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14011,7 +13965,7 @@
     ]
   },
   {
-    "id": "q312",
+    "id": "q311",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14059,7 +14013,7 @@
     ]
   },
   {
-    "id": "q313",
+    "id": "q312",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14107,7 +14061,7 @@
     ]
   },
   {
-    "id": "q314",
+    "id": "q313",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14147,7 +14101,7 @@
     ]
   },
   {
-    "id": "q315",
+    "id": "q314",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14187,7 +14141,7 @@
     ]
   },
   {
-    "id": "q316",
+    "id": "q315",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14235,7 +14189,7 @@
     ]
   },
   {
-    "id": "q317",
+    "id": "q316",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14283,7 +14237,7 @@
     ]
   },
   {
-    "id": "q318",
+    "id": "q317",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14323,7 +14277,7 @@
     ]
   },
   {
-    "id": "q319",
+    "id": "q318",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14363,7 +14317,7 @@
     ]
   },
   {
-    "id": "q320",
+    "id": "q319",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14411,7 +14365,7 @@
     ]
   },
   {
-    "id": "q321",
+    "id": "q320",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14459,7 +14413,7 @@
     ]
   },
   {
-    "id": "q322",
+    "id": "q321",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14499,7 +14453,7 @@
     ]
   },
   {
-    "id": "q323",
+    "id": "q322",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14539,7 +14493,7 @@
     ]
   },
   {
-    "id": "q324",
+    "id": "q323",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14587,7 +14541,7 @@
     ]
   },
   {
-    "id": "q325",
+    "id": "q324",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14635,7 +14589,7 @@
     ]
   },
   {
-    "id": "q326",
+    "id": "q325",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14675,7 +14629,7 @@
     ]
   },
   {
-    "id": "q327",
+    "id": "q326",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14715,7 +14669,7 @@
     ]
   },
   {
-    "id": "q328",
+    "id": "q327",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14763,7 +14717,7 @@
     ]
   },
   {
-    "id": "q329",
+    "id": "q328",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14811,7 +14765,7 @@
     ]
   },
   {
-    "id": "q330",
+    "id": "q329",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14851,7 +14805,7 @@
     ]
   },
   {
-    "id": "q331",
+    "id": "q330",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14891,7 +14845,7 @@
     ]
   },
   {
-    "id": "q332",
+    "id": "q331",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14939,13 +14893,13 @@
     ]
   },
   {
-    "id": "q333",
+    "id": "q332",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
-      "sv": "Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
+      "en": "Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -14967,8 +14921,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14987,13 +14941,13 @@
     ]
   },
   {
-    "id": "q334",
+    "id": "q333",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.",
-      "sv": "Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
+      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 15.",
+      "sv": "Från 15 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
       {
@@ -15007,8 +14961,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15027,13 +14981,13 @@
     ]
   },
   {
-    "id": "q335",
+    "id": "q334",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.",
-      "sv": "Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
+      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 13.",
+      "sv": "Från 13 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
       {
@@ -15047,8 +15001,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15067,13 +15021,13 @@
     ]
   },
   {
-    "id": "q336",
+    "id": "q335",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
-      "sv": "Välj rätt alternativ: Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
+      "en": "Choose the correct option: From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Välj rätt alternativ: Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -15095,8 +15049,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15115,7 +15069,7 @@
     ]
   },
   {
-    "id": "q337",
+    "id": "q336",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15163,7 +15117,7 @@
     ]
   },
   {
-    "id": "q338",
+    "id": "q337",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15203,7 +15157,7 @@
     ]
   },
   {
-    "id": "q339",
+    "id": "q338",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15243,7 +15197,7 @@
     ]
   },
   {
-    "id": "q340",
+    "id": "q339",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15291,7 +15245,7 @@
     ]
   },
   {
-    "id": "q341",
+    "id": "q340",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15339,7 +15293,7 @@
     ]
   },
   {
-    "id": "q342",
+    "id": "q341",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15379,7 +15333,7 @@
     ]
   },
   {
-    "id": "q343",
+    "id": "q342",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15419,7 +15373,7 @@
     ]
   },
   {
-    "id": "q344",
+    "id": "q343",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15467,7 +15421,7 @@
     ]
   },
   {
-    "id": "q345",
+    "id": "q344",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15515,7 +15469,7 @@
     ]
   },
   {
-    "id": "q346",
+    "id": "q345",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15555,7 +15509,7 @@
     ]
   },
   {
-    "id": "q347",
+    "id": "q346",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15595,7 +15549,7 @@
     ]
   },
   {
-    "id": "q348",
+    "id": "q347",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15643,7 +15597,7 @@
     ]
   },
   {
-    "id": "q349",
+    "id": "q348",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15692,7 +15646,7 @@
     ]
   },
   {
-    "id": "q350",
+    "id": "q349",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15733,7 +15687,7 @@
     ]
   },
   {
-    "id": "q351",
+    "id": "q350",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15774,7 +15728,7 @@
     ]
   },
   {
-    "id": "q352",
+    "id": "q351",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15823,7 +15777,7 @@
     ]
   },
   {
-    "id": "q353",
+    "id": "q352",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15871,7 +15825,7 @@
     ]
   },
   {
-    "id": "q354",
+    "id": "q353",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15911,7 +15865,7 @@
     ]
   },
   {
-    "id": "q355",
+    "id": "q354",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15951,7 +15905,7 @@
     ]
   },
   {
-    "id": "q356",
+    "id": "q355",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15999,7 +15953,7 @@
     ]
   },
   {
-    "id": "q357",
+    "id": "q356",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -16047,7 +16001,7 @@
     ]
   },
   {
-    "id": "q358",
+    "id": "q357",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -16087,7 +16041,7 @@
     ]
   },
   {
-    "id": "q359",
+    "id": "q358",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -16127,7 +16081,7 @@
     ]
   },
   {
-    "id": "q360",
+    "id": "q359",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -16175,7 +16129,7 @@
     ]
   },
   {
-    "id": "q361",
+    "id": "q360",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16223,7 +16177,7 @@
     ]
   },
   {
-    "id": "q362",
+    "id": "q361",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16263,7 +16217,7 @@
     ]
   },
   {
-    "id": "q363",
+    "id": "q362",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16303,7 +16257,7 @@
     ]
   },
   {
-    "id": "q364",
+    "id": "q363",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16351,36 +16305,36 @@
     ]
   },
   {
-    "id": "q365",
+    "id": "q364",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? In which year was the UN Universal Declaration of Human Rights presented?",
-      "sv": "Vilket svar stämmer bäst? Vilket år presenterades FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Which answer best matches? Which statement is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
-        "en": "1948",
-        "sv": "1948"
+        "en": "It was presented in 1948 and contains 30 articles",
+        "sv": "Den presenterades 1948 och innehåller 30 artiklar"
       },
       {
-        "en": "1918",
-        "sv": "1918"
+        "en": "It was presented in 1918 and applies only to Europe",
+        "sv": "Den presenterades 1918 och gäller bara Europa"
       },
       {
-        "en": "1945",
-        "sv": "1945"
+        "en": "It says that only citizens have rights",
+        "sv": "Den säger att bara medborgare har rättigheter"
       },
       {
-        "en": "2020",
-        "sv": "2020"
+        "en": "It is only about vacation from work",
+        "sv": "Den handlar bara om semester från arbetet"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The UN presented the Universal Declaration of Human Rights in 1948. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
-      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
+      "en": "The UN presented the Universal Declaration of Human Rights in 1948, and it contains 30 articles. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
+      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948, och den innehåller 30 artiklar. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16399,13 +16353,13 @@
     ]
   },
   {
-    "id": "q366",
+    "id": "q365",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "The UN Universal Declaration of Human Rights was presented in 1948.",
-      "sv": "FN:s förklaring om de mänskliga rättigheterna presenterades 1948."
+      "en": "The UN Universal Declaration of Human Rights was presented in 1948 and contains 30 articles.",
+      "sv": "FN:s förklaring om de mänskliga rättigheterna presenterades 1948 och innehåller 30 artiklar."
     },
     "opts": [
       {
@@ -16419,8 +16373,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The UN presented the Universal Declaration of Human Rights in 1948. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
-      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
+      "en": "The UN presented the Universal Declaration of Human Rights in 1948, and it contains 30 articles. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
+      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948, och den innehåller 30 artiklar. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16439,13 +16393,13 @@
     ]
   },
   {
-    "id": "q367",
+    "id": "q366",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "The UN Universal Declaration of Human Rights was presented in 1918.",
-      "sv": "FN:s förklaring om de mänskliga rättigheterna presenterades 1918."
+      "en": "The UN Universal Declaration of Human Rights was presented in 1918 and applies only to Europe.",
+      "sv": "FN:s förklaring om de mänskliga rättigheterna presenterades 1918 och gäller bara Europa."
     },
     "opts": [
       {
@@ -16459,8 +16413,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The UN presented the Universal Declaration of Human Rights in 1948. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
-      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
+      "en": "The UN presented the Universal Declaration of Human Rights in 1948, and it contains 30 articles. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
+      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948, och den innehåller 30 artiklar. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16479,36 +16433,36 @@
     ]
   },
   {
-    "id": "q368",
+    "id": "q367",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: In which year was the UN Universal Declaration of Human Rights presented?",
-      "sv": "Välj rätt alternativ: Vilket år presenterades FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Choose the correct option: Which statement is correct about the UN Universal Declaration of Human Rights?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
     },
     "opts": [
       {
-        "en": "1948",
-        "sv": "1948"
+        "en": "It was presented in 1948 and contains 30 articles",
+        "sv": "Den presenterades 1948 och innehåller 30 artiklar"
       },
       {
-        "en": "1918",
-        "sv": "1918"
+        "en": "It was presented in 1918 and applies only to Europe",
+        "sv": "Den presenterades 1918 och gäller bara Europa"
       },
       {
-        "en": "1945",
-        "sv": "1945"
+        "en": "It says that only citizens have rights",
+        "sv": "Den säger att bara medborgare har rättigheter"
       },
       {
-        "en": "2020",
-        "sv": "2020"
+        "en": "It is only about vacation from work",
+        "sv": "Den handlar bara om semester från arbetet"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The UN presented the Universal Declaration of Human Rights in 1948. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
-      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
+      "en": "The UN presented the Universal Declaration of Human Rights in 1948, and it contains 30 articles. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.",
+      "sv": "FN presenterade förklaringen om de mänskliga rättigheterna 1948, och den innehåller 30 artiklar. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16527,7 +16481,7 @@
     ]
   },
   {
-    "id": "q369",
+    "id": "q368",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16575,7 +16529,7 @@
     ]
   },
   {
-    "id": "q370",
+    "id": "q369",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16615,7 +16569,7 @@
     ]
   },
   {
-    "id": "q371",
+    "id": "q370",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16655,7 +16609,7 @@
     ]
   },
   {
-    "id": "q372",
+    "id": "q371",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16703,7 +16657,7 @@
     ]
   },
   {
-    "id": "q373",
+    "id": "q372",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16752,7 +16706,7 @@
     ]
   },
   {
-    "id": "q374",
+    "id": "q373",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16793,7 +16747,7 @@
     ]
   },
   {
-    "id": "q375",
+    "id": "q374",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16834,7 +16788,7 @@
     ]
   },
   {
-    "id": "q376",
+    "id": "q375",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16883,7 +16837,7 @@
     ]
   },
   {
-    "id": "q377",
+    "id": "q376",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16931,13 +16885,13 @@
     ]
   },
   {
-    "id": "q378",
+    "id": "q377",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
       "en": "It is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "I Sverige är det olagligt att köpa sex, men personen som säljer sex straffas inte."
+      "sv": "Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte."
     },
     "opts": [
       {
@@ -16971,13 +16925,13 @@
     ]
   },
   {
-    "id": "q379",
+    "id": "q378",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
       "en": "It is always legal to buy sex.",
-      "sv": "I Sverige är det alltid lagligt att köpa sex."
+      "sv": "Att köpa sex i Sverige är alltid lagligt att köpa sex."
     },
     "opts": [
       {
@@ -17011,7 +16965,7 @@
     ]
   },
   {
-    "id": "q380",
+    "id": "q379",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17059,7 +17013,7 @@
     ]
   },
   {
-    "id": "q381",
+    "id": "q380",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17107,7 +17061,7 @@
     ]
   },
   {
-    "id": "q382",
+    "id": "q381",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17147,7 +17101,7 @@
     ]
   },
   {
-    "id": "q383",
+    "id": "q382",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17187,7 +17141,7 @@
     ]
   },
   {
-    "id": "q384",
+    "id": "q383",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17235,7 +17189,7 @@
     ]
   },
   {
-    "id": "q385",
+    "id": "q384",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17283,7 +17237,7 @@
     ]
   },
   {
-    "id": "q386",
+    "id": "q385",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17323,7 +17277,7 @@
     ]
   },
   {
-    "id": "q387",
+    "id": "q386",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17363,7 +17317,7 @@
     ]
   },
   {
-    "id": "q388",
+    "id": "q387",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17411,7 +17365,7 @@
     ]
   },
   {
-    "id": "q389",
+    "id": "q388",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17459,7 +17413,7 @@
     ]
   },
   {
-    "id": "q390",
+    "id": "q389",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17499,7 +17453,7 @@
     ]
   },
   {
-    "id": "q391",
+    "id": "q390",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17539,7 +17493,7 @@
     ]
   },
   {
-    "id": "q392",
+    "id": "q391",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17587,7 +17541,7 @@
     ]
   },
   {
-    "id": "q393",
+    "id": "q392",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17635,7 +17589,7 @@
     ]
   },
   {
-    "id": "q394",
+    "id": "q393",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17675,7 +17629,7 @@
     ]
   },
   {
-    "id": "q395",
+    "id": "q394",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17715,7 +17669,7 @@
     ]
   },
   {
-    "id": "q396",
+    "id": "q395",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17763,7 +17717,7 @@
     ]
   },
   {
-    "id": "q397",
+    "id": "q396",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17811,7 +17765,7 @@
     ]
   },
   {
-    "id": "q398",
+    "id": "q397",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17851,7 +17805,7 @@
     ]
   },
   {
-    "id": "q399",
+    "id": "q398",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17891,7 +17845,7 @@
     ]
   },
   {
-    "id": "q400",
+    "id": "q399",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17939,7 +17893,7 @@
     ]
   },
   {
-    "id": "q401",
+    "id": "q400",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17987,7 +17941,7 @@
     ]
   },
   {
-    "id": "q402",
+    "id": "q401",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -18027,7 +17981,7 @@
     ]
   },
   {
-    "id": "q403",
+    "id": "q402",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -18067,7 +18021,7 @@
     ]
   },
   {
-    "id": "q404",
+    "id": "q403",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -18115,7 +18069,7 @@
     ]
   },
   {
-    "id": "q405",
+    "id": "q404",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18163,7 +18117,7 @@
     ]
   },
   {
-    "id": "q406",
+    "id": "q405",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18203,7 +18157,7 @@
     ]
   },
   {
-    "id": "q407",
+    "id": "q406",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18243,7 +18197,7 @@
     ]
   },
   {
-    "id": "q408",
+    "id": "q407",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18291,7 +18245,7 @@
     ]
   },
   {
-    "id": "q409",
+    "id": "q408",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18339,7 +18293,7 @@
     ]
   },
   {
-    "id": "q410",
+    "id": "q409",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18379,7 +18333,7 @@
     ]
   },
   {
-    "id": "q411",
+    "id": "q410",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18419,7 +18373,7 @@
     ]
   },
   {
-    "id": "q412",
+    "id": "q411",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18467,7 +18421,7 @@
     ]
   },
   {
-    "id": "q413",
+    "id": "q412",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18515,7 +18469,7 @@
     ]
   },
   {
-    "id": "q414",
+    "id": "q413",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18555,7 +18509,7 @@
     ]
   },
   {
-    "id": "q415",
+    "id": "q414",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18595,7 +18549,7 @@
     ]
   },
   {
-    "id": "q416",
+    "id": "q415",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18643,7 +18597,7 @@
     ]
   },
   {
-    "id": "q417",
+    "id": "q416",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18657,8 +18611,8 @@
         "sv": "Genom förhandlingar mellan arbetsmarknadens parter"
       },
       {
-        "en": "By the state deciding all wages",
-        "sv": "Genom att staten bestämmer alla löner"
+        "en": "By the state alone",
+        "sv": "Av staten ensam"
       },
       {
         "en": "Through municipal elections every four years",
@@ -18671,8 +18625,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state setting all wages.",
-      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte genom att staten sätter alla löner."
+      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state alone.",
+      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte av staten ensam."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18691,7 +18645,7 @@
     ]
   },
   {
-    "id": "q418",
+    "id": "q417",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18711,8 +18665,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state setting all wages.",
-      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte genom att staten sätter alla löner."
+      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state alone.",
+      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte av staten ensam."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18731,13 +18685,13 @@
     ]
   },
   {
-    "id": "q419",
+    "id": "q418",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "Wages in Sweden are set by the state deciding all wages.",
-      "sv": "Löner i Sverige bestäms genom att staten bestämmer alla löner."
+      "en": "Wages in Sweden are set by the state alone.",
+      "sv": "Löner i Sverige bestäms av staten ensam."
     },
     "opts": [
       {
@@ -18751,8 +18705,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state setting all wages.",
-      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte genom att staten sätter alla löner."
+      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state alone.",
+      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte av staten ensam."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18771,7 +18725,7 @@
     ]
   },
   {
-    "id": "q420",
+    "id": "q419",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18785,8 +18739,8 @@
         "sv": "Genom förhandlingar mellan arbetsmarknadens parter"
       },
       {
-        "en": "By the state deciding all wages",
-        "sv": "Genom att staten bestämmer alla löner"
+        "en": "By the state alone",
+        "sv": "Av staten ensam"
       },
       {
         "en": "Through municipal elections every four years",
@@ -18799,8 +18753,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state setting all wages.",
-      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte genom att staten sätter alla löner."
+      "en": "In Sweden, trade unions and employer organizations negotiate collective agreements that regulate wages and working conditions. Wages are therefore set through negotiations between labour-market parties, not by the state alone.",
+      "sv": "I Sverige förhandlar fackförbund och arbetsgivarorganisationer om kollektivavtal som reglerar löner och arbetsvillkor. Löner bestäms därför genom förhandlingar mellan arbetsmarknadens parter, inte av staten ensam."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18819,7 +18773,7 @@
     ]
   },
   {
-    "id": "q421",
+    "id": "q420",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18867,7 +18821,7 @@
     ]
   },
   {
-    "id": "q422",
+    "id": "q421",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18907,7 +18861,7 @@
     ]
   },
   {
-    "id": "q423",
+    "id": "q422",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18947,7 +18901,7 @@
     ]
   },
   {
-    "id": "q424",
+    "id": "q423",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18995,7 +18949,7 @@
     ]
   },
   {
-    "id": "q425",
+    "id": "q424",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -19005,12 +18959,12 @@
     },
     "opts": [
       {
-        "en": "It can pay money to unemployed members",
-        "sv": "Den kan betala ut pengar till arbetslösa medlemmar"
+        "en": "It can pay unemployment benefits to members",
+        "sv": "Den kan betala ut arbetslöshetsersättning till medlemmar"
       },
       {
-        "en": "An authority that judges work environment crimes",
-        "sv": "En myndighet som dömer i arbetsmiljöbrott"
+        "en": "A government agency that inspects work environments",
+        "sv": "En myndighet som kontrollerar arbetsmiljöer"
       },
       {
         "en": "It sets all wages in Sweden",
@@ -19023,8 +18977,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Unemployment insurance can give an unemployed person income while they are looking for work. A-kassan is an economic association that pays money to unemployed members, but compensation requires, among other things, enough work during a set period and active job seeking.",
-      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan är en ekonomisk förening som betalar ut pengar till arbetslösa medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
+      "en": "Unemployment insurance can provide income while a person is looking for work. A-kassan can pay unemployment benefits to members, but compensation requires, among other things, enough work during a set period and active job seeking.",
+      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan kan betala ut arbetslöshetsersättning till medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19043,13 +18997,13 @@
     ]
   },
   {
-    "id": "q426",
+    "id": "q425",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "A-kassan can pay money to unemployed members.",
-      "sv": "A-kassan kan betala ut pengar till arbetslösa medlemmar."
+      "en": "A-kassan can pay unemployment benefits to members.",
+      "sv": "A-kassan kan betala ut arbetslöshetsersättning till medlemmar."
     },
     "opts": [
       {
@@ -19063,8 +19017,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Unemployment insurance can give an unemployed person income while they are looking for work. A-kassan is an economic association that pays money to unemployed members, but compensation requires, among other things, enough work during a set period and active job seeking.",
-      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan är en ekonomisk förening som betalar ut pengar till arbetslösa medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
+      "en": "Unemployment insurance can provide income while a person is looking for work. A-kassan can pay unemployment benefits to members, but compensation requires, among other things, enough work during a set period and active job seeking.",
+      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan kan betala ut arbetslöshetsersättning till medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19083,13 +19037,13 @@
     ]
   },
   {
-    "id": "q427",
+    "id": "q426",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "A-kassan is an authority that judges work environment crimes.",
-      "sv": "A-kassan är en myndighet som dömer i arbetsmiljöbrott."
+      "en": "A-kassan is a government agency that inspects work environments.",
+      "sv": "A-kassan är en myndighet som kontrollerar arbetsmiljöer."
     },
     "opts": [
       {
@@ -19103,8 +19057,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Unemployment insurance can give an unemployed person income while they are looking for work. A-kassan is an economic association that pays money to unemployed members, but compensation requires, among other things, enough work during a set period and active job seeking.",
-      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan är en ekonomisk förening som betalar ut pengar till arbetslösa medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
+      "en": "Unemployment insurance can provide income while a person is looking for work. A-kassan can pay unemployment benefits to members, but compensation requires, among other things, enough work during a set period and active job seeking.",
+      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan kan betala ut arbetslöshetsersättning till medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19123,7 +19077,7 @@
     ]
   },
   {
-    "id": "q428",
+    "id": "q427",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -19133,12 +19087,12 @@
     },
     "opts": [
       {
-        "en": "It can pay money to unemployed members",
-        "sv": "Den kan betala ut pengar till arbetslösa medlemmar"
+        "en": "It can pay unemployment benefits to members",
+        "sv": "Den kan betala ut arbetslöshetsersättning till medlemmar"
       },
       {
-        "en": "An authority that judges work environment crimes",
-        "sv": "En myndighet som dömer i arbetsmiljöbrott"
+        "en": "A government agency that inspects work environments",
+        "sv": "En myndighet som kontrollerar arbetsmiljöer"
       },
       {
         "en": "It sets all wages in Sweden",
@@ -19151,8 +19105,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Unemployment insurance can give an unemployed person income while they are looking for work. A-kassan is an economic association that pays money to unemployed members, but compensation requires, among other things, enough work during a set period and active job seeking.",
-      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan är en ekonomisk förening som betalar ut pengar till arbetslösa medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
+      "en": "Unemployment insurance can provide income while a person is looking for work. A-kassan can pay unemployment benefits to members, but compensation requires, among other things, enough work during a set period and active job seeking.",
+      "sv": "Arbetslöshetsförsäkringen kan ge en arbetslös person inkomst under tiden personen söker arbete. A-kassan kan betala ut arbetslöshetsersättning till medlemmar, men ersättning kräver bland annat tillräckligt arbete under en bestämd period och aktivt arbetssökande."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19171,7 +19125,7 @@
     ]
   },
   {
-    "id": "q429",
+    "id": "q428",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -19220,7 +19174,7 @@
     ]
   },
   {
-    "id": "q430",
+    "id": "q429",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -19261,7 +19215,7 @@
     ]
   },
   {
-    "id": "q431",
+    "id": "q430",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -19302,7 +19256,7 @@
     ]
   },
   {
-    "id": "q432",
+    "id": "q431",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -19351,7 +19305,7 @@
     ]
   },
   {
-    "id": "q433",
+    "id": "q432",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19399,7 +19353,7 @@
     ]
   },
   {
-    "id": "q434",
+    "id": "q433",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19439,7 +19393,7 @@
     ]
   },
   {
-    "id": "q435",
+    "id": "q434",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19479,7 +19433,7 @@
     ]
   },
   {
-    "id": "q436",
+    "id": "q435",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19527,7 +19481,7 @@
     ]
   },
   {
-    "id": "q437",
+    "id": "q436",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19575,7 +19529,7 @@
     ]
   },
   {
-    "id": "q438",
+    "id": "q437",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19615,7 +19569,7 @@
     ]
   },
   {
-    "id": "q439",
+    "id": "q438",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19655,7 +19609,7 @@
     ]
   },
   {
-    "id": "q440",
+    "id": "q439",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19703,7 +19657,7 @@
     ]
   },
   {
-    "id": "q441",
+    "id": "q440",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19752,7 +19706,7 @@
     ]
   },
   {
-    "id": "q442",
+    "id": "q441",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19793,7 +19747,7 @@
     ]
   },
   {
-    "id": "q443",
+    "id": "q442",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19834,7 +19788,7 @@
     ]
   },
   {
-    "id": "q444",
+    "id": "q443",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19883,7 +19837,7 @@
     ]
   },
   {
-    "id": "q445",
+    "id": "q444",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19911,8 +19865,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19931,7 +19885,7 @@
     ]
   },
   {
-    "id": "q446",
+    "id": "q445",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19951,8 +19905,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19971,7 +19925,7 @@
     ]
   },
   {
-    "id": "q447",
+    "id": "q446",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19991,8 +19945,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20011,7 +19965,7 @@
     ]
   },
   {
-    "id": "q448",
+    "id": "q447",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -20039,8 +19993,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. That is why health care is the correct answer: regions run and finance hospitals and health centres.",
-      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Därför är vård rätt svar: regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
+      "en": "Sweden’s 21 regions tax their residents and are responsible for providing health and medical care for everyone. Regions run and finance hospitals and health centres.",
+      "sv": "Sveriges 21 regioner tar ut skatt av sina invånare och ska erbjuda hälso- och sjukvård till alla. Regionerna driver och finansierar bland annat sjukhus och vårdcentraler."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -20059,7 +20013,7 @@
     ]
   },
   {
-    "id": "q449",
+    "id": "q448",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -20107,7 +20061,7 @@
     ]
   },
   {
-    "id": "q450",
+    "id": "q449",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -20147,7 +20101,7 @@
     ]
   },
   {
-    "id": "q451",
+    "id": "q450",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -20187,7 +20141,7 @@
     ]
   },
   {
-    "id": "q452",
+    "id": "q451",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -20235,7 +20189,7 @@
     ]
   },
   {
-    "id": "q453",
+    "id": "q452",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -20283,7 +20237,7 @@
     ]
   },
   {
-    "id": "q454",
+    "id": "q453",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -20323,7 +20277,7 @@
     ]
   },
   {
-    "id": "q455",
+    "id": "q454",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -20363,7 +20317,7 @@
     ]
   },
   {
-    "id": "q456",
+    "id": "q455",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -20411,7 +20365,7 @@
     ]
   },
   {
-    "id": "q457",
+    "id": "q456",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20459,7 +20413,7 @@
     ]
   },
   {
-    "id": "q458",
+    "id": "q457",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20499,7 +20453,7 @@
     ]
   },
   {
-    "id": "q459",
+    "id": "q458",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20539,7 +20493,7 @@
     ]
   },
   {
-    "id": "q460",
+    "id": "q459",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20587,7 +20541,7 @@
     ]
   },
   {
-    "id": "q461",
+    "id": "q460",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20636,7 +20590,7 @@
     ]
   },
   {
-    "id": "q462",
+    "id": "q461",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20677,7 +20631,7 @@
     ]
   },
   {
-    "id": "q463",
+    "id": "q462",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20718,7 +20672,7 @@
     ]
   },
   {
-    "id": "q464",
+    "id": "q463",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20767,7 +20721,7 @@
     ]
   },
   {
-    "id": "q465",
+    "id": "q464",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20815,7 +20769,7 @@
     ]
   },
   {
-    "id": "q466",
+    "id": "q465",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20855,7 +20809,7 @@
     ]
   },
   {
-    "id": "q467",
+    "id": "q466",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20895,7 +20849,7 @@
     ]
   },
   {
-    "id": "q468",
+    "id": "q467",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20943,7 +20897,7 @@
     ]
   },
   {
-    "id": "q469",
+    "id": "q468",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20991,7 +20945,7 @@
     ]
   },
   {
-    "id": "q470",
+    "id": "q469",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21031,7 +20985,7 @@
     ]
   },
   {
-    "id": "q471",
+    "id": "q470",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21071,7 +21025,7 @@
     ]
   },
   {
-    "id": "q472",
+    "id": "q471",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21119,7 +21073,7 @@
     ]
   },
   {
-    "id": "q473",
+    "id": "q472",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21167,7 +21121,7 @@
     ]
   },
   {
-    "id": "q474",
+    "id": "q473",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21207,7 +21161,7 @@
     ]
   },
   {
-    "id": "q475",
+    "id": "q474",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21247,7 +21201,7 @@
     ]
   },
   {
-    "id": "q476",
+    "id": "q475",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21295,7 +21249,7 @@
     ]
   },
   {
-    "id": "q477",
+    "id": "q476",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21343,7 +21297,7 @@
     ]
   },
   {
-    "id": "q478",
+    "id": "q477",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21383,7 +21337,7 @@
     ]
   },
   {
-    "id": "q479",
+    "id": "q478",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21423,7 +21377,7 @@
     ]
   },
   {
-    "id": "q480",
+    "id": "q479",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21471,7 +21425,7 @@
     ]
   },
   {
-    "id": "q481",
+    "id": "q480",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21519,7 +21473,7 @@
     ]
   },
   {
-    "id": "q482",
+    "id": "q481",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21559,7 +21513,7 @@
     ]
   },
   {
-    "id": "q483",
+    "id": "q482",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21599,7 +21553,7 @@
     ]
   },
   {
-    "id": "q484",
+    "id": "q483",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21647,7 +21601,7 @@
     ]
   },
   {
-    "id": "q485",
+    "id": "q484",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21675,8 +21629,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21695,7 +21649,7 @@
     ]
   },
   {
-    "id": "q486",
+    "id": "q485",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21715,8 +21669,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21735,7 +21689,7 @@
     ]
   },
   {
-    "id": "q487",
+    "id": "q486",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21755,8 +21709,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21775,7 +21729,7 @@
     ]
   },
   {
-    "id": "q488",
+    "id": "q487",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21803,8 +21757,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
-      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
+      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible.",
+      "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21823,7 +21777,7 @@
     ]
   },
   {
-    "id": "q489",
+    "id": "q488",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21871,7 +21825,7 @@
     ]
   },
   {
-    "id": "q490",
+    "id": "q489",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21911,7 +21865,7 @@
     ]
   },
   {
-    "id": "q491",
+    "id": "q490",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21951,7 +21905,7 @@
     ]
   },
   {
-    "id": "q492",
+    "id": "q491",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21999,7 +21953,7 @@
     ]
   },
   {
-    "id": "q493",
+    "id": "q492",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -22027,8 +21981,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22047,7 +22001,7 @@
     ]
   },
   {
-    "id": "q494",
+    "id": "q493",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -22067,8 +22021,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22087,7 +22041,7 @@
     ]
   },
   {
-    "id": "q495",
+    "id": "q494",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -22107,8 +22061,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22127,7 +22081,7 @@
     ]
   },
   {
-    "id": "q496",
+    "id": "q495",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -22155,8 +22109,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier, so the answer about work, study, communication, and information is correct.",
-      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare, därför är alternativet om arbete, studier, kommunikation och information rätt."
+      "en": "Computers, the internet, smartphones, and AI have changed how people work, study, communicate, and access information. Digitalization has also made rapid trade, international cooperation, and information exchange easier.",
+      "sv": "Datorer, internet, smarta telefoner och AI har förändrat hur människor arbetar, studerar, kommunicerar och tar del av information. Digitaliseringen har också gjort snabb handel, internationellt samarbete och informationsutbyte enklare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22175,7 +22129,7 @@
     ]
   },
   {
-    "id": "q497",
+    "id": "q496",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22203,8 +22157,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22223,7 +22177,7 @@
     ]
   },
   {
-    "id": "q498",
+    "id": "q497",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22243,8 +22197,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22263,7 +22217,7 @@
     ]
   },
   {
-    "id": "q499",
+    "id": "q498",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22283,8 +22237,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22303,7 +22257,7 @@
     ]
   },
   {
-    "id": "q500",
+    "id": "q499",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22331,8 +22285,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out, so the option with the two Nordic bodies is correct.",
-      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra, därför är alternativet med de två nordiska organen rätt."
+      "en": "Sweden cooperates with Denmark, Finland, Iceland, and Norway mainly through the Nordic Council and the Nordic Council of Ministers. Those councils agree on issues that each country can then carry out.",
+      "sv": "Sverige samarbetar med Danmark, Finland, Island och Norge främst genom Nordiska rådet och Nordiska ministerrådet. Råden kommer överens i frågor som varje land sedan kan genomföra."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22351,7 +22305,7 @@
     ]
   },
   {
-    "id": "q501",
+    "id": "q500",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22399,7 +22353,7 @@
     ]
   },
   {
-    "id": "q502",
+    "id": "q501",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22439,7 +22393,7 @@
     ]
   },
   {
-    "id": "q503",
+    "id": "q502",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22479,7 +22433,7 @@
     ]
   },
   {
-    "id": "q504",
+    "id": "q503",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22527,7 +22481,7 @@
     ]
   },
   {
-    "id": "q505",
+    "id": "q504",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22555,8 +22509,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22575,7 +22529,7 @@
     ]
   },
   {
-    "id": "q506",
+    "id": "q505",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22595,8 +22549,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22615,7 +22569,7 @@
     ]
   },
   {
-    "id": "q507",
+    "id": "q506",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22635,8 +22589,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22655,7 +22609,7 @@
     ]
   },
   {
-    "id": "q508",
+    "id": "q507",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22683,8 +22637,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. That makes the option about studying, moving, working, and goods correct; the other alternatives do not describe the EU's four freedoms.",
-      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. Därför är alternativet om studier, flytt, arbete och varor rätt; de andra alternativen beskriver inte EU:s fyra friheter."
+      "en": "The EU's four freedoms mean that people can study, move, work, and sell goods freely between EU countries. The other alternatives do not describe the EU's four freedoms.",
+      "sv": "EU:s fyra friheter innebär att människor kan studera, flytta, arbeta och sälja varor fritt mellan EU-länder. De andra alternativen beskriver inte EU:s fyra friheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22703,7 +22657,7 @@
     ]
   },
   {
-    "id": "q509",
+    "id": "q508",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22751,7 +22705,7 @@
     ]
   },
   {
-    "id": "q510",
+    "id": "q509",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22791,7 +22745,7 @@
     ]
   },
   {
-    "id": "q511",
+    "id": "q510",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22831,7 +22785,7 @@
     ]
   },
   {
-    "id": "q512",
+    "id": "q511",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22879,7 +22833,7 @@
     ]
   },
   {
-    "id": "q513",
+    "id": "q512",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22907,8 +22861,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22927,7 +22881,7 @@
     ]
   },
   {
-    "id": "q514",
+    "id": "q513",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22947,8 +22901,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22967,7 +22921,7 @@
     ]
   },
   {
-    "id": "q515",
+    "id": "q514",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22987,8 +22941,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23007,7 +22961,7 @@
     ]
   },
   {
-    "id": "q516",
+    "id": "q515",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -23035,8 +22989,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies, so the answer about poverty and oppression is correct.",
-      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen, därför är alternativet om fattigdom och förtryck rätt."
+      "en": "Sida is a government agency that works to reduce poverty and oppression in the world. Through Sida, Sweden supports other countries in developing democracy, gender equality, the economy, and sustainable societies.",
+      "sv": "Sida är en statlig myndighet som arbetar för att minska fattigdom och förtryck i världen. Genom Sida stödjer Sverige andra länder i att utveckla demokrati, jämställdhet, ekonomi och hållbara samhällen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23055,7 +23009,7 @@
     ]
   },
   {
-    "id": "q517",
+    "id": "q516",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -23103,7 +23057,7 @@
     ]
   },
   {
-    "id": "q518",
+    "id": "q517",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -23143,7 +23097,7 @@
     ]
   },
   {
-    "id": "q519",
+    "id": "q518",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -23183,7 +23137,7 @@
     ]
   },
   {
-    "id": "q520",
+    "id": "q519",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -23231,7 +23185,7 @@
     ]
   },
   {
-    "id": "q521",
+    "id": "q520",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -23279,7 +23233,7 @@
     ]
   },
   {
-    "id": "q522",
+    "id": "q521",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -23319,7 +23273,7 @@
     ]
   },
   {
-    "id": "q523",
+    "id": "q522",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -23359,7 +23313,7 @@
     ]
   },
   {
-    "id": "q524",
+    "id": "q523",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -23407,7 +23361,7 @@
     ]
   },
   {
-    "id": "q525",
+    "id": "q524",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23435,8 +23389,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23455,7 +23409,7 @@
     ]
   },
   {
-    "id": "q526",
+    "id": "q525",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23475,8 +23429,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23495,7 +23449,7 @@
     ]
   },
   {
-    "id": "q527",
+    "id": "q526",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23515,8 +23469,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23535,7 +23489,7 @@
     ]
   },
   {
-    "id": "q528",
+    "id": "q527",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23563,8 +23517,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion, so the option about religious neutrality is correct.",
-      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion, därför är alternativet om religiös neutralitet rätt."
+      "en": "Sweden is a secular state, which means the state is religiously neutral and does not take sides for or discriminate against any religion. The state also guarantees the right to decide whether to belong to a religion.",
+      "sv": "Sverige är en sekulär stat, vilket betyder att staten är religiöst neutral och inte tar ställning för eller diskriminerar någon religion. Staten garanterar också rätten att själv bestämma om man vill tillhöra en religion."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23583,7 +23537,7 @@
     ]
   },
   {
-    "id": "q529",
+    "id": "q528",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23611,8 +23565,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23631,7 +23585,7 @@
     ]
   },
   {
-    "id": "q530",
+    "id": "q529",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23651,8 +23605,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23671,7 +23625,7 @@
     ]
   },
   {
-    "id": "q531",
+    "id": "q530",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23691,8 +23645,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23711,7 +23665,7 @@
     ]
   },
   {
-    "id": "q532",
+    "id": "q531",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23739,8 +23693,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
-      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all.",
+      "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23759,7 +23713,7 @@
     ]
   },
   {
-    "id": "q533",
+    "id": "q532",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23807,7 +23761,7 @@
     ]
   },
   {
-    "id": "q534",
+    "id": "q533",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23847,7 +23801,7 @@
     ]
   },
   {
-    "id": "q535",
+    "id": "q534",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23887,7 +23841,7 @@
     ]
   },
   {
-    "id": "q536",
+    "id": "q535",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23935,7 +23889,7 @@
     ]
   },
   {
-    "id": "q537",
+    "id": "q536",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23963,8 +23917,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23983,7 +23937,7 @@
     ]
   },
   {
-    "id": "q538",
+    "id": "q537",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -24003,8 +23957,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24023,7 +23977,7 @@
     ]
   },
   {
-    "id": "q539",
+    "id": "q538",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -24043,8 +23997,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24063,7 +24017,7 @@
     ]
   },
   {
-    "id": "q540",
+    "id": "q539",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -24091,8 +24045,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages, so the Lutheran Protestant tradition is the correct answer.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden, därför är den lutherska, protestantiska traditionen rätt svar."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Sweden was previously a Catholic country during the Middle Ages.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Sverige var tidigare ett katolskt land under medeltiden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24111,7 +24065,7 @@
     ]
   },
   {
-    "id": "q541",
+    "id": "q540",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -24139,8 +24093,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24159,7 +24113,7 @@
     ]
   },
   {
-    "id": "q542",
+    "id": "q541",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -24179,8 +24133,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24199,7 +24153,7 @@
     ]
   },
   {
-    "id": "q543",
+    "id": "q542",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -24219,8 +24173,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24239,7 +24193,7 @@
     ]
   },
   {
-    "id": "q544",
+    "id": "q543",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -24267,8 +24221,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War, so Islam is the correct answer.",
-      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget, därför är Islam rätt svar."
+      "en": "Islam is now the second-largest religion in Sweden, and there are mosques and prayer rooms throughout the country. The number of Muslims increased through immigration after the Second World War.",
+      "sv": "Islam är numera den näst största religionen i Sverige, och det finns moskéer och bönelokaler över hela landet. Antalet muslimer ökade genom invandring efter andra världskriget."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24287,7 +24241,7 @@
     ]
   },
   {
-    "id": "q545",
+    "id": "q544",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24315,8 +24269,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24335,7 +24289,7 @@
     ]
   },
   {
-    "id": "q546",
+    "id": "q545",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24355,8 +24309,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24375,7 +24329,7 @@
     ]
   },
   {
-    "id": "q547",
+    "id": "q546",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24395,8 +24349,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24415,7 +24369,7 @@
     ]
   },
   {
-    "id": "q548",
+    "id": "q547",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24443,8 +24397,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks, so the option about parties, dinners, and fireworks is correct.",
-      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier, därför är alternativet om fester, middagar och fyrverkerier rätt."
+      "en": "New Year’s Eve on 31 December is often celebrated with parties and dinners with friends and family. The arrival of the new year is celebrated at night with fireworks.",
+      "sv": "Nyårsafton den 31 december firas ofta med fester och middagar med vänner och familj. Det nya årets ankomst firas på natten med fyrverkerier."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -24463,7 +24417,7 @@
     ]
   },
   {
-    "id": "q549",
+    "id": "q548",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24512,7 +24466,7 @@
     ]
   },
   {
-    "id": "q550",
+    "id": "q549",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24553,7 +24507,7 @@
     ]
   },
   {
-    "id": "q551",
+    "id": "q550",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24594,7 +24548,7 @@
     ]
   },
   {
-    "id": "q552",
+    "id": "q551",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24643,7 +24597,7 @@
     ]
   },
   {
-    "id": "q553",
+    "id": "q552",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24692,7 +24646,7 @@
     ]
   },
   {
-    "id": "q554",
+    "id": "q553",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24733,7 +24687,7 @@
     ]
   },
   {
-    "id": "q555",
+    "id": "q554",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24774,7 +24728,7 @@
     ]
   },
   {
-    "id": "q556",
+    "id": "q555",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24823,7 +24777,7 @@
     ]
   },
   {
-    "id": "q557",
+    "id": "q556",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24872,7 +24826,7 @@
     ]
   },
   {
-    "id": "q558",
+    "id": "q557",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24913,7 +24867,7 @@
     ]
   },
   {
-    "id": "q559",
+    "id": "q558",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24954,7 +24908,7 @@
     ]
   },
   {
-    "id": "q560",
+    "id": "q559",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25003,7 +24957,7 @@
     ]
   },
   {
-    "id": "q561",
+    "id": "q560",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25051,7 +25005,7 @@
     ]
   },
   {
-    "id": "q562",
+    "id": "q561",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25091,7 +25045,7 @@
     ]
   },
   {
-    "id": "q563",
+    "id": "q562",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25131,7 +25085,7 @@
     ]
   },
   {
-    "id": "q564",
+    "id": "q563",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25179,7 +25133,7 @@
     ]
   },
   {
-    "id": "q565",
+    "id": "q564",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25228,7 +25182,7 @@
     ]
   },
   {
-    "id": "q566",
+    "id": "q565",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25269,7 +25223,7 @@
     ]
   },
   {
-    "id": "q567",
+    "id": "q566",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25310,7 +25264,7 @@
     ]
   },
   {
-    "id": "q568",
+    "id": "q567",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25359,7 +25313,7 @@
     ]
   },
   {
-    "id": "q569",
+    "id": "q568",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25408,7 +25362,7 @@
     ]
   },
   {
-    "id": "q570",
+    "id": "q569",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25449,7 +25403,7 @@
     ]
   },
   {
-    "id": "q571",
+    "id": "q570",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25490,7 +25444,7 @@
     ]
   },
   {
-    "id": "q572",
+    "id": "q571",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25539,7 +25493,7 @@
     ]
   },
   {
-    "id": "q573",
+    "id": "q572",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25588,7 +25542,7 @@
     ]
   },
   {
-    "id": "q574",
+    "id": "q573",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25629,7 +25583,7 @@
     ]
   },
   {
-    "id": "q575",
+    "id": "q574",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25670,7 +25624,7 @@
     ]
   },
   {
-    "id": "q576",
+    "id": "q575",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25719,7 +25673,7 @@
     ]
   },
   {
-    "id": "q577",
+    "id": "q576",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25768,7 +25722,7 @@
     ]
   },
   {
-    "id": "q578",
+    "id": "q577",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25809,7 +25763,7 @@
     ]
   },
   {
-    "id": "q579",
+    "id": "q578",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25850,7 +25804,7 @@
     ]
   },
   {
-    "id": "q580",
+    "id": "q579",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25899,7 +25853,7 @@
     ]
   },
   {
-    "id": "q581",
+    "id": "q580",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25948,7 +25902,7 @@
     ]
   },
   {
-    "id": "q582",
+    "id": "q581",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25989,7 +25943,7 @@
     ]
   },
   {
-    "id": "q583",
+    "id": "q582",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -26030,7 +25984,7 @@
     ]
   },
   {
-    "id": "q584",
+    "id": "q583",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -26079,7 +26033,7 @@
     ]
   },
   {
-    "id": "q585",
+    "id": "q584",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -26128,7 +26082,7 @@
     ]
   },
   {
-    "id": "q586",
+    "id": "q585",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -26169,7 +26123,7 @@
     ]
   },
   {
-    "id": "q587",
+    "id": "q586",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -26210,7 +26164,7 @@
     ]
   },
   {
-    "id": "q588",
+    "id": "q587",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -26259,7 +26213,7 @@
     ]
   },
   {
-    "id": "q589",
+    "id": "q588",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26308,7 +26262,7 @@
     ]
   },
   {
-    "id": "q590",
+    "id": "q589",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26349,7 +26303,7 @@
     ]
   },
   {
-    "id": "q591",
+    "id": "q590",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26390,7 +26344,7 @@
     ]
   },
   {
-    "id": "q592",
+    "id": "q591",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26439,7 +26393,7 @@
     ]
   },
   {
-    "id": "q593",
+    "id": "q592",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26488,7 +26442,7 @@
     ]
   },
   {
-    "id": "q594",
+    "id": "q593",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26529,7 +26483,7 @@
     ]
   },
   {
-    "id": "q595",
+    "id": "q594",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26570,7 +26524,7 @@
     ]
   },
   {
-    "id": "q596",
+    "id": "q595",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26619,7 +26573,7 @@
     ]
   },
   {
-    "id": "q597",
+    "id": "q596",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26668,7 +26622,7 @@
     ]
   },
   {
-    "id": "q598",
+    "id": "q597",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26709,7 +26663,7 @@
     ]
   },
   {
-    "id": "q599",
+    "id": "q598",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26750,7 +26704,7 @@
     ]
   },
   {
-    "id": "q600",
+    "id": "q599",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26799,7 +26753,7 @@
     ]
   },
   {
-    "id": "q601",
+    "id": "q600",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26848,7 +26802,7 @@
     ]
   },
   {
-    "id": "q602",
+    "id": "q601",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26889,7 +26843,7 @@
     ]
   },
   {
-    "id": "q603",
+    "id": "q602",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26930,7 +26884,7 @@
     ]
   },
   {
-    "id": "q604",
+    "id": "q603",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26979,7 +26933,7 @@
     ]
   },
   {
-    "id": "q605",
+    "id": "q604",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27028,7 +26982,7 @@
     ]
   },
   {
-    "id": "q606",
+    "id": "q605",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27069,7 +27023,7 @@
     ]
   },
   {
-    "id": "q607",
+    "id": "q606",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27110,7 +27064,7 @@
     ]
   },
   {
-    "id": "q608",
+    "id": "q607",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27159,13 +27113,13 @@
     ]
   },
   {
-    "id": "q609",
+    "id": "q608",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which Christian churches or communities are mentioned as examples in Sweden today?",
-      "sv": "Vilket svar stämmer bäst? Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
+      "en": "Which answer best matches? Which Christian churches or communities exist in Sweden today?",
+      "sv": "Vilket svar stämmer bäst? Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -27205,6 +27159,47 @@
       "religion",
       "published-variant",
       "section-practice"
+    ]
+  },
+  {
+    "id": "q609",
+    "chapterId": 12,
+    "chapter": "Ch. 12 · A secular state and a multi-religious country",
+    "type": "true_false",
+    "q": {
+      "en": "Orthodox churches, the Catholic Church, and Protestant churches exist in Sweden today.",
+      "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor finns i dagens Sverige."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In present-day Sweden there are many Christian communities representing different traditions and beliefs. Examples include Orthodox churches, the Catholic Church, and different Protestant churches; the options about only the Church of Sweden, Buddhist and Hindu temples, or mosques describe other or too narrow parts.",
+      "sv": "I dagens Sverige finns många kristna samfund som representerar olika traditioner och trosinriktningar. Exempel är ortodoxa kyrkor, katolska kyrkan och olika protestantiska kyrkor; alternativen om bara Svenska kyrkan, buddhistiska och hinduiska tempel eller moskéer beskriver andra eller för snäva delar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "En sekulär stat och ett mångreligiöst land",
+      "section": "Kristendom",
+      "page": 43
+    },
+    "questionProvenance": "derived",
+    "difficulty": "easy",
+    "tags": [
+      "christianity",
+      "christian-communities",
+      "orthodox-catholic-protestant",
+      "religion",
+      "published-variant",
+      "true-false"
     ]
   },
   {
@@ -27213,49 +27208,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Orthodox churches, the Catholic Church, and Protestant churches are mentioned as examples in Sweden today.",
-      "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor nämns som exempel i dagens Sverige."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "In present-day Sweden there are many Christian communities representing different traditions and beliefs. Examples include Orthodox churches, the Catholic Church, and different Protestant churches; the options about only the Church of Sweden, Buddhist and Hindu temples, or mosques describe other or too narrow parts.",
-      "sv": "I dagens Sverige finns många kristna samfund som representerar olika traditioner och trosinriktningar. Exempel är ortodoxa kyrkor, katolska kyrkan och olika protestantiska kyrkor; alternativen om bara Svenska kyrkan, buddhistiska och hinduiska tempel eller moskéer beskriver andra eller för snäva delar."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "En sekulär stat och ett mångreligiöst land",
-      "section": "Kristendom",
-      "page": 43
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "christianity",
-      "christian-communities",
-      "orthodox-catholic-protestant",
-      "religion",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q611",
-    "chapterId": 12,
-    "chapter": "Ch. 12 · A secular state and a multi-religious country",
-    "type": "true_false",
-    "q": {
-      "en": "Only the Church of Sweden and no other communities are mentioned as examples in Sweden today.",
-      "sv": "Bara Svenska kyrkan och inga andra samfund nämns som exempel i dagens Sverige."
+      "en": "Only the Church of Sweden and no other communities exist in Sweden today.",
+      "sv": "Bara Svenska kyrkan och inga andra samfund finns i dagens Sverige."
     },
     "opts": [
       {
@@ -27290,13 +27244,13 @@
     ]
   },
   {
-    "id": "q612",
+    "id": "q611",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which Christian churches or communities are mentioned as examples in Sweden today?",
-      "sv": "Välj rätt alternativ: Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
+      "en": "Choose the correct option: Which Christian churches or communities exist in Sweden today?",
+      "sv": "Välj rätt alternativ: Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -27339,13 +27293,13 @@
     ]
   },
   {
-    "id": "q613",
+    "id": "q612",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Vilket svar stämmer bäst? Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "Which answer best matches? What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vilket svar stämmer bäst? Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -27353,22 +27307,22 @@
         "sv": "Resor till Asien och ökat intresse för meditation och yoga"
       },
       {
-        "en": "That Sweden's first mosques were built during the 1970s",
-        "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
+        "en": "The building of Sweden's first mosques during the 1970s",
+        "sv": "Byggandet av Sveriges första moskéer under 1970-talet"
       },
       {
-        "en": "That National Day became a public holiday through a Riksdag decision",
-        "sv": "Att nationaldagen blev helgdag genom riksdagsbeslut"
+        "en": "National Day becoming a public holiday through a Riksdag decision",
+        "sv": "Nationaldagen som helgdag genom ett riksdagsbeslut"
       },
       {
-        "en": "That the Church of Sweden and the state separated in 2000",
-        "sv": "Att Svenska kyrkan och staten skildes åt år 2000"
+        "en": "The Church of Sweden's separation from the state in 2000",
+        "sv": "Svenska kyrkans separation från staten år 2000"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27389,13 +27343,13 @@
     ]
   },
   {
-    "id": "q614",
+    "id": "q613",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Travel to Asia and increased interest in meditation and yoga are mentioned as examples of contacts with Hindus and Buddhists in Sweden during the 20th century.",
-      "sv": "Resor till Asien och ökat intresse för meditation och yoga nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
+      "en": "Travel to Asia and increased interest in meditation and yoga contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      "sv": "Resor till Asien och ökat intresse för meditation och yoga bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet."
     },
     "opts": [
       {
@@ -27409,8 +27363,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27431,13 +27385,13 @@
     ]
   },
   {
-    "id": "q615",
+    "id": "q614",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "The building of Sweden's first mosques during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
-      "sv": "Byggandet av Sveriges första moskéer under 1970-talet nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
+      "en": "The building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      "sv": "Byggandet av Sveriges första moskéer under 1970-talet bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet."
     },
     "opts": [
       {
@@ -27451,8 +27405,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27473,13 +27427,13 @@
     ]
   },
   {
-    "id": "q616",
+    "id": "q615",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Välj rätt alternativ: Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "Choose the correct option: What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Välj rätt alternativ: Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -27487,22 +27441,22 @@
         "sv": "Resor till Asien och ökat intresse för meditation och yoga"
       },
       {
-        "en": "That Sweden's first mosques were built during the 1970s",
-        "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
+        "en": "The building of Sweden's first mosques during the 1970s",
+        "sv": "Byggandet av Sveriges första moskéer under 1970-talet"
       },
       {
-        "en": "That National Day became a public holiday through a Riksdag decision",
-        "sv": "Att nationaldagen blev helgdag genom riksdagsbeslut"
+        "en": "National Day becoming a public holiday through a Riksdag decision",
+        "sv": "Nationaldagen som helgdag genom ett riksdagsbeslut"
       },
       {
-        "en": "That the Church of Sweden and the state separated in 2000",
-        "sv": "Att Svenska kyrkan och staten skildes åt år 2000"
+        "en": "The Church of Sweden's separation from the state in 2000",
+        "sv": "Svenska kyrkans separation från staten år 2000"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27523,7 +27477,7 @@
     ]
   },
   {
-    "id": "q617",
+    "id": "q616",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27572,7 +27526,7 @@
     ]
   },
   {
-    "id": "q618",
+    "id": "q617",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27613,7 +27567,7 @@
     ]
   },
   {
-    "id": "q619",
+    "id": "q618",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27654,7 +27608,7 @@
     ]
   },
   {
-    "id": "q620",
+    "id": "q619",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27703,7 +27657,7 @@
     ]
   },
   {
-    "id": "q621",
+    "id": "q620",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27752,7 +27706,7 @@
     ]
   },
   {
-    "id": "q622",
+    "id": "q621",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27793,7 +27747,7 @@
     ]
   },
   {
-    "id": "q623",
+    "id": "q622",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27834,7 +27788,7 @@
     ]
   },
   {
-    "id": "q624",
+    "id": "q623",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27883,7 +27837,7 @@
     ]
   },
   {
-    "id": "q625",
+    "id": "q624",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27933,7 +27887,7 @@
     ]
   },
   {
-    "id": "q626",
+    "id": "q625",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27975,7 +27929,7 @@
     ]
   },
   {
-    "id": "q627",
+    "id": "q626",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28017,7 +27971,7 @@
     ]
   },
   {
-    "id": "q628",
+    "id": "q627",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28067,7 +28021,7 @@
     ]
   },
   {
-    "id": "q629",
+    "id": "q628",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28118,7 +28072,7 @@
     ]
   },
   {
-    "id": "q630",
+    "id": "q629",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28161,7 +28115,7 @@
     ]
   },
   {
-    "id": "q631",
+    "id": "q630",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28204,7 +28158,7 @@
     ]
   },
   {
-    "id": "q632",
+    "id": "q631",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28255,7 +28209,7 @@
     ]
   },
   {
-    "id": "q633",
+    "id": "q632",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28304,7 +28258,7 @@
     ]
   },
   {
-    "id": "q634",
+    "id": "q633",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28345,7 +28299,7 @@
     ]
   },
   {
-    "id": "q635",
+    "id": "q634",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28386,7 +28340,7 @@
     ]
   },
   {
-    "id": "q636",
+    "id": "q635",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28435,7 +28389,7 @@
     ]
   },
   {
-    "id": "q637",
+    "id": "q636",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28484,7 +28438,7 @@
     ]
   },
   {
-    "id": "q638",
+    "id": "q637",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28525,7 +28479,7 @@
     ]
   },
   {
-    "id": "q639",
+    "id": "q638",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28566,7 +28520,7 @@
     ]
   },
   {
-    "id": "q640",
+    "id": "q639",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28615,13 +28569,13 @@
     ]
   },
   {
-    "id": "q641",
+    "id": "q640",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
-      "sv": "Vilket svar stämmer bäst? Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
+      "en": "Which answer best matches? Which branches of Islam are found in Swedish Muslim congregations?",
+      "sv": "Vilket svar stämmer bäst? Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -28664,13 +28618,13 @@
     ]
   },
   {
-    "id": "q642",
+    "id": "q641",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Sunni and Shia are mentioned as examples in Swedish Muslim congregations.",
-      "sv": "Sunni och shia nämns som exempel i svenska muslimska församlingar."
+      "en": "Sunni and Shia are found in Swedish Muslim congregations.",
+      "sv": "Sunni och shia finns i svenska muslimska församlingar."
     },
     "opts": [
       {
@@ -28705,13 +28659,13 @@
     ]
   },
   {
-    "id": "q643",
+    "id": "q642",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Catholic and Orthodox churches are mentioned as examples in Swedish Muslim congregations.",
-      "sv": "Katolska och ortodoxa kyrkor nämns som exempel i svenska muslimska församlingar."
+      "en": "Catholic and Orthodox churches are found in Swedish Muslim congregations.",
+      "sv": "Katolska och ortodoxa kyrkor finns i svenska muslimska församlingar."
     },
     "opts": [
       {
@@ -28746,13 +28700,13 @@
     ]
   },
   {
-    "id": "q644",
+    "id": "q643",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
-      "sv": "Välj rätt alternativ: Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
+      "en": "Choose the correct option: Which branches of Islam are found in Swedish Muslim congregations?",
+      "sv": "Välj rätt alternativ: Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -28795,7 +28749,7 @@
     ]
   },
   {
-    "id": "q645",
+    "id": "q644",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28845,7 +28799,7 @@
     ]
   },
   {
-    "id": "q646",
+    "id": "q645",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28887,7 +28841,7 @@
     ]
   },
   {
-    "id": "q647",
+    "id": "q646",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28929,7 +28883,7 @@
     ]
   },
   {
-    "id": "q648",
+    "id": "q647",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28979,7 +28933,7 @@
     ]
   },
   {
-    "id": "q649",
+    "id": "q648",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -29028,7 +28982,7 @@
     ]
   },
   {
-    "id": "q650",
+    "id": "q649",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -29069,7 +29023,7 @@
     ]
   },
   {
-    "id": "q651",
+    "id": "q650",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -29110,7 +29064,7 @@
     ]
   },
   {
-    "id": "q652",
+    "id": "q651",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -29159,13 +29113,13 @@
     ]
   },
   {
-    "id": "q653",
+    "id": "q652",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
-      "sv": "Vilket svar stämmer bäst? Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
+      "en": "Which answer best matches? What happened on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Vilket svar stämmer bäst? Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
@@ -29208,13 +29162,13 @@
     ]
   },
   {
-    "id": "q654",
+    "id": "q653",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "The event from 1523 was that Gustav Vasa was elected king of Sweden.",
-      "sv": "Händelsen från 1523 var att Gustav Vasa valdes till svensk kung."
+      "en": "Gustav Vasa was elected king of Sweden.",
+      "sv": "Gustav Vasa valdes till svensk kung."
     },
     "opts": [
       {
@@ -29249,13 +29203,13 @@
     ]
   },
   {
-    "id": "q655",
+    "id": "q654",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "The event from 1523 was that Sweden joined the EU.",
-      "sv": "Händelsen från 1523 var att Sverige gick med i EU."
+      "en": "Sweden joined the EU.",
+      "sv": "Sverige gick med i EU."
     },
     "opts": [
       {
@@ -29290,13 +29244,13 @@
     ]
   },
   {
-    "id": "q656",
+    "id": "q655",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
-      "sv": "Välj rätt alternativ: Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
+      "en": "Choose the correct option: What happened on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Välj rätt alternativ: Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
@@ -29339,7 +29293,7 @@
     ]
   },
   {
-    "id": "q657",
+    "id": "q656",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29389,7 +29343,7 @@
     ]
   },
   {
-    "id": "q658",
+    "id": "q657",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29431,7 +29385,7 @@
     ]
   },
   {
-    "id": "q659",
+    "id": "q658",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29473,7 +29427,7 @@
     ]
   },
   {
-    "id": "q660",
+    "id": "q659",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29523,7 +29477,7 @@
     ]
   },
   {
-    "id": "q661",
+    "id": "q660",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29572,7 +29526,7 @@
     ]
   },
   {
-    "id": "q662",
+    "id": "q661",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29613,7 +29567,7 @@
     ]
   },
   {
-    "id": "q663",
+    "id": "q662",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29654,7 +29608,7 @@
     ]
   },
   {
-    "id": "q664",
+    "id": "q663",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29703,7 +29657,7 @@
     ]
   },
   {
-    "id": "q665",
+    "id": "q664",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29752,7 +29706,7 @@
     ]
   },
   {
-    "id": "q666",
+    "id": "q665",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29793,7 +29747,7 @@
     ]
   },
   {
-    "id": "q667",
+    "id": "q666",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29834,7 +29788,7 @@
     ]
   },
   {
-    "id": "q668",
+    "id": "q667",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29883,7 +29837,7 @@
     ]
   },
   {
-    "id": "q669",
+    "id": "q668",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29932,7 +29886,7 @@
     ]
   },
   {
-    "id": "q670",
+    "id": "q669",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29973,7 +29927,7 @@
     ]
   },
   {
-    "id": "q671",
+    "id": "q670",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30014,7 +29968,7 @@
     ]
   },
   {
-    "id": "q672",
+    "id": "q671",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30063,7 +30017,7 @@
     ]
   },
   {
-    "id": "q673",
+    "id": "q672",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30112,7 +30066,7 @@
     ]
   },
   {
-    "id": "q674",
+    "id": "q673",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30153,7 +30107,7 @@
     ]
   },
   {
-    "id": "q675",
+    "id": "q674",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30194,7 +30148,7 @@
     ]
   },
   {
-    "id": "q676",
+    "id": "q675",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30243,7 +30197,7 @@
     ]
   },
   {
-    "id": "q677",
+    "id": "q676",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30292,7 +30246,7 @@
     ]
   },
   {
-    "id": "q678",
+    "id": "q677",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30333,7 +30287,7 @@
     ]
   },
   {
-    "id": "q679",
+    "id": "q678",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30374,7 +30328,7 @@
     ]
   },
   {
-    "id": "q680",
+    "id": "q679",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30423,7 +30377,7 @@
     ]
   },
   {
-    "id": "q681",
+    "id": "q680",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30473,7 +30427,7 @@
     ]
   },
   {
-    "id": "q682",
+    "id": "q681",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30515,7 +30469,7 @@
     ]
   },
   {
-    "id": "q683",
+    "id": "q682",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30557,7 +30511,7 @@
     ]
   },
   {
-    "id": "q684",
+    "id": "q683",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30607,7 +30561,7 @@
     ]
   },
   {
-    "id": "q685",
+    "id": "q684",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30656,7 +30610,7 @@
     ]
   },
   {
-    "id": "q686",
+    "id": "q685",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30697,7 +30651,7 @@
     ]
   },
   {
-    "id": "q687",
+    "id": "q686",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30738,7 +30692,7 @@
     ]
   },
   {
-    "id": "q688",
+    "id": "q687",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30787,7 +30741,7 @@
     ]
   },
   {
-    "id": "q689",
+    "id": "q688",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30837,7 +30791,7 @@
     ]
   },
   {
-    "id": "q690",
+    "id": "q689",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30879,7 +30833,7 @@
     ]
   },
   {
-    "id": "q691",
+    "id": "q690",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30921,7 +30875,7 @@
     ]
   },
   {
-    "id": "q692",
+    "id": "q691",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30971,7 +30925,7 @@
     ]
   },
   {
-    "id": "q693",
+    "id": "q692",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31020,7 +30974,7 @@
     ]
   },
   {
-    "id": "q694",
+    "id": "q693",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31061,7 +31015,7 @@
     ]
   },
   {
-    "id": "q695",
+    "id": "q694",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31102,7 +31056,7 @@
     ]
   },
   {
-    "id": "q696",
+    "id": "q695",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31151,7 +31105,7 @@
     ]
   },
   {
-    "id": "q697",
+    "id": "q696",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31200,7 +31154,7 @@
     ]
   },
   {
-    "id": "q698",
+    "id": "q697",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31241,7 +31195,7 @@
     ]
   },
   {
-    "id": "q699",
+    "id": "q698",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31282,7 +31236,7 @@
     ]
   },
   {
-    "id": "q700",
+    "id": "q699",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31331,7 +31285,7 @@
     ]
   },
   {
-    "id": "q701",
+    "id": "q700",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31381,7 +31335,7 @@
     ]
   },
   {
-    "id": "q702",
+    "id": "q701",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31423,7 +31377,7 @@
     ]
   },
   {
-    "id": "q703",
+    "id": "q702",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31465,7 +31419,7 @@
     ]
   },
   {
-    "id": "q704",
+    "id": "q703",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31515,7 +31469,7 @@
     ]
   },
   {
-    "id": "q705",
+    "id": "q704",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31564,7 +31518,7 @@
     ]
   },
   {
-    "id": "q706",
+    "id": "q705",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31605,7 +31559,7 @@
     ]
   },
   {
-    "id": "q707",
+    "id": "q706",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31646,7 +31600,7 @@
     ]
   },
   {
-    "id": "q708",
+    "id": "q707",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31695,7 +31649,7 @@
     ]
   },
   {
-    "id": "q709",
+    "id": "q708",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31744,7 +31698,7 @@
     ]
   },
   {
-    "id": "q710",
+    "id": "q709",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31785,7 +31739,7 @@
     ]
   },
   {
-    "id": "q711",
+    "id": "q710",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31826,7 +31780,7 @@
     ]
   },
   {
-    "id": "q712",
+    "id": "q711",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31875,7 +31829,7 @@
     ]
   },
   {
-    "id": "q713",
+    "id": "q712",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31924,7 +31878,7 @@
     ]
   },
   {
-    "id": "q714",
+    "id": "q713",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31965,7 +31919,7 @@
     ]
   },
   {
-    "id": "q715",
+    "id": "q714",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -32006,7 +31960,7 @@
     ]
   },
   {
-    "id": "q716",
+    "id": "q715",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -32055,7 +32009,7 @@
     ]
   },
   {
-    "id": "q717",
+    "id": "q716",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -32104,7 +32058,7 @@
     ]
   },
   {
-    "id": "q718",
+    "id": "q717",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -32145,7 +32099,7 @@
     ]
   },
   {
-    "id": "q719",
+    "id": "q718",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -32186,7 +32140,7 @@
     ]
   },
   {
-    "id": "q720",
+    "id": "q719",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -32235,7 +32189,7 @@
     ]
   },
   {
-    "id": "q721",
+    "id": "q720",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -32284,7 +32238,7 @@
     ]
   },
   {
-    "id": "q722",
+    "id": "q721",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -32325,7 +32279,7 @@
     ]
   },
   {
-    "id": "q723",
+    "id": "q722",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -32366,7 +32320,7 @@
     ]
   },
   {
-    "id": "q724",
+    "id": "q723",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -32415,7 +32369,7 @@
     ]
   },
   {
-    "id": "q725",
+    "id": "q724",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32443,8 +32397,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32464,7 +32418,7 @@
     ]
   },
   {
-    "id": "q726",
+    "id": "q725",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32484,8 +32438,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32505,7 +32459,7 @@
     ]
   },
   {
-    "id": "q727",
+    "id": "q726",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32525,8 +32479,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32546,7 +32500,7 @@
     ]
   },
   {
-    "id": "q728",
+    "id": "q727",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32574,8 +32528,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has about 250,000 islands, more than any other country in the world. That makes about 250,000 correct, while 25,000, 2,500, and 250 are too low.",
-      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Därför är cirka 250 000 rätt, medan 25 000, 2 500 och 250 är för låga tal."
+      "en": "Sweden has about 250,000 islands, more than any other country in the world. The numbers 25,000, 2,500, and 250 are too low.",
+      "sv": "Sverige har cirka 250 000 öar, fler än något annat land i världen. Talen 25 000, 2 500 och 250 är för låga."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32595,7 +32549,7 @@
     ]
   },
   {
-    "id": "q729",
+    "id": "q728",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32645,7 +32599,7 @@
     ]
   },
   {
-    "id": "q730",
+    "id": "q729",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32687,7 +32641,7 @@
     ]
   },
   {
-    "id": "q731",
+    "id": "q730",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32729,7 +32683,7 @@
     ]
   },
   {
-    "id": "q732",
+    "id": "q731",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32779,7 +32733,7 @@
     ]
   },
   {
-    "id": "q733",
+    "id": "q732",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32828,7 +32782,7 @@
     ]
   },
   {
-    "id": "q734",
+    "id": "q733",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32869,7 +32823,7 @@
     ]
   },
   {
-    "id": "q735",
+    "id": "q734",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -32910,7 +32864,7 @@
     ]
   },
   {
-    "id": "q736",
+    "id": "q735",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -32959,7 +32913,7 @@
     ]
   },
   {
-    "id": "q737",
+    "id": "q736",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33007,7 +32961,7 @@
     ]
   },
   {
-    "id": "q738",
+    "id": "q737",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33047,7 +33001,7 @@
     ]
   },
   {
-    "id": "q739",
+    "id": "q738",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33087,7 +33041,7 @@
     ]
   },
   {
-    "id": "q740",
+    "id": "q739",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33135,7 +33089,7 @@
     ]
   },
   {
-    "id": "q741",
+    "id": "q740",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33183,7 +33137,7 @@
     ]
   },
   {
-    "id": "q742",
+    "id": "q741",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33223,7 +33177,7 @@
     ]
   },
   {
-    "id": "q743",
+    "id": "q742",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33263,7 +33217,7 @@
     ]
   },
   {
-    "id": "q744",
+    "id": "q743",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33311,7 +33265,7 @@
     ]
   },
   {
-    "id": "q745",
+    "id": "q744",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33359,7 +33313,7 @@
     ]
   },
   {
-    "id": "q746",
+    "id": "q745",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33399,7 +33353,7 @@
     ]
   },
   {
-    "id": "q747",
+    "id": "q746",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33439,7 +33393,7 @@
     ]
   },
   {
-    "id": "q748",
+    "id": "q747",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33487,7 +33441,7 @@
     ]
   },
   {
-    "id": "q749",
+    "id": "q748",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33536,7 +33490,7 @@
     ]
   },
   {
-    "id": "q750",
+    "id": "q749",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33577,7 +33531,7 @@
     ]
   },
   {
-    "id": "q751",
+    "id": "q750",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33618,7 +33572,7 @@
     ]
   },
   {
-    "id": "q752",
+    "id": "q751",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33667,7 +33621,7 @@
     ]
   },
   {
-    "id": "q753",
+    "id": "q752",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33716,7 +33670,7 @@
     ]
   },
   {
-    "id": "q754",
+    "id": "q753",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33757,7 +33711,7 @@
     ]
   },
   {
-    "id": "q755",
+    "id": "q754",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -33798,7 +33752,7 @@
     ]
   },
   {
-    "id": "q756",
+    "id": "q755",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -33847,7 +33801,7 @@
     ]
   },
   {
-    "id": "q757",
+    "id": "q756",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -33895,7 +33849,7 @@
     ]
   },
   {
-    "id": "q758",
+    "id": "q757",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33935,7 +33889,7 @@
     ]
   },
   {
-    "id": "q759",
+    "id": "q758",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -33975,7 +33929,7 @@
     ]
   },
   {
-    "id": "q760",
+    "id": "q759",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34023,7 +33977,7 @@
     ]
   },
   {
-    "id": "q761",
+    "id": "q760",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34071,7 +34025,7 @@
     ]
   },
   {
-    "id": "q762",
+    "id": "q761",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34111,7 +34065,7 @@
     ]
   },
   {
-    "id": "q763",
+    "id": "q762",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34151,7 +34105,7 @@
     ]
   },
   {
-    "id": "q764",
+    "id": "q763",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34199,7 +34153,7 @@
     ]
   },
   {
-    "id": "q765",
+    "id": "q764",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34247,7 +34201,7 @@
     ]
   },
   {
-    "id": "q766",
+    "id": "q765",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34287,7 +34241,7 @@
     ]
   },
   {
-    "id": "q767",
+    "id": "q766",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34327,7 +34281,7 @@
     ]
   },
   {
-    "id": "q768",
+    "id": "q767",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34375,7 +34329,7 @@
     ]
   },
   {
-    "id": "q769",
+    "id": "q768",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34423,7 +34377,7 @@
     ]
   },
   {
-    "id": "q770",
+    "id": "q769",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34463,7 +34417,7 @@
     ]
   },
   {
-    "id": "q771",
+    "id": "q770",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34503,7 +34457,7 @@
     ]
   },
   {
-    "id": "q772",
+    "id": "q771",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34551,7 +34505,7 @@
     ]
   },
   {
-    "id": "q773",
+    "id": "q772",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34599,7 +34553,7 @@
     ]
   },
   {
-    "id": "q774",
+    "id": "q773",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34639,7 +34593,7 @@
     ]
   },
   {
-    "id": "q775",
+    "id": "q774",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -34679,7 +34633,7 @@
     ]
   },
   {
-    "id": "q776",
+    "id": "q775",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -34727,7 +34681,7 @@
     ]
   },
   {
-    "id": "q777",
+    "id": "q776",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -34776,7 +34730,7 @@
     ]
   },
   {
-    "id": "q778",
+    "id": "q777",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -34817,7 +34771,7 @@
     ]
   },
   {
-    "id": "q779",
+    "id": "q778",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -34858,7 +34812,7 @@
     ]
   },
   {
-    "id": "q780",
+    "id": "q779",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -34907,7 +34861,7 @@
     ]
   },
   {
-    "id": "q781",
+    "id": "q780",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -34956,13 +34910,13 @@
     ]
   },
   {
-    "id": "q782",
+    "id": "q781",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Sickness insurance, parental insurance, and unemployment insurance are state-funded welfare systems that can provide financial support during illness, parenthood, or unemployment.",
-      "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring är statligt finansierade trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet."
+      "en": "Sickness insurance, parental insurance, and unemployment insurance.",
+      "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring."
     },
     "opts": [
       {
@@ -34997,13 +34951,13 @@
     ]
   },
   {
-    "id": "q783",
+    "id": "q782",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Health centres, hospitals, and regional public transport are state-funded welfare systems that can provide financial support during illness, parenthood, or unemployment.",
-      "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik är statligt finansierade trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet."
+      "en": "Health centres, hospitals, and regional public transport.",
+      "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik."
     },
     "opts": [
       {
@@ -35038,7 +34992,7 @@
     ]
   },
   {
-    "id": "q784",
+    "id": "q783",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -35087,7 +35041,7 @@
     ]
   },
   {
-    "id": "q785",
+    "id": "q784",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -35136,7 +35090,7 @@
     ]
   },
   {
-    "id": "q786",
+    "id": "q785",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -35177,7 +35131,7 @@
     ]
   },
   {
-    "id": "q787",
+    "id": "q786",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -35218,7 +35172,7 @@
     ]
   },
   {
-    "id": "q788",
+    "id": "q787",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -35267,7 +35221,7 @@
     ]
   },
   {
-    "id": "q789",
+    "id": "q788",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -35316,7 +35270,7 @@
     ]
   },
   {
-    "id": "q790",
+    "id": "q789",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -35357,7 +35311,7 @@
     ]
   },
   {
-    "id": "q791",
+    "id": "q790",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -35398,7 +35352,7 @@
     ]
   },
   {
-    "id": "q792",
+    "id": "q791",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -35447,7 +35401,7 @@
     ]
   },
   {
-    "id": "q793",
+    "id": "q792",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -35496,7 +35450,7 @@
     ]
   },
   {
-    "id": "q794",
+    "id": "q793",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -35537,7 +35491,7 @@
     ]
   },
   {
-    "id": "q795",
+    "id": "q794",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -35578,7 +35532,7 @@
     ]
   },
   {
-    "id": "q796",
+    "id": "q795",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -35622,182 +35576,6 @@
       "municipal-welfare",
       "home-care",
       "adapted-housing",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q797",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "single_choice",
-    "q": {
-      "en": "Which answer best matches? How many articles does the UN Universal Declaration of Human Rights contain?",
-      "sv": "Vilket svar stämmer bäst? Hur många artiklar innehåller FN:s förklaring om de mänskliga rättigheterna?"
-    },
-    "opts": [
-      {
-        "en": "30 articles",
-        "sv": "30 artiklar"
-      },
-      {
-        "en": "20 articles",
-        "sv": "20 artiklar"
-      },
-      {
-        "en": "10 articles",
-        "sv": "10 artiklar"
-      },
-      {
-        "en": "50 articles",
-        "sv": "50 artiklar"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Universal Declaration of Human Rights contains 30 articles. The articles describe rights that apply to all people.",
-      "sv": "Förklaringen om de mänskliga rättigheterna innehåller 30 artiklar. Artiklarna beskriver rättigheter som gäller alla människor."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "FN:s förklaring om de mänskliga rättigheterna",
-      "page": 22
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "human-rights",
-      "un",
-      "articles",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q798",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "true_false",
-    "q": {
-      "en": "The UN Universal Declaration of Human Rights contains 30 articles.",
-      "sv": "FN:s förklaring om de mänskliga rättigheterna innehåller 30 artiklar."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Universal Declaration of Human Rights contains 30 articles. The articles describe rights that apply to all people.",
-      "sv": "Förklaringen om de mänskliga rättigheterna innehåller 30 artiklar. Artiklarna beskriver rättigheter som gäller alla människor."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "FN:s förklaring om de mänskliga rättigheterna",
-      "page": 22
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "human-rights",
-      "un",
-      "articles",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q799",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "true_false",
-    "q": {
-      "en": "The UN Universal Declaration of Human Rights contains 20 articles.",
-      "sv": "FN:s förklaring om de mänskliga rättigheterna innehåller 20 artiklar."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The Universal Declaration of Human Rights contains 30 articles. The articles describe rights that apply to all people.",
-      "sv": "Förklaringen om de mänskliga rättigheterna innehåller 30 artiklar. Artiklarna beskriver rättigheter som gäller alla människor."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "FN:s förklaring om de mänskliga rättigheterna",
-      "page": 22
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "human-rights",
-      "un",
-      "articles",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q800",
-    "chapterId": 7,
-    "chapter": "Ch. 07 · Human rights",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: How many articles does the UN Universal Declaration of Human Rights contain?",
-      "sv": "Välj rätt alternativ: Hur många artiklar innehåller FN:s förklaring om de mänskliga rättigheterna?"
-    },
-    "opts": [
-      {
-        "en": "30 articles",
-        "sv": "30 artiklar"
-      },
-      {
-        "en": "20 articles",
-        "sv": "20 artiklar"
-      },
-      {
-        "en": "10 articles",
-        "sv": "10 artiklar"
-      },
-      {
-        "en": "50 articles",
-        "sv": "50 artiklar"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The Universal Declaration of Human Rights contains 30 articles. The articles describe rights that apply to all people.",
-      "sv": "Förklaringen om de mänskliga rättigheterna innehåller 30 artiklar. Artiklarna beskriver rättigheter som gäller alla människor."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Mänskliga rättigheter",
-      "section": "FN:s förklaring om de mänskliga rättigheterna",
-      "page": 22
-    },
-    "questionProvenance": "derived",
-    "difficulty": "easy",
-    "tags": [
-      "human-rights",
-      "un",
-      "articles",
       "published-variant",
       "judgement"
     ]
@@ -35894,7 +35672,7 @@
       "en": "Human rights, gender equality, children's rights, minority rights, and discrimination.",
       "sv": "Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering."
     },
-    "questionCount": 60
+    "questionCount": 55
   },
   {
     "id": 8,

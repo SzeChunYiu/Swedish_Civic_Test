@@ -34,8 +34,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      'northern Europe is correct.\\',',
-      'northern Europe is correct\\',',
+      'part of northern Europe.\\',',
+      'part of northern Europe\\',',
     );
   }
   return contents;
