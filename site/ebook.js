@@ -1988,13 +1988,12 @@
     },
 
     10: {
-      kicker: { en: 'Chapter 10 · EU & world', sv: 'Kapitel 10 · EU & världen' },
-      title: { en: 'Sweden,', sv: 'Sverige,' },
-      title_em: { en: 'the EU, and the world.', sv: 'EU och världen.' },
+      kicker: { en: 'Chapter 10 · EU & world', sv: 'Kapitel 10 · EU & världen', 'zh-Hans': '第10章 · 欧盟与世界', 'zh-Hant': '第10章 · 歐盟與世界', 'ar': 'الفصل 10 · الاتحاد الأوروبي والعالم', 'ckb': 'بەشی 10 · یەکێتیی ئەوروپا و جیهان', 'fa': 'فصل 10 · اتحادیه اروپا و جهان', 'pl': 'Rozdział 10 · UE i świat', 'so': 'Cutubka 10 · Midowga Yurub iyo adduunka', 'ti': 'ምዕራፍ 10 · ኤውሮጳዊ ሕብረትን ዓለምን', 'tr': 'Bölüm 10 · AB ve dünya', 'uk': 'Розділ 10 · ЄС і світ' },
+      title: { en: 'Sweden,', sv: 'Sverige,', 'zh-Hans': '瑞典、', 'zh-Hant': '瑞典、', 'ar': 'السويد،', 'ckb': 'سوید،', 'fa': 'سوئد،', 'pl': 'Szwecja,', 'so': 'Iswidhan,', 'ti': 'ሽወደን፡', 'tr': 'İsveç,', 'uk': 'Швеція,' },
+      title_em: { en: 'the EU, and the world.', sv: 'EU och världen.', 'zh-Hans': '欧盟与世界。', 'zh-Hant': '歐盟與世界。', 'ar': 'والاتحاد الأوروبي، والعالم.', 'ckb': 'یەکێتیی ئەوروپا، و جیهان.', 'fa': 'اتحادیه اروپا، و جهان.', 'pl': 'Unia Europejska i świat.', 'so': 'Midowga Yurub, iyo adduunka.', 'ti': 'ኤውሮጳዊ ሕብረትን ዓለምን።', 'tr': 'AB ve dünya.', 'uk': 'Європейський Союз і світ.' },
       lede: {
         en: 'Sweden spent two centuries avoiding war and one decade rapidly joining alliances. The pattern is the same — be useful, stay out of trouble.',
-        sv: 'Sverige tillbringade två sekel med att undvika krig och ett årtionde med att snabbt gå med i allianser. Mönstret är detsamma — gör nytta, undvik bråk.',
-      },
+        sv: 'Sverige tillbringade två sekel med att undvika krig och ett årtionde med att snabbt gå med i allianser. Mönstret är detsamma — gör nytta, undvik bråk.', 'zh-Hans': '瑞典花了两个世纪避免战争，又用十年时间迅速加入各种联盟。模式始终一致——做个有用的人，远离麻烦。', 'zh-Hant': '瑞典花了兩個世紀避免戰爭，又用十年時間迅速加入各種聯盟。模式始終一致——做個有用的人，遠離麻煩。', 'ar': 'أمضت السويد قرنين من الزمن تتجنب الحرب وعقدًا واحدًا تنضم فيه بسرعة إلى التحالفات. النمط واحد — كن مفيدًا وابقَ بعيدًا عن المتاعب.', 'ckb': 'سوید دوو سەدە لە جەنگ دوور کەوتەوە و لە یەک دەیەدا بە خێرایی پەیوەست بوو بە هاوپەیمانییەکانەوە. هەمان شێوازە — بەسوود بە و لە کێشە دوور بمێنەوە.', 'fa': 'سوئد دو قرن از جنگ دوری کرد و در یک دهه به‌سرعت به پیمان‌ها پیوست. الگو همان است — مفید باش و از دردسر دور بمان.', 'pl': 'Szwecja przez dwa stulecia unikała wojny, a w ciągu jednej dekady szybko przystąpiła do sojuszy. Wzorzec jest ten sam — być użytecznym, trzymać się z dala od kłopotów.', 'so': 'Iswidhan laba qarni ayay dagaal ka fogaatay, hal toban sanona si dhakhso ah ayay ugu biirtay isbahaysiyo. Qaabku waa isku mid — wax tar, dhibaatadana ka fogow.', 'ti': 'ሽወደን ንኽልተ ዘመን ካብ ውግእ ርሒቓ፡ ኣብ ሓደ ዓሰርተ ዓመት ድማ ብቕልጡፍ ናብ ሕብረታት ተጸምቢራ። እቲ ኣገባብ ሓደ እዩ — ጠቓሚ ኩን፡ ካብ ጸገም ድማ ርሓቕ።', 'tr': 'İsveç iki yüzyıl boyunca savaştan kaçındı ve bir on yıl içinde hızla ittifaklara katıldı. Örüntü aynı — yararlı ol, beladan uzak dur.', 'uk': 'Швеція два століття уникала війни, а за одне десятиліття швидко приєдналася до союзів. Закономірність та сама — бути корисним, триматися подалі від неприємностей.' },
       body: {
         en: `
           <h2>The European Union</h2>
@@ -2018,17 +2017,136 @@
           ],
           'EU: 1995 · Euroomröstning: 2003 · NATO: 2024 · FN-medlem: 1946.',
         ),
+        'zh-Hans': `<h2>欧盟（EU）</h2>
+          <p>瑞典在1994年公投后（52%赞成，47%反对），于1995年1月1日加入欧盟。它使用克朗（krona，瑞典货币），而非欧元。它在欧洲议会拥有21个席位。在欧盟有权限的领域——贸易、农业、渔业、环境、自由流动——欧盟法律优先于瑞典法律。</p>
+          <h2>申根（Schengen）</h2>
+          <p>瑞典是申根区的一部分——与多数欧盟成员国，以及挪威、冰岛、瑞士和列支敦士登之间开放内部边界。你可以免护照检查通行；但仍可能被要求出示身份证件。</p>
+          <h2>北约（NATO，北大西洋公约组织）</h2>
+          <p>瑞典在军事上保持不结盟超过200年，在两次世界大战和冷战期间均保持中立。在俄罗斯入侵乌克兰之后，瑞典于2022年5月申请加入北约，并于2024年3月7日正式加入。</p>
+          <h2>联合国与援助</h2>
+          <p>瑞典于1946年加入联合国（UN）。它在国际援助与和平外交方面有着长期记录。1953–1961年担任联合国秘书长的达格·哈马舍尔德（Dag Hammarskjöld）就是瑞典人。</p>
+          <h2>国防</h2>
+          <p>义务兵役（<em>värnplikt</em>，征兵制）于2017年重新启用，适用于1999年及以后出生的男性和女性。并非所有人都会被征召——选拔依据测试与意愿。服役期通常为9–12个月。</p>
+          ${ebookFactBox('zh-Hans', null, '加入欧盟：1995 · 公投反对欧元：2003 · 加入北约：2024 · 联合国成员起始年：1946 · 义务兵役重新启用：2017。', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'zh-Hant': `<h2>歐盟（EU）</h2>
+          <p>瑞典在1994年公投後（52%贊成，47%反對），於1995年1月1日加入歐盟。它使用克朗（krona，瑞典貨幣），而非歐元。它在歐洲議會擁有21個席位。在歐盟有權限的領域——貿易、農業、漁業、環境、自由流動——歐盟法律優先於瑞典法律。</p>
+          <h2>申根（Schengen）</h2>
+          <p>瑞典是申根區的一部分——與多數歐盟成員國，以及挪威、冰島、瑞士和列支敦斯登之間開放內部邊界。你可以免護照檢查通行；但仍可能被要求出示身分證件。</p>
+          <h2>北約（NATO，北大西洋公約組織）</h2>
+          <p>瑞典在軍事上保持不結盟超過200年，在兩次世界大戰和冷戰期間均保持中立。在俄羅斯入侵烏克蘭之後，瑞典於2022年5月申請加入北約，並於2024年3月7日正式加入。</p>
+          <h2>聯合國與援助</h2>
+          <p>瑞典於1946年加入聯合國（UN）。它在國際援助與和平外交方面有著長期記錄。1953–1961年擔任聯合國秘書長的達格·哈馬舍爾德（Dag Hammarskjöld）就是瑞典人。</p>
+          <h2>國防</h2>
+          <p>義務兵役（<em>värnplikt</em>，徵兵制）於2017年重新啟用，適用於1999年及以後出生的男性和女性。並非所有人都會被徵召——選拔依據測試與意願。服役期通常為9–12個月。</p>
+          ${ebookFactBox('zh-Hant', null, '加入歐盟：1995 · 公投反對歐元：2003 · 加入北約：2024 · 聯合國成員起始年：1946 · 義務兵役重新啟用：2017。', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'ar': `<h2>الاتحاد الأوروبي (EU)</h2>
+          <p>انضمت السويد إلى EU في 1 يناير 1995 بعد استفتاء عام 1994 (52% نعم، 47% لا). تستخدم الكرونا (krona)، وليس اليورو (euro). لها 21 مقعدًا في البرلمان الأوروبي. لقانون الاتحاد الأوروبي الأسبقية على القانون السويدي في المجالات التي يملك الاتحاد صلاحيات فيها — التجارة، والزراعة، ومصايد الأسماك، والبيئة، وحرية التنقل.</p>
+          <h2>Schengen (منطقة شنغن)</h2>
+          <p>السويد جزء من منطقة Schengen — حدود داخلية مفتوحة مع معظم دول EU، إضافة إلى النرويج، وآيسلندا، وسويسرا، وليختنشتاين. يمكنك السفر دون فحوصات جواز السفر؛ لكن قد يُطلب منك إثبات الهوية.</p>
+          <h2>NATO (حلف الناتو)</h2>
+          <p>كانت السويد غير منحازة عسكريًا لأكثر من 200 عام، محايدة طوال الحربين العالميتين والحرب الباردة. بعد غزو روسيا لأوكرانيا، تقدمت السويد بطلب الانضمام إلى NATO في مايو 2022 وانضمت رسميًا في 7 مارس 2024.</p>
+          <h2>الأمم المتحدة (UN) والمساعدات</h2>
+          <p>انضمت السويد إلى UN عام 1946. ولها سجل طويل في المساعدة الدولية ودبلوماسية السلام. كان داغ همرشولد (Dag Hammarskjöld)، الأمين العام للأمم المتحدة 1953–1961، سويديًا.</p>
+          <h2>الدفاع</h2>
+          <p>أُعيد تفعيل <em>التجنيد الإلزامي</em> (värnplikt) عام 2017 وينطبق على الرجال والنساء المولودين عام 1999 فصاعدًا. لا يُستدعى الجميع — يقوم الاختيار على الاختبارات والدافعية. تستمر الخدمة عادةً 9–12 شهرًا.</p>
+          ${ebookFactBox('ar', null, 'الانضمام إلى EU: 1995 · التصويت ضد اليورو: 2003 · الانضمام إلى NATO: 2024 · عضو في UN منذ: 1946 · إعادة تفعيل التجنيد الإلزامي: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'ckb': `<h2>یەکێتیی ئەوروپا (EU)</h2>
+          <p>سوید لە 1 ی ژانیوەری 1995 دوای ڕیفراندۆمی ساڵی 1994 (52% بەڵێ، 47% نا) پەیوەست بوو بە EU ـەوە. کرۆنا (krona) بەکاردێنێت، نەک یۆرۆ (euro). 21 کورسیی هەیە لە پەرلەمانی ئەوروپا. یاسای یەکێتیی ئەوروپا پێشینەی هەیە بەسەر یاسای سویدیدا لەو بوارانەی یەکێتییەکە دەسەڵاتی تێیاندا هەیە — بازرگانی، کشتوکاڵ، ماسیگرتن، ژینگە و ئازادیی جووڵە.</p>
+          <h2>Schengen (ناوچەی شەنگن)</h2>
+          <p>سوید بەشێکە لە ناوچەی Schengen — سنووری ناوخۆیی کراوە لەگەڵ زۆربەی ووڵاتانی EU، لەگەڵ نەرویج، ئایسلەند، سویسرا و لیختنشتاین. دەتوانیت بێ پشکنینی پاسپۆرت گەشت بکەیت؛ بەڵام لەوانەیە هێشتا داوای ناسنامەت لێ بکرێت.</p>
+          <h2>NATO (هاوپەیمانیی ناتۆ)</h2>
+          <p>سوید زیاتر لە 200 ساڵ لە ڕووی سەربازییەوە لاڕێ نەبوو، لە هەردوو جەنگی جیهانی و جەنگی سارددا بێلایەن بوو. دوای هێرشی ڕووسیا بۆ سەر ئۆکرانیا، سوید لە ئایاری 2022 داوای پەیوەستبوونی کرد بە NATO ـەوە و لە 7 ی ئازاری 2024 بە فەرمی پەیوەست بوو.</p>
+          <h2>نەتەوە یەکگرتووەکان (UN) و یارمەتی</h2>
+          <p>سوید لە ساڵی 1946 پەیوەست بوو بە UN ـەوە. ڕیکۆردێکی درێژی هەیە لە یارمەتیی نێودەوڵەتی و دیپلۆماسیی ئاشتی. داگ هامەرشۆلد (Dag Hammarskjöld)، سکرتێری گشتیی نەتەوە یەکگرتووەکان 1953–1961، سویدی بوو.</p>
+          <h2>بەرگری</h2>
+          <p><em>خزمەتی سەربازیی ناچاری</em> (värnplikt) لە ساڵی 2017 دووبارە چالاک کرایەوە و بۆ پیاو و ژنانی لەدایکبووی 1999 بەدواوە جێبەجێ دەبێت. هەموو کەس بانگ ناکرێت — هەڵبژاردن لەسەر بنەمای تاقیکردنەوە و ئارەزوومەندییە. خزمەتەکە بەزۆری 9–12 مانگ دەخایەنێت.</p>
+          ${ebookFactBox('ckb', null, 'پەیوەستبوون بە EU: 1995 · دەنگدان دژی یۆرۆ: 2003 · پەیوەستبوون بە NATO: 2024 · ئەندامی UN لە: 1946 · دووبارە چالاککردنی خزمەتی سەربازیی ناچاری: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'fa': `<h2>اتحادیه اروپا (EU)</h2>
+          <p>سوئد در 1 ژانویه 1995 پس از همه‌پرسی سال 1994 (52% آری، 47% نه) به EU پیوست. از کرون (krona) استفاده می‌کند، نه یورو (euro). در پارلمان اروپا 21 کرسی دارد. در زمینه‌هایی که اتحادیه در آن‌ها صلاحیت دارد — تجارت، کشاورزی، شیلات، محیط‌زیست و آزادی تردد — قانون اتحادیه اروپا بر قانون سوئد اولویت دارد.</p>
+          <h2>Schengen (حوزه شنگن)</h2>
+          <p>سوئد بخشی از حوزه Schengen است — مرزهای داخلی باز با بیشتر کشورهای EU، به‌علاوه نروژ، ایسلند، سوئیس و لیختن‌اشتاین. می‌توانید بدون بازرسی گذرنامه سفر کنید؛ اما ممکن است همچنان از شما کارت شناسایی خواسته شود.</p>
+          <h2>NATO (پیمان ناتو)</h2>
+          <p>سوئد بیش از 200 سال از نظر نظامی بی‌طرف بود، در هر دو جنگ جهانی و جنگ سرد بی‌طرف ماند. پس از حمله روسیه به اوکراین، سوئد در مه 2022 برای پیوستن به NATO درخواست داد و در 7 مارس 2024 رسماً عضو شد.</p>
+          <h2>سازمان ملل متحد (UN) و کمک‌رسانی</h2>
+          <p>سوئد در سال 1946 به UN پیوست. سابقه‌ای طولانی در کمک بین‌المللی و دیپلماسی صلح دارد. داگ همرشولد (Dag Hammarskjöld)، دبیرکل سازمان ملل در سال‌های 1953–1961، سوئدی بود.</p>
+          <h2>دفاع</h2>
+          <p><em>خدمت سربازی اجباری</em> (värnplikt) در سال 2017 دوباره فعال شد و شامل زنان و مردان متولد 1999 به بعد می‌شود. همه فراخوانده نمی‌شوند — گزینش بر پایه آزمون‌ها و انگیزه است. خدمت معمولاً 9–12 ماه طول می‌کشد.</p>
+          ${ebookFactBox('fa', null, 'پیوستن به EU: 1995 · رأی منفی به یورو: 2003 · پیوستن به NATO: 2024 · عضو UN از: 1946 · فعال‌سازی مجدد سربازی اجباری: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'pl': `<h2>Unia Europejska</h2>
+          <p>Szwecja przystąpiła do UE 1 stycznia 1995 roku po referendum w 1994 roku (52% za, 47% przeciw). Używa <em>korony</em> (krona), a nie euro. Ma 21 mandatów w Parlamencie Europejskim. Prawo UE ma pierwszeństwo przed prawem szwedzkim w obszarach, w których UE ma kompetencje — handel, rolnictwo, rybołówstwo, środowisko, swobodny przepływ.</p>
+          <h2>Schengen</h2>
+          <p>Szwecja należy do strefy Schengen — otwarte granice wewnętrzne z większością UE oraz Norwegią, Islandią, Szwajcarią i Liechtensteinem. Możesz podróżować bez kontroli paszportowej; nadal możesz zostać poproszony o dokument tożsamości.</p>
+          <h2>NATO</h2>
+          <p>Szwecja była militarnie niezaangażowana przez ponad 200 lat, neutralna podczas obu wojen światowych i zimnej wojny. Po inwazji Rosji na Ukrainę Szwecja złożyła wniosek o przystąpienie do NATO w maju 2022 roku i formalnie przystąpiła 7 marca 2024 roku.</p>
+          <h2>Organizacja Narodów Zjednoczonych i pomoc</h2>
+          <p>Szwecja przystąpiła do ONZ w 1946 roku. Ma długą historię pomocy międzynarodowej i dyplomacji pokojowej. Dag Hammarskjöld, Sekretarz Generalny ONZ w latach 1953–1961, był Szwedem.</p>
+          <h2>Obrona</h2>
+          <p>Pobór do wojska (<em>obowiązek służby wojskowej</em> (värnplikt)) został przywrócony w 2017 roku i dotyczy zarówno mężczyzn, jak i kobiet urodzonych od 1999 roku. Nie wszyscy są powoływani — wybór opiera się na testach i motywacji. Służba trwa zazwyczaj 9–12 miesięcy.</p>
+          ${ebookFactBox('pl', null, 'Przystąpienie do UE: 1995 · Głosowanie przeciw euro: 2003 · Przystąpienie do NATO: 2024 · Członek ONZ od: 1946 · Przywrócenie poboru: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'so': `<h2>Midowga Yurub</h2>
+          <p>Iswidhan waxay ku biirtay Midowga Yurub (EU) 1 Janaayo 1995 ka dib aftida 1994 (52% haa, 47% maya). Waxay isticmaashaa <em>kuroon</em> (krona), maaha yuuroo. Waxay leedahay 21 kursi oo ku jira Baarlamaanka Yurub. Sharciga Midowga Yurub wuxuu ka horreeyaa sharciga Iswidhan meelaha Midowga uu awood u leeyahay — ganacsi, beeraha, kalluumaysiga, deegaanka, dhaqdhaqaaqa xorta ah.</p>
+          <h2>Schengen</h2>
+          <p>Iswidhan waa qayb ka mid ah Aagga Schengen — xuduud gudaha ah oo furan oo ay la wadaagto inta badan Midowga Yurub, iyo sidoo kale Noorweey, Islaand, Swiiserlaand iyo Lixteshtaayn. Waxaad u safri kartaa baasaboor hubin la'aan; weli waxaa lagaa weydiin karaa aqoonsi.</p>
+          <h2>NATO</h2>
+          <p>Iswidhan in ka badan 200 oo sano si milatari ah uma aysan biirin isbahaysi (NATO waa isbahaysiga gaashaandhigga galbeedka), waxayna dhexdhexaad ahayd labadii Dagaal ee Adduunka iyo Dagaalkii Qaboobaa. Ka dib markii Ruushku ku soo duulay Ukraine, Iswidhan waxay codsatay inay ku biirto NATO bishii Maajo 2022, waxayna si rasmi ah u biirtay 7 Maarso 2024.</p>
+          <h2>Qaramada Midoobay iyo gargaarka</h2>
+          <p>Iswidhan waxay ku biirtay Qaramada Midoobay (UN) 1946. Waxay leedahay taariikh dheer oo gargaar caalami ah iyo diblomaasiyad nabadeed. Dag Hammarskjöld, oo ahaa Xoghayaha Guud ee Qaramada Midoobay 1953–1961, wuxuu ahaa Iswidhan.</p>
+          <h2>Difaaca</h2>
+          <p>Ciidan-qaadista (<em>waajibka adeegga milatari</em> (värnplikt)) waxaa dib loo soo nooleeyay 2017, waxayna khusaysaa rag iyo dumarba ee dhashay 1999 iyo wixii ka dambeeyay. Qof walba lama wacayo — xulashada waxay ku salaysan tahay imtixaanno iyo dhiirrigelin. Adeegga inta badan waa 9–12 bilood.</p>
+          ${ebookFactBox('so', null, 'Ku biiritaanka EU: 1995 · Cod ka soo horjeeda yuuroo: 2003 · Ku biiritaanka NATO: 2024 · Xubin ka ah UN ilaa: 1946 · Dib u soo nooleynta ciidan-qaadista: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'ti': `<h2>ኤውሮጳዊ ሕብረት</h2>
+          <p>ሽወደን ድሕሪ ናይ 1994 ህዝበ-ውሳነ (52% እወ፡ 47% ኣይፋል) ኣብ 1 ጥሪ 1995 ናብ ኤውሮጳዊ ሕብረት (EU) ተጸምቢራ። ኤውሮ ዘይኮነ <em>ክሮና</em> (krona) ትጥቀም። ኣብ ኤውሮጳዊ ባይቶ 21 መንበር ኣለዋ። ሕጊ ኤውሮጳዊ ሕብረት ኣብቲ ሕብረት ስልጣን ዘለዎ ጽላታት — ንግዲ፡ ሕርሻ፡ ምግፋፍ ዓሳ፡ ኣከባቢ፡ ናጻ ምንቅስቓስ — ካብ ሕጊ ሽወደን ቀዳምነት ኣለዎ።</p>
+          <h2>ሸንገን</h2>
+          <p>ሽወደን ኣካል ናይ ዞባ ሸንገን እያ — ምስ መብዛሕትኡ ኤውሮጳዊ ሕብረት፡ ከምኡ'ውን ምስ ኖርወይ፡ ኣይስላንድ፡ ስዊዘርላንድን ሊክተንስታይንን ክፉት ውሽጣዊ ዶብ። ብዘይ ምርመራ ፓስፖርት ክትጓዓዝ ትኽእል፣ ኮይኑ ግን ናይ መንነት ወረቐት ክሕተት ይከኣል እዩ።</p>
+          <h2>NATO</h2>
+          <p>ሽወደን ካብ 200 ዓመት ንላዕሊ ብወተሃደራዊ መዳይ ኣብ ዋላ ሓደ ሕብረት ዘይተጸምበረት፡ ኣብ ክልቲኡ ኲናት ዓለምን ኣብ ዝሑል ኲናትን ገለልተኛ ኔራ። ድሕሪ ወራር ሩስያ ኣብ ዩክሬን፡ ሽወደን ኣብ ግንቦት 2022 ናብ NATO (ምዕራባዊ ወተሃደራዊ ሕብረት) ንምጽንባር ኣመልኪታ ኣብ 7 መጋቢት 2024 ብወግዒ ተጸምቢራ።</p>
+          <h2>ውድብ ሕቡራት ሃገራትን ሓገዝን</h2>
+          <p>ሽወደን ኣብ 1946 ናብ ውድብ ሕቡራት ሃገራት (UN) ተጸምቢራ። ነዊሕ ታሪኽ ዓለምለኻዊ ሓገዝን ሰላማዊ ዲፕሎማስን ኣለዋ። ዳግ ሃመርሾልድ፡ ካብ 1953–1961 ዋና ጸሓፊ ውድብ ሕቡራት ሃገራት፡ ሽወደናዊ ነበረ።</p>
+          <h2>ምክልኻል</h2>
+          <p>ግዴታ ወተሃደራዊ ኣገልግሎት (<em>ግዴታ ወተሃደራዊ ኣገልግሎት</em> (värnplikt)) ኣብ 2017 እንደገና ተበጊሱ፡ ንኽልቲኦም ካብ 1999 ንደሓር ዝተወልዱ ሰብኡትን ኣንስትን ይምልከት። ኩሉ ሰብ ኣይጽዋዕን — እቲ ምርጫ ኣብ ፈተናታትን ድሌትን ይምርኮስ። እቲ ኣገልግሎት መብዛሕትኡ ግዜ 9–12 ኣዋርሕ እዩ።</p>
+          ${ebookFactBox('ti', null, 'ናብ ኤውሮጳዊ ሕብረት ምጽንባር: 1995 · ኣንጻር ኤውሮ ድምጺ: 2003 · ናብ NATO ምጽንባር: 2024 · ኣባል ውድብ ሕቡራት ሃገራት ካብ: 1946 · ግዴታ ወተሃደራዊ ኣገልግሎት እንደገና ምብጋስ: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'tr': `<h2>Avrupa Birliği</h2>
+          <p>İsveç, 1994 yılındaki bir referandumun ardından (yüzde 52 evet, yüzde 47 hayır) 1 Ocak 1995'te AB'ye katıldı. Avro değil, <em>kron</em> (krona) kullanır. Avrupa Parlamentosu'nda 21 sandalyesi vardır. AB hukuku, AB'nin yetkili olduğu alanlarda — ticaret, tarım, balıkçılık, çevre, serbest dolaşım — İsveç hukukuna göre önceliklidir.</p>
+          <h2>Schengen</h2>
+          <p>İsveç, Schengen Bölgesi'nin bir parçasıdır — AB'nin çoğuyla ve ayrıca Norveç, İzlanda, İsviçre ve Lihtenştayn ile açık iç sınırlar. Pasaport kontrolü olmadan seyahat edebilirsiniz; yine de kimlik sorulabilir.</p>
+          <h2>NATO</h2>
+          <p>İsveç 200 yıldan fazla bir süre askeri açıdan ittifaksızdı, her iki Dünya Savaşı'nda ve Soğuk Savaş boyunca tarafsızdı. Rusya'nın Ukrayna'yı işgalinin ardından İsveç, Mayıs 2022'de NATO'ya katılmak için başvurdu ve 7 Mart 2024'te resmen katıldı.</p>
+          <h2>Birleşmiş Milletler ve yardım</h2>
+          <p>İsveç, 1946'da BM'ye katıldı. Uzun bir uluslararası yardım ve barış diplomasisi geçmişine sahiptir. 1953–1961 yılları arasında BM Genel Sekreteri olan Dag Hammarskjöld İsveçliydi.</p>
+          <h2>Savunma</h2>
+          <p>Zorunlu askerlik (<em>askerlik yükümlülüğü</em> (värnplikt)) 2017'de yeniden yürürlüğe girdi ve 1999 ve sonrasında doğan hem erkekleri hem de kadınları kapsar. Herkes çağrılmaz — seçim testlere ve motivasyona dayanır. Hizmet genellikle 9–12 aydır.</p>
+          ${ebookFactBox('tr', null, 'AB\'ye katılım: 1995 · Avroya karşı oy: 2003 · NATO\'ya katılım: 2024 · BM üyeliği: 1946 · Zorunlu askerliğin yeniden yürürlüğe girmesi: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
+        'uk': `<h2>Європейський Союз</h2>
+          <p>Швеція приєдналася до ЄС 1 січня 1995 року після референдуму 1994 року (52% за, 47% проти). Вона використовує <em>крону</em> (krona), а не євро. Має 21 місце в Європейському парламенті. Право ЄС має перевагу над шведським правом у сферах, де ЄС має компетенцію — торгівля, сільське господарство, рибальство, довкілля, вільне пересування.</p>
+          <h2>Шенген</h2>
+          <p>Швеція входить до Шенгенської зони — відкриті внутрішні кордони з більшістю країн ЄС, а також Норвегією, Ісландією, Швейцарією та Ліхтенштейном. Ви можете подорожувати без паспортного контролю; вас усе ж можуть попросити пред'явити документ, що посвідчує особу.</p>
+          <h2>НАТО</h2>
+          <p>Швеція понад 200 років залишалася військово позаблоковою, нейтральною під час обох світових воєн і холодної війни. Після вторгнення Росії в Україну Швеція подала заявку на вступ до НАТО в травні 2022 року та офіційно приєдналася 7 березня 2024 року.</p>
+          <h2>Організація Об'єднаних Націй і допомога</h2>
+          <p>Швеція вступила до ООН у 1946 році. Вона має давню історію міжнародної допомоги та мирної дипломатії. Даг Гаммаршельд, Генеральний секретар ООН у 1953–1961 роках, був шведом.</p>
+          <h2>Оборона</h2>
+          <p>Військовий призов (<em>військовий обов'язок</em> (värnplikt)) було відновлено у 2017 році, і він стосується як чоловіків, так і жінок, народжених із 1999 року. Призивають не всіх — відбір ґрунтується на тестах і мотивації. Служба зазвичай триває 9–12 місяців.</p>
+          ${ebookFactBox('uk', null, 'Вступ до ЄС: 1995 · Голосування проти євро: 2003 · Вступ до НАТО: 2024 · Член ООН з: 1946 · Відновлення призову: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
+        `,
       },
     },
 
     11: {
-      kicker: { en: 'Chapter 11 · Migration', sv: 'Kapitel 11 · Migration' },
-      title: { en: 'Migration, residence,', sv: 'Migration, uppehåll' },
-      title_em: { en: 'and citizenship.', sv: 'och medborgarskap.' },
+      kicker: { en: 'Chapter 11 · Migration', sv: 'Kapitel 11 · Migration', 'zh-Hans': '第11章 · 移民', 'zh-Hant': '第11章 · 移民', 'ar': 'الفصل 11 · الهجرة', 'ckb': 'بەشی 11 · کۆچ', 'fa': 'فصل 11 · مهاجرت', 'pl': 'Rozdział 11 · Migracja', 'so': 'Cutubka 11 · Socdaalka', 'ti': 'ምዕራፍ 11 · ስደት', 'tr': 'Bölüm 11 · Göç', 'uk': 'Розділ 11 · Міграція' },
+      title: { en: 'Migration, residence,', sv: 'Migration, uppehåll', 'zh-Hans': '移民、居留，', 'zh-Hant': '移民、居留，', 'ar': 'الهجرة، والإقامة،', 'ckb': 'کۆچ، نیشتەجێبوون،', 'fa': 'مهاجرت، اقامت،', 'pl': 'Migracja, pobyt', 'so': 'Socdaalka, deganaanshaha', 'ti': 'ስደት፡ መንበሪ፡', 'tr': 'Göç, ikamet', 'uk': 'Міграція, проживання' },
+      title_em: { en: 'and citizenship.', sv: 'och medborgarskap.', 'zh-Hans': '与公民身份。', 'zh-Hant': '與公民身分。', 'ar': 'والمواطنة.', 'ckb': 'و هاوڵاتیبوون.', 'fa': 'و شهروندی.', 'pl': 'i obywatelstwo.', 'so': 'iyo dhalashada.', 'ti': 'ዜግነትን።', 'tr': 've vatandaşlık.', 'uk': 'і громадянство.' },
       lede: {
         en: 'Becoming a Swedish citizen is a process more than an event. The paperwork is long, but the rules are unusually clear.',
-        sv: 'Att bli svensk medborgare är mer en process än ett ögonblick. Pappersarbetet är långt, men reglerna är ovanligt tydliga.',
-      },
+        sv: 'Att bli svensk medborgare är mer en process än ett ögonblick. Pappersarbetet är långt, men reglerna är ovanligt tydliga.', 'zh-Hans': '成为瑞典公民更像是一个过程，而非一个瞬间。文书手续繁多，但规则却出奇地清晰。', 'zh-Hant': '成為瑞典公民更像是一個過程，而非一個瞬間。文書手續繁多，但規則卻出奇地清晰。', 'ar': 'أن تصبح مواطنًا سويديًا عمليةٌ أكثر منه حدثًا. الأوراق طويلة، لكن القواعد واضحة بشكل غير معتاد.', 'ckb': 'بوون بە هاوڵاتیی سویدی زیاتر پرۆسەیەکە تا ڕووداوێک. کاغەزبازییەکە درێژە، بەڵام یاساکان بە شێوەیەکی نائاسایی ڕوونن.', 'fa': 'شهروند سوئد شدن بیش از آنکه یک رویداد باشد، یک فرایند است. کاغذبازی طولانی است، اما قوانین به‌طور غیرعادی روشن‌اند.', 'pl': 'Zostanie obywatelem Szwecji to bardziej proces niż wydarzenie. Formalności są długie, ale zasady są wyjątkowo jasne.', 'so': 'In aad noqoto muwaadin Iswidhan waa hannaan ka badan dhacdo. Warqadaha way dheer yihiin, laakiin xeerarku waa kuwo si aan caadi ahayn u cad.', 'ti': 'ዜጋ ሽወደን ምዃን ካብ ፍጻመ ንላዕሊ መስርሕ እዩ። እቲ ወረቓቕቲ ነዊሕ እዩ፡ እቶም ሕግታት ግን ብዘይተለመደ መንገዲ ንጹራት እዮም።', 'tr': 'İsveç vatandaşı olmak bir olaydan çok bir süreçtir. Evrak işleri uzundur, ancak kurallar alışılmadık derecede açıktır.', 'uk': 'Стати громадянином Швеції — це радше процес, ніж подія. Паперова робота довга, але правила надзвичайно зрозумілі.' },
       body: {
         en: `
           <h2>Who is who</h2>
@@ -2062,17 +2180,226 @@
           'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
           'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
         ),
+        'zh-Hans': `<h2>谁是谁</h2>
+          <ul>
+            <li><b>Migrationsverket</b>（移民局）——负责裁定居留许可、庇护、家庭团聚、工作许可和公民身份。</li>
+            <li><b>Skatteverket</b>（税务局）——在你取得居留许可并登记为在瑞典居住后，向你发放个人身份号码（personnummer）。</li>
+            <li><b>Polisen</b>（警察局）——负责护照及部分身份证件事务。</li>
+          </ul>
+          <h2>取得永久居留的途径</h2>
+          <p>你可以通过以下身份来到瑞典：劳工（持有工资高于最低标准的工作邀约）、学生、研究人员、居民的家庭成员、行使自由流动权的欧盟公民，或寻求庇护者。在合法居留一段时间后——通常为四到五年——你可以申请永久居留许可（<em>permanent uppehållstillstånd</em>），欧盟公民则可申请永久居留权。</p>
+          <h2>成为瑞典人</h2>
+          <p>要通过入籍申请瑞典公民身份，你通常需要：</p>
+          <ul>
+            <li>年满18岁（儿童通常随父母的申请一并纳入）。</li>
+            <li>持有永久居留许可、居留权或永久居留权。</li>
+            <li>在瑞典居住满规定期限——通常为五年（无国籍者、难民和北欧国家公民期限较短）。</li>
+            <li>生活有序——没有重大犯罪记录。</li>
+            <li>（自2026年起）通过公民身份考试（medborgarskapsprov，关于公民知识与瑞典语的考试），并满足瑞典语语言要求。</li>
+          </ul>
+          <h2>双重国籍</h2>
+          <p>瑞典自2001年起接受双重国籍。成为瑞典公民并不会使你失去原有国籍（视你原籍国的规定而定）。</p>
+          ${ebookFactBox('zh-Hans', null, '新的公民身份规则自2026年6月6日起适用。UHR（瑞典大学与高校理事会）表示，首场公民知识考试于2026年8月15日在斯德哥尔摩举行。标准居留年限要求：5年 · 双重国籍：允许（自2001年起） · 决定机关：Migrationsverket。', ['uhrStudyMaterial'])}
+        `,
+        'zh-Hant': `<h2>誰是誰</h2>
+          <ul>
+            <li><b>Migrationsverket</b>（移民局）——負責裁定居留許可、庇護、家庭團聚、工作許可和公民身分。</li>
+            <li><b>Skatteverket</b>（稅務局）——在你取得居留許可並登記為在瑞典居住後，向你發放個人身分號碼（personnummer）。</li>
+            <li><b>Polisen</b>（警察局）——負責護照及部分身分證件事務。</li>
+          </ul>
+          <h2>取得永久居留的途徑</h2>
+          <p>你可以透過以下身分來到瑞典：勞工（持有工資高於最低標準的工作邀約）、學生、研究人員、居民的家庭成員、行使自由流動權的歐盟公民，或尋求庇護者。在合法居留一段時間後——通常為四到五年——你可以申請永久居留許可（<em>permanent uppehållstillstånd</em>），歐盟公民則可申請永久居留權。</p>
+          <h2>成為瑞典人</h2>
+          <p>要透過入籍申請瑞典公民身分，你通常需要：</p>
+          <ul>
+            <li>年滿18歲（兒童通常隨父母的申請一併納入）。</li>
+            <li>持有永久居留許可、居留權或永久居留權。</li>
+            <li>在瑞典居住滿規定期限——通常為五年（無國籍者、難民和北歐國家公民期限較短）。</li>
+            <li>生活有序——沒有重大犯罪記錄。</li>
+            <li>（自2026年起）通過公民身分考試（medborgarskapsprov，關於公民知識與瑞典語的考試），並滿足瑞典語語言要求。</li>
+          </ul>
+          <h2>雙重國籍</h2>
+          <p>瑞典自2001年起接受雙重國籍。成為瑞典公民並不會使你失去原有國籍（視你原籍國的規定而定）。</p>
+          ${ebookFactBox('zh-Hant', null, '新的公民身分規則自2026年6月6日起適用。UHR（瑞典大學與高校理事會）表示，首場公民知識考試於2026年8月15日在斯德哥爾摩舉行。標準居留年限要求：5年 · 雙重國籍：允許（自2001年起） · 決定機關：Migrationsverket。', ['uhrStudyMaterial'])}
+        `,
+        'ar': `<h2>من هو من</h2>
+          <ul>
+            <li><b>Migrationsverket</b> (وكالة الهجرة) — وكالة الهجرة. تبتّ في تصاريح الإقامة، واللجوء، ولمّ شمل الأسرة، وتصاريح العمل، والمواطنة.</li>
+            <li><b>Skatteverket</b> (مصلحة الضرائب) — يمنحك رقمك الشخصي (personnummer) بمجرد حصولك على تصريح إقامة وتسجيلك مقيمًا في السويد.</li>
+            <li><b>Polisen</b> (الشرطة) — تتولى جوازات السفر وبعض مسائل الهوية.</li>
+          </ul>
+          <h2>مسارات الإقامة الدائمة</h2>
+          <p>يمكنك القدوم إلى السويد بصفتك: عاملًا (بعرض عمل يفوق حدًا أدنى للأجر)، أو طالبًا، أو باحثًا، أو فردًا من أسرة مقيم، أو مواطنًا في EU (الاتحاد الأوروبي) يمارس حرية التنقل، أو طالب لجوء. بعد فترة من الإقامة القانونية — عادةً أربع إلى خمس سنوات — يمكنك التقدم بطلب إقامة دائمة <em>تصريح الإقامة الدائمة</em> (permanent uppehållstillstånd)، أو، بالنسبة لمواطني EU، حق الإقامة الدائمة.</p>
+          <h2>أن تصبح سويديًا</h2>
+          <p>للتقدم بطلب الجنسية السويدية عن طريق التجنّس، تحتاج عمومًا إلى:</p>
+          <ul>
+            <li>أن تكون 18 عامًا على الأقل (يُدرج الأطفال عادةً ضمن طلب أحد الوالدين).</li>
+            <li>أن يكون لديك تصريح إقامة دائمة، أو حق إقامة، أو حق إقامة دائمة.</li>
+            <li>أن تكون قد عشت في السويد مدةً مؤهِّلة — عادةً خمس سنوات (أقصر للأشخاص عديمي الجنسية، واللاجئين، ومواطني دول الشمال).</li>
+            <li>أن تكون قد عشت حياة منظمة — دون سجل جنائي ذي شأن.</li>
+            <li>(اعتبارًا من 2026) أن تجتاز medborgarskapsprov (اختبار المواطنة) — اختبار المواطنة في المعرفة المدنية واللغة السويدية — وأن تستوفي متطلب اللغة السويدية.</li>
+          </ul>
+          <h2>الجنسية المزدوجة</h2>
+          <p>تقبل السويد الجنسية المزدوجة منذ عام 2001. لا تفقد جنسيتك الأصلية بأن تصبح سويديًا (رهنًا بقواعد بلد المنشأ).</p>
+          ${ebookFactBox('ar', null, 'تُطبَّق قواعد المواطنة الجديدة اعتبارًا من 6 يونيو 2026. يقول UHR (مجلس القبول الجامعي) إن أول جلسة لاختبار المعرفة المدنية ستكون في 15 أغسطس 2026 في ستوكهولم. متطلب الإقامة المعياري: 5 سنوات · الجنسية المزدوجة: مسموحة (منذ 2001) · جهة القرار: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
+        'ckb': `<h2>کێ کێیە</h2>
+          <ul>
+            <li><b>Migrationsverket</b> (ئاژانسی کۆچ) — ئاژانسی کۆچ. بڕیار دەدات لەسەر مۆڵەتی نیشتەجێبوون، پەنابەری، یەکخستنەوەی خێزان، مۆڵەتی کار، و هاوڵاتیبوون.</li>
+            <li><b>Skatteverket</b> (ئاژانسی باج) — هەرکە مۆڵەتی نیشتەجێبوونت هەبوو و وەک نیشتەجێی سوید تۆمار کرایت، ژمارەی کەسیت (personnummer) پێدەدات.</li>
+            <li><b>Polisen</b> (پۆلیس) — مامەڵە لەگەڵ پاسپۆرت و هەندێک کاروباری ناسنامە دەکات.</li>
+          </ul>
+          <h2>ڕێگاکانی نیشتەجێبوونی هەمیشەیی</h2>
+          <p>دەتوانیت بەم شێوازانە بێیتە سوید: کرێکار (بە پێشکەشکردنی کارێک سەرووی حەددی نزمی کرێ)، خوێندکار، توێژەر، ئەندامی خێزانی نیشتەجێیەک، هاوڵاتیی EU (یەکێتیی ئەوروپا) کە ئازادیی جووڵە بەکاردێنێت، یان داواکاری پەنابەری. دوای ماوەیەک نیشتەجێبوونی یاسایی — بەزۆری چوار بۆ پێنج ساڵ — دەتوانیت داوای نیشتەجێبوونی هەمیشەیی بکەیت <em>مۆڵەتی نیشتەجێبوونی هەمیشەیی</em> (permanent uppehållstillstånd)، یان، بۆ هاوڵاتیانی EU، مافی نیشتەجێبوونی هەمیشەیی.</p>
+          <h2>بوون بە سویدی</h2>
+          <p>بۆ داواکردنی هاوڵاتیی سویدی لە ڕێگەی ڕەگەزنامەوەرگرتنەوە، بەگشتی پێویستە:</p>
+          <ul>
+            <li>لانیکەم 18 ساڵان بیت (منداڵان بەزۆری لەگەڵ داواکاریی یەکێک لە دایک و باوک دەخرێنە ناو).</li>
+            <li>مۆڵەتی نیشتەجێبوونی هەمیشەیی، مافی نیشتەجێبوون، یان مافی نیشتەجێبوونی هەمیشەییت هەبێت.</li>
+            <li>ماوەیەکی پێویست لە سوید ژیابیت — بەزۆری پێنج ساڵ (بۆ کەسانی بێ‌ڕەگەزنامە، پەنابەران و هاوڵاتیانی ووڵاتانی نۆردیک کورتترە).</li>
+            <li>ژیانێکی ڕێکوپێکت هەبووبێت — بەبێ تۆمارێکی تاوانیی گرنگ.</li>
+            <li>(لە 2026 بەدواوە) لە medborgarskapsprov (تاقیکردنەوەی هاوڵاتیبوون) سەرکەوتوو بیت — تاقیکردنەوەی هاوڵاتیبوون لەسەر زانیاریی شارستانی و زمانی سویدی — و مەرجی زمانی سویدی بهێنیتە دی.</li>
+          </ul>
+          <h2>هاوڵاتیی دووانە</h2>
+          <p>سوید لە ساڵی 2001 ـەوە هاوڵاتیی دووانەی پەسەند کردووە. بە سویدیبوون، هاوڵاتیی ڕەسەنی خۆت لەدەست نادەیت (بەپێی یاساکانی ووڵاتی ڕەسەنت).</p>
+          ${ebookFactBox('ckb', null, 'یاسا نوێیەکانی هاوڵاتیبوون لە 6 ی حوزەیرانی 2026 ـەوە جێبەجێ دەبن. UHR (ئەنجوومەنی وەرگرتنی زانکۆیی) دەڵێت یەکەم دانیشتنی تاقیکردنەوەی زانیاریی شارستانی لە 15 ی ئابی 2026 لە ستۆکهۆڵم دەبێت. مەرجی نیشتەجێبوونی ستانداردی: 5 ساڵ · هاوڵاتیی دووانە: ڕێگەپێدراو (لە 2001 ـەوە) · دەسەڵاتی بڕیاردان: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
+        'fa': `<h2>چه کسی چه‌کاره است</h2>
+          <ul>
+            <li><b>Migrationsverket</b> (اداره مهاجرت) — اداره مهاجرت. درباره مجوزهای اقامت، پناهندگی، پیوند خانواده، مجوزهای کار و شهروندی تصمیم می‌گیرد.</li>
+            <li><b>Skatteverket</b> (اداره مالیات) — به‌محض اینکه مجوز اقامت بگیرید و به‌عنوان ساکن سوئد ثبت شوید، شماره شخصی (personnummer) شما را صادر می‌کند.</li>
+            <li><b>Polisen</b> (پلیس) — رسیدگی به گذرنامه‌ها و برخی امور هویتی.</li>
+          </ul>
+          <h2>مسیرهای اقامت دائم</h2>
+          <p>می‌توانید به این صورت‌ها به سوئد بیایید: کارگر (با پیشنهاد کاری بالاتر از حداقل دستمزد)، دانشجو، پژوهشگر، عضو خانواده یک مقیم، شهروند EU (اتحادیه اروپا) که از آزادی تردد استفاده می‌کند، یا پناه‌جو. پس از مدتی اقامت قانونی — معمولاً چهار تا پنج سال — می‌توانید برای اقامت دائم <em>مجوز اقامت دائم</em> (permanent uppehållstillstånd) درخواست دهید، یا برای شهروندان EU، حق اقامت دائم.</p>
+          <h2>سوئدی شدن</h2>
+          <p>برای درخواست شهروندی سوئد از راه تابعیت‌پذیری، عموماً باید:</p>
+          <ul>
+            <li>دست‌کم 18 سال داشته باشید (کودکان معمولاً همراه با درخواست یکی از والدین لحاظ می‌شوند).</li>
+            <li>مجوز اقامت دائم، حق اقامت، یا حق اقامت دائم داشته باشید.</li>
+            <li>مدت واجد شرایطی در سوئد زندگی کرده باشید — معمولاً پنج سال (برای افراد بی‌تابعیت، پناهندگان و شهروندان کشورهای اسکاندیناوی کوتاه‌تر).</li>
+            <li>زندگی منظمی داشته باشید — بدون سابقه کیفری قابل‌توجه.</li>
+            <li>(از 2026) در medborgarskapsprov (آزمون شهروندی) — آزمون شهروندی درباره دانش مدنی و زبان سوئدی — قبول شوید و الزام زبان سوئدی را برآورده کنید.</li>
+          </ul>
+          <h2>شهروندی دوگانه</h2>
+          <p>سوئد از سال 2001 شهروندی دوگانه را پذیرفته است. با سوئدی شدن، شهروندی اصلی خود را از دست نمی‌دهید (بسته به قوانین کشور مبدأ شما).</p>
+          ${ebookFactBox('fa', null, 'قوانین جدید شهروندی از 6 ژوئن 2026 اعمال می‌شود. UHR (شورای پذیرش دانشگاهی) می‌گوید نخستین جلسه آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. الزام اقامت استاندارد: 5 سال · شهروندی دوگانه: مجاز (از 2001) · مرجع تصمیم‌گیری: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
+        'pl': `<h2>Kto jest kim</h2>
+          <ul>
+            <li><b>Migrationsverket</b> — Urząd ds. Migracji (Migrationsverket). Decyduje o zezwoleniach na pobyt, azylu, łączeniu rodzin, pozwoleniach na pracę i obywatelstwie.</li>
+            <li><b>Skatteverket</b> — Urząd Skarbowy (Skatteverket) nadaje numer personalny (personnummer), gdy masz zezwolenie na pobyt i jesteś zarejestrowany jako mieszkaniec Szwecji.</li>
+            <li><b>Polisen</b> — Policja (Polisen) zajmuje się paszportami i niektórymi sprawami dotyczącymi dokumentów tożsamości.</li>
+          </ul>
+          <h2>Drogi do pobytu stałego</h2>
+          <p>Do Szwecji możesz przyjechać jako: pracownik (z ofertą pracy powyżej płacy minimalnej), student, naukowiec, członek rodziny mieszkańca, obywatel UE korzystający ze swobody przepływu lub osoba ubiegająca się o azyl. Po okresie legalnego pobytu — zwykle od czterech do pięciu lat — możesz ubiegać się o pobyt stały (<em>zezwolenie na pobyt stały</em> (permanent uppehållstillstånd)) lub, w przypadku obywateli UE, o prawo stałego pobytu.</p>
+          <h2>Stawanie się Szwedem</h2>
+          <p>Aby ubiegać się o obywatelstwo szwedzkie w drodze naturalizacji, zazwyczaj musisz:</p>
+          <ul>
+            <li>Mieć co najmniej 18 lat (dzieci są zwykle uwzględniane we wniosku rodzica).</li>
+            <li>Mieć zezwolenie na pobyt stały, prawo pobytu lub prawo stałego pobytu.</li>
+            <li>Mieszkać w Szwecji przez wymagany okres — zwykle pięć lat (krócej w przypadku bezpaństwowców, uchodźców i obywateli krajów nordyckich).</li>
+            <li>Prowadzić uporządkowane życie — bez poważnej karalności.</li>
+            <li>(Od 2026) Zdać <em>egzamin obywatelski</em> (medborgarskapsprovet) — test wiedzy obywatelskiej i języka szwedzkiego — oraz spełnić wymóg znajomości języka szwedzkiego.</li>
+          </ul>
+          <h2>Podwójne obywatelstwo</h2>
+          <p>Szwecja akceptuje podwójne obywatelstwo od 2001 roku. Nie tracisz swojego pierwotnego obywatelstwa, stając się Szwedem (z zastrzeżeniem przepisów twojego kraju pochodzenia).</p>
+          ${ebookFactBox('pl', null, 'Nowe przepisy dotyczące obywatelstwa obowiązują od 6 czerwca 2026 roku. UHR podaje, że pierwszy egzamin z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Standardowy wymóg pobytu: 5 lat · Podwójne obywatelstwo: dozwolone (od 2001) · Organ decyzyjny: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
+        'so': `<h2>Yaa yahay yaa</h2>
+          <ul>
+            <li><b>Migrationsverket</b> — Hay'adda Socdaalka (Migrationsverket). Waxay go'aamisaa oggolaanshaha deganaanshaha, magangalyada, midaynta qoyska, oggolaanshaha shaqada, iyo dhalashada.</li>
+            <li><b>Skatteverket</b> — Hay'adda Canshuuraha (Skatteverket) waxay ku siisaa lambarkaaga shakhsi ahaaneed (personnummer) marka aad haysato oggolaanshe deganaansho oo aad u diiwaangashan tahay inaad ku nooshahay Iswidhan.</li>
+            <li><b>Polisen</b> — Booliska (Polisen) waxay maaraysaa baasaboorrada iyo arrimaha qaar ee aqoonsiga.</li>
+          </ul>
+          <h2>Waddooyinka loo maro deganaanshaha rasmiga ah</h2>
+          <p>Waxaad u iman kartaa Iswidhan: shaqaale (oo haysta dalbasho shaqo oo ka sarreeya mushaharka ugu yar), arday, cilmi-baadhe, xubin qoyska ah oo deggan, muwaadin Midowga Yurub oo isticmaalaya xorriyadda dhaqdhaqaaqa, ama qof magangalyo doon ah. Ka dib muddo deganaansho sharci ah — caadi ahaan afar ilaa shan sano — waxaad codsan kartaa deganaansho rasmi ah (<em>oggolaanshaha deganaanshaha joogtada ah</em> (permanent uppehållstillstånd)) ama, muwaadiniinta Midowga Yurub, xaqa deganaanshaha joogtada ah.</p>
+          <h2>Noqoshada qof Iswidhan ah</h2>
+          <p>Si aad u codsato dhalashada Iswidhan iyada oo loo marayo dabiicinta, guud ahaan waxaad u baahan tahay inaad:</p>
+          <ul>
+            <li>Ugu yaraan 18 sano jir tahay (caruurta caadi ahaan waxaa lagu daraa codsiga waalidka).</li>
+            <li>Haysato oggolaanshe deganaansho joogto ah, xaq deganaansho, ama xaq deganaansho joogto ah.</li>
+            <li>Ku noolaato Iswidhan muddo u qalanta — caadi ahaan shan sano (way ka gaaban tahay dadka aan dhalasho lahayn, qaxootiga, iyo muwaadiniinta Nordic).</li>
+            <li>Nolol habaysan u noolaato — diiwaan dembi oo weyn la'aan.</li>
+            <li>(Laga bilaabo 2026) Gudo <em>imtixaanka dhalashada</em> (medborgarskapsprovet) — imtixaanka aqoonta muwaadinnimada iyo afka Iswidhish — oona buuxiso shuruudda luqadda Iswidhish.</li>
+          </ul>
+          <h2>Dhalashada labanlaabka ah</h2>
+          <p>Iswidhan waxay aqbashay dhalashada labanlaabka ah ilaa 2001. Lumin maysid dhalashadaada asalka ah markaad noqoto Iswidhan (iyada oo ku xiran xeerarka dalkaaga aad ka soo jeedo).</p>
+          ${ebookFactBox('so', null, 'Xeerarka cusub ee dhalashada waxay dhaqaaqayaan 6 Juun 2026. UHR waxay sheegaysaa in fadhiga ugu horreeya ee aqoonta muwaadinnimada uu noqon doono 15 Ogosto 2026 magaalada Stockholm. Shuruudda deganaanshaha caadiga ah: 5 sano · Dhalashada labanlaabka ah: la oggol yahay (ilaa 2001) · Hay\'adda go\'aanka gaarta: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
+        'ti': `<h2>መን እዩ መን</h2>
+          <ul>
+            <li><b>Migrationsverket</b> — ኤጀንሲ ስደት (Migrationsverket)። ብዛዕባ ፍቓድ መንበሪ፡ ዑቕባ፡ ምትእኽኻብ ስድራቤት፡ ፍቓድ ስራሕን ዜግነትን ይውስን።</li>
+            <li><b>Skatteverket</b> — ኤጀንሲ ግብሪ (Skatteverket) ፍቓድ መንበሪ ምስ ዝህልወካን ኣብ ሽወደን ትነብር ምስ እትምዝገብን መለለዪ ቁጽሪ (personnummer) ይህበካ።</li>
+            <li><b>Polisen</b> — ፖሊስ (Polisen) ፓስፖርትን ገለ ጉዳያት መንነትን የማሓድር።</li>
+          </ul>
+          <h2>መንገድታት ናብ ቀዋሚ መንበሪ</h2>
+          <p>ናብ ሽወደን ከምዚ ዝስዕብ ኴንካ ክትመጽእ ትኽእል፦ ሰራሕተኛ (ካብ ዝተሓተ ደሞዝ ንላዕሊ ናይ ስራሕ ዕድል ዘለዎ)፡ ተማሃራይ፡ ተመራማራይ፡ ኣባል ስድራቤት ነባራይ፡ ናጻ ምንቅስቓስ ዝጥቀም ዜጋ ኤውሮጳዊ ሕብረት፡ ወይ ሓታቲ ዑቕባ። ድሕሪ ሕጋዊ መንበሪ ግዜ — መብዛሕትኡ ግዜ ካብ ኣርባዕተ ክሳብ ሓሙሽተ ዓመት — ቀዋሚ መንበሪ (<em>ቀዋሚ ፍቓድ መንበሪ</em> (permanent uppehållstillstånd)) ወይ፡ ንዜጋታት ኤውሮጳዊ ሕብረት፡ ቀዋሚ መሰል መንበሪ ከተመልክት ትኽእል።</p>
+          <h2>ሽወደናዊ ምዃን</h2>
+          <p>ብመስርሕ ዜግነት ናይ ሽወደን ዜግነት ንምምልካት፡ ብሓፈሻ ከምዚ ዝስዕብ ክትከውን የድሊ፦</p>
+          <ul>
+            <li>እንተወሓደ 18 ዓመት ክትከውን (ቆልዑ መብዛሕትኡ ግዜ ኣብ መመልከቲ ወላዲ ይካተቱ)።</li>
+            <li>ቀዋሚ ፍቓድ መንበሪ፡ መሰል መንበሪ፡ ወይ ቀዋሚ መሰል መንበሪ ክህልወካ።</li>
+            <li>ኣብ ሽወደን ብቑዕ ግዜ ክትነብር — መብዛሕትኡ ግዜ ሓሙሽተ ዓመት (ንሰብ ኣልቦ ዜግነት፡ ስደተኛታትን ዜጋታት ኖርዲክን ይሓጽር)።</li>
+            <li>ስርዓታዊ ህይወት ክትመርሕ — ዓቢ ገበናዊ መዝገብ ዘይብልካ።</li>
+            <li>(ካብ 2026 ጀሚሩ) <em>ፈተና ዜግነት</em> (medborgarskapsprovet) — ፈተና ሲቪካዊ ፍልጠትን ሽወደንኛን — ክትሓልፍን ናይ ሽወደን ቋንቋ መምዘኒ ከተማልእን።</li>
+          </ul>
+          <h2>ድርብ ዜግነት</h2>
+          <p>ሽወደን ካብ 2001 ጀሚራ ድርብ ዜግነት ተቐቢላ። ሽወደናዊ ብምዃንካ ናይ መበቆል ዜግነትካ ኣይተጥፍእን (ብመሰረት ሕግታት ናይ መበቆል ሃገርካ)።</p>
+          ${ebookFactBox('ti', null, 'ሓደስቲ ሕግታት ዜግነት ካብ 6 ሰነ 2026 ጀሚሮም ይትግበሩ። UHR እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ከም ዝካየድ ይገልጽ። ስሩዕ መምዘኒ መንበሪ: 5 ዓመት · ድርብ ዜግነት: ይፍቀድ (ካብ 2001) · ውሳነ ዝህብ ኣካል: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
+        'tr': `<h2>Kim kimdir</h2>
+          <ul>
+            <li><b>Migrationsverket</b> — Göç Kurumu (Migrationsverket). İkamet izinleri, iltica, aile birleşimi, çalışma izinleri ve vatandaşlık konularında karar verir.</li>
+            <li><b>Skatteverket</b> — Vergi Dairesi (Skatteverket), bir ikamet izniniz olduğunda ve İsveç'te yaşayan biri olarak kaydedildiğinizde size kimlik numaranızı (personnummer) verir.</li>
+            <li><b>Polisen</b> — Polis (Polisen), pasaportları ve bazı kimlik konularını yürütür.</li>
+          </ul>
+          <h2>Daimi ikamete giden yollar</h2>
+          <p>İsveç'e şu şekilde gelebilirsiniz: bir işçi (asgari ücretin üzerinde bir iş teklifiyle), bir öğrenci, bir araştırmacı, bir ikamet edenin aile üyesi, serbest dolaşım hakkını kullanan bir AB vatandaşı veya bir sığınmacı. Bir süre yasal ikametten sonra — genellikle dört ila beş yıl — daimi ikamet (<em>daimi ikamet izni</em> (permanent uppehållstillstånd)) için veya AB vatandaşları için daimi ikamet hakkı için başvurabilirsiniz.</p>
+          <h2>İsveçli olmak</h2>
+          <p>Vatandaşlığa kabul yoluyla İsveç vatandaşlığına başvurmak için genellikle şunlara ihtiyacınız vardır:</p>
+          <ul>
+            <li>En az 18 yaşında olmak (çocuklar genellikle bir ebeveynin başvurusuna dahil edilir).</li>
+            <li>Daimi ikamet izni, ikamet hakkı veya daimi ikamet hakkına sahip olmak.</li>
+            <li>İsveç'te belirli bir süre yaşamış olmak — genellikle beş yıl (vatansız kişiler, mülteciler ve İskandinav vatandaşları için daha kısa).</li>
+            <li>Düzenli bir yaşam sürmek — önemli bir sabıka kaydı olmaması.</li>
+            <li>(2026'dan itibaren) <em>Vatandaşlık sınavını</em> (medborgarskapsprovet) — yurttaşlık bilgisi ve İsveççe testi — geçmek ve bir İsveççe dil koşulunu karşılamak.</li>
+          </ul>
+          <h2>Çifte vatandaşlık</h2>
+          <p>İsveç 2001'den beri çifte vatandaşlığı kabul ediyor. İsveçli olarak orijinal vatandaşlığınızı kaybetmezsiniz (köken ülkenizin kurallarına tabi olarak).</p>
+          ${ebookFactBox('tr', null, 'Yeni vatandaşlık kuralları 6 Haziran 2026\'dan itibaren geçerlidir. UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026\'da Stockholm\'de yapılacağını söylüyor. Standart ikamet koşulu: 5 yıl · Çifte vatandaşlık: izinli (2001\'den beri) · Karar mercii: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
+        'uk': `<h2>Хто є хто</h2>
+          <ul>
+            <li><b>Migrationsverket</b> — Міграційне агентство (Migrationsverket). Вирішує питання дозволів на проживання, притулку, возз'єднання сімей, дозволів на роботу та громадянства.</li>
+            <li><b>Skatteverket</b> — Податкове агентство (Skatteverket) видає вам особистий номер (personnummer), щойно ви отримаєте дозвіл на проживання та зареєструєтеся як мешканець Швеції.</li>
+            <li><b>Polisen</b> — Поліція (Polisen) займається паспортами та деякими питаннями документів, що посвідчують особу.</li>
+          </ul>
+          <h2>Шляхи до постійного проживання</h2>
+          <p>Ви можете приїхати до Швеції як: працівник (із пропозицією роботи з оплатою вище мінімальної), студент, дослідник, член сім'ї резидента, громадянин ЄС, який користується свободою пересування, або шукач притулку. Після періоду законного проживання — зазвичай від чотирьох до п'яти років — ви можете подати заяву на постійне проживання (<em>постійний дозвіл на проживання</em> (permanent uppehållstillstånd)) або, для громадян ЄС, на право постійного проживання.</p>
+          <h2>Як стати шведом</h2>
+          <p>Щоб подати заяву на шведське громадянство шляхом натуралізації, вам зазвичай потрібно:</p>
+          <ul>
+            <li>Бути не молодшим за 18 років (діти зазвичай включаються до заяви одного з батьків).</li>
+            <li>Мати дозвіл на постійне проживання, право проживання або право постійного проживання.</li>
+            <li>Прожити у Швеції кваліфікаційний період — зазвичай п'ять років (менше для осіб без громадянства, біженців і громадян країн Північної Європи).</li>
+            <li>Вести впорядкований спосіб життя — без серйозної судимості.</li>
+            <li>(Із 2026 року) Скласти <em>іспит на громадянство</em> (medborgarskapsprovet) — тест на знання громадянознавства та шведської мови — і відповідати вимозі щодо знання шведської мови.</li>
+          </ul>
+          <h2>Подвійне громадянство</h2>
+          <p>Швеція визнає подвійне громадянство з 2001 року. Ви не втрачаєте своє початкове громадянство, ставши шведом (за умови дотримання правил вашої країни походження).</p>
+          ${ebookFactBox('uk', null, 'Нові правила громадянства діють із 6 червня 2026 року. UHR повідомляє, що перше складання іспиту з громадянознавства відбудеться 15 серпня 2026 року в Стокгольмі. Стандартна вимога щодо проживання: 5 років · Подвійне громадянство: дозволене (із 2001) · Орган, що приймає рішення: Migrationsverket.', ['uhrStudyMaterial'])}
+        `,
       },
     },
 
     12: {
-      kicker: { en: 'Chapter 12 · Mock exam', sv: 'Kapitel 12 · Övningsprov' },
-      title: { en: 'Mock exam', sv: 'Övningsprov' },
-      title_em: { en: 'and current test status.', sv: 'och aktuell provstatus.' },
+      kicker: { en: 'Chapter 12 · Mock exam', sv: 'Kapitel 12 · Övningsprov', 'zh-Hans': '第12章 · 模拟考试', 'zh-Hant': '第12章 · 模擬考試', 'ar': 'الفصل 12 · الامتحان التجريبي', 'ckb': 'بەشی 12 · تاقیکردنەوەی هەڵسەنگاندن', 'fa': 'فصل 12 · آزمون آزمایشی', 'pl': 'Rozdział 12 · Egzamin próbny', 'so': 'Cutubka 12 · Imtixaan tijaabo ah', 'ti': 'ምዕራፍ 12 · ናይ ምክያድ ፈተና', 'tr': 'Bölüm 12 · Deneme sınavı', 'uk': 'Розділ 12 · Пробний іспит' },
+      title: { en: 'Mock exam', sv: 'Övningsprov', 'zh-Hans': '模拟考试', 'zh-Hant': '模擬考試', 'ar': 'الامتحان التجريبي', 'ckb': 'تاقیکردنەوەی هەڵسەنگاندن', 'fa': 'آزمون آزمایشی', 'pl': 'Egzamin próbny', 'so': 'Imtixaan tijaabo ah', 'ti': 'ናይ ምክያድ ፈተና', 'tr': 'Deneme sınavı', 'uk': 'Пробний іспит' },
+      title_em: { en: 'and current test status.', sv: 'och aktuell provstatus.', 'zh-Hans': '与当前考试状态。', 'zh-Hant': '與當前考試狀態。', 'ar': 'وحالة الاختبار الحالية.', 'ckb': 'و دۆخی ئێستای تاقیکردنەوە.', 'fa': 'و وضعیت کنونی آزمون.', 'pl': 'i aktualny status testu.', 'so': 'iyo xaaladda imtixaanka ee hadda jirta.', 'ti': 'ከምኡ\'ውን ህሉው ኩነታት ፈተና።', 'tr': 've mevcut sınav durumu.', 'uk': 'та поточний статус тесту.' },
       lede: {
         en: 'Use the mock exam for practice, but keep the practical test details tied to UHR and Migrationsverket.',
-        sv: 'Använd övningsprovet för övning, men håll praktiska provdetaljer knutna till UHR och Migrationsverket.',
-      },
+        sv: 'Använd övningsprovet för övning, men håll praktiska provdetaljer knutna till UHR och Migrationsverket.', 'zh-Hans': '用模拟考试来练习，但要把实际考试的细节以UHR和Migrationsverket为准。', 'zh-Hant': '用模擬考試來練習，但要把實際考試的細節以UHR和Migrationsverket為準。', 'ar': 'استخدم الامتحان التجريبي للتدرّب، لكن أبقِ تفاصيل الاختبار العملية مرتبطة بـ UHR و Migrationsverket.', 'ckb': 'تاقیکردنەوەی هەڵسەنگاندن بۆ مەشق بەکاربهێنە، بەڵام وردەکارییە کردارییەکانی تاقیکردنەوە بە UHR و Migrationsverket ـەوە بەستراوە بهێڵەرەوە.', 'fa': 'از آزمون آزمایشی برای تمرین استفاده کنید، اما جزئیات عملی آزمون را به UHR و Migrationsverket وابسته نگه دارید.', 'pl': 'Korzystaj z egzaminu próbnego do ćwiczeń, ale szczegóły praktyczne testu trzymaj powiązane z UHR i Migrationsverket.', 'so': 'Imtixaanka tijaabada ah u isticmaal tababar, laakiin faahfaahinta wax-ku-oolka ah ee imtixaanka ku xidh UHR iyo Migrationsverket.', 'ti': 'ነቲ ናይ ምክያድ ፈተና ንልምምድ ተጠቐመሉ፡ ንተግባራዊ ዝርዝራት ፈተና ግን ምስ UHRን Migrationsverketን ኣታሓሒዝካ ሓዞ።', 'tr': 'Deneme sınavını alıştırma için kullanın, ancak pratik sınav ayrıntılarını UHR ve Migrationsverket\'e bağlı tutun.', 'uk': 'Використовуйте пробний іспит для практики, але практичні деталі тесту тримайте прив\'язаними до UHR і Migrationsverket.' },
       body: {
         en: `
           <h2>Current official status</h2>
@@ -2104,17 +2431,146 @@
           </ol>
           <div class="ebook__factbox"><h4>Aktuella källnoter</h4><p>Källor hämtade 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
+        'zh-Hans': `<h2>当前官方状态</h2>
+          <p>UHR表示，首场公民知识考试将于2026年8月15日在斯德哥尔摩举行。需要一封Migrationsverket的信函：只有收到Migrationsverket来信的人才能报名。</p>
+          <p>名额有限。8月这场考试免费，UHR表示参加者将有充裕的时间。</p>
+          <h2>UHR尚待公布的实际细节</h2>
+          <p>UHR尚未公布确切的时间和地点。请使用本应用进行非官方练习，并以UHR和Migrationsverket为准，获取影响你自身情况的指示。</p>
+          <h2>现在如何备考</h2>
+          <ol>
+            <li>把这本电子书从头到尾至少读一遍。用「练习」标签页反复操练你容易忘记的内容。</li>
+            <li>对于每个你答错两次的知识点，把它写在卡片上贴到冰箱上。难为情是最好的老师。</li>
+            <li>在考试前一周快速浏览官方的《<em>Sverige i fokus</em>》PDF（可从UHR免费下载）。不要试图死记硬背。</li>
+            <li>把这里的模拟考试当作混合主题回忆的演练，然后重新复习你失分的章节。</li>
+          </ol>
+          <div class="ebook__factbox"><h4>当前来源说明</h4><p>资料获取于2026-05-19：${officialTestSourceLinks()}</p></div>`,
+        'zh-Hant': `<h2>當前官方狀態</h2>
+          <p>UHR表示，首場公民知識考試將於2026年8月15日在斯德哥爾摩舉行。需要一封Migrationsverket的信函：只有收到Migrationsverket來信的人才能報名。</p>
+          <p>名額有限。8月這場考試免費，UHR表示參加者將有充裕的時間。</p>
+          <h2>UHR尚待公布的實際細節</h2>
+          <p>UHR尚未公布確切的時間和地點。請使用本應用進行非官方練習，並以UHR和Migrationsverket為準，獲取影響你自身情況的指示。</p>
+          <h2>現在如何備考</h2>
+          <ol>
+            <li>把這本電子書從頭到尾至少讀一遍。用「練習」標籤頁反覆操練你容易忘記的內容。</li>
+            <li>對於每個你答錯兩次的知識點，把它寫在卡片上貼到冰箱上。難為情是最好的老師。</li>
+            <li>在考試前一週快速瀏覽官方的《<em>Sverige i fokus</em>》PDF（可從UHR免費下載）。不要試圖死記硬背。</li>
+            <li>把這裡的模擬考試當作混合主題回憶的演練，然後重新複習你失分的章節。</li>
+          </ol>
+          <div class="ebook__factbox"><h4>當前來源說明</h4><p>資料獲取於2026-05-19：${officialTestSourceLinks()}</p></div>`,
+        'ar': `<h2>الحالة الرسمية الحالية</h2>
+          <p>يقول UHR (مجلس القبول الجامعي) إن أول جلسة لاختبار المعرفة المدنية ستُعقد في 15 أغسطس 2026 في ستوكهولم. يُشترط وجود خطاب من Migrationsverket (وكالة الهجرة): فقط من يتلقون خطابًا من Migrationsverket يمكنهم التسجيل.</p>
+          <p>المقاعد محدودة. جلسة أغسطس مجانية، ويقول UHR إن المشاركين سيُمنحون وقتًا وافرًا.</p>
+          <h2>تفاصيل عملية لم يصدرها UHR بعد</h2>
+          <p>لم ينشر UHR بعد الوقت والمكان بالضبط. استخدم هذا التطبيق للتدرّب غير الرسمي، واستخدم UHR و Migrationsverket للحصول على التعليمات التي تخص حالتك الخاصة.</p>
+          <h2>كيف تدرس الآن</h2>
+          <ol>
+            <li>اقرأ هذا الكتاب الإلكتروني من أوله إلى آخره مرة واحدة على الأقل. استخدم تبويب التدريب لتثبيت ما تنساه.</li>
+            <li>كل معلومة تخطئ فيها مرتين، اكتبها على بطاقة وألصقها على الثلاجة. الإحراج معلّم رائع.</li>
+            <li>تصفّح ملف <em>السويد في بؤرة التركيز</em> (Sverige i fokus) الرسمي (تنزيل مجاني من UHR) في الأسبوع السابق للاختبار. لا تحاول حفظه عن ظهر قلب.</li>
+            <li>استخدم الامتحان التجريبي هنا كبروفة لاستدعاء مواضيع مختلطة، ثم عُد إلى الفصول التي فاتتك فيها نقاط.</li>
+          </ol>
+          <div class="ebook__factbox"><h4>ملاحظات المصادر الحالية</h4><p>تم الاطلاع على المصادر في 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
+        'ckb': `<h2>دۆخی فەرمیی ئێستا</h2>
+          <p>UHR (ئەنجوومەنی وەرگرتنی زانکۆیی) دەڵێت یەکەم دانیشتنی تاقیکردنەوەی زانیاریی شارستانی لە 15 ی ئابی 2026 لە ستۆکهۆڵم بەڕێوەدەچێت. نامەیەک لە Migrationsverket (ئاژانسی کۆچ) پێویستە: تەنها ئەو کەسانەی نامەیەک لە Migrationsverket وەردەگرن دەتوانن خۆیان تۆمار بکەن.</p>
+          <p>کورسییەکان سنووردارن. دانیشتنی ئاب بەخۆڕاییە، و UHR دەڵێت بەشداربووان کاتێکی بەرفراوانیان پێدەدرێت.</p>
+          <h2>وردەکارییە کردارییەکان کە هێشتا UHR بڵاوی نەکردوونەتەوە</h2>
+          <p>UHR هێشتا کات و شوێنی ورد بڵاو نەکردووەتەوە. ئەم ئەپە بۆ مەشقی نافەرمی بەکاربهێنە، و UHR و Migrationsverket بۆ ئەو ڕێنماییانە بەکاربهێنە کە کاریگەرییان لەسەر کەیسی خۆت هەیە.</p>
+          <h2>چۆن ئێستا بخوێنیت</h2>
+          <ol>
+            <li>ئەم ئەلیکترۆنیکیە کتێبە لانیکەم جارێک لە سەرەتاوە بۆ کۆتایی بخوێنەرەوە. تابی مەشق بەکاربهێنە بۆ جێگیرکردنی ئەوەی لەبیرت دەچێت.</li>
+            <li>هەر زانیارییەک دووجار هەڵەی تێدا دەکەیت، لەسەر کارتێک بینووسە و بیلکێنە بە سەلاجەوە. شەرمەزاری مامۆستایەکی نایابە.</li>
+            <li>هەفتەی پێش تاقیکردنەوە، فایلی فەرمیی <em>سوید لە چاودێریدا</em> (Sverige i fokus) (داگرتنی بەخۆڕایی لە UHR) سەرپێی بخوێنەرەوە. هەوڵ مەدە لەبەری بکەیت.</li>
+            <li>تاقیکردنەوەی هەڵسەنگاندنی ئێرە وەک ڕاهێنانێک بۆ بیرهێنانەوەی بابەتی تێکەڵ بەکاربهێنە، پاشان بگەڕێرەوە بۆ ئەو بەشانەی خاڵت تێیاندا لەدەست داوە.</li>
+          </ol>
+          <div class="ebook__factbox"><h4>تێبینییەکانی سەرچاوەی ئێستا</h4><p>سەرچاوەکان لە 2026-05-19 سەردان کران: ${officialTestSourceLinks()}</p></div>`,
+        'fa': `<h2>وضعیت رسمی کنونی</h2>
+          <p>UHR (شورای پذیرش دانشگاهی) می‌گوید نخستین جلسه آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار خواهد شد. نامه‌ای از Migrationsverket (اداره مهاجرت) لازم است: تنها کسانی که از Migrationsverket نامه دریافت می‌کنند می‌توانند ثبت‌نام کنند.</p>
+          <p>صندلی‌ها محدودند. جلسه اوت رایگان است، و UHR می‌گوید شرکت‌کنندگان وقت کافی خواهند داشت.</p>
+          <h2>جزئیات عملی که هنوز از سوی UHR منتشر نشده</h2>
+          <p>UHR هنوز زمان و مکان دقیق را منتشر نکرده است. از این برنامه برای تمرین غیررسمی استفاده کنید، و برای دستورالعمل‌هایی که بر پرونده خودتان اثر می‌گذارد به UHR و Migrationsverket مراجعه کنید.</p>
+          <h2>چگونه اکنون مطالعه کنیم</h2>
+          <ol>
+            <li>این کتاب الکترونیکی را دست‌کم یک‌بار از ابتدا تا انتها بخوانید. از زبانه تمرین برای مرور آنچه فراموش می‌کنید استفاده کنید.</li>
+            <li>هر واقعیتی را که دو بار اشتباه می‌کنید، روی کارتی بنویسید و به یخچال بچسبانید. خجالت معلم بزرگی است.</li>
+            <li>هفته پیش از آزمون، فایل رسمی <em>سوئد در کانون توجه</em> (Sverige i fokus) را (دانلود رایگان از UHR) مرور کنید. سعی نکنید آن را حفظ کنید.</li>
+            <li>از آزمون آزمایشی این‌جا به‌عنوان تمرینی برای یادآوری موضوعات ترکیبی استفاده کنید، سپس به فصل‌هایی که در آن‌ها امتیاز از دست داده‌اید برگردید.</li>
+          </ol>
+          <div class="ebook__factbox"><h4>ملاحظات منابع کنونی</h4><p>منابع در 2026-05-19 بازدید شدند: ${officialTestSourceLinks()}</p></div>`,
+        'pl': `<h2>Aktualny status oficjalny</h2>
+          <p>UHR podaje, że pierwszy egzamin z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Wymagane jest pismo z Migrationsverket: zapisać się mogą tylko osoby, które otrzymają pismo od Migrationsverket.</p>
+          <p>Liczba miejsc jest ograniczona. Sierpniowy egzamin jest bezpłatny, a UHR podaje, że uczestnicy będą mieli dużo czasu.</p>
+          <h2>Szczegóły praktyczne oczekiwane od UHR</h2>
+          <p>UHR nie opublikował jeszcze dokładnego czasu i miejsca. Korzystaj z tej aplikacji do nieoficjalnych ćwiczeń, a w sprawie instrukcji dotyczących twojej własnej sprawy korzystaj z UHR i Migrationsverket.</p>
+          <h2>Jak się teraz uczyć</h2>
+          <ol>
+            <li>Przeczytaj ten e-book od początku do końca przynajmniej raz. Korzystaj z zakładki Ćwiczenia, aby przećwiczyć to, co zapominasz.</li>
+            <li>Każdy fakt, który pomylisz dwa razy, zapisz na kartce i przyklej na lodówce. Zawstydzenie to świetny nauczyciel.</li>
+            <li>Przejrzyj oficjalny PDF <em>Sverige i fokus</em> (bezpłatny do pobrania z UHR) w tygodniu przed testem. Nie próbuj uczyć się go na pamięć.</li>
+            <li>Wykorzystaj tutejszy egzamin próbny jako próbę przypominania sobie zagadnień z różnych tematów, a następnie wróć do rozdziałów, w których straciłeś punkty.</li>
+          </ol>
+          <div class="ebook__factbox"><h4>Aktualne uwagi o źródłach</h4><p>Źródła dostępne 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
+        'so': `<h2>Xaaladda rasmiga ah ee hadda</h2>
+          <p>UHR waxay sheegaysaa in fadhiga ugu horreeya ee aqoonta muwaadinnimada uu noqon doono 15 Ogosto 2026 magaalada Stockholm. Waxaa loo baahan yahay warqad ka socota Migrationsverket: kaliya dadka hela warqad ka timid Migrationsverket ayaa is-diiwaangelin kara.</p>
+          <p>Kuraasta way xaddidan yihiin. Fadhiga Ogosto waa lacag la'aan, UHR waxay sheegaysaa in ka qaybgalayaashu heli doonaan waqti badan.</p>
+          <h2>Faahfaahinta wax-ku-oolka ah ee laga sugayo UHR</h2>
+          <p>UHR weli ma daabacin waqtiga iyo goobta saxda ah. Barnaamijkan u isticmaal tababar aan rasmi ahayn, oona u isticmaal UHR iyo Migrationsverket tilmaamaha saameeya kiiskaaga gaarka ah.</p>
+          <h2>Sida loo barto hadda</h2>
+          <ol>
+            <li>Akhri buug-elegtarooniggan bilow ilaa dhammaad ugu yaraan hal mar. Isticmaal tabka Tababarka si aad u celcelin u samayso waxa aad illowdo.</li>
+            <li>Xaqiiqo kasta oo aad laba jeer khaldato, ku qor kaadh oona ku dheji qaboojiyaha. Ceebtu waa macallin fiican.</li>
+            <li>Si dhakhso ah u eeg PDF-ka rasmiga ah ee <em>Sverige i fokus</em> (oo bilaash looga soo dejin karo UHR) toddobaadka ka horreeya imtixaanka. Ha isku dayin inaad xafiddo.</li>
+            <li>Isticmaal imtixaanka tijaabada ah ee halkan sidii layli xusuus mawduucyo isku qasan, ka dibna dib u eeg cutubyada aad dhibcaha ka lumisay.</li>
+          </ol>
+          <div class="ebook__factbox"><h4>Xusuusyada ilaha hadda jira</h4><p>Ilaha la helay 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
+        'ti': `<h2>ህሉው ወግዓዊ ኩነታት</h2>
+          <p>UHR እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ከም ዝካየድ ይገልጽ። ካብ Migrationsverket ዝመጽእ ደብዳበ የድሊ፦ ካብ Migrationsverket ደብዳበ ዝተቐበሉ ሰባት ጥራይ እዮም ክምዝገቡ ዝኽእሉ።</p>
+          <p>ቦታታት ውሱን እዩ። እቲ ናይ ነሓሰ ፈተና ብናጻ እዩ፡ UHR ድማ ተሳተፍቲ ብዙሕ ግዜ ከም ዝህልዎም ይገልጽ።</p>
+          <h2>ካብ UHR ዝጽበዩ ተግባራዊ ዝርዝራት</h2>
+          <p>UHR ነቲ ልክዕ ግዜን ቦታን ጌና ኣይዘርግሐን። ነዚ መተግበሪ ንዘይወግዓዊ ልምምድ ተጠቐመሉ፡ ንኩነታት ጉዳይካ ዝምልከት መምርሒታት ድማ ካብ UHRን Migrationsverketን ተጠቐም።</p>
+          <h2>ሕጂ ብኸመይ ከም እትመሃር</h2>
+          <ol>
+            <li>ነዚ ኤለክትሮኒካዊ መጽሓፍ እንተወሓደ ሓደ ግዜ ካብ መጀመርታ ክሳብ መወዳእታ ኣንብቦ። ነቲ እትርስዖ ንምልምማድ ነቲ ናይ ልምምድ ታብ ተጠቐመሉ።</li>
+            <li>ክልተ ግዜ ንዝተጋገኻዮ ነፍሲ ወከፍ ሓቂ ኣብ ካርድ ጽሓፎ ኣብ ፍሪጅ ድማ ለጥፎ። ሕፍረት ጽቡቕ መምህር እዩ።</li>
+            <li>ቅድሚ ፈተና ኣብ ዘላ ሰሙን ነቲ ወግዓዊ <em>Sverige i fokus</em> PDF (ካብ UHR ብናጻ ዝረኽብ) ብኣጋር ኣንብቦ። ብቓል ክትሕዞ ኣይትፈትን።</li>
+            <li>ነዚ ኣብዚ ዘሎ ናይ ምክያድ ፈተና ከም ናይ ዝተሓዋወሰ ኣርእስቲ ምዝካር ልምምድ ተጠቐመሉ፡ ብድሕሪኡ ነቶም ነጥቢ ዝሰኣንካሎም ምዕራፋት ተመለሰሎም።</li>
+          </ol>
+          <div class="ebook__factbox"><h4>ህሉዋት ናይ ምንጪ መዘኻኸሪታት</h4><p>ምንጭታት ዝተረኽቡ 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
+        'tr': `<h2>Mevcut resmi durum</h2>
+          <p>UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026'da Stockholm'de yapılacağını söylüyor. Bir Migrationsverket mektubu gereklidir: yalnızca Migrationsverket'ten mektup alan kişiler kaydolabilir.</p>
+          <p>Yerler sınırlıdır. Ağustos oturumu ücretsizdir ve UHR, katılımcıların bol zamana sahip olacağını söylüyor.</p>
+          <h2>UHR'den beklenen pratik ayrıntılar</h2>
+          <p>UHR henüz tam zamanı ve yeri yayınlamadı. Resmi olmayan alıştırma için bu uygulamayı kullanın ve kendi durumunuzu etkileyen talimatlar için UHR ve Migrationsverket'i kullanın.</p>
+          <h2>Şimdi nasıl çalışmalı</h2>
+          <ol>
+            <li>Bu e-kitabı en az bir kez baştan sona okuyun. Unuttuklarınızı pekiştirmek için Alıştırma sekmesini kullanın.</li>
+            <li>İki kez yanlış yaptığınız her bilgi için bir kart yazın ve buzdolabına yapıştırın. Utanmak harika bir öğretmendir.</li>
+            <li>Testten önceki hafta resmi <em>Sverige i fokus</em> PDF'sini (UHR'den ücretsiz indirme) göz gezdirin. Onu ezberlemeye çalışmayın.</li>
+            <li>Buradaki deneme sınavını karışık konulu hatırlama provası olarak kullanın, ardından puan kaybettiğiniz bölümlere geri dönün.</li>
+          </ol>
+          <div class="ebook__factbox"><h4>Mevcut kaynak notları</h4><p>Kaynaklara erişim tarihi 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
+        'uk': `<h2>Поточний офіційний статус</h2>
+          <p>UHR повідомляє, що перше складання іспиту з громадянознавства відбудеться 15 серпня 2026 року в Стокгольмі. Потрібен лист від Migrationsverket: зареєструватися можуть лише особи, які отримають лист від Migrationsverket.</p>
+          <p>Кількість місць обмежена. Серпневе складання безкоштовне, і UHR повідомляє, що учасники матимуть достатньо часу.</p>
+          <h2>Практичні деталі, які очікуються від UHR</h2>
+          <p>UHR ще не оприлюднив точний час і місце. Використовуйте цей застосунок для неофіційної практики, а щодо інструкцій, які стосуються вашої власної справи, звертайтеся до UHR і Migrationsverket.</p>
+          <h2>Як вчитися зараз</h2>
+          <ol>
+            <li>Прочитайте цю електронну книгу від початку до кінця принаймні один раз. Використовуйте вкладку «Практика», щоб опрацьовувати те, що забуваєте.</li>
+            <li>Кожен факт, у якому ви двічі помилилися, запишіть на картці та прикріпіть на холодильнику. Збентеження — чудовий учитель.</li>
+            <li>Перегляньте офіційний PDF <em>Sverige i fokus</em> (безкоштовне завантаження з UHR) за тиждень до тесту. Не намагайтеся вивчити його напам'ять.</li>
+            <li>Використовуйте тутешній пробний іспит як репетицію пригадування матеріалу з різних тем, а потім поверніться до розділів, де ви втратили бали.</li>
+          </ol>
+          <div class="ebook__factbox"><h4>Поточні примітки про джерела</h4><p>Джерела переглянуто 2026-05-19: ${officialTestSourceLinks()}</p></div>`,
       },
     },
 
     13: {
-      kicker: { en: 'Chapter 13 · Traditions', sv: 'Kapitel 13 · Traditioner' },
-      title: { en: 'Traditions,', sv: 'Traditioner,' },
-      title_em: { en: 'holidays, and change.', sv: 'högtider och förändring.' },
+      kicker: { en: 'Chapter 13 · Traditions', sv: 'Kapitel 13 · Traditioner', 'zh-Hans': '第13章 · 传统', 'zh-Hant': '第13章 · 傳統', 'ar': 'الفصل 13 · التقاليد', 'ckb': 'بەشی 13 · نەریتەکان', 'fa': 'فصل 13 · سنت‌ها', 'pl': 'Rozdział 13 · Tradycje', 'so': 'Cutubka 13 · Caadooyinka', 'ti': 'ምዕራፍ 13 · ልምድታት', 'tr': 'Bölüm 13 · Gelenekler', 'uk': 'Розділ 13 · Традиції' },
+      title: { en: 'Traditions,', sv: 'Traditioner,', 'zh-Hans': '传统、', 'zh-Hant': '傳統、', 'ar': 'التقاليد،', 'ckb': 'نەریتەکان،', 'fa': 'سنت‌ها،', 'pl': 'Tradycje,', 'so': 'Caadooyinka,', 'ti': 'ልምድታት፡', 'tr': 'Gelenekler,', 'uk': 'Традиції,' },
+      title_em: { en: 'holidays, and change.', sv: 'högtider och förändring.', 'zh-Hans': '节日与变迁。', 'zh-Hant': '節日與變遷。', 'ar': 'والأعياد، والتغيير.', 'ckb': 'جەژنەکان، و گۆڕان.', 'fa': 'تعطیلات، و تغییر.', 'pl': 'święta i zmiana.', 'so': 'fasaxyada, iyo isbeddelka.', 'ti': 'በዓላትን ለውጥን።', 'tr': 'tatiller ve değişim.', 'uk': 'свята та зміни.' },
       lede: {
         en: 'Swedish traditions are not museum pieces. Some are old, some are borrowed, and most are just ways people mark the year together.',
-        sv: 'Svenska traditioner är inte museiföremål. Vissa är gamla, vissa har kommit hit senare, och de flesta hjälper människor att känna igen året tillsammans.',
-      },
+        sv: 'Svenska traditioner är inte museiföremål. Vissa är gamla, vissa har kommit hit senare, och de flesta hjälper människor att känna igen året tillsammans.', 'zh-Hans': '瑞典的传统并非陈列于博物馆中的展品。有些古老，有些是外来的，而大多数只是人们一起标记岁时的方式。', 'zh-Hant': '瑞典的傳統並非陳列於博物館中的展品。有些古老，有些是外來的，而大多數只是人們一起標記歲時的方式。', 'ar': 'التقاليد السويدية ليست قطعًا متحفية. بعضها قديم، وبعضها مستعار، ومعظمها مجرد طرق يحتفي بها الناس بالعام معًا.', 'ckb': 'نەریتە سویدییەکان پارچەی مۆزەخانە نین. هەندێکیان کۆنن، هەندێکیان وەرگیراون، و زۆربەیان تەنها ڕێگان بۆ ئەوەی خەڵک پێکەوە ساڵ نیشانە بکەن.', 'fa': 'سنت‌های سوئدی اشیای موزه‌ای نیستند. برخی کهن‌اند، برخی وام‌گرفته‌شده، و بیشترشان فقط راه‌هایی‌اند که مردم با هم سال را جشن می‌گیرند.', 'pl': 'Szwedzkie tradycje nie są muzealnymi eksponatami. Niektóre są stare, niektóre zapożyczone, a większość to po prostu sposoby, w jakie ludzie wspólnie świętują rok.', 'so': 'Caadooyinka Iswidhan maaha walxo matxaf. Qaar way duug yihiin, qaar waa la amaahday, badidooduna waa kaliya siyaabo dadku ay si wadajir ah u xuseeyaan sannadka.', 'ti': 'ሽወደናዊ ልምድታት ናይ ቤተ-መዘክር ኣቕሑ ኣይኮኑን። ገሊኦም ኣረጊት እዮም፡ ገሊኦም ዝተለቅሑ እዮም፡ መብዛሕትኦም ድማ ሰባት ነታ ዓመት ብሓባር ዘኽብሩላ መንገድታት እዮም።', 'tr': 'İsveç gelenekleri müze eşyaları değildir. Bazıları eski, bazıları ödünç alınmış, çoğu ise sadece insanların yılı birlikte kutlama yollarıdır.', 'uk': 'Шведські традиції — не музейні експонати. Деякі давні, деякі запозичені, а більшість — це просто способи, якими люди разом відзначають рік.' },
       body: {
         en: `
           <h2>Traditions change</h2>
@@ -2152,6 +2608,246 @@
           'Nationaldag: 6 juni · Valborg: 30 april · Midsommarafton: fredag 19-25 juni · Lucia: 13 december · Julafton: 24 december.',
           'Läs kapitlet tillsammans med övningen för traditioner och högtider. Datum, handlingar och vad högtiderna betyder är vanligare än detaljfrågor om exakt hur varje familj firar.',
         ),
+        'zh-Hans': `<h2>传统会变迁</h2>
+          <p>传统是一个群体共有的习惯：一个节日、一首歌、食物、服装、一种仪式，或一种聚会的方式。传统可以古老，却不必凝固不变。人们迁徙，家庭融合，新的习俗也成为日常瑞典生活的一部分。</p>
+          <p>这正是为什么本章并不是一份关于「真正的」与「不真正的」瑞典特性的清单。它是一份常见参照点的日历：那些出现在学校、工作、公共生活和公民学习材料中的节日与仪式。</p>
+          <h2>国庆日与公民仪式</h2>
+          <p>瑞典的国庆日是6月6日。它与古斯塔夫·瓦萨（Gustav Vasa，瑞典国王）于1523年当选为国王以及1809年的《政府组织法》（Instrument of Government）相关。如今人们升旗、发表演讲，许多市镇会在仪式上欢迎新的瑞典公民。</p>
+          <h2>春与夏</h2>
+          <ul>
+            <li><b>复活节</b>（Easter）落在3月或4月，源于基督教，不过许多人把它当作家庭与春季的节日来庆祝。</li>
+            <li><b>瓦尔普吉斯之夜</b>（Walpurgis Night），4月30日，通常意味着篝火和迎接春天的歌声。</li>
+            <li><b>五一</b>（First of May）是国际劳动节，以游行和政治演讲来标记。</li>
+            <li><b>仲夏前夜</b>（Midsummer Eve）总是在6月19日至25日之间的一个星期五，人们在户外聚会，戴花环、立仲夏柱，享用鲱鱼、新土豆和草莓。</li>
+          </ul>
+          <h2>秋与冬</h2>
+          <ul>
+            <li><b>诸圣节</b>（All Saints' Day）是许多人在墓前点燃蜡烛、缅怀已故亲友的日子。</li>
+            <li><b>将临期</b>（Advent）是圣诞节前的四个星期日。许多家庭会使用将临期蜡烛、星灯或日历。</li>
+            <li><b>露西亚节</b>（Lucia），12月13日，是关于一年中最黑暗时节里的光的节日，常伴有游行、烛光和歌唱。</li>
+            <li><b>圣诞节</b>源于基督教，同时也是一个重要的家庭节日。在瑞典，主要的庆祝通常是在平安夜（Christmas Eve），即12月24日。</li>
+            <li><b>除夕</b>（New Year's Eve），12月31日，人们通常以晚宴、派对和午夜的烟花来庆祝。</li>
+          </ul>
+          <h2>新的传统</h2>
+          <p>移民为瑞典公共生活增添了更多可见的传统。开斋节（Eid al-Fitr）、诺鲁孜节（Nouruz）、库尔德新年（Newroz）、排灯节（Diwali）以及其他庆典，可能出现在学校、职场、社区和城市活动中。其中重要的模式很简单：传统可以迁移并适应。</p>
+          ${ebookFactBox('zh-Hans', null, '国庆日：6月6日 · 瓦尔普吉斯之夜：4月30日 · 仲夏前夜：6月19日至25日之间的星期五 · 露西亚节：12月13日 · 平安夜：12月24日。', ['uhrStudyMaterial'])}
+        `,
+        'zh-Hant': `<h2>傳統會變遷</h2>
+          <p>傳統是一個群體共有的習慣：一個節日、一首歌、食物、服裝、一種儀式，或一種聚會的方式。傳統可以古老，卻不必凝固不變。人們遷徙，家庭融合，新的習俗也成為日常瑞典生活的一部分。</p>
+          <p>這正是為什麼本章並不是一份關於「真正的」與「不真正的」瑞典特性的清單。它是一份常見參照點的日曆：那些出現在學校、工作、公共生活和公民學習材料中的節日與儀式。</p>
+          <h2>國慶日與公民儀式</h2>
+          <p>瑞典的國慶日是6月6日。它與古斯塔夫·瓦薩（Gustav Vasa，瑞典國王）於1523年當選為國王以及1809年的《政府組織法》（Instrument of Government）相關。如今人們升旗、發表演講，許多市鎮會在儀式上歡迎新的瑞典公民。</p>
+          <h2>春與夏</h2>
+          <ul>
+            <li><b>復活節</b>（Easter）落在3月或4月，源於基督教，不過許多人把它當作家庭與春季的節日來慶祝。</li>
+            <li><b>瓦爾普吉斯之夜</b>（Walpurgis Night），4月30日，通常意味著篝火和迎接春天的歌聲。</li>
+            <li><b>五一</b>（First of May）是國際勞動節，以遊行和政治演講來標記。</li>
+            <li><b>仲夏前夜</b>（Midsummer Eve）總是在6月19日至25日之間的一個星期五，人們在戶外聚會，戴花環、立仲夏柱，享用鯡魚、新馬鈴薯和草莓。</li>
+          </ul>
+          <h2>秋與冬</h2>
+          <ul>
+            <li><b>諸聖節</b>（All Saints' Day）是許多人在墓前點燃蠟燭、緬懷已故親友的日子。</li>
+            <li><b>將臨期</b>（Advent）是聖誕節前的四個星期日。許多家庭會使用將臨期蠟燭、星燈或日曆。</li>
+            <li><b>露西亞節</b>（Lucia），12月13日，是關於一年中最黑暗時節裡的光的節日，常伴有遊行、燭光和歌唱。</li>
+            <li><b>聖誕節</b>源於基督教，同時也是一個重要的家庭節日。在瑞典，主要的慶祝通常是在平安夜（Christmas Eve），即12月24日。</li>
+            <li><b>除夕</b>（New Year's Eve），12月31日，人們通常以晚宴、派對和午夜的煙花來慶祝。</li>
+          </ul>
+          <h2>新的傳統</h2>
+          <p>移民為瑞典公共生活增添了更多可見的傳統。開齋節（Eid al-Fitr）、諾魯孜節（Nouruz）、庫爾德新年（Newroz）、排燈節（Diwali）以及其他慶典，可能出現在學校、職場、社區和城市活動中。其中重要的模式很簡單：傳統可以遷移並適應。</p>
+          ${ebookFactBox('zh-Hant', null, '國慶日：6月6日 · 瓦爾普吉斯之夜：4月30日 · 仲夏前夜：6月19日至25日之間的星期五 · 露西亞節：12月13日 · 平安夜：12月24日。', ['uhrStudyMaterial'])}
+        `,
+        'ar': `<h2>التقاليد تتغير</h2>
+          <p>التقليد عادة يتشاركها جماعة: عيد، أو أغنية، أو طعام، أو ملابس، أو طقس، أو طريقة للتجمّع. يمكن للتقاليد أن تكون قديمة دون أن تكون متجمدة. ينتقل الناس، وتختلط العائلات، وتصبح عادات جديدة جزءًا من السويد اليومية.</p>
+          <p>لهذا السبب ليس هذا الفصل قائمة بما هو "حقيقي" و"غير حقيقي" من السويدية. إنه تقويم لنقاط مرجعية شائعة: الأعياد والطقوس التي تظهر في المدرسة، والعمل، والحياة العامة، ومواد الدراسة المدنية.</p>
+          <h2>اليوم الوطني والمراسم المدنية</h2>
+          <p>اليوم الوطني للسويد هو 6 يونيو. وهو مرتبط بانتخاب Gustav Vasa (غوستاف فاسا) ملكًا عام 1523 وصك الحكم لعام 1809. اليوم تُرفع الأعلام، وتُلقى الخطب، وترحّب بلديات كثيرة بالمواطنين السويديين الجدد في مراسم.</p>
+          <h2>الربيع والصيف</h2>
+          <ul>
+            <li><b>عيد الفصح</b> يقع في مارس أو أبريل وله جذور مسيحية، رغم أن كثيرين يحتفلون به كعيد عائلي وربيعي.</li>
+            <li><b>ليلة Walpurgis (فالبورغيس)</b>، 30 أبريل، تعني غالبًا نيران المحرقات والأغاني ترحيبًا بالربيع.</li>
+            <li><b>الأول من مايو</b> هو اليوم العالمي للعمال، يُحتفى به بمظاهرات وخطب سياسية.</li>
+            <li><b>عشية Midsummer (منتصف الصيف)</b> تكون دائمًا يوم جمعة بين 19 و25 يونيو، مع تجمعات في الهواء الطلق، وأكاليل من الزهور، وعمود منتصف الصيف، والرنجة، والبطاطس الجديدة، والفراولة.</li>
+          </ul>
+          <h2>الخريف والشتاء</h2>
+          <ul>
+            <li><b>عيد جميع القديسين</b> هو حين يُشعل كثيرون الشموع عند القبور لتذكّر الأقارب والأصدقاء الذين رحلوا.</li>
+            <li><b>Advent (زمن المجيء)</b> هو الآحاد الأربعة السابقة ليوم عيد الميلاد. تستخدم بيوت كثيرة شموع Advent، أو النجوم، أو التقاويم.</li>
+            <li><b>Lucia (لوسيا)</b>، 13 ديسمبر، تتعلق بالضوء في أحلك أيام السنة، غالبًا بمواكب، وشموع، وغناء.</li>
+            <li><b>عيد الميلاد</b> له جذور مسيحية وهو أيضًا عيد عائلي كبير. في السويد يكون الاحتفال الرئيسي عادةً عشية عيد الميلاد، 24 ديسمبر.</li>
+            <li><b>ليلة رأس السنة</b>، 31 ديسمبر، يُحتفى بها عادةً بالعشاء، والحفلات، والألعاب النارية عند منتصف الليل.</li>
+          </ul>
+          <h2>تقاليد جديدة</h2>
+          <p>أضافت الهجرة تقاليد أكثر ظهورًا إلى الحياة العامة السويدية. قد تظهر عيد الفطر، ونوروز، ونوروز الكردي (Newroz)، وديوالي، واحتفالات أخرى في المدارس، وأماكن العمل، والأحياء، وفعاليات المدن. النمط المهم بسيط: التقاليد يمكنها أن تنتقل وتتكيف.</p>
+          ${ebookFactBox('ar', null, 'اليوم الوطني: 6 يونيو · ليلة Walpurgis: 30 أبريل · عشية Midsummer: الجمعة بين 19 و25 يونيو · Lucia: 13 ديسمبر · عشية عيد الميلاد: 24 ديسمبر.', ['uhrStudyMaterial'])}
+        `,
+        'ckb': `<h2>نەریتەکان دەگۆڕێن</h2>
+          <p>نەریت ئەو خووەیە کە کۆمەڵێک تێیدا هاوبەشن: جەژنێک، گۆرانییەک، خواردن، جل، ئاینێک، یان ڕێگایەک بۆ کۆبوونەوە. نەریتەکان دەتوانن کۆن بن بەبێ ئەوەی بەستوو بن. خەڵک دەجووڵێن، خێزانەکان تێکەڵ دەبن، و خووە نوێیەکان دەبنە بەشێک لە سویدی ڕۆژانە.</p>
+          <p>لەبەر ئەوەیە ئەم بەشە لیستێک نییە لە "ڕاستەقینە" و "نا ڕاستەقینە"ی سویدیبوون. ساڵنامەیەکە لە خاڵە سەرچاوە باوەکان: ئەو جەژن و ئاینانەی لە قوتابخانە، کار، ژیانی گشتی، و ماددەی خوێندنی شارستانیدا دەردەکەون.</p>
+          <h2>ڕۆژی نیشتمانی و مەراسیمە شارستانییەکان</h2>
+          <p>ڕۆژی نیشتمانیی سوید 6 ی حوزەیرانە. پەیوەستە بە هەڵبژاردنی Gustav Vasa (گوستاڤ ڤاسا) وەک پاشا لە ساڵی 1523 و بەڵگەی حوکمڕانیی 1809. ئەمڕۆ ئاڵاکان بەرز دەکرێنەوە، وتارەکان دەخوێنرێنەوە، و زۆرێک لە شارەوانییەکان بەخێرهاتنی هاوڵاتیانی نوێی سویدی دەکەن لە مەراسیمەکاندا.</p>
+          <h2>بەهار و هاوین</h2>
+          <ul>
+            <li><b>جەژنی هەستانەوە</b> لە مارس یان ئاپریل دەکەوێت و ڕەگی مەسیحیی هەیە، هەرچەندە زۆر کەس وەک جەژنێکی خێزانی و بەهاری ئاهەنگی بۆ دەگێڕن.</li>
+            <li><b>شەوی Walpurgis (ڤالپورگیس)</b>، 30 ی ئاپریل، زۆرجار مانای ئاگری گەورە و گۆرانی بۆ بەخێرهاتنی بەهارە.</li>
+            <li><b>یەکی مایس</b> ڕۆژی جیهانیی کرێکارانە، کە بە خۆپیشاندان و وتاری سیاسی نیشانە دەکرێت.</li>
+            <li><b>شەوی Midsummer (ناوەڕاستی هاوین)</b> هەمیشە ڕۆژی هەینییەکە لە نێوان 19 و 25 ی حوزەیران، لەگەڵ کۆبوونەوەی دەرەوە، تاجی گوڵ، کۆڵەکەی ناوەڕاستی هاوین، ماسیی ڕەنگە، پەتاتەی نوێ، و فڕاولە.</li>
+          </ul>
+          <h2>پاییز و زستان</h2>
+          <ul>
+            <li><b>ڕۆژی هەموو پیرۆزان</b> ئەو کاتەیە کە زۆر کەس مۆم لەسەر گۆڕەکان دادەگیرسێنن بۆ بیرکردنەوەی ئەو خزم و هاوڕێیانەی کۆچیان کردووە.</li>
+            <li><b>Advent (کاتی هاتن)</b> چوار یەکشەممەی پێش ڕۆژی کریسمسە. زۆر ماڵ مۆمی Advent، ئەستێرە، یان ساڵنامە بەکاردێنن.</li>
+            <li><b>Lucia (لوسیا)</b>، 13 ی دیسەمبەر، دەربارەی ڕووناکییە لە تاریکترین بەشی ساڵدا، زۆرجار لەگەڵ ڕیزی ڕۆیشتن، مۆم، و گۆرانی.</li>
+            <li><b>کریسمس</b> ڕەگی مەسیحیی هەیە و هەروەها جەژنێکی گەورەی خێزانییە. لە سویددا ئاهەنگی سەرەکی بەزۆری شەوی کریسمسە، 24 ی دیسەمبەر.</li>
+            <li><b>شەوی ساڵی نوێ</b>، 31 ی دیسەمبەر، بەگشتی بە نانی ئێوارە، ئاهەنگ، و مووشەکبازی لە نیوەشەودا ئاهەنگی بۆ دەگێڕدرێت.</li>
+          </ul>
+          <h2>نەریتە نوێیەکان</h2>
+          <p>کۆچ نەریتی بەرچاوتری زیادکردووە بۆ ژیانی گشتیی سوید. جەژنی ڕەمەزان (Eid al-Fitr)، نەورۆز، نەورۆزی کوردی (Newroz)، دیوالی، و ئاهەنگەکانی تر لەوانەیە لە قوتابخانە، شوێنی کار، گەڕەک، و چالاکییەکانی شار دەربکەون. شێوازە گرنگەکە سادەیە: نەریتەکان دەتوانن گەشت بکەن و خۆ بگونجێنن.</p>
+          ${ebookFactBox('ckb', null, 'ڕۆژی نیشتمانی: 6 ی حوزەیران · شەوی Walpurgis: 30 ی ئاپریل · شەوی Midsummer: هەینی لە نێوان 19 و 25 ی حوزەیران · Lucia: 13 ی دیسەمبەر · شەوی کریسمس: 24 ی دیسەمبەر.', ['uhrStudyMaterial'])}
+        `,
+        'fa': `<h2>سنت‌ها تغییر می‌کنند</h2>
+          <p>سنت عادتی است که گروهی در آن سهیم‌اند: یک تعطیلی، یک ترانه، غذا، لباس، یک آیین، یا راهی برای گرد هم آمدن. سنت‌ها می‌توانند کهن باشند بی‌آنکه منجمد بمانند. مردم جابه‌جا می‌شوند، خانواده‌ها درمی‌آمیزند، و آداب تازه بخشی از سوئد روزمره می‌شوند.</p>
+          <p>به همین دلیل این فصل فهرستی از "اصیل" و "غیراصیل" بودنِ سوئدی نیست. تقویمی است از نقاط مرجع رایج: تعطیلات و آیین‌هایی که در مدرسه، کار، زندگی عمومی و مواد مطالعه مدنی پدیدار می‌شوند.</p>
+          <h2>روز ملی و مراسم مدنی</h2>
+          <p>روز ملی سوئد 6 ژوئن است. این روز به انتخاب Gustav Vasa (گوستاو واسا) به‌عنوان پادشاه در سال 1523 و سند حکومت 1809 پیوند دارد. امروزه پرچم‌ها برافراشته می‌شوند، سخنرانی‌ها برگزار می‌شوند، و بسیاری از شهرداری‌ها در مراسمی به شهروندان تازه سوئدی خوش‌آمد می‌گویند.</p>
+          <h2>بهار و تابستان</h2>
+          <ul>
+            <li><b>عید پاک</b> در مارس یا آوریل می‌افتد و ریشه مسیحی دارد، هرچند بسیاری آن را به‌عنوان جشنی خانوادگی و بهاری برگزار می‌کنند.</li>
+            <li><b>شب Walpurgis (والپورگیس)</b>، 30 آوریل، اغلب به معنای آتش‌افروزی و ترانه‌هایی برای خوش‌آمدگویی به بهار است.</li>
+            <li><b>اول مه</b> روز جهانی کارگر است که با تظاهرات و سخنرانی‌های سیاسی نشانه‌گذاری می‌شود.</li>
+            <li><b>شب Midsummer (نیمه تابستان)</b> همیشه جمعه‌ای میان 19 و 25 ژوئن است، با گردهمایی‌های بیرون از خانه، تاج‌های گل، تیر نیمه تابستان، شاه‌ماهی، سیب‌زمینی تازه و توت‌فرنگی.</li>
+          </ul>
+          <h2>پاییز و زمستان</h2>
+          <ul>
+            <li><b>روز همه قدیسان</b> زمانی است که بسیاری بر سر گورها شمع روشن می‌کنند تا یاد خویشان و دوستان درگذشته را گرامی بدارند.</li>
+            <li><b>Advent (زمان آمدن)</b> چهار یکشنبه پیش از روز کریسمس است. بسیاری از خانه‌ها از شمع‌های Advent، ستاره‌ها یا تقویم‌ها استفاده می‌کنند.</li>
+            <li><b>Lucia (لوسیا)</b>، 13 دسامبر، درباره نور در تاریک‌ترین بخش سال است، اغلب با دسته‌های راهپیمایی، شمع‌ها و آوازخوانی.</li>
+            <li><b>کریسمس</b> ریشه مسیحی دارد و نیز جشنی بزرگ خانوادگی است. در سوئد جشن اصلی معمولاً شب کریسمس، 24 دسامبر، است.</li>
+            <li><b>شب سال نو</b>، 31 دسامبر، معمولاً با شام‌ها، مهمانی‌ها و آتش‌بازی در نیمه‌شب جشن گرفته می‌شود.</li>
+          </ul>
+          <h2>سنت‌های تازه</h2>
+          <p>مهاجرت سنت‌های آشکارتری به زندگی عمومی سوئد افزوده است. عید فطر، نوروز، نوروز کردی (Newroz)، دیوالی و جشن‌های دیگر ممکن است در مدارس، محل‌های کار، محله‌ها و رویدادهای شهری پدیدار شوند. الگوی مهم ساده است: سنت‌ها می‌توانند سفر کنند و سازگار شوند.</p>
+          ${ebookFactBox('fa', null, 'روز ملی: 6 ژوئن · شب Walpurgis: 30 آوریل · شب Midsummer: جمعه میان 19 و 25 ژوئن · Lucia: 13 دسامبر · شب کریسمس: 24 دسامبر.', ['uhrStudyMaterial'])}
+        `,
+        'pl': `<h2>Tradycje się zmieniają</h2>
+          <p>Tradycja to zwyczaj dzielony przez grupę: święto, pieśń, jedzenie, ubiór, ceremonia lub sposób gromadzenia się. Tradycje mogą być stare, nie będąc zamrożone. Ludzie się przeprowadzają, rodziny się mieszają, a nowe zwyczaje stają się częścią codziennej Szwecji.</p>
+          <p>Dlatego ten rozdział nie jest listą "prawdziwej" i "nieprawdziwej" szwedzkości. To kalendarz wspólnych punktów odniesienia: świąt i rytuałów, które pojawiają się w szkole, pracy, życiu publicznym i materiałach do nauki obywatelskiej.</p>
+          <h2>Święto Narodowe i ceremonie obywatelskie</h2>
+          <p>Święto Narodowe Szwecji przypada 6 czerwca. Jest związane z wyborem Gustawa Wazy na króla w 1523 roku oraz z aktem o formie rządu z 1809 roku. Dziś wciągane są flagi, wygłaszane są przemówienia, a wiele gmin wita nowych obywateli Szwecji podczas ceremonii.</p>
+          <h2>Wiosna i lato</h2>
+          <ul>
+            <li><b>Wielkanoc</b> przypada w marcu lub kwietniu i ma korzenie chrześcijańskie, choć wiele osób świętuje ją jako święto rodzinne i wiosenne.</li>
+            <li><b>Noc Walpurgii</b> (Valborg), 30 kwietnia, często oznacza ogniska i pieśni witające wiosnę.</li>
+            <li><b>Pierwszy maja</b> to Międzynarodowy Dzień Pracy, obchodzony demonstracjami i przemówieniami politycznymi.</li>
+            <li><b>Wigilia Nocy Świętojańskiej</b> (Midsommar) to zawsze piątek między 19 a 25 czerwca, ze spotkaniami na świeżym powietrzu, wiankami z kwiatów, słupem majowym, śledziem, młodymi ziemniakami i truskawkami.</li>
+          </ul>
+          <h2>Jesień i zima</h2>
+          <ul>
+            <li><b>Dzień Wszystkich Świętych</b> to czas, gdy wiele osób zapala znicze na grobach, by wspomnieć zmarłych krewnych i przyjaciół.</li>
+            <li><b>Adwent</b> to cztery niedziele przed Bożym Narodzeniem. Wiele domów używa świec adwentowych, gwiazd lub kalendarzy.</li>
+            <li><b>Lucia</b>, 13 grudnia, dotyczy światła w najciemniejszej porze roku, często z procesjami, świecami i śpiewem.</li>
+            <li><b>Boże Narodzenie</b> ma korzenie chrześcijańskie i jest też ważnym świętem rodzinnym. W Szwecji główne obchody to zwykle Wigilia, 24 grudnia.</li>
+            <li><b>Sylwester</b>, 31 grudnia, jest powszechnie świętowany kolacjami, przyjęciami i fajerwerkami o północy.</li>
+          </ul>
+          <h2>Nowe tradycje</h2>
+          <p>Migracja dodała więcej widocznych tradycji do szwedzkiego życia publicznego. Eid al-Fitr, Nouruz, Newroz, Diwali i inne uroczystości mogą pojawiać się w szkołach, miejscach pracy, dzielnicach i wydarzeniach miejskich. Ważny wzorzec jest prosty: tradycje mogą podróżować i się dostosowywać.</p>
+          ${ebookFactBox('pl', null, 'Święto Narodowe: 6 czerwca · Noc Walpurgii: 30 kwietnia · Wigilia Nocy Świętojańskiej: piątek między 19 a 25 czerwca · Lucia: 13 grudnia · Wigilia Bożego Narodzenia: 24 grudnia.', ['uhrStudyMaterial'])}
+        `,
+        'so': `<h2>Caadooyinku way isbeddelaan</h2>
+          <p>Caado waa dhaqan ay koox wadaagaan: fasax, hees, cunto, dhar, xaflad, ama hab lagu kulmo. Caadooyinku way duug noqon karaan iyaga oo aan barafoobin. Dadku way guuraan, qoysasku way isku dhex galaan, caadooyin cusubna waxay noqdaan qayb ka mid ah Iswidhan maalinlaha ah.</p>
+          <p>Taasi waa sababta cutubkani aanu u ahayn liis Iswidhan-nimo "run ah" iyo "run ahayn". Waa jadwal dhibcaha tixraaca guud ah: fasaxyada iyo cibaadooyinka ka muuqda dugsiga, shaqada, nolosha dadweynaha, iyo waxyaabaha lagu barto muwaadinnimada.</p>
+          <h2>Maalinta Qaranka iyo xafladaha muwaadinnimada</h2>
+          <p>Maalinta Qaranka ee Iswidhan waa 6 Juun. Waxay la xidhiidhaa doorashada Gustav Vasa boqor ahaan 1523 iyo Dukumentiga Dawladda ee 1809. Maanta calammada waa la taagaa, khudbadaha waa la jeediyaa, degmooyin badanna waxay ku soo dhaweeyaan muwaadiniinta cusub ee Iswidhan xafladaha.</p>
+          <h2>Gu'ga iyo xagaaga</h2>
+          <ul>
+            <li><b>Iistar</b> waxay dhacdaa Maarso ama Abriil waxayna leedahay asal Masiixi ah, in kasta oo dad badani u dabaaldegaan fasax qoys iyo gu'.</li>
+            <li><b>Habeenka Walpurgis</b> (Valborg), 30 Abriil, inta badan waxay ka dhigan tahay dabab iyo heeso lagu soo dhaweeyo gu'ga.</li>
+            <li><b>Kowda Maajo</b> waa Maalinta Caalamiga ah ee Shaqaalaha, waxaa lagu xusaa banaanbaxyo iyo khudbado siyaasadeed.</li>
+            <li><b>Habeenka Bartamaha Xagaaga</b> (Midsommar) had iyo jeer waa Jimce u dhexeeya 19 ilaa 25 Juun, oo leh kulammo bannaanka ah, taajaj ubaxeed, tiir bartamaha xagaaga, kalluun heering, baradho cusub, iyo strawberry.</li>
+          </ul>
+          <h2>Dayrta iyo jiilaalka</h2>
+          <ul>
+            <li><b>Maalinta Kuwa Quduuska ah oo dhan</b> waa marka dad badani shumacyo ku shidaan qabuuraha si ay u xusuustaan qaraabo iyo saaxiibbo dhintay.</li>
+            <li><b>Advent</b> waa afarta Axad ee ka horreeya Maalinta Kirismaska. Guryo badan waxay isticmaalaan shumacyada Advent, xiddigaha, ama jadwallada.</li>
+            <li><b>Lucia</b>, 13 Disembar, waxay ku saabsan tahay iftiinka xilliga ugu mugdiga badan sannadka, inta badan oo leh socod, shumacyo, iyo heesid.</li>
+            <li><b>Kirismaska</b> wuxuu leeyahay asal Masiixi ah waana sidoo kale fasax qoys oo weyn. Iswidhan dabaaldegga ugu weyn caadi ahaan waa Habeenka Kirismaska, 24 Disembar.</li>
+            <li><b>Habeenka Sannadcusubka</b>, 31 Disembar, badanaa waxaa lagu dabaaldegaa casho, xaflado, iyo nalalka dabka ee saqda dhexe.</li>
+          </ul>
+          <h2>Caadooyin cusub</h2>
+          <p>Socdaalku wuxuu ku daray caadooyin badan oo muuqda nolosha dadweynaha Iswidhan. Eid al-Fitr, Nouruz, Newroz, Diwali, iyo dabaaldegyo kale waxay ka soo muuqan karaan dugsiyada, goobaha shaqada, xaafadaha, iyo dhacdooyinka magaalada. Qaabka muhiimka ah waa fudud yahay: caadooyinku way safri karaan oo la qabsan karaan.</p>
+          ${ebookFactBox('so', null, 'Maalinta Qaranka: 6 Juun · Habeenka Walpurgis: 30 Abriil · Habeenka Bartamaha Xagaaga: Jimce u dhexeeya 19 iyo 25 Juun · Lucia: 13 Disembar · Habeenka Kirismaska: 24 Disembar.', ['uhrStudyMaterial'])}
+        `,
+        'ti': `<h2>ልምድታት ይቕየሩ</h2>
+          <p>ልምዲ ብጉጅለ ዝካፈል ልምዲ እዩ፦ በዓል፡ ደርፊ፡ መግቢ፡ ክዳን፡ ስነ-ስርዓት፡ ወይ ናይ ምትእኽኻብ መንገዲ። ልምድታት ከይተረረ ኣረጊት ክኾኑ ይኽእሉ። ሰባት ይግዕዙ፡ ስድራቤታት ይተሓናፈጻ፡ ሓደስቲ ልምድታት ድማ ኣካል መዓልታዊ ሽወደን ይኾኑ።</p>
+          <p>ስለዚ እዩ እዚ ምዕራፍ "ሓቀኛ"ን "ዘይሓቀኛ"ን ሽወደናውነት ዝርዝር ዘይኮነ። ናይ ሓባር መወከሲ ነጥብታት ዓውደ-ኣዋርሕ እዩ፦ ኣብ ቤት ትምህርቲ፡ ስራሕ፡ ህዝባዊ ህይወትን ናይ ሲቪካዊ መጽናዕቲ ጽሑፋትን ዝረኣዩ በዓላትን ስርዓታትን።</p>
+          <h2>ሃገራዊ መዓልትን ሲቪካዊ ስነ-ስርዓታትን</h2>
+          <p>ሃገራዊ መዓልቲ ሽወደን 6 ሰነ እዩ። ምስ ምርጫ ጉስታቭ ቫሳ ንጉስ ኮይኑ ኣብ 1523ን ምስ ናይ 1809 ሰነድ ምሕደራ መንግስትን ይተኣሳሰር። ሎሚ ባንዴራታት ይለዓላ፡ መደረታት ይካየድ፡ ብዙሓት ምምሕዳራት ድማ ሓደስቲ ዜጋታት ሽወደን ኣብ ስነ-ስርዓታት ይቕበሉ።</p>
+          <h2>ጽድያን ክረምትን</h2>
+          <ul>
+            <li><b>ፋሲካ</b> ኣብ መጋቢት ወይ ሚያዝያ ይኸውን ክርስትያናዊ መሰረት ኣለዎ፡ ብዙሓት ሰባት ግን ከም ናይ ስድራቤትን ጽድያን በዓል የብዕልዎ።</li>
+            <li><b>ለይቲ ቫልፑርግስ</b> (Valborg)፡ 30 ሚያዝያ፡ መብዛሕትኡ ግዜ ጽድያ ዝቕበሉ ሓዊን ደርፍታትን ማለት እዩ።</li>
+            <li><b>ቀዳማይ ግንቦት</b> ኣህጉራዊ መዓልቲ ሰራሕተኛታት እዩ፡ ብሰልፍታትን ፖለቲካዊ መደረታትን ይኽበር።</li>
+            <li><b>ድሮ ማእከል ክረምቲ</b> (Midsommar) ኩሉ ግዜ ኣብ መንጎ 19ን 25ን ሰነ ዘሎ ዓርቢ እዩ፡ ምስ ናይ ደገ ምትእኽኻባት፡ ናይ ዕምባባ ዘውድታት፡ ናይ ማእከል ክረምቲ ዓንዲ፡ ሄሪንግ ዓሳ፡ ሓደስቲ ድንሽን ፍራውለን።</li>
+          </ul>
+          <h2>ቀውዕን ክረምትን</h2>
+          <ul>
+            <li><b>መዓልቲ ኩሎም ቅዱሳን</b> ብዙሓት ሰባት ንዝሞቱ ኣዝማድን ፈተውትን ንምዝካር ኣብ መቓብር ሽምዓ ዘብርሁሉ ግዜ እዩ።</li>
+            <li><b>ኣድቨንት</b> ቅድሚ ልደት ዘለዋ ኣርባዕተ ሰናብቲ እየን። ብዙሓት ኣባይቲ ናይ ኣድቨንት ሽምዓታት፡ ኮዋኽብቲ፡ ወይ ዓውደ-ኣዋርሕ ይጥቀሙ።</li>
+            <li><b>ሉቸ</b> (Lucia)፡ 13 ታሕሳስ፡ ብዛዕባ ብርሃን ኣብታ ኣዝያ ጸልማት ዝኾነት ክፍለ-ግዜ ዓመት እዩ፡ መብዛሕትኡ ግዜ ምስ ሰልፍታት፡ ሽምዓታትን ዝማረን።</li>
+            <li><b>ልደት</b> ክርስትያናዊ መሰረት ኣለዎ ከምኡ'ውን ዓቢ ናይ ስድራቤት በዓል እዩ። ኣብ ሽወደን እቲ ቀንዲ ኣከባብራ መብዛሕትኡ ግዜ ድሮ ልደት፡ 24 ታሕሳስ እዩ።</li>
+            <li><b>ድሮ ሓዱሽ ዓመት</b>፡ 31 ታሕሳስ፡ ብተደጋጋሚ ብድራራት፡ ድግሳትን ኣብ ፍርቂ ለይቲ ብዝፍጸም ርሺ-ርሺን ይኽበር።</li>
+          </ul>
+          <h2>ሓደስቲ ልምድታት</h2>
+          <p>ስደት ናብ ህዝባዊ ህይወት ሽወደን ዝያዳ ዝረኣዩ ልምድታት ወሲኹ። ኢድ ኣል-ፊጥር (Eid al-Fitr)፡ ኖውሩዝ (Nouruz)፡ ኔውሮዝ (Newroz)፡ ዲዋሊ (Diwali)ን ካልኦት ኣኽብሮታትን ኣብ ቤት ትምህርትታት፡ ቦታታት ስራሕ፡ ከባቢታትን ናይ ከተማ ፍጻመታትን ክረኣዩ ይኽእሉ። እቲ ኣገዳሲ ኣገባብ ቀሊል እዩ፦ ልምድታት ክጓዓዙን ክላመዱን ይኽእሉ።</p>
+          ${ebookFactBox('ti', null, 'ሃገራዊ መዓልቲ: 6 ሰነ · ለይቲ ቫልፑርግስ: 30 ሚያዝያ · ድሮ ማእከል ክረምቲ: ኣብ መንጎ 19ን 25ን ሰነ ዘሎ ዓርቢ · ሉቸ: 13 ታሕሳስ · ድሮ ልደት: 24 ታሕሳስ.', ['uhrStudyMaterial'])}
+        `,
+        'tr': `<h2>Gelenekler değişir</h2>
+          <p>Gelenek, bir grup tarafından paylaşılan bir alışkanlıktır: bir tatil, bir şarkı, yiyecek, giysi, bir tören veya bir araya gelme biçimi. Gelenekler donmuş olmadan eski olabilir. İnsanlar taşınır, aileler karışır ve yeni gelenekler günlük İsveç'in bir parçası olur.</p>
+          <p>Bu yüzden bu bölüm "gerçek" ve "gerçek olmayan" İsveçliliğin bir listesi değildir. Ortak referans noktalarının bir takvimidir: okulda, işte, kamusal yaşamda ve yurttaşlık çalışma materyalinde görünen tatiller ve ritüeller.</p>
+          <h2>Ulusal Gün ve yurttaşlık törenleri</h2>
+          <p>İsveç'in Ulusal Günü 6 Haziran'dır. Gustav Vasa'nın 1523'te kral seçilmesi ve 1809 Hükümet Belgesi ile bağlantılıdır. Bugün bayraklar göndere çekilir, konuşmalar yapılır ve birçok belediye yeni İsveç vatandaşlarını törenlerle karşılar.</p>
+          <h2>İlkbahar ve yaz</h2>
+          <ul>
+            <li><b>Paskalya</b> Mart veya Nisan'a denk gelir ve Hristiyan kökenlidir, ancak birçok kişi onu bir aile ve ilkbahar tatili olarak kutlar.</li>
+            <li><b>Walpurgis Gecesi</b> (Valborg), 30 Nisan, çoğu zaman ilkbaharı karşılayan şenlik ateşleri ve şarkılar anlamına gelir.</li>
+            <li><b>Bir Mayıs</b> Uluslararası İşçi Günü'dür ve gösteriler ve siyasi konuşmalarla anılır.</li>
+            <li><b>Yaz Ortası Arifesi</b> (Midsommar) her zaman 19 ile 25 Haziran arasında bir Cuma günüdür; açık hava buluşmaları, çiçek çelenkleri, bir yaz ortası direği, ringa balığı, taze patates ve çileklerle kutlanır.</li>
+          </ul>
+          <h2>Sonbahar ve kış</h2>
+          <ul>
+            <li><b>Azizler Günü</b>, birçok kişinin ölen akraba ve arkadaşlarını anmak için mezarlarda mum yaktığı gündür.</li>
+            <li><b>Advent</b>, Noel'den önceki dört Pazar günüdür. Birçok ev Advent mumları, yıldızları veya takvimleri kullanır.</li>
+            <li><b>Lucia</b>, 13 Aralık, yılın en karanlık döneminde ışıkla ilgilidir; çoğu zaman alaylar, mumlar ve şarkılarla kutlanır.</li>
+            <li><b>Noel</b> Hristiyan kökenlidir ve aynı zamanda önemli bir aile tatilidir. İsveç'te ana kutlama genellikle 24 Aralık'ta, Noel Arifesi'nde olur.</li>
+            <li><b>Yılbaşı Gecesi</b>, 31 Aralık, genellikle akşam yemekleri, partiler ve gece yarısı havai fişeklerle kutlanır.</li>
+          </ul>
+          <h2>Yeni gelenekler</h2>
+          <p>Göç, İsveç kamusal yaşamına daha fazla görünür gelenek ekledi. Eid al-Fitr, Nouruz, Newroz, Diwali ve diğer kutlamalar okullarda, işyerlerinde, mahallelerde ve şehir etkinliklerinde görülebilir. Önemli örüntü basittir: gelenekler yolculuk edebilir ve uyum sağlayabilir.</p>
+          ${ebookFactBox('tr', null, 'Ulusal Gün: 6 Haziran · Walpurgis Gecesi: 30 Nisan · Yaz Ortası Arifesi: 19 ile 25 Haziran arası bir Cuma · Lucia: 13 Aralık · Noel Arifesi: 24 Aralık.', ['uhrStudyMaterial'])}
+        `,
+        'uk': `<h2>Традиції змінюються</h2>
+          <p>Традиція — це звичай, який поділяє група: свято, пісня, їжа, одяг, церемонія чи спосіб зібратися разом. Традиції можуть бути давніми, не будучи застиглими. Люди переїжджають, родини змішуються, а нові звичаї стають частиною повсякденної Швеції.</p>
+          <p>Саме тому цей розділ не є переліком «справжньої» та «несправжньої» шведськості. Це календар спільних орієнтирів: свят і ритуалів, які з'являються у школі, на роботі, у суспільному житті та в матеріалах для вивчення громадянознавства.</p>
+          <h2>Національний день і громадянські церемонії</h2>
+          <p>Національний день Швеції — 6 червня. Він пов'язаний з обранням Густава Вази королем у 1523 році та з Актом про форму правління 1809 року. Сьогодні піднімають прапори, виголошують промови, і багато муніципалітетів вітають нових громадян Швеції на церемоніях.</p>
+          <h2>Весна та літо</h2>
+          <ul>
+            <li><b>Великдень</b> припадає на березень або квітень і має християнське коріння, хоча багато людей святкують його як родинне та весняне свято.</li>
+            <li><b>Вальпургієва ніч</b> (Valborg), 30 квітня, часто означає багаття та пісні на честь весни.</li>
+            <li><b>Перше травня</b> — Міжнародний день праці, який відзначають демонстраціями та політичними промовами.</li>
+            <li><b>Переддень літнього сонцестояння</b> (Midsommar) — це завжди п'ятниця між 19 та 25 червня, із зібраннями просто неба, вінками з квітів, святковим стовпом, оселедцем, молодою картоплею та полуницею.</li>
+          </ul>
+          <h2>Осінь і зима</h2>
+          <ul>
+            <li><b>День усіх святих</b> — це коли багато людей запалюють свічки на могилах, щоб згадати померлих родичів і друзів.</li>
+            <li><b>Адвент</b> — це чотири неділі перед Різдвом. Багато домівок використовують адвентські свічки, зірки або календарі.</li>
+            <li><b>Lucia</b>, 13 грудня, присвячена світлу в найтемнішу пору року, часто з процесіями, свічками та співами.</li>
+            <li><b>Різдво</b> має християнське коріння і є також важливим родинним святом. У Швеції головне святкування зазвичай припадає на Святвечір, 24 грудня.</li>
+            <li><b>Переддень Нового року</b>, 31 грудня, зазвичай святкують вечерями, вечірками та феєрверками опівночі.</li>
+          </ul>
+          <h2>Нові традиції</h2>
+          <p>Міграція додала більше помітних традицій до суспільного життя Швеції. Eid al-Fitr, Nouruz, Newroz, Diwali та інші святкування можуть з'являтися у школах, на робочих місцях, у районах і на міських заходах. Важлива закономірність проста: традиції можуть подорожувати й адаптуватися.</p>
+          ${ebookFactBox('uk', null, 'Національний день: 6 червня · Вальпургієва ніч: 30 квітня · Переддень літнього сонцестояння: п\'ятниця між 19 та 25 червня · Lucia: 13 грудня · Святвечір: 24 грудня.', ['uhrStudyMaterial'])}
+        `,
       },
     },
   };
