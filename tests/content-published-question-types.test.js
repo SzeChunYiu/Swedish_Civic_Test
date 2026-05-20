@@ -20,6 +20,8 @@ const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
+const democraticParticipationOptionPromptPattern =
+  /\b(?:Vilket är ett sätt att påverka och delta i samhället|Which is a way to influence and participate in society)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -417,6 +419,116 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q081 uses stilted Saltsjöbaden Agreement English wording/,
+  );
+});
+
+test('democratic participation source prompts ask the civic concept directly in exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q013GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q013', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q013', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q013', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q013', 'judgement'),
+  ];
+  const q013Ids = ['q013', ...q013GeneratedIds];
+  const textForQuestion = (question) =>
+    [
+      question.q?.sv,
+      question.q?.en,
+      ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
+    ].join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q013Ids.includes(question.id))
+    .filter((question) =>
+      democraticParticipationOptionPromptPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => q013Ids.includes(question.id))
+    .filter((question) =>
+      democraticParticipationOptionPromptPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q013Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => democraticParticipationOptionPromptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q013 = generatedSiteBank.find((question) => question.id === 'q013');
+  const q013SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'singleChoice'),
+  );
+  const q013True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'trueStatement'),
+  );
+  const q013Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'judgement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q013, 'q013 should be published in the site bank');
+  assert.equal(q013.q.sv, 'Hur kan människor påverka samhället och delta i demokratin?');
+  assert.equal(q013.q.en, 'How can people influence society and participate in democracy?');
+  assert.equal(
+    q013.opts[0].sv,
+    'Genom att kontakta politiker, demonstrera eller skriva på en namninsamling',
+  );
+  assert.equal(q013.opts[0].en, 'By contacting politicians, demonstrating, or signing a petition');
+  assert.equal(
+    q013SingleChoice?.q.en,
+    'Which answer best matches? How can people influence society and participate in democracy?',
+  );
+  assert.equal(
+    q013True?.q.en,
+    'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
+  );
+  assert.equal(
+    q013Judgement?.q.sv,
+    'Välj rätt alternativ: Hur kan människor påverka samhället och delta i demokratin?',
+  );
+});
+
+test('democratic participation prompt guard rejects the old option-oriented wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Hur kan människor påverka samhället och delta i demokratin?',
+        'Vilket är ett sätt att påverka och delta i samhället?',
+      )
+      .replace(
+        'How can people influence society and participate in democracy?',
+        'Which is a way to influence and participate in society?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q013 uses option-oriented democratic-participation prompt wording/,
   );
 });
 

@@ -259,6 +259,10 @@ const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
   /\bbec(?:o|a)me important for\b/i,
 ];
+const QUESTION_DEMOCRATIC_PARTICIPATION_DIRECT_PROMPT_PATTERNS = [
+  /\bVilket är ett sätt att påverka och delta i samhället\b/i,
+  /\bWhich is a way to influence and participate in society\b/i,
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4345,6 +4349,16 @@ function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionDemocraticParticipationDirectPromptIssue(question) {
+  if (!question.tags?.includes('participation') && question.id !== 'q013') return null;
+
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_DEMOCRATIC_PARTICIPATION_DIRECT_PROMPT_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -5514,6 +5528,9 @@ function civicStatementSv(source, option) {
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
   match = q.match(/^Vilket är ett sätt att (.+)$/i);
   if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Hur kan (.+?) påverka (.+?) och delta i (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} kan påverka ${match[2]} och delta i ${match[3]} genom att ${lowerFirst(answer.replace(/^Genom att\s+/i, ''))}`;
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
@@ -5825,6 +5842,9 @@ function civicStatementEn(source, option) {
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
   match = q.match(/^Which is a way to (.+)$/i);
   if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^How can (.+?) influence (.+?) and participate in (.+)$/i);
+  if (match)
+    return `${upperFirst(match[1])} can influence ${match[2]} and participate in ${match[3]} by ${lowerFirst(stripLeadingByEn(answer))}`;
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
@@ -7219,6 +7239,7 @@ let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
+let questionDemocraticParticipationDirectPromptValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16501,6 +16522,8 @@ if (Array.isArray(questions)) {
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
+      const democraticParticipationDirectPromptIssue =
+        findQuestionDemocraticParticipationDirectPromptIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const successionVatDistractorIssue = findQuestionSuccessionVatDistractorIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
@@ -16551,6 +16574,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
       } else {
         questionSaltsjobadenAgreementEnglishNaturalnessValidated += 1;
+      }
+      if (democraticParticipationDirectPromptIssue) {
+        fail(`${label} uses option-oriented democratic-participation prompt wording`);
+      } else {
+        questionDemocraticParticipationDirectPromptValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -17028,6 +17056,7 @@ console.log(
       questionStateWelfareEnglishNaturalnessValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
+      questionDemocraticParticipationDirectPromptValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
