@@ -8,17 +8,11 @@ import {
   createNativeMobileAdsConsentRuntime,
   initializeGoogleMobileAdsAfterConsent,
   type MobileAdsConsentInitializationResult,
-  type MobileAdsConsentRuntime,
 } from './mobileAdsConsent';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let cachedInitialization: MobileAdsConsentInitializationResult | undefined;
 let initializationPromise: Promise<MobileAdsConsentInitializationResult> | undefined;
-
-interface MobileAdsConsentInitializeOptions {
-  platform?: string;
-  runtime?: MobileAdsConsentRuntime;
-}
 
 function createInitialResult(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
@@ -43,44 +37,24 @@ function createInitialResult(
   };
 }
 
-function rememberInitializationResult(
-  result: MobileAdsConsentInitializationResult,
-): MobileAdsConsentInitializationResult {
-  if (result.initialized) {
-    cachedInitialization = result;
-  }
-
-  if (!result.initialized) {
-    initializationPromise = undefined;
-  }
-
-  return result;
-}
-
-export function resetMobileAdsConsentInitializationCache() {
-  cachedInitialization = undefined;
-  initializationPromise = undefined;
-}
-
-export function initializeMobileAdsConsentOnce(
+function initializeOnce(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
-  options: MobileAdsConsentInitializeOptions = {},
 ): Promise<MobileAdsConsentInitializationResult> {
-  const platform = options.platform ?? Platform.OS;
-  const runtime = options.runtime ?? createNativeMobileAdsConsentRuntime(platform);
-
   if (entitlements.adsDisabled) {
     return initializeGoogleMobileAdsAfterConsent({
       entitlements,
-      runtime,
+      runtime: createNativeMobileAdsConsentRuntime(Platform.OS),
     });
   }
 
   initializationPromise ??= initializeGoogleMobileAdsAfterConsent({
     entitlements,
-    runtime,
+    runtime: createNativeMobileAdsConsentRuntime(Platform.OS),
   })
-    .then(rememberInitializationResult)
+    .then((result) => {
+      cachedInitialization = result;
+      return result;
+    })
     .catch((error: unknown) => {
       initializationPromise = undefined;
       throw error;
@@ -100,7 +74,7 @@ export function useMobileAdsConsent(entitlements: Pick<PremiumEntitlements, 'ads
     let isMounted = true;
     setResult(initialResult);
 
-    void initializeMobileAdsConsentOnce(entitlements)
+    void initializeOnce(entitlements)
       .then((nextResult) => {
         if (isMounted) setResult(nextResult);
       })

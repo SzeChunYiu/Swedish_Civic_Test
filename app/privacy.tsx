@@ -26,23 +26,23 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Inget konto krävs',
       },
       localProgressStorage: {
-        body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, streaks och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus.',
+        body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, studiesviter och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus. Lokal export och import gäller bara studiedata på enheten.',
         title: 'Lokal lagring av framsteg',
       },
       gdprRights: {
-        body: 'Du kan begära export eller radering av supportmeddelanden du har skickat via Support-skärmen. Lokalt lagrade framsteg, inställningar och köpstatus kan rensas genom att avinstallera appen eller rensa appdata på enheten.',
+        body: 'Du kan begära export eller radering av supportmeddelanden du har skickat via Support-skärmen. Lokalt lagrade framsteg och inställningar kan exporteras, importeras eller rensas genom att avinstallera appen eller rensa appdata på enheten. Köpstatus återställs separat via appbutiken.',
         title: 'Dina rättigheter enligt GDPR',
       },
       adsAndPurchases: {
-        body: 'Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads. Tidsatta provskärmar är annonsfria. Ta bort annonser är ett engångsköp utan förbrukning för 29 SEK. När köpet eller återställningen valideras sparar appen en lokal köpstatuspost med produkt-ID, transaktions-ID eller köptoken och tidpunkt för kvittovalidering så att annonser kan döljas på den här enheten.',
+        body: 'Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads. Tidsatta provskärmar är annonsfria. Ta bort annonser är ett engångsköp utan förbrukning för 29 SEK som sätter adsDisabled=true på den här enheten och kan återställas via appbutiken.',
         title: 'Annonser och köp',
       },
       adConsent: {
-        body: 'På iOS begärs App Tracking Transparency innan spårningsbaserad annonsering. Där det krävs visas Google UMP consent-formuläret innan riktiga AdMob-annonser visas. Annonser kan blockeras eller begäras som icke-personanpassade annonser när samtyckesbeslutet inte tillåter personanpassad annonsering.',
+        body: 'På iOS begärs App Tracking Transparency innan spårningsbaserad annonsering. Där det krävs visas Google UMP-samtyckesformuläret innan riktiga AdMob-annonser visas. Annonser kan blockeras eller begäras som icke-personanpassade annonser när samtyckesbeslutet inte tillåter personanpassad annonsering.',
         title: 'Annonssamtycke',
       },
       providerProcessing: {
-        body: 'Google Mobile Ads och appbutikerna kan behandla enhets-, annonserings-, samtyckes-, produkt-ID-, transaktions-ID-, köptoken- och kvittovalideringsinformation för att visa annonser, tillämpa Ta bort annonser och återställa köp. Appen samlar inte in medborgarskapsstatus, detaljer om migrationsärenden, myndighets-ID eller registrerade profiluppgifter.',
+        body: 'Google Mobile Ads och appbutikerna kan behandla enhets-, annonserings-, samtyckes- och köpstatusinformation för att visa annonser, tillämpa Ta bort annonser och återställa köp. Appen samlar inte in medborgarskapsstatus, detaljer om migrationsärenden, myndighets-ID eller registrerade profiluppgifter.',
         title: 'Leverantörers behandling',
       },
     },
@@ -55,15 +55,15 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'No account required',
       },
       localProgressStorage: {
-        body: 'Study progress, settings, bookmarks, mistakes, XP, streaks, and audio preferences are stored locally on the device so the app can remember your practice state.',
+        body: 'Study progress, settings, bookmarks, mistakes, XP, streaks, and audio preferences are stored locally on the device so the app can remember your practice state. Local export and import only cover study data on the device.',
         title: 'Local progress storage',
       },
       gdprRights: {
-        body: 'You may request export or deletion of support messages you have sent via the Support screen. Locally stored progress, settings, and purchase status can be cleared by uninstalling the app or clearing app data on the device.',
+        body: 'You may request export or deletion of support messages you have sent via the Support screen. Locally stored progress and settings can be exported, imported, or cleared by uninstalling the app or clearing app data on the device. Purchase status is restored separately through the app store.',
         title: 'Your rights under GDPR',
       },
       adsAndPurchases: {
-        body: 'The free app is ad-supported on study screens through Google Mobile Ads. Timed mock exam screens stay ad-free. Remove Ads is a one-time non-consumable purchase for 29 SEK. After a purchase or restore is validated, the app stores a local purchase-status record with product ID, transaction ID or purchase token, and receipt-validation timestamp so ads can be hidden on this device.',
+        body: 'The free app is ad-supported on study screens through Google Mobile Ads. Timed mock exam screens stay ad-free. Remove Ads is a one-time non-consumable purchase for 29 SEK that sets adsDisabled=true on this device and can be restored through the app store.',
         title: 'Ads and purchases',
       },
       adConsent: {
@@ -71,7 +71,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Ad consent',
       },
       providerProcessing: {
-        body: 'Google Mobile Ads and the app stores may process device, advertising, consent, product ID, transaction ID, purchase token, and receipt-validation information to serve ads, apply Remove Ads, and restore purchases. The app does not collect citizenship status, immigration case details, government IDs, or registered profile details.',
+        body: 'Google Mobile Ads and the app stores may process device, advertising, consent, and purchase status information to serve ads, apply Remove Ads, and restore purchases. The app does not collect citizenship status, immigration case details, government IDs, or registered profile details.',
         title: 'Provider processing',
       },
     },

@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -19,8 +18,12 @@ function parseValidationSummary() {
 test('quiz AnswerOption keeps feedback labels and selection state in accessibility parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/AnswerOption.tsx'), 'utf8');
+  const optionCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/OptionCard.tsx'),
+    'utf8',
+  );
 
-  assert.equal(summary.answerOptionAccessibilityRulesValidated, 19);
+  assert.equal(summary.answerOptionAccessibilityRulesValidated, 20);
   assert.equal(summary.answerOptionAccessibilityParityValidated, true);
   assert.match(source, /import \{ OptionCard \} from '\.\.\/OptionCard';/);
   assert.match(source, /import type \{ OptionCardState \} from '\.\.\/OptionCard';/);
@@ -36,7 +39,8 @@ test('quiz AnswerOption keeps feedback labels and selection state in accessibili
     /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   );
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityState=\{\{ disabled, selected \}\}/);
+  assert.match(source, /const checked = selected;/);
+  assert.match(source, /accessibilityState=\{\{ checked, disabled, selected \}\}/);
   assert.match(source, /disabled=\{disabled\}/);
   assert.match(source, /resultLabel=\{resultLabel\}/);
   assert.match(source, /state=\{state\}/);
@@ -48,6 +52,14 @@ test('quiz AnswerOption keeps feedback labels and selection state in accessibili
   assert.match(source, /if \(tone !== 'idle'\) return tone;/);
   assert.match(source, /return selected \? 'selected' : 'idle';/);
   assert.match(source, /return language === 'en' \? option\.textEn : option\.textSv;/);
+  assert.match(optionCardSource, /const defaultChecked = state === 'selected';/);
+  assert.match(
+    optionCardSource,
+    /const isChecked = accessibilityState\?\.checked \?\? defaultChecked;/,
+  );
+  assert.match(optionCardSource, /aria-checked=\{resolvedAccessibilityState\.checked\}/);
+  assert.match(optionCardSource, /aria-selected=\{resolvedAccessibilityState\.selected\}/);
+  assert.doesNotMatch(optionCardSource, /const isChecked = state !== 'idle';/);
 });
 
 test('AnswerOption accessibility parity rejects English-only Swedish idle labels', () => {
@@ -110,7 +122,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('AnswerOption accessibility parity rejects selected-state drift', () => {
+test('AnswerOption accessibility parity rejects checked-state drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -123,7 +135,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/AnswerOption.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('accessibilityState={{ disabled, selected }}', 'accessibilityState={{ disabled }}');
+      .replace('const checked = selected;', "const checked = state !== 'idle';");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -136,6 +148,36 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /AnswerOption missing selected and disabled state forwarding for accessibility parity/,
+    /AnswerOption missing selected-only checked state for accessibility parity/,
+  );
+});
+
+test('AnswerOption accessibility parity rejects selected-state forwarding drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/AnswerOption.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('accessibilityState={{ checked, disabled, selected }}', 'accessibilityState={{ checked, disabled }}');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AnswerOption missing checked, selected, and disabled state forwarding for accessibility parity/,
   );
 });
