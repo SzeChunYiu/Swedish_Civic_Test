@@ -89,6 +89,33 @@ test('package npm test selector enters the dispatcher before running suites', ()
   }
 });
 
+test('answer shuffle parity uses the focused content validator path', () => {
+  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
+  const parityTest = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-answer-shuffle-parity.test.js'),
+    'utf8',
+  );
+  const focusBlockStart = validator.indexOf(
+    "process.argv.includes('--focus-answer-shuffle-parity')",
+  );
+  const focusBlockEnd =
+    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
+  const focusBlock =
+    focusBlockStart === -1 || focusBlockEnd === -1
+      ? ''
+      : validator.slice(focusBlockStart, focusBlockEnd);
+  const focusFlagMatches = parityTest.match(/--focus-answer-shuffle-parity/g) || [];
+
+  assert.notEqual(focusBlockStart, -1, 'validate-content needs the answer-shuffle focus flag');
+  assert.match(focusBlock, /validateAnswerShuffleDistributionParity\(\);/);
+  assert.match(focusBlock, /answerShuffleDistributionParityValidated/);
+  assert.match(focusBlock, /publishedQuestions/);
+  assert.ok(
+    focusFlagMatches.length >= 3,
+    'positive and mutation answer-shuffle checks should use the focused validator',
+  );
+});
+
 test('unsupported npm test selectors fail before running any suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
   const npmLog = path.join(tmpDir, 'npm.log');

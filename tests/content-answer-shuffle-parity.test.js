@@ -6,10 +6,14 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function readValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-answer-shuffle-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -51,6 +55,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-answer-shuffle-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -83,6 +88,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-answer-shuffle-parity');
 require('./scripts/validate-content.js');
 `,
     ],
