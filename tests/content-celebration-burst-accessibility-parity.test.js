@@ -6,24 +6,28 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+function parseFocusedValidationSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-celebration-burst-accessibility'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
+  assert.ok(match, 'focused CelebrationBurst validation should print JSON summary');
   return JSON.parse(match[0]);
 }
 
 test('quiz CelebrationBurst keeps success motion decorative and non-interactive', () => {
-  const summary = parseValidationSummary();
+  const summary = parseFocusedValidationSummary();
   const source = fs.readFileSync(
     path.join(repoRoot, 'components/quiz/CelebrationBurst.tsx'),
     'utf8',
   );
 
-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 11);
+  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 13);
   assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
   assert.match(source, /active: boolean;/);
   assert.match(source, /if \(!active\) \{\s*progress\.setValue\(0\);\s*return;\s*\}/);
@@ -32,6 +36,14 @@ test('quiz CelebrationBurst keeps success motion decorative and non-interactive'
   assert.match(source, /useNativeDriver:\s*true,/);
   assert.match(source, /if \(!active\) return null;/);
   assert.match(source, /accessibilityElementsHidden/);
+  assert.match(
+    source,
+    /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  );
+  assert.match(
+    source,
+    /<Animated\.View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  );
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /pointerEvents="none"/);
   assert.match(source, /<View style=\{styles\.pill\}>/);
@@ -48,6 +60,68 @@ test('CelebrationBurst is reachable from practice and routed quiz feedback', () 
     assert.match(source, /streak=\{celebrationStreak\}/);
     assert.match(source, /questionProgress\[question\.id\]\?\.correctStreak \?\? 1/);
   }
+});
+
+test('CelebrationBurst accessibility parity rejects active animation restart drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('progress.setValue(0);\\n    Animated.timing(progress, {', 'Animated.timing(progress, {');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-celebration-burst-accessibility');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /CelebrationBurst missing active animation restarts from zero for accessibility parity/,
+  );
+});
+
+test('CelebrationBurst accessibility parity rejects reduced-motion tree exposure drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('accessibilityElementsHidden\\n        importantForAccessibility="no-hide-descendants"\\n        pointerEvents="none"', 'importantForAccessibility="no-hide-descendants"\\n        pointerEvents="none"');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-celebration-burst-accessibility');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /CelebrationBurst missing reduced-motion branch hidden from accessibility tree for accessibility parity/,
+  );
 });
 
 test('CelebrationBurst accessibility parity rejects descendant exposure drift', () => {
@@ -67,6 +141,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-celebration-burst-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
