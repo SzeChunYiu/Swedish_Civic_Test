@@ -7561,6 +7561,174 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
+const PUBLISHED_SOURCE_PARITY_FIELDS = [
+  'id',
+  'chapterId',
+  'type',
+  'questionSv',
+  'questionEn',
+  'options',
+  'correctOptionId',
+  'explanationSv',
+  'explanationEn',
+  'uhrReference',
+  'difficulty',
+  'tags',
+];
+
+function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
+  if (!Array.isArray(questionsToValidate)) return;
+
+  if (questionsToValidate.length !== count) {
+    fail(`${label} has ${questionsToValidate.length} rows, expected ${count}`);
+  }
+
+  questionsToValidate.forEach((question, index) => {
+    if (index >= count) {
+      fail(`${label}[${index}] exceeds expected ${count} rows`);
+      return;
+    }
+
+    const expectedId = `q${String(startQuestionNumber + index).padStart(3, '0')}`;
+    const actualId = question?.id;
+    if (actualId !== expectedId) {
+      fail(`${label}[${index}] has id ${actualId}, expected ${expectedId}`);
+      return;
+    }
+
+    authoredSourcePartitionQuestionsValidated += 1;
+  });
+}
+
+function expectedPublishedSourceField(question, field) {
+  if (question.type === 'true_false' && field === 'questionSv') {
+    return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
+  }
+  if (question.type === 'true_false' && field === 'questionEn') {
+    return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
+  }
+  if (field === 'options') {
+    return normalizePublishedSourceOptions(question.options);
+  }
+  return question[field];
+}
+
+function normalizePublishedSourceOptions(options) {
+  if (!Array.isArray(options)) return options;
+  return options.map((option) => ({
+    id: option.id,
+    textSv: option.textSv,
+    textEn: option.textEn,
+  }));
+}
+
+function validateAuthoredSourceParity() {
+  if (
+    !Array.isArray(baseQuestions) ||
+    !Array.isArray(additionalQuestions) ||
+    !Array.isArray(localizedAdditionalQuestions) ||
+    !Array.isArray(sourceQuestions)
+  ) {
+    return;
+  }
+
+  validateAuthoredSourcePartition(
+    baseQuestions,
+    'baseQuestions',
+    1,
+    EXPECTED_BASE_SOURCE_QUESTIONS,
+  );
+  validateAuthoredSourcePartition(
+    additionalQuestions,
+    'additionalQuestions',
+    EXPECTED_BASE_SOURCE_QUESTIONS + 1,
+    EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
+  );
+
+  const authoredQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
+  const expectedPublishedSourceQuestions = authoredQuestions;
+  if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
+    fail(
+      `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
+    );
+  }
+  if (sourceQuestions.length !== authoredQuestions.length) {
+    fail(
+      `sourceQuestions has ${sourceQuestions.length} rows, expected ${authoredQuestions.length} authored questions`,
+    );
+  }
+
+  const seenIds = new Set();
+  authoredQuestions.forEach((question, index) => {
+    const label = hasText(question.id) ? question.id : `authored question[${index}]`;
+    const expectedId = `q${String(index + 1).padStart(3, '0')}`;
+    let authoredQuestionIsValid = true;
+
+    function reject(message) {
+      authoredQuestionIsValid = false;
+      fail(message);
+    }
+
+    if (question.id !== expectedId) {
+      reject(`authored source index ${index} has id ${question.id}, expected ${expectedId}`);
+    }
+    if (seenIds.has(question.id)) reject(`duplicate authored source question id ${question.id}`);
+    if (hasText(question.id)) seenIds.add(question.id);
+    if (question.reviewStatus !== 'reviewed') {
+      reject(
+        `${label} authored source reviewStatus is ${question.reviewStatus}, expected reviewed`,
+      );
+    }
+    if (findQuestionTrueFalseStemPrefix(question)) {
+      reject(`${label} authored true/false source stem contains redundant true/false prefix`);
+    }
+    if (findAuthoredTrueFalseExplanationBoilerplate(question)) {
+      reject(
+        `${label} authored true/false source explanation contains answer-judgement boilerplate`,
+      );
+    }
+
+    if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
+      authoredSourceQuestionsValidated += 1;
+    }
+
+    const publishedQuestion = sourceQuestions[index];
+    const expectedSourceQuestion = expectedPublishedSourceQuestions[index] ?? question;
+    if (!publishedQuestion) return;
+
+    let publicationParityIsValid = true;
+    if (publishedQuestion.reviewStatus !== 'published') {
+      publicationParityIsValid = false;
+      fail(`${label} published source reviewStatus is ${publishedQuestion.reviewStatus}`);
+    }
+
+    for (const field of PUBLISHED_SOURCE_PARITY_FIELDS) {
+      const expectedValue = expectedPublishedSourceField(expectedSourceQuestion, field);
+      const actualValue =
+        field === 'options'
+          ? normalizePublishedSourceOptions(publishedQuestion[field])
+          : publishedQuestion[field];
+      if (JSON.stringify(actualValue) !== JSON.stringify(expectedValue)) {
+        publicationParityIsValid = false;
+        fail(`${label} published source ${field} does not match authored source`);
+      }
+    }
+    if (publicationParityIsValid) sourcePublicationParityValidated += 1;
+  });
+}
+
+if (process.argv.includes('--focus-authored-source-parity')) {
+  validateAuthoredSourceParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    authoredSourceQuestionsValidated,
+    authoredSourcePartitionQuestionsValidated,
+    sourcePublicationParityValidated,
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
   const readinessValidation = validateStaticV11ReadinessCopy();
@@ -15023,160 +15191,7 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankParityValidated = true;
 }
 
-const PUBLISHED_SOURCE_PARITY_FIELDS = [
-  'id',
-  'chapterId',
-  'type',
-  'questionSv',
-  'questionEn',
-  'options',
-  'correctOptionId',
-  'explanationSv',
-  'explanationEn',
-  'uhrReference',
-  'difficulty',
-  'tags',
-];
-
-function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
-  if (!Array.isArray(questionsToValidate)) return;
-
-  if (questionsToValidate.length !== count) {
-    fail(`${label} has ${questionsToValidate.length} rows, expected ${count}`);
-  }
-
-  questionsToValidate.forEach((question, index) => {
-    if (index >= count) {
-      fail(`${label}[${index}] exceeds expected ${count} rows`);
-      return;
-    }
-
-    const expectedId = `q${String(startQuestionNumber + index).padStart(3, '0')}`;
-    const actualId = question?.id;
-    if (actualId !== expectedId) {
-      fail(`${label}[${index}] has id ${actualId}, expected ${expectedId}`);
-      return;
-    }
-
-    authoredSourcePartitionQuestionsValidated += 1;
-  });
-}
-
-function expectedPublishedSourceField(question, field) {
-  if (question.type === 'true_false' && field === 'questionSv') {
-    return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
-  }
-  if (question.type === 'true_false' && field === 'questionEn') {
-    return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
-  }
-  if (field === 'options') {
-    return normalizePublishedSourceOptions(question.options);
-  }
-  return question[field];
-}
-
-function normalizePublishedSourceOptions(options) {
-  if (!Array.isArray(options)) return options;
-  return options.map((option) => ({
-    id: option.id,
-    textSv: option.textSv,
-    textEn: option.textEn,
-  }));
-}
-
-function validateAuthoredSourceParity() {
-  if (
-    !Array.isArray(baseQuestions) ||
-    !Array.isArray(additionalQuestions) ||
-    !Array.isArray(localizedAdditionalQuestions) ||
-    !Array.isArray(sourceQuestions)
-  ) {
-    return;
-  }
-
-  validateAuthoredSourcePartition(
-    baseQuestions,
-    'baseQuestions',
-    1,
-    EXPECTED_BASE_SOURCE_QUESTIONS,
-  );
-  validateAuthoredSourcePartition(
-    additionalQuestions,
-    'additionalQuestions',
-    EXPECTED_BASE_SOURCE_QUESTIONS + 1,
-    EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
-  );
-
-  const authoredQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
-  const expectedPublishedSourceQuestions = authoredQuestions;
-  if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
-    fail(
-      `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
-    );
-  }
-  if (sourceQuestions.length !== authoredQuestions.length) {
-    fail(
-      `sourceQuestions has ${sourceQuestions.length} rows, expected ${authoredQuestions.length} authored questions`,
-    );
-  }
-
-  const seenIds = new Set();
-  authoredQuestions.forEach((question, index) => {
-    const label = hasText(question.id) ? question.id : `authored question[${index}]`;
-    const expectedId = `q${String(index + 1).padStart(3, '0')}`;
-    let authoredQuestionIsValid = true;
-
-    function reject(message) {
-      authoredQuestionIsValid = false;
-      fail(message);
-    }
-
-    if (question.id !== expectedId) {
-      reject(`authored source index ${index} has id ${question.id}, expected ${expectedId}`);
-    }
-    if (seenIds.has(question.id)) reject(`duplicate authored source question id ${question.id}`);
-    if (hasText(question.id)) seenIds.add(question.id);
-    if (question.reviewStatus !== 'reviewed') {
-      reject(
-        `${label} authored source reviewStatus is ${question.reviewStatus}, expected reviewed`,
-      );
-    }
-    if (findQuestionTrueFalseStemPrefix(question)) {
-      reject(`${label} authored true/false source stem contains redundant true/false prefix`);
-    }
-    if (findAuthoredTrueFalseExplanationBoilerplate(question)) {
-      reject(
-        `${label} authored true/false source explanation contains answer-judgement boilerplate`,
-      );
-    }
-
-    if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
-      authoredSourceQuestionsValidated += 1;
-    }
-
-    const publishedQuestion = sourceQuestions[index];
-    const expectedSourceQuestion = expectedPublishedSourceQuestions[index] ?? question;
-    if (!publishedQuestion) return;
-
-    let publicationParityIsValid = true;
-    if (publishedQuestion.reviewStatus !== 'published') {
-      publicationParityIsValid = false;
-      fail(`${label} published source reviewStatus is ${publishedQuestion.reviewStatus}`);
-    }
-    for (const field of PUBLISHED_SOURCE_PARITY_FIELDS) {
-      const expectedValue = expectedPublishedSourceField(expectedSourceQuestion, field);
-      const actualValue =
-        field === 'options'
-          ? normalizePublishedSourceOptions(publishedQuestion[field])
-          : publishedQuestion[field];
-      if (JSON.stringify(actualValue) !== JSON.stringify(expectedValue)) {
-        publicationParityIsValid = false;
-        fail(`${label} published source ${field} does not match authored source`);
-      }
-    }
-    if (publicationParityIsValid) sourcePublicationParityValidated += 1;
-  });
-}
+validateAuthoredSourceParity();
 
 function validateGenerationParity() {
   if (
