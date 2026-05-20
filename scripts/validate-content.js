@@ -5731,7 +5731,9 @@ function whyTargetStatementEn(target) {
     return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
   }
 
-  match = cleaned.match(/^(is|are|was|were)\s+(.+?)\s+((?:needed|required|allowed|called)\b.*)$/i);
+  match = cleaned.match(
+    /^(is|are|was|were)\s+(.+)\s+((?:needed|required|important|allowed|permitted|called|responsible|common|legal|illegal|true|false)\b.*)$/i,
+  );
   if (match) {
     return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3]}`;
   }
@@ -5762,30 +5764,12 @@ function reasonAnswerClauseEn(answer) {
   return lowerFirst(stripped);
 }
 function reasonStatementSv(answer, target) {
-  if (target) {
-    return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
-      answer,
-    )}`.replace(/\beU\b/g, 'EU');
-  }
-
-  const stripped = stripLeadingPurposeSv(answer);
-  if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
-  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
-    return `En anledning är att ${stripped}`;
-  }
-  return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
+  return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
+    answer,
+  )}`.replace(/\beU\b/g, 'EU');
 }
 function reasonStatementEn(answer, target) {
-  if (target) {
-    return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
-  }
-
-  const stripped = stripLeadingPurposeEn(answer);
-  if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
-  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
-    return `One reason is that ${stripped}`;
-  }
-  return `One reason is ${lowerFirst(stripped)}`;
+  return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
 }
 function frontedManyActionSv(answer) {
   const words = lowerFirst(answer).split(/\s+/);
