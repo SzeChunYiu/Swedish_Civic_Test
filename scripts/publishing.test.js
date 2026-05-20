@@ -428,7 +428,6 @@ test('release readiness and owner action surfaces use current ads posture', () =
   assert.match(ownerActionPacket, /concrete AdMob app\/unit IDs/i);
 });
 
-
 test('generated owner action packet uses current ads posture', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'owner-action-packet-'));
   const releaseGatesPath = path.join(tmpDir, 'release-gates.json');
