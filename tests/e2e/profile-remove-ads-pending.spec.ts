@@ -1,16 +1,19 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { markAboutTheTestSeen, seedSettingsLanguage, type AppLanguage } from './browserLaunch';
+import type { AppLanguage } from './browserLaunch';
 
 const removeAdsStorageKey = 'monetization.removeAds.adsDisabled.v1';
 const removeAdsProductId = 'com.billyyiu.almostswedish.removeads';
+const settingsLanguageKey = 'settings\\language';
+const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 const entitlementHydrationDelayMs = 4000;
 
 type RemoveAdsDelayWindow = Window &
   typeof globalThis & {
     __SMT_E2E__?: boolean;
     __SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS?: number;
+    __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
   };
 
 type StoredRemoveAdsRecord = {
@@ -39,15 +42,23 @@ async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
   await page.addInitScript(
     ({
       delayMs,
+      language,
+      languageKey,
       productId,
+      seenKey,
       storageKey,
     }: {
       delayMs: number;
+      language: AppLanguage;
+      languageKey: string;
       productId: string;
+      seenKey: string;
       storageKey: string;
     }) => {
       window.localStorage.clear();
       window.sessionStorage.clear();
+      window.localStorage.setItem(languageKey, language);
+      window.localStorage.setItem(seenKey, 'true');
 
       const now = '2026-05-19T00:00:00.000Z';
       const storedRecord: StoredRemoveAdsRecord = {
@@ -65,15 +76,17 @@ async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
       const e2eWindow = window as RemoveAdsDelayWindow;
       e2eWindow.__SMT_E2E__ = true;
       e2eWindow.__SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS = delayMs;
+      e2eWindow.__SMT_REMOVE_ADS_MOCK_OWNED__ = true;
     },
     {
       delayMs: entitlementHydrationDelayMs,
+      language,
+      languageKey: settingsLanguageKey,
       productId: removeAdsProductId,
+      seenKey: settingsSeenAboutKey,
       storageKey: removeAdsStorageKey,
     },
   );
-  await seedSettingsLanguage(page, language);
-  await markAboutTheTestSeen(page);
 }
 
 test.use({ viewport: { width: 390, height: 844 } });
@@ -96,12 +109,12 @@ test('profile hides Remove Ads paywall while stored entitlement hydration is pen
   await expect(page.getByText('Ad-free study is active', { exact: true })).toBeVisible({
     timeout: entitlementHydrationDelayMs + 5000,
   });
-  await expect(
-    page.getByText('Purchase confirmed. Study ads are disabled on this device', { exact: false }),
-  ).toBeVisible();
+  await expect(page.getByText('Ads are disabled on this device.', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Restore Remove Ads purchase' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' })).toHaveCount(0);
-  await expect(page.getByText(/Pay 29 SEK once/)).toHaveCount(0);
+  const buyButton = page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' });
+  await expect(buyButton).toBeVisible();
+  await expect(buyButton).toBeDisabled();
+  await expect(page.getByText(/Pay 29 SEK once/)).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });
