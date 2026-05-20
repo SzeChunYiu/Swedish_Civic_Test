@@ -3047,6 +3047,7 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'textSv', type: 'string', optional: false },
       { name: 'textEn', type: 'string', optional: false },
+      { name: 'text', type: 'LocalizedContentText', optional: true },
     ],
   },
   {
@@ -3057,10 +3058,12 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'type', type: 'QuestionType', optional: false },
       { name: 'questionSv', type: 'string', optional: false },
       { name: 'questionEn', type: 'string', optional: false },
+      { name: 'questionText', type: 'LocalizedContentText', optional: true },
       { name: 'options', type: 'QuestionOption[]', optional: false },
       { name: 'correctOptionId', type: 'string', optional: false },
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'explanationText', type: 'LocalizedContentText', optional: true },
       { name: 'uhrReference', type: 'UHRReference', optional: false },
       { name: 'difficulty', type: 'Difficulty', optional: false },
       { name: 'reviewStatus', type: 'ReviewStatus', optional: false },
@@ -3073,8 +3076,10 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'nameSv', type: 'string', optional: false },
       { name: 'nameEn', type: 'string', optional: false },
+      { name: 'nameText', type: 'LocalizedContentText', optional: true },
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
+      { name: 'descriptionText', type: 'LocalizedContentText', optional: true },
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
@@ -6230,7 +6235,12 @@ function optionIdsMatchQuestionType(question) {
 
 function trueFalseOptionLabelsMatchConvention(question) {
   if (question.type !== 'true_false' || !Array.isArray(question.options)) return false;
-  return jsonEqual(question.options, TRUE_FALSE_OPTIONS);
+  const legacyLabels = question.options.map((option) => ({
+    id: option.id,
+    textSv: option.textSv,
+    textEn: option.textEn,
+  }));
+  return jsonEqual(legacyLabels, TRUE_FALSE_OPTIONS);
 }
 
 function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn) {

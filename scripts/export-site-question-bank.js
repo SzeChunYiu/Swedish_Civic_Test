@@ -43,6 +43,35 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function localizedQuestionText(question) {
+  return Object.assign(
+    { en: question.questionEn, sv: question.questionSv },
+    question.questionText || {},
+  );
+}
+
+function localizedOptionText(option) {
+  return Object.assign({ en: option.textEn, sv: option.textSv }, option.text || {});
+}
+
+function localizedExplanationText(question) {
+  return Object.assign(
+    { en: question.explanationEn, sv: question.explanationSv },
+    question.explanationText || {},
+  );
+}
+
+function localizedChapterTitle(chapter) {
+  return Object.assign({ en: chapter.nameEn, sv: chapter.nameSv }, chapter.nameText || {});
+}
+
+function localizedChapterDescription(chapter) {
+  return Object.assign(
+    { en: chapter.descriptionEn, sv: chapter.descriptionSv },
+    chapter.descriptionText || {},
+  );
+}
+
 function parseChapterNumber(chapterId) {
   const match = /^ch(\d{2})$/.exec(chapterId);
   if (!match) throw new Error(`Invalid chapter id for static site export: ${chapterId}`);
@@ -85,10 +114,10 @@ function buildSiteQuestionBank() {
       chapterId: chapterNumber,
       chapter: `Ch. ${String(chapterNumber).padStart(2, '0')} · ${chapter.nameEn}`,
       type: question.type,
-      q: { en: question.questionEn, sv: question.questionSv },
-      opts: question.options.map((option) => ({ en: option.textEn, sv: option.textSv })),
+      q: localizedQuestionText(question),
+      opts: question.options.map(localizedOptionText),
       answer,
-      why: { en: question.explanationEn, sv: question.explanationSv },
+      why: localizedExplanationText(question),
       source: {
         title: 'Sverige i fokus',
         chapter: question.uhrReference.chapter,
@@ -106,8 +135,8 @@ function buildSiteQuestionBank() {
     return {
       id: chapterNumber,
       emoji: chapterEmoji.get(chapter.id) || '•',
-      title: { en: chapter.nameEn, sv: chapter.nameSv },
-      description: { en: chapter.descriptionEn, sv: chapter.descriptionSv },
+      title: localizedChapterTitle(chapter),
+      description: localizedChapterDescription(chapter),
       questionCount: chapter.questionCount,
     };
   });

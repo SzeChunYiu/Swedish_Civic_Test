@@ -30,10 +30,13 @@ test('content TypeScript schema stays in parity with runtime validator expectati
     /export type LocalizedContentText = Record<'sv' \| 'en', string> &\s*Partial<Record<LocaleCode, string>>;/,
   );
   assert.match(contentTypes, /export interface PracticeQuestion/);
+  assert.match(contentTypes, /text\?: LocalizedContentText;/);
   assert.match(contentTypes, /questionText\?: LocalizedContentText;/);
   assert.match(contentTypes, /explanationText\?: LocalizedContentText;/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
+  assert.match(contentTypes, /nameText\?: LocalizedContentText;/);
+  assert.match(contentTypes, /descriptionText\?: LocalizedContentText;/);
   assert.match(contentTypes, /export interface GlossaryTerm/);
   assert.match(contentTypes, /chapterId\?: string;/);
 });

@@ -1,8 +1,9 @@
 import { additionalQuestions } from './additionalQuestions';
+import { applyQuestionLocalizationPilot } from './questionLocalizations';
 import { derivePublishedQuestions, publishQuestions } from '../lib/content/derivedQuestions';
 import type { PracticeQuestion } from '../types/content';
 
-export const baseQuestions: PracticeQuestion[] = [
+const rawBaseQuestions: PracticeQuestion[] = [
   {
     id: 'q001',
     chapterId: 'ch01',
@@ -624,6 +625,10 @@ export const baseQuestions: PracticeQuestion[] = [
     tags: ['referendum', 'advisory', 'elections'],
   },
 ];
+
+export const baseQuestions: PracticeQuestion[] = rawBaseQuestions.map(
+  applyQuestionLocalizationPilot,
+);
 
 export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
