@@ -477,7 +477,7 @@ const i18n = (window.i18n = {
     brand: 'Almost Swedish',
     'nav.home': 'Hem',
     'nav.practice': 'Öva',
-    'nav.mock': 'Provexempel',
+    'nav.mock': 'Övningsprov',
     'nav.ebook': 'E-bok',
     'nav.support': 'Hjälp',
     'nav.privacy': 'Integritet',
@@ -489,7 +489,7 @@ const i18n = (window.i18n = {
     'hero.h1b': 'Öva med källor.',
     'hero.h1c': 'Känn dig förberedd.',
     'hero.lede':
-      'Ett lugnt, fristående studieverktyg för svensk samhällskunskap. Korta kapitel, fokuserad övning och provexempel hjälper dig att förstå innehållet steg för steg.',
+      'Ett lugnt, fristående studieverktyg för svensk samhällskunskap. Korta kapitel, fokuserad övning och ett tidsatt övningsprov hjälper dig att förstå innehållet steg för steg.',
     'hero.cta1': 'Börja öva',
     'hero.cta2': 'Testa en fråga',
     'hero.stat1': 'samhällsfrågor',
@@ -589,9 +589,9 @@ const i18n = (window.i18n = {
       'Den faktiska vägen till passet. Vägar, krav, skillnaden mellan PUT, medborgarskap och "bara på besök".',
     'chap.11.m1': '35 frågor',
     'chap.11.m2': '~9 min',
-    'chap.12.t': 'Provexempel & överlevnadsguide',
+    'chap.12.t': 'Övningsprov & överlevnadsguide',
     'chap.12.d':
-      'Tidsatta fullängdsprov som ser ut och känns som det riktiga. Plus en "så här packar du väskan"-lista.',
+      'Tidsatta övningsprov i full längd som hjälper dig träna provsituationen. Plus en "så här packar du väskan"-lista.',
     'chap.12.m1': '3 hela prov',
     'chap.12.m2': '60 min styck',
     'chap.13.t': 'Traditioner, helgdagar & vardagskultur',
@@ -623,7 +623,7 @@ const i18n = (window.i18n = {
       'Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.',
     'faq.4.q': 'Är den gratis?',
     'faq.4.a':
-      'Gratis att börja, plugga och göra provexempel. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.',
+      'Gratis att börja, plugga och öva med övningsprov. Du kan göra övningsprov i appen utan betalning; annonser hjälper oss hålla kärnfunktionerna tillgängliga, och Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.',
     'faq.5.q': 'Fungerar den på svenska också?',
     'faq.5.a':
       'Ja. Växla med EN / SV-knappen i menyn, eller byt inne i appen. Många använder båda samtidigt — läs frågan på svenska, kika på engelska när det kör ihop sig.',
@@ -683,7 +683,7 @@ const i18n = (window.i18n = {
     'support.s1.li4':
       'Ett ljudproblem — klipp som hackar, fel uttal, tystnad där det borde vara tal.',
     'support.s1.li5':
-      'Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett provexempel som inte går att avsluta.',
+      'Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett övningsprov som inte går att avsluta.',
     'support.s1.li6':
       'Ett butik- eller bygge-problem — krasch vid start, betalningskrångel, en nedladdning som vägrar.',
     'support.s2.t': 'Vad du bör inkludera',
@@ -779,11 +779,11 @@ const i18n = (window.i18n = {
     'footer.app.1': 'Varför den finns',
     'footer.app.2': 'Testa en fråga',
     'footer.app.3': 'Kapitel',
-    'footer.app.4': 'Provexempel',
+    'footer.app.4': 'Övningsprov',
     'footer.app.5': 'Roadmap',
     'footer.h.legal': 'Finstilta',
     'footer.about.p':
-      'Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.',
+      'Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra övningsprov.',
     'footer.h.honest': 'Ärlig friskrivning',
     'footer.honest.p':
       'Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.',
@@ -821,7 +821,7 @@ const i18n = (window.i18n = {
     'ebook.ch.9.title': 'Pengar, banker & BankID',
     'ebook.ch.10.title': 'Sverige, EU & världen',
     'ebook.ch.11.title': 'Migration, uppehållstillstånd & medborgarskap',
-    'ebook.ch.12.title': 'Provexempel & överlevnadsguide',
+    'ebook.ch.12.title': 'Övningsprov & överlevnadsguide',
     'ebook.ch.13.title': 'Traditioner, helgdagar & vardagskultur',
     'chap.13.m1': '34 frågor',
     'ebook.title': 'Fältguiden',
