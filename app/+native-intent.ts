@@ -16,6 +16,7 @@ const staticRoutes = new Set([
   '/practice',
   '/privacy',
   '/profile',
+  '/search',
   '/settings',
   '/sources',
   '/support',
