@@ -248,6 +248,17 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\bn(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l\b/i,
   /\bmentioned\s+as\s+(?:historical\s+)?reasons\b/i,
 ];
+const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
+];
+const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
+  /\bskatt och moms\b/i,
+  /\btax and VAT\b/i,
+  /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
+  /\bCompanies also pay tax,\s+and VAT is paid\b/i,
+  /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
+  /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -259,6 +270,10 @@ const QUESTION_NESTED_META_STEM_PATTERNS = [
 const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
+];
+const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
+  /\bVilket svar beskriver\b/i,
+  /\bWhich answer describes\b/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
@@ -713,17 +728,17 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Studera lugnt, ett samhällsbegrepp i taget',
     'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
-    'Redoindikator',
-    'redo',
-    'Öva mer först',
-    'På rätt väg',
-    'Nästan redo',
-    'Stark förberedelse',
-    'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
-    '${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade',
-    'Redoindikator: ${score} procent. ${verdict}. ${details}',
-    'Starta ett mockprov för att kontrollera din redoindikator',
-    'Gör ett mockprov',
+    'Förberedelsesignal',
+    'lokalt',
+    'Mer underlag behövs',
+    'Framsteg syns',
+    'Bra övningstakt',
+    'Stark lokal övning',
+    'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
+    '${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade',
+    'Förberedelsesignal: ${score} procent. ${verdict}. ${details}',
+    'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+    'Gör ett tidsatt övningsprov',
     'Repetera svaga kapitel',
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
@@ -778,25 +793,25 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
-    'Provredo',
-    'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
+    'Övningsläge',
+    'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
   ],
   en: [
     'Study dashboard',
     'Prepare calmly, one civic concept at a time',
     'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     "Today's goal",
-    'Readiness indicator',
-    'ready',
-    'Keep practicing first',
-    'Getting there',
-    'Almost ready',
-    'Strong preparation',
-    'Based on your answers so far. Answer more questions for a steadier signal.',
-    '${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried',
-    'Readiness indicator: ${score} percent. ${verdict}. ${details}',
-    'Start a mock exam to check your readiness indicator',
-    'Take a mock exam',
+    'Preparation signal',
+    'local',
+    'More evidence needed',
+    'Progress is visible',
+    'Solid practice pace',
+    'Strong local practice',
+    'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
+    '${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried',
+    'Preparation signal: ${score} percent. ${verdict}. ${details}',
+    'Start a timed practice exam to compare with your local preparation signal',
+    'Take a timed practice exam',
     'Review weak chapters',
     'Start a 5-minute practice set',
     'Start the recommended practice session',
@@ -851,8 +866,8 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'See which areas are ready, reviewed, or still weak.',
     'Study rhythm',
     'Get one simple next action and gentle habit feedback without blocking serious study.',
-    'Exam readiness',
-    'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
+    'Timed practice',
+    'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
   ],
 };
 const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
@@ -867,6 +882,8 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
 ].map((parts) => parts.join(''));
 const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
 const FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY = /\b(?:felspårning|repetition av misstag)\b/i;
+const FORBIDDEN_HOME_PREPARATION_SIGNAL_COPY =
+  /\b(?:Readiness indicator|Exam readiness|Almost ready|Redoindikator|Provredo|Are you ready to pass)\b/;
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['GuidedPracticePath', 'home route must render the guided practice path component'],
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -886,7 +903,7 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ],
   [
     'computeReadinessFromQuestionProgress({',
-    'home route must derive the readiness indicator from stored progress',
+    'home route must derive the preparation signal from stored progress',
   ],
   ['const guidedPathChapterGroups = [', 'home route must define the guided path chapter groups'],
   [
@@ -917,13 +934,14 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['mockExamSessions,', 'home route must feed persisted mock exam scores into readiness'],
   [
     'const readinessVerdict = copy.readinessVerdicts[readiness.verdict];',
-    'home route readiness verdict must use localized copy',
+    'home route preparation signal verdict must use localized copy',
   ],
   [
     'accessibilityLabel={readinessAccessibilityLabel}',
-    'home route readiness card must expose localized accessibility copy',
+    'home route preparation signal card must expose localized accessibility copy',
   ],
   ['href="/exam"', 'home route readiness CTA must link to the mock exam flow'],
+  ['{copy.readinessCaveat}', 'home route preparation signal caveat must always render'],
   ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
   ['title={copy.title}', 'home route title must render localized copy'],
   ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
@@ -4248,6 +4266,28 @@ function findQuestionStemSourceAuthorityReference(question) {
   return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionTaxVatTwoConceptIssue(question) {
+  const text = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  return QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionNestedMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
@@ -6936,6 +6976,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -9441,6 +9482,7 @@ function validateHomeRouteHeaderParity() {
 function validateHomeRouteCopyParity() {
   let valid = true;
   let homeRoute = '';
+  let readinessSource = '';
 
   function reject(message) {
     valid = false;
@@ -9451,6 +9493,13 @@ function validateHomeRouteCopyParity() {
     homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   } catch (error) {
     reject(`home route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    readinessSource = fs.readFileSync(path.join(repoRoot, 'lib/learning/readiness.ts'), 'utf8');
+  } catch (error) {
+    reject(`readiness source could not be read for home preparation signal copy: ${error.message}`);
     return;
   }
 
@@ -9466,6 +9515,15 @@ function validateHomeRouteCopyParity() {
 
   if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
     reject('home route Swedish missed-question review copy must use natural learner wording');
+  }
+
+  const unsupportedPreparationSignalCopy = `${homeRoute}\n${readinessSource}`.match(
+    FORBIDDEN_HOME_PREPARATION_SIGNAL_COPY,
+  );
+  if (unsupportedPreparationSignalCopy) {
+    reject(
+      `home route preparation signal copy must not expose official-readiness wording: ${unsupportedPreparationSignalCopy[0]}`,
+    );
   }
 
   const seenLabels = new Set();
@@ -10392,7 +10450,7 @@ function validateSwedishFlashcardCopyNaturalness() {
 
   if (
     !homeRoute.includes(
-      'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
+      'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
     )
   ) {
     reject('home route Swedish study-loop copy must not include unreachable flashcard copy');
@@ -10400,7 +10458,7 @@ function validateSwedishFlashcardCopyNaturalness() {
 
   if (
     !homeRoute.includes(
-      'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
+      'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
     )
   ) {
     reject('home route English study-loop copy must not include unreachable flashcard copy');
@@ -16113,6 +16171,9 @@ if (Array.isArray(questions)) {
       }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
+      const stateWelfareEnglishNaturalnessIssue =
+        findQuestionStateWelfareEnglishNaturalnessIssue(question);
+      const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
@@ -16142,6 +16203,16 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (stateWelfareEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted state-welfare English wording`);
+      } else {
+        questionStateWelfareEnglishNaturalnessValidated += 1;
+      }
+      if (taxVatTwoConceptIssue) {
+        fail(
+          `${label} combines tax liability and VAT purchase taxation in one learner-facing item`,
+        );
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16608,6 +16679,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      questionStateWelfareEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
