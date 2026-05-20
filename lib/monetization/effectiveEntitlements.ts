@@ -84,7 +84,7 @@ function isProActive(snap: ProTierEntitlements | null | undefined): boolean {
 }
 
 function isRemoveAdsActive(snap: PremiumEntitlements | null | undefined): boolean {
-  return Boolean(snap && snap.adsDisabled);
+  return Boolean(snap && snap.adsDisabled === true);
 }
 
 /**
