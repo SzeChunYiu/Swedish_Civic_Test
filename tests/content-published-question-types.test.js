@@ -730,7 +730,6 @@ require('./scripts/validate-content.js');
   assert.match(output, /q103 uses literal First of May English wording/);
 });
 
-
 test('EU cooperation source and exports use natural English article', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = Array.from(actualStaticQuestions());
@@ -1677,6 +1676,15 @@ test('generated parity validator derives expectations from the production genera
   assert.doesNotMatch(source, /const expected = expectedGeneratedAnswerShape\(sourceQuestion/);
 });
 
+test('criminal-responsibility currentness guard derives generated ids from the source row', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
+
+  assert.match(source, /sourceId: 'q044'/);
+  assert.match(source, /function criminalResponsibilityCurrentnessQuestionIds\(\)/);
+  assert.match(source, /sourceIndex \* GENERATED_VARIANTS_PER_SOURCE/);
+  assert.doesNotMatch(source, /ids:\s*\[[^\]]*q\d{3}/);
+});
+
 test('generated id fixture guard rejects raw generated ids in newly added content test files', () => {
   const firstGeneratedNumber = firstGeneratedQuestionNumber();
   const generatedId = `q${String(firstGeneratedNumber).padStart(3, '0')}`;
@@ -1733,7 +1741,7 @@ test('criminal-responsibility age copy is date-stamped to the current main-rule 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.criminalResponsibilityCurrentnessOfficialSourcesValidated, 3);
   assert.equal(summary.criminalResponsibilityCurrentnessSourceMetadataValidated, true);
-  assert.equal(summary.criminalResponsibilityCurrentnessSourceRetrievedAt, '2026-05-19');
+  assert.equal(summary.criminalResponsibilityCurrentnessSourceRetrievedAt, '2026-05-20');
   assert.equal(summary.criminalResponsibilityCurrentnessProposalEffectiveDate, '2026-08-02');
   assert.equal(summary.criminalResponsibilityCurrentnessQuestionsValidated, 5);
   assert.equal(summary.criminalResponsibilityCurrentnessParityValidated, true);
