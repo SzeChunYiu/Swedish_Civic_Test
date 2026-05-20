@@ -22,12 +22,8 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'lib/monetization/purchases.ts'),
     'utf8',
   );
-  const paywallSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
-    'utf8',
-  );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 15);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 14);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /'persistence_failed'/);
   assert.match(purchaseSource, /interface RemoveAdsPersistenceResult/);
@@ -51,8 +47,6 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
-  assert.match(paywallSource, /persistence_failed/);
-  assert.match(paywallSource, /Tap Restore to activate ad-free study/);
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
@@ -115,35 +109,5 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /native Remove Ads finish transaction must be non-consumable/,
-  );
-});
-
-test('Remove Ads purchase runtime parity rejects missing persistence-failure result', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replaceAll("return createResult('persistence_failed'", "return createResult('pending'");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /Remove Ads buy and restore flows must return persistence_failed/,
   );
 });
