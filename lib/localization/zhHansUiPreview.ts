@@ -174,6 +174,53 @@ export const zhHansUiPreview = {
         '由我们补充撰写，用来解释 UHR 材料没有直接展开的背景内容。不会出现在模拟考试中。',
     },
   },
+
+  quizFeedback: {
+    answerOption: {
+      fallbackLabel: '答案选项',
+      selectAccessibilityLabelTemplate: '选择答案：{label}',
+      stateLabels: {
+        selected: '已选择',
+        correct: '正确答案',
+        incorrect: '答错的选项',
+      },
+    },
+    explanationPanel: {
+      title: '答案解析',
+      fallback: '这道题暂时没有答案解析。',
+      accessibilityLabelPrefix: '答案解析',
+    },
+    sourceCitation: {
+      label: '资料来源',
+      pagePrefix: '第 {pageApprox} 页',
+      unavailable: '暂无资料来源',
+      uhrReferenceLabel: 'UHR 参考材料',
+      defaultSourceTitle: 'Sverige i fokus',
+      basedOnUhrTemplate: '依据 UHR 参考材料整理：{chapter}，{section}。',
+    },
+    confidenceRating: {
+      title: '你有多确定？',
+      subtitle: '可选的 Pro 校准工具，用来帮助你了解自己对答案的把握。',
+      groupLabel: '可选的答案把握程度评分',
+      optionLabelTemplate: '将把握程度设为 5 分中的 {value} 分：{label}',
+      options: {
+        1: '猜的',
+        2: '不太确定',
+        3: '有点把握',
+        4: '比较确定',
+        5: '很确定',
+      },
+    },
+    resultFeedback: {
+      correct: '答对了。',
+      incorrect: '这次选错了。',
+      correctAnswerLabel: '正确答案',
+      yourAnswerLabel: '你的答案',
+      reviewExplanation: '查看解析',
+      keepGoing: '继续加油',
+      mistakeReassurance: '错一次没关系，把这个知识点记牢就好。',
+    },
+  },
   languagePicker: {
     triggerLabelTemplate: '当前语言为 {currentLabel}。打开语言选择器。',
     closeLabel: '关闭语言选择器',
