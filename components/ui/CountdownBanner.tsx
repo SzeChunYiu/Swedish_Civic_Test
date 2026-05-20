@@ -1,20 +1,28 @@
+import { Link, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
   CITIZENSHIP_RULES_EFFECTIVE_DATE,
   CITIZENSHIP_TIMELINE_SOURCE_URLS,
+  CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE,
   CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
   daysUntil,
   formatExamDate,
 } from '../../lib/learning/examDate';
 import { colors, radius, space, typography } from '../../lib/theme';
 
+type TimelineSourceLink = {
+  accessibilityLabel: string;
+  label: string;
+  sourceKey: keyof typeof CITIZENSHIP_TIMELINE_SOURCE_URLS;
+};
+
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (rulesDate: string, firstSittingDate: string) =>
-      `Nya medborgarskapsregler gäller från ${rulesDate}. Första samhällskunskapsprovet genomförs den ${firstSittingDate} i Stockholm. Förbered dig nu.`,
+    body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
+      `Nya medborgarskapsregler gäller från ${rulesDate}. Samhällskunskapsprovet väntas starta i augusti 2026; första provomgången är ${firstSittingDate} i Stockholm. Regeringens tidsgräns för första steget är ${deadlineDate}.`,
     sourceLabel: 'Officiella datumkällor:',
     sources: [
       {
@@ -37,8 +45,8 @@ const copy = {
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (rulesDate: string, firstSittingDate: string) =>
-      `New citizenship rules apply from ${rulesDate}. The first civic-knowledge test will be held on ${firstSittingDate} in Stockholm. Start preparing now.`,
+    body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
+      `New citizenship rules apply from ${rulesDate}. The civic-knowledge test is expected in August 2026; the first sitting is ${firstSittingDate} in Stockholm. The government deadline for the first step is ${deadlineDate}.`,
     sourceLabel: 'Official date sources:',
     sources: [
       {
@@ -72,23 +80,31 @@ export interface CountdownBannerProps {
 }
 
 export function CountdownBanner({ accessibilityLabel, language }: CountdownBannerProps) {
-  const [days, setDays] = useState<number>(() => daysUntil(EXAM_REFORM_DATE));
+  const [days, setDays] = useState<number>(() => daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE));
 
   useEffect(() => {
-    const interval = setInterval(() => setDays(daysUntil(EXAM_REFORM_DATE)), 60 * 60 * 1000);
+    const interval = setInterval(
+      () => setDays(daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE)),
+      60 * 60 * 1000,
+    );
     return () => clearInterval(interval);
   }, []);
 
   if (days <= 0) return null;
 
   const t = copy[language];
-  const dateString = formatExamDate(EXAM_REFORM_DATE, language);
-  const resolvedAccessibilityLabel =
-    accessibilityLabel ?? `${t.label(days)} ${t.untilLabel}. ${t.body(dateString)}`;
+  const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
+  const firstSittingDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, language);
+  const deadlineDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE, language);
+  const accessibilitySummary = `${t.label(days)} ${t.untilLabel}. ${t.body(
+    rulesDateString,
+    firstSittingDateString,
+    deadlineDateString,
+  )}`;
 
   return (
     <View
-      accessibilityLabel={resolvedAccessibilityLabel}
+      accessibilityLabel={accessibilityLabel ?? accessibilitySummary}
       accessibilityRole="alert"
       style={styles.banner}
     >
@@ -97,14 +113,16 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
         <Text style={styles.daysLabel}>{t.untilLabel}</Text>
       </View>
       <View style={styles.contentBlock}>
-        <Text style={styles.body}>{t.body(rulesDateString, firstSittingDateString)}</Text>
+        <Text style={styles.body}>
+          {t.body(rulesDateString, firstSittingDateString, deadlineDateString)}
+        </Text>
         <View style={styles.sourceRow}>
           <Text style={styles.sourceLabel}>{t.sourceLabel}</Text>
           {t.sources.map((source) => (
             <Link
               accessibilityLabel={source.accessibilityLabel}
               accessibilityRole="link"
-              href={CITIZENSHIP_TIMELINE_SOURCE_URLS[source.sourceKey]}
+              href={CITIZENSHIP_TIMELINE_SOURCE_URLS[source.sourceKey] as Href}
               key={source.sourceKey}
               style={styles.sourceLink}
               target="_blank"
@@ -120,7 +138,7 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
 
 const styles = StyleSheet.create({
   banner: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: colors.warningSoft,
     borderColor: colors.warning,
     borderRadius: radius.card,
@@ -149,11 +167,38 @@ const styles = StyleSheet.create({
     lineHeight: typography.micro.lineHeight,
     textTransform: 'uppercase',
   },
+  contentBlock: {
+    flex: 1,
+    gap: space[1],
+  },
   body: {
     color: colors.text,
     flex: 1,
     fontFamily: typography.bodyTight.fontFamily,
     fontSize: typography.bodyTight.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
+  },
+  sourceRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  sourceLabel: {
+    color: colors.textSecondary,
+    fontFamily: typography.micro.fontFamily,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+  },
+  sourceLink: {
+    color: colors.accent,
+    fontFamily: typography.micro.fontFamily,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+    minHeight: space[6],
+    minWidth: space[6],
+    paddingHorizontal: space[1],
+    paddingVertical: space[0.5],
+    textDecorationLine: 'underline',
   },
 });
