@@ -775,6 +775,7 @@ const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
+const EXPECTED_WEEKLY_RECAP_RUNTIME_CASES = 7;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -8114,6 +8115,8 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const weeklyRecapModule = loadTs('lib/learning/weeklyRecap.ts');
+const generateWeeklyRecap = weeklyRecapModule.generateWeeklyRecap;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const darkColors = themeModule.darkColors;
@@ -8408,6 +8411,8 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
+let weeklyRecapRuntimeCasesValidated = 0;
+let weeklyRecapRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -9213,6 +9218,9 @@ if (typeof calculateChapterMastery !== 'function') {
   fail('calculateChapterMastery export is not a function');
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
+if (typeof generateWeeklyRecap !== 'function') {
+  fail('generateWeeklyRecap export is not a function');
+}
 if (!isObjectRecord(colors)) fail('theme colors export is not an object');
 if (!isObjectRecord(motion)) fail('theme motion export is not an object');
 if (!isObjectRecord(radius)) fail('theme radius export is not an object');
@@ -17406,6 +17414,122 @@ function validateReadinessAdapterRules() {
   }
 }
 
+function validateWeeklyRecapRuntimeGuards() {
+  if (typeof generateWeeklyRecap !== 'function') {
+    return;
+  }
+
+  const recap = generateWeeklyRecap({
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: '7',
+      dailyGoalAnswers: 10,
+      questionProgress: {
+        validResolved: {
+          questionId: 'validResolved',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T10:03:00.000Z',
+        },
+        stringCounters: {
+          questionId: 'stringCounters',
+          correctStreak: '1',
+          wrongCount: '2',
+          lastAnsweredAt: '2026-05-20T10:04:00.000Z',
+        },
+      },
+      sessions: [
+        {
+          id: 'weekly-bad-runtime',
+          mode: 'exam',
+          questionIds: ['q1', 'q2', 'q3'],
+          startedAt: '2026-05-20T10:00:00.000Z',
+          completedAt: '2026-05-20T10:30:00.000Z',
+          score: Infinity,
+          answers: [
+            {
+              questionId: 'q1',
+              selectedOptionIds: ['a'],
+              isCorrect: 'true',
+              answeredAt: '2026-05-20T10:00:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q2',
+              selectedOptionIds: ['a'],
+              isCorrect: 1,
+              answeredAt: '2026-05-20T10:01:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q3',
+              selectedOptionIds: ['a'],
+              isCorrect: false,
+              answeredAt: '2026-05-20T10:02:00.000Z',
+              timeSpentSeconds: 5,
+            },
+          ],
+        },
+        {
+          id: 'weekly-high-runtime',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-05-20T11:00:00.000Z',
+          completedAt: '2026-05-20T11:20:00.000Z',
+          score: 1.2,
+        },
+      ],
+    },
+    chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
+    chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
+    masteryThreshold: '0.8',
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+
+  const cases = [
+    { label: 'truthy correctness is not correct', actual: recap.accuracy, expected: 0 },
+    { label: 'answered count is preserved', actual: recap.questionsAnswered, expected: 3 },
+    { label: 'valid resolved mistake still counts', actual: recap.mistakesResolved, expected: 1 },
+    { label: 'malformed streak normalizes to number', actual: recap.streakDays, expected: 0 },
+    { label: 'exam completions still count', actual: recap.mockExamsTaken, expected: 2 },
+    { label: 'mock best score is finite and clamped', actual: recap.bestMockScore, expected: 1 },
+    {
+      label: 'invalid mastery values do not master',
+      actual: recap.chapterNowMastered,
+      expected: null,
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    if (!jsonEqual(actual, expected)) {
+      rulesAreValid = false;
+      fail(
+        `weekly recap runtime guard ${label} returned ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      weeklyRecapRuntimeCasesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && weeklyRecapRuntimeCasesValidated === EXPECTED_WEEKLY_RECAP_RUNTIME_CASES) {
+    weeklyRecapRuntimeParityValidated = true;
+  }
+}
+
+if (process.argv.includes('--focus-weekly-recap-runtime')) {
+  validateWeeklyRecapRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    weeklyRecapRuntimeCasesValidated,
+    weeklyRecapRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -18976,6 +19100,7 @@ validateReadinessAdapterRules();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
+validateWeeklyRecapRuntimeGuards();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -19264,6 +19389,8 @@ console.log(
       xpRulesParityValidated,
       masteryRulesValidated,
       masteryRulesParityValidated,
+      weeklyRecapRuntimeCasesValidated,
+      weeklyRecapRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,

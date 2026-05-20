@@ -9,9 +9,10 @@
 // just finished.
 
 import { getLocalDateKey } from './streaks';
-import type { QuizSession, UserProgress, UserQuestionProgress } from '../../types/progress';
+import type { UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_MASTERY_THRESHOLD = 0.8;
 
 export interface WeeklyRecap {
   weekStart: string; // local date key, Monday
@@ -65,19 +66,60 @@ export function endOfWeek(date: Date): Date {
   return new Date(start.getTime() + 7 * DAY_MS - 1);
 }
 
-function isWithin(iso: string | undefined, start: Date, end: Date): boolean {
-  if (!iso) return false;
+function isWithin(iso: unknown, start: Date, end: Date): boolean {
+  if (typeof iso !== 'string' || !iso) return false;
   const t = new Date(iso).getTime();
   if (Number.isNaN(t)) return false;
   return t >= start.getTime() && t <= end.getTime();
 }
 
-function isAnsweredInWindow(answer: { answeredAt: string }, start: Date, end: Date): boolean {
+function isAnsweredInWindow(answer: { answeredAt?: unknown }, start: Date, end: Date): boolean {
   return isWithin(answer.answeredAt, start, end);
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function finiteNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function normalizedStreakDays(value: unknown): number {
+  const days = finiteNumber(value);
+  return days === null ? 0 : Math.max(0, Math.floor(days));
+}
+
+function normalizedMasteryThreshold(value: unknown): number {
+  const threshold = finiteNumber(value);
+  return threshold !== null && threshold >= 0 && threshold <= 1
+    ? threshold
+    : DEFAULT_MASTERY_THRESHOLD;
+}
+
+function normalizedMasteryValue(value: unknown): number | null {
+  const mastery = finiteNumber(value);
+  return mastery !== null && mastery >= 0 && mastery <= 1 ? mastery : null;
+}
+
+function normalizedMockScore(value: unknown): number | null {
+  const score = finiteNumber(value);
+  if (score === null) return null;
+  return Math.max(0, Math.min(1, score));
+}
+
+function progressSessions(progress: UserProgress): readonly unknown[] {
+  const sessions = (progress as { sessions?: unknown }).sessions;
+  return Array.isArray(sessions) ? sessions : [];
+}
+
+function progressQuestionMap(progress: UserProgress): Record<string, unknown> {
+  const questionProgress = (progress as { questionProgress?: unknown }).questionProgress;
+  return isRecord(questionProgress) ? questionProgress : {};
+}
+
 function answersFromSessions(
-  sessions: QuizSession[],
+  sessions: readonly unknown[],
   start: Date,
   end: Date,
 ): {
@@ -92,11 +134,15 @@ function answersFromSessions(
   const questionsTouched = new Set<string>();
 
   for (const session of sessions) {
+    if (!isRecord(session) || !Array.isArray(session.answers)) continue;
     for (const answer of session.answers) {
+      if (!isRecord(answer)) continue;
       if (!isAnsweredInWindow(answer, start, end)) continue;
       total += 1;
-      if (answer.isCorrect) correct += 1;
-      questionsTouched.add(answer.questionId);
+      if (answer.isCorrect === true) correct += 1;
+      if (typeof answer.questionId === 'string' && answer.questionId.trim()) {
+        questionsTouched.add(answer.questionId);
+      }
     }
   }
 
@@ -104,15 +150,19 @@ function answersFromSessions(
 }
 
 function findFirstNewlyMastered(
-  startMastery: Record<string, number>,
-  nowMastery: Record<string, number>,
+  startMastery: Record<string, unknown>,
+  nowMastery: Record<string, unknown>,
   threshold: number,
 ): string | null {
   const candidates: { chapterId: string; nowValue: number }[] = [];
   for (const [chapterId, nowValue] of Object.entries(nowMastery)) {
-    const startValue = startMastery[chapterId] ?? 0;
-    if (startValue < threshold && nowValue >= threshold) {
-      candidates.push({ chapterId, nowValue });
+    const normalizedNow = normalizedMasteryValue(nowValue);
+    if (normalizedNow === null) continue;
+    const hasStartValue = Object.prototype.hasOwnProperty.call(startMastery, chapterId);
+    const normalizedStart = hasStartValue ? normalizedMasteryValue(startMastery[chapterId]) : 0;
+    if (normalizedStart === null) continue;
+    if (normalizedStart < threshold && normalizedNow >= threshold) {
+      candidates.push({ chapterId, nowValue: normalizedNow });
     }
   }
   if (candidates.length === 0) return null;
@@ -122,21 +172,26 @@ function findFirstNewlyMastered(
 }
 
 function mistakesResolvedInWindow(
-  questionProgress: Record<string, UserQuestionProgress>,
+  questionProgress: Record<string, unknown>,
   start: Date,
   end: Date,
 ): number {
   let count = 0;
   for (const qp of Object.values(questionProgress)) {
+    if (!isRecord(qp)) continue;
     if (!qp.lastAnsweredAt) continue;
     if (!isWithin(qp.lastAnsweredAt, start, end)) continue;
-    if (qp.correctStreak >= 1 && qp.wrongCount > 0) count += 1;
+    const correctStreak = finiteNumber(qp.correctStreak);
+    const wrongCount = finiteNumber(qp.wrongCount);
+    if (correctStreak !== null && correctStreak >= 1 && wrongCount !== null && wrongCount > 0) {
+      count += 1;
+    }
   }
   return count;
 }
 
 function countMocks(
-  sessions: QuizSession[],
+  sessions: readonly unknown[],
   start: Date,
   end: Date,
 ): {
@@ -146,12 +201,14 @@ function countMocks(
   let count = 0;
   let best: number | null = null;
   for (const session of sessions) {
+    if (!isRecord(session)) continue;
     if (session.mode !== 'exam') continue;
     if (!session.completedAt) continue;
     if (!isWithin(session.completedAt, start, end)) continue;
     count += 1;
-    if (typeof session.score === 'number') {
-      best = best === null ? session.score : Math.max(best, session.score);
+    const score = normalizedMockScore(session.score);
+    if (score !== null) {
+      best = best === null ? score : Math.max(best, score);
     }
   }
   return { count, bestScore: best };
@@ -164,8 +221,8 @@ export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
   const previousStart = new Date(start.getTime() - 7 * DAY_MS);
   const previousEnd = new Date(start.getTime() - 1);
 
-  const sessions = input.progress.sessions ?? [];
-  const questionProgress = input.progress.questionProgress ?? {};
+  const sessions = progressSessions(input.progress);
+  const questionProgress = progressQuestionMap(input.progress);
 
   const current = answersFromSessions(sessions, start, end);
   const previous = answersFromSessions(sessions, previousStart, previousEnd);
@@ -190,7 +247,7 @@ export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
       ? findFirstNewlyMastered(
           input.chapterMasteryAtWeekStart,
           input.chapterMasteryNow,
-          input.masteryThreshold ?? 0.8,
+          normalizedMasteryThreshold(input.masteryThreshold),
         )
       : null;
 
@@ -205,7 +262,7 @@ export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
     chaptersTouched: [...current.chapterIdsTouched].sort(),
     chapterNowMastered,
     mistakesResolved,
-    streakDays: input.progress.currentStreak ?? 0,
+    streakDays: normalizedStreakDays((input.progress as { currentStreak?: unknown }).currentStreak),
     mockExamsTaken: mocks.count,
     bestMockScore: mocks.bestScore,
     accuracyDeltaPoints,
