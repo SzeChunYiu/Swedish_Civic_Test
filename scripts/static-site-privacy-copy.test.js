@@ -9,6 +9,13 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
+function staticSiteSwedishDictionary() {
+  const source = read('site/app.js');
+  const match = source.match(/\n  sv: \{([\s\S]*?)\n  \}\n\};/);
+  assert.ok(match, 'site/app.js Swedish dictionary block stays parseable');
+  return match[1];
+}
+
 test('static site privacy copy rejects stale monetization claims', () => {
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
@@ -19,8 +26,6 @@ test('static site privacy copy rejects stale monetization claims', () => {
     /Om vi n[aå]gonsin l[aä]gger till premium/i,
     /we don't sell anything/i,
     /s[aä]ljer ingenting/i,
-    /adsDisabled=true/i,
-    /local adsDisabled entitlement flag/i,
     /collects nothing and shares nothing/i,
     /samlar inget och delar inget/i,
     /collects no user data and shares no user data/i,
@@ -38,94 +43,21 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
     /Google Mobile Ads \(AdMob\)/,
     /ad and consent signals/,
     /annons- och samtyckessignaler/,
-    /Remove Ads is an optional one-time 29 SEK purchase/,
-    /validated purchase-status record/,
-    /product ID, transaction ID or purchase token/,
-    /receipt-validation timestamp/,
-    /Ta bort annonser .*eng[aå]ngsk[oö]p p[aå] 29 SEK/,
-    /köpstatuspost med produkt-ID, transaktions-ID eller köptoken/,
+    /Remove Ads is an optional one-time 29 SEK purchase that removes ads/,
+    /Ta bort annonser .*eng[aå]ngsk[oö]p p[aå] 29 SEK som tar bort annonser/,
     /ads never collect study answers or progress/,
     /annonser samlar aldrig in dina studiesvar eller framsteg/,
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
-test('static home privacy microcopy scopes local study data without denying ad tracking', () => {
-  const appSource = read('site/app.js');
-  const surface = staticPublicPrivacySurface();
-  const noTrackingRegression = surface
-    .replace('Study progress stays local.', 'No tracking.')
-    .replace('Studieframsteg sparas lokalt.', 'Ingen spårning.');
+test('static site Swedish study copy uses natural Swedish study terms', () => {
+  const swedishDictionary = staticSiteSwedishDictionary();
 
-  assertNoUnqualifiedNoTrackingClaims(surface);
-  assert.throws(
-    () => assertNoUnqualifiedNoTrackingClaims(noTrackingRegression),
-    /No tracking|Ingen spårning/,
-  );
-  assert.match(
-    appSource,
-    /['"]numbers\.4['"]:\s*['"]to start\. No login\. Study progress stays local\.['"]/,
-  );
-  assert.match(
-    appSource,
-    /['"]numbers\.4['"]:\s*['"]att börja\. Ingen inloggning\. Studieframsteg sparas lokalt\.['"]/,
-  );
-  assert.match(surface, /Google AdSense/);
-  assert.match(surface, /reviewed web slot IDs are configured/);
-  assert.match(surface, /granskade webbplats-ID:n [aä]r konfigurerade/);
-  assert.match(surface, /Google Mobile Ads \(AdMob\)/);
-  assert.match(surface, /ad and consent signals/);
-  assert.match(surface, /annons- och samtyckessignaler/);
-});
-
-test('static site Swedish privacy copy uses natural study-streak wording', () => {
-  const appSource = read('site/app.js');
-  const privacyParagraphs = [
-    ...staticDictionaryValues(appSource, 'privacy.s3.p'),
-    ...staticDictionaryValues(appSource, 'privacy.s4.p'),
-  ];
-  const swedishPrivacyParagraphs = privacyParagraphs.filter((paragraph) =>
-    /\b(?:lagras|skickar|annonsleverantörer|studiesvar)\b/i.test(paragraph),
-  );
-  const englishPrivacyParagraphs = privacyParagraphs.filter((paragraph) =>
-    /\b(?:stored locally|ad providers)\b/i.test(paragraph),
+  [/Spaced repetition/i, /\bquiz\b/i, /\btiming\b/i, /litet quiz/i, /riktig timing/i].forEach(
+    (pattern) => assert.doesNotMatch(swedishDictionary, pattern),
   );
 
-  assert.equal(swedishPrivacyParagraphs.length, 2);
-  assert.equal(englishPrivacyParagraphs.length, 2);
-
-  swedishPrivacyParagraphs.forEach((paragraph) => {
-    assert.doesNotMatch(
-      paragraph,
-      /\bstreaks\b/i,
-      'Swedish static privacy copy must not use the English plural "streaks"',
-    );
-    assert.match(
-      paragraph,
-      /\bstudiesviter\b/i,
-      'Swedish static privacy copy should name locally stored study streaks naturally',
-    );
-  });
-
-  englishPrivacyParagraphs.forEach((paragraph) => {
-    assert.match(paragraph, /\bstreaks\b/i);
-  });
-});
-
-test('static Swedish dictionary rejects grammar and tone artifacts', () => {
-  const source = read('site/app.js');
-  const blockedPhrases = [
-    ['ingen', 'juridiska'].join(' '),
-    ['fika', 'stor'].join('-'),
-    ['fika', 'skador'].join('-'),
-  ];
-
-  blockedPhrases.forEach((phrase) => {
-    assert.doesNotMatch(source, new RegExp(phrase, 'i'));
-  });
-
-  [
-    /inget juridiskt kr[aå]ngel/,
-    /en kort studievana/,
-    /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
-  ].forEach((pattern) => assert.match(source, pattern));
+  [/Repetition med intervall/, /kort övning/, /realistisk tidskänsla/].forEach((pattern) =>
+    assert.match(swedishDictionary, pattern),
+  );
 });

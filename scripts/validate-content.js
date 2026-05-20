@@ -3613,6 +3613,56 @@ function validateStaticEbookPracticalTestClaims() {
   };
 }
 
+const STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN = [
+  /Spaced repetition/i,
+  /\bquiz\b/i,
+  /\btiming\b/i,
+  /litet quiz/i,
+  /riktig timing/i,
+];
+
+const STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED = [
+  'Repetition med intervall',
+  'kort övning',
+  'realistisk tidskänsla',
+];
+
+function validateStaticSiteSwedishStudyTerms() {
+  const source = loadText('site/app.js');
+  const swedishDictionary = source.match(/\n  sv: \{([\s\S]*?)\n  \}\n\};/)?.[1];
+  let forbiddenTermsValidated = 0;
+  let requiredTermsValidated = 0;
+
+  if (!swedishDictionary) {
+    fail('static site Swedish dictionary block must stay parseable');
+    return {
+      forbiddenTermsValidated,
+      requiredTermsValidated,
+    };
+  }
+
+  STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN.forEach((pattern) => {
+    if (pattern.test(swedishDictionary)) {
+      fail(`static site Swedish dictionary contains English study term: ${pattern}`);
+      return;
+    }
+    forbiddenTermsValidated += 1;
+  });
+
+  STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED.forEach((term) => {
+    if (!swedishDictionary.includes(term)) {
+      fail(`static site Swedish dictionary missing natural study term: ${term}`);
+      return;
+    }
+    requiredTermsValidated += 1;
+  });
+
+  return {
+    forbiddenTermsValidated,
+    requiredTermsValidated,
+  };
+}
+
 function questionSentenceEndingsAreComplete(question) {
   return ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'].every((field) =>
     textHasSentenceEnding(question[field]),
@@ -6064,6 +6114,8 @@ let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
+let staticSiteSwedishStudyTermsValidated = 0;
+let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -6308,6 +6360,15 @@ staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatter
 staticEbookOutcomeClaimParityValidated =
   staticEbookOutcomeClaimPatternsValidated ===
   STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
+{
+  const studyTermValidation = validateStaticSiteSwedishStudyTerms();
+  staticSiteSwedishStudyTermsValidated =
+    studyTermValidation.forbiddenTermsValidated + studyTermValidation.requiredTermsValidated;
+  staticSiteSwedishStudyTermNaturalnessValidated =
+    studyTermValidation.forbiddenTermsValidated ===
+      STATIC_SITE_SWEDISH_STUDY_TERM_FORBIDDEN.length &&
+    studyTermValidation.requiredTermsValidated === STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED.length;
+}
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -13866,6 +13927,8 @@ console.log(
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
+      staticSiteSwedishStudyTermsValidated,
+      staticSiteSwedishStudyTermNaturalnessValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
