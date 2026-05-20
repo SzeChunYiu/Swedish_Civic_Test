@@ -21,9 +21,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Sverige ligger i Norden i norra Europa. Norden är en del av norra Europa och består av Danmark, Finland, Island, Norge och Sverige, därför är alternativet om Norden i norra Europa rätt.',
+      'Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.',
     explanationEn:
-      'Sweden is in the Nordic region in northern Europe. The Nordic region is part of northern Europe and includes Denmark, Finland, Iceland, Norway, and Sweden, so the option about the Nordic region in northern Europe is correct.',
+      'Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -37,17 +37,17 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q002',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-    questionEn: "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
+    questionSv: 'Sveriges nordligaste del ligger norr om polcirkeln.',
+    questionEn: "Sweden's northernmost part lies north of the Arctic Circle.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften.',
+      'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln.',
     explanationEn:
-      "The statement is true: Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. That makes True correct, while False contradicts the fact.",
+      "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -71,9 +71,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'b',
     explanationSv:
-      'Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Därför är 1 600 kilometer rätt; 160 och 60 kilometer är för korta och 16 000 kilometer är för långt.',
+      'Sverige är ett avlångt land som sträcker sig cirka 1 600 kilometer från Treriksröset i norr till Smygehuk i söder. Avstånden 160 och 60 kilometer är för korta, och 16 000 kilometer är för långt.',
     explanationEn:
-      'Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. That makes 1,600 kilometres correct; 160 and 60 kilometres are too short, and 16,000 kilometres is too long.',
+      'Sweden is an elongated country that stretches about 1,600 kilometres from Treriksröset in the north to Smygehuk in the south. The distances 160 and 60 kilometres are too short, and 16,000 kilometres is too long.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -97,9 +97,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Havet vid Sveriges östra kust heter Östersjön. Därför är Östersjön rätt; Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust.',
+      'Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust.',
     explanationEn:
-      "The sea along Sweden's eastern coast is the Baltic Sea. That makes the Baltic Sea correct; the North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
+      "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -139,19 +139,17 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q006',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
-    questionEn:
-      "True or false: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
+    questionSv: 'Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
+    questionEn: "The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Påståendet är sant: Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
+      'Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
     explanationEn:
-      'The statement is true: Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.',
+      'Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -265,9 +263,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Därför är alternativet med dessa resurser rätt, medan alternativen med olja, naturgas, ökenmark, tropiskt regn och liknande inte beskriver Sveriges viktiga naturresurser.',
+      'Sverige är rikt på flera viktiga naturresurser: järnmalm och andra mineraler, skog, jordbruksmark och vatten. Olja, naturgas, ökenmark, tropiskt regn och liknande beskriver inte Sveriges viktiga naturresurser.',
     explanationEn:
-      "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. That makes the option listing those resources correct, while the alternatives about oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
+      "Sweden is rich in several important natural resources: iron ore and other minerals, forests, agricultural land, and water. Oil, natural gas, desert land, tropical rain, and similar items do not describe Sweden's important natural resources.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Naturresurser',
@@ -291,9 +289,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Därför är Folkstyre rätt; militärstyre, envälde och företagsstyre lägger makten någon annanstans.',
+      'Demokrati betyder folkstyre: makten utgår från folket och medborgarna kan påverka beslut. Människor ska kunna välja mellan flera politiska alternativ, och de som får makten ska kunna bytas ut. Militärstyre, envälde och företagsstyre lägger makten någon annanstans.',
     explanationEn:
-      'Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. That makes rule by the people correct; military rule, autocracy, and rule by companies place power somewhere else.',
+      'Democracy means rule by the people: power comes from the people, and citizens can influence decisions. People should be able to choose between several political alternatives, and those who gain power can be replaced. Military rule, autocracy, and rule by companies place power somewhere else.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -333,9 +331,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt; därför är alternativet om en röst var rätt.',
+      'Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt.',
     explanationEn:
-      'Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret; that makes the option about one vote each correct.',
+      'Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -419,9 +417,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Därför är rättssäkerhet rätt svar; censur, segregation och monarki betyder andra saker.',
+      'Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker.',
     explanationEn:
-      'Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. That makes legal certainty the correct answer; censorship, segregation, and monarchy mean other things.',
+      'Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
@@ -527,9 +525,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'c',
     explanationSv:
-      'Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Det gör 349 till rätt svar; 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen.',
+      'Riksdagen har 349 ledamöter, och de väljs vart fjärde år. Talen 21, 290 och 1 600 anger inte antalet ledamöter i riksdagen.',
     explanationEn:
-      'The Riksdag has 349 members, and they are elected every four years. That makes 349 the correct answer; 21, 290, and 1,600 do not give the number of Riksdag members.',
+      'The Riksdag has 349 members, and they are elected every four years. The numbers 21, 290, and 1,600 do not give the number of Riksdag members.',
     uhrReference: { chapter: 'Så här styrs Sverige', section: 'Staten', pageApprox: 12 },
     difficulty: 'easy',
     reviewStatus: 'reviewed',
@@ -592,12 +590,12 @@ export const baseQuestions: PracticeQuestion[] = [
     options: [
       {
         id: 'a',
-        textSv: 'Politikerna behöver inte följa resultatet',
+        textSv: 'Politikerna måste inte följa resultatet',
         textEn: 'Politicians do not have to follow the result',
       },
       {
         id: 'b',
-        textSv: 'Politikerna är skyldiga att följa resultatet',
+        textSv: 'Politikerna måste alltid följa resultatet',
         textEn: 'Politicians must always follow the result',
       },
       {
@@ -613,9 +611,9 @@ export const baseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt.',
+      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.',
     explanationEn:
-      'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.',
+      'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
     uhrReference: {
       chapter: 'Politiska val och partier',
       section: 'Folkomröstningar',

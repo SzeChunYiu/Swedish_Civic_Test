@@ -370,6 +370,17 @@ const AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS = [
   /\b(?:True|False)\s+is\s+correct\b/i,
   /\bwhile False\b/i,
 ];
+const QUESTION_EXPLANATION_ANSWER_JUDGEMENT_PATTERNS = [
+  /\bdärför\s+är\s+alternativet\b[^.?!;]*(?:\brätt\b|\brätt\s+svar\b)/i,
+  /\bdärför\s+är\b[^.?!;]*\brätt\s+svar\b/i,
+  /\bdet\s+gör\b[^.?!;]*\btill\s+rätt\s+svar\b/i,
+  /\bso\s+the\s+answer\s+about\b[^.?!;]*\bis\s+correct\b/i,
+  /\bthat\s+makes\b[^.?!;]*\bthe\s+correct\s+answer\b/i,
+  /\bso\b[^.?!;]*\bis\s+the\s+correct\s+answer\b/i,
+  /\btherefore\s+the\s+option\s+about\b[^.?!;]*\bis\s+correct\b/i,
+  /\bso\s+the\s+option\s+about\b[^.?!;]*\bis\s+correct\b/i,
+  /\bthat\s+makes\s+(?!(?:True|False)\b)[^.?!;]*\bcorrect\b/i,
+];
 const GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [/\bmaterialet\b/i, /\bfrom the material\b/i];
 const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Inget av alternativen stämmer',
@@ -4291,6 +4302,11 @@ function findAuthoredTrueFalseExplanationBoilerplate(question) {
   return AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionExplanationAnswerJudgementBoilerplate(question) {
+  const text = [question.explanationSv, question.explanationEn].filter(Boolean).join(' ');
+  return QUESTION_EXPLANATION_ANSWER_JUDGEMENT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionFalseAnswerExplanationMismatch(question) {
   if (
     question.type !== 'true_false' ||
@@ -6545,6 +6561,9 @@ function validateQuestionSchema(question, index) {
     if (hasText(question[field]) && !textHasSentenceEnding(question[field])) {
       reject(`${label} ${field} must end with sentence punctuation`);
     }
+  }
+  if (findQuestionExplanationAnswerJudgementBoilerplate(question)) {
+    reject(`${label} explanation contains answer-judgement boilerplate`);
   }
 
   if (!Array.isArray(question.options) || ![2, 4].includes(question.options.length)) {

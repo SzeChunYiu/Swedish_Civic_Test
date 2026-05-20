@@ -1154,6 +1154,43 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects authored answer-judgement explanation boilerplate', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = String(originalReadFileSync.call(this, filePath, ...args));
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return contents
+      .replace(
+        'Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.',
+        'Sverige ligger i Norden i norra Europa, därför är alternativet om Norden i norra Europa rätt. Därför är Norden rätt svar. Det gör Norden till rätt svar.',
+      )
+      .replace(
+        'Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.',
+        'Sweden is in the Nordic region in northern Europe, so the answer about the Nordic region is correct. That makes the Nordic region the correct answer. Sweden is in the Nordic region, so the Nordic region is the correct answer.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 explanation contains answer-judgement boilerplate/,
+  );
+});
+
 test('published question schema rejects residual q256-q305 reason-target wording', () => {
   const result = spawnSync(
     process.execPath,
