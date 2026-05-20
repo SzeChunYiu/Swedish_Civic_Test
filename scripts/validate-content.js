@@ -818,13 +818,10 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'XP-baserad',
     'dagars svit',
     'daglig vana',
-    '${count} svitskydd redo',
-    'Svitskydd',
     'svaga kapitel',
     'behöver repetition',
     'frågor',
     '${count} kapitel',
-    'Fokuserad repetition',
     'Håll koll på det som behöver övas',
     'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     'Granska bokmärkta eller missade frågor',
@@ -867,13 +864,10 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'XP-based',
     'day streak',
     'daily habit',
-    '${count} streak freeze ready',
-    'Streak freeze',
     'weak chapters',
     'needs review',
     'questions',
     '${count} chapters',
-    'Focused review',
     'Keep track of what needs review',
     'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     'Review bookmarked or missed questions',
@@ -899,6 +893,8 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Lärdomar från', ' framgångsrika'],
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
+  ['simulated', ' learners'],
+  ['flash', 'cards'],
 ].map((parts) => parts.join(''));
 const EXPECTED_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
   'genomgång av frågor du missat',
@@ -974,9 +970,6 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['label={copy.levelMetric}', 'home level metric must render localized copy'],
   ['helper={copy.xpBasedHelper}', 'home XP helper must render localized copy'],
   ['label={copy.dayStreakMetric}', 'home streak metric must render localized copy'],
-  ['helper={dayStreakHelper}', 'home streak helper must render freeze-aware copy'],
-  ['freezeBannerCopy(streakWithFreeze, language)', 'home streak rescue copy must localize'],
-  ['<Badge tone="warm">{copy.streakFreezeBadge}</Badge>', 'home streak freeze badge must localize'],
   ['label={copy.weakChaptersMetric}', 'home weak-chapter metric must render localized copy'],
   ['helper={copy.weakChaptersHelper}', 'home weak-chapter helper must render localized copy'],
   ['label={copy.questionsMetric}', 'home question metric must render localized copy'],
@@ -7539,6 +7532,39 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-home-route-copy')) {
+  validateStaticValidationSyntaxGate();
+  validateHomeRouteHeaderParity();
+  validateHomeRouteCopyParity();
+  validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+    homeRouteHeadersValidated,
+    homeRouteHeaderParityValidated,
+    homeRouteCopyLabelsValidated,
+    homeRouteCopyParityValidated,
+    homeRouteInternalBenchmarkCopyValidated,
+    homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
+  validateStaticValidationSyntaxGate();
+  validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+    homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -9775,7 +9801,13 @@ function validateHomeRouteCopyParity() {
 
   FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
-      reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
+      reject(
+        forbidden === 'simulated learners'
+          ? 'home route contains synthetic learner feedback copy'
+          : forbidden === 'flashcards'
+            ? 'home route must not advertise flashcards until the feature is reachable'
+            : `home route learner copy must not expose internal benchmark phrase ${forbidden}`,
+      );
     }
   });
 
@@ -9784,6 +9816,13 @@ function validateHomeRouteCopyParity() {
       reject(`home route preparation signal copy must not expose official-readiness wording`);
     }
   });
+
+  if (
+    !homeRoute.includes("chapterRange: 'Kapitel 10-13'") ||
+    !homeRoute.includes("chapterRange: 'Chapters 10-13'")
+  ) {
+    reject('home route guided path must finish with chapters 10-13');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -15588,21 +15627,6 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
-if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
-  validateHomeRouteSwedishMistakeReviewCopyNaturalness();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
-      },
-      null,
-      2,
-    ),
-  );
-  process.exit(0);
-}
 validateStaticHeadMetadataParity();
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();

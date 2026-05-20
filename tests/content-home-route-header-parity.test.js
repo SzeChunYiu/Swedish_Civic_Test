@@ -6,13 +6,17 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+function parseFocusedHomeRouteSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-home-route-copy'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
+  assert.ok(match, 'focused home route validation should print JSON summary');
   return JSON.parse(match[0]);
 }
 
@@ -31,13 +35,13 @@ function parseFocusedHomeMistakeReviewSummary() {
 }
 
 test('home route title and dashboard card headings stay accessible as headers', () => {
-  const summary = parseValidationSummary();
+  const summary = parseFocusedHomeRouteSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 82);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 88);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
@@ -95,6 +99,7 @@ test('home route copy parity rejects unreachable flashcard promises', () => {
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -177,6 +182,7 @@ test('home route copy parity rejects internal benchmark phrases in learner copy'
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 const forbiddenPhrase = ${JSON.stringify(forbiddenPhrase)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
@@ -208,6 +214,7 @@ test('home route copy parity rejects unsupported readiness prediction wording', 
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -239,13 +246,15 @@ test('home route copy parity rejects guided path chapter drift', () => {
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'ch13'", "'ch99'");
+      .replace("chapterRange: 'Kapitel 10-13'", "chapterRange: 'Kapitel 10-99'")
+      .replace("chapterRange: 'Chapters 10-13'", "chapterRange: 'Chapters 10-99'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -269,6 +278,7 @@ test('home route header parity rejects unheadered dashboard card titles', () => 
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -302,6 +312,7 @@ test('home route copy parity rejects bypassing the settings language', () => {
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -332,6 +343,7 @@ test('home route copy parity rejects missing Swedish shell copy', () => {
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -359,13 +371,14 @@ test('home route copy parity rejects synthetic learner feedback copy', () => {
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Study-loop improvements', ['10,000 simulated', 'learners'].join(' '));
+      .replace('10,000-learner feedback pass', ['10,000 simulated', 'learners'].join(' '));
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

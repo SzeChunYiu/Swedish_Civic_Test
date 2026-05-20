@@ -23,6 +23,10 @@ const homeActionLinks = [
     label: 'Granska bokmärkta eller missade frågor',
     name: 'feedback review CTA',
   },
+  {
+    label: 'Öppna källor och transparens',
+    name: 'source trust CTA',
+  },
 ];
 
 function collectConsoleErrors(page: Page): string[] {
