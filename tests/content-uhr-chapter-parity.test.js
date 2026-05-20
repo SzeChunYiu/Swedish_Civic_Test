@@ -34,6 +34,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       "    chapterId: 'ch02',",
     );
   }
+  if (normalizedPath.endsWith('/data/chapters.ts')) {
+    return String(contents)
+      .replace('    questionCount: 65,', '    questionCount: 60,')
+      .replace('    questionCount: 50,', '    questionCount: 55,');
+  }
   return contents;
 };
 require('./scripts/validate-content.js');
