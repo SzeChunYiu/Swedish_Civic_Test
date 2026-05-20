@@ -15,6 +15,11 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
+import {
+  buildDailyChallenge,
+  dailyChallengeBannerCopy,
+  isDailyChallengeCompleted,
+} from '../../lib/learning/dailyChallenge';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
@@ -52,6 +57,8 @@ type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
   dailyGoalTitle: string;
+  dailyChallengeAccessibilityLabel: (title: string, subtitle: string, completed: boolean) => string;
+  dailyChallengeCta: (completed: boolean) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -107,6 +114,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
     dailyGoalTitle: 'Dagens mål',
+    dailyChallengeAccessibilityLabel: (title, subtitle, completed) =>
+      `${title}. ${subtitle}. ${
+        completed ? 'Dagens utmaning är redan klar.' : 'Starta dagens utmaning.'
+      }`,
+    dailyChallengeCta: (completed) => (completed ? 'Öva igen' : 'Starta utmaningen'),
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
@@ -240,6 +252,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
     dailyGoalTitle: "Today's goal",
+    dailyChallengeAccessibilityLabel: (title, subtitle, completed) =>
+      `${title}. ${subtitle}. ${
+        completed ? "Today's challenge is already complete." : "Start today's challenge."
+      }`,
+    dailyChallengeCta: (completed) => (completed ? 'Practise again' : 'Start challenge'),
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
@@ -384,9 +401,13 @@ export default function Screen() {
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
+  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
+  const dailyChallenge = buildDailyChallenge({ bank: questions });
+  const dailyChallengeCompleted = isDailyChallengeCompleted(Object.keys(dailyChallengeCompletions));
+  const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
   const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const currentStreak = calculateStreak(answerDates);
@@ -472,6 +493,26 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
+      <Card style={styles.dailyChallengeCard}>
+        <Badge tone={dailyChallengeCompleted ? 'blue' : 'warm'}>{dailyChallengeCopy.title}</Badge>
+        <Text style={styles.dailyChallengeText}>{dailyChallengeCopy.subtitle}</Text>
+        <Text style={styles.dailyChallengeMeta}>
+          {dailyChallenge.questionIds.length}{' '}
+          {language === 'sv' ? 'frågor valda för idag' : 'questions selected for today'}
+        </Text>
+        <Link
+          accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
+            dailyChallengeCopy.title,
+            dailyChallengeCopy.subtitle,
+            dailyChallengeCompleted,
+          )}
+          accessibilityRole="link"
+          href="/practice?mode=challenge"
+          style={styles.dailyChallengeLink}
+        >
+          {copy.dailyChallengeCta(dailyChallengeCompleted)}
+        </Link>
+      </Card>
       {showRemoveAdsOffer ? (
         <PricingWedge
           questionCount={questions.length}
@@ -672,6 +713,31 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
+  },
+  dailyChallengeCard: {
+    gap: space[1],
+  },
+  dailyChallengeText: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  dailyChallengeMeta: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dailyChallengeLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.5],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   actions: {
     flexDirection: 'row',
