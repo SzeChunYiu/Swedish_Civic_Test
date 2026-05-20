@@ -1672,6 +1672,20 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   );
   assert.match(activity, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(activity, /accessibilityRole="summary"/);
+  assert.match(activity, /copy\.legend\.title/);
+  assert.match(activity, /copy\.legend\.low/);
+  assert.match(activity, /copy\.legend\.high/);
+  assert.match(activity, /style=\{\[styles\.legendSwatch, styles\[item\.style\]\]\}/);
+  assert.match(
+    activity,
+    /legendSwatch:\s*\{[\s\S]*height: space\[[^\]]+\][\s\S]*width: space\[[^\]]+\]/,
+  );
+  assert.match(dashboard, /title: 'Aktivitetsskala'/);
+  assert.match(dashboard, /low: 'Låg aktivitet'/);
+  assert.match(dashboard, /high: 'Hög aktivitet'/);
+  assert.match(dashboard, /title: 'Activity scale'/);
+  assert.match(dashboard, /low: 'Low activity'/);
+  assert.match(dashboard, /high: 'High activity'/);
   assert.doesNotMatch(activity, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(
     chapters,
