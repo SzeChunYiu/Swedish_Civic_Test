@@ -82,11 +82,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     const marker = \`export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]);\`;
     const replacement = \`export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]).map((question) =>
   question.id === 'q001'
     ? {
