@@ -152,21 +152,28 @@ function extractStaticHeadMetadata(indexHtml) {
 function validateStaticHeadMetadata(indexHtml) {
   const metadata = extractStaticHeadMetadata(indexHtml);
   const failures = [];
+  let titleValidated = false;
+  let outcomeClaimPatternsValidated = 0;
 
   if (!metadata.title) {
     failures.push('missing <title>');
   } else {
+    const titleFailures = [];
     if (!/^Almost Swedish\b/.test(metadata.title)) {
-      failures.push('title must start with Almost Swedish');
+      titleFailures.push('title must start with Almost Swedish');
     }
     if (!/\b(?:study|practice|studera|öva|träna)\b/i.test(metadata.title)) {
-      failures.push('title must describe study or practice');
+      titleFailures.push('title must describe study or practice');
     }
+    failures.push(...titleFailures);
+    titleValidated = titleFailures.length === 0;
   }
 
   for (const { label, pattern } of STATIC_HEAD_METADATA_OUTCOME_PATTERNS) {
     if (pattern.test(metadata.surface)) {
       failures.push(`metadata contains ${label}`);
+    } else {
+      outcomeClaimPatternsValidated += 1;
     }
   }
 
@@ -175,6 +182,9 @@ function validateStaticHeadMetadata(indexHtml) {
     ok: failures.length === 0,
     details: failures.join('; '),
     failures,
+    outcomeClaimPatternsTotal: STATIC_HEAD_METADATA_OUTCOME_PATTERNS.length,
+    outcomeClaimPatternsValidated,
+    titleValidated,
   };
 }
 
