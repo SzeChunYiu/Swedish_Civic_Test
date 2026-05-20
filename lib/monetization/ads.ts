@@ -159,12 +159,17 @@ export function shouldShowLaunchPopupAd({
   alreadyShownThisLaunch,
   consentDecision,
   entitlements,
+  platform,
 }: {
   alreadyShownThisLaunch: boolean;
   consentDecision?: AdConsentGate;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
+  platform?: AdRuntimePlatform | 'web' | string;
 }): boolean {
-  return !alreadyShownThisLaunch && shouldShowAd('app_open_launch', entitlements, consentDecision);
+  return (
+    !alreadyShownThisLaunch &&
+    shouldShowAd('app_open_launch', entitlements, consentDecision, platform)
+  );
 }
 
 function pathMatchesRoute(pathname: string, route: string): boolean {

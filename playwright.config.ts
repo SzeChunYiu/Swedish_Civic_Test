@@ -4,10 +4,8 @@ import { getChromiumLaunchOptions } from './tests/e2e/browserLaunch';
 
 const DEFAULT_E2E_PORT = 4173;
 const e2ePort = Number(process.env.E2E_PORT ?? DEFAULT_E2E_PORT);
-const e2eBaseUrl = `http://127.0.0.1:${e2ePort}`;
-const chromiumLaunchOptions = getChromiumLaunchOptions();
-const e2ePort = Number(process.env.E2E_PORT || 4173);
 const e2eBaseURL = `http://127.0.0.1:${e2ePort}`;
+const chromiumLaunchOptions = getChromiumLaunchOptions();
 
 if (!Number.isInteger(e2ePort) || e2ePort < 1 || e2ePort > 65535) {
   throw new Error(`E2E_PORT must be an integer TCP port, received ${process.env.E2E_PORT}`);

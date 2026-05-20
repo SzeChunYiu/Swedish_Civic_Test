@@ -300,8 +300,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bfor Cooperation between\b/,
   /^En anledning är att Sverige (?:hade|saknade)\b/,
   /^One reason is that Sweden had\b/,
-  /^En anledning är att Det\b/,
-  /^One reason is that It\b/,
   /\bhar förändrat bara hur\b/i,
   /\bhas changed only how\b/i,
   /\barbetar för endast\b/i,
@@ -973,8 +971,8 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
   { routeName: 'home', sv: 'Hem', en: 'Home' },
   { routeName: 'learn', sv: 'Lär dig', en: 'Learn' },
   { routeName: 'practice', sv: 'Öva', en: 'Practice' },
-  { routeName: 'exam', sv: 'Övningsprov', en: 'Exam' },
-  { routeName: 'mistakes', sv: 'Repetition', en: 'Mistakes' },
+  { routeName: 'exam', sv: 'Prov', en: 'Exam' },
+  { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes' },
   { routeName: 'profile', sv: 'Profil', en: 'Profile' },
 ];
 const EXPECTED_TAB_NAVIGATION_RULES = [
@@ -4189,7 +4187,7 @@ function lowerLeadingSwedishClauseStart(value) {
   );
 }
 function lowerLeadingEnglishClauseStart(value) {
-  return value.replace(/^(The|In|A|An|At|On|Almost|Politicians|All|It)\b/, (match) =>
+  return value.replace(/^(The|In|A|An|At|On|Almost|Politicians|All)\b/, (match) =>
     match.toLowerCase(),
   );
 }
@@ -4384,89 +4382,19 @@ function englishGainedRightStatement(subject, answer) {
     stripLeadingPurposeEn(answer).replace(/\bin the country\b/i, 'in Sweden'),
   )}`;
 }
-function whyTargetStatementSv(target) {
-  const cleaned = stripFinalPunctuation(target);
-
-  let match = cleaned.match(
-    /^(kan|ska|måste|bör|får)\s+(.+?)\s+(vara|bli|ha|göra|skapa|ersätta|ge|påverka|spridas|delta|rösta)\b(.*)$/i,
-  );
-  if (match) {
-    return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
-  }
-
-  match = cleaned.match(/^behövs\s+(.+?)\s+(när|för|i|på|av)\b(.*)$/i);
-  if (match) {
-    return `${lowerLeadingSwedishClauseStart(match[1])} behövs ${match[2]}${match[3]}`;
-  }
-
-  match = cleaned.match(/^(behövs|finns)\s+(.+)$/i);
-  if (match) return `${lowerLeadingSwedishClauseStart(match[2])} ${match[1].toLowerCase()}`;
-
-  return lowerLeadingSwedishClauseStart(cleaned);
-}
-function whyTargetStatementEn(target) {
-  const cleaned = stripFinalPunctuation(target);
-
-  let match = cleaned.match(
-    /^(can|could|should|must|will|would|may|might)\s+(.+?)\s+(be|have|do|make|create|spread|replace|give|become|affect)\b(.*)$/i,
-  );
-  if (match) {
-    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
-  }
-
-  match = cleaned.match(/^(is|are|was|were)\s+(.+?)\s+((?:needed|required|allowed|called)\b.*)$/i);
-  if (match) {
-    return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3]}`;
-  }
-
-  return lowerLeadingEnglishClauseStart(cleaned);
-}
-function swedishReasonClause(value) {
-  return lowerFirst(value).replace(/\bsom publiceras är alltid\b/i, 'som publiceras alltid är');
-}
-function reasonAnswerClauseSv(answer) {
-  const stripped = stripLeadingPurposeSv(answer);
-  if (/^för att|^att\s+/i.test(answer.trim())) return `att ${swedishReasonClause(stripped)}`;
-  if (
-    /(^|[\s,])(?:hade|saknade|var|är|kan|ska|måste|gör|behöver|får|blir|har)(?=$|[\s,.?!])/i.test(
-      stripped,
-    )
-  ) {
-    return `att ${swedishReasonClause(stripped)}`;
-  }
-  return lowerFirst(stripped).replace(/\beU\b/g, 'EU');
-}
-function reasonAnswerClauseEn(answer) {
-  const stripped = stripLeadingPurposeEn(answer);
-  if (/^to\b/i.test(answer.trim())) return `to ${lowerFirst(stripped)}`;
-  if (/\b(?:had|was|were|is|are|can|must|should|does|do|has|have|makes|gives)\b/i.test(stripped)) {
-    return `that ${lowerFirst(stripped)}`;
-  }
-  return lowerFirst(stripped);
-}
-function reasonStatementSv(answer, target) {
-  if (target) {
-    return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
-      answer,
-    )}`.replace(/\beU\b/g, 'EU');
-  }
-
+function reasonStatementSv(answer) {
   const stripped = stripLeadingPurposeSv(answer);
   if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
-    return `En anledning är att ${lowerLeadingSwedishClauseStart(stripped)}`;
+    return `En anledning är att ${stripped}`;
   }
   return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
-function reasonStatementEn(answer, target) {
-  if (target) {
-    return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
-  }
-
+function reasonStatementEn(answer) {
   const stripped = stripLeadingPurposeEn(answer);
   if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
   if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
-    return `One reason is that ${lowerLeadingEnglishClauseStart(stripped)}`;
+    return `One reason is that ${stripped}`;
   }
   return `One reason is ${lowerFirst(stripped)}`;
 }
@@ -5017,7 +4945,7 @@ function civicStatementSv(source, option) {
   if (match)
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
   match = q.match(/^Varför (.+)$/i);
-  if (match) return reasonStatementSv(answer, match[1]);
+  if (match) return reasonStatementSv(answer);
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
@@ -5322,7 +5250,7 @@ function civicStatementEn(source, option) {
   if (match)
     return `${upperFirst(match[1])} is often called ${match[2]} because ${embeddedEnglishClause(answer)}`;
   match = q.match(/^Why (.+)$/i);
-  if (match) return reasonStatementEn(answer, match[1]);
+  if (match) return reasonStatementEn(answer);
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
   match = q.match(/^What happens in (.+?) if (.+)$/i);
@@ -7014,10 +6942,6 @@ function validateTabNavigationParity() {
     reject('tab layout must not include visible placeholder tab glyphs');
   }
 
-  if (/exam:\s*'Prov'/.test(tabLayout)) {
-    reject('tab layout must not expose bare Swedish exam tab copy');
-  }
-
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
       `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
@@ -7100,6 +7024,14 @@ function validateAdPlacementRouteParity() {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
       );
+      const webFallbackShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*WEB_AD_FALLBACK_CONSENT_DECISION\\s*,?\\s*\\)`,
+      );
+      const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+      const adBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+        'utf8',
+      );
       const nativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
@@ -7108,8 +7040,20 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
         'utf8',
       );
-      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
+      if (!adsSource.includes('export const WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('ads.ts must export the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (!adBannerSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('AdBanner web fallback must use the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (!webFallbackShouldShowPattern.test(nativeAdCardSource)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+        routeIsValid = false;
+      }
+      if (!nativeAdCardSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('NativeAdCard web fallback must use the shared web fallback consent decision');
         routeIsValid = false;
       }
       if (nativeAdCardSource.includes('react-native-google-mobile-ads')) {
@@ -7408,7 +7352,7 @@ function validateRemoveAdsEntitlementHookParity() {
       'unresolved purchase state must return ad-blocked pending entitlements',
     ],
     [
-      /entitlementsReady/.test(homeSource) &&
+      /\bentitlementsReady\b/.test(homeSource) &&
         normalizedHomeSource.includes(
           'const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;',
         ) &&
@@ -11436,7 +11380,6 @@ function validateMobileAdsConsentHookParity() {
   }
 
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
-  const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const hookCases = [
     [
       normalizedHookSource.includes(

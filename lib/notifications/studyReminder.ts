@@ -1,4 +1,22 @@
-import type { NotificationChannelInput, NotificationRequestInput } from 'expo-notifications';
+// Local type stubs matching expo-notifications shapes — avoids a hard
+// dev-dependency on expo-notifications while keeping strict type safety.
+// The actual module is imported dynamically at runtime in createExpoStudyReminderRuntime.
+type NotificationChannelInput = {
+  importance?: number;
+  name?: string;
+  [key: string]: unknown;
+};
+type NotificationContentInput = {
+  title?: string;
+  body?: string;
+  data?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+type NotificationTriggerInput = unknown;
+type NotificationRequestInput = {
+  content: NotificationContentInput;
+  trigger: NotificationTriggerInput;
+};
 
 import type {
   AppLanguage,

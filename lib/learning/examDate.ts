@@ -1,5 +1,27 @@
 export const EXAM_REFORM_DATE = new Date('2026-06-06T00:00:00Z');
 
+// --- Citizenship reform timeline constants -----------------------------------
+
+export const CITIZENSHIP_RULES_EFFECTIVE_DATE = EXAM_REFORM_DATE;
+
+export const CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = new Date('2026-08-17T00:00:00Z');
+
+const CITIZENSHIP_RULES_SOURCE_URL =
+  'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html';
+
+const CIVIC_KNOWLEDGE_TEST_SOURCE_URL =
+  'https://www.uhr.se/studier-och-antagning/samhallsorientering-och-medborgarskapstest/';
+
+const CIVIC_KNOWLEDGE_TEST_ASSIGNMENT_SOURCE_URL =
+  'https://www.regeringen.se/rattsliga-dokument/statens-offentliga-utredningar/2025/12/sou-2025102/';
+
+export const CITIZENSHIP_TIMELINE_SOURCE_URLS = {
+  rulesEffectiveDate: CITIZENSHIP_RULES_SOURCE_URL,
+  civicKnowledgeTestStart: CIVIC_KNOWLEDGE_TEST_SOURCE_URL,
+  civicKnowledgeTestFirstSitting: CIVIC_KNOWLEDGE_TEST_SOURCE_URL,
+  civicKnowledgeTestDeadline: CIVIC_KNOWLEDGE_TEST_ASSIGNMENT_SOURCE_URL,
+} as const;
+
 export function daysUntil(target: Date, now: Date = new Date()): number {
   const msPerDay = 1000 * 60 * 60 * 24;
   const diff = target.getTime() - now.getTime();

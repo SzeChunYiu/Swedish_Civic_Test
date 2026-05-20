@@ -40,11 +40,7 @@ export function BadgeRow({
         <Text style={[styles.description, unlocked ? null : styles.lockedText]}>{description}</Text>
         <Text style={styles.progress}>{progressHint}</Text>
       </View>
-      <Badge
-        accessibilityLabel={statusLabel}
-        style={styles.statusBadge}
-        tone={unlocked ? 'green' : 'warm'}
-      >
+      <Badge accessibilityLabel={statusLabel} tone={unlocked ? 'green' : 'warm'}>
         {statusLabel}
       </Badge>
     </View>

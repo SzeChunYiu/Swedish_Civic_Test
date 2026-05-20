@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -9,6 +10,14 @@ import {
   formatExamDate,
 } from '../../lib/learning/examDate';
 import { colors, radius, space, typography } from '../../lib/theme';
+
+type TimelineSourceKey = keyof typeof CITIZENSHIP_TIMELINE_SOURCE_URLS;
+
+type TimelineSourceLink = {
+  accessibilityLabel: string;
+  label: string;
+  sourceKey: TimelineSourceKey;
+};
 
 const copy = {
   sv: {
@@ -72,19 +81,24 @@ export interface CountdownBannerProps {
 }
 
 export function CountdownBanner({ accessibilityLabel, language }: CountdownBannerProps) {
-  const [days, setDays] = useState<number>(() => daysUntil(EXAM_REFORM_DATE));
+  const [days, setDays] = useState<number>(() => daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE));
 
   useEffect(() => {
-    const interval = setInterval(() => setDays(daysUntil(EXAM_REFORM_DATE)), 60 * 60 * 1000);
+    const interval = setInterval(
+      () => setDays(daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE)),
+      60 * 60 * 1000,
+    );
     return () => clearInterval(interval);
   }, []);
 
   if (days <= 0) return null;
 
   const t = copy[language];
-  const dateString = formatExamDate(EXAM_REFORM_DATE, language);
+  const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
+  const firstSittingDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, language);
   const resolvedAccessibilityLabel =
-    accessibilityLabel ?? `${t.label(days)} ${t.untilLabel}. ${t.body(dateString)}`;
+    accessibilityLabel ??
+    `${t.label(days)} ${t.untilLabel}. ${t.body(rulesDateString, firstSittingDateString)}`;
 
   return (
     <View
@@ -155,5 +169,24 @@ const styles = StyleSheet.create({
     fontFamily: typography.bodyTight.fontFamily,
     fontSize: typography.bodyTight.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
+  },
+  contentBlock: {
+    flex: 1,
+    gap: space[0.75],
+  },
+  sourceRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[0.5],
+  },
+  sourceLabel: {
+    color: colors.textMuted,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+  },
+  sourceLink: {
+    color: colors.accent,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
   },
 });

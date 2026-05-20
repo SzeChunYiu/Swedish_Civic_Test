@@ -13,7 +13,6 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { questions } from '../../data/questions';
-import type { RecoverablePersistenceWarning } from '../../lib/storage/persistenceWarning';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -122,6 +121,17 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
   return language === 'en' ? option.textEn : option.textSv;
 }
 
+type MistakesListHeaderProps = {
+  clearMistakeReviewPersistenceWarning: () => void;
+  clearProgressPersistenceWarning: () => void;
+  copy: MistakesCopy;
+  language: AppLanguage;
+  mistakeReviewPersistenceWarning: ReturnType<
+    typeof useMistakeReviewStore.getState
+  >['persistenceWarning'];
+  progressPersistenceWarning: ReturnType<typeof useProgressStore.getState>['persistenceWarning'];
+};
+
 function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
   return (
     <View
@@ -143,27 +153,56 @@ function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerR
   );
 }
 
+function renderListHeader({
+  clearMistakeReviewPersistenceWarning,
+  clearProgressPersistenceWarning,
+  copy,
+  language,
+  mistakeReviewPersistenceWarning,
+  progressPersistenceWarning,
+}: MistakesListHeaderProps) {
+  return (
+    <View style={styles.headerStack}>
+      <View style={styles.hero}>
+        <Badge tone="orange">{copy.badge}</Badge>
+        <Text accessibilityRole="header" style={styles.title}>
+          {copy.title}
+        </Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
+      </View>
+      <QuestionDisclaimer />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearProgressPersistenceWarning}
+        warning={progressPersistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearMistakeReviewPersistenceWarning}
+        warning={mistakeReviewPersistenceWarning}
+      />
+
+      <NativeAdCard />
+      <RemoveAdsPlacementCta placement="results_native" />
+    </View>
+  );
+}
+
 export default function Screen() {
   const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const progressPersistenceWarning = useProgressStore(
-    (state) => (state as OptionalPersistenceWarningSlice).persistenceWarning ?? null,
-  );
+  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
-    (state) =>
-      (state as OptionalPersistenceWarningSlice).clearPersistenceWarning ??
-      noopDismissPersistenceWarning,
+    (state) => state.clearPersistenceWarning,
   );
   const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
   const mistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => (state as OptionalPersistenceWarningSlice).persistenceWarning ?? null,
+    (state) => state.persistenceWarning,
   );
   const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) =>
-      (state as OptionalPersistenceWarningSlice).clearPersistenceWarning ??
-      noopDismissPersistenceWarning,
+    (state) => state.clearPersistenceWarning,
   );
   const reviewItems = useMemo<MistakesReviewListItem[]>(() => {
     const mistakenQuestions = questions.filter(
@@ -210,32 +249,6 @@ export default function Screen() {
 
     return items;
   }, [questionProgress]);
-
-  const renderListHeader = () => (
-    <View style={styles.headerStack}>
-      <View style={styles.hero}>
-        <Badge tone="orange">{copy.badge}</Badge>
-        <Text accessibilityRole="header" style={styles.title}>
-          {copy.title}
-        </Text>
-        <Text style={styles.subtitle}>{copy.subtitle}</Text>
-      </View>
-      <QuestionDisclaimer />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearProgressPersistenceWarning}
-        warning={progressPersistenceWarning}
-      />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearMistakeReviewPersistenceWarning}
-        warning={mistakeReviewPersistenceWarning}
-      />
-
-      <NativeAdCard />
-      <RemoveAdsPlacementCta placement="results_native" />
-    </View>
-  );
 
   const renderReviewItem = ({ item }: ListRenderItemInfo<MistakesReviewListItem>) => {
     if (item.type === 'section') {
@@ -324,7 +337,14 @@ export default function Screen() {
       initialNumToRender={10}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={renderEmptyState}
-      ListHeaderComponent={renderListHeader}
+      ListHeaderComponent={renderListHeader({
+        clearMistakeReviewPersistenceWarning,
+        clearProgressPersistenceWarning,
+        copy,
+        language,
+        mistakeReviewPersistenceWarning,
+        progressPersistenceWarning,
+      })}
       maxToRenderPerBatch={8}
       renderItem={renderReviewItem}
       removeClippedSubviews

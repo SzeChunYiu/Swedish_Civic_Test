@@ -304,4 +304,20 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     minHeight: space[6],
   },
+  removeAdsPaywall: {
+    gap: space[1],
+  },
+  removeAdsPaywallFocused: {
+    borderColor: colors.accent,
+    borderRadius: radius.card,
+    borderWidth: 2,
+    padding: space[1],
+  },
+  removeAdsFocusCue: {
+    color: colors.accent,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+    textAlign: 'center',
+  },
 });

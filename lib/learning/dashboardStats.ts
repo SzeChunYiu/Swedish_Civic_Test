@@ -139,6 +139,7 @@ export interface MockHistoryEntry {
   /** Pass score in 0..1 (matches QuizSession.score). null if no score recorded. */
   score: number | null;
   completedAt: string;
+  completedAtMs: number;
   durationMs: number | null;
 }
 
@@ -235,6 +236,7 @@ export function mistakeConvergence(
   options: { daysBack: number; now?: Date } = { daysBack: DEFAULT_RECENT_DAYS_BACK },
 ): MistakeConvergencePoint[] {
   const now = options.now ?? new Date();
+  const daysBack = normalizeDashboardDaysBack(options.daysBack, DEFAULT_RECENT_DAYS_BACK);
   const allAnswers: { answer: QuizAnswer; answeredAtMs: number }[] = [];
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {

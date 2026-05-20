@@ -7,5 +7,5 @@ export function AdInterstitial({
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
   triggerKey?: string;
 }) {
-  return <AdBanner entitlements={entitlements} placement="quiz_completed_interstitial" />;
+  return <AdBanner entitlements={entitlements} />;
 }

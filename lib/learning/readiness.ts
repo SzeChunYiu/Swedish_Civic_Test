@@ -264,7 +264,7 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
 
   const accuracy = rollingAccuracy(input.progress, now);
   const coverage = chapterCoverage(input.progress, input.chapters, input.questionChapterIndex, now);
-  const recency = recencyFromLastAnswer(input.progress, now);
+  const recency = recencyFromProgressEvents(input.progress, now);
   const mockAvg = mockAverage(input.progress, now);
 
   // Weights: accuracy is the strongest signal, coverage second, recency third,

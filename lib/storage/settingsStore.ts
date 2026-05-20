@@ -7,6 +7,16 @@ import { writeRecoverably } from './persistenceWarning';
 
 export type AppLanguage = 'sv' | 'en';
 
+export type StudyReminderPermissionStatus = 'granted' | 'denied' | 'undetermined';
+
+export type StudyReminderPersistedState = {
+  studyReminderEnabled: boolean;
+  studyReminderHour: number;
+  studyReminderMinute: number;
+  studyReminderPermissionStatus: StudyReminderPermissionStatus;
+  studyReminderNotificationId: string | null;
+};
+
 const languageKey = 'language';
 const audioEnabledKey = 'audioEnabled';
 const dailyGoalKey = 'dailyGoalAnswers';

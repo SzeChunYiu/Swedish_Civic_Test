@@ -6,6 +6,7 @@ const UHR_ABOUT_TEST_URL = 'https://www.uhr.se/medborgarskapsprovet/om-medborgar
 
 type LegalRouteSectionCopy = {
   body: string;
+  sourceLabel?: string;
   title: string;
 };
 
