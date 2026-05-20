@@ -1,4 +1,4 @@
-/* Almost Swedish — Multi-language strings beyond EN + SV.
+/* Sveriges Medborgartest — Multi-language strings beyond EN + SV.
    Languages: zh-Hans, zh-Hant, ar, so.
    Body content (privacy, terms, ebook) stays English in MVP — these dicts
    cover the high-frequency UI surface: nav, hero, CTAs, settings, consent,

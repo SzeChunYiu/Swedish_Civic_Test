@@ -1,10 +1,10 @@
 import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types/monetization';
 import type { AdConsentDecision } from './consent';
+import { getRealAdUnitOverride, readRealAdUnitOverrides } from './adUnitsReal';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
-type AdUnitEnvValues = Record<AdPlacement, { android?: string; ios?: string }>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
@@ -26,14 +26,15 @@ function readBooleanFlag(value: string | undefined, defaultValue: boolean): bool
   return defaultValue;
 }
 
-function normalizeEnvString(value: string | undefined): string | undefined {
-  const normalized = value?.trim();
-  return normalized ? normalized : undefined;
+function readEnvString(key: string): string | undefined {
+  const value = process.env[key]?.trim();
+  return value ? value : undefined;
 }
 
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
 
 const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
+const REAL_AD_UNIT_OVERRIDES = readRealAdUnitOverrides();
 
 const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   app_open_launch: {
@@ -59,33 +60,6 @@ const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   rewarded_extra_exam: {
     android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
     ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
-  },
-};
-
-const REAL_AD_UNIT_ENV_VALUES: AdUnitEnvValues = {
-  app_open_launch: {
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID,
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID,
-  },
-  chapter_list_banner: {
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID,
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID,
-  },
-  home_banner: {
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID,
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID,
-  },
-  quiz_completed_interstitial: {
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID,
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID,
-  },
-  results_native: {
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID,
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID,
-  },
-  rewarded_extra_exam: {
-    android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID,
-    ios: process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID,
   },
 };
 
@@ -135,9 +109,10 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 ];
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
-  const envValues = REAL_AD_UNIT_ENV_VALUES[unit.placement];
-  const androidUnitId = normalizeEnvString(envValues.android);
-  const iosUnitId = normalizeEnvString(envValues.ios);
+  const envKeys = REAL_AD_UNIT_ENV_KEYS[unit.placement];
+  const override = getRealAdUnitOverride(unit.placement, REAL_AD_UNIT_OVERRIDES);
+  const androidUnitId = override?.androidUnitId ?? readEnvString(envKeys.android);
+  const iosUnitId = override?.iosUnitId ?? readEnvString(envKeys.ios);
 
   return {
     ...unit,
@@ -205,7 +180,9 @@ export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
+  realUnitOverrideEnvKey: 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON',
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
+  realUnitOverrides: REAL_AD_UNIT_OVERRIDES,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
   units: getConfiguredAdUnits(),

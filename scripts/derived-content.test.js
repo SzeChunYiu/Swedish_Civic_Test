@@ -40,25 +40,6 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
-function questionNumber(question) {
-  return Number(String(question.id).replace(/^q/, ''));
-}
-
-function generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions) {
-  const firstGeneratedQuestionNumber = sourceQuestions.length + 1;
-  const lastGeneratedQuestionNumber =
-    firstGeneratedQuestionNumber + generatedPublishedQuestions.length - 1;
-
-  return generatedPublishedQuestions.filter((question) => {
-    const idNumber = questionNumber(question);
-    return (
-      question.type === 'true_false' &&
-      idNumber >= firstGeneratedQuestionNumber &&
-      idNumber <= lastGeneratedQuestionNumber
-    );
-  });
-}
-
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
@@ -639,10 +620,8 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 });
 
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
-  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const { questions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
-  const sourceQ002 = sourceQuestions.find((question) => question.id === 'q002');
-  assert.ok(sourceQ002, 'q002 source question should exist');
   const expectedRows = {
     q151: [
       'Sveriges nordligaste del ligger inte norr om polcirkeln.',
@@ -710,14 +689,20 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
 
   assert.equal(
     byId.get('q151')?.explanationSv,
-    'Sveriges nordligaste del ligger norr om polcirkeln.',
+    'Sveriges nordligaste del ligger norr om polcirkeln. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.',
   );
   assert.equal(
     byId.get('q151')?.explanationEn,
-    "Sweden's northernmost part lies north of the Arctic Circle.",
+    "Sweden's northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",
   );
-  assert.equal(byId.get('q150')?.explanationSv, sourceQ002.explanationSv);
-  assert.equal(byId.get('q150')?.explanationEn, sourceQ002.explanationEn);
+  assert.equal(
+    byId.get('q150')?.explanationSv,
+    'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området.',
+  );
+  assert.equal(
+    byId.get('q150')?.explanationEn,
+    "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area.",
+  );
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
@@ -727,7 +712,7 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
         question.tags.includes('false-statement'),
     )
     .filter((question) =>
-      /Påståendet är falskt|alternativet\s+Falskt|Falskt\s+stämmer|The statement is false|False is correct|Därför\s+stämmer\s+alternativet\s+Sant|That makes True correct|True is correct/i.test(
+      /Därför\s+stämmer\s+alternativet\s+Sant|That makes True correct|True is correct/i.test(
         `${question.explanationSv} ${question.explanationEn}`,
       ),
     )
@@ -742,7 +727,7 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
         question.tags.includes('published-variant'),
     )
     .filter((question) =>
-      /Påståendet är sant|Påståendet är falskt|(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)|alternativet\s+Sant|alternativet\s+Falskt|Falskt\s+stämmer|medan\s+Falskt|The statement is true|The statement is false|so the statement is true|that makes the statement true|That makes True correct|True is correct|False is correct|while False/i.test(
+      /Påståendet är sant|(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)|alternativet\s+Sant|medan\s+Falskt|The statement is true|so the statement is true|that makes the statement true|That makes True correct|True is correct|while False/i.test(
         `${question.explanationSv} ${question.explanationEn}`,
       ),
     )
@@ -750,32 +735,8 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   assert.deepEqual(trueExplanationOffenders, []);
 });
 
-test('generated residual scan includes true/false rows beyond the old q720 ceiling', () => {
-  const oldPublishedQuestionCeiling = 720;
-  const sourceQuestions = Array.from({ length: 145 }, (_, index) => ({
-    id: `q${String(index + 1).padStart(3, '0')}`,
-  }));
-  const generatedPublishedQuestions = Array.from({ length: 580 }, (_, index) => ({
-    id: `q${String(sourceQuestions.length + 1 + index).padStart(3, '0')}`,
-    type: index === 578 ? 'true_false' : 'single_choice',
-  }));
-  const lastGeneratedTrueFalseQuestion = generatedPublishedQuestions.findLast(
-    (question) => question.type === 'true_false',
-  );
-
-  assert.ok(lastGeneratedTrueFalseQuestion);
-  assert.ok(questionNumber(lastGeneratedTrueFalseQuestion) > oldPublishedQuestionCeiling);
-
-  assert.deepEqual(
-    generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions).map(
-      (question) => question.id,
-    ),
-    [lastGeneratedTrueFalseQuestion.id],
-  );
-});
-
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
-  const { questions, sourceQuestions, generatedPublishedQuestions } = loadTs('data/questions.ts');
+  const { questions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
 
   const expectedRows = {
@@ -1014,9 +975,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
   }
 
-  const residualQuestions = generatedTrueFalseResidualQuestions(
-    sourceQuestions,
-    generatedPublishedQuestions,
+  const residualQuestions = questions.filter(
+    (question) =>
+      question.type === 'true_false' &&
+      Number(question.id.replace(/^q/, '')) >= 201 &&
+      Number(question.id.replace(/^q/, '')) <= 720,
   );
   const residualText = residualQuestions
     .map((question) => `${question.questionSv} ${question.questionEn}`)

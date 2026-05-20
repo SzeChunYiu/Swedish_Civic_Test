@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { flagColors, radius } from '../../lib/theme';
+import { colors, radius } from '../../lib/theme';
 
 type SwedishFlagBandProps = {
   height?: number;
@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
   blue: {
-    backgroundColor: flagColors.blue,
+    backgroundColor: colors.swedishBlue,
     flex: 2,
   },
   gold: {
-    backgroundColor: flagColors.gold,
+    backgroundColor: colors.swedishGold,
     flex: 1,
   },
 });

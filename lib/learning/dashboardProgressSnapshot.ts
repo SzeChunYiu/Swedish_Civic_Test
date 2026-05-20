@@ -77,19 +77,15 @@ export function buildDashboardProgressSnapshot({
         }
       : null;
 
-  const examSessions: QuizSession[] = mockExamSessions.map((session) => {
-    const answers = answerAttemptsForMockExam(session);
-
-    return {
-      answers,
-      completedAt: session.completedAt,
-      id: session.sessionId,
-      mode: 'exam',
-      questionIds: [...new Set(answers.map((answer) => answer.questionId))],
-      score: session.score,
-      startedAt: session.completedAt,
-    };
-  });
+  const examSessions: QuizSession[] = mockExamSessions.map((session) => ({
+    answers: [],
+    completedAt: session.completedAt,
+    id: session.sessionId,
+    mode: 'exam',
+    questionIds: [],
+    score: session.score,
+    startedAt: session.completedAt,
+  }));
 
   return {
     currentStreak: answerDates.length,

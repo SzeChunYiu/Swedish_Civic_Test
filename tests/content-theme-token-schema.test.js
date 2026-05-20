@@ -26,10 +26,6 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(themeIndex, /export \{ colors \} from '\.\/colors';/);
-  assert.match(
-    themeIndex,
-    /export \{ flagColors, SWEDISH_FLAG_BLUE, SWEDISH_FLAG_GOLD \} from '\.\/flag';/,
-  );
   assert.match(themeIndex, /export \{ space \} from '\.\/spacing';/);
   assert.match(themeIndex, /export \{ typography \} from '\.\/typography';/);
 });

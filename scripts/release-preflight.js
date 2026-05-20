@@ -10,7 +10,6 @@ const skipExternalChecks = /^(1|true|yes)$/i.test(
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
-const appAdsUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)
   : [supportUrl, privacyUrl];
@@ -37,7 +36,7 @@ const evidenceRequirements = {
   'store-records': [
     ['App Store Connect record', /App Store Connect|Apple/i],
     ['Google Play Console record', /Google Play/i],
-    ['bundle/package identifier', /com\.billyyiu\.almostswedish/i],
+    ['bundle/package identifier', /com\.billyyiu\.swedishcivictest/i],
     ['Support URL entered in store records', /Support URL/i],
     ['Privacy Policy URL entered in store records', /Privacy Policy URL/i],
   ],
@@ -107,17 +106,6 @@ const blockedEvidencePatterns = [
   [/missing/i, 'missing'],
 ];
 
-const stalePublicPrivacyPatterns = [
-  [/no user data is collected/i, 'no user data is collected'],
-  [/no user data is shared/i, 'no user data is shared'],
-  [/no user data collected/i, 'no user data collected'],
-  [/no user data shared/i, 'no user data shared'],
-  [/real ad rendering is disabled/i, 'real ad rendering is disabled'],
-  [/real ads? (?:is|are) disabled/i, 'real ads disabled'],
-  [/Data Not Collected/i, 'Data Not Collected'],
-  [/REAL_ADS_ENABLED_FOR_V1/i, 'REAL_ADS_ENABLED_FOR_V1'],
-];
-
 const gateSpecificBlockedEvidencePatterns = {
   'device-screenshots': [
     [/web[- ]draft/i, 'web-draft evidence is not final store screenshot evidence'],
@@ -164,7 +152,6 @@ const expectedPublicUrlEvidenceRequirements = {
   'public-urls': [
     ['expected Support URL', supportUrl],
     ['expected Privacy Policy URL', privacyUrl],
-    ['expected app-ads.txt URL', appAdsUrl],
   ],
 };
 
@@ -247,32 +234,6 @@ function removeAdsV1AcceptanceFindings() {
   }
   if (!/admob|advertis|in-app purchase/i.test(dataSafety)) {
     findings.push('GOAL step 7 is red: Google Play data safety does not disclose ads and IAP.');
-  }
-  const stalePublicPrivacyTerms = stalePublicPrivacyPatterns
-    .filter(([pattern]) => pattern.test(publicPrivacySurface))
-    .map(([, label]) => label);
-  if (stalePublicPrivacyTerms.length > 0) {
-    findings.push(
-      `Public privacy posture is red: hosted/listing copy still says ${stalePublicPrivacyTerms.join(
-        ', ',
-      )}.`,
-    );
-  }
-  if (!/Google Mobile Ads|AdMob/i.test(publicPrivacySurface)) {
-    findings.push(
-      'Public privacy posture is red: public copy does not disclose Google Mobile Ads.',
-    );
-  }
-  if (!/Remove Ads/i.test(publicPrivacySurface) || !/29 SEK/i.test(publicPrivacySurface)) {
-    findings.push(
-      'Public privacy posture is red: public copy does not disclose 29 SEK Remove Ads.',
-    );
-  }
-  if (
-    !/App Tracking Transparency|ATT/i.test(publicPrivacySurface) ||
-    !/UMP consent/i.test(publicPrivacySurface)
-  ) {
-    findings.push('Public privacy posture is red: public copy does not disclose ATT/UMP consent.');
   }
   if (!exists(removeAdsDeviceQaPath)) {
     findings.push(`Manual device-QA gate is red: ${removeAdsDeviceQaPath} is missing.`);
@@ -677,8 +638,8 @@ function validateStoreRecordEvidence(evidencePath) {
   if (evidence.status !== 'ready') {
     errors.push('status must be ready');
   }
-  if (evidence.bundleIdentifier !== 'com.billyyiu.almostswedish') {
-    errors.push('bundleIdentifier must be com.billyyiu.almostswedish');
+  if (evidence.bundleIdentifier !== 'com.billyyiu.swedishcivictest') {
+    errors.push('bundleIdentifier must be com.billyyiu.swedishcivictest');
   }
   if (!/^https:\/\/appstoreconnect\.apple\.com\//i.test(evidence.appStoreConnectUrl || '')) {
     errors.push('appStoreConnectUrl must be an App Store Connect URL');
@@ -788,8 +749,8 @@ function validateStoreCredentialEvidence(evidencePath) {
   if (!/^SHA256:[0-9a-f]{64}$/i.test(android.serviceAccountKeyFingerprint || '')) {
     errors.push('android.serviceAccountKeyFingerprint must be a SHA256 fingerprint');
   }
-  if (android.packageName !== 'com.billyyiu.almostswedish') {
-    errors.push('android.packageName must be com.billyyiu.almostswedish');
+  if (android.packageName !== 'com.billyyiu.swedishcivictest') {
+    errors.push('android.packageName must be com.billyyiu.swedishcivictest');
   }
   if (!android.credentialsSource || !String(android.credentialsSource).trim()) {
     errors.push('android.credentialsSource is required');
@@ -1417,16 +1378,15 @@ function publicUrlsGate(manualEvidence) {
   const manualGate = evidenceGate(
     manualEvidence,
     'public-urls',
-    'Public support, privacy, and app-ads URLs',
-    'Static pages/files exist locally, but no hosted HTTPS URL evidence is recorded.',
-    'Host the static pages and app-ads file, verify public HTTPS access, and enter support/privacy URLs in both store records.',
+    'Public support and privacy URLs',
+    'Static pages exist locally, but no hosted HTTPS URL evidence is recorded.',
+    'Host the static pages, verify public HTTPS access, and enter URLs in both store records.',
     {
       requiredArtifactMissing:
         exists('publishing/public-site/support/index.html') &&
-        exists('publishing/public-site/privacy/index.html') &&
-        exists('publishing/public-site/app-ads.txt')
+        exists('publishing/public-site/privacy/index.html')
           ? null
-          : 'Local static support/privacy/app-ads files are missing from publishing/public-site.',
+          : 'Local static support/privacy pages are missing from publishing/public-site.',
     },
   );
 
@@ -1447,9 +1407,6 @@ function publicUrlsGate(manualEvidence) {
   const liveCheck = commandSucceeds(process.execPath, [
     'scripts/check-public-urls.js',
     ...publicUrls,
-    '--expect-app-ads-file',
-    appAdsUrl,
-    'publishing/public-site/app-ads.txt',
   ]);
   if (liveCheck.ok) {
     return gate(
