@@ -1,76 +1,107 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
+import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
+
 const totalQuestions = 20;
+const viewport = { width: 390, height: 844 };
 
-async function closeLaunchAdIfPresent(page: Page) {
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
-}
-
-async function expectReachableTarget(locator: Locator, label: string) {
-  const box = await locator.boundingBox();
-
-  expect(box, `${label} should be visible and measurable`).not.toBeNull();
-  expect(box!.height, `${label} should be at least 44px tall`).toBeGreaterThanOrEqual(44);
-  expect(box!.width, `${label} should be at least 44px wide`).toBeGreaterThanOrEqual(44);
-}
-
-test('mock exam answer options keep radio semantics through submission', async ({ page }) => {
-  const consoleErrors: string[] = [];
+function collectPageErrors(page: Page) {
+  const errors: string[] = [];
 
   page.on('console', (message) => {
-    if (message.type() === 'error') consoleErrors.push(message.text());
+    if (message.type() === 'error') errors.push(message.text());
   });
-  page.on('pageerror', (error) => consoleErrors.push(error.message));
+  page.on('pageerror', (error) => errors.push(error.message));
 
+  return errors;
+}
+
+async function enableEnglishSupportFromSettings(page: Page) {
+  await page.setViewportSize(viewport);
+  await markAboutTheTestSeen(page);
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await page
+    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
+    .click();
+
+  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+}
+
+async function expectReachableRadioTarget(option: Locator, label: string) {
+  await option.scrollIntoViewIfNeeded();
+  await expect(option).toBeVisible();
+  await expect(option).toHaveAttribute('role', 'radio');
+  await expect(option).toHaveAttribute('aria-checked', 'false');
+
+  const box = await option.boundingBox();
+  expect(box, `${label} should have measurable geometry`).not.toBeNull();
+  expect(box!.width, `${label} should keep a 44px minimum width`).toBeGreaterThanOrEqual(44);
+  expect(box!.height, `${label} should keep a 44px minimum height`).toBeGreaterThanOrEqual(44);
+}
+
+test('mock exam answer options keep English radio labels and checked state', async ({ page }) => {
+  const pageErrors = collectPageErrors(page);
+
+  await enableEnglishSupportFromSettings(page);
   await page.goto('/exam', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
 
-  await expect(page.getByText('Övningsprov')).toBeVisible();
-  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
+  const start = page.getByLabel('Start mock exam');
+  await expect(start).toBeEnabled();
+  await start.click();
 
-  const firstQuestionRadios = page.getByRole('radio', { name: /för fråga 1$/ });
-  await expect(firstQuestionRadios).toHaveCount(4);
+  await expect(page.getByText(`0/${totalQuestions} answered`)).toBeVisible();
+  await expect(page.getByLabel(/^Välj svaret /)).toHaveCount(0);
 
-  const firstRadio = firstQuestionRadios.first();
-  const secondRadio = firstQuestionRadios.nth(1);
-  await expect(firstRadio).toHaveAttribute('aria-checked', 'false');
-  await expect(secondRadio).toHaveAttribute('aria-checked', 'false');
-  await expectReachableTarget(firstRadio, 'first answer option');
+  const questionOneOptions = page.getByRole('radio', {
+    name: /^Select answer .+ for question 1$/,
+  });
+  await expect(questionOneOptions).toHaveCount(4);
 
-  await firstRadio.focus();
-  await expect(firstRadio).toBeFocused();
-
-  await firstRadio.click();
-  await expect(firstRadio).toHaveAttribute('aria-checked', 'true');
-  await expect(firstRadio).toHaveAttribute('aria-selected', 'true');
-  await expect(secondRadio).toHaveAttribute('aria-checked', 'false');
-
-  for (let questionNumber = 2; questionNumber <= totalQuestions; questionNumber += 1) {
-    const option = page
-      .getByRole('radio', {
-        name: new RegExp(`^Välj svaret .+ för fråga ${questionNumber}$`),
-      })
-      .first();
-    await expectReachableTarget(option, `question ${questionNumber} answer option`);
-    await option.click();
+  for (let index = 0; index < 4; index += 1) {
+    await expectReachableRadioTarget(
+      questionOneOptions.nth(index),
+      `question 1 option ${index + 1}`,
+    );
   }
 
-  await expect(page.getByText(`${totalQuestions}/${totalQuestions} besvarade`)).toBeVisible();
+  const selectedOption = questionOneOptions.first();
+  await selectedOption.click();
+  await expect(selectedOption).toHaveAttribute('aria-checked', 'true');
 
-  const submit = page.getByLabel('Skicka övningsprov');
-  await expect(submit).toBeEnabled();
-  await submit.click();
+  for (let index = 1; index < 4; index += 1) {
+    await expect(questionOneOptions.nth(index)).toHaveAttribute('aria-checked', 'false');
+  }
 
-  await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();
-  await expect(page.getByText('Frågegenomgång')).toBeVisible();
-  await expect(page.getByText('Valt svar').first()).toBeVisible();
-  await expect(page.getByText('Rätt svar').first()).toBeVisible();
-  await expect(page.getByRole('radio', { name: /för fråga 1$/ })).toHaveCount(0);
-  expect(consoleErrors).toEqual([]);
+  for (let questionNumber = 2; questionNumber <= totalQuestions; questionNumber += 1) {
+    await page
+      .getByRole('radio', { name: new RegExp(`^Select answer .+ for question ${questionNumber}$`) })
+      .first()
+      .click();
+  }
+
+  await expect(page.getByText(`${totalQuestions}/${totalQuestions} answered`)).toBeVisible();
+  await expect(page.getByLabel('Submit mock exam')).toBeEnabled();
+  await page.getByLabel('Submit mock exam').click();
+
+  await expect(page.getByText('Exam result', { exact: true })).toBeVisible();
+  await expect(page.getByText('Mock exam result')).toBeVisible();
+  await expect(page.getByText('Question review')).toBeVisible();
+  await expect(page.getByText('Selected answer').first()).toBeVisible();
+  await expect(page.getByText('Correct answer').first()).toBeVisible();
+  await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
+
+  await expect(page.getByLabel(/^Välj svaret /)).toHaveCount(0);
+  await expect(page.getByText('Valt svar')).toHaveCount(0);
+  await expect(page.getByText('Rätt svar')).toHaveCount(0);
+  await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
+
+  expect(pageErrors).toEqual([]);
 });

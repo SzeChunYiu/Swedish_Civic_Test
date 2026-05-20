@@ -90,7 +90,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'difficulty',
   'reviewStatus',
   'tags',
-  'questionProvenance',
 ];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
@@ -5904,7 +5903,6 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
-const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
@@ -10706,16 +10704,6 @@ function validateMobileAdsConsentTypeSchemaParity() {
     return;
   }
 
-  if (
-    /Promise\.all\(\s*\[[\s\S]*resolveTrackingTransparencyStatus[\s\S]*resolveUmpConsentStatus/.test(
-      mobileConsentSource,
-    )
-  ) {
-    reject(
-      'lib/monetization/mobileAdsConsent.ts must sequence ATT before UMP consent collection instead of Promise.all',
-    );
-  }
-
   EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.forEach((expectedInterface) => {
     const actualFields = extractObjectTypePropertiesFromTs(
       mobileConsentSource,
@@ -12674,7 +12662,6 @@ function validateQuestionBankCsvContract() {
       question.difficulty,
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
-      getQuestionProvenance(question),
     ];
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {

@@ -16,12 +16,7 @@
 // through i18n to user-facing copy.
 
 import { perChapterProgress, mockHistory } from './dashboardStats';
-import type {
-  QuizAnswer,
-  QuizSession,
-  UserProgress,
-  UserQuestionProgress,
-} from '../../types/progress';
+import type { UserProgress, UserQuestionProgress } from '../../types/progress';
 import type { PracticeQuestion } from '../../types/content';
 import type { MockExamProgress } from '../storage/progressStore';
 
@@ -128,93 +123,36 @@ export function computeReadinessFromQuestionProgress(input: {
   questionProgress: Record<string, UserQuestionProgress>;
   questions: readonly PracticeQuestion[];
   chapters: readonly { id: string; questionCount: number }[];
-  mockExamSessions?: readonly MockExamProgress[];
-  now?: Date;
+  mockExamSessions: readonly MockExamProgress[];
 }): ReadinessScore {
   // Build a minimal UserProgress so computeReadinessScore can run unchanged.
   const questionChapterIndex: Record<string, string> = {};
   for (const q of input.questions) {
     questionChapterIndex[q.id] = q.chapterId;
   }
-  const studyAnswers: QuizAnswer[] = Object.entries(input.questionProgress).flatMap(
-    ([questionId, progress]) => {
-      if (!progress.lastAnsweredAt) return [];
-      const answeredAt = progress.lastAnsweredAt;
-      const seenCount = Math.max(
-        0,
-        progress.seenCount ?? progress.correctCount + progress.wrongCount,
-        progress.correctCount + progress.wrongCount,
-      );
-      const correctCount = Math.min(Math.max(0, progress.correctCount), seenCount);
-      const wrongCount = Math.min(
-        Math.max(0, progress.wrongCount),
-        Math.max(0, seenCount - correctCount),
-      );
-      const residualCount = Math.max(0, seenCount - correctCount - wrongCount);
-
-      return Array.from({ length: correctCount }, () => ({
-        questionId,
-        selectedOptionIds: [],
-        isCorrect: true,
-        answeredAt,
-        timeSpentSeconds: 0,
-      })).concat(
-        Array.from({ length: wrongCount + residualCount }, () => ({
-          questionId,
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt,
-          timeSpentSeconds: 0,
-        })),
-      );
-    },
-  );
-
-  const studySessions: QuizSession[] =
-    studyAnswers.length > 0
-      ? [
-          {
-            id: 'persisted-question-progress',
-            mode: 'study' as const,
-            questionIds: [...new Set(studyAnswers.map((answer) => answer.questionId))],
-            answers: studyAnswers,
-            startedAt: studyAnswers
-              .map((answer) => answer.answeredAt)
-              .sort((a, b) => a.localeCompare(b))[0],
-          },
-        ]
-      : [];
-
-  const mockSessions: QuizSession[] = (input.mockExamSessions ?? []).map((s) => {
-    const totalCount = Math.max(0, Math.round(s.totalCount ?? 0));
-    const correctCount = Math.min(Math.max(0, Math.round(s.correctCount ?? 0)), totalCount);
-
-    return {
-      id: s.sessionId,
-      mode: 'exam' as const,
-      questionIds: [],
-      answers: Array.from({ length: correctCount }, () => ({
+  const sessions = input.mockExamSessions.map((s) => ({
+    id: s.sessionId,
+    mode: 'exam' as const,
+    questionIds: [],
+    answers: Array.from({ length: s.correctCount }, () => ({
+      questionId: '',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: s.completedAt,
+      timeSpentSeconds: 0,
+    })).concat(
+      Array.from({ length: s.totalCount - s.correctCount }, () => ({
         questionId: '',
         selectedOptionIds: [],
-        isCorrect: true,
+        isCorrect: false,
         answeredAt: s.completedAt,
         timeSpentSeconds: 0,
-      })).concat(
-        Array.from({ length: totalCount - correctCount }, () => ({
-          questionId: '',
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt: s.completedAt,
-          timeSpentSeconds: 0,
-        })),
-      ),
-      startedAt: s.completedAt,
-      completedAt: s.completedAt,
-      score: s.score,
-    };
-  });
-
-  const sessions: QuizSession[] = studySessions.concat(mockSessions);
+      })),
+    ),
+    startedAt: s.completedAt,
+    completedAt: s.completedAt,
+    score: s.score,
+  }));
   const progress: UserProgress = {
     totalXp: 0,
     level: 1,
@@ -223,12 +161,7 @@ export function computeReadinessFromQuestionProgress(input: {
     questionProgress: input.questionProgress,
     sessions,
   };
-  return computeReadinessScore({
-    progress,
-    chapters: input.chapters,
-    questionChapterIndex,
-    now: input.now,
-  });
+  return computeReadinessScore({ progress, chapters: input.chapters, questionChapterIndex });
 }
 
 export function computeReadinessScore(input: ReadinessInput): ReadinessScore {

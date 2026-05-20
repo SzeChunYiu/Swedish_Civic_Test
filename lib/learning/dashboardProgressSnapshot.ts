@@ -79,7 +79,9 @@ export function buildDashboardProgressSnapshot({
   totalXp,
 }: DashboardProgressSnapshotInput): UserProgress {
   const persistedPracticeAnswers = answerAttempts.map(answerAttemptToQuizAnswer);
-  const persistedQuestionIds = new Set(persistedPracticeAnswers.map((answer) => answer.questionId));
+  const persistedQuestionIds = new Set(
+    persistedPracticeAnswers.map((answer) => answer.questionId),
+  );
   const aggregateFallbackAnswers = Object.values(questionProgress)
     .filter((progress) => !persistedQuestionIds.has(progress.questionId))
     .flatMap(answerAttemptsForProgress);

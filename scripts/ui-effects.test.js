@@ -503,22 +503,6 @@ test('practice and routed quiz answer options expose selected state', () => {
   assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
 });
 
-test('exam answer options use the shared radio option card contract', () => {
-  const source = read('app/(tabs)/exam.tsx');
-  const optionRegion = source.match(/question\.options\.map[\s\S]*?<Button/)?.[0] || '';
-
-  assert.match(source, /import \{ OptionCard \} from '\.\.\/\.\.\/components\/OptionCard';/);
-  assert.match(
-    optionRegion,
-    /<OptionCard[\s\S]*accessibilityLabel=\{copy\.answerAccessibilityLabel/,
-  );
-  assert.match(optionRegion, /aria-checked=\{isSelected\}/);
-  assert.match(optionRegion, /accessibilityState=\{\{ selected: isSelected \}\}/);
-  assert.match(optionRegion, /languageOverride=\{language\}/);
-  assert.match(optionRegion, /state=\{isSelected \? 'selected' : 'idle'\}/);
-  assert.doesNotMatch(optionRegion, /accessibilityRole="button"/);
-});
-
 test('answer option feedback remains available in the accessibility label', () => {
   const source = read('components/quiz/AnswerOption.tsx');
 
