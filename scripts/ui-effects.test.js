@@ -907,7 +907,13 @@ test('chapter card groups title, translation, status, and description into an ac
   assert.match(source, /copy\.accessibilityLabel\.secondaryName\(secondaryName\)/);
   assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
   assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
-  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
+  assert.match(source, /accessibilitySummary\?: boolean/);
+  assert.match(source, /accessibilitySummary = true/);
+  assert.match(source, /accessible=\{accessibilitySummary\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{accessibilitySummary \? chapterAccessibilityLabel : undefined\}/,
+  );
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -963,6 +969,7 @@ test('learn route chapter links announce chapter progress', () => {
     /copy\.accessibilityLabel\(\{ primaryName, secondaryName, progressLabel \}\)/,
   );
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
+  assert.match(source, /accessibilitySummary=\{false\}/);
   assert.match(source, /language=\{language\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
