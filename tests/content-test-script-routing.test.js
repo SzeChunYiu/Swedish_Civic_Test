@@ -195,6 +195,9 @@ test('UHR reference card focused content validation runs only its accessibility 
     false,
   );
 });
+=======
+
+>>>>>>> 6dc6098e (test: focus UHR reference card a11y parity)
 test('unsupported npm test selectors fail before running any suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
   const npmLog = path.join(tmpDir, 'npm.log');
