@@ -200,6 +200,24 @@ test('validate-content rejects published-variant provenance collapse', () => {
 });
 
 test('question-bank export check rejects published-variant provenance collapse', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      collapsePublishedVariantMutationScript(
+        "process.argv.push('--check'); require('./scripts/export-question-bank.js');",
+      ),
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /question bank provenance composition failed:[\s\S]*published-variant tag but provenance uhr; expected derived/,
+  );
+});
+
 test('question-bank CSV exposes UHR source metadata with no blank cells', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
@@ -244,9 +262,6 @@ test('question-bank CSV contract rejects source publisher drift', () => {
     process.execPath,
     [
       '-e',
-      collapsePublishedVariantMutationScript(
-        "process.argv.push('--check'); require('./scripts/export-question-bank.js');",
-      ),
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
@@ -270,7 +285,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /question bank provenance composition failed:[\s\S]*published-variant tag but provenance uhr; expected derived/,
     /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Fel utgivare", expected "Universitets- och högskolerådet \(UHR\)"/,
   );
 });
