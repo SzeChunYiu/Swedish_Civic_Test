@@ -74,7 +74,15 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(practiceSource, /PracticeInterstitialAd/);
   assert.match(
     practiceSource,
-    /<PracticeInterstitialAd showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\} \/>/,
+    /const practiceInterstitialShowKey = getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\);/,
+  );
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
+  );
+  assert.doesNotMatch(
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
   );
   assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
@@ -95,6 +103,8 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.doesNotMatch(practiceInterstitialSource, /react-native-google-mobile-ads/);
   assert.match(practiceInterstitialNativeSource, /InterstitialAd\.createForAdRequest/);
   assert.match(practiceInterstitialNativeSource, /AdEventType\.LOADED/);
+  assert.match(practiceInterstitialNativeSource, /AdEventType\.OPENED/);
+  assert.match(practiceInterstitialNativeSource, /AdEventType\.CLOSED/);
   assert.match(practiceInterstitialNativeSource, /AdEventType\.ERROR/);
   assert.match(practiceInterstitialNativeSource, /interstitialAd\.show\(\)/);
   assert.match(
@@ -108,6 +118,18 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(practiceInterstitialNativeSource, /useMobileAdsConsent/);
   assert.match(practiceInterstitialNativeSource, /requestNonPersonalizedAdsOnly/);
   assert.match(practiceInterstitialNativeSource, /lastInterstitialShowKey === showKey/);
+  assert.match(
+    practiceInterstitialNativeSource,
+    /AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialNativeSource,
+    /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/,
+  );
+  assert.match(
+    practiceInterstitialNativeSource,
+    /Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/,
+  );
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
   assert.match(nativeAdCardSource, /getAdUnit\('results_native'\)/);
   assert.match(nativeAdCardSource, /getNativeAdCardCopy\(language, unit\)/);
@@ -242,7 +264,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '<PracticeInterstitialAd showKey={\`\${question.id}:\${selectedOptionId ?? \\'\\'}\`} />',
+        '<PracticeInterstitialAd showKey={practiceInterstitialShowKey} />',
         '<AdBanner placement="quiz_completed_interstitial" />',
       );
   }

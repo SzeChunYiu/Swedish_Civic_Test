@@ -18,18 +18,26 @@ export type QuestionProgress = {
   bookmarked?: boolean;
 };
 
+export type MockExamAnswerProgress = {
+  questionId: string;
+  isCorrect: boolean;
+  timeSpentSeconds: number;
+};
+
 export type MockExamProgress = {
   sessionId: string;
   score: number;
   completedAt: string;
   correctCount: number;
   totalCount: number;
+  answers: MockExamAnswerProgress[];
 };
 
 const progressStateKey = 'progressState';
 const maxHydratedQuestionAnswerCount = 10000;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
+const maxHydratedMockQuestionTimeSeconds = 12 * 60 * 60;
 const maxHydratedFreezeLifetimeCount = 10000;
 const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
 const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
@@ -64,6 +72,7 @@ const emptyProgress: PersistedProgress = {
 type MockExamProgressInput = {
   sessionId: string;
   score: number;
+  answers?: MockExamAnswerProgress[];
   completedAt?: string;
   correctCount?: number;
   totalCount?: number;
@@ -81,6 +90,32 @@ function clampScore(value: unknown): number {
   if (typeof value !== 'number') return 0;
   if (!Number.isFinite(value)) return 0;
   return Math.max(0, Math.min(1, value));
+}
+
+function normalizeMockExamAnswers(value: unknown): MockExamAnswerProgress[] {
+  if (!Array.isArray(value)) return [];
+
+  const answers: MockExamAnswerProgress[] = [];
+  for (const answer of value) {
+    if (answers.length >= maxHydratedMockQuestionCount) break;
+    if (!answer || typeof answer !== 'object') continue;
+
+    const item = answer as Partial<MockExamAnswerProgress>;
+    if (typeof item.questionId !== 'string' || item.questionId.trim().length === 0) continue;
+    if (typeof item.isCorrect !== 'boolean') continue;
+
+    answers.push({
+      questionId: item.questionId,
+      isCorrect: item.isCorrect,
+      timeSpentSeconds: normalizeNonNegativeInteger(
+        item.timeSpentSeconds,
+        0,
+        maxHydratedMockQuestionTimeSeconds,
+      ),
+    });
+  }
+
+  return answers;
 }
 
 function isHydratableDateTime(timeMs: number): boolean {
@@ -212,16 +247,23 @@ function normalizeProgress(value: unknown): PersistedProgress {
       const item = session as Partial<MockExamProgress>;
       const completedAt = normalizeIsoTimestamp(item.completedAt);
       if (typeof item.sessionId !== 'string' || !completedAt) continue;
+      const normalizedAnswers = normalizeMockExamAnswers(item.answers);
       const totalCount = normalizeNonNegativeInteger(
         item.totalCount,
-        0,
+        normalizedAnswers.length,
         maxHydratedMockQuestionCount,
       );
+      const answers = normalizedAnswers.slice(0, totalCount);
       const correctCount = Math.min(
-        normalizeNonNegativeInteger(item.correctCount, 0, maxHydratedMockQuestionCount),
+        normalizeNonNegativeInteger(
+          item.correctCount,
+          answers.filter((answer) => answer.isCorrect).length,
+          maxHydratedMockQuestionCount,
+        ),
         totalCount,
       );
       mockExamSessions.push({
+        answers,
         sessionId: item.sessionId,
         score: clampScore(item.score ?? 0),
         completedAt,
@@ -336,12 +378,27 @@ export const useProgressStore = create<ProgressState>((set) => ({
   recordMockExamSession: (session) =>
     set((state) => {
       const completedAt = session.completedAt ?? new Date().toISOString();
+      const normalizedAnswers = normalizeMockExamAnswers(session.answers);
+      const totalCount = normalizeNonNegativeInteger(
+        session.totalCount,
+        normalizedAnswers.length,
+        maxHydratedMockQuestionCount,
+      );
+      const answers = normalizedAnswers.slice(0, totalCount);
       const nextSession: MockExamProgress = {
+        answers,
         sessionId: session.sessionId,
         score: clampScore(session.score),
         completedAt,
-        correctCount: Math.max(0, session.correctCount ?? 0),
-        totalCount: Math.max(0, session.totalCount ?? 0),
+        correctCount: Math.min(
+          normalizeNonNegativeInteger(
+            session.correctCount,
+            answers.filter((answer) => answer.isCorrect).length,
+            maxHydratedMockQuestionCount,
+          ),
+          totalCount,
+        ),
+        totalCount,
       };
       const existingSession = state.mockExamSessions.find(
         (item) => item.sessionId === nextSession.sessionId,

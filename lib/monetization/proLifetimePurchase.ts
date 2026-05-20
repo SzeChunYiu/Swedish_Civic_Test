@@ -24,10 +24,12 @@ export const PRO_LIFETIME_STORAGE_KEY = 'monetization.proLifetime.entitled.v1';
 
 const STORED_TRUE = 'true';
 
+export type ProLifetimePurchaseFailureReason = 'entitlement_persistence_failed';
 export type ProLifetimePurchaseStatus = 'purchased' | 'pending' | 'restored' | 'not_found';
 
 export interface ProLifetimePurchaseResult {
   entitlements: ProTierEntitlements;
+  failureReason?: ProLifetimePurchaseFailureReason;
   priceLabel: typeof PRO_LIFETIME_PRICE_LABEL;
   productId: typeof PRO_LIFETIME_PRODUCT_ID;
   purchaseToken?: string | null;
@@ -71,15 +73,27 @@ function createResult(
   status: ProLifetimePurchaseStatus,
   entitlements: ProTierEntitlements,
   purchase?: RemoveAdsPurchaseRecord,
+  failureReason?: ProLifetimePurchaseFailureReason,
 ): ProLifetimePurchaseResult {
   return {
     entitlements,
+    failureReason,
     priceLabel: PRO_LIFETIME_PRICE_LABEL,
     productId: PRO_LIFETIME_PRODUCT_ID,
     purchaseToken: purchase?.purchaseToken,
     status,
     transactionId: purchase?.transactionId,
   };
+}
+
+async function getRecoverableProLifetimeEntitlement(
+  storage: PurchaseStorage,
+): Promise<ProTierEntitlements> {
+  try {
+    return await getProLifetimeEntitlement({ storage });
+  } catch {
+    return proLifetimeEntitlements(false);
+  }
 }
 
 export async function setProLifetimeEntitlement(
@@ -113,8 +127,20 @@ export async function buyProLifetime({
     if (!purchase || !isProLifetimePurchase(purchase)) {
       return createResult('pending', await getProLifetimeEntitlement({ storage }));
     }
+
+    let entitlements: ProTierEntitlements;
+    try {
+      entitlements = await setProLifetimeEntitlement(true, { storage });
+    } catch {
+      return createResult(
+        'pending',
+        await getRecoverableProLifetimeEntitlement(storage),
+        purchase,
+        'entitlement_persistence_failed',
+      );
+    }
+
     await provider.finishPurchase?.(purchase);
-    const entitlements = await setProLifetimeEntitlement(true, { storage });
     return createResult('purchased', entitlements, purchase);
   } finally {
     await provider.disconnect?.();
