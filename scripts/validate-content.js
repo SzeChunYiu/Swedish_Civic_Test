@@ -787,6 +787,15 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
+const EXPECTED_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
+  'genomgång av frågor du missat',
+  'bokmärken, missade frågor, ljud',
+];
+const FORBIDDEN_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
+  /felspårning/i,
+  /repetition av misstag/i,
+  /upprepning av misstag/i,
+];
 const FORBIDDEN_HOME_ROUTE_READINESS_COPY = [
   'Redoindikator',
   'redoindikator',
@@ -6842,6 +6851,7 @@ let homeRouteHeaderParityValidated = false;
 let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
 let homeRouteInternalBenchmarkCopyValidated = false;
+let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -9225,6 +9235,37 @@ function validateHomeRouteCopyParity() {
     homeRouteCopyParityValidated = true;
     homeRouteInternalBenchmarkCopyValidated = true;
   }
+}
+
+function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
+  let valid = true;
+  let homeRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  } catch (error) {
+    reject(`home route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  FORBIDDEN_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY.forEach((pattern) => {
+    if (pattern.test(homeRoute)) {
+      reject('home route Swedish missed-question review copy must use natural learner wording');
+    }
+  });
+
+  EXPECTED_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY.forEach((phrase) => {
+    if (!homeRoute.includes(phrase)) {
+      reject('home route Swedish missed-question review copy must use natural learner wording');
+    }
+  });
+
+  if (valid) homeRouteSwedishMistakeReviewCopyNaturalnessValidated = true;
 }
 
 function validateMistakeReviewHydrationEvidence() {
@@ -14871,6 +14912,21 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
+if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
+  validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
@@ -15143,6 +15199,7 @@ validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
 validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
+validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
@@ -15285,6 +15342,7 @@ console.log(
       homeRouteCopyLabelsValidated,
       homeRouteCopyParityValidated,
       homeRouteInternalBenchmarkCopyValidated,
+      homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,

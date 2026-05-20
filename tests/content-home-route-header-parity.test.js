@@ -16,6 +16,20 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function parseFocusedHomeMistakeReviewSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-home-sv-mistake-review-copy'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused home copy validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 test('home route title and dashboard card headings stay accessible as headers', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
@@ -114,6 +128,7 @@ test('home route copy parity rejects harsh Swedish mistake-review wording', () =
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-home-sv-mistake-review-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -142,6 +157,16 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /home route Swedish missed-question review copy must use natural learner wording/,
   );
+});
+
+test('home route copy parity accepts natural Swedish missed-question review wording', () => {
+  const summary = parseFocusedHomeMistakeReviewSummary();
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+
+  assert.equal(summary.homeRouteSwedishMistakeReviewCopyNaturalnessValidated, true);
+  assert.match(source, /genomgång av frågor du missat/);
+  assert.match(source, /missade frågor/);
+  assert.doesNotMatch(source, /felspårning|repetition av misstag|upprepning av misstag/i);
 });
 
 test('home route copy parity rejects internal benchmark phrases in learner copy', () => {
