@@ -896,8 +896,14 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
   { routeName: 'learn', sv: 'Lär dig', en: 'Learn' },
   { routeName: 'practice', sv: 'Öva', en: 'Practice' },
   { routeName: 'exam', sv: 'Prov', en: 'Exam' },
-  { routeName: 'mistakes', sv: 'Misstag', en: 'Mistakes' },
+  { routeName: 'mistakes', sv: 'Repetition', en: 'Mistakes' },
   { routeName: 'profile', sv: 'Profil', en: 'Profile' },
+];
+const FORBIDDEN_TAB_NAVIGATION_COPY_PATTERNS = [
+  {
+    label: 'Swedish mistakes tab bare error label',
+    pattern: /mistakes:\s*'Misstag'/,
+  },
 ];
 const EXPECTED_TAB_NAVIGATION_RULES = [
   {
@@ -6621,6 +6627,12 @@ function validateTabNavigationParity() {
 
   if (tabLayout.includes('⏷')) {
     reject('tab layout must not include visible placeholder tab glyphs');
+  }
+
+  for (const rule of FORBIDDEN_TAB_NAVIGATION_COPY_PATTERNS) {
+    if (rule.pattern.test(tabLayout)) {
+      reject(`tab layout must not expose ${rule.label}`);
+    }
   }
 
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {

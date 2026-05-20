@@ -244,7 +244,7 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   await expect(page.getByText('I södra Europa — Fel')).toBeVisible();
   await expect(page.getByText('I Norden i norra Europa — Rätt svar')).toBeVisible();
 
-  await page.getByText('Misstag', { exact: true }).click();
+  await page.getByText('Repetition', { exact: true }).click();
   await closeLaunchAdIfPresent(page);
 
   await expect(page).toHaveURL(/\/mistakes$/);
