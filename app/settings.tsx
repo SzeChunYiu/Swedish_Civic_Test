@@ -234,6 +234,7 @@ export default function Screen() {
   const copy = settingsCopy[language];
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const [focusedControl, setFocusedControl] = useState<string | null>(null);
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
@@ -247,6 +248,7 @@ export default function Screen() {
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
+    const focusKey = `language-${value}`;
 
     return (
       <Pressable
@@ -256,10 +258,13 @@ export default function Screen() {
         accessibilityRole="radio"
         accessibilityState={{ checked: language === value }}
         hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setLanguage(value)}
         style={({ pressed }) => [
           styles.pill,
           language === value ? styles.pillActive : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
           pressed ? styles.controlPressed : null,
         ]}
       >
@@ -272,6 +277,7 @@ export default function Screen() {
 
   const renderThemeButton = (value: ThemeMode, label: string) => {
     const selected = themeMode === value;
+    const focusKey = `theme-${value}`;
 
     return (
       <Pressable
@@ -281,10 +287,13 @@ export default function Screen() {
         accessibilityRole="button"
         accessibilityState={{ selected }}
         hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setThemeMode(value)}
         style={({ pressed }) => [
           styles.pill,
           selected ? styles.pillActive : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
           pressed ? styles.controlPressed : null,
         ]}
       >
@@ -371,9 +380,12 @@ export default function Screen() {
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
           hitSlop={space[1]}
+          onBlur={() => setFocusedControl(null)}
+          onFocus={() => setFocusedControl('audio')}
           onPress={() => setAudioEnabled(!audioEnabled)}
           style={({ pressed }) => [
             styles.secondaryButton,
+            focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
             pressed ? styles.secondaryButtonPressed : null,
           ]}
         >
@@ -406,6 +418,7 @@ export default function Screen() {
         >
           {[5, 10, 20, 40].map((goal) => {
             const selected = dailyGoalAnswers === goal;
+            const focusKey = `daily-goal-${goal}`;
 
             return (
               <Pressable
@@ -415,11 +428,14 @@ export default function Screen() {
                 accessibilityRole="radio"
                 accessibilityState={{ checked: dailyGoalAnswers === goal }}
                 hitSlop={space[1]}
+                onBlur={() => setFocusedControl(null)}
+                onFocus={() => setFocusedControl(focusKey)}
                 onPress={() => setDailyGoalAnswers(goal)}
                 style={({ pressed }) => [
                   styles.pill,
                   styles.goalPill,
                   selected ? styles.pillActive : null,
+                  focusedControl === focusKey ? styles.controlFocused : null,
                   pressed ? styles.controlPressed : null,
                 ]}
               >
@@ -594,6 +610,9 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.focusSoft,
       transform: [{ scale: motion.pressedScale }],
     },
+    controlFocused: {
+      borderColor: themeColors.focus,
+    },
     goalPill: {
       alignItems: 'flex-start',
       gap: space.hairline,
@@ -615,6 +634,8 @@ function createStyles(themeColors: ThemeColors) {
       alignItems: 'center',
       alignSelf: 'flex-start',
       backgroundColor: themeColors.accent,
+      borderColor: themeColors.accent,
+      borderWidth: space.hairline,
       borderRadius: radius.button,
       justifyContent: 'center',
       minHeight: space[5] + space[0.5],
@@ -624,6 +645,9 @@ function createStyles(themeColors: ThemeColors) {
     secondaryButtonPressed: {
       backgroundColor: themeColors.accentActive,
       transform: [{ scale: motion.pressedScale }],
+    },
+    secondaryButtonFocused: {
+      borderColor: themeColors.focus,
     },
     secondaryButtonText: {
       color: themeColors.surface,
