@@ -4652,6 +4652,34 @@ function findQuestionSecretBallotSvPronounNaturalnessIssue(question) {
   return QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN.test(text);
 }
 
+function isPoliticalPartyOptionShapeQuestion(question) {
+  const tags = question.tags || [];
+  const promptText = [question.questionSv, question.questionEn].join(' ');
+  return (
+    question.type === 'single_choice' &&
+    tags.includes('political-parties') &&
+    /\bpolitiskt parti\b/i.test(promptText) &&
+    /\bpolitical party\b/i.test(promptText)
+  );
+}
+
+function findQuestionPoliticalPartyOptionShapeIssue(question) {
+  if (!isPoliticalPartyOptionShapeQuestion(question) || !Array.isArray(question.options)) {
+    return null;
+  }
+
+  const svOptions = question.options.map((option) => normalizeOptionText(option?.textSv));
+  const enOptions = question.options.map((option) => normalizeOptionText(option?.textEn));
+  const svNounPhraseShape = /^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i;
+  const enNounPhraseShape = /^(?:Shared|The power|Responsibility|Direct)\s+/i;
+
+  if (svOptions.some((text) => /^De\s+/i.test(text))) return 'finite-sv-option';
+  if (enOptions.some((text) => /^They\s+/i.test(text))) return 'finite-en-option';
+  if (!svOptions.every((text) => svNounPhraseShape.test(text))) return 'mixed-sv-option-shape';
+  if (!enOptions.every((text) => enNounPhraseShape.test(text))) return 'mixed-en-option-shape';
+  return null;
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -5362,13 +5390,13 @@ function importantRolesStatementEn(subject, context, answer) {
   return replaceLeadingEnglishSubject(subject, answer);
 }
 function commonStatementSv(subject, answer) {
-  if (/^Gemensamma\s+/i.test(answer)) {
+  if (/^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
   }
   return replaceLeadingSwedishSubject(subject, answer);
 }
 function commonStatementEn(subject, answer) {
-  if (/^Shared\s+/i.test(answer)) {
+  if (/^(?:Shared|The power|Responsibility|Direct)\s+/i.test(answer)) {
     return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
@@ -7452,6 +7480,7 @@ let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
+let questionPoliticalPartyOptionShapeValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -17392,6 +17421,7 @@ if (Array.isArray(questions)) {
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const secretBallotSvPronounNaturalnessIssue =
         findQuestionSecretBallotSvPronounNaturalnessIssue(question);
+      const politicalPartyOptionShapeIssue = findQuestionPoliticalPartyOptionShapeIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -17468,6 +17498,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses unnatural secret-ballot Swedish voting pronoun`);
       } else {
         questionSecretBallotSvPronounNaturalnessValidated += 1;
+      }
+      if (politicalPartyOptionShapeIssue) {
+        fail(`${label} mixes political-party option grammar shapes`);
+      } else if (isPoliticalPartyOptionShapeQuestion(question)) {
+        questionPoliticalPartyOptionShapeValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -17953,6 +17988,7 @@ console.log(
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionSecretBallotSvPronounNaturalnessValidated,
+      questionPoliticalPartyOptionShapeValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
