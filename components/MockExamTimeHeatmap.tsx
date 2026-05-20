@@ -94,6 +94,8 @@ export function MockExamTimeHeatmap({
 }: MockExamTimeHeatmapProps) {
   const copy = timeHeatmapCopy[language];
   const medianSeconds = medianMs == null ? null : Math.round(medianMs / 1000);
+  const summaryAccessibilityLabel =
+    medianSeconds == null ? copy.title : `${copy.title}. ${copy.median(medianSeconds)}`;
   const timedAnswers = answers
     .map((answer, index) => ({
       ...answer,
@@ -105,14 +107,10 @@ export function MockExamTimeHeatmap({
   if (timedAnswers.length === 0) return null;
 
   return (
-    <Surface
-      accessibilityLabel={`${copy.title}. ${
-        medianSeconds == null ? '' : copy.median(medianSeconds)
-      }`}
-      accessibilityRole="summary"
-      style={styles.card}
-      tone="surface"
-    >
+    <Surface accessible={false} accessibilityRole="none" style={styles.card} tone="surface">
+      <Text accessibilityRole="summary" style={styles.accessibilitySummary}>
+        {summaryAccessibilityLabel}
+      </Text>
       <View style={styles.header}>
         <Text accessibilityRole="header" style={styles.title} variant="h2">
           {copy.title}
@@ -175,6 +173,13 @@ export function MockExamTimeHeatmap({
 }
 
 const styles = StyleSheet.create({
+  accessibilitySummary: {
+    height: 1,
+    left: -10000,
+    overflow: 'hidden',
+    position: 'absolute',
+    width: 1,
+  },
   card: {
     gap: space[1.5],
   },
