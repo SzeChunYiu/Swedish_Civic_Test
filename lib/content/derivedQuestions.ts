@@ -425,6 +425,30 @@ function reasonStatementEn(answer: string): string {
   return `One reason is ${lowerFirst(stripped)}`;
 }
 
+function swedishDemocracyThreatStatement(answer: string): string {
+  const stripped = stripLeadingPurposeSv(answer).trim();
+  if (/^Det kan skapa konflikter/i.test(stripped)) {
+    return 'Falsk information och hat kan hota demokratin eftersom sådant kan skapa konflikter och skrämma människor från demokratisk debatt';
+  }
+  if (/^Det gör att alla automatiskt får mer kunskap/i.test(stripped)) {
+    return 'Falsk information och hat ger automatiskt alla mer kunskap';
+  }
+  return `Falsk information och hat kan hota demokratin eftersom ${lowerFirst(stripped)}`;
+}
+
+function englishDemocracyThreatStatement(answer: string): string {
+  const stripped = stripLeadingPurposeEn(answer).trim();
+  if (/^It can create conflicts/i.test(stripped)) {
+    return 'False information and hate can threaten democracy because they can create conflicts and scare people away from democratic debate';
+  }
+  if (/^It automatically gives everyone more knowledge/i.test(stripped)) {
+    return 'False information and hate automatically give everyone more knowledge';
+  }
+  return `False information and hate can threaten democracy because ${lowerLeadingEnglishClauseStart(
+    stripped,
+  )}`;
+}
+
 function frontedManyActionSv(answer: string): string {
   const words = lowerFirst(answer).split(/\s+/);
   if (words.length <= 1) return `gör många ${words[0] ?? ''}`.trim();
@@ -1112,6 +1136,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match)
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
 
+  match = q.match(/^Varför kan falsk information och hat vara ett hot mot demokratin$/i);
+  if (match) return swedishDemocracyThreatStatement(answer);
+
   match = q.match(/^Varför (.+)$/i);
   if (match) return reasonStatementSv(answer);
 
@@ -1544,6 +1571,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} is often called ${match[2]} because ${embeddedEnglishClause(
       answer,
     )}`;
+
+  match = q.match(/^Why can false information and hate be a threat to democracy$/i);
+  if (match) return englishDemocracyThreatStatement(answer);
 
   match = q.match(/^Why (.+)$/i);
   if (match) return reasonStatementEn(answer);
