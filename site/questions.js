@@ -6842,228 +6842,929 @@
   },
   {
     "id": "q150",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which parts are included in what is called the state?",
-      "sv": "Vilka delar ingår i det som kallas staten?"
+      "en": "How can commercial radio and TV channels earn income?",
+      "sv": "Hur kan kommersiella radio- och tv-kanaler få inkomster?"
     },
     "opts": [
       {
-        "en": "The Riksdag, the government, agencies, and courts",
-        "sv": "Riksdag, regering, myndigheter och domstolar"
+        "en": "They sell advertising space or charge for a specific channel",
+        "sv": "De säljer reklamplats eller tar betalt för en särskild kanal"
       },
       {
-        "en": "Regions, municipalities, and county museums",
-        "sv": "Regioner, kommuner och länsmuseer"
+        "en": "Through court fees from trials",
+        "sv": "Genom domstolsavgifter från rättegångar"
       },
       {
-        "en": "Parties, banks, and companies",
-        "sv": "Partier, banker och företag"
+        "en": "Through membership fees to trade unions",
+        "sv": "Genom medlemsavgifter till fackförbund"
       },
       {
-        "en": "The royal house, the church, and the EU",
-        "sv": "Kungahuset, kyrkan och EU"
+        "en": "By municipalities deciding their programmes",
+        "sv": "Genom att kommunerna bestämmer deras program"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
-      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
+      "en": "Commercial radio and TV channels can earn income by selling advertising space or by people paying to watch a specific TV channel. Court fees, trade-union membership fees, and municipal programming decisions belong to other parts of society.",
+      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller genom att människor betalar för att kunna se en särskild tv-kanal. Domstolsavgifter, fackliga medlemsavgifter och kommunala programbeslut hör till andra delar av samhället."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Mediernas roll",
+      "section": "Olika slags medier",
+      "page": 21
     },
-    "difficulty": "medium",
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
     "tags": [
-      "state",
-      "riksdag",
-      "government",
-      "courts"
+      "commercial-media",
+      "advertising",
+      "radio-tv"
     ]
   },
   {
     "id": "q151",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is a budget bill?",
-      "sv": "Vad är en budgetproposition?"
+      "en": "What characterizes media financed by advertising?",
+      "sv": "Vad kännetecknar medier som finansieras med reklam?"
     },
     "opts": [
       {
-        "en": "The government's proposal to the Riksdag on state income and expenditure",
-        "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter"
+        "en": "They are often run by private companies and earn income from advertising",
+        "sv": "De drivs ofta av privata företag och får inkomster genom reklam"
       },
       {
-        "en": "A municipality’s decision on who should become prime minister",
-        "sv": "Kommunens beslut om vem som ska bli statsminister"
+        "en": "They may never sell advertising space",
+        "sv": "De får aldrig sälja reklamplats"
       },
       {
-        "en": "The courts’ plan for criminal investigations",
-        "sv": "Domstolarnas plan för brottsutredningar"
+        "en": "They replace the mission of public-service companies",
+        "sv": "De ersätter public service-företagens uppdrag"
       },
       {
-        "en": "The regions’ list of all bus routes",
-        "sv": "Regionernas lista över alla busslinjer"
+        "en": "They consist only of government agencies",
+        "sv": "De består bara av statliga myndigheter"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
-      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
+      "en": "Advertising-funded media are often run by private companies and can earn income by selling advertising space. That differs from public service, which should not make money from advertising and has a special mission.",
+      "sv": "Reklamfinansierade medier drivs ofta av privata företag och kan få inkomster genom att sälja plats för reklam. Det skiljer dem från public service, som inte ska tjäna pengar på reklam och har ett särskilt uppdrag."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
-      "budget-bill",
-      "government",
-      "state-budget"
+      "private-media",
+      "advertising-funded",
+      "newspapers"
     ]
   },
   {
     "id": "q152",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which agency makes decisions about parental benefit, for example?",
-      "sv": "Vilken myndighet fattar till exempel beslut om föräldrapenning?"
+      "en": "How are many newspapers published today?",
+      "sv": "Hur publiceras många tidningar i dag?"
     },
     "opts": [
       {
-        "en": "The Swedish Social Insurance Agency",
-        "sv": "Försäkringskassan"
+        "en": "They are also available online and updated with news several times per day",
+        "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag"
       },
       {
-        "en": "The Swedish Tax Agency",
-        "sv": "Skatteverket"
+        "en": "They may be sold only as one copy per year",
+        "sv": "De får bara säljas som ett exemplar per år"
       },
       {
-        "en": "The Swedish Police Authority",
-        "sv": "Polismyndigheten"
+        "en": "They may be distributed only within one residential building",
+        "sv": "De får bara spridas inom ett enda bostadshus"
       },
       {
-        "en": "The Parliamentary Ombudsmen",
-        "sv": "Justitieombudsmannen"
+        "en": "They may not write about local or national news",
+        "sv": "De får inte skriva om lokala eller nationella nyheter"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
-      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
+      "en": "Many daily and evening newspapers exist as local or nationwide media and on the internet. Today, most newspapers are also online and are updated with news several times per day.",
+      "sv": "Många dagstidningar och kvällstidningar finns både som lokala eller rikstäckande medier och på internet. I dag finns de flesta tidningar också online och uppdateras med nyheter flera gånger per dag."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Mediernas roll",
+      "section": "Privat- och reklamfinansierade medier",
+      "page": 21
     },
+    "questionProvenance": "uhr",
     "difficulty": "medium",
     "tags": [
-      "agencies",
-      "social-insurance-agency",
-      "parental-benefit"
+      "newspapers",
+      "online-news",
+      "local-national-media"
     ]
   },
   {
     "id": "q153",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Who can check that other agencies act correctly?",
-      "sv": "Vilka kan kontrollera att andra myndigheter gör rätt?"
+      "en": "What is important to remember about the web and social media?",
+      "sv": "Vad är viktigt att komma ihåg om webben och sociala medier?"
     },
     "opts": [
       {
-        "en": "The Parliamentary Ombudsmen and the Chancellor of Justice",
-        "sv": "Justitieombudsmannen och Justitiekanslern"
+        "en": "Anyone can create content there, and it is not always checked the same way as in other media",
+        "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier"
       },
       {
-        "en": "Regional councils and county museums",
-        "sv": "Regionfullmäktige och länsmuseerna"
+        "en": "Only responsible publishers may write posts there",
+        "sv": "Bara ansvariga utgivare får skriva inlägg där"
       },
       {
-        "en": "The crown princess and municipal committees",
-        "sv": "Kronprinsessan och kommunala nämnder"
+        "en": "All content is first approved by the state",
+        "sv": "Allt innehåll godkänns först av staten"
       },
       {
-        "en": "Banks and employers",
-        "sv": "Banker och arbetsgivare"
+        "en": "The content is always more reliable than news in newspapers",
+        "sv": "Innehållet är alltid mer pålitligt än nyheter i tidningar"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
-      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
+      "en": "On the web and in social media, anyone can create content. For that reason, what is spread there is not always checked in the same way as content in other media, which makes personal scrutiny important.",
+      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll. Därför kontrolleras det som sprids där inte alltid på samma sätt som innehåll i andra medier, vilket gör egen granskning viktig."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Mediernas roll",
+      "section": "Webb och sociala medier",
+      "page": 21
     },
-    "difficulty": "hard",
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
     "tags": [
-      "agency-oversight",
-      "parliamentary-ombudsmen",
-      "chancellor-of-justice"
+      "web",
+      "social-media",
+      "content-control"
     ]
   },
   {
     "id": "q154",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 6,
+    "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What do municipal committees do?",
-      "sv": "Vad gör kommunala nämnder?"
+      "en": "Why is source criticism needed when using media?",
+      "sv": "Varför behövs källkritik när man använder medier?"
     },
     "opts": [
       {
-        "en": "They are responsible for different areas in the municipality and are chosen by the municipal council",
-        "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige"
+        "en": "False information can spread quickly and affect people's opinions",
+        "sv": "Falska uppgifter kan spridas snabbt och påverka människors åsikter"
       },
       {
-        "en": "They choose the Speaker of the Riksdag",
-        "sv": "De väljer riksdagens talman"
+        "en": "Everything that is published is always correct",
+        "sv": "Allt som publiceras är alltid korrekt"
       },
       {
-        "en": "They lead Sweden’s foreign policy",
-        "sv": "De leder Sveriges utrikespolitik"
+        "en": "Source criticism means never reading news",
+        "sv": "Källkritik betyder att man aldrig ska läsa nyheter"
       },
       {
-        "en": "They supervise all courts",
-        "sv": "De kontrollerar alla domstolar"
+        "en": "Only printed books need to be checked",
+        "sv": "Bara tryckta böcker behöver kontrolleras"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
-      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
+      "en": "Information can come from many kinds of sources, but not everything that is published is always correct. False information can spread quickly and affect people’s opinions, so one needs to question and check what one reads, sees, or hears.",
+      "sv": "Information kan komma från många slags källor, men allt som publiceras är inte alltid korrekt. Falska uppgifter kan spridas snabbt och påverka människors åsikter, så man behöver ifrågasätta och kontrollera det man läser, ser eller hör."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Kommunernas ansvar",
-      "page": 13
+      "chapter": "Mediernas roll",
+      "section": "Källkritik",
+      "page": 21
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "source-criticism",
+      "false-information",
+      "media-literacy"
+    ]
+  },
+  {
+    "id": "q155",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue?",
+      "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
+    },
+    "opts": [
+      {
+        "en": "A private company can provide the service while tax revenue funds it",
+        "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
+      },
+      {
+        "en": "The service must always be paid for entirely with private loans",
+        "sv": "Tjänsten måste alltid betalas helt med privata lån"
+      },
+      {
+        "en": "Private providers take over the responsibilities of the state, regions, and municipalities",
+        "sv": "Privata utförare tar över statens, regionernas och kommunernas ansvar"
+      },
+      {
+        "en": "Tax revenue may be used only if the service is run by the state",
+        "sv": "Skattepengar får bara användas om tjänsten drivs av staten"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A welfare service can be provided by a private company and still be financed with tax revenue. The responsibility and funding can therefore be public even when the provider itself is private.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattemedel. Ansvaret och finansieringen kan alltså vara offentlig även när själva utföraren är privat."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Stat, regioner och kommuner har olika ansvar",
+      "page": 30
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "welfare",
+      "tax-funding",
+      "private-providers",
+      "responsibility-split"
+    ]
+  },
+  {
+    "id": "q156",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
+      "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
+    },
+    "opts": [
+      {
+        "en": "Sickness insurance, parental insurance, and unemployment insurance",
+        "sv": "Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring"
+      },
+      {
+        "en": "Health centres, hospitals, and regional public transport",
+        "sv": "Vårdcentraler, sjukhus och regional kollektivtrafik"
+      },
+      {
+        "en": "Preschools, after-school centres, and municipal adult education",
+        "sv": "Förskolor, fritidshem och kommunal vuxenutbildning"
+      },
+      {
+        "en": "Private credit cards, car loans, and mortgages",
+        "sv": "Privata kreditkort, billån och bostadslån"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
+      "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Statligt finansierad välfärd",
+      "page": 30
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "state-welfare",
+      "social-insurance",
+      "sickness-insurance",
+      "parental-insurance"
+    ]
+  },
+  {
+    "id": "q157",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "What is included in primary care?",
+      "sv": "Vad ingår i primärvården?"
+    },
+    "opts": [
+      {
+        "en": "Health centres, child health centres, and maternity clinics",
+        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
+      },
+      {
+        "en": "Courts, prosecutors, and prison and probation services",
+        "sv": "Domstolar, åklagare och kriminalvård"
+      },
+      {
+        "en": "Pensions, child allowance, and study support",
+        "sv": "Pensioner, barnbidrag och studiestöd"
+      },
+      {
+        "en": "Daily newspapers, public service broadcasting, and social media",
+        "sv": "Dagstidningar, public service och sociala medier"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Primary care is the part of health care that many people encounter first. Health centres, child health centres, and maternity clinics belong to it, while hospital care and psychiatric care are other kinds of health care.",
+      "sv": "Primärvården är den del av sjukvården som många möter först. Vårdcentraler, barnavårdscentraler och mödravårdscentraler hör dit, medan sjukhusvård och psykiatrisk vård är andra slags sjukvård."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Olika slags sjukvård",
+      "page": 31
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "health-care",
+      "primary-care",
+      "health-centres",
+      "maternity-care"
+    ]
+  },
+  {
+    "id": "q158",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "What responsibility does the municipality have for children’s everyday life and education?",
+      "sv": "Vilket ansvar har kommunen för barns vardag och utbildning?"
+    },
+    "opts": [
+      {
+        "en": "To arrange preschools, after-school centres, compulsory schools, and upper-secondary schools",
+        "sv": "Att ordna förskolor, fritidshem, grundskolor och gymnasieskolor"
+      },
+      {
+        "en": "To pay sickness insurance and state pensions",
+        "sv": "Att betala sjukförsäkring och statliga pensioner"
+      },
+      {
+        "en": "To run regional hospitals and health centres",
+        "sv": "Att driva regionernas sjukhus och vårdcentraler"
+      },
+      {
+        "en": "To decide court sentences in criminal cases",
+        "sv": "Att bestämma domstolarnas straff i brottmål"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Municipalities are responsible for making schools and education available. This includes preschools, after-school centres, compulsory schools for children aged 6 to 16, upper-secondary schools, and municipal adult education.",
+      "sv": "Kommuner ansvarar för att det finns skolor och utbildning. Det omfattar förskolor, fritidshem, grundskolor för barn mellan 6 och 16 år, gymnasieskolor och kommunal vuxenutbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "municipal-welfare",
+      "childcare",
+      "education",
+      "schools"
+    ]
+  },
+  {
+    "id": "q159",
+    "chapterId": 9,
+    "chapter": "Ch. 09 · The welfare society",
+    "type": "single_choice",
+    "q": {
+      "en": "What help can older people receive from the municipality to manage everyday life?",
+      "sv": "Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?"
+    },
+    "opts": [
+      {
+        "en": "Care and services at home or housing adapted for older people",
+        "sv": "Vård och service hemma eller boende som är anpassat för äldre personer"
+      },
+      {
+        "en": "Automatic study support and a university place",
+        "sv": "Automatiskt studiestöd och plats på universitet"
+      },
+      {
+        "en": "Decisions about which news media may publish",
+        "sv": "Beslut om vilka nyheter medier får publicera"
+      },
+      {
+        "en": "Private loans that replace all municipal help",
+        "sv": "Privata lån som ersätter all kommunal hjälp"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Older people may need help with practical everyday tasks and personal hygiene. The municipality can provide care and services at home, or offer housing adapted for older people if needed.",
+      "sv": "Äldre personer kan behöva hjälp med praktiska saker i vardagen och med personlig hygien. Kommunen kan ge vård och service hemma, eller erbjuda ett boende som är anpassat för äldre personer om det behövs."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Välfärdssamhället",
+      "section": "Kommunerna har ett stort ansvar",
+      "page": 31
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "elderly-care",
+      "municipal-welfare",
+      "home-care",
+      "adapted-housing"
+    ]
+  },
+  {
+    "id": "q160",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What does the Freedom of the Press Act protect?",
+      "sv": "Vad skyddar tryckfrihetsförordningen?"
+    },
+    "opts": [
+      {
+        "en": "The right to spread thoughts and opinions in printed texts",
+        "sv": "Rätten att sprida tankar och åsikter i tryckta texter"
+      },
+      {
+        "en": "The right to decide succession to the throne",
+        "sv": "Rätten att bestämma tronföljden"
+      },
+      {
+        "en": "The right to judge criminal cases",
+        "sv": "Rätten att döma i brottmål"
+      },
+      {
+        "en": "The right to collect municipal tax",
+        "sv": "Rätten att ta ut kommunalskatt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Freedom of the Press Act is one of Sweden’s constitutional laws and protects freedom of the press. It concerns the right to spread thoughts and opinions in printed texts, while succession, courts, and municipal tax belong to other parts of society.",
+      "sv": "Tryckfrihetsförordningen är en av Sveriges grundlagar och skyddar tryckfriheten. Den handlar om rätten att sprida tankar och åsikter i tryckta texter, medan tronföljd, domstolar och kommunalskatt hör till andra delar av samhällssystemet."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Tryckfrihetsförordningen",
+      "page": 16
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-press",
+      "constitutional-laws",
+      "printed-texts"
+    ]
+  },
+  {
+    "id": "q161",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What does the Fundamental Law on Freedom of Expression protect?",
+      "sv": "Vad skyddar yttrandefrihetsgrundlagen?"
+    },
+    "opts": [
+      {
+        "en": "The right to express thoughts and opinions in media such as radio and television",
+        "sv": "Rätten att uttrycka tankar och åsikter i medier som radio och tv"
+      },
+      {
+        "en": "The right to inherit the throne",
+        "sv": "Rätten att ärva tronen"
+      },
+      {
+        "en": "The right to appoint all lay judges",
+        "sv": "Rätten att utse alla nämndemän"
+      },
+      {
+        "en": "The right to decide school curricula",
+        "sv": "Rätten att besluta skolans kursplaner"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Fundamental Law on Freedom of Expression protects the right to express thoughts and opinions in media such as radio and television. It is a constitutional law about freedom of expression, not a rule about succession, lay judges, or school curricula.",
+      "sv": "Yttrandefrihetsgrundlagen skyddar rätten att uttrycka tankar och åsikter i medier som radio och tv. Den är en grundlag om yttrandefrihet, inte en regel om tronföljd, nämndemän eller skolans kursplaner."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Yttrandefrihetsgrundlagen",
+      "page": 16
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "freedom-of-expression",
+      "constitutional-laws",
+      "media"
+    ]
+  },
+  {
+    "id": "q162",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Which statement describes the preliminary investigation in a criminal investigation?",
+      "sv": "Vilket påstående beskriver förundersökningen i en brottsutredning?"
+    },
+    "opts": [
+      {
+        "en": "The police collect evidence and speak with witnesses",
+        "sv": "Polisen samlar in bevis och pratar med vittnen"
+      },
+      {
+        "en": "The court decides a penalty before anyone is suspected",
+        "sv": "Domstolen bestämmer straff innan någon är misstänkt"
+      },
+      {
+        "en": "The Riksdag decides whether the suspect is guilty",
+        "sv": "Riksdagen avgör om den misstänkte är skyldig"
+      },
+      {
+        "en": "The lawyer writes new laws for the police",
+        "sv": "Advokaten skriver nya lagar åt polisen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "During a preliminary investigation, the police investigate what has happened. The police can collect evidence and speak with witnesses; penalties are not decided in advance and guilt is not decided by the Riksdag.",
+      "sv": "Vid en förundersökning undersöker polisen vad som har hänt. Polisen kan samla in bevis och prata med vittnen; straff bestäms inte i förväg och skuldfrågan avgörs inte av riksdagen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Brottsutredning",
+      "page": 18
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "criminal-investigation",
+      "preliminary-investigation",
+      "police"
+    ]
+  },
+  {
+    "id": "q163",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "What happens during a trial in a criminal case?",
+      "sv": "Vad händer under en rättegång i ett brottmål?"
+    },
+    "opts": [
+      {
+        "en": "The prosecutor tries to show that the defendant committed the crime",
+        "sv": "Åklagaren försöker visa att den åtalade har begått brottet"
+      },
+      {
+        "en": "The police alone decide the defendant’s penalty",
+        "sv": "Polisen bestämmer ensam vilket straff den åtalade får"
+      },
+      {
+        "en": "The government decides whether the evidence is enough",
+        "sv": "Regeringen avgör om bevisningen räcker"
+      },
+      {
+        "en": "Witnesses vote on the judgment",
+        "sv": "Vittnen röstar om domen"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "In a criminal trial, the prosecutor tries to show that the defendant committed the crime. The defendant can receive help from a defence lawyer, and the court decides the case based on the evidence.",
+      "sv": "I en rättegång i brottmål försöker åklagaren visa att den åtalade har begått brottet. Den åtalade kan få hjälp av en försvarare, och domstolen avgör målet utifrån bevisningen."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Rättegång",
+      "page": 19
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "medium",
+    "tags": [
+      "trial",
+      "criminal-case",
+      "prosecutor",
+      "court"
+    ]
+  },
+  {
+    "id": "q164",
+    "chapterId": 5,
+    "chapter": "Ch. 05 · Law and justice",
+    "type": "single_choice",
+    "q": {
+      "en": "Which are the general courts in Sweden?",
+      "sv": "Vilka är de allmänna domstolarna i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "District court, court of appeal, and Supreme Court",
+        "sv": "Tingsrätt, hovrätt och Högsta domstolen"
+      },
+      {
+        "en": "Municipality, region, and government",
+        "sv": "Kommun, region och regering"
+      },
+      {
+        "en": "The Police, Tax Agency, and Social Insurance Agency",
+        "sv": "Polisen, Skatteverket och Försäkringskassan"
+      },
+      {
+        "en": "Riksdag, committee, and ministry",
+        "sv": "Riksdag, utskott och departement"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The general courts are the district court, the court of appeal, and the Supreme Court. Municipalities, regions, agencies, Riksdag committees, and ministries have other tasks.",
+      "sv": "De allmänna domstolarna är tingsrätt, hovrätt och Högsta domstolen. Kommuner, regioner, myndigheter, riksdagens utskott och departement har andra uppgifter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Lag och rätt",
+      "section": "Domstolar",
+      "page": 18
+    },
+    "questionProvenance": "uhr",
+    "difficulty": "easy",
+    "tags": [
+      "courts",
+      "district-court",
+      "court-of-appeal",
+      "supreme-court"
+    ]
+  },
+  {
+    "id": "q165",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Why do trees not grow in the coldest and windiest parts of the Swedish mountain region?",
+      "sv": "Varför växer det inte träd i fjällens kallaste och blåsigaste delar?"
+    },
+    "opts": [
+      {
+        "en": "The climate is too cold and windy",
+        "sv": "Klimatet är för kallt och blåsigt"
+      },
+      {
+        "en": "The ground is covered by tropical rainforest",
+        "sv": "Marken är täckt av tropisk regnskog"
+      },
+      {
+        "en": "The area is below sea level",
+        "sv": "Området ligger under havsytan"
+      },
+      {
+        "en": "Farming takes up all the land there",
+        "sv": "Jordbruket tar upp all mark där"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
+      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Fjäll",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "mountains",
+      "climate",
+      "skanderna"
+    ]
+  },
+  {
+    "id": "q151",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which trees are more common in northern Sweden's forests?",
+      "sv": "Vilka träd är vanligare i norra Sveriges skogar?"
+    },
+    "opts": [
+      {
+        "en": "Conifers such as spruce and pine",
+        "sv": "Barrträd som gran och tall"
+      },
+      {
+        "en": "Palms and bamboo",
+        "sv": "Palmer och bambu"
+      },
+      {
+        "en": "Fruit trees from tropical climates",
+        "sv": "Fruktträd från tropiskt klimat"
+      },
+      {
+        "en": "Deciduous trees that only grow by the Mediterranean Sea",
+        "sv": "Lövträd som bara växer vid Medelhavet"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
+      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "municipal-committees",
-      "municipal-council",
-      "local-government"
+      "geography",
+      "forest",
+      "conifers",
+      "climate"
+    ]
+  },
+  {
+    "id": "q152",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Where do most people in Sweden live?",
+      "sv": "Var bor de flesta människor i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "In southern Sweden and along the coasts",
+        "sv": "I södra Sverige och längs kusterna"
+      },
+      {
+        "en": "Evenly spread across the whole country",
+        "sv": "Jämnt fördelat över hela landet"
+      },
+      {
+        "en": "Mainly on uninhabited islands",
+        "sv": "Främst på obebodda öar"
+      },
+      {
+        "en": "Only in the mountain areas",
+        "sv": "Bara i fjällområdena"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Befolkning",
+      "page": 7
+    },
+    "difficulty": "easy",
+    "tags": [
+      "population",
+      "demography",
+      "cities",
+      "coasts"
+    ]
+  },
+  {
+    "id": "q153",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Why is most Swedish farming in southern Sweden?",
+      "sv": "Varför finns det mesta av Sveriges jordbruk i södra Sverige?"
+    },
+    "opts": [
+      {
+        "en": "The milder climate makes it easier to farm there",
+        "sv": "Det mildare klimatet gör det lättare att odla där"
+      },
+      {
+        "en": "Northern Sweden has no drinking water",
+        "sv": "Norra Sverige saknar allt dricksvatten"
+      },
+      {
+        "en": "Southern Sweden has no cities",
+        "sv": "Södra Sverige har inga städer"
+      },
+      {
+        "en": "Farming is banned near the coasts",
+        "sv": "Jordbruk är förbjudet nära kusterna"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
+      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Naturresurser",
+      "page": 8
+    },
+    "difficulty": "medium",
+    "tags": [
+      "natural-resources",
+      "agriculture",
+      "climate",
+      "southern-sweden"
+    ]
+  },
+  {
+    "id": "q154",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "What can climate change lead to in Sweden?",
+      "sv": "Vad kan klimatförändringar leda till i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "More heavy rain, heat periods, drought, and forest fires",
+        "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder"
+      },
+      {
+        "en": "Sea levels always falling everywhere",
+        "sv": "Att havsnivån alltid sjunker överallt"
+      },
+      {
+        "en": "Extreme weather disappearing completely",
+        "sv": "Att extremt väder försvinner helt"
+      },
+      {
+        "en": "All emissions automatically becoming zero",
+        "sv": "Att alla utsläpp automatiskt blir noll"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
+      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Klimatförändringar",
+      "page": 8
+    },
+    "difficulty": "medium",
+    "tags": [
+      "climate-change",
+      "flooding",
+      "drought",
+      "forest-fires"
     ]
   },
   {
@@ -7072,8 +7773,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden is located ...",
-      "sv": "Sverige ligger ..."
+      "en": "Which answer best matches? Where is Sweden located?",
+      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?"
     },
     "opts": [
       {
@@ -33558,60 +34259,60 @@
   },
   {
     "id": "q751",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which parts are included in what is called the state?",
-      "sv": "Vilket svar stämmer bäst? Vilka delar ingår i det som kallas staten?"
+      "en": "Which answer best matches? Why do trees not grow in the coldest and windiest parts of the Swedish mountain region?",
+      "sv": "Vilket svar stämmer bäst? Varför växer det inte träd i fjällens kallaste och blåsigaste delar?"
     },
     "opts": [
       {
-        "en": "The Riksdag, the government, agencies, and courts",
-        "sv": "Riksdag, regering, myndigheter och domstolar"
+        "en": "The climate is too cold and windy",
+        "sv": "Klimatet är för kallt och blåsigt"
       },
       {
-        "en": "Regions, municipalities, and county museums",
-        "sv": "Regioner, kommuner och länsmuseer"
+        "en": "The ground is covered by tropical rainforest",
+        "sv": "Marken är täckt av tropisk regnskog"
       },
       {
-        "en": "Parties, banks, and companies",
-        "sv": "Partier, banker och företag"
+        "en": "The area is below sea level",
+        "sv": "Området ligger under havsytan"
       },
       {
-        "en": "The royal house, the church, and the EU",
-        "sv": "Kungahuset, kyrkan och EU"
+        "en": "Farming takes up all the land there",
+        "sv": "Jordbruket tar upp all mark där"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
-      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
+      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
+      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Fjäll",
+      "page": 6
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "state",
-      "riksdag",
-      "government",
-      "courts",
+      "geography",
+      "mountains",
+      "climate",
+      "skanderna",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q752",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "The Riksdag, the government, agencies, and courts.",
-      "sv": "Riksdag, regering, myndigheter och domstolar."
+      "en": "One reason is that The climate is too cold and windy.",
+      "sv": "En anledning är klimatet är för kallt och blåsigt."
     },
     "opts": [
       {
@@ -33625,33 +34326,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
-      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
+      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
+      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Fjäll",
+      "page": 6
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "state",
-      "riksdag",
-      "government",
-      "courts",
+      "geography",
+      "mountains",
+      "climate",
+      "skanderna",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q753",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "Regions, municipalities, and county museums.",
-      "sv": "Regioner, kommuner och länsmuseer."
+      "en": "One reason is that The ground is covered by tropical rainforest.",
+      "sv": "En anledning är marken är täckt av tropisk regnskog."
     },
     "opts": [
       {
@@ -33665,128 +34366,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
-      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
+      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
+      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Fjäll",
+      "page": 6
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "state",
-      "riksdag",
-      "government",
-      "courts",
+      "geography",
+      "mountains",
+      "climate",
+      "skanderna",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q754",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which parts are included in what is called the state?",
-      "sv": "Välj rätt alternativ: Vilka delar ingår i det som kallas staten?"
+      "en": "Choose the correct option: Why do trees not grow in the coldest and windiest parts of the Swedish mountain region?",
+      "sv": "Välj rätt alternativ: Varför växer det inte träd i fjällens kallaste och blåsigaste delar?"
     },
     "opts": [
       {
-        "en": "The Riksdag, the government, agencies, and courts",
-        "sv": "Riksdag, regering, myndigheter och domstolar"
+        "en": "The climate is too cold and windy",
+        "sv": "Klimatet är för kallt och blåsigt"
       },
       {
-        "en": "Regions, municipalities, and county museums",
-        "sv": "Regioner, kommuner och länsmuseer"
+        "en": "The ground is covered by tropical rainforest",
+        "sv": "Marken är täckt av tropisk regnskog"
       },
       {
-        "en": "Parties, banks, and companies",
-        "sv": "Partier, banker och företag"
+        "en": "The area is below sea level",
+        "sv": "Området ligger under havsytan"
       },
       {
-        "en": "The royal house, the church, and the EU",
-        "sv": "Kungahuset, kyrkan och EU"
+        "en": "Farming takes up all the land there",
+        "sv": "Jordbruket tar upp all mark där"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
-      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
+      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
+      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Fjäll",
+      "page": 6
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "state",
-      "riksdag",
-      "government",
-      "courts",
+      "geography",
+      "mountains",
+      "climate",
+      "skanderna",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q755",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is a budget bill?",
-      "sv": "Vilket svar stämmer bäst? Vad är en budgetproposition?"
+      "en": "Which answer best matches? Which trees are more common in northern Sweden's forests?",
+      "sv": "Vilket svar stämmer bäst? Vilka träd är vanligare i norra Sveriges skogar?"
     },
     "opts": [
       {
-        "en": "The government's proposal to the Riksdag on state income and expenditure",
-        "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter"
+        "en": "Conifers such as spruce and pine",
+        "sv": "Barrträd som gran och tall"
       },
       {
-        "en": "A municipality’s decision on who should become prime minister",
-        "sv": "Kommunens beslut om vem som ska bli statsminister"
+        "en": "Palms and bamboo",
+        "sv": "Palmer och bambu"
       },
       {
-        "en": "The courts’ plan for criminal investigations",
-        "sv": "Domstolarnas plan för brottsutredningar"
+        "en": "Fruit trees from tropical climates",
+        "sv": "Fruktträd från tropiskt klimat"
       },
       {
-        "en": "The regions’ list of all bus routes",
-        "sv": "Regionernas lista över alla busslinjer"
+        "en": "Deciduous trees that only grow by the Mediterranean Sea",
+        "sv": "Lövträd som bara växer vid Medelhavet"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
-      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
+      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
+      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "budget-bill",
-      "government",
-      "state-budget",
+      "geography",
+      "forest",
+      "conifers",
+      "climate",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q756",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "The government's proposal to the Riksdag on state income and expenditure.",
-      "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter."
+      "en": "Conifers such as spruce and pine.",
+      "sv": "Barrträd som gran och tall."
     },
     "opts": [
       {
@@ -33800,32 +34502,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
-      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
+      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
+      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "budget-bill",
-      "government",
-      "state-budget",
+      "geography",
+      "forest",
+      "conifers",
+      "climate",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q757",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "A municipality’s decision on who should become prime minister.",
-      "sv": "Kommunens beslut om vem som ska bli statsminister."
+      "en": "Palms and bamboo.",
+      "sv": "Palmer och bambu."
     },
     "opts": [
       {
@@ -33839,126 +34542,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
-      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
+      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
+      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "budget-bill",
-      "government",
-      "state-budget",
+      "geography",
+      "forest",
+      "conifers",
+      "climate",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q758",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is a budget bill?",
-      "sv": "Välj rätt alternativ: Vad är en budgetproposition?"
+      "en": "Choose the correct option: Which trees are more common in northern Sweden's forests?",
+      "sv": "Välj rätt alternativ: Vilka träd är vanligare i norra Sveriges skogar?"
     },
     "opts": [
       {
-        "en": "The government's proposal to the Riksdag on state income and expenditure",
-        "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter"
+        "en": "Conifers such as spruce and pine",
+        "sv": "Barrträd som gran och tall"
       },
       {
-        "en": "A municipality’s decision on who should become prime minister",
-        "sv": "Kommunens beslut om vem som ska bli statsminister"
+        "en": "Palms and bamboo",
+        "sv": "Palmer och bambu"
       },
       {
-        "en": "The courts’ plan for criminal investigations",
-        "sv": "Domstolarnas plan för brottsutredningar"
+        "en": "Fruit trees from tropical climates",
+        "sv": "Fruktträd från tropiskt klimat"
       },
       {
-        "en": "The regions’ list of all bus routes",
-        "sv": "Regionernas lista över alla busslinjer"
+        "en": "Deciduous trees that only grow by the Mediterranean Sea",
+        "sv": "Lövträd som bara växer vid Medelhavet"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
-      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
+      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
+      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Staten",
-      "page": 12
+      "chapter": "Landet Sverige",
+      "section": "Skogar, sjöar och öar",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "budget-bill",
-      "government",
-      "state-budget",
+      "geography",
+      "forest",
+      "conifers",
+      "climate",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q759",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which agency makes decisions about parental benefit, for example?",
-      "sv": "Vilket svar stämmer bäst? Vilken myndighet fattar till exempel beslut om föräldrapenning?"
+      "en": "Which answer best matches? Where do most people in Sweden live?",
+      "sv": "Vilket svar stämmer bäst? Var bor de flesta människor i Sverige?"
     },
     "opts": [
       {
-        "en": "The Swedish Social Insurance Agency",
-        "sv": "Försäkringskassan"
+        "en": "In southern Sweden and along the coasts",
+        "sv": "I södra Sverige och längs kusterna"
       },
       {
-        "en": "The Swedish Tax Agency",
-        "sv": "Skatteverket"
+        "en": "Evenly spread across the whole country",
+        "sv": "Jämnt fördelat över hela landet"
       },
       {
-        "en": "The Swedish Police Authority",
-        "sv": "Polismyndigheten"
+        "en": "Mainly on uninhabited islands",
+        "sv": "Främst på obebodda öar"
       },
       {
-        "en": "The Parliamentary Ombudsmen",
-        "sv": "Justitieombudsmannen"
+        "en": "Only in the mountain areas",
+        "sv": "Bara i fjällområdena"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
-      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Befolkning",
+      "page": 7
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "agencies",
-      "social-insurance-agency",
-      "parental-benefit",
+      "population",
+      "demography",
+      "cities",
+      "coasts",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q760",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "The Swedish Social Insurance Agency.",
-      "sv": "Försäkringskassan."
+      "en": "In southern Sweden and along the coasts.",
+      "sv": "I södra Sverige och längs kusterna."
     },
     "opts": [
       {
@@ -33972,32 +34678,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
-      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Befolkning",
+      "page": 7
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "agencies",
-      "social-insurance-agency",
-      "parental-benefit",
+      "population",
+      "demography",
+      "cities",
+      "coasts",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q761",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "The Swedish Tax Agency.",
-      "sv": "Skatteverket."
+      "en": "Evenly spread across the whole country.",
+      "sv": "Jämnt fördelat över hela landet."
     },
     "opts": [
       {
@@ -34011,126 +34718,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
-      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Befolkning",
+      "page": 7
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "agencies",
-      "social-insurance-agency",
-      "parental-benefit",
+      "population",
+      "demography",
+      "cities",
+      "coasts",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q762",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which agency makes decisions about parental benefit, for example?",
-      "sv": "Välj rätt alternativ: Vilken myndighet fattar till exempel beslut om föräldrapenning?"
+      "en": "Choose the correct option: Where do most people in Sweden live?",
+      "sv": "Välj rätt alternativ: Var bor de flesta människor i Sverige?"
     },
     "opts": [
       {
-        "en": "The Swedish Social Insurance Agency",
-        "sv": "Försäkringskassan"
+        "en": "In southern Sweden and along the coasts",
+        "sv": "I södra Sverige och längs kusterna"
       },
       {
-        "en": "The Swedish Tax Agency",
-        "sv": "Skatteverket"
+        "en": "Evenly spread across the whole country",
+        "sv": "Jämnt fördelat över hela landet"
       },
       {
-        "en": "The Swedish Police Authority",
-        "sv": "Polismyndigheten"
+        "en": "Mainly on uninhabited islands",
+        "sv": "Främst på obebodda öar"
       },
       {
-        "en": "The Parliamentary Ombudsmen",
-        "sv": "Justitieombudsmannen"
+        "en": "Only in the mountain areas",
+        "sv": "Bara i fjällområdena"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
-      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Befolkning",
+      "page": 7
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "agencies",
-      "social-insurance-agency",
-      "parental-benefit",
+      "population",
+      "demography",
+      "cities",
+      "coasts",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q763",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Who can check that other agencies act correctly?",
-      "sv": "Vilket svar stämmer bäst? Vilka kan kontrollera att andra myndigheter gör rätt?"
+      "en": "Which answer best matches? Why is most Swedish farming in southern Sweden?",
+      "sv": "Vilket svar stämmer bäst? Varför finns det mesta av Sveriges jordbruk i södra Sverige?"
     },
     "opts": [
       {
-        "en": "The Parliamentary Ombudsmen and the Chancellor of Justice",
-        "sv": "Justitieombudsmannen och Justitiekanslern"
+        "en": "The milder climate makes it easier to farm there",
+        "sv": "Det mildare klimatet gör det lättare att odla där"
       },
       {
-        "en": "Regional councils and county museums",
-        "sv": "Regionfullmäktige och länsmuseerna"
+        "en": "Northern Sweden has no drinking water",
+        "sv": "Norra Sverige saknar allt dricksvatten"
       },
       {
-        "en": "The crown princess and municipal committees",
-        "sv": "Kronprinsessan och kommunala nämnder"
+        "en": "Southern Sweden has no cities",
+        "sv": "Södra Sverige har inga städer"
       },
       {
-        "en": "Banks and employers",
-        "sv": "Banker och arbetsgivare"
+        "en": "Farming is banned near the coasts",
+        "sv": "Jordbruk är förbjudet nära kusterna"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
-      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
+      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
+      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Naturresurser",
+      "page": 8
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "agency-oversight",
-      "parliamentary-ombudsmen",
-      "chancellor-of-justice",
+      "natural-resources",
+      "agriculture",
+      "climate",
+      "southern-sweden",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q764",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "The Parliamentary Ombudsmen and the Chancellor of Justice.",
-      "sv": "Justitieombudsmannen och Justitiekanslern."
+      "en": "One reason is the milder climate makes it easier to farm there.",
+      "sv": "En anledning är att Det mildare klimatet gör det lättare att odla där."
     },
     "opts": [
       {
@@ -34144,32 +34854,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
-      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
+      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
+      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Naturresurser",
+      "page": 8
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "agency-oversight",
-      "parliamentary-ombudsmen",
-      "chancellor-of-justice",
+      "natural-resources",
+      "agriculture",
+      "climate",
+      "southern-sweden",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q765",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "Regional councils and county museums.",
-      "sv": "Regionfullmäktige och länsmuseerna."
+      "en": "One reason is northern Sweden has no drinking water.",
+      "sv": "En anledning är norra Sverige saknar allt dricksvatten."
     },
     "opts": [
       {
@@ -34183,126 +34894,129 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
-      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
+      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
+      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Naturresurser",
+      "page": 8
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "agency-oversight",
-      "parliamentary-ombudsmen",
-      "chancellor-of-justice",
+      "natural-resources",
+      "agriculture",
+      "climate",
+      "southern-sweden",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q766",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Who can check that other agencies act correctly?",
-      "sv": "Välj rätt alternativ: Vilka kan kontrollera att andra myndigheter gör rätt?"
+      "en": "Choose the correct option: Why is most Swedish farming in southern Sweden?",
+      "sv": "Välj rätt alternativ: Varför finns det mesta av Sveriges jordbruk i södra Sverige?"
     },
     "opts": [
       {
-        "en": "The Parliamentary Ombudsmen and the Chancellor of Justice",
-        "sv": "Justitieombudsmannen och Justitiekanslern"
+        "en": "The milder climate makes it easier to farm there",
+        "sv": "Det mildare klimatet gör det lättare att odla där"
       },
       {
-        "en": "Regional councils and county museums",
-        "sv": "Regionfullmäktige och länsmuseerna"
+        "en": "Northern Sweden has no drinking water",
+        "sv": "Norra Sverige saknar allt dricksvatten"
       },
       {
-        "en": "The crown princess and municipal committees",
-        "sv": "Kronprinsessan och kommunala nämnder"
+        "en": "Southern Sweden has no cities",
+        "sv": "Södra Sverige har inga städer"
       },
       {
-        "en": "Banks and employers",
-        "sv": "Banker och arbetsgivare"
+        "en": "Farming is banned near the coasts",
+        "sv": "Jordbruk är förbjudet nära kusterna"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
-      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
+      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
+      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Myndigheter",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Naturresurser",
+      "page": 8
     },
-    "difficulty": "hard",
+    "difficulty": "medium",
     "tags": [
-      "agency-oversight",
-      "parliamentary-ombudsmen",
-      "chancellor-of-justice",
+      "natural-resources",
+      "agriculture",
+      "climate",
+      "southern-sweden",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q767",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do municipal committees do?",
-      "sv": "Vilket svar stämmer bäst? Vad gör kommunala nämnder?"
+      "en": "Which answer best matches? What can climate change lead to in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad kan klimatförändringar leda till i Sverige?"
     },
     "opts": [
       {
-        "en": "They are responsible for different areas in the municipality and are chosen by the municipal council",
-        "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige"
+        "en": "More heavy rain, heat periods, drought, and forest fires",
+        "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder"
       },
       {
-        "en": "They choose the Speaker of the Riksdag",
-        "sv": "De väljer riksdagens talman"
+        "en": "Sea levels always falling everywhere",
+        "sv": "Att havsnivån alltid sjunker överallt"
       },
       {
-        "en": "They lead Sweden’s foreign policy",
-        "sv": "De leder Sveriges utrikespolitik"
+        "en": "Extreme weather disappearing completely",
+        "sv": "Att extremt väder försvinner helt"
       },
       {
-        "en": "They supervise all courts",
-        "sv": "De kontrollerar alla domstolar"
+        "en": "All emissions automatically becoming zero",
+        "sv": "Att alla utsläpp automatiskt blir noll"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
-      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
+      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
+      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Kommunernas ansvar",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Klimatförändringar",
+      "page": 8
     },
     "difficulty": "medium",
     "tags": [
-      "municipal-committees",
-      "municipal-council",
-      "local-government",
+      "climate-change",
+      "flooding",
+      "drought",
+      "forest-fires",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q768",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "They are responsible for different areas in the municipality and are chosen by the municipal council.",
-      "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige."
+      "en": "More heavy rain, heat periods, drought, and forest fires.",
+      "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder."
     },
     "opts": [
       {
@@ -34316,32 +35030,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
-      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
+      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
+      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Kommunernas ansvar",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Klimatförändringar",
+      "page": 8
     },
     "difficulty": "medium",
     "tags": [
-      "municipal-committees",
-      "municipal-council",
-      "local-government",
+      "climate-change",
+      "flooding",
+      "drought",
+      "forest-fires",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q769",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "They choose the Speaker of the Riksdag.",
-      "sv": "De väljer riksdagens talman."
+      "en": "Sea levels always falling everywhere.",
+      "sv": "Havsnivån alltid sjunker överallt."
     },
     "opts": [
       {
@@ -34355,67 +35070,69 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
-      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
+      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
+      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Kommunernas ansvar",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Klimatförändringar",
+      "page": 8
     },
     "difficulty": "medium",
     "tags": [
-      "municipal-committees",
-      "municipal-council",
-      "local-government",
+      "climate-change",
+      "flooding",
+      "drought",
+      "forest-fires",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q770",
-    "chapterId": 3,
-    "chapter": "Ch. 03 · How Sweden is governed",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What do municipal committees do?",
-      "sv": "Välj rätt alternativ: Vad gör kommunala nämnder?"
+      "en": "Choose the correct option: What can climate change lead to in Sweden?",
+      "sv": "Välj rätt alternativ: Vad kan klimatförändringar leda till i Sverige?"
     },
     "opts": [
       {
-        "en": "They are responsible for different areas in the municipality and are chosen by the municipal council",
-        "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige"
+        "en": "More heavy rain, heat periods, drought, and forest fires",
+        "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder"
       },
       {
-        "en": "They choose the Speaker of the Riksdag",
-        "sv": "De väljer riksdagens talman"
+        "en": "Sea levels always falling everywhere",
+        "sv": "Att havsnivån alltid sjunker överallt"
       },
       {
-        "en": "They lead Sweden’s foreign policy",
-        "sv": "De leder Sveriges utrikespolitik"
+        "en": "Extreme weather disappearing completely",
+        "sv": "Att extremt väder försvinner helt"
       },
       {
-        "en": "They supervise all courts",
-        "sv": "De kontrollerar alla domstolar"
+        "en": "All emissions automatically becoming zero",
+        "sv": "Att alla utsläpp automatiskt blir noll"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
-      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
+      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
+      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Så här styrs Sverige",
-      "section": "Kommunernas ansvar",
-      "page": 13
+      "chapter": "Landet Sverige",
+      "section": "Klimatförändringar",
+      "page": 8
     },
     "difficulty": "medium",
     "tags": [
-      "municipal-committees",
-      "municipal-council",
-      "local-government",
+      "climate-change",
+      "flooding",
+      "drought",
+      "forest-fires",
       "published-variant",
       "judgement"
     ]
@@ -34434,7 +35151,7 @@
       "en": "Geography, climate, nature, population, natural resources, and climate change.",
       "sv": "Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar."
     },
-    "questionCount": 65
+    "questionCount": 90
   },
   {
     "id": 2,
@@ -34460,7 +35177,7 @@
       "en": "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
       "sv": "Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick."
     },
-    "questionCount": 80
+    "questionCount": 55
   },
   {
     "id": 4,
