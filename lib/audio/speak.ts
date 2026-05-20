@@ -7,11 +7,11 @@ import {
 } from '../quiz/questionText';
 
 type SpeakableQuestion = {
+  questionSv: string;
+  options: QuestionOption[];
   correctOptionId?: string;
   explanationSv?: string;
   explanationText?: Partial<LocalizedContentText>;
-  options: QuestionOption[];
-  questionSv: string;
 };
 
 const SOURCE_CITATION_REPLACEMENTS = [
@@ -25,17 +25,6 @@ const SOURCE_CITATION_REPLACEMENTS = [
 
 function optionLetter(index: number): string {
   return String.fromCharCode('A'.charCodeAt(0) + index);
-}
-
-function cleanSpeechText(text?: string): string {
-  if (!text) return '';
-  const withoutAuthority = stripSourceAuthorityPhrasing(text) || text;
-  return SOURCE_CITATION_REPLACEMENTS.reduce(
-    (current, pattern) => current.replace(pattern, ''),
-    withoutAuthority,
-  )
-    .replace(/\s{2,}/g, ' ')
-    .trim();
 }
 
 export function buildQuestionSpeechText(question: SpeakableQuestion): string {
@@ -54,17 +43,24 @@ export function buildAnswerFeedbackSpeechText(
 
   const correctOption = question.options.find((option) => option.id === question.correctOptionId);
   const selectedOption = question.options.find((option) => option.id === selectedOptionId);
-  const selectedText = getQuestionOptionText(selectedOption, 'sv', 'det valda svaret');
-  const correctText = getQuestionOptionText(correctOption, 'sv', 'det markerade rätta svaret');
+  const selectedOptionText = getQuestionOptionText(selectedOption, 'sv', 'det valda svaret');
+  const correctOptionText = getQuestionOptionText(
+    correctOption,
+    'sv',
+    'det markerade rätta svaret',
+  );
   const selectedIsCorrect = selectedOptionId === question.correctOptionId;
   const resultText = selectedIsCorrect
-    ? `Du valde: ${selectedText}. Det stämmer.`
-    : `Du valde: ${selectedText}. Det rätta svaret är: ${correctText}.`;
-  const explanationText = cleanSpeechText(
-    getQuestionExplanationText(question, 'sv', question.explanationSv ?? ''),
-  );
+    ? `Du valde: ${selectedOptionText}. Det stämmer.`
+    : `Du valde: ${selectedOptionText}. Det rätta svaret är: ${correctOptionText}.`;
+  const explanationText = SOURCE_CITATION_REPLACEMENTS.reduce(
+    (current, replacement) => current.replace(replacement, ''),
+    stripSourceAuthorityPhrasing(
+      getQuestionExplanationText(question, 'sv', question.explanationSv ?? ''),
+    ),
+  ).trim();
 
-  return `${resultText} Förklaring: ${explanationText}`.trim();
+  return `${resultText}${explanationText ? ` Förklaring: ${explanationText}` : ''}`.trim();
 }
 
 export interface SpeakSwedishOptions {

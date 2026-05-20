@@ -764,16 +764,19 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.deepEqual(defaultResult, {
-    reward: {
-      amount: 1,
-      type: 'extra_mock_exam',
-    },
-    status: 'earned_reward',
+  const confirmedResult = await showRewardedExtraExamAd({
+    confirmReward: () => true,
   });
+
+  assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
+  assert.equal(confirmedResult.status, 'earned_reward');
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
   assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
   assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
+  assert.match(
+    webRewardedAdSource,
+    /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};/,
+  );
   assert.match(nativeRewardedAdSource, /initializeGoogleMobileAdsAfterConsent/);
   assert.match(nativeRewardedAdSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
   assert.match(
@@ -800,8 +803,10 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   assert.match(
     examSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{ entitlements \}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*await grantRewardedExamCredit\(\);/,
+    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*return;[\s\S]*await grantRewardedExamCredit\(\);/,
   );
+  assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
+  assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);
 });
 
 test('ad rendering flag disables all placements even for free users', () => {

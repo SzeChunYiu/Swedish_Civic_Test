@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  findNodeHandle,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { ResultSummary } from '../../components/ResultSummary';
@@ -54,6 +62,9 @@ type ExamRouteCopy = {
   progressTitle: string;
   questionNumber: (questionNumber: number) => string;
   questionReviewTitle: string;
+  rewardPreviewBody: string;
+  rewardPreviewButton: string;
+  rewardPreviewTitle: string;
   resultBadge: string;
   resultNote: string;
   resultSubtitle: string;
@@ -110,6 +121,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
+    rewardPreviewBody:
+      'Slutför den korta förhandsvisningen innan du låser upp ett extra övningsprov. Det här är inte ett riktigt prov och ger ingen officiell fördel.',
+    rewardPreviewButton: 'Slutför förhandsvisning',
+    rewardPreviewTitle: 'Belöningsförhandsvisning',
     resultBadge: 'Övningsresultat',
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
@@ -170,6 +185,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
+    rewardPreviewBody:
+      'Complete the short preview before unlocking an extra mock exam. This is not a real exam and does not provide any official advantage.',
+    rewardPreviewButton: 'Complete sponsor preview',
+    rewardPreviewTitle: 'Reward preview',
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
@@ -230,6 +249,7 @@ export default function Screen() {
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [focusedReviewQuestionId, setFocusedReviewQuestionId] = useState<string | null>(null);
+  const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
@@ -326,6 +346,7 @@ export default function Screen() {
   );
   const shouldAttemptRewardedAd =
     accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
+  const usesWebRewardPreview = Platform.OS === 'web' && shouldAttemptRewardedAd;
   const shouldRetryAccessRead = accessDecision.reason === 'access_read_failed';
   const startAccessibleExamLabel = shouldRetryAccessRead
     ? copy.retryAccess
@@ -336,6 +357,7 @@ export default function Screen() {
         : copy.startMockExam;
   const canStartAccessibleExam =
     !accessLoading &&
+    (!usesWebRewardPreview || rewardPreviewCompleted) &&
     (shouldRetryAccessRead ||
       accessDecision.canStartExam ||
       shouldAttemptRewardedAd ||
@@ -343,6 +365,28 @@ export default function Screen() {
   const accessStatusText = accessLoading
     ? copy.checkingAccess
     : getAccessStatusText(accessDecision.reason, language);
+  const rewardPreviewPanel = usesWebRewardPreview ? (
+    <View style={styles.rewardPreviewCard}>
+      <Text accessibilityRole="header" style={styles.rewardPreviewTitle}>
+        {copy.rewardPreviewTitle}
+      </Text>
+      <Text style={styles.subtitle}>{copy.rewardPreviewBody}</Text>
+      <Button
+        accessibilityLabel={copy.rewardPreviewButton}
+        accessibilityRole="button"
+        accessibilityState={{ selected: rewardPreviewCompleted }}
+        disabled={rewardPreviewCompleted}
+        onPress={() => {
+          setRewardPreviewCompleted(true);
+          setAccessStatusMessage(null);
+        }}
+        style={styles.actionButton}
+        variant="secondary"
+      >
+        {copy.rewardPreviewButton}
+      </Button>
+    </View>
+  ) : null;
 
   const resetExamAttempt = useCallback(() => {
     const now = Date.now();
@@ -355,6 +399,7 @@ export default function Screen() {
     setSubmittedAt(null);
     setCompletionRecorded(false);
     setFocusedReviewQuestionId(null);
+    setRewardPreviewCompleted(false);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
@@ -408,7 +453,10 @@ export default function Screen() {
       if (accessDecision.reason === 'rewarded_exam_credit') {
         await consumeRewardedExamCredit();
       } else if (shouldAttemptRewardedAd) {
-        const rewardedAdResult = await showRewardedExtraExamAd({ entitlements });
+        const rewardedAdResult = await showRewardedExtraExamAd({
+          confirmReward: Platform.OS === 'web' ? () => rewardPreviewCompleted : undefined,
+          entitlements,
+        });
 
         if (rewardedAdResult.status !== 'earned_reward') {
           setAccessStatusMessage(getRewardedAdStatusText(rewardedAdResult.status, language));
@@ -417,6 +465,7 @@ export default function Screen() {
 
         await grantRewardedExamCredit();
         await consumeRewardedExamCredit();
+        setRewardPreviewCompleted(false);
       } else if (!accessDecision.canStartExam) {
         setAccessStatusMessage(copy.extraExamUnavailable);
         return;
@@ -440,6 +489,7 @@ export default function Screen() {
     language,
     refreshAccess,
     resetExamAttempt,
+    rewardPreviewCompleted,
     shouldAttemptRewardedAd,
     shouldRetryAccessRead,
     startingAccessibleExam,
@@ -510,6 +560,7 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
+          {rewardPreviewPanel}
           <Button
             aria-disabled={!canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
@@ -568,6 +619,7 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
+          {rewardPreviewPanel}
           <Button
             aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
@@ -783,6 +835,19 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     gap: space[1.25],
     padding: space[2],
+  },
+  rewardPreviewCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1],
+    padding: space[1.5],
+  },
+  rewardPreviewTitle: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
   statusText: {
     color: colors.warning,

@@ -64,14 +64,14 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   const exam = generateExam(questions, { questionCount: config.questionCount });
 
   assert.equal(summary.mockExamRuntimeParityValidated, true);
-  assert.match(rewardedAdSource, /confirmReward\?: RewardedExtraExamConfirmation/);
+  assert.match(rewardedAdSource, /confirmReward\?: RewardedExtraExamRewardConfirmation/);
   assert.match(
     rewardedAdSource,
     /if \(!rewardConfirmed\) \{[\s\S]*status: 'closed_without_reward'/,
   );
   assert.match(
     examRouteSource,
-    /import \{ Platform, Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    /Platform,/,
   );
   assert.match(
     examRouteSource,
@@ -79,7 +79,7 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   );
   assert.match(
     examRouteSource,
-    /confirmReward: usesWebRewardPreview \? \(\) => true : undefined,[\s\S]*entitlements,/,
+    /confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,/,
   );
   assert.match(examRouteSource, /\{copy\.rewardPreviewTitle\}/);
   assert.match(examRouteSource, /\{copy\.rewardPreviewBody\}/);
