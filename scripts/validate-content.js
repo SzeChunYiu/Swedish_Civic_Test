@@ -3191,6 +3191,10 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
     pattern: /if \(!active\) return null;/,
   },
   {
+    label: 'web decorative container aria-hidden',
+    pattern: /aria-hidden/,
+  },
+  {
     label: 'decorative animation hidden from accessibility tree',
     pattern: /accessibilityElementsHidden/,
   },
