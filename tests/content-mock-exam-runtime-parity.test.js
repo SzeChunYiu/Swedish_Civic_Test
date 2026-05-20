@@ -138,3 +138,22 @@ test('web rewarded unlocks require explicit completion before credit grant path'
   assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
   assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);
 });
+
+test('native mock exam copy parity rejects provexamen wording in library and tier labels', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-copy-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused mock-exam copy validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);
+  assert.equal(summary.nativeMockExamLibraryLabelsValidated, 7);
+  assert.equal(summary.nativeMockExamTierCopyValidated, true);
+  assert.equal(summary.nativeMockExamSwedishCopyNaturalnessValidated, true);
+});

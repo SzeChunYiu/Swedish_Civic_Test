@@ -1660,6 +1660,16 @@ const EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY = [
     ],
   },
 ];
+const EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV = Object.freeze([
+  'Övningsprov 1 – Mjuk start',
+  'Övningsprov 2 – Standard',
+  'Övningsprov 3 – Standard',
+  'Övningsprov 4 – Standard plus',
+  'Övningsprov 5 – Utmaning',
+  'Övningsprov 6 – Slutspurt',
+  'Slumpmässigt övningsprov',
+]);
+const UNSUPPORTED_NATIVE_MOCK_EXAM_SWEDISH_TERMS = /\bprovexamen\b|\bprovexamina\b/i;
 const NATIVE_MOCK_EXAM_UNSUPPORTED_SCORE_SOURCE_PATTERNS = [
   {
     label: '75% pass line',
@@ -7689,6 +7699,8 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
+const mockExamLibraryModule = loadTs('lib/learning/mockExamLibrary.ts');
+const MOCK_EXAM_LIBRARY = mockExamLibraryModule.MOCK_EXAM_LIBRARY;
 const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
@@ -7717,6 +7729,8 @@ const REMOVE_ADS_ENTITLEMENTS = premiumModule.REMOVE_ADS_ENTITLEMENTS;
 const hasAdsDisabled = premiumModule.hasAdsDisabled;
 const isPremiumUser = premiumModule.isPremiumUser;
 const premiumConfig = premiumModule.premiumConfig;
+const tierComparisonModule = loadTs('lib/monetization/tierComparison.ts');
+const TIER_ROWS = tierComparisonModule.TIER_ROWS;
 const purchaseModule = loadTs('lib/monetization/purchases.ts');
 const REMOVE_ADS_PRICE_LABEL = purchaseModule.REMOVE_ADS_PRICE_LABEL;
 const REMOVE_ADS_PRODUCT_ID = purchaseModule.REMOVE_ADS_PRODUCT_ID;
@@ -7775,7 +7789,10 @@ let examRouteCopyLabelsValidated = 0;
 let examRouteCopyParityValidated = false;
 let nativeMockExamComponentCopyLabelsValidated = 0;
 let nativeMockExamComponentLegalCopyValidated = false;
+let nativeMockExamLibraryLabelsValidated = 0;
 let nativeMockExamScoreSourceCopyValidated = false;
+let nativeMockExamSwedishCopyNaturalnessValidated = false;
+let nativeMockExamTierCopyValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
@@ -10232,6 +10249,7 @@ function validateNativeMockExamComponentLegalCopy() {
     new RegExp(`\b${['skarp', swedishExamNoun].join('\\s+')}\b`, 'i'),
     new RegExp(`\b${['starta', 'provet'].join('\\s+')}\b`, 'i'),
     new RegExp(`\b${swedishExamNoun}\b`, 'i'),
+    UNSUPPORTED_NATIVE_MOCK_EXAM_SWEDISH_TERMS,
   ];
 
   function reject(message) {
@@ -10280,6 +10298,78 @@ function validateNativeMockExamComponentLegalCopy() {
     nativeMockExamComponentLegalCopyValidated = true;
     nativeMockExamScoreSourceCopyValidated = true;
   }
+}
+
+function validateNativeMockExamLibraryAndTierCopy() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Array.isArray(MOCK_EXAM_LIBRARY)) {
+    reject('MOCK_EXAM_LIBRARY must be an array of native mock-exam descriptors');
+  } else {
+    const labelsSv = MOCK_EXAM_LIBRARY.map((mock) => mock.labelSv);
+
+    if (JSON.stringify(labelsSv) !== JSON.stringify(EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV)) {
+      reject('mock exam library Swedish labels must use the canonical Övningsprov wording');
+    }
+
+    labelsSv.forEach((label, index) => {
+      let labelIsValid = true;
+      if (!hasText(label) || !textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`mock exam library Swedish label ${index + 1} must be normalized`);
+      }
+      if (UNSUPPORTED_NATIVE_MOCK_EXAM_SWEDISH_TERMS.test(label)) {
+        labelIsValid = false;
+        reject(`mock exam library Swedish label ${JSON.stringify(label)} must not use provexamen`);
+      }
+      if (labelIsValid) nativeMockExamLibraryLabelsValidated += 1;
+    });
+  }
+
+  const mockExamsRow = Array.isArray(TIER_ROWS)
+    ? TIER_ROWS.find((row) => row.id === 'mockExams')
+    : null;
+  if (!mockExamsRow) {
+    reject('tier comparison must include the mockExams row');
+  } else {
+    if (mockExamsRow.labelSv !== 'Övningsprov') {
+      reject('tier comparison mock-exams label must use Swedish Övningsprov wording');
+    }
+    if (mockExamsRow.labelEn !== 'Mock exams') {
+      reject('tier comparison mock-exams label must preserve English Mock exams wording');
+    }
+    if (UNSUPPORTED_NATIVE_MOCK_EXAM_SWEDISH_TERMS.test(mockExamsRow.labelSv)) {
+      reject('tier comparison mock-exams label must not use provexamen/provexamina');
+    }
+  }
+
+  if (
+    valid &&
+    nativeMockExamLibraryLabelsValidated === EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV.length
+  ) {
+    nativeMockExamSwedishCopyNaturalnessValidated = true;
+    nativeMockExamTierCopyValidated = true;
+  }
+}
+
+if (process.argv.includes('--focus-mock-exam-copy-parity')) {
+  validateNativeMockExamComponentLegalCopy();
+  validateNativeMockExamLibraryAndTierCopy();
+  exitWithValidationFailures();
+  printValidationSummary({
+    nativeMockExamComponentCopyLabelsValidated,
+    nativeMockExamComponentLegalCopyValidated,
+    nativeMockExamLibraryLabelsValidated,
+    nativeMockExamScoreSourceCopyValidated,
+    nativeMockExamSwedishCopyNaturalnessValidated,
+    nativeMockExamTierCopyValidated,
+  });
+  process.exit(0);
 }
 
 function validateQuizRouteHeaderParity() {
@@ -17475,6 +17565,7 @@ validateCitizenshipRequirementsLimitedSeatParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
 validateNativeMockExamComponentLegalCopy();
+validateNativeMockExamLibraryAndTierCopy();
 validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
@@ -17613,7 +17704,10 @@ console.log(
       examRouteCopyParityValidated,
       nativeMockExamComponentCopyLabelsValidated,
       nativeMockExamComponentLegalCopyValidated,
+      nativeMockExamLibraryLabelsValidated,
       nativeMockExamScoreSourceCopyValidated,
+      nativeMockExamSwedishCopyNaturalnessValidated,
+      nativeMockExamTierCopyValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
       quizRouteCopyLabelsValidated,

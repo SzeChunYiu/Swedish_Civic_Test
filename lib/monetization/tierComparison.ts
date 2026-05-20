@@ -88,7 +88,7 @@ export const TIER_ROWS: readonly TierRow[] = [
   },
   {
     id: 'mockExams',
-    labelSv: 'Provexamina',
+    labelSv: 'Övningsprov',
     labelEn: 'Mock exams',
     flag: 'unlimitedMockExams',
     free: { kind: 'text', sv: '3 / vecka', en: '3 / week' },
