@@ -41,7 +41,7 @@ fraud prevention.
   app set ID, and, where applicable, other device/account identifiers.
 - **Financial info / purchase history** — Google Play Billing and the app runtime
   process the Remove Ads purchase/restore state for app functionality. The app
-  stores a local validated Remove Ads purchase-status record containing product ID, transaction ID or purchase token, receipt-validation timestamp, source, schema version, and valid receipt status.
+  stores only the local `adsDisabled` entitlement flag.
 
 ## Purposes
 
@@ -49,14 +49,14 @@ fraud prevention.
 - Analytics: Google Mobile Ads measurement and SDK performance signals.
 - Fraud prevention, security, and compliance: Google Mobile Ads integrity and
   abuse-prevention signals.
-- App functionality: Remove Ads purchase, restore, and local validated purchase-status record.
+- App functionality: Remove Ads purchase, restore, and local entitlement state.
 
 ## Security practices and user controls
 
 - Google Mobile Ads reports SDK data as encrypted in transit.
 - Users can reset or delete the Android advertising ID in Android settings.
 - The app gates real ad serving through Google UMP consent where required.
-- Remove Ads disables ad placements from the local validated purchase-status record.
+- Remove Ads disables ad placements for the local entitlement state.
 - Users can clear local app data through the operating system to remove local
   study progress and the local entitlement cache.
 
