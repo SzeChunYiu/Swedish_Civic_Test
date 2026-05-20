@@ -736,10 +736,7 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     /Det är inte sant att|Det stämmer inte att|Det stämmer att|It is not true that|It is true that|Påståendet är sant|The statement is true/i,
   );
 
-  assert.equal(
-    matchedRows[0].explanationSv,
-    'Sveriges nordligaste del ligger norr om polcirkeln.',
-  );
+  assert.equal(matchedRows[0].explanationSv, 'Sveriges nordligaste del ligger norr om polcirkeln.');
   assert.equal(
     matchedRows[0].explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
