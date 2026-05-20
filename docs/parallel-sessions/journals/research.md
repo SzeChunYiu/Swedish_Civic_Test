@@ -48,3 +48,19 @@ Verification (commands + result):
 PR (number + merged?): pending
 Accepted by worker? no/pending verification
 Next suggested validator action: Review the Finland note for source adequacy; no CONTENT import is queued while UHR-only Phase A remains the operator policy.
+
+Lane: RESEARCH
+Host/branch: LUNARC / task/research/iceland-1779259000
+Role type and manager: dynamic-worker research lane; escalates to CEO/VALIDATOR
+Task / checklist item: `nordic:iceland citizenship test/criteria - structure, sources`
+Changed artifacts:
+- docs/research/nordic/iceland-citizenship-language-test.md
+- docs/parallel-sessions/journals/research.md
+Verification (commands + result):
+- Official sources opened through web/search and shell retrieval: Ísland.is citizenship application overview, `when-can-I-apply`, `conditions`, Icelandic test information page, and Directorate of Immigration 2026-03-02 news.
+- `curl -L -I --max-time 20` for all five cited Ísland.is/Directorate URLs: HTTP 200.
+- No TypeScript touched; `npm run typecheck` not required for this Markdown-only research artifact under the RESEARCH lane doc.
+- `git diff --check`: exit 0.
+PR (number + merged?): branch pushed to `task/research/iceland-1779259000`; PR creation blocked because local `gh`/`hub` and `GH_TOKEN`/`GITHUB_TOKEN` are unavailable, and GitHub MCP `_create_pull_request` timed out during startup twice. GitHub PR URL returned by push: https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/new/task/research/iceland-1779259000
+Accepted by worker? yes
+Next suggested validator action: Review the Iceland note for source adequacy; no CONTENT import is queued while UHR-only Phase A remains the operator policy.
