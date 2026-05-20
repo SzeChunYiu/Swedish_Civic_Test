@@ -26,18 +26,37 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /const copy = quizSessionCopy\[language\];/);
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Session \$\{currentSessionId\}/);
-  assert.match(source, /Frågepass \$\{currentSessionId\}/);
-  assert.match(source, /Försök igen med den här frågan/);
+  assert.match(source, /Försök igen med den här övningsfrågan/);
   assert.match(source, /Try this quiz question again/);
-  assert.doesNotMatch(
-    source,
-    new RegExp(
-      ['Starta ' + 'quiz', 'Quiz' + 'pass', 'quiz' + 'frågor', 'quiz' + 'frågan'].join('|'),
-    ),
-  );
   assert.match(source, /<QuestionDisclaimer language=\{language\} \/>/);
   assert.match(source, /<QuestionCard question=\{question\} language=\{language\} \/>/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
+});
+
+test('native routed Swedish study copy avoids learner-facing quiz loanwords', () => {
+  const sources = [
+    'app/chapter/[chapterId].tsx',
+    'app/quiz/[sessionId].tsx',
+    'scripts/validate-content.js',
+    'tests/content-chapter-route-header-parity.test.js',
+    'tests/content-quiz-route-copy-parity.test.js',
+  ]
+    .map((relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'))
+    .join('\n');
+  const bannedSwedishLearnerCopy = [
+    new RegExp(['Starta', 'quiz'].join(' ')),
+    new RegExp(['Quiz', 'pass'].join('')),
+    new RegExp(['quiz', 'frågor'].join('')),
+    new RegExp(['quiz', 'frågan'].join('')),
+  ];
+
+  for (const pattern of bannedSwedishLearnerCopy) {
+    assert.doesNotMatch(sources, pattern);
+  }
+  assert.match(sources, /Starta frågepass/);
+  assert.match(sources, /Frågepass/);
+  assert.match(sources, /övningsfrågor/);
+  assert.match(sources, /övningsfrågan/);
 });
 
 test('routed quiz copy parity rejects bypassing the settings language', () => {
@@ -98,42 +117,6 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /quiz route is missing sv copy/);
-});
-
-test('routed quiz copy parity rejects Swedish quiz loanwords', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-const oldPass = ['Quiz', 'pass'].join('');
-const oldQuestionList = ['quiz', 'frågor'].join('');
-const oldQuestion = ['quiz', 'frågan'].join('');
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("'Frågepass'", "'" + oldPass + "'")
-      .replace("'Det finns inga övningsfrågor ännu.'", "'Det finns inga " + oldQuestionList + " ännu.'")
-      .replace("\`Frågepass \${currentSessionId}\`", "\`" + oldPass + " \${currentSessionId}\`")
-      .replace("'Försök igen med den här frågan'", "'Försök igen med den här " + oldQuestion + "'");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /quiz route Swedish copy must avoid English quiz loanwords/,
-  );
 });
 
 test('routed quiz copy parity rejects missing localized disclaimer wiring', () => {

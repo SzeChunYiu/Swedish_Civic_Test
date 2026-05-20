@@ -3,7 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
+import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
+import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -12,7 +14,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildQuestionSpeechText, stopSpeech } from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { scoreAnswers } from '../../lib/quiz/scoring';
@@ -43,7 +45,7 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
     sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     sessionTitle: (currentSessionId) => `Frågepass ${currentSessionId}`,
     tryAgain: 'Försök igen',
-    tryAgainAccessibilityLabel: 'Försök igen med den här frågan',
+    tryAgainAccessibilityLabel: 'Försök igen med den här övningsfrågan',
   },
   en: {
     backToPractice: 'Back to Practice',
@@ -91,16 +93,13 @@ export default function QuizSessionScreen() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const questionProgress = useProgressStore((state) => state.questionProgress);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = quizSessionCopy[language];
 
   useEffect(() => {
-    stopSpeech();
     setSelectedOptionId(null);
-    return () => {
-      stopSpeech();
-    };
   }, [normalizedSessionId, question?.id]);
 
   if (!question) {
@@ -124,6 +123,9 @@ export default function QuizSessionScreen() {
   const hasSelectedAnswer = Boolean(selectedOptionId);
   const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const celebrationStreak = selectedIsCorrect
+    ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
 
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
@@ -139,10 +141,6 @@ export default function QuizSessionScreen() {
         selectedOptionTextSv: selectedOption.textSv,
       });
     }
-  };
-  const handleTryAgain = () => {
-    stopSpeech();
-    setSelectedOptionId(null);
   };
 
   return (
@@ -190,6 +188,11 @@ export default function QuizSessionScreen() {
 
       {hasSelectedAnswer ? (
         <View style={styles.feedback}>
+          <CelebrationBurst
+            active={selectedIsCorrect}
+            languageOverride={language}
+            streak={celebrationStreak}
+          />
           {score ? (
             <Text style={styles.score}>
               {copy.scoreLabel}: {score.correct}/{score.total}
@@ -200,13 +203,18 @@ export default function QuizSessionScreen() {
             explanationSv={question.explanationSv}
             language={language}
           />
+          <FeedbackAudioButton
+            enabled={audioEnabled}
+            language={language}
+            text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
+          />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
           <View style={styles.actions}>
             <Button
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
               accessibilityState={{ disabled: false }}
-              onPress={handleTryAgain}
+              onPress={() => setSelectedOptionId(null)}
               style={styles.actionButton}
               variant="secondary"
             >

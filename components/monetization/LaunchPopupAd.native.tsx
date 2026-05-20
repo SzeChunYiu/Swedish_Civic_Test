@@ -2,15 +2,10 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { AdEventType, AppOpenAd } from 'react-native-google-mobile-ads';
 
-import {
-  adsConfig,
-  getPlatformAdUnitId,
-  shouldShowLaunchPopupAd,
-} from '../../lib/monetization/ads';
+import { getPlatformAdUnitId, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import type { PremiumEntitlements } from '../../types/monetization';
-import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';
 
 let launchPopupShownThisRuntime = false;
 let launchPopupLoadInFlight = false;
@@ -21,37 +16,29 @@ export function LaunchPopupAd({
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
   const mobileAdsConsent = useMobileAdsConsent(entitlements);
-  const nativeLaunchPopupUnitId = getPlatformAdUnitId('app_open_launch', Platform.OS);
-  const nativeLaunchPopupMayShow =
-    adsConfig.googleMobileAdsEnabled &&
-    !launchPopupShownThisRuntime &&
-    !launchPopupLoadInFlight &&
-    !entitlements.adsDisabled &&
-    Boolean(nativeLaunchPopupUnitId);
-  const launchPopupAdUnitId =
-    mobileAdsConsent.initialized &&
-    shouldShowLaunchPopupAd({
-      alreadyShownThisLaunch: launchPopupShownThisRuntime,
-      consentDecision: mobileAdsConsent.decision.consentDecision,
-      entitlements,
-      platform: Platform.OS,
-    })
-      ? nativeLaunchPopupUnitId
-      : undefined;
-
-  if (nativeLaunchPopupMayShow) {
-    deferFirstRunAboutModalForLaunchSession();
-  }
 
   useEffect(() => {
-    if (!launchPopupAdUnitId) return undefined;
+    if (
+      launchPopupLoadInFlight ||
+      !mobileAdsConsent.initialized ||
+      !shouldShowLaunchPopupAd({
+        alreadyShownThisLaunch: launchPopupShownThisRuntime,
+        consentDecision: mobileAdsConsent.decision.consentDecision,
+        entitlements,
+      })
+    ) {
+      return undefined;
+    }
+
+    const unitId = getPlatformAdUnitId('app_open_launch', Platform.OS);
+    if (!unitId) return undefined;
 
     let unsubscribe: (() => void) | undefined;
     let unsubscribeError: (() => void) | undefined;
     let didReachShowPath = false;
 
     try {
-      const appOpenAd = AppOpenAd.createForAdRequest(launchPopupAdUnitId, {
+      const appOpenAd = AppOpenAd.createForAdRequest(unitId, {
         requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
       });
 
@@ -87,7 +74,7 @@ export function LaunchPopupAd({
       launchPopupLoadInFlight = false;
       return undefined;
     }
-  }, [launchPopupAdUnitId, mobileAdsConsent.decision.requestNonPersonalizedAdsOnly]);
+  }, [entitlements, mobileAdsConsent]);
 
   return null;
 }

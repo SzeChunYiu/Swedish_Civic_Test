@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import { ResultSummary } from '../../components/ResultSummary';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -55,10 +57,7 @@ type ExamRouteCopy = {
   resultSubtitle: string;
   reviewBadge: string;
   rewardedAdStatus: Record<RewardedExtraExamAdStatus, string>;
-  retryCompletionSave: string;
-  retryCompletionSaveHint: string;
   savedBadge: string;
-  saveFailedBadge: string;
   savingBadge: string;
   savingCompletion: string;
   selectedAnswerLabel: string;
@@ -119,10 +118,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       timed_out: 'Belöningsannonsen hann löpa ut innan det extra provet låstes upp.',
       unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
     },
-    retryCompletionSave: 'Försök spara igen',
-    retryCompletionSaveHint: 'Spara resultatet innan nästa kostnadsfria övningsprov.',
     savedBadge: 'Sparat',
-    saveFailedBadge: 'Sparfel',
     savingBadge: 'Sparar',
     savingCompletion: 'Sparar dagens övningsprov.',
     selectedAnswerLabel: 'Valt svar',
@@ -179,10 +175,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       timed_out: 'Rewarded ad timed out before the extra exam unlocked.',
       unavailable: 'Rewarded ad is unavailable on this device right now.',
     },
-    retryCompletionSave: 'Retry saving result',
-    retryCompletionSaveHint: 'Save the result before the next free mock exam.',
     savedBadge: 'Saved',
-    saveFailedBadge: 'Save failed',
     savingBadge: 'Saving',
     savingCompletion: "Saving today's mock exam completion.",
     selectedAnswerLabel: 'Selected answer',
@@ -206,8 +199,6 @@ function getRewardedAdStatusText(status: RewardedExtraExamAdStatus, language: Ap
   return examRouteCopy[language].rewardedAdStatus[status];
 }
 
-type CompletionSaveState = 'idle' | 'saving' | 'saved' | 'failed';
-
 export default function Screen() {
   const [examAttemptIndex, setExamAttemptIndex] = useState(0);
   const examSessionId = `mock-exam-${examAttemptIndex}`;
@@ -222,8 +213,7 @@ export default function Screen() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [examUnlocked, setExamUnlocked] = useState(false);
-  const [completionSaveState, setCompletionSaveState] = useState<CompletionSaveState>('idle');
-  const [completionRetrying, setCompletionRetrying] = useState(false);
+  const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
@@ -282,7 +272,6 @@ export default function Screen() {
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
-  const completionRecorded = completionSaveState === 'saved';
   const shouldAttemptRewardedAd =
     accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
   const startAccessibleExamLabel = shouldAttemptRewardedAd
@@ -298,38 +287,18 @@ export default function Screen() {
   const accessStatusText = accessLoading
     ? copy.checkingAccess
     : getAccessStatusText(accessDecision.reason, language);
-  const canStartNextExam =
-    (completionRecorded || (completionSaveState === 'failed' && entitlements.unlimitedMockExams)) &&
-    canStartAccessibleExam;
-  const completionStatusText =
-    completionRecorded || entitlements.unlimitedMockExams
-      ? accessStatusText
-      : completionSaveState === 'failed'
-        ? copy.retryCompletionSaveHint
-        : copy.savingCompletion;
-  const completionBadgeText = completionRecorded
-    ? copy.savedBadge
-    : completionSaveState === 'failed'
-      ? copy.saveFailedBadge
-      : copy.savingBadge;
-  const completionBadgeTone = completionRecorded
-    ? 'green'
-    : completionSaveState === 'failed'
-      ? 'orange'
-      : 'warm';
 
   const resetExamAttempt = useCallback(() => {
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
     setSubmitted(false);
-    setCompletionSaveState('idle');
-    setCompletionRetrying(false);
+    setCompletionRecorded(false);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
 
   const handleStartAccessibleExam = useCallback(async () => {
-    if ((result ? !canStartNextExam : !canStartAccessibleExam) || startingAccessibleExam) return;
+    if (!canStartAccessibleExam || startingAccessibleExam) return;
 
     setAccessStatusMessage(null);
     setStartingAccessibleExam(true);
@@ -362,7 +331,6 @@ export default function Screen() {
     accessDecision.canStartExam,
     accessDecision.reason,
     canStartAccessibleExam,
-    canStartNextExam,
     consumeRewardedExamCredit,
     copy.extraExamUnavailable,
     copy.unlockFailure,
@@ -370,30 +338,12 @@ export default function Screen() {
     grantRewardedExamCredit,
     language,
     resetExamAttempt,
-    result,
     shouldAttemptRewardedAd,
     startingAccessibleExam,
   ]);
 
-  const handleRetryCompletionSave = useCallback(async () => {
-    if (completionRecorded || completionRetrying) return;
-
-    setCompletionRetrying(true);
-
-    try {
-      await recordExamCompletion();
-      setCompletionSaveState('saved');
-      setAccessStatusMessage(null);
-    } catch {
-      setCompletionSaveState('failed');
-      setAccessStatusMessage(copy.completionStoreFailure);
-    } finally {
-      setCompletionRetrying(false);
-    }
-  }, [completionRecorded, completionRetrying, copy.completionStoreFailure, recordExamCompletion]);
-
   useEffect(() => {
-    if (!submitted || completionSaveState !== 'idle') return undefined;
+    if (!submitted || completionRecorded) return undefined;
 
     let isMounted = true;
     recordMockExamSession({
@@ -404,17 +354,13 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    setCompletionSaveState('saving');
-
-    void recordExamCompletion()
+    void recordExamCompletion(examSessionId)
       .then(() => {
-        if (!isMounted) return;
-        setCompletionSaveState('saved');
-        setAccessStatusMessage(null);
+        if (isMounted) setCompletionRecorded(true);
       })
       .catch(() => {
         if (!isMounted) return;
-        setCompletionSaveState('failed');
+        setCompletionRecorded(true);
         setAccessStatusMessage(copy.completionStoreFailure);
       });
 
@@ -422,7 +368,7 @@ export default function Screen() {
       isMounted = false;
     };
   }, [
-    completionSaveState,
+    completionRecorded,
     copy.completionStoreFailure,
     examSessionId,
     recordExamCompletion,
@@ -473,7 +419,7 @@ export default function Screen() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
+          <Badge tone={endedByTime ? 'orange' : 'blue'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
           </Badge>
           <Text accessibilityRole="header" style={styles.title}>
@@ -485,46 +431,37 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <View style={styles.resultCard}>
-          <Text style={styles.metric}>{result.percent}%</Text>
-          <Text style={styles.subtitle}>
-            {copy.correctCount(result.correctCount, result.totalCount)}
-          </Text>
-          <Text style={styles.resultNote}>{copy.resultNote}</Text>
-        </View>
+        <ResultSummary
+          correctCount={result.correctCount}
+          languageOverride={language}
+          metricLabel={copy.correctCount(result.correctCount, result.totalCount)}
+          status={endedByTime ? 'review' : undefined}
+          subtitle={copy.resultNote}
+          totalCount={result.totalCount}
+        />
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
               {copy.nextExamTitle}
             </Text>
-            <Badge tone={completionBadgeTone}>{completionBadgeText}</Badge>
+            <Badge tone={accessDecision.canStartExam ? 'green' : 'warm'}>
+              {completionRecorded ? copy.savedBadge : copy.savingBadge}
+            </Badge>
           </View>
-          <Text style={styles.subtitle}>{completionStatusText}</Text>
+          <Text style={styles.subtitle}>
+            {completionRecorded ? accessStatusText : copy.savingCompletion}
+          </Text>
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
-          {completionSaveState === 'failed' ? (
-            <Button
-              aria-disabled={completionRetrying}
-              accessibilityLabel={copy.retryCompletionSave}
-              accessibilityRole="button"
-              accessibilityState={{ disabled: completionRetrying }}
-              disabled={completionRetrying}
-              onPress={handleRetryCompletionSave}
-              style={styles.actionButton}
-              variant="secondary"
-            >
-              {copy.retryCompletionSave}
-            </Button>
-          ) : null}
           <Button
-            aria-disabled={!canStartNextExam || startingAccessibleExam || completionRetrying}
+            aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
             accessibilityRole="button"
             accessibilityState={{
-              disabled: !canStartNextExam || startingAccessibleExam || completionRetrying,
+              disabled: !completionRecorded || !canStartAccessibleExam || startingAccessibleExam,
             }}
-            disabled={!canStartNextExam || startingAccessibleExam || completionRetrying}
+            disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             onPress={handleStartAccessibleExam}
             style={styles.actionButton}
             variant="secondary"
@@ -635,21 +572,20 @@ export default function Screen() {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <Pressable
+                <OptionCard
                   key={option.id}
+                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected, selected: isSelected }}
+                  label={optionText}
+                  languageOverride={language}
                   onPress={() =>
                     setAnswers((current) => ({ ...current, [question.id]: option.id }))
                   }
-                  style={[styles.option, isSelected ? styles.optionSelected : null]}
-                >
-                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
-                    {optionText}
-                  </Text>
-                </Pressable>
+                  state={isSelected ? 'selected' : 'idle'}
+                />
               );
             })}
           </View>
@@ -749,42 +685,8 @@ const styles = StyleSheet.create({
   options: {
     gap: space[1],
   },
-  option: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space[1.5],
-  },
-  optionSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  optionText: {
-    color: colors.textSoft,
-    fontSize: typography.navButton.fontSize,
-  },
-  optionTextSelected: {
-    color: colors.badgeBlueText,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
   actionButton: {
     minHeight: space[5] + space[0.5],
-  },
-  resultCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    padding: space[2],
-  },
-  metric: {
-    color: colors.text,
-    fontSize: typography.subHeadingLarge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  resultNote: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[1],
   },
   breakdownRow: {
     alignItems: 'center',

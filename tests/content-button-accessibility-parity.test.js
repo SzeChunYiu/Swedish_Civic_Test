@@ -41,6 +41,37 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
 });
 
+test('shared Buttons use tokenized disabled styles instead of wrapper opacity', () => {
+  const buttonSources = [
+    [
+      'components/ui/Button.tsx',
+      fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8'),
+    ],
+    [
+      'components/Button.tsx',
+      fs.readFileSync(path.join(repoRoot, 'components/Button.tsx'), 'utf8'),
+    ],
+  ];
+
+  for (const [filePath, source] of buttonSources) {
+    assert.doesNotMatch(
+      source,
+      /disabled:\s*\{\s*opacity\s*:/,
+      `${filePath} should not use disabled wrapper opacity`,
+    );
+    assert.match(
+      source,
+      /disabled:\s*\{[\s\S]*backgroundColor:\s*colors\.surfaceWarm[\s\S]*borderColor:\s*colors\.border[\s\S]*\}/,
+      `${filePath} should use tokenized disabled background and border`,
+    );
+    assert.match(
+      source,
+      /disabledLabel:\s*\{[\s\S]*color:\s*colors\.textMuted[\s\S]*\}/,
+      `${filePath} should use readable muted disabled label text`,
+    );
+  }
+});
+
 test('Button accessibility parity rejects web aria state drift', () => {
   const result = spawnSync(
     process.execPath,

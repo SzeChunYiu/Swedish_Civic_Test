@@ -1,12 +1,13 @@
-import { Link, useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { useEffect, useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
+import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
@@ -16,6 +17,8 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
+import { dashboardSummary } from '../../lib/learning/dashboardStats';
+import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
@@ -27,7 +30,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 
 type StudyLoopItemCopy = {
   label: string;
@@ -38,6 +41,10 @@ type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
   dailyGoalTitle: string;
+  dashboardAccessibilityLabel: (summary: string) => string;
+  dashboardCta: string;
+  dashboardSummary: (count: number) => string;
+  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -50,20 +57,6 @@ type HomeCopy = {
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
-  quickActionsTitle: string;
-  quickActionsSubtitle: string;
-  quickPracticeTitle: string;
-  quickPracticeDescription: string;
-  quickPracticeAccessibilityLabel: string;
-  quickExamTitle: string;
-  quickExamDescription: string;
-  quickExamAccessibilityLabel: string;
-  quickMistakesTitle: string;
-  quickMistakesDescription: string;
-  quickMistakesAccessibilityLabel: string;
-  quickSearchTitle: string;
-  quickSearchDescription: string;
-  quickSearchAccessibilityLabel: string;
   readinessAccessibilityLabel: (score: number, verdict: string, details: string) => string;
   readinessCta: string;
   readinessCtaAccessibilityLabel: string;
@@ -92,6 +85,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
     dailyGoalTitle: 'Dagens mål',
+    dashboardAccessibilityLabel: (summary) => `Öppna framstegsöversikten. ${summary}`,
+    dashboardCta: 'Visa översikt',
+    dashboardSummary: (count) => `${count} svar den här veckan`,
+    dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
@@ -105,20 +102,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
-    quickActionsTitle: 'Snabbstart',
-    quickActionsSubtitle: 'Välj ett tydligt nästa steg utan att leta i flikarna.',
-    quickPracticeTitle: 'Kort övning',
-    quickPracticeDescription: 'Fortsätt med nästa fråga och direkt återkoppling.',
-    quickPracticeAccessibilityLabel: 'Starta en kort övning från startsidan',
-    quickExamTitle: 'Övningsprov',
-    quickExamDescription: 'Kontrollera tiden, poängen och redoindikatorn.',
-    quickExamAccessibilityLabel: 'Starta ett övningsprov från startsidan',
-    quickMistakesTitle: 'Sparat och svårt',
-    quickMistakesDescription: 'Öppna bokmärken och frågor du svarat fel på.',
-    quickMistakesAccessibilityLabel: 'Öppna sparade och svåra frågor',
-    quickSearchTitle: 'Sök fråga',
-    quickSearchDescription: 'Hitta begrepp, svar och förklaringar i banken.',
-    quickSearchAccessibilityLabel: 'Sök i frågebanken',
     readinessAccessibilityLabel: (score, verdict, details) =>
       `Redoindikator: ${score} procent. ${verdict}. ${details}`,
     readinessCta: 'Gör ett mockprov',
@@ -156,8 +139,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       },
       {
         label: 'Provredo',
-        lesson:
-          'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
@@ -174,6 +156,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
     dailyGoalTitle: "Today's goal",
+    dashboardAccessibilityLabel: (summary) => `Open the progress dashboard. ${summary}`,
+    dashboardCta: 'View dashboard',
+    dashboardSummary: (count) => `${count} answers this week`,
+    dashboardTitle: 'Progress dashboard',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
@@ -187,20 +173,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
-    quickActionsTitle: 'Quick start',
-    quickActionsSubtitle: 'Choose one clear next step without hunting through tabs.',
-    quickPracticeTitle: 'Short practice',
-    quickPracticeDescription: 'Continue with the next question and immediate feedback.',
-    quickPracticeAccessibilityLabel: 'Start a short practice session from Home',
-    quickExamTitle: 'Practice exam',
-    quickExamDescription: 'Check timing, scoring, and your readiness indicator.',
-    quickExamAccessibilityLabel: 'Start a practice exam from Home',
-    quickMistakesTitle: 'Saved and tricky',
-    quickMistakesDescription: 'Open bookmarks and questions you answered incorrectly.',
-    quickMistakesAccessibilityLabel: 'Open saved and tricky questions',
-    quickSearchTitle: 'Search questions',
-    quickSearchDescription: 'Find concepts, answers, and explanations in the bank.',
-    quickSearchAccessibilityLabel: 'Search the question bank',
     readinessAccessibilityLabel: (score, verdict, details) =>
       `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
     readinessCta: 'Take a mock exam',
@@ -239,7 +211,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       {
         label: 'Exam readiness',
         lesson:
-          'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
@@ -255,10 +227,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 };
 
 export default function Screen() {
-  const router = useRouter();
   const {
     entitlements: monetizationEntitlements,
-    entitlementStatus: monetizationEntitlementStatus,
+    entitlementsReady: monetizationEntitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -306,41 +277,26 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-
-  const quickActions = [
-    {
-      key: 'practice',
-      title: copy.quickPracticeTitle,
-      description: copy.quickPracticeDescription,
-      accessibilityLabel: copy.quickPracticeAccessibilityLabel,
-      href: '/practice',
-      tone: 'primary',
-    },
-    {
-      key: 'exam',
-      title: copy.quickExamTitle,
-      description: copy.quickExamDescription,
-      accessibilityLabel: copy.quickExamAccessibilityLabel,
-      href: '/exam',
-      tone: 'secondary',
-    },
-    {
-      key: 'mistakes',
-      title: copy.quickMistakesTitle,
-      description: copy.quickMistakesDescription,
-      accessibilityLabel: copy.quickMistakesAccessibilityLabel,
-      href: '/mistakes',
-      tone: 'secondary',
-    },
-    {
-      key: 'search',
-      title: copy.quickSearchTitle,
-      description: copy.quickSearchDescription,
-      accessibilityLabel: copy.quickSearchAccessibilityLabel,
-      href: '/search',
-      tone: 'secondary',
-    },
-  ] as const;
+  const dashboardProgress = useMemo(
+    () =>
+      buildDashboardProgressSnapshot({
+        answerDates,
+        dailyGoalAnswers,
+        mockExamSessions,
+        questionProgress,
+        totalXp,
+      }),
+    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+  );
+  const dashboardQuestionChapterIndex = useMemo(
+    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
+    [],
+  );
+  const dashboard = useMemo(
+    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
+    [dashboardProgress, dashboardQuestionChapterIndex],
+  );
+  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -365,6 +321,7 @@ export default function Screen() {
       }
     >
       <SwedishFlagBand />
+      <CountdownBanner language={language} />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -373,6 +330,18 @@ export default function Screen() {
           tone="accent"
         />
       </View>
+      <Link
+        accessibilityLabel={copy.dashboardAccessibilityLabel(dashboardSummaryLine)}
+        accessibilityRole="link"
+        href="/dashboard"
+        style={styles.dashboardLink}
+      >
+        <View style={styles.dashboardLinkContent}>
+          <Text style={styles.dashboardTitle}>{copy.dashboardTitle}</Text>
+          <Text style={styles.dashboardSummaryText}>{dashboardSummaryLine}</Text>
+          <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
+        </View>
+      </Link>
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -406,7 +375,7 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      {!monetizationEntitlements.adsDisabled ? (
+      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -431,49 +400,6 @@ export default function Screen() {
           {copy.browseChapters}
         </Link>
       </View>
-
-      <Card style={styles.quickActionsCard}>
-        <View style={styles.quickActionsHeader}>
-          <Text accessibilityRole="header" style={styles.quickActionsTitle}>
-            {copy.quickActionsTitle}
-          </Text>
-          <Text style={styles.quickActionsSubtitle}>{copy.quickActionsSubtitle}</Text>
-        </View>
-        <View style={styles.quickActionGrid}>
-          {quickActions.map((action) => {
-            const primary = action.tone === 'primary';
-
-            return (
-              <Pressable
-                key={action.key}
-                accessibilityLabel={action.accessibilityLabel}
-                accessibilityRole="button"
-                aria-label={action.accessibilityLabel}
-                onPress={() => router.push(action.href)}
-                style={({ pressed }) => [
-                  styles.quickAction,
-                  primary ? styles.quickActionPrimary : styles.quickActionSecondary,
-                  pressed ? styles.quickActionPressed : null,
-                ]}
-              >
-                <Text
-                  style={[styles.quickActionTitle, primary ? styles.quickActionTitlePrimary : null]}
-                >
-                  {action.title}
-                </Text>
-                <Text
-                  style={[
-                    styles.quickActionDescription,
-                    primary ? styles.quickActionDescriptionPrimary : null,
-                  ]}
-                >
-                  {action.description}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </Card>
 
       <View style={styles.statsRow}>
         <MetricCard
@@ -534,14 +460,15 @@ export default function Screen() {
         })}
       </View>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        entitlementStatus={monetizationEntitlementStatus}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
-      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
+      {monetizationEntitlementsReady ? (
+        <PremiumBanner
+          entitlements={monetizationEntitlements}
+          language={language}
+          onEntitlementsChange={setMonetizationEntitlements}
+          runtimeOptions={purchaseRuntime}
+        />
+      ) : null}
+      <AdBanner placement="home_banner" />
     </ScreenShell>
   );
 }
@@ -551,6 +478,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
+  },
+  dashboardLink: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    minHeight: space[6],
+    padding: space[2],
+    textDecorationLine: 'none',
+  },
+  dashboardLinkContent: {
+    gap: space[0.5],
+  },
+  dashboardTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  dashboardSummaryText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dashboardCta: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
   },
   readinessCard: {
     gap: space[1.5],
@@ -673,67 +629,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: space[1.5],
   },
-  quickActionsCard: {
-    gap: space[1.5],
-  },
-  quickActionsHeader: {
-    gap: space[0.5],
-  },
-  quickActionsTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  quickActionsSubtitle: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  quickActionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  quickAction: {
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    flexBasis: 148,
-    flexGrow: 1,
-    gap: space[0.5],
-    minHeight: space[9],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1.25],
-  },
-  quickActionPrimary: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  quickActionSecondary: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-  },
-  quickActionPressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  quickActionTitle: {
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  quickActionTitlePrimary: {
-    color: colors.surface,
-  },
-  quickActionDescription: {
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  quickActionDescriptionPrimary: {
-    color: colors.surface,
-  },
-
   streakFreezeCard: {
     gap: space[1],
   },
