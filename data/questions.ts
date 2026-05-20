@@ -630,9 +630,13 @@ export const baseQuestions: PracticeQuestion[] = rawBaseQuestions.map(
   applyQuestionLocalizationPilot,
 );
 
+const localizedAdditionalQuestions: PracticeQuestion[] = additionalQuestions.map(
+  applyQuestionLocalizationPilot,
+);
+
 export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]);
 
 export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
