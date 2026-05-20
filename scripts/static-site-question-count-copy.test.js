@@ -162,3 +162,9 @@ test('static English mock exam copy remains available', () => {
   assert.match(rendered.get('faq.4.a'), /take mock exams/);
   assert.equal(rendered.get('footer.app.4'), 'Mock exam');
 });
+
+test('static footer exposes localized mock exam route', () => {
+  const footerHtml = read('site/index.html').match(/<footer[\s\S]*?<\/footer>/)?.[0] || '';
+
+  assert.match(footerHtml, /<a href="#\/mock" data-i18n="footer\.app\.4">Mock exam<\/a>/);
+});
