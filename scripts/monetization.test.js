@@ -1554,7 +1554,11 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   );
 
   assert.match(entitlementHookSource, /defaultWebPurchaseRuntimeOptions/);
+  assert.match(entitlementHookSource, /defaultNativePurchaseRuntimeOptions/);
+  assert.match(entitlementHookSource, /createNativePurchaseProvider/);
+  assert.match(entitlementHookSource, /createSecureStorePurchaseStorage/);
   assert.match(entitlementHookSource, /createWebPurchaseStorage/);
+  assert.doesNotMatch(entitlementHookSource, /if \(Platform\.OS !== 'web'\) return undefined;/);
   assert.match(entitlementHookSource, /publishRemoveAdsEntitlements/);
   assert.match(entitlementHookSource, /subscribeToRemoveAdsEntitlements/);
   assert.match(entitlementHookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
@@ -1784,7 +1788,7 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(initializedResult.state.umpConsentStatus, 'obtained');
   assert.equal(initializedResult.decision.canInitializeGoogleMobileAds, true);
   assert.equal(initializedResult.decision.requestNonPersonalizedAdsOnly, true);
-  assert.deepEqual(calls, ['att:get', 'ump', 'att:request', 'ads:init']);
+  assert.deepEqual(calls, ['att:get', 'att:request', 'ump', 'ads:init']);
 
   const disabledCalls = [];
   const disabledState = await collectMobileAdsConsentState({
@@ -1906,6 +1910,9 @@ test('global launch popup ad is suppressed on active question and compliance rou
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/disclaimer'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/mistakes'), false);
@@ -1914,7 +1921,10 @@ test('global launch popup ad is suppressed on active question and compliance rou
     '/exam',
     '/practice',
     '/quiz',
+    '/about-the-test',
+    '/citizenship-requirements',
     '/disclaimer',
+    '/onboarding',
     '/privacy',
     '/sources',
     '/support',
@@ -1922,5 +1932,6 @@ test('global launch popup ad is suppressed on active question and compliance rou
   ]);
   assert.match(entitlementHookSource, /getPurchaseEntitlements/);
   assert.match(entitlementHookSource, /createWebPurchaseStorage/);
-  assert.match(entitlementHookSource, /Platform\.OS !== 'web'/);
+  assert.match(entitlementHookSource, /Platform\.OS === 'web'/);
+  assert.match(entitlementHookSource, /createNativePurchaseProvider/);
 });
