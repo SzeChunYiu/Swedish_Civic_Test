@@ -15,7 +15,8 @@ export type MockExamAccessReason =
   | 'rewarded_ad_available'
   | 'remove_ads_active'
   | 'consent_required'
-  | 'ads_unavailable';
+  | 'ads_unavailable'
+  | 'access_read_failed';
 
 export type MockExamAccessState = {
   completedMockExamsToday: number;
@@ -505,5 +506,16 @@ export function getMockExamAccessDecision({
     canOfferRewardedAd,
     canStartExam: false,
     reason,
+  };
+}
+
+export function getMockExamAccessReadFailedDecision(): MockExamAccessDecision {
+  return {
+    canOfferRewardedAd: false,
+    canStartExam: false,
+    freeExamsRemaining: 0,
+    placement: REWARDED_EXTRA_EXAM_PLACEMENT,
+    reason: 'access_read_failed',
+    rewardedExtraExamCredits: 0,
   };
 }

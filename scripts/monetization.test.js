@@ -351,6 +351,7 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
         REWARDED_EXTRA_EXAM_PLACEMENT,
         consumeRewardedExtraExamCredit,
         getMockExamAccessDecision,
+        getMockExamAccessReadFailedDecision,
         grantRewardedExtraExamCredit,
       } = loadTs('lib/monetization/rewardedExam.ts');
       const { shouldShowAd } = loadTs('lib/monetization/ads.ts');
@@ -429,8 +430,37 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
         }).reason,
         'premium_unlimited_mock_exams',
       );
+      assert.deepEqual(getMockExamAccessReadFailedDecision(), {
+        canOfferRewardedAd: false,
+        canStartExam: false,
+        freeExamsRemaining: 0,
+        placement: 'rewarded_extra_exam',
+        reason: 'access_read_failed',
+        rewardedExtraExamCredits: 0,
+      });
     },
   );
+});
+
+test('mock exam access read failures fail closed until retry succeeds', () => {
+  const accessHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.match(accessHookSource, /const \[accessReadFailed, setAccessReadFailed\]/);
+  assert.match(accessHookSource, /getMockExamAccessReadFailedDecision\(\)/);
+  assert.match(accessHookSource, /accessReadFailed && !entitlements\.unlimitedMockExams/);
+  assert.match(accessHookSource, /setAccessReadFailed\(true\);\s*setAccessReady\(true\);/);
+  assert.match(accessHookSource, /setAccessReadFailed\(false\);\s*setAccessReady\(true\);/);
+  assert.doesNotMatch(
+    accessHookSource,
+    /catch\(\(\) => \{\s*if \(isMounted\) setAccessReady\(true\);/,
+  );
+  assert.match(examSource, /access_read_failed/);
+  assert.match(examSource, /retryAccess/);
+  assert.match(examSource, /await refreshAccess\(\);/);
 });
 
 test('rewarded extra exam access honors real-ad consent readiness', () => {
