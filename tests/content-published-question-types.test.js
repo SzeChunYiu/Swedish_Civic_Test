@@ -21,6 +21,8 @@ const q071SocialInsuranceOverlapPattern =
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
+const christmasTreeGenericEnglishPattern =
+  /\b(?:tree at Christmas|bring a tree into the house|Bring a tree|Plant a tree|Dance around a tree|Light a tree)\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
@@ -126,6 +128,10 @@ test('published question types stay answerable by quiz runtime', () => {
     summary.publishedQuestions,
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionChristmasTreeEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
@@ -640,6 +646,94 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.match(output, /q103 uses literal First of May English wording/);
+});
+
+test('Christmas tree source and exports use specific English tree wording', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q138GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q138', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q138', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q138', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q138', 'judgement'),
+  ];
+  const q138Ids = ['q138', ...q138GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    christmasTreeGenericEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q138Ids.includes(question.id))
+    .filter((question) => christmasTreeGenericEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q138Ids.includes(question.id))
+    .filter((question) => christmasTreeGenericEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const q138 = generatedSiteBank.find((question) => question.id === 'q138');
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.ok(q138, 'q138 should be published in the site bank');
+  assert.equal(q138.q.en, 'At Christmas in Sweden, what do many people do with a Christmas tree?');
+  assert.equal(
+    generatedSiteBank.find((question) => question.id === q138GeneratedIds[0])?.q.en,
+    'At Christmas, ...',
+  );
+  assert.match(q138.opts[0]?.en || '', /^Bring a Christmas tree/);
+  assert.match(q138.why.en, /^At Christmas, many people bring a Christmas tree/);
+});
+
+test('Christmas tree English naturalness guard rejects generic tree wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'At Christmas in Sweden, what do many people do with a Christmas tree?',
+        'What do many people do with a tree at Christmas in Sweden?',
+      )
+      .replace('Bring a Christmas tree into the house', 'Bring a tree into the house')
+      .replace('Plant a spruce tree at the cemetery', 'Plant a tree at the cemetery')
+      .replace('Dance around a spruce tree outdoors', 'Dance around a tree outdoors')
+      .replace('Light a spruce tree as a spring bonfire', 'Light a tree as a spring bonfire')
+      .replace(
+        'At Christmas, many people bring a Christmas tree into the house',
+        'At Christmas, many people bring a tree into the house',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q138 uses generic tree English Christmas wording/);
 });
 
 test('Council of Europe source and exports use natural promote English', () => {

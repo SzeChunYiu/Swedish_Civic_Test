@@ -6293,30 +6293,30 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What do many people do with a tree at Christmas in Sweden?",
+      "en": "At Christmas in Sweden, what do many people do with a Christmas tree?",
       "sv": "Vad gör många med en gran vid jul i Sverige?"
     },
     "opts": [
       {
-        "en": "Bring a tree into the house and decorate it with strings of lights, baubles, and tinsel",
+        "en": "Bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel",
         "sv": "Tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter"
       },
       {
-        "en": "Plant a tree at the cemetery and light grave candles",
+        "en": "Plant a spruce tree at the cemetery and light grave candles",
         "sv": "Planterar en gran på kyrkogården och tänder gravljus"
       },
       {
-        "en": "Dance around a tree outdoors to welcome summer",
+        "en": "Dance around a spruce tree outdoors to welcome summer",
         "sv": "Dansar runt en gran utomhus för att välkomna sommaren"
       },
       {
-        "en": "Light a tree as a spring bonfire on Walpurgis Night",
+        "en": "Light a spruce tree as a spring bonfire on Walpurgis Night",
         "sv": "Tänder en gran som vårbrasa på valborgsmässoafton"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "en": "At Christmas, many people bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
       "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
@@ -31659,25 +31659,25 @@
     },
     "opts": [
       {
-        "en": "Bring a tree into the house and decorate it with strings of lights, baubles, and tinsel",
+        "en": "Bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel",
         "sv": "Tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter"
       },
       {
-        "en": "Plant a tree at the cemetery and light grave candles",
+        "en": "Plant a spruce tree at the cemetery and light grave candles",
         "sv": "Planterar en gran på kyrkogården och tänder gravljus"
       },
       {
-        "en": "Dance around a tree outdoors to welcome summer",
+        "en": "Dance around a spruce tree outdoors to welcome summer",
         "sv": "Dansar runt en gran utomhus för att välkomna sommaren"
       },
       {
-        "en": "Light a tree as a spring bonfire on Walpurgis Night",
+        "en": "Light a spruce tree as a spring bonfire on Walpurgis Night",
         "sv": "Tänder en gran som vårbrasa på valborgsmässoafton"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "en": "At Christmas, many people bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
       "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
@@ -31703,7 +31703,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel.",
+      "en": "At Christmas, many people bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel.",
       "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter."
     },
     "opts": [
@@ -31718,7 +31718,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "en": "At Christmas, many people bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
       "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
@@ -31744,7 +31744,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "At Christmas, many people plant a tree at the cemetery and light grave candles.",
+      "en": "At Christmas, many people plant a spruce tree at the cemetery and light grave candles.",
       "sv": "Vid jul planterar många en gran på kyrkogården och tänder gravljus."
     },
     "opts": [
@@ -31759,7 +31759,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "en": "At Christmas, many people bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
       "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
@@ -31785,30 +31785,30 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What do many people do with a tree at Christmas in Sweden?",
+      "en": "Choose the correct option: At Christmas in Sweden, what do many people do with a Christmas tree?",
       "sv": "Välj rätt alternativ: Vad gör många med en gran vid jul i Sverige?"
     },
     "opts": [
       {
-        "en": "Bring a tree into the house and decorate it with strings of lights, baubles, and tinsel",
+        "en": "Bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel",
         "sv": "Tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter"
       },
       {
-        "en": "Plant a tree at the cemetery and light grave candles",
+        "en": "Plant a spruce tree at the cemetery and light grave candles",
         "sv": "Planterar en gran på kyrkogården och tänder gravljus"
       },
       {
-        "en": "Dance around a tree outdoors to welcome summer",
+        "en": "Dance around a spruce tree outdoors to welcome summer",
         "sv": "Dansar runt en gran utomhus för att välkomna sommaren"
       },
       {
-        "en": "Light a tree as a spring bonfire on Walpurgis Night",
+        "en": "Light a spruce tree as a spring bonfire on Walpurgis Night",
         "sv": "Tänder en gran som vårbrasa på valborgsmässoafton"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "en": "At Christmas, many people bring a Christmas tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
       "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {

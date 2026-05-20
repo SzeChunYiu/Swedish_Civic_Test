@@ -2112,6 +2112,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
 
+  match = q.match(/^At (.+?) in Sweden, what do many people do with (.+)$/i);
+  if (match) return `At ${match[1]}, ${manyPeopleActionEn(answer)}`;
+
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
 
