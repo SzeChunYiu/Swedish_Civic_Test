@@ -2073,6 +2073,96 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated statement-choice meta prompts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === generatedFixtureId('q002', 0)",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vilket påstående är korrekt om Sveriges nordligaste del?',",
+        "        questionEn: \\"Which statement is correct about Sweden's northernmost part?\\",",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /uses generated single-choice meta-stem wording/,
+  );
+});
+
+test('published question schema rejects generated statement-choice explanation boilerplate', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === generatedFixtureId('q002', 0)",
+        "    ? {",
+        "        ...question,",
+        "        explanationSv:",
+        "          'Sveriges nordligaste del ligger norr om polcirkeln. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.',",
+        "        explanationEn:",
+        "          'Sweden\\'s northernmost part lies north of the Arctic Circle. Therefore the statement that matches that fact is correct, while the opposite statement is not.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /explanation refers to True\/False labels absent from the options/,
+  );
+});
+
 test('published question schema rejects generated true/false grammar-splice stems', () => {
   const result = spawnSync(
     process.execPath,

@@ -352,6 +352,10 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
   /^\s*Vilket svar är korrekt\?/i,
   /^\s*Which answer is correct\?/i,
+  /^\s*Vilket påstående är korrekt\b/i,
+  /^\s*Vilket påstående stämmer bäst\b/i,
+  /^\s*Which statement is correct\b/i,
+  /^\s*Which statement best matches\b/i,
 ];
 const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bPåståendet är sant\b/i,
@@ -360,6 +364,10 @@ const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bThat makes True correct\b/i,
   /\bTrue is correct\b/i,
   /\bwhile False\b/i,
+  /\bpåståendet som motsvarar den uppgiften\b/i,
+  /\bmotsatsen inte stämmer\b/i,
+  /\bstatement that matches that fact\b/i,
+  /\bopposite statement is not\b/i,
 ];
 const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
   /\bPåståendet är sant\b/i,
@@ -4714,15 +4722,11 @@ function falseStatementExplanationEn(source) {
 }
 
 function trueFalseSingleChoiceExplanationSv(source) {
-  return `${ensureSentence(
-    trueFalseSourceStatementSv(source, true),
-  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
+  return trueStatementExplanationSv(source);
 }
 
 function trueFalseSingleChoiceExplanationEn(source) {
-  return `${ensureSentence(
-    trueFalseSourceStatementEn(source, true),
-  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
+  return trueStatementExplanationEn(source);
 }
 
 function statementTopicSv(source) {
@@ -4796,27 +4800,57 @@ function generatedTrueFalseStatementEn(source, option, variantIsTrue) {
 }
 function judgementPromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
+    return `Vilken uppgift stämmer om ${statementTopicSv(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
+  if (prompt) return prompt;
   return `Välj rätt alternativ: ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `Which statement best matches ${statementTopicEn(source)}?`;
+    return `Which fact is correct about ${statementTopicEn(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
+  if (prompt) return prompt;
   return `Choose the correct option: ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
+    return `Vad gäller för ${statementTopicSv(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
+  if (prompt) return prompt;
   return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `Which statement is correct about ${statementTopicEn(source)}?`;
+    return `What is correct about ${statementTopicEn(source)}?`;
   }
+  const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
+  if (prompt) return prompt;
   return `Which answer best matches? ${source.questionEn}`;
+}
+function generatedSingleChoicePromptFromSourceSv(source, variant) {
+  const q = stripFinalPunctuation(source.questionSv);
+  const match =
+    q.match(/^Vilket påstående stämmer om (.+)$/i) ??
+    q.match(/^Vilket påstående är korrekt om (.+)$/i) ??
+    q.match(/^Vilket påstående om (.+?) stämmer$/i);
+  if (!match) return null;
+  return variant === 'judgement'
+    ? `Vilken uppgift stämmer om ${match[1]}?`
+    : `Vad gäller för ${match[1]}?`;
+}
+function generatedSingleChoicePromptFromSourceEn(source, variant) {
+  const q = stripFinalPunctuation(source.questionEn);
+  const match =
+    q.match(/^Which statement is correct about (.+)$/i) ??
+    q.match(/^Which statement about (.+?) is correct$/i) ??
+    q.match(/^Which statement best matches (.+)$/i);
+  if (!match) return null;
+  return variant === 'judgement'
+    ? `Which fact is correct about ${match[1]}?`
+    : `What is correct about ${match[1]}?`;
 }
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
