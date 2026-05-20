@@ -480,6 +480,8 @@ test('practice completion placement uses a native interstitial and web preview',
   assert.match(nativeInterstitialSource, /useMobileAdsConsent/);
   assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
   assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
+  assert.match(nativeInterstitialSource, /lastInterstitialShowKey = showKey/);
+  assert.match(nativeInterstitialSource, /interstitialShowInFlight/);
   assert.match(
     nativeInterstitialSource,
     /AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/,
@@ -1027,14 +1029,18 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
-  assert.deepEqual(confirmedResult, {
+  const earnedReward = {
     reward: {
       amount: 1,
       type: 'extra_mock_exam',
     },
     status: 'earned_reward',
-  });
+  };
+
+  assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
+  assert.deepEqual(previewCompletedResult, earnedReward);
+  assert.deepEqual(confirmedResult, earnedReward);
+  assert.deepEqual(previewDeclinedResult, { status: 'closed_without_reward' });
   assert.deepEqual(rejectedResult, { status: 'closed_without_reward' });
   assert.deepEqual(failedConfirmationResult, { status: 'closed_without_reward' });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });

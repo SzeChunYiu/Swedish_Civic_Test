@@ -61,7 +61,19 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
+  );
+  assert.match(
+    practiceSource,
+    /getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\)/,
+  );
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.doesNotMatch(
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
+  );
   assert.match(mistakesSource, /<NativeAdCard \/>/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
   assert.match(
