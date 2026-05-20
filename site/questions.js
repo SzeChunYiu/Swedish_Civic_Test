@@ -5890,8 +5890,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30045,8 +30045,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30086,8 +30086,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30127,8 +30127,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30176,8 +30176,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
-      "sv": "I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
+      "en": "In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs. Flower wreaths, graduation caps, and Advent stars belong to other traditions or contexts.",
+      "sv": "I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger. Blomsterkransar, studentmössor och adventsstjärnor hör till andra traditioner eller sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
