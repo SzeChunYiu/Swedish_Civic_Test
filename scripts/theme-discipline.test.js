@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -165,4 +166,17 @@ test('disabled button tokens keep labels readable without wrapper opacity', () =
       )} should be at least ${MIN_BODY_TEXT_CONTRAST}:1`,
     );
   }
+});
+
+test('theme content validation parser keeps one contrast pair declaration', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'scripts/validate-content.js'), 'utf8');
+  const declarationCount = [...source.matchAll(/const EXPECTED_THEME_CONTRAST_PAIRS = \[/g)].length;
+
+  assert.equal(declarationCount, 1);
+  assert.doesNotThrow(() =>
+    execFileSync(process.execPath, ['--check', 'scripts/validate-content.js'], {
+      cwd: ROOT,
+      stdio: 'pipe',
+    }),
+  );
 });
