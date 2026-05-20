@@ -64,6 +64,7 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
     <View style={styles.row}>
       <LanguagePicker />
       <Pressable
+        aria-checked={audioEnabled}
         accessibilityRole="switch"
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
         accessibilityState={{ checked: audioEnabled }}
@@ -87,32 +88,22 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
 }
 
 function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
-  const webInteractionHandlers =
-    Platform.OS === 'web'
-      ? {
-          onBlur: () => setIsFocused(false),
-          onFocus: () => setIsFocused(true),
-          onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => setIsHovered(false),
-        }
-      : {};
+  const clearPressedState = () => setIsPressed(false);
+  const linkInteractionHandlers = {
+    onPressIn: () => setIsPressed(true),
+    onPressOut: clearPressedState,
+  };
+  const webClassName = Platform.OS === 'web' ? { className: topBarActionLinkClassName } : {};
 
   return (
     <Link
-      {...webInteractionHandlers}
+      {...linkInteractionHandlers}
+      {...webClassName}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       href={href}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
-      style={[
-        styles.iconLink,
-        isFocused || isHovered ? styles.iconLinkHover : null,
-        isPressed ? styles.iconLinkPressed : null,
-      ]}
+      style={[styles.iconLink, isPressed ? styles.iconLinkPressed : null]}
     >
       {children}
     </Link>
@@ -140,6 +131,7 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
+    display: 'flex',
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],

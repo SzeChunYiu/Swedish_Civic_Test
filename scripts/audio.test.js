@@ -94,7 +94,7 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.match(warnings[1], /Speech stop unavailable/i);
 });
 
-test('practice and routed quiz screens honor the persisted audio setting', () => {
+test('practice and routed quiz screens honor audio settings for prompt and feedback playback', () => {
   const routeFiles = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
 
   for (const routeFile of routeFiles) {
@@ -113,4 +113,10 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
       /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
     );
   }
+});
+
+test('active mock exams do not render feedback audio controls', () => {
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.doesNotMatch(examSource, /FeedbackAudioButton|buildAnswerFeedbackSpeechText/);
 });

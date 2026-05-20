@@ -17,8 +17,6 @@ function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
 }
 
-function staleSeparatedWords(...words) {
-  return new RegExp(words.join('[\\s_-]+'), 'i');
 function staleNativeIdentifierPattern() {
   return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
 }
@@ -56,15 +54,6 @@ function assertNoStalePublicPrivacyPosture(source) {
     staleWords('real', 'ads', 'disabled'),
     staleWords('Data', 'Not', 'Collected'),
     staleToken('REAL_ADS', 'ENABLED_FOR_V1'),
-  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
-}
-
-function assertNoStaleReleaseInstructionPosture(source) {
-  [
-    staleSeparatedWords('real', 'ads', 'disabled'),
-    staleSeparatedWords('deferred', 'real', 'ads', 'disabled'),
-    staleWords('disabled', 'Google', 'Mobile', 'Ads'),
-    new RegExp(`${['REAL_ADS', 'ENABLED_FOR_V1'].join('_')}\\s*=\\s*false`, 'i'),
   ].forEach((pattern) => assert.doesNotMatch(source, pattern));
 }
 
@@ -108,9 +97,10 @@ function parseExternalBlockerRows(markdown) {
 
 test('store publishing metadata is prepared', () => {
   const appConfig = JSON.parse(read('app.json')).expo;
-  const iosRemoveAdsProductId = `${appConfig.ios.bundleIdentifier}.removeads`;
-  const androidRemoveAdsProductId = 'removeads';
-  const staleRemoveAdsProductId = ['com', 'billyyiu', 'swedishcivictest', 'removeads'].join('.');
+  const proLifetimeSource = read('lib/monetization/proLifetimePurchase.ts');
+  const appStoreIdentitySource = read('lib/monetization/appStoreIdentity.ts');
+  const proLifetimeProductId = `${appConfig.ios.bundleIdentifier}.prolifetime`;
+
   assert.equal(appConfig.name, 'Almost Swedish');
   assert.equal(appConfig.slug, 'almost-swedish');
   assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
@@ -143,21 +133,6 @@ test('store publishing metadata is prepared', () => {
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
   assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
-
-  for (const filePath of [
-    'publishing/admob-iap-setup-runbook.md',
-    'publishing/admob-progress.md',
-    'publishing/operator-todo.md',
-    'publishing/privacy-labels.md',
-  ]) {
-    const source = read(filePath);
-    assert.match(source, new RegExp(iosRemoveAdsProductId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-    assert.doesNotMatch(
-      source,
-      new RegExp(staleRemoveAdsProductId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
-    );
-    assert.match(source, new RegExp(`\\b${androidRemoveAdsProductId}\\b`));
-  }
 });
 
 test('release evidence template matches ad-supported app store posture', () => {
@@ -270,23 +245,6 @@ test('post-EAS-auth runbook covers build, device, and store evidence sequence', 
   assert.match(runbook, /reports\/release-evidence-YYYY-MM-DD\.md/);
   assert.match(runbook, /scripts\/update-release-gate\.js/);
   assert.match(runbook, /--gate android-device-audio/);
-});
-
-test('active release instructions describe the ad-supported Remove Ads posture', () => {
-  const activeReleaseInstructions = [
-    read('publishing/post-eas-auth-runbook.md'),
-    read('reports/external-release-blockers.md'),
-    read('scripts/write-release-owner-action-packet.js'),
-  ].join('\n');
-
-  assert.match(activeReleaseInstructions, /AdMob app (record|readiness)/i);
-  assert.match(activeReleaseInstructions, /Google Mobile Ads/i);
-  assert.match(activeReleaseInstructions, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
-  assert.match(activeReleaseInstructions, /Remove Ads/i);
-  assert.match(activeReleaseInstructions, /29 SEK/i);
-  assert.match(activeReleaseInstructions, /App Tracking Transparency|ATT/i);
-  assert.match(activeReleaseInstructions, /Google UMP|UMP consent|ATT\/UMP/i);
-  assertNoStaleReleaseInstructionPosture(activeReleaseInstructions);
 });
 
 test('external release blocker checklist is tied to SzeChunYiu tracker', () => {

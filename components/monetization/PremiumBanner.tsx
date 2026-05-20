@@ -40,7 +40,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     bodyActive:
       'Köpet är bekräftat. Studieannonser är avstängda på den här enheten, och återställning finns kvar om butikskontot behöver kontrolleras igen.',
     bodyIdle: (price) =>
-      `Hela frågebanken och alla 13 ämnen ingår gratis. Betala ${price} en gång för att ta bort annonser från studieskärmar; provläget är redan annonsfritt.`,
+      `Hela frågebanken är gratis och annonser finansierar studieskärmar. Betala ${price} en gång för att ta bort annonser från studieskärmar; det låser inte upp frågor. Tidsatta övningsprov är redan annonsfria.`,
     buyAccessibilityHint:
       'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
@@ -67,7 +67,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     bodyActive:
       'Purchase confirmed. Study ads are disabled on this device, and Restore stays available if this store account needs to be checked again.',
     bodyIdle: (price) =>
-      `The full question bank and all 13 topics are free. Pay ${price} once to remove ads from study screens; exams stay ad-free.`,
+      `The full question bank stays free and ads support study screens. Pay ${price} once to remove ads from study screens; it does not unlock questions. Exams stay ad-free.`,
     buyAccessibilityHint:
       'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
@@ -94,6 +94,11 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
 
 function getStatusMessage(status: PurchaseUiStatus, copy: PremiumBannerCopy): string {
   return copy.statusMessages[status];
+}
+
+function getVisibleStatus(adsDisabled: boolean, status: PurchaseUiStatus): PurchaseUiStatus {
+  if (!adsDisabled) return status;
+  return status === 'restored' ? 'restored' : 'purchased';
 }
 
 export function PremiumBanner({

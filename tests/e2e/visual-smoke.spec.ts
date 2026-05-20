@@ -97,7 +97,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
 
   for (const [name, route] of routes) {
     await page.goto(route, { waitUntil: 'networkidle' });
-    const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
+    const dismissal = await dismissBlockingModals(page);
     await expect(page.locator('body')).not.toContainText('Not Found');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
     const file = `${name}.png`;

@@ -127,15 +127,21 @@ const removeAdsDeviceQaPath =
 const removeAdsStep3StructuralGate =
   'Remove Ads structural gate: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
 const releaseScopeOverrideId = 'release-scope-v11';
-const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
-const removeAdsDeviceQaRequiredChecks = [
-  'admob-test-ads-study-screens',
-  'remove-ads-purchase-hides-ads',
-  'entitlement-persists-after-relaunch',
-  'restore-purchase-restores-entitlement',
-  'att-status-documented',
-  'ump-consent-documented',
-  'mock-exam-shows-no-ads',
+const removeAdsDeviceQaChecks = [
+  'AdMob test ads rendered on study screens',
+  'Remove Ads purchase removed ads',
+  'Entitlement persisted after relaunch',
+  'Restore purchase restored entitlement',
+  'ATT prompt/status documented',
+  'EEA UMP consent prompt rendered',
+  'Timed exam screens showed no ads',
+];
+const removeAdsDeviceQaMetadata = [
+  ['Device', /(?:iPhone|iPad|Pixel|Galaxy|Android|iOS|simulator|physical)/i],
+  ['Build', /(?:build|EAS|TestFlight|APK|AAB|IPA|version|https?:\/\/)/i],
+  ['Evidence artifact', /\b(?:reports|publishing|content|assets)\/[^\s,;:]+|https:\/\//i],
+  ['Reviewer', /\S/],
+  ['Reviewed at', /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/],
 ];
 
 const expectedPublicUrlEvidenceRequirements = {
@@ -550,6 +556,94 @@ function validateDeviceAudioEvidence(evidencePath, expectedPlatform) {
       errors.push(`${label} proof artifact url must be HTTPS`);
     }
   });
+
+  return errors;
+}
+
+function extractMarkdownSection(markdown, heading) {
+  const pattern = new RegExp(
+    `(?:^|\\n)##\\s+${escapeRegExp(heading)}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`,
+    'i',
+  );
+  return markdown.match(pattern)?.[1] || '';
+}
+
+function readMarkdownField(section, label) {
+  const pattern = new RegExp(`^-\\s+${escapeRegExp(label)}:\\s*(.+?)\\s*$`, 'im');
+  return section.match(pattern)?.[1]?.trim() || '';
+}
+
+function looksPlaceholder(value) {
+  return (
+    value.length === 0 ||
+    /^(?:TBD|TODO|placeholder|missing|none|n\/a|na|done|pass|passed|ok)$/i.test(value) ||
+    /<[^>]+>/.test(value)
+  );
+}
+
+function validateReferencedArtifact(value, reportPath) {
+  const artifactMatch = value.match(
+    /\b(?:reports|publishing|content|assets)\/[^\s,;:]+|https:\/\//i,
+  );
+  if (!artifactMatch) return 'must include a local artifact path or HTTPS URL';
+
+  const artifact = artifactMatch[0].replace(/[.)\]]+$/g, '');
+  if (/^https:\/\//i.test(artifact)) return null;
+  const artifactPath = path.isAbsolute(artifact) ? artifact : path.resolve(artifact);
+  return exists(artifactPath) ? null : `referenced artifact does not exist: ${artifact}`;
+}
+
+function validateRemoveAdsDeviceQaReport(reportPath) {
+  let markdown;
+  try {
+    markdown = fs.readFileSync(reportPath, 'utf8');
+  } catch (error) {
+    return [`could not read ${reportPath}: ${error.message}`];
+  }
+
+  const errors = [];
+  const blockedTerms = [
+    ...blockedEvidencePatterns,
+    [/^\s*done\s*$/im, 'generic "done" evidence'],
+    [/- \[[ \t]\]/, 'unchecked manual checklist item'],
+  ]
+    .filter(([pattern]) => pattern.test(markdown))
+    .map(([, label]) => label);
+  if (blockedTerms.length > 0) {
+    errors.push(
+      `report still contains blocker or placeholder language: ${blockedTerms.join(', ')}`,
+    );
+  }
+
+  for (const platform of ['iOS', 'Android']) {
+    const section = extractMarkdownSection(markdown, platform);
+    if (!section.trim()) {
+      errors.push(`missing ## ${platform} section`);
+      continue;
+    }
+
+    for (const [label, pattern] of removeAdsDeviceQaMetadata) {
+      const value = readMarkdownField(section, label);
+      if (looksPlaceholder(value)) {
+        errors.push(`${platform} ${label} must be concrete`);
+        continue;
+      }
+      if (!pattern.test(value)) {
+        errors.push(`${platform} ${label} does not match expected evidence shape`);
+      }
+      if (label === 'Evidence artifact') {
+        const artifactError = validateReferencedArtifact(value, reportPath);
+        if (artifactError) errors.push(`${platform} Evidence artifact ${artifactError}`);
+      }
+    }
+
+    for (const check of removeAdsDeviceQaChecks) {
+      const pattern = new RegExp(`-\\s+\\[[xX]\\]\\s+${escapeRegExp(check)}\\b`);
+      if (!pattern.test(section)) {
+        errors.push(`${platform} missing checked manual check: ${check}`);
+      }
+    }
+  }
 
   return errors;
 }

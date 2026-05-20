@@ -69,9 +69,14 @@ function normalize(value: unknown): PersistedReviews {
   return { byId, gradedPerDay };
 }
 
-function read(): PersistedReviews {
-  const raw = reviewStorage?.getString(REVIEW_STORE_KEY);
-  if (!raw) return EMPTY;
+function read(): {
+  state: PersistedReviews;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, () =>
+    reviewStorage?.getString(REVIEW_STORE_KEY),
+  );
+  if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
   try {
     return normalize(JSON.parse(raw));
   } catch {
@@ -79,8 +84,8 @@ function read(): PersistedReviews {
   }
 }
 
-function write(state: PersistedReviews): void {
-  reviewStorage?.set(REVIEW_STORE_KEY, JSON.stringify(state));
+function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
+  return writeRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, JSON.stringify(state));
 }
 
 type ReviewState = PersistedReviews & {
