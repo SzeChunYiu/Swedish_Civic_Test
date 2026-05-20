@@ -458,6 +458,28 @@ test('custom pressed controls mirror false checked and expanded state to web ari
   assert.doesNotMatch(provenanceBadgeSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('mock exam config controls are not nested inside labelled summary containers', () => {
+  const source = read('components/MockExamConfigPanel.tsx');
+
+  assert.match(source, /const resolvedPanelAccessibilityLabel =/);
+  assert.match(
+    source,
+    /<Surface[\s\S]*accessibilityRole="none"[\s\S]*\{\.\.\.surfaceProps\}[\s\S]*accessible=\{false\}/,
+  );
+  assert.match(
+    source,
+    /<View\s+accessible\s+accessibilityLabel=\{resolvedPanelAccessibilityLabel\}\s+accessibilityRole=\{accessibilityRole\}\s+style=\{styles\.header\}/,
+  );
+  assert.match(source, /accessibilityRole="adjustable"/);
+  assert.match(source, /accessibilityRole="checkbox"/);
+  assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
+  assert.doesNotMatch(
+    source,
+    /<View\s+accessibilityLabel=\{resolvedChaptersLabel\}\s+accessibilityRole="summary"\s+style=\{styles\.chips\}/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings controls use token pressed feedback on all direct controls', () => {
   const source = read('app/settings.tsx');
 
