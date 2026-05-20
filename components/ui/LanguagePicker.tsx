@@ -23,6 +23,7 @@ type FocusableView = View & {
 type WebKeyboardEvent = {
   key: string;
   preventDefault: () => void;
+  shiftKey?: boolean;
   stopPropagation: () => void;
 };
 
@@ -67,6 +68,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const [open, setOpen] = useState(false);
   const [focusedOptionCode, setFocusedOptionCode] = useState<string | null>(null);
+  const closeButtonRef = useRef<View | null>(null);
   const triggerRef = useRef<View | null>(null);
   const rowRefs = useRef<Record<string, View | null>>({});
 
@@ -83,6 +85,11 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
 
   const focusTrigger = () => {
     focusView(triggerRef.current);
+  };
+
+  const focusCloseButton = () => {
+    setFocusedOptionCode(null);
+    focusView(closeButtonRef.current);
   };
 
   const focusAvailableOption = (optionCode: string) => {
@@ -125,6 +132,31 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
     focusAvailableIndex(nextIndex);
   };
 
+  const containTabFocus = (event: WebKeyboardEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!availableLocaleOptions.length) {
+      focusCloseButton();
+      return;
+    }
+
+    if (!focusedOptionCode) {
+      focusAvailableIndex(event.shiftKey ? availableLocaleOptions.length - 1 : 0);
+      return;
+    }
+
+    const focusedIndex = getFocusedAvailableIndex();
+    const nextIndex = event.shiftKey ? focusedIndex - 1 : focusedIndex + 1;
+
+    if (nextIndex < 0 || nextIndex >= availableLocaleOptions.length) {
+      focusCloseButton();
+      return;
+    }
+
+    focusAvailableIndex(nextIndex);
+  };
+
   const handleSelect = (option: LocaleOption) => {
     if (!option.available) return;
 
@@ -134,6 +166,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
 
   const handleMenuKeyDown = (event: WebKeyboardEvent) => {
     switch (event.key) {
+      case 'Tab':
+        containTabFocus(event);
+        break;
       case 'Escape':
         event.preventDefault();
         event.stopPropagation();
@@ -236,6 +271,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                 hitSlop={space[1]}
                 onFocus={() => setFocusedOptionCode(null)}
                 onPress={() => closePicker({ restoreFocus: true })}
+                ref={closeButtonRef}
                 style={({ pressed }) => [
                   styles.closeButton,
                   pressed ? styles.closeButtonPressed : null,

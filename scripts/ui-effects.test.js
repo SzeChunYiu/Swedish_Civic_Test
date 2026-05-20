@@ -186,8 +186,24 @@ test('language picker future-language rows are disabled instead of selectable', 
   const source = read('components/ui/LanguagePicker.tsx');
 
   assert.match(source, /const availableLocaleOptions = useMemo\(/);
+  assert.match(source, /const closeButtonRef = useRef<View \| null>\(null\);/);
   assert.match(source, /const focusAvailableOption = \(optionCode: string\) => \{/);
+  assert.match(source, /const focusCloseButton = \(\) => \{/);
+  assert.match(source, /focusView\(closeButtonRef\.current\);/);
+  assert.match(source, /const containTabFocus = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /if \(!availableLocaleOptions\.length\) \{/);
+  assert.match(
+    source,
+    /focusAvailableIndex\(event\.shiftKey \? availableLocaleOptions\.length - 1 : 0\);/,
+  );
+  assert.match(
+    source,
+    /const nextIndex = event\.shiftKey \? focusedIndex - 1 : focusedIndex \+ 1;/,
+  );
+  assert.match(source, /if \(nextIndex < 0 \|\| nextIndex >= availableLocaleOptions\.length\) \{/);
   assert.match(source, /const handleMenuKeyDown = \(event: WebKeyboardEvent\) => \{/);
+  assert.match(source, /case 'Tab':/);
+  assert.match(source, /containTabFocus\(event\);/);
   assert.match(source, /case 'Escape':/);
   assert.match(source, /closePicker\(\{ restoreFocus: true \}\);/);
   assert.match(source, /case 'ArrowDown':/);
@@ -233,6 +249,7 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
   assert.match(source, /styles\.closeButton/);
+  assert.match(source, /ref=\{closeButtonRef\}/);
   assert.doesNotMatch(
     source,
     /const handleSelect = \(option: LocaleOption\) => \{[\s\S]*setOpen\(false\);[\s\S]*if \(!option\.available\) return;/,
