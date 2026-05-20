@@ -1,36 +1,123 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
+import {
+  dismissBlockingModals,
+  markAboutTheTestSeen,
+  seedSettingsLanguage,
+  type AppLanguage,
+} from './browserLaunch';
 
-async function expectHydratedSearch(page: Page, url: string, expectedQuery: string) {
-  await page.goto(url, { waitUntil: 'networkidle' });
+type SearchNavigationScenario = {
+  clearName: string;
+  filteredSummary: RegExp;
+  initialSummary: RegExp;
+  inputName: string;
+  language: AppLanguage;
+  questionLinkName: RegExp;
+  questionTitlePrefix: RegExp;
+  query: string;
+  sessionTitle: (questionId: string) => string;
+  sourceCitation: RegExp;
+  url: string;
+};
+
+const searchNavigationScenarios: SearchNavigationScenario[] = [
+  {
+    clearName: 'Rensa sökfältet',
+    filteredSummary: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
+    initialSummary: /\d+ samhällsbegrepp i referensen/,
+    inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    language: 'sv',
+    questionLinkName: /Öppna övningsfrågan:/,
+    questionTitlePrefix: /^Öppna övningsfrågan:\s*/,
+    query: 'riksdag',
+    sessionTitle: (questionId) => `Frågepass ${questionId}`,
+    sourceCitation: /Källa: Sverige i fokus/,
+    url: '/search?q=riksdag',
+  },
+  {
+    clearName: 'Clear the search field',
+    filteredSummary: /\d+ of \d+ terms and \d+ practice questions match/,
+    initialSummary: /\d+ civic reference terms/,
+    inputName: 'Search civic terms and practice questions',
+    language: 'en',
+    questionLinkName: /Open practice question:/,
+    questionTitlePrefix: /^Open practice question:\s*/,
+    query: 'kommun',
+    sessionTitle: (questionId) => `Session ${questionId}`,
+    sourceCitation: /Source: Sverige i fokus/,
+    url: '/search?query=kommun',
+  },
+];
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+async function expectHydratedSearch(page: Page, scenario: SearchNavigationScenario) {
+  await page.goto(scenario.url, { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  const input = page.getByRole('textbox', { name: 'Sök samhällsbegrepp' });
+  const input = page.getByRole('textbox', { name: scenario.inputName });
   await expect(input).toBeVisible();
-  await expect(input).toHaveValue(expectedQuery);
-  await expect(page.getByText(/\d+ av \d+ samhällsbegrepp visas/)).toBeVisible();
-  await expect(page.getByText(new RegExp(expectedQuery, 'i')).first()).toBeVisible();
+  await expect(input).toHaveValue(scenario.query);
+  await expect(page.getByText(scenario.filteredSummary)).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: scenario.questionLinkName }).first()).toBeVisible();
 
   return input;
 }
 
-test('search route hydrates q and query URL parameters before typing', async ({ page }) => {
-  const consoleErrors: string[] = [];
-
-  page.on('console', (message) => {
-    if (message.type() === 'error') consoleErrors.push(message.text());
+async function expectFirstQuestionResultNavigates(page: Page, scenario: SearchNavigationScenario) {
+  const questionLink = page.getByRole('link', { name: scenario.questionLinkName }).first();
+  const accessibleName = await questionLink.evaluate((node) => {
+    return node.getAttribute('aria-label') ?? node.textContent ?? '';
   });
-  page.on('pageerror', (error) => consoleErrors.push(error.message));
+  const href = await questionLink.getAttribute('href');
+  const questionId = href?.match(/\/quiz\/([^/?#]+)/)?.[1];
+  const questionTitle = accessibleName.replace(scenario.questionTitlePrefix, '').trim();
 
-  await markAboutTheTestSeen(page);
+  expect(href).toMatch(/\/quiz\/[^/?#]+/);
+  expect(questionId, 'search question result should route to a concrete question id').toBeTruthy();
+  expect(
+    questionTitle.length,
+    'search question result should name the destination question',
+  ).toBeGreaterThan(10);
 
-  const riksdagInput = await expectHydratedSearch(page, '/search?q=riksdag', 'riksdag');
-  await page.getByRole('button', { name: 'Rensa sökfältet' }).click();
-  await expect(riksdagInput).toHaveValue('');
-  await expect(page.getByText(/\d+ samhällsbegrepp i referensen/)).toBeVisible();
+  await questionLink.click();
 
-  await expectHydratedSearch(page, '/search?query=kommun', 'kommun');
+  await expect(page).toHaveURL(new RegExp(`/quiz/${escapeRegExp(questionId ?? '')}(?:[?#].*)?$`));
+  await expect(
+    page.getByText(scenario.sessionTitle(questionId ?? ''), { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: questionTitle }).last()).toBeVisible();
+  await expect(page.getByText(scenario.sourceCitation).first()).toBeVisible();
+}
 
-  expect(consoleErrors).toEqual([]);
-});
+for (const scenario of searchNavigationScenarios) {
+  test(`search question result opens the exact routed quiz from ${scenario.url}`, async ({
+    page,
+  }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+    await seedSettingsLanguage(page, scenario.language);
+    await markAboutTheTestSeen(page);
+
+    await expectHydratedSearch(page, scenario);
+    await expectFirstQuestionResultNavigates(page, scenario);
+
+    const input = await expectHydratedSearch(page, scenario);
+    await page.getByRole('button', { name: scenario.clearName }).click();
+    await expect(input).toHaveValue('');
+    await expect(page.getByText(scenario.initialSummary)).toBeVisible();
+
+    expect(consoleErrors).toEqual([]);
+  });
+}

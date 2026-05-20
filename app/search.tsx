@@ -7,6 +7,13 @@ import { Button } from '../components/ui/Button';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { glossaryTerms } from '../data/glossary';
+import { questions } from '../data/questions';
+import {
+  getQuestionSearchChapterName,
+  getQuestionSearchExcerpt,
+  getQuestionSearchTitle,
+  searchQuestions,
+} from '../lib/search/questionSearch';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 import type { GlossaryTerm } from '../types/content';
@@ -39,9 +46,19 @@ export default function SearchScreen() {
       glossaryTermMatchesQuery(term, chapter, normalizedQuery),
     );
   }, [termsWithChapters, trimmedQuery]);
+  const questionResults = useMemo(() => {
+    if (!trimmedQuery) return [];
+
+    return searchQuestions({
+      chapters,
+      limit: 8,
+      query: trimmedQuery,
+      questions,
+    });
+  }, [trimmedQuery]);
   const resultSummary =
     trimmedQuery.length > 0
-      ? copy.filteredSummary(filteredTerms.length, termsWithChapters.length)
+      ? copy.filteredSummary(filteredTerms.length, termsWithChapters.length, questionResults.length)
       : copy.allTermsSummary(termsWithChapters.length);
   const searchDescriptionId = 'search-route-glossary-description';
 
@@ -143,6 +160,85 @@ export default function SearchScreen() {
         )}
       </View>
 
+      {trimmedQuery.length > 0 ? (
+        <View style={styles.questionSection}>
+          <View style={styles.inlineSectionHeader}>
+            <Text accessibilityRole="header" style={styles.questionSectionTitle}>
+              {copy.questionSectionTitle}
+            </Text>
+            <Text style={styles.questionSectionSubtitle}>
+              {copy.questionSectionSubtitle(questionResults.length)}
+            </Text>
+          </View>
+
+          <View style={styles.questionList}>
+            {questionResults.length > 0 ? (
+              questionResults.map((result) => {
+                const title = getQuestionSearchTitle(result.question, language);
+                const excerpt = getQuestionSearchExcerpt(result.question, language);
+                const chapterName = getQuestionSearchChapterName(result.chapter, language);
+                const sourceReference = [
+                  result.question.uhrReference.chapter,
+                  result.question.uhrReference.section,
+                ]
+                  .filter(Boolean)
+                  .join(' · ');
+                const questionSummary = copy.questionAccessibilityLabel({
+                  chapterName,
+                  excerpt,
+                  sourceReference,
+                  title,
+                });
+                const questionSummaryId = `search-question-summary-${result.question.id}`;
+
+                return (
+                  <Card key={result.question.id} style={styles.questionCard}>
+                    <Text nativeID={questionSummaryId} style={styles.accessibilitySummaryText}>
+                      {questionSummary}
+                    </Text>
+                    <View style={styles.questionHeader}>
+                      <View style={styles.questionTitleGroup}>
+                        <Text accessibilityRole="header" style={styles.questionTitle}>
+                          {title}
+                        </Text>
+                        {chapterName ? (
+                          <Text style={styles.questionMeta}>{chapterName}</Text>
+                        ) : null}
+                      </View>
+                      <Link
+                        aria-describedby={questionSummaryId}
+                        accessibilityLabel={copy.openQuestionAccessibilityLabel(title)}
+                        accessibilityRole="link"
+                        href={`/quiz/${result.question.id}`}
+                        style={styles.questionLink}
+                      >
+                        {copy.openQuestion}
+                      </Link>
+                    </View>
+                    <Text style={styles.explanation}>{excerpt}</Text>
+                    {sourceReference ? (
+                      <Text style={styles.questionSource}>
+                        {copy.sourceLabel}: {sourceReference}
+                      </Text>
+                    ) : null}
+                  </Card>
+                );
+              })
+            ) : (
+              <Card
+                accessible
+                accessibilityLabel={`${copy.emptyQuestionTitle}. ${copy.emptyQuestionBody}`}
+              >
+                <Text accessibilityRole="header" style={styles.emptyTitle}>
+                  {copy.emptyQuestionTitle}
+                </Text>
+                <Text style={styles.explanation}>{copy.emptyQuestionBody}</Text>
+              </Card>
+            )}
+          </View>
+        </View>
+      ) : null}
+
       <Link
         accessibilityLabel={copy.browseChaptersAccessibilityLabel}
         accessibilityRole="link"
@@ -162,16 +258,38 @@ type SearchRouteCopy = {
   clearSearch: string;
   clearSearchAccessibilityLabel: string;
   emptyBody: string;
+  emptyQuestionBody: string;
+  emptyQuestionTitle: string;
   emptyTitle: string;
   eyebrow: string;
-  filteredSummary: (visibleCount: number, totalCount: number) => string;
+  filteredSummary: (
+    visibleTermCount: number,
+    totalTermCount: number,
+    questionCount: number,
+  ) => string;
   openChapterAccessibilityLabel: (chapterName: string) => string;
+  openQuestion: string;
+  openQuestionAccessibilityLabel: (title: string) => string;
+  questionAccessibilityLabel: ({
+    chapterName,
+    excerpt,
+    sourceReference,
+    title,
+  }: {
+    chapterName: string;
+    excerpt: string;
+    sourceReference: string;
+    title: string;
+  }) => string;
+  questionSectionSubtitle: (count: number) => string;
+  questionSectionTitle: string;
   searchCardAccessibilityLabel: string;
   searchInputAccessibilityLabel: string;
   searchLabel: string;
   searchPlaceholder: string;
   sectionSubtitle: string;
   sectionTitle: string;
+  sourceLabel: string;
   subtitle: string;
   termAccessibilityLabel: ({
     chapterName,
@@ -193,24 +311,44 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     clearSearch: 'Rensa sökning',
     clearSearchAccessibilityLabel: 'Rensa sökfältet',
     emptyBody: 'Prova ett annat ord, en myndighet eller ett kapitelnamn.',
+    emptyQuestionBody: 'Inga källbaserade övningsfrågor matchar just nu.',
+    emptyQuestionTitle: 'Inga frågor matchar sökningen',
     emptyTitle: 'Inga begrepp matchar din sökning',
     eyebrow: 'Sökbar referens',
-    filteredSummary: (visibleCount, totalCount) =>
-      `${visibleCount} av ${totalCount} samhällsbegrepp visas`,
+    filteredSummary: (visibleTermCount, totalTermCount, questionCount) =>
+      `${visibleTermCount} av ${totalTermCount} begrepp och ${questionCount} övningsfrågor matchar`,
     openChapterAccessibilityLabel: (chapterName) => `Öppna kapitlet ${chapterName}`,
-    searchCardAccessibilityLabel: 'Sök bland samhällsbegrepp och kapitelkopplingar',
-    searchInputAccessibilityLabel: 'Sök samhällsbegrepp',
+    openQuestion: 'Öppna fråga',
+    openQuestionAccessibilityLabel: (title) => `Öppna övningsfrågan: ${title}`,
+    questionAccessibilityLabel: ({ chapterName, excerpt, sourceReference, title }) =>
+      [
+        title,
+        excerpt,
+        chapterName ? `Kapitel: ${chapterName}` : '',
+        sourceReference ? `Källa: ${sourceReference}` : '',
+      ]
+        .filter(Boolean)
+        .join('. '),
+    questionSectionSubtitle: (count) =>
+      count === 1
+        ? '1 källbaserad övningsfråga matchar'
+        : `${count} källbaserade övningsfrågor matchar`,
+    questionSectionTitle: 'Övningsfrågor',
+    searchCardAccessibilityLabel: 'Sök bland samhällsbegrepp, frågor och kapitelkopplingar',
+    searchInputAccessibilityLabel: 'Sök samhällsbegrepp och övningsfrågor',
     searchLabel: 'Sök begrepp',
     searchPlaceholder: 'Sök demokrati, kommun, välfärd ...',
-    sectionSubtitle: 'Slå upp centrala ord och öppna kapitlet där begreppet används i frågebanken.',
-    sectionTitle: 'Begreppsreferens',
+    sectionSubtitle:
+      'Slå upp centrala ord och öppna kapitlet eller övningsfrågan där begreppet används.',
+    sectionTitle: 'Begrepp och frågor',
+    sourceLabel: 'Källa',
     subtitle:
-      'En snabb ordlista för centrala samhällsbegrepp, med svenska och engelska förklaringar.',
+      'En snabb sökning för centrala samhällsbegrepp, källbaserade frågor och förklaringar.',
     termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
       chapterName
         ? `${primaryTerm}. ${explanation}. Kopplat kapitel: ${chapterName}.`
         : `${primaryTerm}. ${explanation}.`,
-    title: 'Sök begrepp, kapitel och förklaringar',
+    title: 'Sök begrepp, frågor och förklaringar',
   },
   en: {
     allTermsSummary: (count) => `${count} civic reference terms`,
@@ -219,24 +357,43 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     clearSearch: 'Clear search',
     clearSearchAccessibilityLabel: 'Clear the search field',
     emptyBody: 'Try another word, authority, or chapter name.',
+    emptyQuestionBody: 'No source-backed practice questions match right now.',
+    emptyQuestionTitle: 'No questions match this search',
     emptyTitle: 'No terms match your search',
     eyebrow: 'Searchable reference',
-    filteredSummary: (visibleCount, totalCount) =>
-      `${visibleCount} of ${totalCount} civic reference terms shown`,
+    filteredSummary: (visibleTermCount, totalTermCount, questionCount) =>
+      `${visibleTermCount} of ${totalTermCount} terms and ${questionCount} practice questions match`,
     openChapterAccessibilityLabel: (chapterName) => `Open the chapter ${chapterName}`,
-    searchCardAccessibilityLabel: 'Search civic reference terms and chapter links',
-    searchInputAccessibilityLabel: 'Search civic terms',
+    openQuestion: 'Open question',
+    openQuestionAccessibilityLabel: (title) => `Open practice question: ${title}`,
+    questionAccessibilityLabel: ({ chapterName, excerpt, sourceReference, title }) =>
+      [
+        title,
+        excerpt,
+        chapterName ? `Chapter: ${chapterName}` : '',
+        sourceReference ? `Source: ${sourceReference}` : '',
+      ]
+        .filter(Boolean)
+        .join('. '),
+    questionSectionSubtitle: (count) =>
+      count === 1
+        ? '1 source-backed practice question matches'
+        : `${count} source-backed practice questions match`,
+    questionSectionTitle: 'Practice questions',
+    searchCardAccessibilityLabel: 'Search civic reference terms, questions, and chapter links',
+    searchInputAccessibilityLabel: 'Search civic terms and practice questions',
     searchLabel: 'Search terms',
     searchPlaceholder: 'Search democracy, municipality, welfare ...',
     sectionSubtitle:
-      'Look up central words and open the chapter where the term appears in the question bank.',
-    sectionTitle: 'Civic reference terms',
-    subtitle: 'A quick glossary for key civic terms, with Swedish and English explanations.',
+      'Look up central words and open the chapter or practice question where the term appears.',
+    sectionTitle: 'Civic terms and questions',
+    sourceLabel: 'Source',
+    subtitle: 'A quick search for key civic terms, source-backed questions, and explanations.',
     termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
       chapterName
         ? `${primaryTerm}. ${explanation}. Linked chapter: ${chapterName}.`
         : `${primaryTerm}. ${explanation}.`,
-    title: 'Search terms, chapters, and explanations',
+    title: 'Search terms, questions, and explanations',
   },
 };
 
@@ -354,6 +511,71 @@ const styles = StyleSheet.create({
   chapterLink: {
     backgroundColor: colors.focusSoft,
     borderColor: colors.focus,
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
+    color: colors.text,
+    fontFamily: typography.navButton.fontFamily,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[5],
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.75],
+    textDecorationLine: 'none',
+  },
+  questionSection: {
+    gap: space[1.5],
+  },
+  inlineSectionHeader: {
+    gap: space[0.5],
+  },
+  questionSectionTitle: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  questionSectionSubtitle: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  questionList: {
+    gap: space[1.5],
+  },
+  questionCard: {
+    gap: space[1.25],
+  },
+  questionHeader: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+  },
+  questionTitleGroup: {
+    flex: 1,
+    gap: space[0.5],
+    minWidth: space[15],
+  },
+  questionTitle: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.body.lineHeight,
+  },
+  questionMeta: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  questionSource: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  questionLink: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.accent,
     borderRadius: radius.pill,
     borderWidth: space.hairline,
     color: colors.text,
