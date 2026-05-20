@@ -112,6 +112,28 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
+test('exam submission finality focused validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused exam submission validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.examSubmissionFinalityParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'progressQuestionSchemaParityValidated'),
+    false,
+  );
+});
+
 test('unsupported npm test selectors fail before running any suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
   const npmLog = path.join(tmpDir, 'npm.log');

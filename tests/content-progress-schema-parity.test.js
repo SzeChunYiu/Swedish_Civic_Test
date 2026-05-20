@@ -31,6 +31,30 @@ require('./scripts/validate-content.js');
   );
 }
 
+function runFocusedExamSubmissionValidationWithRoutePatch(search, replacement) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return String(contents).replace(${JSON.stringify(search)}, ${JSON.stringify(replacement)});
+  }
+  return contents;
+};
+process.argv.push('--focus-exam-submission-finality-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 function resolveLocalTs(parentFilename, request) {
   const base = path.resolve(path.dirname(parentFilename), request);
   const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
@@ -520,6 +544,19 @@ test('progress mutations return the same shape as persisted JSON readback', () =
   assert.deepEqual(useProgressStore.getState().completedQuestionIds, []);
   assert.deepEqual(useProgressStore.getState().questionProgress, {});
   assert.deepEqual(useProgressStore.getState().answerHistory, []);
+});
+
+test('exam submission finality parity rejects losing the submitted completion timestamp', () => {
+  const result = runFocusedExamSubmissionValidationWithRoutePatch(
+    'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),',
+    'completedAt: new Date().toISOString(),',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam result submission must persist a completed mock-exam score for readiness/,
+  );
 });
 
 test('progress hydration falls back when MMKV reads throw', () => {
