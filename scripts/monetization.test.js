@@ -68,6 +68,27 @@ function withEnv(overrides, fn) {
   }
 }
 
+const EFFECTIVE_ENTITLEMENT_NOW = new Date('2026-05-19T12:00:00.000Z');
+
+const EFFECTIVE_PRO_LIFETIME_ENTITLEMENTS = {
+  adsDisabled: true,
+  unlimitedMockExams: true,
+  fullMistakeReview: true,
+  spacedRepetition: true,
+  nativeLangExplanations: true,
+  customStudyPlan: true,
+  notesExport: true,
+  predictedPassProbability: true,
+  confidenceSlider: true,
+  multiColorHighlights: true,
+};
+
+const EFFECTIVE_REMOVE_ADS_ENTITLEMENTS = {
+  adsDisabled: true,
+  unlimitedMockExams: false,
+  fullMistakeReview: false,
+};
+
 function assertRealAdUnitEnvInliningSource(adsSource, adsConfig) {
   assert.match(
     adsSource,
@@ -975,6 +996,101 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
     }),
     true,
   );
+});
+
+test('effective entitlement expiry ordering uses parsed ISO timestamps', () => {
+  const { resolveEffectiveEntitlement, timeBoundedExpiry } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+  const entitlementSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/effectiveEntitlements.ts'),
+    'utf8',
+  );
+
+  assert.match(entitlementSource, /function parseIsoTimestamp/);
+  assert.match(entitlementSource, /new Date\(iso\)\.getTime\(\)/);
+  assert.match(entitlementSource, /return bTime < aTime \? b : a;/);
+  assert.doesNotMatch(entitlementSource, /return\s+a\s*<\s*b\s*\?\s*a\s*:\s*b;/);
+
+  const validReferralExpiry = '2026-05-24T12:00:00.000Z';
+  const invalidTrial = resolveEffectiveEntitlement({
+    proTrial: { expiresAtIso: 'not-a-date' },
+    referralGrant: { expiresAtIso: validReferralExpiry },
+    now: EFFECTIVE_ENTITLEMENT_NOW,
+  });
+  assert.deepEqual(invalidTrial.activeSources, ['referral-grant-active']);
+  assert.equal(invalidTrial.nextExpiryIso, validReferralExpiry);
+  assert.equal(
+    timeBoundedExpiry({
+      proTrial: { expiresAtIso: 'not-a-date' },
+      referralGrant: { expiresAtIso: validReferralExpiry },
+      now: EFFECTIVE_ENTITLEMENT_NOW,
+    }),
+    validReferralExpiry,
+  );
+
+  const laterByTimestamp = '2026-05-20T00:00:00-05:00';
+  const earlierByTimestamp = '2026-05-20T03:00:00Z';
+  const mixedOffsets = resolveEffectiveEntitlement({
+    proTrial: { expiresAtIso: laterByTimestamp },
+    referralGrant: { expiresAtIso: earlierByTimestamp },
+    now: EFFECTIVE_ENTITLEMENT_NOW,
+  });
+  assert.deepEqual(mixedOffsets.activeSources, ['pro-trial-active', 'referral-grant-active']);
+  assert.equal(mixedOffsets.nextExpiryIso, earlierByTimestamp);
+
+  const trialExpiry = '2026-05-20T05:00:00Z';
+  const referralExpiry = '2026-05-20T00:00:00-05:00';
+  const equalAbsoluteExpiry = resolveEffectiveEntitlement({
+    proTrial: { expiresAtIso: trialExpiry },
+    referralGrant: { expiresAtIso: referralExpiry },
+    now: EFFECTIVE_ENTITLEMENT_NOW,
+  });
+  assert.equal(equalAbsoluteExpiry.nextExpiryIso, trialExpiry);
+});
+
+test('effective entitlement primary source keeps Remove Ads and Pro Lifetime stable', () => {
+  const { resolveEffectiveEntitlement, timeBoundedExpiry } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+
+  const removeAdsOnly = resolveEffectiveEntitlement({
+    removeAds: EFFECTIVE_REMOVE_ADS_ENTITLEMENTS,
+    now: EFFECTIVE_ENTITLEMENT_NOW,
+  });
+  assert.equal(removeAdsOnly.primarySource, 'remove-ads');
+  assert.deepEqual(removeAdsOnly.activeSources, ['remove-ads']);
+  assert.equal(removeAdsOnly.entitlements.adsDisabled, true);
+  assert.equal(removeAdsOnly.entitlements.spacedRepetition, false);
+  assert.equal(removeAdsOnly.entitlements.unlimitedMockExams, false);
+  assert.equal(removeAdsOnly.nextExpiryIso, null);
+  assert.equal(
+    timeBoundedExpiry({
+      removeAds: EFFECTIVE_REMOVE_ADS_ENTITLEMENTS,
+      now: EFFECTIVE_ENTITLEMENT_NOW,
+    }),
+    null,
+  );
+
+  const trialExpiry = '2026-05-24T12:00:00.000Z';
+  const lifetimeWithTrial = resolveEffectiveEntitlement({
+    proLifetime: EFFECTIVE_PRO_LIFETIME_ENTITLEMENTS,
+    proTrial: { expiresAtIso: trialExpiry },
+    now: EFFECTIVE_ENTITLEMENT_NOW,
+  });
+  assert.equal(lifetimeWithTrial.primarySource, 'pro-lifetime');
+  assert.deepEqual(lifetimeWithTrial.activeSources, ['pro-lifetime', 'pro-trial-active']);
+  assert.equal(lifetimeWithTrial.entitlements.adsDisabled, true);
+  assert.equal(lifetimeWithTrial.entitlements.spacedRepetition, true);
+  assert.equal(lifetimeWithTrial.nextExpiryIso, trialExpiry);
+  assert.equal(
+    timeBoundedExpiry({
+      proLifetime: EFFECTIVE_PRO_LIFETIME_ENTITLEMENTS,
+      now: EFFECTIVE_ENTITLEMENT_NOW,
+    }),
+    null,
+  );
+  assert.equal(timeBoundedExpiry({ now: EFFECTIVE_ENTITLEMENT_NOW }), null);
 });
 
 test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async () => {
