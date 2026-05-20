@@ -24,26 +24,31 @@ function loadTs(rel) {
 
 // Test fixtures: a minimal in-memory provider + storage.
 
-function makeMockProvider({ owned = false } = {}) {
+function makeMockProvider({ events = [], owned = false } = {}) {
   let connected = false;
   let ownsPro = owned;
   return {
     async connect() {
+      events.push('connect');
       connected = true;
     },
     async disconnect() {
+      events.push('disconnect');
       connected = false;
     },
-    async finishPurchase() {
+    async finishPurchase(purchase) {
       if (!connected) throw new Error('not connected');
+      events.push(`finish:${purchase.productId}`);
     },
     async requestRemoveAdsPurchase(productId) {
       if (!connected) throw new Error('not connected');
+      events.push(`request:${productId}`);
       ownsPro = true;
       return { productId, purchaseToken: 'tok', transactionId: 'tx', raw: { ids: [productId] } };
     },
     async restorePurchases(productIds) {
       if (!connected) throw new Error('not connected');
+      events.push(`restore:${productIds.join(',')}`);
       if (!ownsPro) return [];
       const id = productIds[0];
       return [{ productId: id, purchaseToken: 'tok', transactionId: 'tx', raw: { ids: [id] } }];
@@ -51,13 +56,15 @@ function makeMockProvider({ owned = false } = {}) {
   };
 }
 
-function makeMemoryStorage() {
+function makeMemoryStorage({ events = [], failSet = false } = {}) {
   const store = new Map();
   return {
     async getItemAsync(k) {
       return store.get(k) ?? null;
     },
     async setItemAsync(k, v) {
+      events.push(`set:${k}:${v}`);
+      if (failSet) throw new Error('secure store write failed');
       store.set(k, v);
     },
     async deleteItemAsync(k) {
@@ -105,6 +112,43 @@ test('buyProLifetime: fresh buy persists entitlement and returns purchased statu
   assert.equal(result.entitlements.unlimitedMockExams, true);
   const post = await getProLifetimeEntitlement({ storage });
   assert.equal(post.spacedRepetition, true);
+});
+
+test('buyProLifetime: persists Pro entitlement before finishing the store purchase', async () => {
+  const { buyProLifetime, PRO_LIFETIME_STORAGE_KEY } = loadTs(
+    'lib/monetization/proLifetimePurchase.ts',
+  );
+  const events = [];
+  const storage = makeMemoryStorage({ events });
+  const result = await buyProLifetime({ provider: makeMockProvider({ events }), storage });
+
+  const persistIndex = events.indexOf(`set:${PRO_LIFETIME_STORAGE_KEY}:true`);
+  const finishIndex = events.findIndex((event) => event.startsWith('finish:'));
+
+  assert.equal(result.status, 'purchased');
+  assert.notEqual(persistIndex, -1, 'Pro entitlement should be persisted');
+  assert.notEqual(finishIndex, -1, 'store purchase should be finished after persistence');
+  assert.ok(
+    persistIndex < finishIndex,
+    `expected persistence before finish, got ${events.join(' -> ')}`,
+  );
+});
+
+test('buyProLifetime: persistence failure stays pending and does not finish purchase', async () => {
+  const { buyProLifetime } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const events = [];
+  const storage = makeMemoryStorage({ events, failSet: true });
+  const result = await buyProLifetime({ provider: makeMockProvider({ events }), storage });
+
+  assert.equal(result.status, 'pending');
+  assert.equal(result.failureReason, 'entitlement_persistence_failed');
+  assert.equal(result.entitlements.spacedRepetition, false);
+  assert.equal(result.purchaseToken, 'tok');
+  assert.equal(
+    events.some((event) => event.startsWith('finish:')),
+    false,
+  );
+  assert.equal(events.at(-1), 'disconnect');
 });
 
 test('restoreProLifetime: with no prior purchase returns not_found', async () => {
