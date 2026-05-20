@@ -1183,12 +1183,12 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q071',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Statligt finansierad välfärd', pageApprox: 30 },
-    'Vad finansierar staten inom välfärden?',
-    'What does the state finance within welfare?',
+    'Vad finansierar staten inom högre utbildning och forskning?',
+    'What does the state finance within higher education and research?',
     [
       [
-        'Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag',
-        'Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance',
+        'Högre utbildning och forskning vid högskolor och universitet',
+        'Higher education and research at colleges and universities',
       ],
       [
         'Sjukhus, vårdcentraler och regional sjukvård',
@@ -1204,9 +1204,9 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet.',
-    'The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.',
-    ['state-welfare', 'pensions', 'child-allowance', 'study-support'],
+    'Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg.',
+    'The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.',
+    ['state-welfare', 'higher-education', 'research', 'universities'],
   ),
   single(
     'q072',
