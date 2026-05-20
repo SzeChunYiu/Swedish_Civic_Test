@@ -25,7 +25,6 @@ function daysAfter(baseIso, days) {
 
 test('spaced repetition schema validates schedule intervals and runtime parity', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
