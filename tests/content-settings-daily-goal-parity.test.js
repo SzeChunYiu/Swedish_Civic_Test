@@ -26,7 +26,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-settings-store');
+process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -50,7 +50,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-settings-store');
+process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -148,7 +148,7 @@ function loadDailyGoalFromStorage(storedValue) {
 test('daily goal settings stay in parity between storage and settings controls', () => {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-settings-store'],
+    ['scripts/validate-content.js', '--focus-settings-parity'],
     {
       encoding: 'utf8',
     },

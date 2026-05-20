@@ -8583,15 +8583,24 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-store')) {
+if (
+  process.argv.includes('--focus-settings-store') ||
+  process.argv.includes('--focus-settings-parity')
+) {
+  validateSettingsRouteHeaderParity();
   validateSettingsRouteCopyParity();
+  validateSettingsRouteScrollParity();
   validateSettingsStoreSchemaParity();
   validateSettingsDailyGoalParity();
   validateSettingsAudioParity();
   exitWithValidationFailures();
   printValidationSummary({
+    settingsRouteHeadersValidated,
+    settingsRouteHeaderParityValidated,
     settingsRouteCopyLabelsValidated,
     settingsRouteCopyParityValidated,
+    settingsRouteScrollRulesValidated,
+    settingsRouteScrollParityValidated,
     settingsStoreFieldsValidated,
     settingsStoreSchemaParityValidated,
     settingsDailyGoalOptionsValidated,
@@ -13346,6 +13355,12 @@ function validateSettingsDailyGoalParity() {
   }
   if (!normalizedSettingsStore.includes('return normalizeDailyGoalAnswers(storedValue);')) {
     reject('readDailyGoalAnswers must normalize the raw persisted value');
+  }
+  if (!normalizedSettingsStore.includes('const storedDailyGoalOptions = [5, 10, 20, 40];')) {
+    reject('settings store must define the persisted daily-goal option set');
+  }
+  if (!normalizedSettingsStore.includes('storedDailyGoalOptions.includes(answerCount)')) {
+    reject('readDailyGoalAnswers must only hydrate stored daily-goal values from shipped options');
   }
   if (settingsStore.includes('storedValue && storedValue > 0 ? storedValue : 10')) {
     reject('readDailyGoalAnswers must not hydrate raw positive persisted values');
