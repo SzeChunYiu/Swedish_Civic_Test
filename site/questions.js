@@ -1992,7 +1992,7 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet",
+        "sv": "Politikerna behöver inte följa resultatet",
         "zh-Hant": "政治人物不一定必須遵循結果",
         "zh-Hans": "政治人物不一定必须遵循结果",
         "ar": "لا يجب على السياسيين بالضرورة اتباع النتيجة",
@@ -2050,7 +2050,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.",
       "zh-Hant": "公投可以就某個特定問題在全國、地區或市鎮舉行。它們是諮詢性的，所以政治人物不一定必須遵循結果。",
       "zh-Hans": "公投可以就某个特定问题在全国、地区或市镇举行。它们是咨询性的，所以政治人物不一定必须遵循结果。",
       "ar": "يمكن إجراء الاستفتاءات حول مسألة معينة على المستوى الوطني أو في إقليم أو بلدية. وهي استشارية، لذلك لا يجب على السياسيين بالضرورة اتباع النتيجة.",
@@ -22428,7 +22428,7 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet",
+        "sv": "Politikerna behöver inte följa resultatet",
         "zh-Hant": "政治人物不一定必須遵循結果",
         "zh-Hans": "政治人物不一定必须遵循结果",
         "ar": "لا يجب على السياسيين بالضرورة اتباع النتيجة",
@@ -22486,7 +22486,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22511,7 +22511,7 @@
     "type": "true_false",
     "q": {
       "en": "That referendums in Sweden are advisory means politicians do not have to follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet."
+      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet."
     },
     "opts": [
       {
@@ -22526,7 +22526,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22551,7 +22551,7 @@
     "type": "true_false",
     "q": {
       "en": "That referendums in Sweden are advisory means politicians must always follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste alltid följa resultatet."
+      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet."
     },
     "opts": [
       {
@@ -22566,7 +22566,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22596,7 +22596,7 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet",
+        "sv": "Politikerna behöver inte följa resultatet",
         "zh-Hant": "政治人物不一定必須遵循結果",
         "zh-Hans": "政治人物不一定必须遵循结果",
         "ar": "لا يجب على السياسيين بالضرورة اتباع النتيجة",
@@ -22654,7 +22654,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
