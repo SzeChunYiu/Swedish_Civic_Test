@@ -28,7 +28,8 @@
 - Machine-readable external gate evidence: `reports/release-gates.json`
 - Post-EAS-auth runbook: `publishing/post-eas-auth-runbook.md`
 - Filled release evidence: `reports/release-evidence-2026-05-15.md`
-- v1.0 ads deferred evidence: `reports/2026-05-15-v1-ads-deferred.md`
+- Historical ad-posture evidence superseded by the current ad-supported gate:
+  `reports/2026-05-15-v1-ads-deferred.md`
 - Web export smoke evidence: `reports/2026-05-15-web-export-smoke.md`
 - Expo Doctor evidence: `reports/2026-05-15-expo-doctor.md`
 - Native prebuild smoke evidence: `reports/2026-05-15-native-prebuild-smoke.md`
@@ -53,7 +54,10 @@
 - Google Play internal test release.
 - Android device audio verification.
 - iOS device audio verification.
-- Real ads and RevenueCat are deferred for v1.0. Re-enable only after AdMob/product setup plus privacy and data-safety review.
+- Final ad-supported submission evidence remains blocked until AdMob app/unit IDs,
+  app-ads.txt review, ATT/UMP consent evidence, the 29 SEK Remove Ads
+  non-consumable IAP records, and privacy/data-safety review are recorded for the
+  generated binary.
 
 ## Executable blocker check
 
@@ -69,6 +73,8 @@ external/device/store gate has concrete evidence. It is intentionally
 fail-closed; update both `reports/release-gates.json` and the dated release
 evidence file when external evidence is collected.
 
-## If live SDKs are enabled before release
+## Before submitting with live SDKs
 
-Re-run privacy review before submitting store metadata. Real ad, purchase, analytics, crash, or support SDKs can change Apple privacy labels and Google Play Data safety answers.
+Re-run privacy review before submitting store metadata. Real ad, purchase,
+analytics, crash, or support SDKs can change Apple privacy labels and Google
+Play Data safety answers.
