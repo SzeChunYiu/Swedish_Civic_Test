@@ -2774,12 +2774,12 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q140',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Jul', pageApprox: 47 },
-    'Vilket påstående stämmer om julfirande i Sverige?',
-    'Which statement is correct about Christmas celebrations in Sweden?',
+    'Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?',
+    'How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
     [
       [
-        'Många firar jul som en familjehögtid även utan religiös betydelse',
-        'Many people celebrate Christmas as a family holiday even without religious meaning',
+        'Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem',
+        'Many people celebrate Christmas as a family holiday even when it has no religious meaning for them',
       ],
       [
         'Jul firas alltid med demonstrationer om sociala frågor',
@@ -2795,8 +2795,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider.',
-    'Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.',
+    'Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider.',
+    'Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.',
     ['christmas', 'family-holiday', 'secular-celebration', 'traditions'],
     'easy',
   ),
