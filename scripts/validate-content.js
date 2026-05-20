@@ -866,6 +866,43 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
+const EXPECTED_PUBLIC_SUPPORT_PRIVACY_BRAND_ARTIFACTS = [
+  {
+    file: 'publishing/public-support-and-privacy.md',
+    requiredSnippets: [
+      'Support URL',
+      'Privacy Policy URL',
+      'AdMob app-ads.txt',
+      '# Almost Swedish support',
+      '# Almost Swedish privacy policy',
+    ],
+  },
+  {
+    file: 'publishing/public-site/support/index.html',
+    requiredSnippets: [
+      '<title>Almost Swedish support</title>',
+      '<h1>Almost Swedish support</h1>',
+      'not affiliated with UHR',
+      'Please include no personal data',
+    ],
+  },
+  {
+    file: 'publishing/public-site/privacy/index.html',
+    requiredSnippets: [
+      '<title>Almost Swedish privacy policy</title>',
+      '<h1>Almost Swedish privacy policy</h1>',
+      'No account required',
+      'Google Mobile Ads',
+      'Remove Ads is an optional one-time',
+      '29 SEK',
+    ],
+  },
+];
+const STALE_PUBLIC_SUPPORT_PRIVACY_BRAND_PATTERNS = [
+  /Sweden Citizenship Test Prep/i,
+  /Swedish Citizenship Test Prep/i,
+  /Sveriges Medborgartest/i,
+];
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',
@@ -5998,6 +6035,8 @@ let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
+let publicSupportPrivacyBrandFilesValidated = 0;
+let publicSupportPrivacyBrandParityValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let tabNavigationRulesValidated = 0;
@@ -6496,6 +6535,72 @@ function validateAppConfigSchema() {
 
   if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
     appConfigSchemaValidated = true;
+  }
+}
+
+function validatePublicSupportPrivacyBrandParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  publicSupportPrivacyBrandFilesValidated = 0;
+  publicSupportPrivacyBrandParityValidated = false;
+
+  const brand = appConfig?.expo?.name;
+  if (!hasText(brand)) {
+    reject('app.json expo.name must define the canonical public app brand');
+    return;
+  }
+
+  publicSupportPrivacyBrandFilesValidated += 1;
+
+  for (const artifact of EXPECTED_PUBLIC_SUPPORT_PRIVACY_BRAND_ARTIFACTS) {
+    let artifactValid = true;
+    let source = '';
+
+    function rejectArtifact(message) {
+      artifactValid = false;
+      reject(message);
+    }
+
+    try {
+      source = loadText(artifact.file);
+    } catch (error) {
+      rejectArtifact(`${artifact.file} is missing or unreadable: ${error.message}`);
+      continue;
+    }
+
+    for (const pattern of STALE_PUBLIC_SUPPORT_PRIVACY_BRAND_PATTERNS) {
+      if (pattern.test(source)) {
+        rejectArtifact(`${artifact.file} uses stale public brand copy: ${pattern}`);
+      }
+    }
+
+    const canonicalBrandPattern = new RegExp(escapeRegExp(brand), 'i');
+    if (!canonicalBrandPattern.test(source)) {
+      rejectArtifact(`${artifact.file} missing canonical app brand "${brand}"`);
+    }
+
+    for (const snippet of artifact.requiredSnippets) {
+      if (!source.includes(snippet)) {
+        rejectArtifact(`${artifact.file} missing required public support/privacy copy: ${snippet}`);
+      }
+    }
+
+    if (artifactValid) {
+      publicSupportPrivacyBrandFilesValidated += 1;
+    }
+  }
+
+  if (
+    valid &&
+    publicSupportPrivacyBrandFilesValidated ===
+      EXPECTED_PUBLIC_SUPPORT_PRIVACY_BRAND_ARTIFACTS.length + 1
+  ) {
+    publicSupportPrivacyBrandParityValidated = true;
   }
 }
 
@@ -13696,6 +13801,7 @@ validateMockExamConfig(
     : 0,
 );
 validateAppConfigSchema();
+validatePublicSupportPrivacyBrandParity();
 validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
@@ -13805,6 +13911,8 @@ console.log(
       chapterExactSchemaKeysValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
+      publicSupportPrivacyBrandFilesValidated,
+      publicSupportPrivacyBrandParityValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       tabNavigationRulesValidated,

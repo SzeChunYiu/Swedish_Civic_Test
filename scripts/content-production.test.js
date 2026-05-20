@@ -18,6 +18,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.chapterExactSchemaKeysValidated, 13);
   assert.equal(summary.appConfigPluginsValidated, 5);
   assert.equal(summary.appConfigSchemaValidated, true);
+  assert.equal(summary.publicSupportPrivacyBrandFilesValidated, 4);
+  assert.equal(summary.publicSupportPrivacyBrandParityValidated, true);
   assert.equal(summary.launchAdSuppressedRoutesValidated, 8);
   assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
   assert.equal(summary.tabNavigationRulesValidated, 11);
