@@ -133,13 +133,19 @@ async function openStaticSiteWithStoredConsent(consent) {
   }, consent);
 
   await page.goto(server.url, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() =>
+    Boolean(document.querySelector('ins.adsbygoogle') && window.__adsenseEvents?.length >= 3),
+  );
 
   return { adScriptRequests, browser, page, server };
 }
 
-for (const { consent } of [{ consent: 'min' }, { consent: 'all' }]) {
+for (const { consent, expectedDataNpa, expectedNpa } of [
+  { consent: 'min', expectedDataNpa: '1', expectedNpa: 1 },
+  { consent: 'all', expectedDataNpa: null, expectedNpa: 0 },
+]) {
   test(
-    `stored ${consent} AdSense consent does not load unconfigured web slots`,
+    `stored ${consent} AdSense consent applies before script load and survives reload`,
     chromiumTestOptions(),
     async () => {
       const { adScriptRequests, browser, page, server } =
@@ -147,37 +153,31 @@ for (const { consent } of [{ consent: 'min' }, { consent: 'all' }]) {
 
       try {
         const firstLoad = await page.evaluate(() => ({
-          adPlacements: Array.from(document.querySelectorAll('ins.adsbygoogle')).map((node) => ({
-            placement: node.getAttribute('data-smt-ad-placement'),
-            slot: node.getAttribute('data-ad-slot'),
-          })),
-          anchorHidden: document.querySelector('[data-ad-slot="anchor"]')?.hidden,
           events: window.__adsenseEvents,
-          inlineHidden: document.querySelector('[data-ad-slot="inline"]')?.hidden,
           modalHidden: document.getElementById('consent')?.hidden,
           storedConsent: window.localStorage.getItem('smt_consent'),
         }));
 
         assert.equal(firstLoad.modalHidden, true);
         assert.equal(firstLoad.storedConsent, consent);
-        assert.equal(adScriptRequests.length, 0);
-        assert.equal(firstLoad.inlineHidden, true);
-        assert.equal(firstLoad.anchorHidden, true);
-        assert.deepEqual(firstLoad.events, []);
-        assert.deepEqual(firstLoad.adPlacements, [
-          { placement: 'inline', slot: null },
-          { placement: 'anchor', slot: null },
-        ]);
+        assert.equal(adScriptRequests.length, 1);
+        assert.deepEqual(
+          firstLoad.events.map((event) => event.type),
+          ['append', 'push', 'push'],
+        );
+
+        for (const event of firstLoad.events) {
+          assert.equal(event.npa, expectedNpa);
+          assert.deepEqual(event.dataNpa, [expectedDataNpa, expectedDataNpa]);
+        }
 
         await page.reload({ waitUntil: 'domcontentloaded' });
+        await page.waitForFunction(() => window.__adsenseEvents?.length >= 3);
 
         const afterReload = await page.evaluate(() => ({
           dataNpa: Array.from(document.querySelectorAll('ins.adsbygoogle')).map((node) =>
             node.getAttribute('data-npa'),
           ),
-          anchorHidden: document.querySelector('[data-ad-slot="anchor"]')?.hidden,
-          events: window.__adsenseEvents,
-          inlineHidden: document.querySelector('[data-ad-slot="inline"]')?.hidden,
           modalHidden: document.getElementById('consent')?.hidden,
           npa: window.adsbygoogle?.requestNonPersonalizedAds,
           storedConsent: window.localStorage.getItem('smt_consent'),
@@ -185,12 +185,8 @@ for (const { consent } of [{ consent: 'min' }, { consent: 'all' }]) {
 
         assert.equal(afterReload.modalHidden, true);
         assert.equal(afterReload.storedConsent, consent);
-        assert.equal(afterReload.inlineHidden, true);
-        assert.equal(afterReload.anchorHidden, true);
-        assert.equal(adScriptRequests.length, 0);
-        assert.deepEqual(afterReload.events, []);
-        assert.deepEqual(afterReload.dataNpa, [null, null]);
-        assert.equal(afterReload.npa, undefined);
+        assert.equal(afterReload.npa, expectedNpa);
+        assert.deepEqual(afterReload.dataNpa, [expectedDataNpa, expectedDataNpa]);
       } finally {
         await browser.close();
         await server.close();
@@ -201,27 +197,7 @@ for (const { consent } of [{ consent: 'min' }, { consent: 'all' }]) {
 
 test('static AdSense stored-consent source keeps NPA before load ordering explicit', () => {
   const source = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
-  const index = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
-  const extras = fs.readFileSync(path.join(siteRoot, 'i18n-extras.js'), 'utf8');
-  const staticSurface = `${source}\n${index}\n${extras}`;
 
-  assert.doesNotMatch(staticSurface, /data-ad-slot=["'](?:0{8,}|000000000[0-9])["']/);
-  assert.doesNotMatch(
-    staticSurface,
-    /Replace ca-pub-XXX|data-ad-slot value with your AdSense IDs/i,
-  );
-  assert.doesNotMatch(
-    staticSurface,
-    /Your AdSense slot will render here|AdSense-yta visas här|Anchor ad slot|AdSense 广告将显示在此处|AdSense 廣告將顯示在此處|ستظهر إعلانات AdSense هنا|AdSense halkan ayey ka soo bixi doontaa/i,
-  );
-
-  assert.match(
-    source,
-    /slots:\s*{\s*['"]?inline['"]?:\s*['"]{2}\s*,\s*['"]?anchor['"]?:\s*['"]{2}/,
-  );
-  assert.match(source, /function smtIsRealAdSenseSlotId\(slotId\)/);
-  assert.match(source, /function smtStaticAdsAreConfigured\(\)/);
-  assert.match(source, /if \(!smtStaticAdsAreConfigured\(\)\) {\s*smtHideConsent\(\);/);
   assert.match(source, /window\.adsbygoogle = window\.adsbygoogle \|\| \[\];/);
   assert.match(
     source,

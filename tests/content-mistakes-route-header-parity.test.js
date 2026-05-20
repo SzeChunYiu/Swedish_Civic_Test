@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -26,9 +25,9 @@ test('mistakes route title, review sections, and empty state stay accessible as 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Misstag/);
-  assert.match(source, /Inga misstag ännu/);
-  assert.match(source, /Fel svar att repetera/);
+  assert.match(source, /Missade frågor/);
+  assert.match(source, /Inga missade frågor ännu/);
+  assert.match(source, /Frågor att öva igen/);
   assert.match(source, /Mistakes/);
   assert.match(
     source,
