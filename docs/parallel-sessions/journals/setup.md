@@ -1201,3 +1201,92 @@ Verification: clean worktree from current `origin/main` `5ccf15d`; `NODE_OPTIONS
 PR: pending from current SETUP audit branch at handoff commit time.
 Blocked? yes - no fresh unblocked local SETUP source atom was found; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: keep SETUP source-held unless fresh P0 site/release source evidence appears; keep production freshness separate until production serves current main and passes the hash-aware live smoke.
+
+## Iteration 252 - 2026-05-19
+
+Task completed: AUDIO-FEEDBACK-PLAYBACK-1 - added post-answer Swedish feedback audio for Practice and routed Quiz, with localized play/stop controls that read the selected answer, the correct answer when different, and the Swedish explanation while keeping source/provenance text separate.
+Artifacts changed: `components/learning/FeedbackAudioButton.tsx`, `lib/audio/speak.ts`, `app/(tabs)/practice.tsx`, `app/quiz/[sessionId].tsx`, `scripts/audio.test.js`, `tests/content-audio-button-accessibility-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `7a6e873d`; linked shared ignored `node_modules`; `node --test scripts/audio.test.js tests/content-audio-button-accessibility-parity.test.js tests/content-practice-flow-parity.test.js tests/content-chapter-quiz-session-parity.test.js` exit 0 with 13/13 passing; `npm run validate:content` exit 0 with `audioButtonAccessibilityParityValidated:true`, `questionSpeechTextParityValidated:true`, and `speechRuntimeParityValidated:true`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0; targeted Prettier write unchanged; `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 npm run build:web:export -- --max-workers 2` exit 0. Exported-web browser route smoke was attempted against local `dist-web`, but current main throws `No routes found` before route render; this matches the separately queued export route-context work and did not exercise this audio UI.
+PR: pending from `task/setup/audio-feedback-playback-1779210506` at handoff commit time.
+Blocked? no for the source audio-feedback atom; rendered static-route smoke remains blocked by the unrelated web export route-context issue, and no Vercel CLI was run.
+Next suggested validator action: inspect feedback audio on Practice and `/quiz/<id>`, rerun the focused audio/parity checks plus `npm run validate:content`; repeat rendered browser coverage after the export route-context blocker is fixed.
+
+## Iteration 253 - 2026-05-19
+
+Task completed: SCHEDULED-DEPLOY-THIRTY-MINUTE-CADENCE-GUARD-1 - aligned the scheduled Deploy Hook workflow to the repo's 30-minute cadence and added a build-config guard rejecting 15-minute drift while preserving the no-Vercel-CLI path.
+Artifacts changed: `.github/workflows/scheduled-deploy.yml`, `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main`; linked shared ignored `node_modules`; focused `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 43/43 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 770 questions and static parity true; first typecheck attempt failed before linking dependencies because the temp worktree had no `node_modules`, then `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0 after linking; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check and `git diff --check` exit 0; direct workflow scan shows `cron: '*/30 * * * *'` and no workflow `VERCEL_TOKEN`, `vercel@latest`, `vercel deploy`, `.vercel/project.json`, or `npx --yes vercel` deploy path.
+PR: pending from `task/scheduled-deploy-cadence-1779200400` at handoff commit time.
+Blocked? no for this release/deploy source guard; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
+Next suggested validator action: inspect the scheduled workflow cadence guard and rerun `npm run test:build-config` plus workflow source scan before acceptance.
+
+## Iteration 254 - 2026-05-19
+
+Task completed: AD-COPY-SV-REWARDED-OVNINGSPROV-LABEL-1 - changed the shared Swedish rewarded extra-exam ad label from bare `extra prov` wording to `Annons för extra övningsprov`, and added validator/source guards for web/native ad labels plus the adjacent Remove Ads CTA title path.
+Artifacts changed: `lib/monetization/adCopy.ts`, `scripts/validate-content.js`, `scripts/monetization.test.js`, `tests/content-ad-placement-route-parity.test.js`, `scripts/ui-effects.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `2086b964`; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/monetization.test.js tests/content-ad-placement-route-parity.test.js scripts/ui-effects.test.js` exit 0 with 100/100 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `adCopySvRewardedPracticeExamCasesValidated:7` and `adCopySvRewardedPracticeExamNaturalnessValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0; `node --check` for the changed JS test/validator files exit 0; `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0.
+PR: pending from `task/ad-copy-sv-rewarded-pane2-1779228086` at handoff commit time.
+Blocked? no for this ad-copy naturalness guard.
+Next suggested validator action: inspect the shared rewarded ad copy and rerun `npm run validate:content` plus the focused monetization/ad-placement/UI tests before accepting the route.
+
+## Iteration 255 - 2026-05-20
+
+Task completed: STATIC-HERO-PASSPORT-OUTCOME-COPY-1 follow-up - neutralized the static no-JS hero/footer fallback slogans and expanded the shared outcome-copy guard to scan `site/index.html`.
+Artifacts changed: `site/index.html`, `scripts/static-outcome-copy-guard.js`, `scripts/compliance-pages.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `3590ee03`; linked shared ignored `node_modules`; `node --test scripts/compliance-pages.test.js scripts/static-site-source-provenance-copy.test.js tests/content-static-site-ebook-parity.test.js --test-name-pattern 'compliance|ebook|source|pass|guarantee|outcome|static'` exit 0 with 18/18 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `staticSiteOutcomeSloganParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check scripts/static-outcome-copy-guard.js` and `node --check scripts/compliance-pages.test.js` exit 0; targeted Prettier check exit 0; direct `findUnsupportedStaticOutcomeSlogans()` scan returned `[]`; direct `rg` scan for the listed pass/passport slogans across `site/index.html`, `site/app.js`, `site/i18n-extras.js`, `site/buddies.js`, and `site/tweaks.jsx` returned no matches; `git diff --check` exit 0.
+PR: pending from `task/setup/static-hero-fallback-copy-1779229718-4134892` at handoff commit time.
+Blocked? no for this static outcome-copy guard follow-up; no Vercel CLI was run.
+Next suggested validator action: inspect the no-JS fallback copy and rerun the shared static outcome-copy guard tests before accepting `STATIC-HERO-PASSPORT-OUTCOME-COPY-1`.
+
+## Iteration 258 - 2026-05-20
+
+Task completed: STATIC-ADSENSE-STORED-CONSENT-BROWSER-GUARD-1 - set `adsbygoogle.requestNonPersonalizedAds` before static AdSense loads and added served-browser coverage for returning visitors with stored `min` and `all` consent.
+Artifacts changed: `site/app.js`, `scripts/static-site-adsense-consent-browser.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main`; `npm run test:static-site-adsense-consent-browser` exit 0 with 3/3 passing; `npm run validate:content` exit 0 with 770 questions and `staticSiteQuestionBankParityValidated:true`; `node --test scripts/static-site-adsense-consent-browser.test.js scripts/static-site-privacy-copy.test.js scripts/static-site-mobile-nav.test.js scripts/check-live-site.test.js` exit 0 with 18/18 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `git diff --check` exit 0. The browser guard seeds `smt_consent=min` and `smt_consent=all` before first navigation, fakes `pagead2.googlesyndication.com`, verifies the consent modal stays hidden, confirms localStorage survives reload, checks `ins.adsbygoogle` `data-npa`, checks `window.adsbygoogle.requestNonPersonalizedAds`, and requires script append before the two ad pushes with NPA already applied.
+PR: pending from `task/adsense-stored-consent-1779235600` at handoff commit time.
+Blocked? no for this static AdSense stored-consent guard; no Vercel CLI was run.
+Next suggested validator action: inspect the static consent ordering fix and rerun `npm run test:static-site-adsense-consent-browser` plus the grouped static browser/privacy/mobile/live-site checks before accepting.
+
+## Iteration 259 - 2026-05-20
+
+Task completed: PLAYWRIGHT-E2E-PORT-CONFIG-GUARD-1 - made the exported-web Playwright server port derive from `E2E_PORT`, default to 4173, and pass the selected port to `serve-dist-web.cjs` through `PORT` with a build-config regression guard.
+Artifacts changed: `playwright.config.ts`, `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main` after claim commit `17a46abe`; `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'Playwright exported-web server port is configurable per worker' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 45/45 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 795 questions and static parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `E2E_PORT=4188 npx --no-install playwright test --list` exit 0 listing 36 tests; targeted Prettier check and `git diff --check` exit 0.
+PR: pending from `task/setup/playwright-e2e-port-guard-1779234942` at handoff commit time.
+Blocked? no for this e2e port-config guard.
+Next suggested validator action: inspect the Playwright config port wiring and rerun `npm run test:build-config`, typecheck, and an `E2E_PORT=<free-port> npx playwright test --list` smoke before accepting.
+
+## Iteration 260 - 2026-05-20
+
+Task completed: STATIC-SV-MOCK-EXAM-TERM-BROWSER-GUARD-1 - added rendered static-site browser coverage for Swedish/English mock-exam wording across Home, Support, mobile nav, footer, and `#/mock`, and restored the localized footer route link that the guard requires.
+Artifacts changed: `site/index.html`, `tests/e2e/static-site-sv-mock-exam-copy.spec.ts`, `scripts/static-site-question-count-copy.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `9e023246`; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/static-site-sv-mock-exam-copy.spec.ts --workers=1` exit 0 with 1/1 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `node --test scripts/static-site-question-count-copy.test.js scripts/static-site-mobile-nav.test.js` exit 0 with 9/9 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; repo format check plus targeted Prettier for the new static/e2e files exit 0; `git diff --check` exit 0.
+PR: pending from `setup/static-sv-mock-exam-browser-guard-1779236573` at handoff commit time.
+Blocked? no for this static browser wording/reachability guard; no Vercel CLI was run.
+Next suggested validator action: inspect the rendered static browser guard and rerun the focused e2e, content validation, and grouped static source/mobile-nav checks before accepting `STATIC-SV-MOCK-EXAM-TERM-BROWSER-GUARD-1`.
+
+## Iteration 261 - 2026-05-20
+
+Task completed: NATIVE-EBOOK-HIGHLIGHTS-SURFACE-1 bounded SETUP cleanup - stopped the native Pro tier table from advertising ebook highlights and notes export while the native app has no ebook route, keeping the tested local highlight store primitive for a future real reader surface.
+Artifacts changed: `lib/monetization/tierComparison.ts`, `tests/v1-1-pro-foundations.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `1260753b`; `node --test tests/v1-1-highlights-store.test.js tests/v1-1-effective-entitlements.test.js tests/content-learn-route-copy-parity.test.js tests/content-profile-route-copy-parity.test.js scripts/ui-effects.test.js tests/v1-1-pro-foundations.test.js` exit 0 with 129/129 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; repo format check plus targeted Prettier for changed files exit 0; `git diff --check` exit 0.
+PR: pending from `setup/native-ebook-pro-promise-1779237259` at handoff commit time.
+Blocked? no for this bounded native Pro promise cleanup; the full native ebook reader/highlight surface remains a future product task.
+Next suggested validator action: inspect the tier comparison rows and rerun the focused Pro/highlight/profile checks before accepting `NATIVE-EBOOK-HIGHLIGHTS-SURFACE-1`.
+
+## Iteration 262 - 2026-05-20
+
+Task completed: RELEASE-PREFLIGHT-ALLOWED-DIRTY-FIRST-LINE-1 - preserved leading `git status --porcelain` columns in release-preflight command output so allowed dirty-path parsing works for the first modified line, and added a regression fixture for an allowed first-line modified file plus an allowed later untracked report.
+Artifacts changed: `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `codex-tasks/claims.txt`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `25549d24`; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/release-preflight.test.js --test-name-pattern 'dirty|allowed'` exit 0 with 57/57 passing before rebase; after rebase, `NODE_OPTIONS='--v8-pool-size=1' npm run test:release-preflight` exit 0 with 58/58 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 795 questions and static parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0 after excluding raw `codex-tasks/claims.txt`; `git diff --check` exit 0.
+Blocked? no for this release-health parser guard.
+Next suggested validator action: inspect the release-preflight output trimming change and rerun `npm run test:release-preflight`, the focused dirty/allowed test slice, typecheck, validate-content, ownership, and diff checks before accepting.
+
+## Iteration 264 - 2026-05-20
+
+Task completed: AUDIO-FEEDBACK-E2E-GUARD-1 - added exported-web Playwright coverage for localized post-answer feedback audio controls on Practice and routed Quiz, including 390x844 mobile rendering, pre-answer absence, >=44px touch targets, deterministic play-to-stop label toggles, and active mock-exam absence.
+Artifacts changed: `tests/e2e/practice-feedback.spec.ts`, `codex-tasks/claims.txt`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `e7dceace`; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` exit 0 with 9/9 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `audioButtonAccessibilityParityValidated:true`, `questionSpeechTextParityValidated:true`, `speechRuntimeParityValidated:true`, and 795 questions; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/audio.test.js tests/content-audio-button-accessibility-parity.test.js` exit 0 with 10/10 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `npx prettier --check tests/e2e/practice-feedback.spec.ts` exit 0; `git diff --check` exit 0.
+PR: pending from `task/audio-feedback-e2e-1779243568` at handoff commit time.
+Blocked? no for this rendered audio-feedback guard; no Vercel CLI was run.
+Next suggested validator action: inspect the Playwright speech stub and feedback-control assertions, then rerun the focused exported-web build/e2e, audio parity tests, and content validation before accepting `AUDIO-FEEDBACK-E2E-GUARD-1`.
