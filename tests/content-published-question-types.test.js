@@ -23,6 +23,12 @@ const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
+const workersDayHolidayEnglishPatterns = [
+  /\bDemonstrations on workers[’'] day\b/i,
+  /\bHolding demonstrations on workers[’'] day\b/i,
+  /\bWorkers[’'] day with demonstrations and speeches\b/,
+  /\bmarks workers[’'] day with demonstrations and speeches\b/i,
+];
 const euCooperationMissingArticleEnglishPattern =
   /\bThe EU is political and economic cooperation between European countries\b/i;
 const goodFridayRemembersEnglishPattern =
@@ -793,6 +799,114 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.match(output, /q103 uses literal First of May English wording/);
+});
+
+test('May Day holiday options use natural International Workers Day English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const holidayIds = [
+    'q097',
+    generatedQuestionId(sourceQuestions, 'q097', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q097', 'judgement'),
+    'q100',
+    generatedQuestionId(sourceQuestions, 'q100', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q100', 'judgement'),
+    'q103',
+    generatedQuestionId(sourceQuestions, 'q103', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q103', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q103', 'judgement'),
+  ];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    workersDayHolidayEnglishPatterns.some((pattern) =>
+      pattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+    ),
+  );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => holidayIds.includes(question.id))
+    .filter((question) =>
+      workersDayHolidayEnglishPatterns.some((pattern) => pattern.test(textForQuestion(question))),
+    )
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => holidayIds.includes(question.id))
+    .filter((question) =>
+      workersDayHolidayEnglishPatterns.some((pattern) => pattern.test(textForQuestion(question))),
+    )
+    .map((question) => question.id);
+  const q097 = generatedSiteBank.find((question) => question.id === 'q097');
+  const q100 = generatedSiteBank.find((question) => question.id === 'q100');
+  const q103 = generatedSiteBank.find((question) => question.id === 'q103');
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.ok(q097?.opts.some((option) => option.en === 'May Day demonstrations'));
+  assert.ok(q100?.opts.some((option) => option.en === 'Holding May Day demonstrations'));
+  assert.ok(
+    q103?.opts.some(
+      (option) => option.en === "International Workers' Day with demonstrations and speeches",
+    ),
+  );
+});
+
+test('May Day holiday English guard rejects lower-case workers day labels', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace('May Day demonstrations', 'Demonstrations on workers’ day')
+      .replace('Holding May Day demonstrations', 'Holding demonstrations on workers’ day')
+      .replace(
+        "International Workers' Day with demonstrations and speeches",
+        "Workers' day with demonstrations and speeches",
+      );
+  }
+  return contents;
+};
+const { buildSiteQuestionBank } = require('./scripts/export-site-question-bank.js');
+const bad = buildSiteQuestionBank().questions
+  .filter((question) => {
+    const text = [
+      question.q?.en,
+      question.why?.en,
+      ...(question.opts || []).map((option) => option.en),
+    ].join(' ');
+    return /(?:Demonstrations on workers[’'] day|Holding demonstrations on workers[’'] day|Workers[’'] day with demonstrations and speeches|marks workers[’'] day with demonstrations and speeches)/i.test(text);
+  })
+  .map((question) => question.id);
+console.log(JSON.stringify(bad));
+if (!bad.includes('q097') || !bad.includes('q100') || !bad.includes('q103') || bad.length < 8) {
+  process.exit(1);
+}
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.equal(result.status, 0, output);
+  assert.match(output, /q097/);
+  assert.match(output, /q100/);
+  assert.match(output, /q103/);
 });
 
 test('Good Friday source and exports use natural commemorates English', () => {
