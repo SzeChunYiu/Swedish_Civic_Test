@@ -69,27 +69,22 @@ function previousDayKey(dayKey: string): string {
  * Refill the freeze stockpile if at least one week has passed since the last
  * earn. Pure — returns a new state, does not mutate.
  */
-export function refillFreezes(
-  state: StreakFreezeState,
-  now: Date = new Date(),
-): StreakFreezeState {
-  const currentWeekStart = startOfWeek(now);
-  const lastEarnedDate = new Date(`${state.lastEarnedAt}T00:00:00.000Z`);
-  const weeksSince = Math.floor(
-    (currentWeekStart.getTime() - lastEarnedDate.getTime()) / (7 * DAY_MS),
-  );
-  if (weeksSince <= 0) return state;
+export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
+  const currentWeekStartKey = getLocalDateKey(startOfWeek(now));
+  if (currentWeekStartKey <= state.lastEarnedAt) return state;
+
+  const lastNoon = new Date(`${state.lastEarnedAt}T12:00:00.000Z`).getTime();
+  const currentNoon = new Date(`${currentWeekStartKey}T12:00:00.000Z`).getTime();
+  const weeksSince = Math.max(1, Math.round((currentNoon - lastNoon) / (7 * DAY_MS)));
 
   const earned = Math.min(weeksSince * FREEZES_PER_WEEK, MAX_STOCKPILE - state.available);
   if (earned <= 0) {
-    // Still advance lastEarnedAt to the current week so we don't keep computing
-    // huge weeksSince counts.
-    return { ...state, lastEarnedAt: getLocalDateKey(currentWeekStart) };
+    return { ...state, lastEarnedAt: currentWeekStartKey };
   }
   return {
     ...state,
     available: state.available + earned,
-    lastEarnedAt: getLocalDateKey(currentWeekStart),
+    lastEarnedAt: currentWeekStartKey,
     lifetimeEarned: state.lifetimeEarned + earned,
   };
 }
@@ -121,9 +116,7 @@ export interface StreakWithFreezeResult {
  *
  * Pure function — returns new state, does not mutate.
  */
-export function calculateStreakWithFreeze(
-  input: StreakWithFreezeInput,
-): StreakWithFreezeResult {
+export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakWithFreezeResult {
   const refilled = refillFreezes(input.freezeState, input.now ?? new Date());
   const today = input.today ?? getLocalDateKey(input.now ?? new Date());
   const activeSet = new Set(input.activeDayKeys.map((d) => d.slice(0, 10)));
