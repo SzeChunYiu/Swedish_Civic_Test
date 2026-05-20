@@ -27,6 +27,7 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     steps: [
       'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
       'Öva med UHR-refererade frågor och förklaringar.',
+      'Alla 13 ämnen och hela frågebanken ingår gratis.',
       'Följ framsteg lokalt på din enhet utan konto.',
     ],
     subtitle:
@@ -42,6 +43,7 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     steps: [
       'Study Swedish civic concepts with English support when needed.',
       'Practice with UHR-referenced questions and explanations.',
+      'All 13 topics and the full question bank are included for free.',
       'Track progress locally on your device without an account.',
     ],
     subtitle:
