@@ -313,12 +313,12 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       options: [
         {
           id: 'a',
-          textSv: 'politikerna måste inte följa resultatet',
+          textSv: 'politikerna behöver inte följa resultatet',
           textEn: 'Politicians do not have to follow the result',
         },
         {
           id: 'b',
-          textSv: 'politikerna måste alltid följa resultatet',
+          textSv: 'politikerna är skyldiga att följa resultatet',
           textEn: 'Politicians must always follow the result',
         },
         { id: 'c', textSv: 'valet blir hemligt', textEn: 'The vote becomes secret' },
@@ -570,6 +570,46 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       reviewStatus: 'reviewed',
       tags: ['courts'],
     },
+    {
+      id: 'q055',
+      chapterId: 'ch07',
+      type: 'single_choice',
+      questionSv: 'Vad gäller för att köpa sex i Sverige?',
+      questionEn: 'What applies to buying sex in Sweden?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Det är olagligt att köpa sex, men personen som säljer straffas inte',
+          textEn: 'It is illegal to buy sex, but the person who sells it is not punished',
+        },
+        {
+          id: 'b',
+          textSv: 'Det är alltid lagligt att köpa sex',
+          textEn: 'It is always legal to buy sex',
+        },
+        {
+          id: 'c',
+          textSv: 'Bara personen som säljer sex kan straffas',
+          textEn: 'Only the person who sells sex can be punished',
+        },
+        {
+          id: 'd',
+          textSv: 'Det gäller bara utanför Sverige',
+          textEn: 'It applies only outside Sweden',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Att köpa sex är olagligt i Sverige.',
+      explanationEn: 'Buying sex is illegal in Sweden.',
+      uhrReference: {
+        chapter: 'Mänskliga rättigheter',
+        section: 'Sexköpslagen',
+        pageApprox: 24,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['law'],
+    },
   ];
 
   const derived = derivePublishedQuestions(sources, 301);
@@ -580,14 +620,25 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is\b|En anledning är\b|have they|har de/i,
+    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is\b|En anledning är\b|have they|har de|betyder att politikerna måste (?:inte|alltid) följa resultatet|Att köpa sex i Sverige är (?:olagligt|alltid lagligt) att köpa sex/i,
   );
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
+      'Rådgivande folkomröstningar i Sverige betyder att politiker inte behöver följa resultatet.',
     ),
   );
+  assert.ok(
+    text.includes(
+      'Rådgivande folkomröstningar i Sverige betyder att politiker är skyldiga att följa resultatet.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'I Sverige är det olagligt att köpa sex, men personen som säljer sex straffas inte.',
+    ),
+  );
+  assert.ok(text.includes('I Sverige är det alltid lagligt att köpa sex.'));
   assert.ok(
     text.includes(
       'That referendums in Sweden are advisory means politicians do not have to follow the result.',

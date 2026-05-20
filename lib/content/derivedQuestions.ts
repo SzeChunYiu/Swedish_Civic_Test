@@ -469,6 +469,28 @@ function replaceLeadingSwedishSubject(subject: string, value: string): string {
     .replace(/^Det är\s+/i, `${normalizedSubject} är `);
 }
 
+function referendumAdvisoryStatementSv(answer: string): string {
+  if (/(?:måste inte|behöver inte)\s+följa resultatet/i.test(answer)) {
+    return 'Rådgivande folkomröstningar i Sverige betyder att politiker inte behöver följa resultatet';
+  }
+  if (/(?:måste alltid följa|är skyldiga att följa)\s+resultatet/i.test(answer)) {
+    return 'Rådgivande folkomröstningar i Sverige betyder att politiker är skyldiga att följa resultatet';
+  }
+  return `Att folkomröstningar i Sverige är rådgivande betyder att ${lowerFirst(
+    stripLeadingPurposeSv(answer),
+  )}`;
+}
+
+function sexPurchaseLawStatementSv(answer: string): string {
+  if (/olagligt att köpa sex,\s*men personen som säljer straffas inte/i.test(answer)) {
+    return 'I Sverige är det olagligt att köpa sex, men personen som säljer sex straffas inte';
+  }
+  if (/alltid lagligt att köpa sex/i.test(answer)) {
+    return 'I Sverige är det alltid lagligt att köpa sex';
+  }
+  return replaceLeadingSwedishSubject('att köpa sex i Sverige', answer);
+}
+
 function replaceLeadingEnglishSubject(subject: string, value: string): string {
   const normalizedSubject = upperFirst(subject.trim());
   return value
@@ -1007,6 +1029,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
 
+  match = q.match(/^Vad betyder det att folkomröstningar i Sverige är rådgivande$/i);
+  if (match) return referendumAdvisoryStatementSv(answer);
+
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
@@ -1095,6 +1120,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilka myndigheter ingår i (.+)$/i);
   if (match) return `${upperFirst(answer)} ingår i ${match[1]}`;
+
+  match = q.match(/^Vad gäller för att köpa sex i Sverige$/i);
+  if (match) return sexPurchaseLawStatementSv(answer);
 
   match = q.match(/^Vad gäller för (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);

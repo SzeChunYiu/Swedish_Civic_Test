@@ -882,11 +882,11 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet"
+        "sv": "Politikerna behöver inte följa resultatet"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna måste alltid följa resultatet"
+        "sv": "Politikerna är skyldiga att följa resultatet"
       },
       {
         "en": "Referendums may only be held nationally",
@@ -900,7 +900,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1382,7 +1382,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
+      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte behöver följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10726,11 +10726,11 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet"
+        "sv": "Politikerna behöver inte följa resultatet"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna måste alltid följa resultatet"
+        "sv": "Politikerna är skyldiga att följa resultatet"
       },
       {
         "en": "Referendums may only be held nationally",
@@ -10744,7 +10744,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10769,7 +10769,7 @@
     "type": "true_false",
     "q": {
       "en": "That referendums in Sweden are advisory means politicians do not have to follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet."
+      "sv": "Rådgivande folkomröstningar i Sverige betyder att politiker inte behöver följa resultatet."
     },
     "opts": [
       {
@@ -10784,7 +10784,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10809,7 +10809,7 @@
     "type": "true_false",
     "q": {
       "en": "That referendums in Sweden are advisory means politicians must always follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste alltid följa resultatet."
+      "sv": "Rådgivande folkomröstningar i Sverige betyder att politiker är skyldiga att följa resultatet."
     },
     "opts": [
       {
@@ -10824,7 +10824,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -10854,11 +10854,11 @@
     "opts": [
       {
         "en": "Politicians do not have to follow the result",
-        "sv": "Politikerna måste inte följa resultatet"
+        "sv": "Politikerna behöver inte följa resultatet"
       },
       {
         "en": "Politicians must always follow the result",
-        "sv": "Politikerna måste alltid följa resultatet"
+        "sv": "Politikerna är skyldiga att följa resultatet"
       },
       {
         "en": "Referendums may only be held nationally",
@@ -10872,7 +10872,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result; that makes the option about politicians not having to follow the result correct.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet; därför är alternativet om att politikerna inte måste följa resultatet rätt."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet; därför är alternativet om att politikerna inte behöver följa resultatet rätt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -12760,7 +12760,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
+      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte behöver följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16937,7 +16937,7 @@
     "type": "true_false",
     "q": {
       "en": "It is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte."
+      "sv": "I Sverige är det olagligt att köpa sex, men personen som säljer sex straffas inte."
     },
     "opts": [
       {
@@ -16977,7 +16977,7 @@
     "type": "true_false",
     "q": {
       "en": "It is always legal to buy sex.",
-      "sv": "Att köpa sex i Sverige är alltid lagligt att köpa sex."
+      "sv": "I Sverige är det alltid lagligt att köpa sex."
     },
     "opts": [
       {
