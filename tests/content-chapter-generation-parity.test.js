@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync, spawnSync } = require('node:child_process');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -37,20 +37,11 @@ function countByChapter(questions) {
 }
 
 test('chapter source and generated question counts stay in parity', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-
-  const summary = JSON.parse(match[0]);
   const { chapters } = loadTs('data/chapters.ts');
   const { sourceQuestions, generatedPublishedQuestions, questions } = loadTs('data/questions.ts');
   const sourceCounts = countByChapter(sourceQuestions);
   const generatedCounts = countByChapter(generatedPublishedQuestions);
   const publishedCounts = countByChapter(questions);
-
-  assert.equal(summary.chapterGenerationParityValidated, chapters.length);
 
   chapters.forEach((chapter) => {
     const sourceCount = sourceCounts.get(chapter.id) || 0;

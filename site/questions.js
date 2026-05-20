@@ -35672,7 +35672,7 @@
       "en": "Human rights, gender equality, children's rights, minority rights, and discrimination.",
       "sv": "Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering."
     },
-    "questionCount": 60
+    "questionCount": 55
   },
   {
     "id": 8,
@@ -35698,7 +35698,7 @@
       "en": "Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.",
       "sv": "Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner."
     },
-    "questionCount": 60
+    "questionCount": 55
   },
   {
     "id": 10,
