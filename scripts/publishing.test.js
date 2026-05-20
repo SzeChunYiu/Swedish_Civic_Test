@@ -108,10 +108,30 @@ function parseExternalBlockerRows(markdown) {
 
 test('store publishing metadata is prepared', () => {
   const appConfig = JSON.parse(read('app.json')).expo;
-  assert.equal(appConfig.name, 'Sweden Citizenship Test Prep');
-  assert.equal(appConfig.slug, 'swedish-civic-test');
-  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.swedishcivictest');
-  assert.equal(appConfig.android.package, 'com.billyyiu.swedishcivictest');
+  const iosRemoveAdsProductId = `${appConfig.ios.bundleIdentifier}.removeads`;
+  const androidRemoveAdsProductId = 'removeads';
+  const staleRemoveAdsProductId = ['com', 'billyyiu', 'swedishcivictest', 'removeads'].join('.');
+  assert.equal(appConfig.name, 'Almost Swedish');
+  assert.equal(appConfig.slug, 'almost-swedish');
+  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(appConfig.android.package, 'com.billyyiu.almostswedish');
+  assert.match(
+    appStoreIdentitySource,
+    new RegExp(escapeRegExp(appConfig.ios.bundleIdentifier), 'i'),
+  );
+  assert.match(appStoreIdentitySource, /proLifetime:\s*`\$\{APP_NATIVE_IDENTIFIER\}\.prolifetime`/);
+  assert.match(proLifetimeSource, /appStoreProductIds\.proLifetime/);
+  assert.doesNotMatch(proLifetimeSource, staleNativeIdentifierPattern());
+  assert.doesNotMatch(appStoreIdentitySource, staleNativeIdentifierPattern());
+
+  for (const productSetupCopy of [
+    read('publishing/admob-iap-setup-runbook.md'),
+    read('publishing/operator-todo.md'),
+  ]) {
+    assert.match(productSetupCopy, /Pro Lifetime/i);
+    assert.match(productSetupCopy, new RegExp(escapeRegExp(proLifetimeProductId), 'i'));
+    assert.match(productSetupCopy, /59 SEK/i);
+  }
 
   const appStoreListing = read('publishing/app-store-listing.md');
   assert.match(appStoreListing, /Sweden Citizenship Test Prep/);
@@ -122,6 +142,46 @@ test('store publishing metadata is prepared', () => {
   assert.match(googlePlayListing, /Sweden Citizenship Test Prep/);
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
+  assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
+
+  for (const filePath of [
+    'publishing/admob-iap-setup-runbook.md',
+    'publishing/admob-progress.md',
+    'publishing/operator-todo.md',
+    'publishing/privacy-labels.md',
+  ]) {
+    const source = read(filePath);
+    assert.match(source, new RegExp(iosRemoveAdsProductId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.doesNotMatch(
+      source,
+      new RegExp(staleRemoveAdsProductId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+    );
+    assert.match(source, new RegExp(`\\b${androidRemoveAdsProductId}\\b`));
+  }
+});
+
+test('release evidence template matches ad-supported app store posture', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  const template = read('reports/release-evidence-template.md');
+
+  assert.match(template, new RegExp(appConfig.ios.bundleIdentifier, 'i'));
+  assert.match(template, new RegExp(appConfig.android.package, 'i'));
+  assert.match(template, /AdMob app ID/i);
+  assert.match(template, /app-ads\.txt/i);
+  assert.match(template, /adMob\.realAdsEnabled:\s*true/i);
+  assert.match(template, /adMob\.appAdsTxtReviewed:\s*true/i);
+  assert.match(template, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(template, /Remove Ads/i);
+  assert.match(template, /29 SEK/i);
+  assert.match(template, /non-consumable/i);
+  assert.match(template, /generated binary\/build|generated binary/i);
+  assert.match(template, /App Tracking Transparency|ATT/i);
+  assert.match(template, /Google UMP|UMP consent/i);
+
+  assert.doesNotMatch(template, staleNativeIdentifierPattern());
+  assert.doesNotMatch(template, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
+  assert.doesNotMatch(template, staleWords('real', 'ads', 'disabled'));
+  assert.doesNotMatch(template, disabledGoogleMobileAdsPattern());
 });
 
 test('privacy labels and data safety answers match ad-supported release practices', () => {
