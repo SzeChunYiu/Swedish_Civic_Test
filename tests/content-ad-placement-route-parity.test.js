@@ -46,6 +46,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
     'utf8',
   );
+  const removeAdsPlacementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
 
   assert.equal(summary.bannerAdPlacementTypeCasesValidated, 3);
   assert.equal(summary.adPlacementRoutesValidated, 4);
@@ -74,6 +78,16 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(removeAdsPlacementCtaSource, /restoreRemoveAdsPurchase/);
+  assert.match(
+    removeAdsPlacementCtaSource,
+    /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/,
+  );
+  assert.match(
+    removeAdsPlacementCtaSource,
+    /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/,
+  );
+  assert.match(removeAdsPlacementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
   assert.match(
     practiceInterstitialSource,
     /shouldShowAd\('quiz_completed_interstitial', resolvedEntitlements\)/,

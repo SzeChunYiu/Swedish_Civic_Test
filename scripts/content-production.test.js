@@ -141,7 +141,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.purchaseTypeUnionsValidated, 2);
   assert.equal(summary.purchaseTypeInterfacesValidated, 8);
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 14);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 17);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.equal(summary.adConsentTypeUnionsValidated, 6);
   assert.equal(summary.adConsentTypeInterfacesValidated, 3);
