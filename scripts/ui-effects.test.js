@@ -62,6 +62,9 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.match(source, /motion\.duration\.slow/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
+  assert.match(source, /export interface ProgressBarProps \{/);
+  assert.match(source, /presentationOnly\?: boolean;/);
+  assert.match(source, /presentationOnly = false,/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
   assert.match(source, /`\$\{progressPercent\} percent complete`/);
   assert.match(source, /const progressPercent = Math\.round\(clampedProgress \* 100\);/);
@@ -77,6 +80,9 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.match(source, /aria-valuetext=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole="progressbar"/);
+  assert.match(source, /if \(presentationOnly\) \{/);
+  assert.match(source, /aria-hidden/);
+  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(
     source,
     /accessibilityValue=\{\{\s*min: 0,\s*max: 100,\s*now: progressPercent,\s*text: progressAccessibilityLabel,\s*\}\}/,
