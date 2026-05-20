@@ -8,6 +8,14 @@ import { getLocalDateKey } from './streaks';
 import type { QuizAnswer, QuizSession, UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+export const MAX_DASHBOARD_DAYS_BACK = 53 * 7;
+const DEFAULT_DAILY_ACTIVITY_DAYS_BACK = MAX_DASHBOARD_DAYS_BACK;
+const DEFAULT_RECENT_DAYS_BACK = 30;
+
+function normalizeDashboardDaysBack(daysBack: number, fallback: number): number {
+  if (!Number.isFinite(daysBack)) return fallback;
+  return Math.min(MAX_DASHBOARD_DAYS_BACK, Math.max(1, Math.floor(daysBack)));
+}
 
 // ----------------------------------------------------------- daily activity
 
@@ -24,9 +32,10 @@ export interface DailyActivityBin {
  */
 export function dailyActivityHistogram(
   progress: UserProgress,
-  options: { daysBack: number; now?: Date } = { daysBack: 53 * 7 },
+  options: { daysBack: number; now?: Date } = { daysBack: DEFAULT_DAILY_ACTIVITY_DAYS_BACK },
 ): DailyActivityBin[] {
   const now = options.now ?? new Date();
+  const daysBack = normalizeDashboardDaysBack(options.daysBack, DEFAULT_DAILY_ACTIVITY_DAYS_BACK);
   const counts = new Map<string, number>();
 
   for (const session of progress.sessions ?? []) {
@@ -39,7 +48,7 @@ export function dailyActivityHistogram(
   }
 
   const bins: DailyActivityBin[] = [];
-  for (let offset = options.daysBack - 1; offset >= 0; offset -= 1) {
+  for (let offset = daysBack - 1; offset >= 0; offset -= 1) {
     const d = new Date(now.getTime() - offset * DAY_MS);
     const key = getLocalDateKey(d);
     bins.push({ date: key, count: counts.get(key) ?? 0 });
@@ -125,22 +134,33 @@ export interface MockHistoryEntry {
   durationMs: number | null;
 }
 
+function validTimestampMs(value: string | undefined): number | null {
+  if (!value) return null;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time) ? time : null;
+}
+
 export function mockHistory(progress: UserProgress): MockHistoryEntry[] {
-  const out: MockHistoryEntry[] = [];
+  const out: (MockHistoryEntry & { completedAtMs: number })[] = [];
   for (const session of progress.sessions ?? []) {
     if (session.mode !== 'exam') continue;
-    if (!session.completedAt) continue;
+    const completedAtMs = validTimestampMs(session.completedAt);
+    if (completedAtMs === null || !session.completedAt) continue;
+    const startedAtMs = validTimestampMs(session.startedAt);
+    const durationMs =
+      startedAtMs === null || startedAtMs > completedAtMs ? null : completedAtMs - startedAtMs;
     out.push({
+      completedAtMs,
       sessionId: session.id,
-      score: typeof session.score === 'number' ? session.score : null,
+      score:
+        typeof session.score === 'number' && Number.isFinite(session.score) ? session.score : null,
       completedAt: session.completedAt,
-      durationMs:
-        session.startedAt && session.completedAt
-          ? new Date(session.completedAt).getTime() - new Date(session.startedAt).getTime()
-          : null,
+      durationMs,
     });
   }
-  return out.sort((a, b) => a.completedAt.localeCompare(b.completedAt));
+  return out
+    .sort((a, b) => a.completedAtMs - b.completedAtMs)
+    .map(({ completedAtMs: _completedAtMs, ...entry }) => entry);
 }
 
 export function bestMockScore(progress: UserProgress): number | null {
@@ -201,9 +221,10 @@ export interface MistakeConvergencePoint {
  */
 export function mistakeConvergence(
   progress: UserProgress,
-  options: { daysBack: number; now?: Date } = { daysBack: 30 },
+  options: { daysBack: number; now?: Date } = { daysBack: DEFAULT_RECENT_DAYS_BACK },
 ): MistakeConvergencePoint[] {
   const now = options.now ?? new Date();
+  const daysBack = normalizeDashboardDaysBack(options.daysBack, DEFAULT_RECENT_DAYS_BACK);
   const allAnswers: QuizAnswer[] = [];
   for (const session of progress.sessions ?? []) {
     allAnswers.push(...session.answers);
@@ -211,7 +232,7 @@ export function mistakeConvergence(
   allAnswers.sort((a, b) => a.answeredAt.localeCompare(b.answeredAt));
 
   const points: MistakeConvergencePoint[] = [];
-  for (let offset = options.daysBack - 1; offset >= 0; offset -= 1) {
+  for (let offset = daysBack - 1; offset >= 0; offset -= 1) {
     const cutoff = new Date(now.getTime() - offset * DAY_MS);
     cutoff.setHours(23, 59, 59, 999);
     const cutoffIso = cutoff.toISOString();
@@ -244,9 +265,10 @@ export interface XpDayPoint {
 
 export function xpSparkline(
   progress: UserProgress,
-  options: { daysBack: number; now?: Date } = { daysBack: 30 },
+  options: { daysBack: number; now?: Date } = { daysBack: DEFAULT_RECENT_DAYS_BACK },
 ): XpDayPoint[] {
   const now = options.now ?? new Date();
+  const daysBack = normalizeDashboardDaysBack(options.daysBack, DEFAULT_RECENT_DAYS_BACK);
   const correctByDay = new Map<string, number>();
 
   for (const session of progress.sessions ?? []) {
@@ -260,7 +282,7 @@ export function xpSparkline(
   }
 
   const out: XpDayPoint[] = [];
-  for (let offset = options.daysBack - 1; offset >= 0; offset -= 1) {
+  for (let offset = daysBack - 1; offset >= 0; offset -= 1) {
     const d = new Date(now.getTime() - offset * DAY_MS);
     const key = getLocalDateKey(d);
     out.push({ date: key, xp: (correctByDay.get(key) ?? 0) * 10 });

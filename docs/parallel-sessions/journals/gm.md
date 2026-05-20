@@ -29,3 +29,20 @@ Blockers surfaced: SITE-P0-5 external deploy freshness; supervisor
 Next operator action: q501-q550 DATA-INTEGRITY source cleanup is next after
 q451-q500 acceptance; release privacy gates are accepted; q551-q600 stays
 queued behind q501-q550 unless reordered.
+
+Iteration: 2026-05-20T03:36:55+02:00
+Batch outcome confirmed: yes
+Staffing decision: hold / add none
+Blockers surfaced: supervisor dry-run found queued local work but held it on
+`reason=lunarc_requires_slurm_station`; no apply was run.
+Next operator action: restore usable factory capacity or keep managers routing
+P0-only work through existing active panes; do not dispatch non-P0 side work.
+
+Iteration: 2026-05-20T08:25:30+02:00
+Batch outcome confirmed: yes
+Staffing decision: hold / add none
+Blockers surfaced: none requiring new human escalation; active infra/typecheck
+verification blockers remain in `codex-tasks/blockers.txt`.
+Next operator action: keep P0-advancing DATA-INTEGRITY, CONTENT, and VALIDATOR
+work ahead of side work; do not apply staffing while LUNARC hosts report
+`reason=lunarc_requires_slurm_station`.

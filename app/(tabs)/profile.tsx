@@ -1,15 +1,20 @@
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceActionLink } from '../../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
+import { ProPaywall } from '../../components/monetization/ProPaywall';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { deriveBadges } from '../../lib/learning/badges';
-import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
+import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -20,6 +25,11 @@ type ProfileCopy = {
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
+  dashboardAccessibilityLabel: string;
+  dashboardCta: string;
+  dashboardSubtitle: string;
+  dashboardTitle: string;
+  dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
   languageBadge: string;
@@ -28,6 +38,8 @@ type ProfileCopy = {
   openSettings: string;
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
+  removeAdsFocusCue: string;
+  streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -41,18 +53,25 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
+    dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
+    dashboardCta: 'Visa översikt',
+    dashboardSubtitle: 'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
+    dashboardTitle: 'Framstegsöversikt',
+    dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Öppna inställningar',
-    openSettingsAccessibilityLabel: 'Öppna inställningar',
+    openSettings: 'Ändra mål, språk och ljud',
+    openSettingsAccessibilityLabel: 'Ändra mål, språk och ljud',
     questionsHelper: 'frågor',
+    removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+    streakFreezeBadge: 'Svitskydd',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
-      'Dina mål, språkval, sviter och märken sparas bara på den här enheten, så att dina studier förblir privata.',
+      'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
     title: 'Framsteg utan konto',
     xpMetric: 'XP',
   },
@@ -61,14 +80,21 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
+    dashboardAccessibilityLabel: 'Open progress dashboard',
+    dashboardCta: 'View dashboard',
+    dashboardSubtitle: 'Activity, chapter progress, and XP live on a dedicated page.',
+    dashboardTitle: 'Progress dashboard',
+    dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Open settings',
-    openSettingsAccessibilityLabel: 'Open settings',
+    openSettings: 'Edit goal, language, and audio',
+    openSettingsAccessibilityLabel: 'Edit goal, language, and audio',
     questionsHelper: 'questions',
+    removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
+    streakFreezeBadge: 'Streak freeze',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -82,7 +108,7 @@ const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
   sv: {
     first_practice: 'Första övningen',
     level_2: 'Nivå 2',
-    mistake_reviewer: 'Misstagsrepetition',
+    mistake_reviewer: 'Missade frågor',
     streak_3: 'Tre dagars svit',
   },
   en: {},
@@ -99,8 +125,10 @@ function formatBadges(
 }
 
 export default function Screen() {
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -108,11 +136,28 @@ export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
+  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
+  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
+  const removeAdsFocused = focus === 'remove-ads';
+  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
   const level = calculateLevel(totalXp);
-  const currentStreak = calculateStreak(answerDates);
+  const streakWithFreeze = useMemo(
+    () =>
+      calculateStreakWithFreeze({
+        activeDayKeys: answerDates,
+        freezeState: streakFreezeState,
+      }),
+    [answerDates, streakFreezeState],
+  );
+  const currentStreak = streakWithFreeze.streakDays;
+  const streakRescueMessage = freezeBannerCopy(streakWithFreeze, language);
+  const dayStreakHelper =
+    currentStreak > 0 && streakWithFreeze.freezeState.available > 0
+      ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
+      : undefined;
   const wrongAnswerCount = Object.values(questionProgress).reduce(
     (count, progress) => count + progress.wrongCount,
     0,
@@ -124,6 +169,28 @@ export default function Screen() {
     wrongAnswerCount,
   });
 
+  useEffect(() => {
+    setStreakFreezeState(streakWithFreeze.freezeState);
+  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
+
+  const removeAdsPaywall = entitlementsReady ? (
+    <View
+      nativeID="remove-ads-paywall"
+      testID="remove-ads-paywall"
+      style={[styles.removeAdsPaywall, removeAdsFocused ? styles.removeAdsPaywallFocused : null]}
+    >
+      {removeAdsFocused ? (
+        <Text style={styles.removeAdsFocusCue}>{copy.removeAdsFocusCue}</Text>
+      ) : null}
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
+    </View>
+  ) : null;
+
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
       <View style={styles.statsRow}>
@@ -131,13 +198,20 @@ export default function Screen() {
         <MetricCard label={copy.xpMetric} value={totalXp} />
       </View>
       <View style={styles.statsRow}>
-        <MetricCard label={copy.dayStreakMetric} value={currentStreak} />
+        <MetricCard label={copy.dayStreakMetric} value={currentStreak} helper={dayStreakHelper} />
         <MetricCard
           label={copy.completedMetric}
           value={completedQuestionIds.length}
           helper={copy.questionsHelper}
         />
       </View>
+      {streakRescueMessage ? (
+        <Card accessible accessibilityLabel={streakRescueMessage} style={styles.streakFreezeCard}>
+          <Badge tone="warm">{copy.streakFreezeBadge}</Badge>
+          <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
+        </Card>
+      ) : null}
+      {removeAdsFocused ? removeAdsPaywall : null}
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
@@ -146,21 +220,30 @@ export default function Screen() {
             {dailyGoalAnswers} {copy.answersPerDay}
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
-          <Badge tone={audioEnabled ? 'green' : 'orange'}>
-            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
-          </Badge>
         </View>
-        <View style={styles.settingsShortcutRow}>
-          <Text style={styles.settingsShortcutHelper}>{copy.settingsShortcutHelper}</Text>
-          <Link
+        <Link
+          accessibilityLabel={copy.openSettingsAccessibilityLabel}
+          accessibilityRole="link"
+          asChild
+          href="/settings"
+        >
+          <Button
             accessibilityLabel={copy.openSettingsAccessibilityLabel}
             accessibilityRole="link"
-            href="/settings"
             style={styles.settingsLink}
           >
             {copy.openSettings}
-          </Link>
-        </View>
+          </Button>
+        </Link>
+      </Card>
+
+      <Card style={styles.cardWide}>
+        <SectionHeader title={copy.dashboardTitle} subtitle={copy.dashboardSubtitle} />
+        <ComplianceActionLink
+          accessibilityLabel={copy.dashboardAccessibilityLabel}
+          href="/dashboard"
+          label={copy.dashboardCta}
+        />
       </Card>
 
       <Card style={styles.cardWide}>
@@ -168,22 +251,15 @@ export default function Screen() {
         <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
+      {!removeAdsFocused ? removeAdsPaywall : null}
+      {entitlementsReady && proRuntimeScopeEnabled ? (
+        <ProPaywall
+          alreadyAdFree={monetizationEntitlements.adsDisabled}
+          language={language}
+          onEntitlementsChange={(nextEntitlements) => setMonetizationEntitlements(nextEntitlements)}
+        />
+      ) : null}
       <ComplianceLinks />
-
-      <Link
-        accessibilityLabel={copy.openSettingsAccessibilityLabel}
-        accessibilityRole="link"
-        href="/settings"
-        style={styles.settingsLink}
-      >
-        {copy.openSettings}
-      </Link>
     </ScreenShell>
   );
 }
@@ -196,6 +272,14 @@ const styles = StyleSheet.create({
   cardWide: {
     gap: space[1.5],
   },
+  streakFreezeCard: {
+    gap: space[1],
+  },
+  streakFreezeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
   pillRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -207,28 +291,23 @@ const styles = StyleSheet.create({
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
   },
-  settingsShortcutRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  removeAdsPaywall: {
     gap: space[1],
-    justifyContent: 'space-between',
   },
-  value: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
+  removeAdsPaywallFocused: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space[1],
+  },
+  removeAdsFocusCue: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   settingsLink: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
+    minHeight: space[6],
   },
 });
