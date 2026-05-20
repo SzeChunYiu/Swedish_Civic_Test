@@ -142,7 +142,7 @@ const i18n = window.i18n = {
     "numbers.1": "questions sourced from public records",
     "numbers.2": "chapters covering history, society & rights",
     "numbers.3": "daily — a fika-sized study habit",
-    "numbers.4": "to start. No login. No tracking.",
+    "numbers.4": "to start. No login. Study progress stays local.",
 
     "chap.eyebrow": "What's inside",
     "chap.h1": "From kanelbullar to",
@@ -428,7 +428,7 @@ const i18n = window.i18n = {
     "numbers.1": "frågor från offentliga källor",
     "numbers.2": "kapitel om historia, samhälle & rättigheter",
     "numbers.3": "om dagen — en fika-stor studievana",
-    "numbers.4": "att börja. Ingen inloggning. Ingen spårning.",
+    "numbers.4": "att börja. Ingen inloggning. Studieframsteg stannar lokalt.",
 
     "chap.eyebrow": "Vad ingår",
     "chap.h1": "Från kanelbullar till",

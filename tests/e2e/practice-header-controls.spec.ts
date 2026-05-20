@@ -87,9 +87,9 @@ test('practice header controls keep English labels, states, and mobile targets',
   await expect(sources).toHaveAttribute('aria-expanded', 'false');
   await sources.click();
 
-  const closeSources = page.getByRole('button', { name: 'Close about-the-sources' });
+  const closeSources = page.getByRole('button', { name: 'Close source details' });
   await expect(closeSources).toHaveAttribute('aria-expanded', 'true');
-  await expectStableTarget(closeSources, 'Close about-the-sources control');
+  await expectStableTarget(closeSources, 'Close source details control');
 
   await expect(page.getByText('UHR source', { exact: true }).first()).toBeVisible();
   await expect(
