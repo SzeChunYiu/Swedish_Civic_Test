@@ -1214,9 +1214,13 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
     '(questionProgress[question.id]?.wrongCount ?? 0) === 0',
     'saved questions with wrong-answer context must not duplicate in bookmarked review',
   ],
+  ['<FlatList', 'mistakes review lists must render through FlatList virtualization'],
+  ['data={reviewItems}', 'mistakes FlatList must receive the combined review item model'],
+  ['initialNumToRender={10}', 'mistakes FlatList must keep the initial render bounded'],
+  ['testID="mistakes-review-list"', 'mistakes FlatList must expose a stable scroll target'],
   [
-    '{bookmarkedReviewQuestions.map((question) => {',
-    'bookmarked review cards must render from the filtered saved-only list',
+    'testID="mistakes-review-card"',
+    'mistakes review cards must expose a stable rendered-row test id',
   ],
   [
     '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
