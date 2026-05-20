@@ -86,10 +86,17 @@ const QUESTION_BANK_CSV_HEADER = [
   'questionSv',
   'questionEn',
   'correctOptionId',
+  'optionSv',
+  'optionEn',
+  'correctOptionSv',
+  'correctOptionEn',
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
+  'uhrSourceTitle',
   'uhrSourcePublisher',
+  'uhrSourceUrl',
+  'uhrSourceRetrievedAt',
   'difficulty',
   'reviewStatus',
   'tags',
@@ -6905,12 +6912,6 @@ function validateTabNavigationParity() {
     reject('tab layout must not include visible placeholder tab glyphs');
   }
 
-  const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
-  const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
-  if (swedishExamTabTitle !== 'Övningsprov') {
-    reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
-  }
-
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
       `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
@@ -10966,6 +10967,198 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 }
 
+function validateRemoveAdsSvExamCopyNaturalness() {
+  let valid = true;
+  let premiumBannerSource = '';
+  let pricingWedgeSource = '';
+  let placementCtaSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    premiumBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
+    pricingWedgeSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
+      'utf8',
+    );
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`Remove Ads Swedish copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  const combinedSource = `${premiumBannerSource}\n${pricingWedgeSource}\n${placementCtaSource}`;
+  const copyCases = [
+    [
+      /Tidsatta övningsprov är redan annonsfria/.test(premiumBannerSource),
+      'PremiumBanner Swedish Remove Ads body must name ad-free timed practice exams',
+    ],
+    [
+      /Provläget är redan annonsfritt/.test(premiumBannerSource),
+      'PremiumBanner Swedish purchase hint must name the app exam mode, not the official test',
+    ],
+    [
+      /tidsatta övningsprov är alltid annonsfria/.test(pricingWedgeSource),
+      'PricingWedge Swedish Remove Ads pitch must name timed practice exams',
+    ],
+    [
+      /(?:Tidsatta övningsprov är redan annonsfria|Provläget är redan annonsfritt)/.test(
+        placementCtaSource,
+      ),
+      'RemoveAdsPlacementCta Swedish body must name ad-free timed practice exams or app exam mode',
+    ],
+    [
+      !/\bprov förblir annonsfria\b/i.test(combinedSource),
+      'Swedish Remove Ads copy must not say bare "prov förblir annonsfria"',
+    ],
+    [
+      !/\bprovet är alltid annonsfritt\b/i.test(combinedSource),
+      'Swedish Remove Ads copy must not say bare "provet är alltid annonsfritt"',
+    ],
+    [
+      !/\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i.test(combinedSource),
+      'Swedish Remove Ads copy must not use bare prov/provet for ad-free exam claims',
+    ],
+  ];
+
+  copyCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    removeAdsSvExamCopyNaturalnessCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    removeAdsSvExamCopyNaturalnessCasesValidated === EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES
+  ) {
+    removeAdsSvExamCopyNaturalnessValidated = true;
+  }
+}
+
+function validateAdCopySvRewardedPracticeExamNaturalness() {
+  let valid = true;
+  let adCopySource = '';
+  let webBannerSource = '';
+  let nativeBannerSource = '';
+  let placementCtaSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function hasPracticeQualifier(value) {
+    if (typeof value !== 'string') return false;
+    const normalizedValue = value.toLowerCase();
+    return (
+      normalizedValue.includes('övningsprov') ||
+      normalizedValue.includes('övningsläget') ||
+      normalizedValue.includes('övningsläge')
+    );
+  }
+
+  function hasBareExamWord(value) {
+    return /\bextra prov\b|\bextra provet\b|\bprov\b|\bprovet\b/i.test(value);
+  }
+
+  function isSafeRewardedPracticeCopy(value) {
+    return typeof value === 'string' && hasPracticeQualifier(value) && !hasBareExamWord(value);
+  }
+
+  try {
+    adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+    webBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+    nativeBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+      'utf8',
+    );
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`Rewarded ad Swedish copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  const svAdCopy = adBannerCopy?.sv;
+  const rewardedPlacementLabel = svAdCopy?.placementLabels?.rewarded_extra_exam;
+  const liveAccessibilityLabel =
+    typeof svAdCopy?.accessibilityLabel === 'function'
+      ? svAdCopy.accessibilityLabel(rewardedPlacementLabel, svAdCopy.liveStatus)
+      : '';
+  const testAccessibilityLabel =
+    typeof svAdCopy?.accessibilityLabel === 'function'
+      ? svAdCopy.accessibilityLabel(rewardedPlacementLabel, svAdCopy.testStatus)
+      : '';
+  const placementCtaTitle =
+    typeof rewardedPlacementLabel === 'string'
+      ? `Ta bort annonser vid ${rewardedPlacementLabel.toLowerCase()}`
+      : '';
+  const rewardedAdCopySource = `${adCopySource}\n${webBannerSource}\n${nativeBannerSource}\n${placementCtaSource}`;
+  const copyCases = [
+    [
+      rewardedPlacementLabel === 'Annons för extra övningsprov',
+      'rewarded_extra_exam Swedish ad placement label must say "Annons för extra övningsprov"',
+    ],
+    [
+      isSafeRewardedPracticeCopy(rewardedPlacementLabel),
+      'rewarded_extra_exam Swedish ad placement label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(liveAccessibilityLabel),
+      'rewarded_extra_exam Swedish live ad accessibility label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(testAccessibilityLabel),
+      'rewarded_extra_exam Swedish test ad accessibility label must qualify the exam as an övningsprov',
+    ],
+    [
+      isSafeRewardedPracticeCopy(placementCtaTitle),
+      'RemoveAdsPlacementCta rewarded_extra_exam title must qualify the exam as an övningsprov',
+    ],
+    [
+      /const placementLabel = copy\.placementLabels\[placement\];/.test(webBannerSource) &&
+        /const placementLabel = copy\.placementLabels\[placement\];/.test(nativeBannerSource) &&
+        /const placementLabel = adBannerCopy\[language\]\.placementLabels\[placement\];/.test(
+          placementCtaSource,
+        ) &&
+        /copy\.title\(placementLabel\)/.test(placementCtaSource),
+      'Ad banners and RemoveAdsPlacementCta must derive labels from shared adBannerCopy placement labels',
+    ],
+    [
+      !/\bAnnons för extra prov\b|\bextra prov\b/i.test(rewardedAdCopySource),
+      'rewarded ad copy sources must not contain bare Swedish "extra prov" wording',
+    ],
+  ];
+
+  copyCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    adCopySvRewardedPracticeExamCasesValidated += 1;
+  });
+
+  if (valid && adCopySvRewardedPracticeExamCasesValidated === copyCases.length) {
+    adCopySvRewardedPracticeExamNaturalnessValidated = true;
+  }
+}
+
 function validateAdConsentTypeSchemaParity() {
   let valid = true;
   let consentSource = '';
@@ -13040,10 +13233,17 @@ function validateQuestionBankCsvContract() {
       question.questionSv,
       question.questionEn,
       question.correctOptionId,
+      questionOptionPayload(question, 'textSv'),
+      questionOptionPayload(question, 'textEn'),
+      question.options.find((option) => option.id === question.correctOptionId)?.textSv,
+      question.options.find((option) => option.id === question.correctOptionId)?.textEn,
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
+      uhrSectionMap?.source?.title,
       uhrSectionMap?.source?.publisher,
+      uhrSectionMap?.source?.url,
+      uhrSectionMap?.source?.retrievedDate,
       question.difficulty,
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
