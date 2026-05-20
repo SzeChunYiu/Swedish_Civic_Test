@@ -9,6 +9,7 @@ const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank'
 const {
   generatedFixtureIdExpression,
   generatedFixtureIdHelperSource,
+  generatedQuestionId,
 } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -218,6 +219,90 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q156 uses stilted state-welfare English wording/,
+  );
+});
+
+test('free-media source prompts ask the civic concept directly in exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const answerKeyPromptPattern = /\b(?:Vilket svar beskriver|Which answer describes)\b/i;
+  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => answerKeyPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => answerKeyPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => answerKeyPromptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q045 = generatedSiteBank.find((question) => question.id === 'q045');
+  const q045True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q045', 'trueStatement'),
+  );
+  const q045False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q045', 'falseStatement'),
+  );
+
+  assert.ok(q045, 'q045 should be published in the site bank');
+  assert.equal(q045.q.sv, 'Vilka viktiga uppgifter har fria medier i en demokrati?');
+  assert.equal(q045.q.en, 'What important roles do free media play in a democracy?');
+  assert.ok(q045True, 'q045 true generated variant should be published');
+  assert.equal(
+    q045True.q.sv,
+    'I en demokrati har fria medier viktiga uppgifter: att informera, möjliggöra samhällsdebatt och granska personer med makt.',
+  );
+  assert.equal(
+    q045True.q.en,
+    'In a democracy, free media play important roles: informing, enabling public debate, and scrutinizing people with power.',
+  );
+  assert.ok(q045False, 'q045 false generated variant should be published');
+  assert.equal(q045False.q.sv, 'I en demokrati ska fria medier ersätta politiska val.');
+  assert.equal(q045False.q.en, 'In a democracy, free media should replace political elections.');
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('free-media source prompt guard rejects answer-key wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vilka viktiga uppgifter har fria medier i en demokrati?',
+        'Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?',
+      )
+      .replace(
+        'What important roles do free media play in a democracy?',
+        'Which answer describes an important role of free media in a democracy?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q045 source prompt asks about the answer instead of the civic concept/,
   );
 });
 
