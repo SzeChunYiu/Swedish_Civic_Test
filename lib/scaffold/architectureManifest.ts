@@ -125,6 +125,7 @@ export const architectureSharedUiRuntimeFiles = [
 export const architectureThemeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
+  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',
@@ -399,6 +400,16 @@ export const architectureScaffoldFiles = [
     file: 'app/onboarding.tsx',
     area: 'app',
     purpose: 'First-run learning setup route',
+  },
+  {
+    file: 'app/search.tsx',
+    area: 'app',
+    purpose: 'Search route registered in the root stack',
+  },
+  {
+    file: 'app/dashboard.tsx',
+    area: 'app',
+    purpose: 'Dashboard route registered in the root stack',
   },
   {
     file: 'app/(tabs)/_layout.tsx',
