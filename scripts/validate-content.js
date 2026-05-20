@@ -232,7 +232,7 @@ const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
-const EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE = '2026-05-19';
+const EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE = '2026-05-20';
 const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
@@ -256,6 +256,11 @@ const EXPECTED_ABOUT_THE_TEST_COPY_LABELS = {
     'Är appen officiell?',
     'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
     'Källäge kontrollerat',
+    'Officiella källor',
+    'Utgivare',
+    'Hämtad',
+    'URL',
+    'Öppna officiell källa',
     'Tillbaka till start',
     'Tillbaka till startsidan',
     'Börja öva',
@@ -278,6 +283,11 @@ const EXPECTED_ABOUT_THE_TEST_COPY_LABELS = {
     'Is this app official?',
     'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
     'Source status checked',
+    'Official sources',
+    'Publisher',
+    'Retrieved',
+    'URL',
+    'Open official source',
     'Back to home',
     'Return to the home screen',
     'Start practising',
@@ -309,6 +319,47 @@ const EXPECTED_ABOUT_THE_TEST_COPY_SNIPPETS = [
   [
     'sectionSourceBody: `This status was checked on ${officialTestSourceNotes[0].retrievedDate}',
     'about-the-test route English source-status copy must use source metadata',
+  ],
+  [
+    "import { LegalExternalLink } from '../components/compliance/LegalPage';",
+    'about-the-test route must reuse the legal external-link pattern',
+  ],
+  [
+    "publisher: 'Universitets- och högskolerådet (UHR)'",
+    'about-the-test route official source notes must expose publisher metadata',
+  ],
+  [
+    "titleEn: 'UHR: About the citizenship test'",
+    'about-the-test route official source notes must expose localized source titles',
+  ],
+  [
+    'officialTestSourceNotes.map((source) =>',
+    'about-the-test route must render every official source note',
+  ],
+  ['<LegalExternalLink', 'about-the-test route must render official sources as external links'],
+  [
+    'href={source.url}',
+    'about-the-test route official source links must use the source URL as href',
+  ],
+  [
+    'copy.officialSourcePublisherLabel',
+    'about-the-test route official source links must visibly include publisher labels',
+  ],
+  [
+    'source.publisher',
+    'about-the-test route official source links must visibly include source publishers',
+  ],
+  [
+    'copy.officialSourceRetrievedLabel',
+    'about-the-test route official source links must visibly include retrieved-date labels',
+  ],
+  [
+    'source.retrievedDate',
+    'about-the-test route official source links must visibly include retrieved dates',
+  ],
+  [
+    'copy.officialSourceUrlLabel',
+    'about-the-test route official source links must visibly include URL labels',
   ],
 ];
 const EXPECTED_CITIZENSHIP_REQUIREMENTS_LIMITED_SEAT_SNIPPETS = [
@@ -10440,6 +10491,7 @@ function validateCitizenshipRequirementsLimitedSeatParity() {
 function validateAboutTheTestRouteCopyParity() {
   let valid = true;
   let aboutRoute = '';
+  let legalPage = '';
 
   function reject(message) {
     valid = false;
@@ -10452,10 +10504,23 @@ function validateAboutTheTestRouteCopyParity() {
     reject(`app/about-the-test.tsx could not be read: ${error.message}`);
     return;
   }
+  try {
+    legalPage = fs.readFileSync(path.join(repoRoot, 'components/compliance/LegalPage.tsx'), 'utf8');
+  } catch (error) {
+    reject(`components/compliance/LegalPage.tsx could not be read: ${error.message}`);
+    return;
+  }
 
   EXPECTED_ABOUT_THE_TEST_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!aboutRoute.includes(snippet)) reject(message);
   });
+
+  if (!legalPage.includes('target="_blank"') || !legalPage.includes('rel="noreferrer"')) {
+    reject('about-the-test official source links must inherit safe external-link attributes');
+  }
+  if (!legalPage.includes('minHeight: space[6]') || !legalPage.includes('minWidth: space[6]')) {
+    reject('about-the-test official source links must inherit touch-safe legal link sizing');
+  }
 
   EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.forEach((url) => {
     if (!aboutRoute.includes(url)) {

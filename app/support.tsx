@@ -178,8 +178,10 @@ export default function Screen() {
       <LegalSection title={copy.sections.independentStudyTool.title}>
         {copy.sections.independentStudyTool.body}
       </LegalSection>
-      <LegalSection title={copy.sections.publicSupportPage.title}>
-        {copy.sections.publicSupportPage.body}{' '}
+      <LegalSection
+        title={copy.sections.publicSupportPage.title}
+        body={copy.sections.publicSupportPage.body}
+      >
         <LegalExternalLink
           accessibilityLabel={copy.openSupportPageAccessibilityLabel}
           destination={PUBLIC_SUPPORT_URL}

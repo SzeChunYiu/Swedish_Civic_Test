@@ -17,10 +17,30 @@ type LegalExternalLinkFixture = {
   sectionTitle: string;
   title: string;
   url: string;
+  visibleLabel?: string;
+};
+
+type AboutTheTestOfficialSourceFixture = {
+  language: AppLanguage;
+  openPrefix: string;
+  pageTitle: string;
+  publisherLabel: string;
+  retrievedLabel: string;
+  sourceHeading: string;
+  sourceTitles: string[];
+  urlLabel: string;
 };
 
 const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+];
+const OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-20';
 
 const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
   {
@@ -49,6 +69,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     sectionTitle: 'Offentlig supportsida',
     title: 'Support och återkoppling',
     url: PUBLIC_SUPPORT_URL,
+    visibleLabel: 'Offentlig supportsida',
   },
   {
     actionLabel: 'Open public support page',
@@ -58,6 +79,42 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     sectionTitle: 'Public support page',
     title: 'Support and feedback',
     url: PUBLIC_SUPPORT_URL,
+    visibleLabel: 'Public support page',
+  },
+];
+
+const aboutTheTestOfficialSourceFixtures: AboutTheTestOfficialSourceFixture[] = [
+  {
+    language: 'sv',
+    openPrefix: 'Öppna officiell källa',
+    pageTitle: 'Vad är medborgarskapsprovet i samhällskunskap?',
+    publisherLabel: 'Utgivare',
+    retrievedLabel: 'Hämtad',
+    sourceHeading: 'Officiella källor',
+    sourceTitles: [
+      'UHR: Om medborgarskapsprovet',
+      'UHR: Frågor och svar',
+      'UHR: Anmälan',
+      'UHR: Utbildningsmaterial om det svenska samhället',
+      'Migrationsverket: Nya regler för svenskt medborgarskap från 6 juni 2026',
+    ],
+    urlLabel: 'URL',
+  },
+  {
+    language: 'en',
+    openPrefix: 'Open official source',
+    pageTitle: 'What is the Swedish civic test?',
+    publisherLabel: 'Publisher',
+    retrievedLabel: 'Retrieved',
+    sourceHeading: 'Official sources',
+    sourceTitles: [
+      'UHR: About the citizenship test',
+      'UHR: Questions and answers',
+      'UHR: Registration',
+      'UHR: Study material about Swedish society',
+      'Migrationsverket: New rules for Swedish citizenship from 6 June 2026',
+    ],
+    urlLabel: 'URL',
   },
 ];
 
@@ -152,6 +209,13 @@ async function stubExternalDestinations(page: Page) {
       status: 200,
     }),
   );
+  await page.context().route('https://www.migrationsverket.se/**', (route) =>
+    route.fulfill({
+      body: '<!doctype html><title>Migrationsverket destination</title>',
+      contentType: 'text/html; charset=utf-8',
+      status: 200,
+    }),
+  );
   await page.context().route('https://szechunyiu.github.io/**', (route) =>
     route.fulfill({
       body: '<!doctype html><title>Public support destination</title>',
@@ -180,7 +244,7 @@ for (const fixture of legalExternalLinkFixtures) {
 
     await expect(body).toBeVisible();
     await expect(link).toBeVisible();
-    await expect(link).toContainText(fixture.actionLabel);
+    await expect(link).toContainText(fixture.visibleLabel ?? fixture.actionLabel);
     await expect(link).toContainText(fixture.url);
     await expect(link).toHaveAttribute('href', fixture.url);
     await expect(link).toHaveAttribute('target', '_blank');
@@ -201,6 +265,64 @@ for (const fixture of legalExternalLinkFixtures) {
     await link.click();
     const popup = await popupPromise;
     await expect.poll(() => popup.url()).toBe(fixture.url);
+    await popup.close();
+
+    expect(pageErrors).toEqual([]);
+  });
+}
+
+for (const fixture of aboutTheTestOfficialSourceFixtures) {
+  test(`/about-the-test exposes ${fixture.language} official source links safely`, async ({
+    page,
+  }) => {
+    const pageErrors = collectPageErrors(page);
+    await stubExternalDestinations(page);
+    await seedCleanLanguage(page, fixture.language);
+
+    await page.goto('/about-the-test', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('heading', { name: fixture.pageTitle }).last()).toBeVisible();
+    await expect(page.getByRole('heading', { name: fixture.sourceHeading }).last()).toBeVisible();
+
+    for (const [index, sourceTitle] of fixture.sourceTitles.entries()) {
+      const url = ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS[index];
+      const link = page
+        .getByRole('link', { name: `${fixture.openPrefix}: ${sourceTitle}` })
+        .first();
+
+      await expect(link).toBeVisible();
+      await expect(link).toContainText(sourceTitle);
+      await expect(link).toContainText(url);
+      await expect(link).toContainText(
+        `${fixture.retrievedLabel}: ${OFFICIAL_SOURCE_RETRIEVED_DATE}`,
+      );
+      await expect(link).toContainText(`${fixture.urlLabel}: ${url}`);
+      await expect(link).toHaveAttribute('href', url);
+      await expect(link).toHaveAttribute('target', '_blank');
+      await expect(link).toHaveAttribute('rel', 'noreferrer');
+
+      if (url.includes('migrationsverket.se')) {
+        await expect(link).toContainText(`${fixture.publisherLabel}: Migrationsverket`);
+      } else {
+        await expect(link).toContainText(
+          `${fixture.publisherLabel}: Universitets- och högskolerådet (UHR)`,
+        );
+      }
+    }
+
+    await expectExternalLinksAreTouchSafe(page);
+    await expectNoHorizontalOverflow(page);
+
+    const firstOfficialLink = page
+      .getByRole('link', {
+        name: `${fixture.openPrefix}: ${fixture.sourceTitles[0]}`,
+      })
+      .first();
+    const popupPromise = page.waitForEvent('popup');
+    await firstOfficialLink.click();
+    const popup = await popupPromise;
+    await expect.poll(() => popup.url()).toBe(ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS[0]);
     await popup.close();
 
     expect(pageErrors).toEqual([]);

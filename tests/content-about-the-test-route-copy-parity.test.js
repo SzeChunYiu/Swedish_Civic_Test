@@ -31,15 +31,32 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
 
-  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 40);
+  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 50);
   assert.equal(summary.aboutTheTestRouteCopyParityValidated, true);
   assert.equal(summary.aboutTheTestOfficialSourceUrlsValidated, officialSourceUrls.length);
-  assert.equal(summary.aboutTheTestOfficialSourceRetrievedDateValidated, '2026-05-19');
+  assert.equal(summary.aboutTheTestOfficialSourceRetrievedDateValidated, '2026-05-20');
   assert.equal(summary.citizenshipRequirementsLimitedSeatCopyValidated, 4);
+  assert.match(
+    source,
+    /import \{ LegalExternalLink \} from '\.\.\/components\/compliance\/LegalPage';/,
+  );
   assert.match(source, /const officialTestSourceNotes = \[/);
   assert.match(source, /const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = aboutTheTestCopy\[language\];/);
+  assert.match(source, /publisher: 'Universitets- och högskolerådet \(UHR\)'/);
+  assert.match(source, /publisher: 'Migrationsverket'/);
+  assert.match(source, /titleSv: 'UHR: Om medborgarskapsprovet'/);
+  assert.match(source, /titleEn: 'UHR: About the citizenship test'/);
+  assert.match(source, /officialTestSourceNotes\.map\(\(source\) =>/);
+  assert.match(source, /<LegalExternalLink[\s\S]*href=\{source\.url\}/);
+  assert.match(source, /source\.publisher/);
+  assert.match(source, /source\.retrievedDate/);
+  assert.match(source, /source\.url/);
+  assert.match(source, /Officiella källor/);
+  assert.match(source, /Official sources/);
+  assert.match(source, /Öppna officiell källa/);
+  assert.match(source, /Open official source/);
   assert.match(source, /15 augusti 2026 i Stockholm/);
   assert.match(source, /15 August 2026 in Stockholm/);
   assert.match(source, /brev från Migrationsverket/);
@@ -147,7 +164,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace('https://www.uhr.se/medborgarskapsprovet/anmalan/', 'https://example.invalid/anmalan/')
-      .replaceAll("retrievedDate: '2026-05-19'", "retrievedDate: '2026-05-01'");
+      .replaceAll("retrievedDate: '2026-05-20'", "retrievedDate: '2026-05-01'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -165,7 +182,38 @@ require('./scripts/validate-content.js');
   );
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /about-the-test route official source metadata must use retrievedDate 2026-05-19 for every source/,
+    /about-the-test route official source metadata must use retrievedDate 2026-05-20 for every source/,
+  );
+});
+
+test('about-the-test route copy parity rejects missing rendered official source links', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('officialTestSourceNotes.map((source) =>', 'officialTestSourceNotes.slice(0, 0).map((source) =>');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-about-the-test-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route must render every official source note/,
   );
 });
 
