@@ -1,4 +1,4 @@
-/* Sveriges Medborgartest - generated static question bank.
+/* Almost Swedish - generated static question bank.
    Source: data/questions.ts and data/chapters.ts.
    Run: node scripts/export-site-question-bank.js
 */
