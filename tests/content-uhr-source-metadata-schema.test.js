@@ -20,6 +20,7 @@ test('UHR source metadata schema validates a current retrieval date', () => {
 
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrSourceRetrievedDateValidated, true);
+  assert.equal(uhrSectionMap.source.publisher, 'Universitets- och högskolerådet (UHR)');
   assert.match(uhrSectionMap.source.retrievedDate, /^\d{4}-\d{2}-\d{2}$/);
   assert.ok(new Date(`${uhrSectionMap.source.retrievedDate}T00:00:00Z`) <= new Date());
 });
@@ -50,6 +51,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /UHR section map source retrievedDate must not be in the future/,
+  );
+});
+
+test('UHR source metadata schema rejects publisher drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    return String(contents).replace(
+      '"publisher": "Universitets- och högskolerådet (UHR)"',
+      '"publisher": "Unknown publisher"',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /UHR section map source publisher must be Universitets- och högskolerådet \(UHR\)/,
   );
 });
 

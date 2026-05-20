@@ -64,7 +64,6 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
     <View style={styles.row}>
       <LanguagePicker />
       <Pressable
-        aria-checked={audioEnabled}
         accessibilityRole="switch"
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
         accessibilityState={{ checked: audioEnabled }}
@@ -88,51 +87,25 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
 }
 
 function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
-  const clearPressedState = () => setIsPressed(false);
-  const handleKeyboardPressStart = ({ key }: { key: string }) => {
-    if (key === 'Enter' || key === ' ') setIsPressed(true);
-  };
-  const handleKeyboardPressEnd = ({ key }: { key: string }) => {
-    if (key === 'Enter' || key === ' ') setIsPressed(false);
-  };
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
-          onBlur: () => {
-            setIsFocused(false);
-            clearPressedState();
-          },
+          onBlur: () => setIsFocused(false),
           onFocus: () => setIsFocused(true),
-          onKeyDown: handleKeyboardPressStart,
-          onKeyUp: handleKeyboardPressEnd,
           onMouseEnter: () => setIsHovered(true),
-          onMouseDown: () => setIsPressed(true),
-          onMouseLeave: () => {
-            setIsHovered(false);
-            clearPressedState();
-          },
-          onMouseUp: clearPressedState,
-          onTouchEnd: clearPressedState,
-          onTouchStart: () => setIsPressed(true),
+          onMouseLeave: () => setIsHovered(false),
         }
       : {};
 
   return (
     <Link
-      {...webInteractionHandlers}
+      {...linkInteractionHandlers}
+      {...webClassName}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       href={href}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={clearPressedState}
-      style={[
-        styles.iconLink,
-        isFocused || isHovered ? styles.iconLinkHover : null,
-        isPressed ? styles.iconLinkPressed : null,
-      ]}
+      style={[styles.iconLink, isPressed ? styles.iconLinkPressed : null]}
     >
       {children}
     </Link>
@@ -160,6 +133,7 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
+    display: 'flex',
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],
