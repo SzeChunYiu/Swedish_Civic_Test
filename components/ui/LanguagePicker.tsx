@@ -83,27 +83,15 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
       </Pressable>
 
       <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
-        <Pressable
-          accessibilityLabel={copy.closeLabel}
-          accessibilityRole="button"
-          hitSlop={space[1]}
-          onPress={() => setOpen(false)}
-          style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
-        >
+        <View style={styles.backdropLayer}>
           <Pressable
-            accessible={false}
-            hitSlop={space[0]}
-            importantForAccessibility="no"
-            onPress={closePicker}
+            accessibilityLabel={copy.closeLabel}
+            accessibilityRole="button"
+            hitSlop={space[1]}
+            onPress={() => setOpen(false)}
             style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
           />
-          <View
-            accessibilityLabel={copy.menuLabel}
-            accessibilityRole="menu"
-            hitSlop={space[0]}
-            onPress={(e) => e.stopPropagation()}
-            style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
-          >
+          <View accessibilityLabel={copy.menuLabel} accessibilityRole="menu" style={styles.card}>
             <Text style={styles.title}>{copy.title}</Text>
             <Text style={styles.subtitle}>{copy.subtitle}</Text>
             <ScrollView style={styles.list}>
