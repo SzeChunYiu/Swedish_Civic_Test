@@ -1519,8 +1519,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In proportional elections, parties receive seats based on their share of the votes. If a party receives twenty percent of the votes, it receives twenty percent of the seats; the alternatives about all seats, no seats, or government approval are therefore incorrect.",
-      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Om ett parti får tjugo procent av rösterna får det tjugo procent av platserna; därför är alternativen med alla platser, inga platser eller krav på regeringens godkännande fel."
+      "en": "In proportional elections, parties receive seats based on their share of the votes. A party with twenty percent of the votes therefore receives roughly twenty percent of the seats.",
+      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Ett parti med tjugo procent av rösterna får därför ungefär tjugo procent av platserna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -1657,8 +1657,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that all public power comes from the people. The Instrument of Government also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
-      "sv": "Rätt svar är att all offentlig makt utgår från folket. Regeringsformen beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
+      "en": "The Instrument of Government states that all public power in Sweden comes from the people. It also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
+      "sv": "Regeringsformen slår fast att all offentlig makt i Sverige utgår från folket. Den beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2378,8 +2378,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Examples such as equal pay, education, and shared parental leave show that the narrower or opposite alternatives are incorrect.",
-      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Exempel som lika lön, utbildning och delad föräldraledighet visar att de smalare eller motsatta alternativen är fel."
+      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Equal pay, education, and shared parental leave are examples of that broad meaning.",
+      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika lön, utbildning och delad föräldraledighet är exempel på den breda innebörden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2424,8 +2424,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression, which makes the other alternatives incorrect.",
-      "sv": "Rätt svar är att våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck, vilket gör de andra alternativen fel."
+      "en": "Violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression.",
+      "sv": "Våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2701,8 +2701,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that it is permitted to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
-      "sv": "Rätt svar är att det är tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
+      "en": "In Sweden, people are allowed to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
+      "sv": "I Sverige är det tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -2839,8 +2839,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
-      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+      "en": "About 70 percent of the workforce works in the private sector. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Cirka 70 procent av arbetskraften arbetar i privat sektor. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3892,8 +3892,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
-      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4944,8 +4944,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden; that makes the other options incorrect.",
-      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige; därför är de andra alternativen fel."
+      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden.",
+      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -4991,8 +4991,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues; therefore the options about the year 2000, no congregations, or being the largest religion are incorrect.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor; därför är alternativen om år 2000, inga församlingar eller största religion fel."
+      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -5038,8 +5038,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
+      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences.",
+      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -5418,8 +5418,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -5465,8 +5465,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; the other options confuse Judaism with Islam, the Religious Freedom Act, or an incorrect size ranking.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; de andra alternativen blandar ihop judendom med islam, religionsfrihetslagen eller en felaktig storleksordning."
+      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; Islam, the Religious Freedom Act, and Sweden’s largest religious group belong to other contexts.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; islam, religionsfrihetslagen och Sveriges största religiösa grupp hör till andra sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6127,8 +6127,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year, so those options are incorrect.",
-      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året, därför är de alternativen fel."
+      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year.",
+      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6269,8 +6269,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants, so the options saying traditions must disappear, become laws, or only be celebrated on National Day are incorrect.",
-      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare; därför är alternativen om att traditioner måste försvinna, bli lagar eller bara firas på nationaldagen fel."
+      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants.",
+      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13161,8 +13161,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In proportional elections, parties receive seats based on their share of the votes. If a party receives twenty percent of the votes, it receives twenty percent of the seats; the alternatives about all seats, no seats, or government approval are therefore incorrect.",
-      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Om ett parti får tjugo procent av rösterna får det tjugo procent av platserna; därför är alternativen med alla platser, inga platser eller krav på regeringens godkännande fel."
+      "en": "In proportional elections, parties receive seats based on their share of the votes. A party with twenty percent of the votes therefore receives roughly twenty percent of the seats.",
+      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Ett parti med tjugo procent av rösterna får därför ungefär tjugo procent av platserna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13201,8 +13201,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In proportional elections, parties receive seats based on their share of the votes. If a party receives twenty percent of the votes, it receives twenty percent of the seats; the alternatives about all seats, no seats, or government approval are therefore incorrect.",
-      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Om ett parti får tjugo procent av rösterna får det tjugo procent av platserna; därför är alternativen med alla platser, inga platser eller krav på regeringens godkännande fel."
+      "en": "In proportional elections, parties receive seats based on their share of the votes. A party with twenty percent of the votes therefore receives roughly twenty percent of the seats.",
+      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Ett parti med tjugo procent av rösterna får därför ungefär tjugo procent av platserna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13241,8 +13241,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In proportional elections, parties receive seats based on their share of the votes. If a party receives twenty percent of the votes, it receives twenty percent of the seats; the alternatives about all seats, no seats, or government approval are therefore incorrect.",
-      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Om ett parti får tjugo procent av rösterna får det tjugo procent av platserna; därför är alternativen med alla platser, inga platser eller krav på regeringens godkännande fel."
+      "en": "In proportional elections, parties receive seats based on their share of the votes. A party with twenty percent of the votes therefore receives roughly twenty percent of the seats.",
+      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Ett parti med tjugo procent av rösterna får därför ungefär tjugo procent av platserna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13289,8 +13289,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In proportional elections, parties receive seats based on their share of the votes. If a party receives twenty percent of the votes, it receives twenty percent of the seats; the alternatives about all seats, no seats, or government approval are therefore incorrect.",
-      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Om ett parti får tjugo procent av rösterna får det tjugo procent av platserna; därför är alternativen med alla platser, inga platser eller krav på regeringens godkännande fel."
+      "en": "In proportional elections, parties receive seats based on their share of the votes. A party with twenty percent of the votes therefore receives roughly twenty percent of the seats.",
+      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Ett parti med tjugo procent av rösterna får därför ungefär tjugo procent av platserna."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13689,8 +13689,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that all public power comes from the people. The Instrument of Government also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
-      "sv": "Rätt svar är att all offentlig makt utgår från folket. Regeringsformen beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
+      "en": "The Instrument of Government states that all public power in Sweden comes from the people. It also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
+      "sv": "Regeringsformen slår fast att all offentlig makt i Sverige utgår från folket. Den beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13729,8 +13729,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that all public power comes from the people. The Instrument of Government also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
-      "sv": "Rätt svar är att all offentlig makt utgår från folket. Regeringsformen beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
+      "en": "The Instrument of Government states that all public power in Sweden comes from the people. It also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
+      "sv": "Regeringsformen slår fast att all offentlig makt i Sverige utgår från folket. Den beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13769,8 +13769,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The correct answer is that all public power comes from the people. The Instrument of Government also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
-      "sv": "Rätt svar är att all offentlig makt utgår från folket. Regeringsformen beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
+      "en": "The Instrument of Government states that all public power in Sweden comes from the people. It also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
+      "sv": "Regeringsformen slår fast att all offentlig makt i Sverige utgår från folket. Den beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -13817,8 +13817,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that all public power comes from the people. The Instrument of Government also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
-      "sv": "Rätt svar är att all offentlig makt utgår från folket. Regeringsformen beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
+      "en": "The Instrument of Government states that all public power in Sweden comes from the people. It also states that the Riksdag makes laws, the government governs the country, and the constitution guarantees citizens' basic rights and freedoms.",
+      "sv": "Regeringsformen slår fast att all offentlig makt i Sverige utgår från folket. Den beskriver också att riksdagen stiftar lagar, regeringen styr landet och att grundlagen garanterar medborgarnas grundläggande fri- och rättigheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16509,8 +16509,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Examples such as equal pay, education, and shared parental leave show that the narrower or opposite alternatives are incorrect.",
-      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Exempel som lika lön, utbildning och delad föräldraledighet visar att de smalare eller motsatta alternativen är fel."
+      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Equal pay, education, and shared parental leave are examples of that broad meaning.",
+      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika lön, utbildning och delad föräldraledighet är exempel på den breda innebörden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16549,8 +16549,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Examples such as equal pay, education, and shared parental leave show that the narrower or opposite alternatives are incorrect.",
-      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Exempel som lika lön, utbildning och delad föräldraledighet visar att de smalare eller motsatta alternativen är fel."
+      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Equal pay, education, and shared parental leave are examples of that broad meaning.",
+      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika lön, utbildning och delad föräldraledighet är exempel på den breda innebörden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16589,8 +16589,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Examples such as equal pay, education, and shared parental leave show that the narrower or opposite alternatives are incorrect.",
-      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Exempel som lika lön, utbildning och delad föräldraledighet visar att de smalare eller motsatta alternativen är fel."
+      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Equal pay, education, and shared parental leave are examples of that broad meaning.",
+      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika lön, utbildning och delad föräldraledighet är exempel på den breda innebörden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16637,8 +16637,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Examples such as equal pay, education, and shared parental leave show that the narrower or opposite alternatives are incorrect.",
-      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Exempel som lika lön, utbildning och delad föräldraledighet visar att de smalare eller motsatta alternativen är fel."
+      "en": "Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Equal pay, education, and shared parental leave are examples of that broad meaning.",
+      "sv": "Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika lön, utbildning och delad föräldraledighet är exempel på den breda innebörden."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16685,8 +16685,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression, which makes the other alternatives incorrect.",
-      "sv": "Rätt svar är att våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck, vilket gör de andra alternativen fel."
+      "en": "Violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression.",
+      "sv": "Våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16726,8 +16726,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression, which makes the other alternatives incorrect.",
-      "sv": "Rätt svar är att våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck, vilket gör de andra alternativen fel."
+      "en": "Violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression.",
+      "sv": "Våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16767,8 +16767,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The correct answer is that violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression, which makes the other alternatives incorrect.",
-      "sv": "Rätt svar är att våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck, vilket gör de andra alternativen fel."
+      "en": "Violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression.",
+      "sv": "Våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -16816,8 +16816,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression, which makes the other alternatives incorrect.",
-      "sv": "Rätt svar är att våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck, vilket gör de andra alternativen fel."
+      "en": "Violence in close relationships and honour-related violence and oppression are crimes under Swedish law. Sexual violence, strict control, forced marriage, and child marriage are examples of this violence or oppression.",
+      "sv": "Våld i nära relationer och hedersrelaterat våld och förtryck är brottsligt enligt svensk lag. Sexuellt våld, hård kontroll, tvångsäktenskap och barnäktenskap är exempel på sådant våld eller förtryck."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17745,8 +17745,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that it is permitted to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
-      "sv": "Rätt svar är att det är tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
+      "en": "In Sweden, people are allowed to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
+      "sv": "I Sverige är det tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17785,8 +17785,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that it is permitted to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
-      "sv": "Rätt svar är att det är tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
+      "en": "In Sweden, people are allowed to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
+      "sv": "I Sverige är det tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17825,8 +17825,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The correct answer is that it is permitted to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
-      "sv": "Rätt svar är att det är tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
+      "en": "In Sweden, people are allowed to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
+      "sv": "I Sverige är det tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17873,8 +17873,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is that it is permitted to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
-      "sv": "Rätt svar är att det är tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
+      "en": "In Sweden, people are allowed to marry a person of the same sex. The right to live with whomever one wants is protected by law, and discrimination based on sexual orientation, gender identity, and gender expression is prohibited under the Discrimination Act.",
+      "sv": "I Sverige är det tillåtet att gifta sig med en person av samma kön. Rätten att leva med vem man vill är skyddad i lag, och diskriminering på grund av sexuell läggning, könsidentitet och könsuttryck är förbjuden enligt diskrimineringslagen."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18273,8 +18273,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
-      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+      "en": "About 70 percent of the workforce works in the private sector. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Cirka 70 procent av arbetskraften arbetar i privat sektor. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18313,8 +18313,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
-      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+      "en": "About 70 percent of the workforce works in the private sector. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Cirka 70 procent av arbetskraften arbetar i privat sektor. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18353,8 +18353,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
-      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+      "en": "About 70 percent of the workforce works in the private sector. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Cirka 70 procent av arbetskraften arbetar i privat sektor. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18401,8 +18401,8 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The correct answer is about 70 percent. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
-      "sv": "Rätt svar är cirka 70 procent. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
+      "en": "About 70 percent of the workforce works in the private sector. The private sector consists of privately owned companies, such as shops, restaurants, factories, construction companies, and other businesses, while about 30 percent of people who work are in the public sector.",
+      "sv": "Cirka 70 procent av arbetskraften arbetar i privat sektor. Den privata sektorn består av företag som ägs privat, till exempel butiker, restauranger, fabriker, byggföretag och andra företag, medan cirka 30 procent av dem som arbetar finns i offentlig sektor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22333,8 +22333,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
-      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22373,8 +22373,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
-      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22413,8 +22413,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
-      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22461,8 +22461,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
-      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
+      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries.",
+      "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26421,8 +26421,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden; that makes the other options incorrect.",
-      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige; därför är de andra alternativen fel."
+      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden.",
+      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26462,8 +26462,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden; that makes the other options incorrect.",
-      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige; därför är de andra alternativen fel."
+      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden.",
+      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26503,8 +26503,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden; that makes the other options incorrect.",
-      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige; därför är de andra alternativen fel."
+      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden.",
+      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26552,8 +26552,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden; that makes the other options incorrect.",
-      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige; därför är de andra alternativen fel."
+      "en": "Christianity has left many cultural traces in Sweden, but the role of religion in society has decreased. At the same time, religion and religious questions have received more attention, and almost all world religions are represented in Sweden.",
+      "sv": "Kristendomen har satt många kulturella spår i Sverige, men religionens roll i samhället har minskat. Samtidigt har religion och religiösa frågor fått större uppmärksamhet, och nästan alla världens religioner finns representerade i Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26601,8 +26601,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues; therefore the options about the year 2000, no congregations, or being the largest religion are incorrect.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor; därför är alternativen om år 2000, inga församlingar eller största religion fel."
+      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26642,8 +26642,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues; therefore the options about the year 2000, no congregations, or being the largest religion are incorrect.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor; därför är alternativen om år 2000, inga församlingar eller största religion fel."
+      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26683,8 +26683,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues; therefore the options about the year 2000, no congregations, or being the largest religion are incorrect.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor; därför är alternativen om år 2000, inga församlingar eller största religion fel."
+      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26732,8 +26732,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues; therefore the options about the year 2000, no congregations, or being the largest religion are incorrect.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor; därför är alternativen om år 2000, inga församlingar eller största religion fel."
+      "en": "Judaism's history in Sweden can be traced back to the 18th century. Jews received full civil rights in Sweden only in 1870, and today there are several Jewish congregations and synagogues.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Judar fick fullständiga medborgerliga rättigheter i Sverige först 1870, och i dag finns flera judiska församlingar och synagogor."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26781,8 +26781,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
+      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences.",
+      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26822,8 +26822,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
+      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences.",
+      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26863,8 +26863,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
+      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences.",
+      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -26912,8 +26912,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences; therefore the options about coercion, prohibition, or only one religion are incorrect.",
-      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter; därför är alternativen om tvång, förbud eller bara en religion fel."
+      "en": "Religion studies should give pupils a broad understanding of different religions, beliefs, and worldviews from around the world. The goal is to promote understanding, tolerance, and respect for differences.",
+      "sv": "Religionskunskapen ska ge elever en bred förståelse för olika religioner, trosuppfattningar och livsåskådningar från hela världen. Målet är att främja förståelse, tolerans och respekt för olikheter."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28237,8 +28237,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28278,8 +28278,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28319,8 +28319,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28368,8 +28368,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country, so the options about Buddhism, no Christian churches, or Islam are incorrect.",
-      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land, och därför är alternativen om buddhism, inga kristna kyrkor eller islam fel."
+      "en": "The Church of Sweden has historical roots in the Lutheran Protestant tradition founded in the 16th century. Before that, during the Middle Ages, Sweden was a Catholic country.",
+      "sv": "Svenska kyrkan har historiska rötter i den lutherska, protestantiska traditionen som grundades på 1500-talet. Innan dess, under medeltiden, var Sverige ett katolskt land."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28417,8 +28417,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; the other options confuse Judaism with Islam, the Religious Freedom Act, or an incorrect size ranking.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; de andra alternativen blandar ihop judendom med islam, religionsfrihetslagen eller en felaktig storleksordning."
+      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; Islam, the Religious Freedom Act, and Sweden’s largest religious group belong to other contexts.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; islam, religionsfrihetslagen och Sveriges största religiösa grupp hör till andra sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28458,8 +28458,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; the other options confuse Judaism with Islam, the Religious Freedom Act, or an incorrect size ranking.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; de andra alternativen blandar ihop judendom med islam, religionsfrihetslagen eller en felaktig storleksordning."
+      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; Islam, the Religious Freedom Act, and Sweden’s largest religious group belong to other contexts.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; islam, religionsfrihetslagen och Sveriges största religiösa grupp hör till andra sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28499,8 +28499,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; the other options confuse Judaism with Islam, the Religious Freedom Act, or an incorrect size ranking.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; de andra alternativen blandar ihop judendom med islam, religionsfrihetslagen eller en felaktig storleksordning."
+      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; Islam, the Religious Freedom Act, and Sweden’s largest religious group belong to other contexts.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; islam, religionsfrihetslagen och Sveriges största religiösa grupp hör till andra sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28548,8 +28548,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; the other options confuse Judaism with Islam, the Religious Freedom Act, or an incorrect size ranking.",
-      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; de andra alternativen blandar ihop judendom med islam, religionsfrihetslagen eller en felaktig storleksordning."
+      "en": "Judaism’s history in Sweden can be traced back to the 18th century. At that time, Jews gained the right to live and practice their religion in Sweden; Islam, the Religious Freedom Act, and Sweden’s largest religious group belong to other contexts.",
+      "sv": "Judendomens historia i Sverige kan spåras tillbaka till 1700-talet. Då fick judar rätt att bo och utöva sin religion i Sverige; islam, religionsfrihetslagen och Sveriges största religiösa grupp hör till andra sammanhang."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30953,8 +30953,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year, so those options are incorrect.",
-      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året, därför är de alternativen fel."
+      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year.",
+      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -30994,8 +30994,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year, so those options are incorrect.",
-      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året, därför är de alternativen fel."
+      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year.",
+      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31035,8 +31035,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year, so those options are incorrect.",
-      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året, därför är de alternativen fel."
+      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year.",
+      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31084,8 +31084,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year, so those options are incorrect.",
-      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året, därför är de alternativen fel."
+      "en": "All Saints’ Day is observed on a Saturday at the end of October or at the beginning of November. Midsummer Eve, Walpurgis Night, and Advent occur at other times of the year.",
+      "sv": "Alla helgons dag firas på en lördag i slutet av oktober eller i början av november. Midsommarafton, valborgsmässoafton och advent har andra tidpunkter under året."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31497,8 +31497,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants, so the options saying traditions must disappear, become laws, or only be celebrated on National Day are incorrect.",
-      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare; därför är alternativen om att traditioner måste försvinna, bli lagar eller bara firas på nationaldagen fel."
+      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants.",
+      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31538,8 +31538,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants, so the options saying traditions must disappear, become laws, or only be celebrated on National Day are incorrect.",
-      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare; därför är alternativen om att traditioner måste försvinna, bli lagar eller bara firas på nationaldagen fel."
+      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants.",
+      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31579,8 +31579,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants, so the options saying traditions must disappear, become laws, or only be celebrated on National Day are incorrect.",
-      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare; därför är alternativen om att traditioner måste försvinna, bli lagar eller bara firas på nationaldagen fel."
+      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants.",
+      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31628,8 +31628,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants, so the options saying traditions must disappear, become laws, or only be celebrated on National Day are incorrect.",
-      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare; därför är alternativen om att traditioner måste försvinna, bli lagar eller bara firas på nationaldagen fel."
+      "en": "When people move to other countries, they can bring traditions with them and adapt them to the places and people they meet. Eid al-Fitr, Nouruz, and Newroz are examples of traditions that have come to Sweden with immigrants.",
+      "sv": "När människor flyttar till andra länder kan de ta med sig traditioner och anpassa dem till de platser och människor de möter. Id al-fitr, Nouruz och Newroz är exempel på traditioner som har kommit till Sverige med invandrare."
     },
     "source": {
       "title": "Sverige i fokus",

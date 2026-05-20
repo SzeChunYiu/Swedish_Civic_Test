@@ -290,6 +290,13 @@ const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
   /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
   /\bIn a Lucia procession,\s+one person is Lucia\b/i,
 ];
+const QUESTION_AUTHORED_OPTION_WRONG_EXPLANATION_PATTERNS = [
+  /\bRätt svar är\b/i,
+  /\bThe correct answer is\b/i,
+  /\balternativen\b[^.?!\n]*\bfel\b/i,
+  /\balternatives?\b[^.?!\n]*\b(?:wrong|incorrect)\b/i,
+  /\bother (?:options|alternatives)\b[^.?!\n]*\bincorrect\b/i,
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4585,6 +4592,11 @@ function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
   return QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionAuthoredOptionWrongExplanationIssue(question) {
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return QUESTION_AUTHORED_OPTION_WRONG_EXPLANATION_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -7451,6 +7463,7 @@ let questionMayDayEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
+let questionAuthoredOptionWrongExplanationNaturalnessValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
@@ -16571,6 +16584,9 @@ function validateAuthoredSourceParity() {
     if (findQuestionAnswerKeyPrompt(question)) {
       reject(`${label} source prompt asks about the answer instead of the civic concept`);
     }
+    if (findQuestionAuthoredOptionWrongExplanationIssue(question)) {
+      reject(`${label} authored source explanation uses answer-option judgement wording`);
+    }
 
     if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
       authoredSourceQuestionsValidated += 1;
@@ -17383,6 +17399,8 @@ if (Array.isArray(questions)) {
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
       const luciaExplanationRoleScaffoldIssue =
         findQuestionLuciaExplanationRoleScaffoldIssue(question);
+      const authoredOptionWrongExplanationIssue =
+        findQuestionAuthoredOptionWrongExplanationIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const successionVatDistractorIssue = findQuestionSuccessionVatDistractorIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
@@ -17455,6 +17473,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses Lucia role-scaffold explanation wording`);
       } else {
         questionLuciaExplanationRoleScaffoldValidated += 1;
+      }
+      if (authoredOptionWrongExplanationIssue) {
+        fail(`${label} uses answer-option judgement wording in explanation`);
+      } else {
+        questionAuthoredOptionWrongExplanationNaturalnessValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -17952,6 +17975,7 @@ console.log(
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
+      questionAuthoredOptionWrongExplanationNaturalnessValidated,
       questionSecretBallotSvPronounNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
