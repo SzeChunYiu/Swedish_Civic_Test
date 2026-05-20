@@ -1,40 +1,55 @@
 import { expect, test } from '@playwright/test';
-import { dismissBlockingModals } from './browserLaunch';
+import {
+  collectConsoleAndPageErrors,
+  dismissBlockingModals,
+  seedFreshFirstRunSettingsLanguage,
+} from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
-test('mistakes empty state CTA is a full-size route to practice', async ({ page }) => {
-  const consoleErrors: string[] = [];
+const emptyStateCases = [
+  {
+    ctaLabel: 'Öva svåra frågor',
+    emptyText: 'När du missar en övningsfråga visas den här.',
+    emptyTitle: 'Inga missade frågor ännu',
+    firstQuestionLabel: 'Fråga 1',
+    language: 'sv',
+  },
+  {
+    ctaLabel: 'Practice weak questions',
+    emptyText: 'Answer a practice question incorrectly and it will appear here.',
+    emptyTitle: 'No mistakes yet',
+    firstQuestionLabel: 'Question 1',
+    language: 'en',
+  },
+] as const;
 
-  page.on('console', (message) => {
-    if (message.type() === 'error') consoleErrors.push(message.text());
+for (const copy of emptyStateCases) {
+  test(`mistakes empty state CTA is a full-size route to practice in ${copy.language}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleAndPageErrors(page);
+
+    await seedFreshFirstRunSettingsLanguage(page, copy.language);
+
+    await page.goto('/mistakes', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByText(copy.emptyTitle, { exact: true })).toBeVisible();
+    await expect(page.getByText(copy.emptyText, { exact: true })).toBeVisible();
+
+    const practiceCta = page.getByRole('button', { name: copy.ctaLabel });
+    await expect(practiceCta).toBeVisible();
+
+    const practiceCtaBox = await practiceCta.boundingBox();
+    expect(practiceCtaBox).not.toBeNull();
+    expect(practiceCtaBox!.width).toBeGreaterThanOrEqual(44);
+    expect(practiceCtaBox!.height).toBeGreaterThanOrEqual(44);
+
+    await practiceCta.click();
+
+    await expect(page).toHaveURL(/\/practice$/);
+    await expect(page.getByText(copy.firstQuestionLabel, { exact: true })).toBeVisible();
+    expect(consoleErrors.get()).toEqual([]);
   });
-  page.on('pageerror', (error) => consoleErrors.push(error.message));
-
-  await page.addInitScript(() => {
-    window.localStorage.clear();
-    window.sessionStorage.clear();
-  });
-
-  await page.goto('/mistakes', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-
-  await expect(page.getByText('Inga misstag ännu', { exact: true })).toBeVisible();
-  await expect(
-    page.getByText('Svara fel på en övningsfråga så visas den här.', { exact: true }),
-  ).toBeVisible();
-
-  const practiceCta = page.getByRole('button', { name: 'Öva svåra frågor' });
-  await expect(practiceCta).toBeVisible();
-
-  const practiceCtaBox = await practiceCta.boundingBox();
-  expect(practiceCtaBox).not.toBeNull();
-  expect(practiceCtaBox!.width).toBeGreaterThanOrEqual(44);
-  expect(practiceCtaBox!.height).toBeGreaterThanOrEqual(44);
-
-  await practiceCta.click();
-
-  await expect(page).toHaveURL(/\/practice$/);
-  await expect(page.getByText('Fråga 1', { exact: true })).toBeVisible();
-  expect(consoleErrors).toEqual([]);
-});
+}
