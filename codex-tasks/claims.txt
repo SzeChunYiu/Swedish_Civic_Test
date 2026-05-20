@@ -802,3 +802,4 @@ CLAIMED P0-GATE-VALIDATE-CONTENT-TAB-COPY-REDECLARE-1 by pane4-data-integrity-52
 CLAIMED STATIC-NO-TRACKING-AD-COPY-GUARD-1 by pane4-data-integrity-1779266266 2026-05-20T08:37:46Z (takeover: prior claim has no matching remote branch and current origin/main still ships unqualified static no-tracking copy)
 CLAIMED P0-GATE-TYPECHECK-MERGE-DRIFT-1 by pane3-uiux-651386 2026-05-20T08:46:58Z
 CLAIMED P0-GATE-VALIDATE-CONTENT-THEME-CONTRAST-REDECLARE-1 by pane4-data-integrity-1779266800 2026-05-20T08:46:40Z (current origin/main validate:content stops at duplicate EXPECTED_THEME_CONTRAST_PAIRS before validators run)
+CLAIMED P0-GATE-PUBLISHED-QUESTION-TYPES-SYNTAX-1 by pane0-manager-build-701152 2026-05-20T08:52:30Z
