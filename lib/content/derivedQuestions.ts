@@ -1731,6 +1731,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What support can (.+?) provide to (.+)$/i);
   if (match) return supportStatementEn(match[1], answer);
 
+  match = q.match(/^What is (.+?) responsible for$/i);
+  if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
+
   match = q.match(/^How does (.+?) help with (.+)$/i);
   if (match) {
     if (/^To\s+/i.test(answer)) {

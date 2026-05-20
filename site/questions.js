@@ -4007,24 +4007,24 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What does Sida work to do?",
+      "en": "What is Sida responsible for?",
       "sv": "Vad arbetar Sida för?"
     },
     "opts": [
       {
-        "en": "To reduce poverty and oppression in the world",
+        "en": "Reducing poverty and oppression in the world",
         "sv": "Att minska fattigdom och förtryck i världen"
       },
       {
-        "en": "To judge criminal cases in Swedish courts",
+        "en": "Judging criminal cases in Swedish courts",
         "sv": "Att döma brottmål i svenska domstolar"
       },
       {
-        "en": "To decide who may vote in Riksdag elections",
+        "en": "Deciding who may vote in Riksdag elections",
         "sv": "Att besluta vem som får rösta i riksdagsval"
       },
       {
-        "en": "To broadcast public-service programmes with advertising",
+        "en": "Broadcasting public-service programmes with advertising",
         "sv": "Att sända public service-program med reklam"
       }
     ],
@@ -22838,24 +22838,24 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sida works ...",
+      "en": "Sida is responsible for ...",
       "sv": "Sida arbetar för ..."
     },
     "opts": [
       {
-        "en": "To reduce poverty and oppression in the world",
+        "en": "Reducing poverty and oppression in the world",
         "sv": "Att minska fattigdom och förtryck i världen"
       },
       {
-        "en": "To judge criminal cases in Swedish courts",
+        "en": "Judging criminal cases in Swedish courts",
         "sv": "Att döma brottmål i svenska domstolar"
       },
       {
-        "en": "To decide who may vote in Riksdag elections",
+        "en": "Deciding who may vote in Riksdag elections",
         "sv": "Att besluta vem som får rösta i riksdagsval"
       },
       {
-        "en": "To broadcast public-service programmes with advertising",
+        "en": "Broadcasting public-service programmes with advertising",
         "sv": "Att sända public service-program med reklam"
       }
     ],
@@ -22886,7 +22886,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "Sida works to reduce poverty and oppression in the world.",
+      "en": "Sida is responsible for reducing poverty and oppression in the world.",
       "sv": "Sida arbetar för att minska fattigdom och förtryck i världen."
     },
     "opts": [
@@ -22926,7 +22926,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "Sida works to judge criminal cases in Swedish courts.",
+      "en": "Sida is responsible for judging criminal cases in Swedish courts.",
       "sv": "Sida arbetar för att döma brottmål i svenska domstolar."
     },
     "opts": [
@@ -22966,24 +22966,24 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does Sida work to do?",
+      "en": "Choose the correct option: What is Sida responsible for?",
       "sv": "Välj rätt alternativ: Vad arbetar Sida för?"
     },
     "opts": [
       {
-        "en": "To reduce poverty and oppression in the world",
+        "en": "Reducing poverty and oppression in the world",
         "sv": "Att minska fattigdom och förtryck i världen"
       },
       {
-        "en": "To judge criminal cases in Swedish courts",
+        "en": "Judging criminal cases in Swedish courts",
         "sv": "Att döma brottmål i svenska domstolar"
       },
       {
-        "en": "To decide who may vote in Riksdag elections",
+        "en": "Deciding who may vote in Riksdag elections",
         "sv": "Att besluta vem som får rösta i riksdagsval"
       },
       {
-        "en": "To broadcast public-service programmes with advertising",
+        "en": "Broadcasting public-service programmes with advertising",
         "sv": "Att sända public service-program med reklam"
       }
     ],
