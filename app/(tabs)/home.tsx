@@ -42,6 +42,8 @@ type HomeCopy = {
   feedbackLinkAccessibilityLabel: string;
   feedbackText: string;
   feedbackTitle: string;
+  freeBankBadge: string;
+  freeBankText: string;
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
@@ -88,8 +90,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackLink: 'Repetera sparade frågor',
     feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
     feedbackText:
-      '10 000 simulerade elever bad om tydligare framsteg, sparade svåra frågor, källstödd repetition och annonser som hålls borta från prov. De förbättringarna finns nu i studieflödet.',
-    feedbackTitle: 'UX-förbättringar från simulerade studier',
+      'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
+    feedbackTitle: 'Håll koll på det som behöver övas',
+    freeBankBadge: 'Hela banken gratis',
+    freeBankText:
+      'Alla 13 ämnen och hela frågebanken ingår gratis. Betala bara om du vill ta bort annonser från studieskärmar.',
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
@@ -144,8 +149,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackLink: 'Review saved questions',
     feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
     feedbackText:
-      '10,000 simulated learners asked for clearer progress, saved hard questions, source-backed review, and ads that stay out of exams. Those fixes are now built into the study loop.',
-    feedbackTitle: 'UX updates from simulated study sessions',
+      'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
+    feedbackTitle: 'Keep track of what needs review',
+    freeBankBadge: 'Full bank free',
+    freeBankText:
+      'All 13 topics and the full question bank are included for free. Pay only if you want to remove ads from study screens.',
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
@@ -277,6 +285,10 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
+      <Card style={styles.freeBankCard}>
+        <Badge tone="blue">{copy.freeBankBadge}</Badge>
+        <Text style={styles.freeBankText}>{copy.freeBankText}</Text>
+      </Card>
       {!monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
@@ -492,6 +504,22 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     gap: space[1.5],
+  },
+  streakFreezeCard: {
+    gap: space[1],
+  },
+  streakFreezeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  freeBankCard: {
+    gap: space[1],
+  },
+  freeBankText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   feedbackCard: {
     gap: space[1],
