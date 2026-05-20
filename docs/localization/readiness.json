@@ -116,7 +116,7 @@
       "appAvailable": false,
       "role": "target",
       "sourceCorpus": "complete_round1",
-      "glossary": "style_guide_only",
+      "glossary": "phase1_glossary_phrasebook_audit",
       "uiStrings": "not_started",
       "questionContent": "not_started",
       "nativeReview": "missing",
