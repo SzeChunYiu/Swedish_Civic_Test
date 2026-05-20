@@ -1,6 +1,62 @@
 const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+
+const repoRoot = path.resolve(__dirname, '..');
+const moduleCache = new Map();
+
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
+
+function loadTs(relativePath) {
+  const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) return moduleCache.get(filePath).exports;
+
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const mod = { exports: {} };
+  moduleCache.set(filePath, mod);
+
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return mod.exports;
+}
+
+function countByChapter(questions) {
+  return questions.reduce((counts, question) => {
+    counts.set(question.chapterId, (counts.get(question.chapterId) || 0) + 1);
+    return counts;
+  }, new Map());
+}
+
+test('chapter questionCount metadata matches the published question distribution', () => {
+  const { chapters } = loadTs('data/chapters.ts');
+  const { questions } = loadTs('data/questions.ts');
+  const publishedCounts = countByChapter(questions);
+
+  assert.deepEqual(
+    chapters.map((chapter) => [chapter.id, chapter.questionCount]),
+    chapters.map((chapter) => [chapter.id, publishedCounts.get(chapter.id) || 0]),
+  );
+});
 
 test('full content production validates published UHR-referenced questions', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
