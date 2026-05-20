@@ -74,6 +74,41 @@ export async function markAboutTheTestSeen(page: Page): Promise<void> {
   );
 }
 
+export async function seedFreshSettingsLanguageAndAboutSeen(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  await page.addInitScript(
+    ({
+      language: seededLanguage,
+      languageKey,
+      legacyLanguageKey,
+      legacySeenKey,
+      seenKey,
+    }: {
+      language: AppLanguage;
+      languageKey: string;
+      legacyLanguageKey: string;
+      legacySeenKey: string;
+      seenKey: string;
+    }) => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
+      window.localStorage.setItem(languageKey, seededLanguage);
+      window.localStorage.setItem(legacySeenKey, 'true');
+      window.localStorage.setItem(seenKey, 'true');
+    },
+    {
+      language,
+      languageKey: settingsLanguageKey,
+      legacyLanguageKey: legacySettingsLanguageKey,
+      legacySeenKey: legacySettingsSeenAboutKey,
+      seenKey: settingsSeenAboutKey,
+    },
+  );
+}
+
 export async function seedFreshFirstRunSettingsLanguage(
   page: Page,
   language: AppLanguage,

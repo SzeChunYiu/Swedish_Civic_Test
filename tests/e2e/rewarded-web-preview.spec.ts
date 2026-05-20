@@ -1,13 +1,11 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
+import { dismissBlockingModals, seedFreshSettingsLanguageAndAboutSeen } from './browserLaunch';
 
 type Language = 'sv' | 'en';
 
 const mockExamAccessStorageKey = 'monetization.mockExamAccess.v1';
-const settingsLanguageKey = 'settings\\language';
-const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 const totalQuestions = 20;
 
 const copy: Record<
@@ -68,23 +66,9 @@ async function expectReachableTarget(locator: Locator) {
 }
 
 async function seedDailyFreeMockUsed(page: Page, language: Language) {
+  await seedFreshSettingsLanguageAndAboutSeen(page, language);
   await page.addInitScript(
-    ({
-      accessStorageKey,
-      language: seededLanguage,
-      languageKey,
-      seenKey,
-    }: {
-      accessStorageKey: string;
-      language: Language;
-      languageKey: string;
-      seenKey: string;
-    }) => {
-      window.localStorage.clear();
-      window.sessionStorage.clear();
-      window.localStorage.setItem(languageKey, seededLanguage);
-      window.localStorage.setItem(seenKey, 'true');
-
+    ({ accessStorageKey }: { accessStorageKey: string }) => {
       const today = new Date();
       const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
         2,
@@ -106,9 +90,6 @@ async function seedDailyFreeMockUsed(page: Page, language: Language) {
     },
     {
       accessStorageKey: mockExamAccessStorageKey,
-      language,
-      languageKey: settingsLanguageKey,
-      seenKey: settingsSeenAboutKey,
     },
   );
 }
