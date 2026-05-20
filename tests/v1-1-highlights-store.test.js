@@ -108,6 +108,56 @@ test('highlights store: throwing MMKV reads fall back to empty state and record 
   assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
+test('highlights store: corrupt persisted highlight rows are dropped on hydration', () => {
+  const persisted = {
+    byChapter: {
+      '': [makeHighlight({ id: 'blank-chapter' })],
+      ch01: [
+        makeHighlight({ id: 'valid-green', color: 'green', note: 'Keep this note' }),
+        makeHighlight({ id: '', color: 'yellow' }),
+        makeHighlight({ id: 'blank-block', blockId: '' }),
+        makeHighlight({ id: 'negative-start', startOffset: -1 }),
+        makeHighlight({ id: 'fractional-start', startOffset: 1.5 }),
+        makeHighlight({ id: 'reversed-range', startOffset: 12, endOffset: 3 }),
+        makeHighlight({ id: 'infinite-end', endOffset: Number.POSITIVE_INFINITY }),
+        makeHighlight({ id: 'bad-color', color: 'orange' }),
+        makeHighlight({ id: 'bad-created-at', createdAt: '2026-05-19' }),
+        makeHighlight({ id: 'bad-updated-at', updatedAt: 'not-a-date' }),
+        makeHighlight({ id: 'oversized-note', note: 'A'.repeat(2001) }),
+      ],
+      ch02: [
+        makeHighlight({
+          id: 'valid-pink',
+          blockId: 'b2',
+          color: 'pink',
+          note: 'Short note',
+          updatedAt: undefined,
+        }),
+      ],
+      ch03: 'not-an-array',
+    },
+  };
+  const storage = createMemoryMMKV({ 'ebook.highlights.v1': JSON.stringify(persisted) });
+  const { useHighlightsStore } = loadHighlightsStore({
+    'ebook-highlights': storage,
+  });
+  const state = useHighlightsStore.getState();
+
+  assert.deepEqual(Object.keys(state.byChapter), ['ch01', 'ch02']);
+  assert.deepEqual(
+    state.byChapter.ch01.map((highlight) => highlight.id),
+    ['valid-green'],
+  );
+  assert.equal(state.byChapter.ch01[0].chapterId, 'ch01');
+  assert.equal(state.byChapter.ch01[0].note, 'Keep this note');
+  assert.deepEqual(
+    state.byChapter.ch02.map((highlight) => highlight.id),
+    ['valid-pink'],
+  );
+  assert.equal(state.byChapter.ch02[0].chapterId, 'ch02');
+  assert.equal(state.byChapter.ch02[0].updatedAt, state.byChapter.ch02[0].createdAt);
+});
+
 test('highlights store: successful writes persist JSON and corrupt reads still fall back', () => {
   const storage = createMemoryMMKV();
   const { useHighlightsStore } = loadHighlightsStore({

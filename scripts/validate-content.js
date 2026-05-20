@@ -275,6 +275,7 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
+const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
 const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does the Council of Europe work for\??/i,
   /\bThe Council of Europe works for\b/i,
@@ -450,6 +451,8 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Only sometimes',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
+  /^\s*Vilket svar stämmer bäst\?/i,
+  /^\s*Which answer best matches\?/i,
   /^\s*Vilket svar är korrekt\?/i,
   /^\s*Which answer is correct\?/i,
 ];
@@ -496,33 +499,11 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Bokmärkt',
     'Ta bort bokmärket från den här frågan',
     'Bokmärk den här frågan',
-    'Starta övning med alla synliga frågor',
-    'Fortsätt genom hela frågebanken i ordning med direkt återkoppling.',
-    'Starta alla frågor',
-    'Alla frågor',
-    'Träffsäkerhet: ${accuracy} %',
-    '${title}: ${answered} av ${total} frågor besvarade, ${accuracy} % träffsäkerhet. Öva kapitlet.',
-    'Välj ett kapitel när du vill fokusera på ett område i taget.',
-    'Öva per kapitel',
-    '${answered} av ${total} frågor besvarade',
-    'Öva kapitlet',
     'Besvarade frågor: ${count}',
     'Det finns inga övningsfrågor ännu.',
-    'Övningsnav',
-    'Du har besvarat ${completed} av ${total} synliga frågor.',
-    'Starta blandad övning, ta en kort runda eller fokusera på ett kapitel.',
-    'Välj hur du vill öva',
-    'Gå till övningsprovet',
-    'Byt till tidsatt provträning när du vill testa uthållighet och tempo.',
-    'Gå till övningsprov',
-    'Övningsprov',
     'Nästa fråga',
     'Gå till nästa övningsfråga',
     'Fråga ${questionNumber}',
-    'Starta en snabb runda med ${count} frågor',
-    '${count} frågor blandade mellan kapitel, med obesvarade frågor först.',
-    'Starta snabb runda',
-    'Snabb runda',
     'Poäng',
     'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     'Försök igen',
@@ -544,33 +525,11 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Bookmarked',
     'Remove this question bookmark',
     'Bookmark this question',
-    'Start practice with all visible questions',
-    'Move through the full question bank in order with instant feedback.',
-    'Start all questions',
-    'All questions',
-    'Accuracy: ${accuracy}%',
-    '${title}: ${answered} of ${total} questions answered, ${accuracy}% accuracy. Practise this chapter.',
-    'Choose a chapter when you want to focus on one area at a time.',
-    'Practise by chapter',
-    '${answered} of ${total} questions answered',
-    'Practise chapter',
     'Completed questions: ${count}',
     'No practice questions are available yet.',
-    'Practice hub',
-    'You have answered ${completed} of ${total} visible questions.',
-    'Start mixed practice, take a short round, or focus on one chapter.',
-    'Choose how to practise',
-    'Go to the mock exam',
-    'Switch to timed exam practice when you want to test stamina and pace.',
-    'Go to mock exam',
-    'Mock exam',
     'Next question',
     'Move to the next practice question',
     'Question ${questionNumber}',
-    'Start a quick round with ${count} questions',
-    '${count} questions mixed across chapters, with unanswered questions first.',
-    'Start quick round',
-    'Quick round',
     'Score',
     'Answer, get instant feedback, then review the UHR source before moving on.',
     'Try again',
@@ -594,8 +553,6 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     'const practiceCopy: Record<AppLanguage, PracticeCopy> = {',
     'practice route copy must cover every AppLanguage value',
   ],
-  ['type PracticeScope', 'practice route must import the shared practice scope contract'],
-  ['const QUICK_ROUND_SIZE = 10;', 'practice route must define a bounded quick round size'],
   [
     'const language = useSettingsStore((state) => state.language);',
     'practice route must read language from settings store',
@@ -604,44 +561,17 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     'const copy = practiceCopy[language];',
     'practice route must select copy from settings language',
   ],
-  [
-    'const [practiceStarted, setPracticeStarted]',
-    'practice route must gate the first question behind the hub',
-  ],
   ['<Text>{copy.emptyTitle}</Text>', 'empty state must render localized copy'],
-  ['<Badge>{copy.hubBadge}</Badge>', 'practice hub badge must render localized copy'],
-  ['{copy.hubTitle}', 'practice hub title must render localized copy'],
-  [
-    '{copy.hubProgressSummary(visibleCompletedQuestionIds.length, filteredQuestions.length)}',
-    'practice hub must render localized overall progress copy',
-  ],
-  ['{copy.allPracticeCta}', 'all-practice hub action must render localized copy'],
-  ['{copy.quickRoundCta}', 'quick-round hub action must render localized copy'],
-  ['href="/exam"', 'practice hub mock exam CTA must link to the mock exam flow'],
-  ['{copy.chapterHubTitle}', 'chapter hub heading must render localized copy'],
-  ['{copy.chapterStartCta}', 'chapter practice card CTA must render localized copy'],
   ['<Badge>{copy.badge}</Badge>', 'practice badge must render localized copy'],
   ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
   ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
   [
-    '{copy.completedQuestions(scopedCompletedQuestionIds.length)}',
+    '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
   ],
   [
     'getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'practice route must scope completed progress to the visible question bank',
-  ],
-  [
-    'getQuestionsForPracticeScope(',
-    'practice route must derive the selected practice bank from the hub scope',
-  ],
-  [
-    'getCompletedQuestionIdsForQuestionBank(selectedPracticeQuestions, completedQuestionIds)',
-    'practice route must scope completed progress to the selected practice bank',
-  ],
-  [
-    "onPress={() => startPractice({ type: 'chapter', chapterId: chapter.id })}",
-    'chapter card must start a chapter-scoped practice loop',
   ],
   [
     'accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}',
@@ -4106,6 +4036,7 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
         optional: false,
       },
       { name: 'freeMockExamLimit', type: 'number', optional: false },
+      { name: 'platform', type: 'AdRuntimePlatform', optional: true },
       { name: 'rewardedExtraExamCredits', type: 'number', optional: true },
     ],
   },
@@ -4568,6 +4499,16 @@ function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   return QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(question.questionEn),
   );
+}
+
+function findQuestionMayDayEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
@@ -5714,6 +5655,84 @@ function generatedTrueFalseStatementEn(source, option, variantIsTrue) {
   if (isTrueFalseSource(source)) return trueFalseSourceStatementEn(source, variantIsTrue);
   return truthStatementEn(civicStatementEn(source, option));
 }
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function usableClozeCandidate(value) {
+  const trimmed = value.trim();
+  return trimmed.length >= 3 || /^[A-ZÅÄÖ]{2,}$/.test(trimmed);
+}
+function uniqueClozeCandidates(candidates) {
+  return [
+    ...new Set(
+      candidates
+        .map((candidate) => candidate.trim())
+        .filter((candidate) => candidate && usableClozeCandidate(candidate)),
+    ),
+  ].sort((a, b) => b.length - a.length);
+}
+function replaceClozeCandidate(statement, candidates) {
+  for (const candidate of uniqueClozeCandidates(candidates)) {
+    const pattern = new RegExp(escapeRegExp(candidate), 'i');
+    if (pattern.test(statement)) {
+      const replaced = statement.replace(pattern, '...');
+      if (/[A-Za-zÅÄÖåäö0-9]/.test(replaced.replace(/\.\.\./g, ''))) return replaced;
+    }
+  }
+  return null;
+}
+function singleChoiceClozePromptSv(source) {
+  const option = correctOption(source);
+  const answer = stripFinalPunctuation(answerLabel(option));
+  const strippedPurpose = stripLeadingPurposeSv(answer);
+  const strippedMust = stripLeadingMustSv(answer);
+  const statement = stripFinalPunctuation(civicStatementSv(source, option));
+  const cloze = replaceClozeCandidate(statement, [
+    answer,
+    lowerFirst(answer),
+    upperFirst(answer),
+    strippedPurpose,
+    lowerFirst(strippedPurpose),
+    upperFirst(strippedPurpose),
+    strippedMust,
+    lowerFirst(strippedMust),
+    swedishCalledAnswer(answer),
+    swedishPurposeClause(answer),
+    frontedManyActionSv(answer),
+    reasonAnswerClauseSv(answer),
+    swedishTraditionalCelebrationAnswer(answer),
+  ]);
+
+  if (cloze) return ensureSentence(cloze);
+  return `${stripFinalPunctuation(source.questionSv)} ...?`;
+}
+function singleChoiceClozePromptEn(source) {
+  const option = correctOption(source);
+  const answer = stripFinalPunctuation(answerTextEn(option));
+  const strippedPurpose = stripLeadingPurposeEn(answer);
+  const strippedBy = stripLeadingByEn(answer);
+  const statement = stripFinalPunctuation(civicStatementEn(source, option));
+  const cloze = replaceClozeCandidate(statement, [
+    answer,
+    lowerFirst(answer),
+    upperFirst(answer),
+    strippedPurpose,
+    lowerFirst(strippedPurpose),
+    upperFirst(strippedPurpose),
+    strippedBy,
+    lowerFirst(strippedBy),
+    englishCalledAnswer(answer),
+    englishGerundPhrase(answer),
+    englishCivicActionClause(answer),
+    englishInfinitive(answer),
+    manyPeopleActionEn(answer),
+    reasonAnswerClauseEn(answer),
+    englishTraditionalCelebrationAnswer(answer),
+  ]);
+
+  if (cloze) return ensureSentence(cloze);
+  return `${stripFinalPunctuation(source.questionEn)} ...?`;
+}
 function judgementPromptSv(source) {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
@@ -5730,13 +5749,13 @@ function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+  return singleChoiceClozePromptSv(source);
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
     return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  return `Which answer best matches? ${source.questionEn}`;
+  return singleChoiceClozePromptEn(source);
 }
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
@@ -7176,7 +7195,6 @@ const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
 const getCompletedQuestionIdsForQuestionBank =
   practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
-const getQuestionsForPracticeScope = practiceFlowModule.getQuestionsForPracticeScope;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const getPracticeInterstitialShowKey = practiceSessionStoreModule.getPracticeInterstitialShowKey;
@@ -7198,6 +7216,12 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const calibrationModule = loadTs('lib/learning/calibration.ts');
+const isConfidenceRating = calibrationModule.isConfidenceRating;
+const normalizeConfidenceRating = calibrationModule.normalizeConfidenceRating;
+const generateCalibration = calibrationModule.generateCalibration;
+const gradeFromConfidence = calibrationModule.gradeFromConfidence;
+const lapsePenaltyForWrong = calibrationModule.lapsePenaltyForWrong;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7384,6 +7408,8 @@ let progressStoreFieldsValidated = 0;
 let progressStoreSchemaParityValidated = false;
 let reviewStoreHydrationCasesValidated = 0;
 let reviewStoreHydrationParityValidated = false;
+let highlightsStoreHydrationCasesValidated = 0;
+let highlightsStoreHydrationValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -7457,6 +7483,8 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
+let confidenceRatingBoundaryCasesValidated = 0;
+let confidenceRatingBoundaryParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -7473,6 +7501,7 @@ let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionStateWelfareCoverageSplitValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
+let questionMayDayEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
@@ -8011,6 +8040,20 @@ function validateAdPlacementRouteParity() {
       reject(`${label} must not accept the full AdPlacement union`);
       sourceIsValid = false;
     }
+    if (label === 'native AdBanner') {
+      if (!source.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+        reject('native AdBanner must resolve banner units by Platform.OS');
+        sourceIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner must gate banner visibility by Platform.OS');
+        sourceIsValid = false;
+      }
+    }
 
     if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
   }
@@ -8113,7 +8156,7 @@ function validateAdPlacementRouteParity() {
 
     if (spec.component === 'NativeAdCard') {
       const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
       );
       const nativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
@@ -8252,7 +8295,7 @@ function validateAdPlacementRouteParity() {
 
     if (spec.component === 'PracticeInterstitialAd') {
       const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
       );
       const practiceInterstitialSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
@@ -12639,6 +12682,10 @@ function validateProgressStoreSchemaParity() {
       'const persistedProgress = writeProgress(nextProgress);',
       'progress mutations must persist and canonicalize nextProgress',
     ],
+    [
+      "if (typeof isCorrect !== 'boolean') return state;",
+      'recordAnswer must fail closed on non-boolean runtime answer flags',
+    ],
     ['return persistedProgress;', 'progress mutations must return persisted readback state'],
     [
       'const persistedProgress = writeProgress(emptyProgress);',
@@ -12830,6 +12877,126 @@ function validateReviewStoreHydrationParity() {
 
   if (valid && reviewStoreHydrationCasesValidated === requiredFixtureSnippets.length) {
     reviewStoreHydrationParityValidated = true;
+  }
+}
+
+function validateHighlightsStoreHydrationEvidence() {
+  let valid = true;
+  let highlightsStoreSource = '';
+  let highlightsStoreTestSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    highlightsStoreSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/storage/highlightsStore.ts'),
+      'utf8',
+    );
+    highlightsStoreTestSource = fs.readFileSync(
+      path.join(repoRoot, 'tests/v1-1-highlights-store.test.js'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`highlights store hydration source could not be read: ${error.message}`);
+    return;
+  }
+
+  const testContentScript = packageMetadata?.scripts?.['test:content'];
+  if (typeof testContentScript !== 'string') {
+    reject('package.json scripts.test:content must be a string');
+  } else if (
+    countPatternOccurrences(testContentScript, /tests\/v1-1-highlights-store\.test\.js/) !== 1
+  ) {
+    reject('package.json test:content must run tests/v1-1-highlights-store.test.js exactly once');
+  }
+
+  const normalizedStore = highlightsStoreSource.replace(/\s+/g, ' ');
+  const requiredStoreSnippets = [
+    ['readRecoverably', 'highlights store must report recoverable read failures'],
+    ['writeRecoverably', 'highlights store must report recoverable write failures'],
+    [
+      'function isNonEmptyString(value: unknown): value is string',
+      'highlights hydration must reject blank chapter, highlight, and block ids',
+    ],
+    [
+      'function isCanonicalIsoTimestamp(value: unknown): value is string',
+      'highlights hydration must reject invalid timestamps',
+    ],
+    [
+      'function isValidOffset(value: unknown): value is number',
+      'highlights hydration must reject fractional, non-finite, negative, or oversized offsets',
+    ],
+    [
+      'h.endOffset <= h.startOffset',
+      'highlights hydration must reject reversed or zero-length ranges',
+    ],
+    ['!isValidNote(h.note)', 'highlights hydration must reject oversized notes'],
+    [
+      'state: normalize(JSON.parse(result.value))',
+      'highlights store must normalize parsed persisted JSON before hydration',
+    ],
+  ];
+
+  requiredStoreSnippets.forEach(([snippet, message]) => {
+    if (!normalizedStore.includes(snippet)) {
+      reject(message);
+    }
+  });
+
+  const normalizedTest = highlightsStoreTestSource.replace(/\s+/g, ' ');
+  const requiredFixtureSnippets = [
+    [
+      "test('highlights store: corrupt persisted highlight rows are dropped on hydration'",
+      'corrupt persisted highlight hydration fixture',
+    ],
+    ["'': [makeHighlight({ id: 'blank-chapter' })]", 'blank chapter fixture'],
+    ["makeHighlight({ id: '', color: 'yellow' })", 'blank highlight id fixture'],
+    ["makeHighlight({ id: 'blank-block', blockId: '' })", 'blank block id fixture'],
+    ["makeHighlight({ id: 'negative-start', startOffset: -1 })", 'negative offset fixture'],
+    ["makeHighlight({ id: 'fractional-start', startOffset: 1.5 })", 'fractional offset fixture'],
+    [
+      "makeHighlight({ id: 'reversed-range', startOffset: 12, endOffset: 3 })",
+      'reversed range fixture',
+    ],
+    [
+      "makeHighlight({ id: 'infinite-end', endOffset: Number.POSITIVE_INFINITY })",
+      'non-finite offset fixture',
+    ],
+    ["makeHighlight({ id: 'bad-color', color: 'orange' })", 'invalid color fixture'],
+    [
+      "makeHighlight({ id: 'bad-created-at', createdAt: '2026-05-19' })",
+      'invalid timestamp fixture',
+    ],
+    [
+      "makeHighlight({ id: 'bad-updated-at', updatedAt: 'not-a-date' })",
+      'invalid updatedAt fixture',
+    ],
+    ["makeHighlight({ id: 'oversized-note', note: 'A'.repeat(2001) })", 'oversized note fixture'],
+    [
+      "assert.deepEqual(Object.keys(state.byChapter), ['ch01', 'ch02']);",
+      'survivor chapter assertion',
+    ],
+    ["['valid-green']", 'valid yellow/free color survivor assertion'],
+    ["['valid-pink']", 'valid Pro color survivor assertion'],
+    [
+      'assert.equal(state.byChapter.ch02[0].updatedAt, state.byChapter.ch02[0].createdAt);',
+      'updatedAt fallback assertion',
+    ],
+  ];
+
+  requiredFixtureSnippets.forEach(([snippet, message]) => {
+    if (!normalizedTest.includes(snippet)) {
+      reject(`highlights store corrupt-hydration fixture missing ${message}`);
+      return;
+    }
+    highlightsStoreHydrationCasesValidated += 1;
+  });
+
+  if (valid && highlightsStoreHydrationCasesValidated === requiredFixtureSnippets.length) {
+    highlightsStoreHydrationValidated = true;
   }
 }
 
@@ -14379,8 +14546,7 @@ function validatePracticeFlowParity() {
   if (
     !Array.isArray(questions) ||
     typeof getPracticeQuestionForSession !== 'function' ||
-    typeof getCompletedQuestionIdsForQuestionBank !== 'function' ||
-    typeof getQuestionsForPracticeScope !== 'function'
+    typeof getCompletedQuestionIdsForQuestionBank !== 'function'
   ) {
     return;
   }
@@ -14461,60 +14627,8 @@ function validatePracticeFlowParity() {
       expectedScopedCompletedIds: [secondQuestion.id],
     },
   ];
-  const scopeQuestions = [
-    { id: 'q-scope-1a', chapterId: 'ch01' },
-    { id: 'q-scope-1b', chapterId: 'ch01' },
-    { id: 'q-scope-1c', chapterId: 'ch01' },
-    { id: 'q-scope-2a', chapterId: 'ch02' },
-    { id: 'q-scope-2b', chapterId: 'ch02' },
-    { id: 'q-scope-3a', chapterId: 'ch03' },
-    { id: 'q-scope-3b', chapterId: 'ch03' },
-    { id: 'q-scope-4a', chapterId: 'ch04' },
-    { id: 'q-scope-5a', chapterId: 'ch05' },
-  ];
-  const scopeCases = [
-    {
-      label: 'all scope preserves visible bank order',
-      completedQuestionIds: ['q-scope-1a'],
-      scope: { type: 'all' },
-      quickRoundSize: 4,
-      expectedIds: scopeQuestions.map((question) => question.id),
-    },
-    {
-      label: 'chapter scope returns only selected chapter',
-      completedQuestionIds: [],
-      scope: { type: 'chapter', chapterId: 'ch02' },
-      quickRoundSize: 4,
-      expectedIds: ['q-scope-2a', 'q-scope-2b'],
-    },
-    {
-      label: 'quick scope mixes unanswered questions by chapter',
-      completedQuestionIds: ['q-scope-1a', 'q-scope-2a'],
-      scope: { type: 'quick' },
-      quickRoundSize: 4,
-      expectedIds: ['q-scope-1b', 'q-scope-2b', 'q-scope-3a', 'q-scope-4a'],
-    },
-    {
-      label: 'quick scope fills from answered questions when unanswered is sparse',
-      completedQuestionIds: [
-        'q-scope-1a',
-        'q-scope-1b',
-        'q-scope-1c',
-        'q-scope-2a',
-        'q-scope-2b',
-        'q-scope-3a',
-        'q-scope-4a',
-        'q-scope-5a',
-      ],
-      scope: { type: 'quick' },
-      quickRoundSize: 3,
-      expectedIds: ['q-scope-3b', 'q-scope-1a', 'q-scope-2a'],
-    },
-  ];
   const expectedValidationCount =
-    cases.length +
-    cases.filter((testCase) => testCase.expectedScopedCompletedIds).length +
-    scopeCases.length;
+    cases.length + cases.filter((testCase) => testCase.expectedScopedCompletedIds).length;
 
   let valid = true;
 
@@ -14570,35 +14684,6 @@ function validatePracticeFlowParity() {
     } else if (expectedScopedCompletedIds) {
       practiceFlowCasesValidated += 1;
     }
-  });
-
-  scopeCases.forEach((testCase) => {
-    let scopedQuestions;
-    try {
-      scopedQuestions = getQuestionsForPracticeScope(
-        scopeQuestions,
-        testCase.completedQuestionIds,
-        testCase.scope,
-        testCase.quickRoundSize,
-      );
-    } catch (error) {
-      valid = false;
-      fail(`practice flow ${testCase.label} threw ${error.message}`);
-      return;
-    }
-
-    const actualIds = scopedQuestions.map((question) => question.id);
-    if (JSON.stringify(actualIds) !== JSON.stringify(testCase.expectedIds)) {
-      valid = false;
-      fail(
-        `practice flow ${testCase.label} returned ${JSON.stringify(
-          actualIds,
-        )}, expected ${JSON.stringify(testCase.expectedIds)}`,
-      );
-      return;
-    }
-
-    practiceFlowCasesValidated += 1;
   });
 
   if (valid && practiceFlowCasesValidated === expectedValidationCount) {
@@ -15423,6 +15508,170 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
+}
+
+function validateConfidenceRatingBoundaryParity() {
+  if (
+    typeof isConfidenceRating !== 'function' ||
+    typeof normalizeConfidenceRating !== 'function' ||
+    typeof generateCalibration !== 'function' ||
+    typeof gradeFromConfidence !== 'function' ||
+    typeof lapsePenaltyForWrong !== 'function'
+  ) {
+    return;
+  }
+
+  let valid = true;
+  const validRatings = [1, 2, 3, 4, 5];
+  const invalidRatings = [
+    0,
+    6,
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+    'high',
+    null,
+    undefined,
+    3.5,
+    {},
+    [],
+  ];
+  const requiredSourceSnippets = [
+    ['export function isConfidenceRating', 'calibration must export isConfidenceRating'],
+    [
+      'export function normalizeConfidenceRating',
+      'calibration must export normalizeConfidenceRating',
+    ],
+    [
+      'normalizeConfidenceRating(event.confidenceRating)',
+      'generateCalibration must normalize event confidence ratings before bucket indexing',
+    ],
+    [
+      'normalizedRating === null || normalizedRating <= 3',
+      'gradeFromConfidence must default invalid correct confidence to Good, not Easy',
+    ],
+  ];
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  let calibrationSource = '';
+  try {
+    calibrationSource = fs.readFileSync(path.join(repoRoot, 'lib/learning/calibration.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/learning/calibration.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  validRatings.forEach((rating) => {
+    let caseIsValid = true;
+    if (!isConfidenceRating(rating)) {
+      caseIsValid = false;
+      reject(`confidence rating ${rating} should be accepted`);
+    }
+    if (normalizeConfidenceRating(rating) !== rating) {
+      caseIsValid = false;
+      reject(`confidence rating ${rating} should normalize to itself`);
+    }
+    if (caseIsValid) confidenceRatingBoundaryCasesValidated += 1;
+  });
+
+  invalidRatings.forEach((rating) => {
+    let caseIsValid = true;
+    if (isConfidenceRating(rating)) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should be rejected`);
+    }
+    if (normalizeConfidenceRating(rating) !== null) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should normalize to null`);
+    }
+    if (gradeFromConfidence(true, rating) !== 3) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should map correct answers to Good`);
+    }
+    if (gradeFromConfidence(false, rating) !== 1) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should keep wrong answers at Again`);
+    }
+    if (lapsePenaltyForWrong(rating) !== 0) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should not add lapse penalty`);
+    }
+    if (caseIsValid) confidenceRatingBoundaryCasesValidated += 1;
+  });
+
+  let runtimeCaseIsValid = true;
+  let calibrationResult;
+  try {
+    calibrationResult = generateCalibration([
+      {
+        questionId: 'valid-low',
+        isCorrect: false,
+        answeredAt: '2026-05-19',
+        confidenceRating: 1,
+      },
+      ...invalidRatings.map((confidenceRating, index) => ({
+        questionId: `invalid-${index}`,
+        isCorrect: true,
+        answeredAt: '2026-05-19',
+        confidenceRating,
+      })),
+      {
+        questionId: 'valid-high',
+        isCorrect: true,
+        answeredAt: '2026-05-19',
+        confidenceRating: 5,
+      },
+    ]);
+  } catch (error) {
+    runtimeCaseIsValid = false;
+    reject(`generateCalibration must not throw on invalid confidence ratings: ${error.message}`);
+  }
+
+  if (calibrationResult) {
+    const bucketCounts = calibrationResult.buckets.map((bucket) => bucket.count);
+    if (calibrationResult.totalRatedAnswers !== 2) {
+      runtimeCaseIsValid = false;
+      reject(
+        `generateCalibration should skip invalid ratings and count 2 valid answers, got ${calibrationResult.totalRatedAnswers}`,
+      );
+    }
+    if (!jsonEqual(bucketCounts, [1, 0, 0, 0, 1])) {
+      runtimeCaseIsValid = false;
+      reject(
+        `generateCalibration bucket counts for invalid-rating mix are ${JSON.stringify(bucketCounts)}`,
+      );
+    }
+    if (
+      calibrationResult.buckets.some(
+        (bucket) =>
+          !Number.isFinite(bucket.count) ||
+          (bucket.actualAccuracy !== null && !Number.isFinite(bucket.actualAccuracy)) ||
+          (bucket.deltaPoints !== null && !Number.isFinite(bucket.deltaPoints)),
+      )
+    ) {
+      runtimeCaseIsValid = false;
+      reject('generateCalibration must not create non-finite bucket counts or deltas');
+    }
+  }
+  if (runtimeCaseIsValid) confidenceRatingBoundaryCasesValidated += 1;
+
+  requiredSourceSnippets.forEach(([snippet, message]) => {
+    if (!calibrationSource.includes(snippet)) {
+      reject(message);
+      return;
+    }
+    confidenceRatingBoundaryCasesValidated += 1;
+  });
+
+  const expectedCases =
+    validRatings.length + invalidRatings.length + requiredSourceSnippets.length + 1;
+  if (valid && confidenceRatingBoundaryCasesValidated === expectedCases) {
+    confidenceRatingBoundaryParityValidated = true;
+  }
 }
 
 function validateStreakRules() {
@@ -16896,6 +17145,7 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareCoverageOverlapIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
+      const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
@@ -16954,6 +17204,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal common-to-do English wording`);
       } else {
         questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
+      }
+      if (mayDayEnglishNaturalnessIssue) {
+        fail(`${label} uses literal First of May English wording`);
+      } else {
+        questionMayDayEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -17148,6 +17403,7 @@ validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateReviewStoreHydrationParity();
+validateHighlightsStoreHydrationEvidence();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validatePracticeFlowParity();
@@ -17159,6 +17415,7 @@ validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
+validateConfidenceRatingBoundaryParity();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -17375,6 +17632,8 @@ console.log(
       progressStoreSchemaParityValidated,
       reviewStoreHydrationCasesValidated,
       reviewStoreHydrationParityValidated,
+      highlightsStoreHydrationCasesValidated,
+      highlightsStoreHydrationValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
@@ -17408,6 +17667,8 @@ console.log(
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      confidenceRatingBoundaryCasesValidated,
+      confidenceRatingBoundaryParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
@@ -17451,6 +17712,7 @@ console.log(
       questionStateWelfareEnglishNaturalnessValidated,
       questionStateWelfareCoverageSplitValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
+      questionMayDayEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,

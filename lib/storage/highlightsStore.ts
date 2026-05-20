@@ -34,6 +34,8 @@ export interface Highlight {
 
 const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';
 const highlightsStorageId = 'ebook-highlights';
+const maxHighlightOffset = 200_000;
+const maxHighlightNoteLength = 2_000;
 
 let highlightsStorage: MMKV | null = null;
 
@@ -54,6 +56,31 @@ function isHighlightColor(value: unknown): value is HighlightColor {
   return value === 'yellow' || value === 'green' || value === 'blue' || value === 'pink';
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isCanonicalIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date.toISOString() === value;
+}
+
+function isValidOffset(value: unknown): value is number {
+  return (
+    typeof value === 'number' &&
+    Number.isInteger(value) &&
+    value >= 0 &&
+    value <= maxHighlightOffset
+  );
+}
+
+function isValidNote(value: unknown): value is string | undefined {
+  return (
+    value === undefined || (typeof value === 'string' && value.length <= maxHighlightNoteLength)
+  );
+}
+
 function normalize(value: unknown): PersistedHighlights {
   if (!value || typeof value !== 'object') return EMPTY;
   const candidate = value as Partial<PersistedHighlights>;
@@ -61,18 +88,22 @@ function normalize(value: unknown): PersistedHighlights {
 
   if (candidate.byChapter && typeof candidate.byChapter === 'object') {
     for (const [chapterId, list] of Object.entries(candidate.byChapter)) {
+      if (!isNonEmptyString(chapterId)) continue;
       if (!Array.isArray(list)) continue;
       const cleaned: Highlight[] = [];
       for (const item of list) {
         if (!item || typeof item !== 'object') continue;
         const h = item as Partial<Highlight>;
         if (
-          typeof h.id !== 'string' ||
-          typeof h.blockId !== 'string' ||
-          typeof h.startOffset !== 'number' ||
-          typeof h.endOffset !== 'number' ||
+          !isNonEmptyString(h.id) ||
+          !isNonEmptyString(h.blockId) ||
+          !isValidOffset(h.startOffset) ||
+          !isValidOffset(h.endOffset) ||
+          h.endOffset <= h.startOffset ||
           !isHighlightColor(h.color) ||
-          typeof h.createdAt !== 'string'
+          !isCanonicalIsoTimestamp(h.createdAt) ||
+          (h.updatedAt !== undefined && !isCanonicalIsoTimestamp(h.updatedAt)) ||
+          !isValidNote(h.note)
         ) {
           continue;
         }
@@ -83,9 +114,9 @@ function normalize(value: unknown): PersistedHighlights {
           startOffset: h.startOffset,
           endOffset: h.endOffset,
           color: h.color,
-          note: typeof h.note === 'string' ? h.note : undefined,
+          note: h.note,
           createdAt: h.createdAt,
-          updatedAt: typeof h.updatedAt === 'string' ? h.updatedAt : h.createdAt,
+          updatedAt: h.updatedAt ?? h.createdAt,
         });
       }
       byChapter[chapterId] = cleaned;
