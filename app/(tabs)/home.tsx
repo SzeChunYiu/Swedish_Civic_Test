@@ -22,8 +22,11 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
-import { dashboardSummary } from '../../lib/learning/dashboardStats';
-import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
+import {
+  buildDailyChallenge,
+  dailyChallengeBannerCopy,
+  isDailyChallengeCompleted,
+} from '../../lib/learning/dailyChallenge';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
@@ -61,6 +64,10 @@ type GuidedPathStageCopy = {
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
+  dailyChallengeAccessibilityLabel: (title: string, subtitle: string) => string;
+  dailyChallengeCompletedCta: string;
+  dailyChallengeCta: string;
+  dailyChallengeResult: (correctCount: number, totalCount: number) => string;
   dailyGoalTitle: string;
   dashboardAccessibilityLabel: (summary: string) => string;
   dashboardCta: string;
@@ -190,6 +197,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
+    dailyChallengeAccessibilityLabel: (title, subtitle) => `${title}. ${subtitle}`,
+    dailyChallengeCompletedCta: 'Gör om dagens utmaning',
+    dailyChallengeCta: 'Starta dagens utmaning',
+    dailyChallengeResult: (correctCount, totalCount) =>
+      `Senaste resultat: ${correctCount}/${totalCount} rätt`,
     dailyGoalTitle: 'Dagens mål',
     dashboardAccessibilityLabel: (summary) => `Öppna framstegsöversikten. ${summary}`,
     dashboardCta: 'Visa översikt',
@@ -266,6 +278,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   en: {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
+    dailyChallengeAccessibilityLabel: (title, subtitle) => `${title}. ${subtitle}`,
+    dailyChallengeCompletedCta: "Retry today's challenge",
+    dailyChallengeCta: "Start today's challenge",
+    dailyChallengeResult: (correctCount, totalCount) =>
+      `Latest result: ${correctCount}/${totalCount} correct`,
     dailyGoalTitle: "Today's goal",
     dashboardAccessibilityLabel: (summary) => `Open the progress dashboard. ${summary}`,
     dashboardCta: 'View dashboard',
@@ -351,6 +368,7 @@ export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const answerAttempts = useProgressStore((state) => state.answerAttempts);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
+  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
@@ -396,47 +414,14 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-  const dashboardProgress = useMemo(
-    () =>
-      buildDashboardProgressSnapshot({
-        answerDates,
-        answerAttempts,
-        dailyGoalAnswers,
-        mockExamSessions,
-        questionProgress,
-        totalXp,
-      }),
-    [answerAttempts, answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
+  const dailyChallengeCompleted = isDailyChallengeCompleted(Object.keys(dailyChallengeCompletions));
+  const dailyChallengeCompletion = dailyChallengeCompletions[dailyChallenge.dayKey];
+  const dailyChallengeBanner = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
+  const dailyChallengeAccessibilityLabel = copy.dailyChallengeAccessibilityLabel(
+    dailyChallengeBanner.title,
+    dailyChallengeBanner.subtitle,
   );
-  const dashboardQuestionChapterIndex = useMemo(
-    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
-    [],
-  );
-  const dashboard = useMemo(
-    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
-    [dashboardProgress, dashboardQuestionChapterIndex],
-  );
-  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
-  const guidedPathStages = useMemo(
-    () => buildGuidedPracticePathStages(copy, questionProgress),
-    [copy, questionProgress],
-  );
-  const guidedPathActiveStage =
-    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
-  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
-  const guidedPathCopy: GuidedPracticePathCopy = {
-    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
-      completedToday,
-      dailyGoalAnswers,
-    ),
-    dailyPracticeCta: copy.guidedPathDailyCta,
-    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
-    dailyPracticeTitle: copy.guidedPathDailyTitle,
-    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
-      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
-    ),
-    resumeCta: copy.guidedPathResumeCta,
-  };
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -513,9 +498,34 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      <Card style={styles.freeBankCard}>
-        <Badge tone="blue">{copy.freeBankBadge}</Badge>
-        <Text style={styles.freeBankText}>{copy.freeBankText}</Text>
+      <Card
+        accessible
+        accessibilityLabel={dailyChallengeAccessibilityLabel}
+        style={styles.dailyChallengeCard}
+      >
+        <Badge tone={dailyChallengeCompleted ? 'green' : 'warm'}>
+          {dailyChallenge.questionIds.length} {language === 'sv' ? 'frågor' : 'questions'}
+        </Badge>
+        <Text accessibilityRole="header" style={styles.dailyChallengeTitle}>
+          {dailyChallengeBanner.title}
+        </Text>
+        <Text style={styles.dailyChallengeText}>{dailyChallengeBanner.subtitle}</Text>
+        {dailyChallengeCompletion ? (
+          <Text style={styles.dailyChallengeResult}>
+            {copy.dailyChallengeResult(
+              dailyChallengeCompletion.correctCount,
+              dailyChallengeCompletion.totalCount,
+            )}
+          </Text>
+        ) : null}
+        <Link
+          accessibilityLabel={dailyChallengeAccessibilityLabel}
+          accessibilityRole="link"
+          href="/practice?mode=challenge"
+          style={styles.dailyChallengeLink}
+        >
+          {dailyChallengeCompleted ? copy.dailyChallengeCompletedCta : copy.dailyChallengeCta}
+        </Link>
       </Card>
       {!monetizationEntitlements.adsDisabled ? (
         <PricingWedge
@@ -723,6 +733,40 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  dailyChallengeCard: {
+    gap: space[1],
+  },
+  dailyChallengeTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  dailyChallengeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dailyChallengeResult: {
+    color: colors.success,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dailyChallengeLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.5],
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',

@@ -102,3 +102,42 @@ test('buildDailyChallenge: small bank still produces some output', () => {
   assert.ok(c.questionIds.length <= 5);
   assert.ok(c.questionIds.length >= 1);
 });
+
+test('daily challenge is surfaced from Home and launched through Practice challenge mode', () => {
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+
+  assert.match(homeSource, /buildDailyChallenge\(\{ bank: questions \}\)/);
+  assert.match(homeSource, /dailyChallengeBannerCopy\(dailyChallengeCompleted, language\)/);
+  assert.match(homeSource, /href="\/practice\?mode=challenge"/);
+  assert.match(homeSource, /dailyChallengeCompletions/);
+
+  assert.match(practiceSource, /useLocalSearchParams/);
+  assert.match(practiceSource, /const isChallengeMode = mode === 'challenge';/);
+  assert.match(
+    practiceSource,
+    /const practiceQuestionBank = isChallengeMode \? challengeQuestions : filteredQuestions;/,
+  );
+  assert.match(practiceSource, /copy\.challengeTimer\(remainingChallengeSeconds\)/);
+  assert.match(practiceSource, /recordDailyChallengeCompletion/);
+  assert.match(practiceSource, /setChallengeRetryActive\(true\)/);
+});
+
+test('daily challenge completion is persisted by local day in the progress store', () => {
+  const progressStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+  const progressTypes = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
+
+  assert.match(progressStore, /export type DailyChallengeProgress = \{/);
+  assert.match(progressStore, /dailyChallengeCompletions: Record<string, DailyChallengeProgress>;/);
+  assert.match(progressStore, /dailyChallengeCompletions: \{\},/);
+  assert.match(progressStore, /recordDailyChallengeCompletion: \(completion\) =>/);
+  assert.match(progressStore, /\[nextCompletion\.dayKey\]: nextCompletion/);
+  assert.match(progressTypes, /export interface DailyChallengeCompletion/);
+  assert.match(
+    progressTypes,
+    /dailyChallengeCompletions: Record<string, DailyChallengeCompletion>;/,
+  );
+});

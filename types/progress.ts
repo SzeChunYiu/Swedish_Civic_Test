@@ -32,6 +32,16 @@ export interface QuizSession {
   score?: number;
 }
 
+export interface DailyChallengeCompletion {
+  dayKey: string;
+  questionIds: string[];
+  correctCount: number;
+  totalCount: number;
+  score: number;
+  timeSpentSeconds: number;
+  completedAt: string;
+}
+
 export interface UserProgress {
   totalXp: number;
   level: number;
@@ -39,4 +49,5 @@ export interface UserProgress {
   dailyGoalAnswers: number;
   questionProgress: Record<string, UserQuestionProgress>;
   sessions: QuizSession[];
+  dailyChallengeCompletions: Record<string, DailyChallengeCompletion>;
 }

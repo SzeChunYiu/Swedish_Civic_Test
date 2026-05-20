@@ -249,6 +249,7 @@ export function computeReadinessFromQuestionProgress(input: {
     dailyGoalAnswers: 10,
     questionProgress: input.questionProgress,
     sessions,
+    dailyChallengeCompletions: {},
   };
   return computeReadinessScore({
     progress,
