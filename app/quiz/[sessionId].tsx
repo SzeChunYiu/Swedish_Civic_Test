@@ -22,6 +22,7 @@ import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerV
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { scoreAnswers } from '../../lib/quiz/scoring';
+import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -104,6 +105,7 @@ export default function QuizSessionScreen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
@@ -178,6 +180,7 @@ export default function QuizSessionScreen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
+        rate={audioPlaybackRate}
         text={buildQuestionSpeechText(question)}
       />
       {confidenceRatingEnabled ? (
@@ -234,6 +237,7 @@ export default function QuizSessionScreen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
+            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />

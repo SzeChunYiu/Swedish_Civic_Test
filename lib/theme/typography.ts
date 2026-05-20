@@ -1,6 +1,17 @@
 import type { TextStyle } from 'react-native';
 
 const fontFamily = 'NotionInter, Inter, -apple-system, system-ui, Segoe UI, Helvetica, Arial';
+const easyReadFontFamily =
+  'Atkinson Hyperlegible, Lexend, NotionInter, Inter, -apple-system, system-ui, Segoe UI, Helvetica, Arial';
+
+export function fontFamilyForAccessibility(easyReadFont: boolean): string {
+  return easyReadFont ? easyReadFontFamily : fontFamily;
+}
+
+export function scaleTypographyValue(value: number | undefined, scale: number): number | undefined {
+  if (typeof value !== 'number') return value;
+  return Math.round(value * scale);
+}
 
 // Values authoritative in DESIGN.md §3 (restrained Claude scale):
 // hero 30-38 / section 24-26 / card 19-21 / body 16 / caption 13-14,

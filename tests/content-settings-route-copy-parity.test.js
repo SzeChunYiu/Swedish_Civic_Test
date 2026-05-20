@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-accessibility-bundle-runtime'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -19,7 +23,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 92);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 136);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -36,7 +40,33 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
+  assert.match(
+    source,
+    /const easyReadFont = useAccessibilityStore\(\(state\) => state\.easyReadFont\);/,
+  );
+  assert.match(
+    source,
+    /const fontSizeStep = useAccessibilityStore\(\(state\) => state\.fontSizeStep\);/,
+  );
+  assert.match(
+    source,
+    /const audioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);/,
+  );
+  assert.match(source, /Tillgänglighet/);
+  assert.match(source, /Accessibility/);
+  assert.match(source, /Lättläst teckensnitt/);
+  assert.match(source, /Easy-read font/);
+  assert.match(source, /Textstorlek/);
+  assert.match(source, /Text size/);
+  assert.match(source, /Talhastighet/);
+  assert.match(source, /Swedish speech speed/);
   assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.setEasyReadFontAccessibilityLabel\(easyReadFont\)\}/,
+  );
+  assert.match(source, /accessibilityLabel=\{copy\.setTextSizeAccessibilityLabel\(label\)\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.setAudioRateAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
   assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
   assert.match(
@@ -62,6 +92,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-accessibility-bundle-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -92,6 +123,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-accessibility-bundle-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -119,6 +151,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-accessibility-bundle-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -151,6 +184,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-accessibility-bundle-runtime');
 require('./scripts/validate-content.js');
 `,
     ],

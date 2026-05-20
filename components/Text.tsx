@@ -1,8 +1,9 @@
-import type { ComponentProps, PropsWithChildren } from 'react';
+import { useMemo, type ComponentProps, type PropsWithChildren } from 'react';
 import { StyleSheet, Text as NativeText } from 'react-native';
 import type { AccessibilityRole, StyleProp, TextStyle } from 'react-native';
 
-import { colors, typography } from '../lib/theme';
+import { fontScaleFor, useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import { colors, fontFamilyForAccessibility, scaleTypographyValue, typography } from '../lib/theme';
 
 export type TextVariant = 'h1' | 'h2' | 'body' | 'caption' | 'label';
 export type TextTone = 'primary' | 'secondary' | 'disclaimer' | 'accent' | 'success' | 'warning';
@@ -27,6 +28,14 @@ function getDefaultRole(variant: TextVariant): AccessibilityRole {
   return variant === 'h1' || variant === 'h2' ? 'header' : 'text';
 }
 
+const typographyForVariant: Record<TextVariant, TextStyle> = {
+  h1: typography.displaySecondary,
+  h2: typography.sectionHeading,
+  body: typography.body,
+  caption: typography.captionLight,
+  label: typography.navButton,
+};
+
 export function Text({
   accessibilityRole,
   align = 'left',
@@ -36,10 +45,29 @@ export function Text({
   variant = 'body',
   ...textProps
 }: TextProps) {
+  const easyReadFont = useAccessibilityStore((state) => state.easyReadFont);
+  const fontSizeStep = useAccessibilityStore((state) => state.fontSizeStep);
+  const fontScale = fontScaleFor(fontSizeStep);
+  const accessibilityTextStyle = useMemo(() => {
+    const variantTypography = typographyForVariant[variant];
+    return {
+      fontFamily: fontFamilyForAccessibility(easyReadFont),
+      fontSize: scaleTypographyValue(variantTypography.fontSize, fontScale),
+      lineHeight: scaleTypographyValue(variantTypography.lineHeight, fontScale),
+    };
+  }, [easyReadFont, fontScale, variant]);
+
   return (
     <NativeText
       accessibilityRole={accessibilityRole ?? getDefaultRole(variant)}
-      style={[styles.base, styles[variant], styles[tone], styles[align], style]}
+      style={[
+        styles.base,
+        styles[variant],
+        accessibilityTextStyle,
+        styles[tone],
+        styles[align],
+        style,
+      ]}
       {...textProps}
     >
       {children}

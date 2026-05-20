@@ -8,6 +8,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import type { TextStyle } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -19,14 +20,31 @@ import {
   type LocalStudyDataImportPreview,
   type LocalStudyDataImportSummary,
 } from '../lib/storage/localStudyDataImport';
-import type { ThemeMode } from '../lib/storage/accessibilityStore';
-import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import type { AudioPlaybackRate, FontSizeStep, ThemeMode } from '../lib/storage/accessibilityStore';
+import {
+  AUDIO_PLAYBACK_RATES,
+  fontScaleFor,
+  useAccessibilityStore,
+} from '../lib/storage/accessibilityStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
+import {
+  colorsForThemeMode,
+  fontFamilyForAccessibility,
+  motion,
+  radius,
+  scaleTypographyValue,
+  shadows,
+  space,
+  typography,
+} from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
 
 type SettingsCopy = {
+  accessibilityTitle: string;
+  audioRateLabel: (rate: AudioPlaybackRate) => string;
+  audioRateSummary: (label: string) => string;
+  audioRateTitle: string;
   audioDisabledLabel: string;
   audioEnabledLabel: string;
   audioTitle: string;
@@ -59,10 +77,19 @@ type SettingsCopy = {
   importSummaryWrongAnswers: (count: number) => string;
   importTitle: string;
   languageAccessibilityLabel: (label: string) => string;
+  easyReadFontDisabledLabel: string;
+  easyReadFontEnabledLabel: string;
+  easyReadFontTitle: string;
   studyLanguageTitle: string;
+  setAudioRateAccessibilityLabel: (label: string) => string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
+  setEasyReadFontAccessibilityLabel: (enabled: boolean) => string;
+  setTextSizeAccessibilityLabel: (label: string) => string;
   setThemeModeAccessibilityLabel: (label: string) => string;
   subtitle: string;
+  textSizeLabel: (step: FontSizeStep) => string;
+  textSizeSummary: (label: string) => string;
+  textSizeTitle: string;
   themeDarkLabel: string;
   themeLightLabel: string;
   themeModeSummary: (label: string) => string;
@@ -73,6 +100,15 @@ type SettingsCopy = {
 
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
+    accessibilityTitle: 'Tillgänglighet',
+    audioRateLabel: (rate) => {
+      if (rate === 0.5) return 'Långsam';
+      if (rate === 0.75) return 'Lugn';
+      if (rate === 1.25) return 'Snabb';
+      return 'Normal';
+    },
+    audioRateSummary: (label) => `Svensk uppläsning: ${label}`,
+    audioRateTitle: 'Talhastighet',
     audioDisabledLabel: 'Ljud avstängt',
     audioEnabledLabel: 'Ljud på',
     audioTitle: 'Ljud',
@@ -122,10 +158,25 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSummaryWrongAnswers: (count) => `${count} granskningar av fel svar`,
     importTitle: 'Importera studiedata',
     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
+    easyReadFontDisabledLabel: 'Lättläst teckensnitt avstängt',
+    easyReadFontEnabledLabel: 'Lättläst teckensnitt påslaget',
+    easyReadFontTitle: 'Lättläst teckensnitt',
     studyLanguageTitle: 'Studiespråk',
+    setAudioRateAccessibilityLabel: (label) => `Välj talhastighet: ${label}`,
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
+    setEasyReadFontAccessibilityLabel: (enabled) =>
+      enabled ? 'Stäng av lättläst teckensnitt' : 'Slå på lättläst teckensnitt',
+    setTextSizeAccessibilityLabel: (label) => `Välj textstorlek: ${label}`,
     setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
     subtitle: 'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    textSizeLabel: (step) => {
+      if (step === 0) return 'Kompakt';
+      if (step === 2) return 'Stor';
+      if (step === 3) return 'Extra stor';
+      return 'Standard';
+    },
+    textSizeSummary: (label) => `Textstorlek: ${label}`,
+    textSizeTitle: 'Textstorlek',
     themeDarkLabel: 'Mörkt',
     themeLightLabel: 'Ljust',
     themeModeSummary: (label) => `Tema: ${label}`,
@@ -134,6 +185,15 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     title: 'Inställningar',
   },
   en: {
+    accessibilityTitle: 'Accessibility',
+    audioRateLabel: (rate) => {
+      if (rate === 0.5) return 'Slow';
+      if (rate === 0.75) return 'Comfortable';
+      if (rate === 1.25) return 'Fast';
+      return 'Normal';
+    },
+    audioRateSummary: (label) => `Swedish speech: ${label}`,
+    audioRateTitle: 'Swedish speech speed',
     audioDisabledLabel: 'Audio disabled',
     audioEnabledLabel: 'Audio enabled',
     audioTitle: 'Audio',
@@ -184,10 +244,25 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSummaryWrongAnswers: (count) => `${count} wrong-answer reviews`,
     importTitle: 'Import study data',
     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
+    easyReadFontDisabledLabel: 'Easy-read font off',
+    easyReadFontEnabledLabel: 'Easy-read font on',
+    easyReadFontTitle: 'Easy-read font',
     studyLanguageTitle: 'Study language',
+    setAudioRateAccessibilityLabel: (label) => `Choose Swedish speech speed: ${label}`,
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
+    setEasyReadFontAccessibilityLabel: (enabled) =>
+      enabled ? 'Disable easy-read font' : 'Enable easy-read font',
+    setTextSizeAccessibilityLabel: (label) => `Choose text size: ${label}`,
     setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
     subtitle: 'Control study language, audio, theme, and your daily goal.',
+    textSizeLabel: (step) => {
+      if (step === 0) return 'Compact';
+      if (step === 2) return 'Large';
+      if (step === 3) return 'Extra large';
+      return 'Standard';
+    },
+    textSizeSummary: (label) => `Text size: ${label}`,
+    textSizeTitle: 'Text size',
     themeDarkLabel: 'Dark',
     themeLightLabel: 'Light',
     themeModeSummary: (label) => `Theme: ${label}`,
@@ -229,14 +304,28 @@ export default function Screen() {
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
+  const easyReadFont = useAccessibilityStore((state) => state.easyReadFont);
+  const fontSizeStep = useAccessibilityStore((state) => state.fontSizeStep);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
+  const setEasyReadFont = useAccessibilityStore((state) => state.setEasyReadFont);
+  const setFontSizeStep = useAccessibilityStore((state) => state.setFontSizeStep);
+  const setAudioPlaybackRate = useAccessibilityStore((state) => state.setAudioPlaybackRate);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
   const copy = settingsCopy[language];
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
-  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const fontScale = fontScaleFor(fontSizeStep);
+  const fontFamily = fontFamilyForAccessibility(easyReadFont);
+  const styles = useMemo(
+    () => createStyles(themeColors, fontScale, fontFamily),
+    [fontFamily, fontScale, themeColors],
+  );
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
+  const textSizeOptions: FontSizeStep[] = [0, 1, 2, 3];
+  const activeTextSizeLabel = copy.textSizeLabel(fontSizeStep);
+  const activeAudioRateLabel = copy.audioRateLabel(audioPlaybackRate);
   const themeOptions: { value: ThemeMode; label: string }[] = [
     { value: 'system', label: copy.themeSystemLabel },
     { value: 'light', label: copy.themeLightLabel },
@@ -282,6 +371,54 @@ export default function Screen() {
         accessibilityState={{ selected }}
         hitSlop={space[1]}
         onPress={() => setThemeMode(value)}
+        style={({ pressed }) => [
+          styles.pill,
+          selected ? styles.pillActive : null,
+          pressed ? styles.controlPressed : null,
+        ]}
+      >
+        <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
+      </Pressable>
+    );
+  };
+
+  const renderTextSizeButton = (value: FontSizeStep) => {
+    const selected = fontSizeStep === value;
+    const label = copy.textSizeLabel(value);
+
+    return (
+      <Pressable
+        key={value}
+        aria-checked={selected}
+        accessibilityLabel={copy.setTextSizeAccessibilityLabel(label)}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: selected }}
+        hitSlop={space[1]}
+        onPress={() => setFontSizeStep(value)}
+        style={({ pressed }) => [
+          styles.pill,
+          selected ? styles.pillActive : null,
+          pressed ? styles.controlPressed : null,
+        ]}
+      >
+        <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
+      </Pressable>
+    );
+  };
+
+  const renderAudioRateButton = (value: AudioPlaybackRate) => {
+    const selected = audioPlaybackRate === value;
+    const label = copy.audioRateLabel(value);
+
+    return (
+      <Pressable
+        key={value}
+        aria-checked={selected}
+        accessibilityLabel={copy.setAudioRateAccessibilityLabel(label)}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: selected }}
+        hitSlop={space[1]}
+        onPress={() => setAudioPlaybackRate(value)}
         style={({ pressed }) => [
           styles.pill,
           selected ? styles.pillActive : null,
@@ -381,6 +518,55 @@ export default function Screen() {
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
           </Text>
         </Pressable>
+      </View>
+
+      <View style={styles.section}>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          {copy.accessibilityTitle}
+        </Text>
+        <View style={styles.controlBlock}>
+          <Text style={styles.controlLabel}>{copy.easyReadFontTitle}</Text>
+          <Pressable
+            aria-checked={easyReadFont}
+            accessibilityLabel={copy.setEasyReadFontAccessibilityLabel(easyReadFont)}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: easyReadFont }}
+            hitSlop={space[1]}
+            onPress={() => setEasyReadFont(!easyReadFont)}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              pressed ? styles.secondaryButtonPressed : null,
+            ]}
+          >
+            <Text style={styles.secondaryButtonText}>
+              {easyReadFont ? copy.easyReadFontEnabledLabel : copy.easyReadFontDisabledLabel}
+            </Text>
+          </Pressable>
+        </View>
+        <View style={styles.controlBlock}>
+          <Text style={styles.controlLabel}>{copy.textSizeTitle}</Text>
+          <Text style={styles.subtitle}>{copy.textSizeSummary(activeTextSizeLabel)}</Text>
+          <View
+            aria-label={copy.textSizeTitle}
+            accessibilityLabel={copy.textSizeTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {textSizeOptions.map((option) => renderTextSizeButton(option))}
+          </View>
+        </View>
+        <View style={styles.controlBlock}>
+          <Text style={styles.controlLabel}>{copy.audioRateTitle}</Text>
+          <Text style={styles.subtitle}>{copy.audioRateSummary(activeAudioRateLabel)}</Text>
+          <View
+            aria-label={copy.audioRateTitle}
+            accessibilityLabel={copy.audioRateTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {AUDIO_PLAYBACK_RATES.map((option) => renderAudioRateButton(option))}
+          </View>
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -519,7 +705,15 @@ export default function Screen() {
   );
 }
 
-function createStyles(themeColors: ThemeColors) {
+function createStyles(themeColors: ThemeColors, fontScale: number, fontFamily: string) {
+  const textStyle = (source: TextStyle): TextStyle => ({
+    fontFamily,
+    fontSize: scaleTypographyValue(source.fontSize, fontScale),
+    fontWeight: source.fontWeight,
+    lineHeight: scaleTypographyValue(source.lineHeight, fontScale),
+    ...(typeof source.letterSpacing === 'number' ? { letterSpacing: source.letterSpacing } : {}),
+  });
+
   return StyleSheet.create({
     container: {
       backgroundColor: themeColors.canvas,
@@ -539,14 +733,11 @@ function createStyles(themeColors: ThemeColors) {
     },
     title: {
       color: themeColors.text,
-      fontSize: typography.subHeading.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      letterSpacing: typography.subHeading.letterSpacing,
+      ...textStyle(typography.subHeading),
     },
     subtitle: {
       color: themeColors.textMuted,
-      fontSize: typography.body.fontSize,
-      lineHeight: typography.body.lineHeight,
+      ...textStyle(typography.body),
     },
     section: {
       backgroundColor: themeColors.surface,
@@ -559,8 +750,14 @@ function createStyles(themeColors: ThemeColors) {
     },
     sectionTitle: {
       color: themeColors.text,
-      fontSize: typography.sectionTitle.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
+      ...textStyle(typography.sectionTitle),
+    },
+    controlBlock: {
+      gap: space[1],
+    },
+    controlLabel: {
+      color: themeColors.text,
+      ...textStyle(typography.bodySemibold),
     },
     row: {
       flexDirection: 'row',
@@ -584,8 +781,7 @@ function createStyles(themeColors: ThemeColors) {
     },
     pillText: {
       color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      fontWeight: typography.navButton.fontWeight,
+      ...textStyle(typography.caption),
     },
     pillTextActive: {
       color: themeColors.badgeBlueText,
@@ -601,15 +797,11 @@ function createStyles(themeColors: ThemeColors) {
     },
     goalNumberText: {
       color: themeColors.text,
-      fontSize: typography.bodyBold.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.bodyBold.lineHeight,
+      ...textStyle(typography.bodyBold),
     },
     goalPresetText: {
       color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      fontWeight: typography.caption.fontWeight,
-      lineHeight: typography.caption.lineHeight,
+      ...textStyle(typography.caption),
     },
     secondaryButton: {
       alignItems: 'center',
@@ -627,13 +819,11 @@ function createStyles(themeColors: ThemeColors) {
     },
     secondaryButtonText: {
       color: themeColors.surface,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
+      ...textStyle(typography.navButton),
     },
     disclaimerText: {
       color: themeColors.textDisclaimer,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
+      ...textStyle(typography.caption),
     },
     importInput: {
       backgroundColor: themeColors.surface,
@@ -641,8 +831,7 @@ function createStyles(themeColors: ThemeColors) {
       borderRadius: radius.input,
       borderWidth: StyleSheet.hairlineWidth,
       color: themeColors.text,
-      fontSize: typography.body.fontSize,
-      lineHeight: typography.body.lineHeight,
+      ...textStyle(typography.body),
       minHeight: space[15],
       padding: space[1.5],
     },
@@ -669,8 +858,7 @@ function createStyles(themeColors: ThemeColors) {
     },
     outlineButtonText: {
       color: themeColors.text,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
+      ...textStyle(typography.navButton),
     },
     importSummary: {
       backgroundColor: themeColors.surfaceWarm,
@@ -682,19 +870,15 @@ function createStyles(themeColors: ThemeColors) {
     },
     summaryTitle: {
       color: themeColors.text,
-      fontSize: typography.bodyBold.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.bodyBold.lineHeight,
+      ...textStyle(typography.bodyBold),
     },
     summaryText: {
       color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
+      ...textStyle(typography.caption),
     },
     feedbackText: {
-      fontSize: typography.caption.fontSize,
+      ...textStyle(typography.caption),
       fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.caption.lineHeight,
     },
     feedbackError: {
       color: themeColors.warning,

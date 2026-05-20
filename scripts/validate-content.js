@@ -1868,6 +1868,11 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.audioTitle\}\s*<\/Text>/,
   },
   {
+    label: 'accessibility section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.accessibilityTitle\}\s*<\/Text>/,
+  },
+  {
     label: 'theme section title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.themeModeTitle\}\s*<\/Text>/,
@@ -1885,6 +1890,13 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
 ];
 const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
   sv: [
+    'Tillgänglighet',
+    'Svensk uppläsning: ${label}',
+    'Talhastighet',
+    'Långsam',
+    'Lugn',
+    'Normal',
+    'Snabb',
     'Ljud avstängt',
     'Ljud på',
     'Ljud',
@@ -1921,10 +1933,23 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     '${count} granskningar av fel svar',
     'Importera studiedata',
     'Byt studiespråk till ${label}',
+    'Lättläst teckensnitt avstängt',
+    'Lättläst teckensnitt påslaget',
+    'Lättläst teckensnitt',
     'Studiespråk',
+    'Välj talhastighet: ${label}',
     'Ställ in dagligt mål till ${goal} svar',
+    'Stäng av lättläst teckensnitt',
+    'Slå på lättläst teckensnitt',
+    'Välj textstorlek: ${label}',
     'Välj tema: ${label}',
     'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    'Kompakt',
+    'Stor',
+    'Extra stor',
+    'Standard',
+    'Textstorlek: ${label}',
+    'Textstorlek',
     'Mörkt',
     'Ljust',
     'Tema: ${label}',
@@ -1935,6 +1960,13 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Engelskt stöd',
   ],
   en: [
+    'Accessibility',
+    'Swedish speech: ${label}',
+    'Swedish speech speed',
+    'Slow',
+    'Comfortable',
+    'Normal',
+    'Fast',
     'Audio disabled',
     'Audio enabled',
     'Audio',
@@ -1971,10 +2003,23 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     '${count} wrong-answer reviews',
     'Import study data',
     'Set study language to ${label}',
+    'Easy-read font off',
+    'Easy-read font on',
+    'Easy-read font',
     'Study language',
+    'Choose Swedish speech speed: ${label}',
     'Set daily goal to ${goal} answers',
+    'Disable easy-read font',
+    'Enable easy-read font',
+    'Choose text size: ${label}',
     'Choose theme: ${label}',
     'Control study language, audio, theme, and your daily goal.',
+    'Compact',
+    'Large',
+    'Extra large',
+    'Standard',
+    'Text size: ${label}',
+    'Text size',
     'Dark',
     'Light',
     'Theme: ${label}',
@@ -2037,6 +2082,48 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
     'settings audio switch must render localized state copy',
+  ],
+  [
+    'const easyReadFont = useAccessibilityStore((state) => state.easyReadFont);',
+    'settings route must read easy-read font from accessibility store',
+  ],
+  [
+    'const fontSizeStep = useAccessibilityStore((state) => state.fontSizeStep);',
+    'settings route must read font size from accessibility store',
+  ],
+  [
+    'const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);',
+    'settings route must read audio playback rate from accessibility store',
+  ],
+  ['{copy.accessibilityTitle}', 'settings accessibility section must render localized copy'],
+  [
+    'accessibilityLabel={copy.setEasyReadFontAccessibilityLabel(easyReadFont)}',
+    'settings easy-read font switch must expose localized accessibility copy',
+  ],
+  ['aria-checked={easyReadFont}', 'settings easy-read font switch must expose checked state'],
+  [
+    'accessibilityState={{ checked: easyReadFont }}',
+    'settings easy-read font switch must mirror checked state to accessibilityState',
+  ],
+  [
+    '{easyReadFont ? copy.easyReadFontEnabledLabel : copy.easyReadFontDisabledLabel}',
+    'settings easy-read font switch must render localized state copy',
+  ],
+  [
+    '{copy.textSizeSummary(activeTextSizeLabel)}',
+    'settings text-size summary must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.setTextSizeAccessibilityLabel(label)}',
+    'settings text-size options must expose localized accessibility copy',
+  ],
+  [
+    '{copy.audioRateSummary(activeAudioRateLabel)}',
+    'settings audio-rate summary must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.setAudioRateAccessibilityLabel(label)}',
+    'settings audio-rate options must expose localized accessibility copy',
   ],
   ['{copy.dailyGoalTitle}', 'settings daily-goal section must render localized copy'],
   [
@@ -2722,7 +2809,7 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'optional text, enabled, and language prop contract',
     pattern:
-      /enabled = true,[\s\S]*language = 'sv'[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*text\?: string/,
+      /enabled = true,[\s\S]*language = 'sv'[\s\S]*rate,[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*rate\?: number;[\s\S]*text\?: string/,
   },
   {
     label: 'trimmed speech text source',
@@ -2765,7 +2852,13 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'trimmed speech playback',
-    pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
+    pattern:
+      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText, \{ rate \}\);/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -7482,6 +7575,23 @@ let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+
+if (process.argv.includes('--focus-accessibility-bundle-runtime')) {
+  validateStaticValidationSyntaxGate();
+  validateSettingsRouteHeaderParity();
+  validateSettingsRouteCopyParity();
+  validateAudioButtonAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteHeadersValidated,
+    settingsRouteHeaderParityValidated,
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+    audioButtonAccessibilityRulesValidated,
+    audioButtonAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
 
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();

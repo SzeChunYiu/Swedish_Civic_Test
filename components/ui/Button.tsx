@@ -1,7 +1,15 @@
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
-import { useId, type PropsWithChildren } from 'react';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { useId, useMemo, type PropsWithChildren } from 'react';
+import { fontScaleFor, useAccessibilityStore } from '../../lib/storage/accessibilityStore';
+import {
+  colors,
+  fontFamilyForAccessibility,
+  radius,
+  scaleTypographyValue,
+  space,
+  typography,
+} from '../../lib/theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
 type ButtonProps = PropsWithChildren<
@@ -33,6 +41,17 @@ export function Button({
     accessibilityHint && Platform.OS === 'web'
       ? `button-hint-${hintId.replace(/:/g, '')}`
       : undefined;
+  const easyReadFont = useAccessibilityStore((state) => state.easyReadFont);
+  const fontSizeStep = useAccessibilityStore((state) => state.fontSizeStep);
+  const fontScale = fontScaleFor(fontSizeStep);
+  const accessibleLabelStyle = useMemo(
+    () => ({
+      fontFamily: fontFamilyForAccessibility(easyReadFont),
+      fontSize: scaleTypographyValue(typography.navButton.fontSize, fontScale),
+      lineHeight: scaleTypographyValue(typography.navButton.lineHeight, fontScale),
+    }),
+    [easyReadFont, fontScale],
+  );
 
   return (
     <Pressable
@@ -63,6 +82,7 @@ export function Button({
       <Text
         style={[
           styles.label,
+          accessibleLabelStyle,
           variant === 'primary' ? styles.primaryLabel : styles.darkLabel,
           disabled ? styles.disabledLabel : null,
         ]}

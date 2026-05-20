@@ -35,10 +35,12 @@ const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = {
 export function AudioButton({
   enabled = true,
   language = 'sv',
+  rate,
   text = '',
 }: {
   enabled?: boolean;
   language?: AppLanguage;
+  rate?: number;
   text?: string;
 }) {
   const speechText = text.trim();
@@ -73,7 +75,7 @@ export function AudioButton({
       onPress={() => {
         if (!canPlayAudio) return;
         stopSpeech();
-        speakSwedish(speechText);
+        speakSwedish(speechText, { rate });
       }}
     >
       {label}

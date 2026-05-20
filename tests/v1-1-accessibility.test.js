@@ -155,13 +155,54 @@ test('RootLayout applies persisted theme mode to system chrome before screens re
   const source = loadSource('app/_layout.tsx');
   assert.match(source, /useColorScheme/);
   assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
+  assert.match(
+    source,
+    /const easyReadFont = useAccessibilityStore\(\(state\) => state\.easyReadFont\);/,
+  );
+  assert.match(
+    source,
+    /const fontSizeStep = useAccessibilityStore\(\(state\) => state\.fontSizeStep\);/,
+  );
+  assert.match(source, /const fontScale = fontScaleFor\(fontSizeStep\);/);
   assert.match(source, /const themeColors = colorsForThemeMode\(themeMode, systemColorScheme\);/);
   assert.match(source, /useSystemCanvasColor\(themeColors\.canvas\);/);
   assert.match(source, /headerStyle: \{ backgroundColor: themeColors\.canvas \}/);
+  assert.match(source, /headerTitleStyle/);
+  assert.match(source, /fontFamilyForAccessibility\(easyReadFont\)/);
+  assert.match(source, /scaleTypographyValue\(typography\.navButton\.fontSize, fontScale\)/);
   assert.match(
     source,
     /<StatusBar style=\{resolvedColorScheme === 'dark' \? 'light' : 'dark'\} \/>/,
   );
+});
+
+test('shared text and button components apply free accessibility display settings', () => {
+  const textSource = loadSource('components/Text.tsx');
+  const buttonSource = loadSource('components/ui/Button.tsx');
+  const typographySource = loadSource('lib/theme/typography.ts');
+
+  assert.match(typographySource, /fontFamilyForAccessibility\(easyReadFont: boolean\)/);
+  assert.match(typographySource, /scaleTypographyValue/);
+  assert.match(
+    textSource,
+    /const easyReadFont = useAccessibilityStore\(\(state\) => state\.easyReadFont\);/,
+  );
+  assert.match(
+    textSource,
+    /const fontSizeStep = useAccessibilityStore\(\(state\) => state\.fontSizeStep\);/,
+  );
+  assert.match(textSource, /fontFamilyForAccessibility\(easyReadFont\)/);
+  assert.match(textSource, /scaleTypographyValue\(variantTypography\.fontSize, fontScale\)/);
+  assert.match(
+    buttonSource,
+    /const easyReadFont = useAccessibilityStore\(\(state\) => state\.easyReadFont\);/,
+  );
+  assert.match(
+    buttonSource,
+    /const fontSizeStep = useAccessibilityStore\(\(state\) => state\.fontSizeStep\);/,
+  );
+  assert.match(buttonSource, /fontFamilyForAccessibility\(easyReadFont\)/);
+  assert.match(buttonSource, /scaleTypographyValue\(typography\.navButton\.fontSize, fontScale\)/);
 });
 
 test('speak.ts: speakSwedish accepts a rate option', () => {

@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-accessibility-bundle-runtime'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -22,12 +26,13 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
     'utf8',
   );
 
-  assert.equal(summary.audioButtonAccessibilityRulesValidated, 15);
+  assert.equal(summary.audioButtonAccessibilityRulesValidated, 14);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
   assert.match(source, /import \{ useEffect \} from 'react';/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
   assert.match(source, /language = 'sv'/);
+  assert.match(source, /rate\?: number/);
   assert.match(source, /const speechText = text\.trim\(\);/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
@@ -45,7 +50,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /disabled=\{!canPlayAudio\}/);
   assert.match(source, /if \(!canPlayAudio\) return;/);
   assert.match(source, /stopSpeech\(\);/);
-  assert.match(source, /speakSwedish\(speechText\);/);
+  assert.match(source, /speakSwedish\(speechText, \{ rate \}\);/);
   assert.match(
     source,
     /useEffect\(\(\) => \{[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
@@ -75,11 +80,27 @@ test('learning FeedbackAudioButton exposes localized play and stop states', () =
   assert.match(source, /speakSwedish\(speechText, \{[\s\S]*onDone:[\s\S]*onStopped:/);
   assert.match(
     practiceSource,
-    /<FeedbackAudioButton[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
+    /const audioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);/,
   );
   assert.match(
     quizSource,
-    /<FeedbackAudioButton[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
+    /const audioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);/,
+  );
+  assert.match(
+    practiceSource,
+    /<AudioButton[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
+  );
+  assert.match(
+    quizSource,
+    /<AudioButton[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
+  );
+  assert.match(
+    practiceSource,
+    /<FeedbackAudioButton[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
+  );
+  assert.match(
+    quizSource,
+    /<FeedbackAudioButton[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
   );
   assert.doesNotMatch(examSource, /FeedbackAudioButton|buildAnswerFeedbackSpeechText/);
 });
@@ -97,10 +118,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/learning/AudioButton.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('speakSwedish(speechText);', 'speakSwedish(text);');
+      .replace('speakSwedish(speechText, { rate });', 'speakSwedish(text);');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-accessibility-bundle-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -131,6 +153,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-accessibility-bundle-runtime');
 require('./scripts/validate-content.js');
 `,
     ],

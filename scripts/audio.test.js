@@ -212,7 +212,15 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
     );
     assert.match(
       source,
-      /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
+      /const audioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);/,
+    );
+    assert.match(
+      source,
+      /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
+    );
+    assert.match(
+      source,
+      /<FeedbackAudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
     );
   }
 });
