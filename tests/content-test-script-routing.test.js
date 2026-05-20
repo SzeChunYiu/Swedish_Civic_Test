@@ -45,6 +45,18 @@ test('npm test keeps selector routing in the project dispatcher', () => {
   assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
 });
 
+test('question report link parity runs through its focused validator path', () => {
+  const pkg = readPackageJson();
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-report-link-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(pkg.scripts['test:content'], /tests\/content-question-report-link-parity\.test\.js/);
+  assert.match(source, /--focus-question-report-link-parity/);
+  assert.match(source, /process\.argv\.push\('--focus-question-report-link-parity'\)/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
