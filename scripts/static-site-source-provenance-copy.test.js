@@ -79,7 +79,7 @@ function normalizeInlineHtml(value) {
 
 function staticFallbackI18nValues(indexHtml, keyPrefix) {
   const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
 
   let match;
   while ((match = elementPattern.exec(indexHtml))) {
@@ -87,6 +87,37 @@ function staticFallbackI18nValues(indexHtml, keyPrefix) {
     if (key.startsWith(keyPrefix)) values.set(key, normalizeInlineHtml(rawValue));
   }
   return values;
+}
+
+const staticHeroFooterFallbackKeys = Object.freeze([
+  'hero.eyebrow',
+  'hero.h1a',
+  'hero.h1c',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'footer.t1',
+  'footer.t2',
+  'footer.honest.p',
+]);
+
+function assertStaticFallbackI18nParity(indexHtml, appSource, keys) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const fallbackValues = staticFallbackI18nValues(indexHtml, '');
+  const actualKeys = keys.filter((key) => fallbackValues.has(key)).sort();
+
+  assert.deepEqual(actualKeys, [...keys].sort(), 'static no-JS fallback keys should be present');
+
+  for (const key of keys) {
+    assert.ok(englishTranslations.has(key), `${key} English dictionary entry should be present`);
+    assert.equal(
+      fallbackValues.get(key),
+      normalizeInlineHtml(englishTranslations.get(key)),
+      `${key} no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
+
+  return keys.length;
 }
 
 function staticFaqSection(indexHtml) {
@@ -220,6 +251,26 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
       `${key} no-JS fallback should match the English site/app.js dictionary`,
     );
   }
+});
+
+test('static hero and footer no-JS fallbacks mirror the English dictionary', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+
+  assert.equal(
+    assertStaticFallbackI18nParity(indexHtml, appSource, staticHeroFooterFallbackKeys),
+    staticHeroFooterFallbackKeys.length,
+  );
+
+  assert.throws(
+    () =>
+      assertStaticFallbackI18nParity(
+        indexHtml.replace(/(data-i18n="hero\.cta2">)[^<]+/, '$1One quick question'),
+        appSource,
+        staticHeroFooterFallbackKeys,
+      ),
+    /hero\.cta2 no-JS fallback should match the English site\/app\.js dictionary/,
+  );
 });
 
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {

@@ -335,6 +335,8 @@ const i18n = window.i18n = {
 
     "footer.brag1": "Study lagom.",
     "footer.brag2": "Study smart.",
+    "footer.t1": "Study the material.",
+    "footer.t2": "Practice with sources.",
     "footer.h.app": "The app",
     "footer.app.1": "Why it exists",
     "footer.app.2": "Try a question",
@@ -621,6 +623,8 @@ const i18n = window.i18n = {
 
     "footer.brag1": "Plugga lagom.",
     "footer.brag2": "Plugga smart.",
+    "footer.t1": "Plugga materialet.",
+    "footer.t2": "Öva med källor.",
     "footer.h.app": "Appen",
     "footer.app.1": "Varför den finns",
     "footer.app.2": "Testa en fråga",
