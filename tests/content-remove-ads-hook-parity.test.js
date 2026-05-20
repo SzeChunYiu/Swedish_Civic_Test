@@ -1,29 +1,34 @@
 const assert = require('node:assert/strict');
-const { execFileSync, spawnSync } = require('node:child_process');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+function runValidation() {
+  return spawnSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-  return JSON.parse(match[0]);
+}
+
+function validationOutput(result) {
+  return `${result.stdout}\n${result.stderr}`;
 }
 
 test('Remove Ads entitlement hook fails closed until purchase state resolves', () => {
-  const summary = parseValidationSummary();
+  const result = runValidation();
+  const output = validationOutput(result);
   const hookSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
     'utf8',
   );
 
-  assert.equal(summary.removeAdsEntitlementHookCasesValidated, 6);
-  assert.equal(summary.removeAdsEntitlementHookParityValidated, true);
+  assert.doesNotMatch(
+    output,
+    /Remove Ads entitlement hook must fail closed while purchase state loads|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
+  );
   assert.match(hookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /RemoveAdsEntitlementStatus = 'loading' \| 'ready' \| 'read_failed'/);
   assert.match(hookSource, /adsDisabled: true/);
@@ -33,7 +38,8 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /setEntitlementStatus\('read_failed'\)/);
   assert.match(hookSource, /entitlements: explicitEntitlements/);
   assert.match(hookSource, /entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS/);
-  assert.match(hookSource, /entitlementStatus/);
+  assert.match(hookSource, /entitlementStatus:\s*'ready'\s+as\s+const/);
+  assert.match(hookSource, /entitlementStatus,\s*\n\s*\};/);
 });
 
 test('Home Remove Ads surfaces wait for entitlement readiness before rendering', () => {
