@@ -1098,7 +1098,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is the foremost task of Sweden's regions?",
+      "en": "What is the main responsibility of Sweden's regions?",
       "sv": "Vilken är regionernas främsta uppgift i Sverige?"
     },
     "opts": [
@@ -11785,7 +11785,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is the foremost task of Sweden's regions?",
+      "en": "Which answer best matches? What is the main responsibility of Sweden's regions?",
       "sv": "Vilket svar stämmer bäst? Vilken är regionernas främsta uppgift i Sverige?"
     },
     "opts": [
@@ -11833,7 +11833,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The foremost task of Sweden's regions is to be responsible for health care.",
+      "en": "The main responsibility of Sweden's regions is health care.",
       "sv": "Regionernas främsta uppgift i Sverige är att ansvara för hälso- och sjukvården."
     },
     "opts": [
@@ -11873,7 +11873,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The foremost task of Sweden's regions is to judge criminal cases.",
+      "en": "The main responsibility of Sweden's regions is judging criminal cases.",
       "sv": "Regionernas främsta uppgift i Sverige är att döma i brottmål."
     },
     "opts": [
@@ -11913,7 +11913,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is the foremost task of Sweden's regions?",
+      "en": "Choose the correct option: What is the main responsibility of Sweden's regions?",
       "sv": "Välj rätt alternativ: Vilken är regionernas främsta uppgift i Sverige?"
     },
     "opts": [
@@ -34081,8 +34081,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Commercial radio and TV channels can earn income by selling advertising space or charging for a specific channel.",
-      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller ta betalt för en särskild kanal."
+      "en": "They sell advertising space or charge for a specific channel.",
+      "sv": "De säljer reklamplats eller tar betalt för en särskild kanal."
     },
     "opts": [
       {
@@ -34121,8 +34121,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Commercial radio and TV channels can earn income through court fees from trials.",
-      "sv": "Kommersiella radio- och tv-kanaler kan få inkomster genom domstolsavgifter från rättegångar."
+      "en": "Through court fees from trials.",
+      "sv": "Genom domstolsavgifter från rättegångar."
     },
     "opts": [
       {
@@ -34257,8 +34257,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Media financed by advertising are often run by private companies and earn income from advertising.",
-      "sv": "Medier som finansieras med reklam drivs ofta av privata företag och får inkomster genom reklam."
+      "en": "They are often run by private companies and earn income from advertising.",
+      "sv": "De drivs ofta av privata företag och får inkomster genom reklam."
     },
     "opts": [
       {
@@ -34297,8 +34297,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Media financed by advertising may never sell advertising space.",
-      "sv": "Medier som finansieras med reklam får aldrig sälja reklamplats."
+      "en": "They may never sell advertising space.",
+      "sv": "De får aldrig sälja reklamplats."
     },
     "opts": [
       {
@@ -34433,8 +34433,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Many newspapers are also available online and updated with news several times per day.",
-      "sv": "Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag."
+      "en": "They are also available online and updated with news several times per day.",
+      "sv": "De finns också på internet och uppdateras med nyheter flera gånger per dag."
     },
     "opts": [
       {
@@ -34473,8 +34473,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Many newspapers may be sold only as one copy per year.",
-      "sv": "Många tidningar får bara säljas som ett exemplar per år."
+      "en": "They may be sold only as one copy per year.",
+      "sv": "De får bara säljas som ett exemplar per år."
     },
     "opts": [
       {
@@ -34609,8 +34609,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "On the web and in social media, anyone can create content, and it is not always checked the same way as in other media.",
-      "sv": "På webben och i sociala medier kan vem som helst skapa innehåll, och det kontrolleras inte alltid som i andra medier."
+      "en": "Anyone can create content there, and it is not always checked the same way as in other media.",
+      "sv": "Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier."
     },
     "opts": [
       {
@@ -34649,8 +34649,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "On the web and in social media, only responsible publishers may write posts.",
-      "sv": "På webben och i sociala medier får bara ansvariga utgivare skriva inlägg."
+      "en": "Only responsible publishers may write posts there.",
+      "sv": "Bara ansvariga utgivare får skriva inlägg där."
     },
     "opts": [
       {
