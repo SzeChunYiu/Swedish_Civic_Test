@@ -22,6 +22,7 @@ const q071SocialInsuranceOverlapPattern =
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
+const workersDayEnglishPattern = /\b[Ww]orkers[’'] day\b/;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
@@ -127,6 +128,7 @@ test('published question types stay answerable by quiz runtime', () => {
     summary.publishedQuestions,
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.questionWorkersDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
@@ -482,6 +484,75 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q129 uses Lucia role-scaffold explanation wording/,
+  );
+});
+
+test('May Day holiday copy and exports avoid lower-case workers-day labels', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    workersDayEnglishPattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => workersDayEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q103 = generatedSiteBank.find((question) => question.id === 'q103');
+  const q103TrueStatement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q103', 1),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q103, 'q103 should be published in the site bank');
+  assert.ok(q103TrueStatement, 'q103 true-statement variant should be published');
+  assert.match(
+    q103.opts[0].en,
+    /A public holiday for International Workers’ Day, with demonstrations and speeches/,
+  );
+  assert.match(q103.why.en, /May Day is International Workers’ Day/);
+  assert.match(q103TrueStatement.q.en, /marks a public holiday for International Workers’ Day/);
+});
+
+test('May Day holiday naturalness guard rejects lower-case workers-day labels', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'A public holiday for International Workers’ Day, with demonstrations and speeches',
+      'Workers’ day with demonstrations and speeches',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q103 uses lower-case workers-day holiday wording/,
   );
 });
 

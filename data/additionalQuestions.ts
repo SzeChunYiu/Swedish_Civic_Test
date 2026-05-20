@@ -1741,7 +1741,7 @@ export const additionalQuestions: PracticeQuestion[] = [
         'Celebrate with parties and dinners and at night with fireworks',
       ],
       ['Stora brasor och vårsånger', 'Large bonfires and spring songs'],
-      ['Demonstrationer på arbetarnas dag', 'Demonstrations on workers’ day'],
+      ['Demonstrationer på arbetarnas dag', 'Demonstrations on International Workers’ Day'],
       ['Ceremonier för nya medborgare', 'Ceremonies for new citizens'],
     ],
     0,
@@ -1808,7 +1808,10 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
       ['Att välkomna våren med stora brasor', 'Welcoming spring with large bonfires'],
       ['Att fira nationaldagen med tal', 'Celebrating National Day with speeches'],
-      ['Att ordna demonstrationer på arbetarnas dag', 'Holding demonstrations on workers’ day'],
+      [
+        'Att ordna demonstrationer på arbetarnas dag',
+        'Holding International Workers’ Day demonstrations',
+      ],
     ],
     0,
     'Luciafirandet handlar mycket om att sprida ljus när det är som mörkast på året. Firandet hör till den 13 december och kan innehålla luciatåg där en person är Lucia, bär ljuskrona och sjunger särskilda sånger tillsammans med andra deltagare.',
@@ -1873,7 +1876,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     [
       [
         'Arbetarnas dag med demonstrationer och tal',
-        "Workers' day with demonstrations and speeches",
+        'A public holiday for International Workers’ Day, with demonstrations and speeches',
       ],
       ['Det nya året med fester och fyrverkerier', 'The new year with parties and fireworks'],
       ['Våren med brasor och vårsånger', 'Spring with bonfires and spring songs'],

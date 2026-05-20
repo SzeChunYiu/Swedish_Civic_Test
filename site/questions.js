@@ -4372,7 +4372,7 @@
         "sv": "Stora brasor och vårsånger"
       },
       {
-        "en": "Demonstrations on workers’ day",
+        "en": "Demonstrations on International Workers’ Day",
         "sv": "Demonstrationer på arbetarnas dag"
       },
       {
@@ -4516,7 +4516,7 @@
         "sv": "Att fira nationaldagen med tal"
       },
       {
-        "en": "Holding demonstrations on workers’ day",
+        "en": "Holding International Workers’ Day demonstrations",
         "sv": "Att ordna demonstrationer på arbetarnas dag"
       }
     ],
@@ -4644,7 +4644,7 @@
     },
     "opts": [
       {
-        "en": "Workers' day with demonstrations and speeches",
+        "en": "A public holiday for International Workers’ Day, with demonstrations and speeches",
         "sv": "Arbetarnas dag med demonstrationer och tal"
       },
       {
@@ -24259,7 +24259,7 @@
         "sv": "Stora brasor och vårsånger"
       },
       {
-        "en": "Demonstrations on workers’ day",
+        "en": "Demonstrations on International Workers’ Day",
         "sv": "Demonstrationer på arbetarnas dag"
       },
       {
@@ -24387,7 +24387,7 @@
         "sv": "Stora brasor och vårsånger"
       },
       {
-        "en": "Demonstrations on workers’ day",
+        "en": "Demonstrations on International Workers’ Day",
         "sv": "Demonstrationer på arbetarnas dag"
       },
       {
@@ -24799,7 +24799,7 @@
         "sv": "Att fira nationaldagen med tal"
       },
       {
-        "en": "Holding demonstrations on workers’ day",
+        "en": "Holding International Workers’ Day demonstrations",
         "sv": "Att ordna demonstrationer på arbetarnas dag"
       }
     ],
@@ -24930,7 +24930,7 @@
         "sv": "Att fira nationaldagen med tal"
       },
       {
-        "en": "Holding demonstrations on workers’ day",
+        "en": "Holding International Workers’ Day demonstrations",
         "sv": "Att ordna demonstrationer på arbetarnas dag"
       }
     ],
@@ -25323,7 +25323,7 @@
     },
     "opts": [
       {
-        "en": "Workers' day with demonstrations and speeches",
+        "en": "A public holiday for International Workers’ Day, with demonstrations and speeches",
         "sv": "Arbetarnas dag med demonstrationer och tal"
       },
       {
@@ -25367,7 +25367,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "May Day marks workers' day with demonstrations and speeches.",
+      "en": "May Day marks a public holiday for International Workers’ Day, with demonstrations and speeches.",
       "sv": "På första maj uppmärksammas arbetarnas dag med demonstrationer och tal."
     },
     "opts": [
@@ -25454,7 +25454,7 @@
     },
     "opts": [
       {
-        "en": "Workers' day with demonstrations and speeches",
+        "en": "A public holiday for International Workers’ Day, with demonstrations and speeches",
         "sv": "Arbetarnas dag med demonstrationer och tal"
       },
       {

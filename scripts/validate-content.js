@@ -277,6 +277,7 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
 const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
+const QUESTION_WORKERS_DAY_ENGLISH_NATURALNESS_PATTERN = /\b[Ww]orkers[’'] day\b/;
 const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does the Council of Europe work for\??/i,
   /\bThe Council of Europe works for\b/i,
@@ -4550,6 +4551,16 @@ function findQuestionMayDayEnglishNaturalnessIssue(question) {
   return QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionWorkersDayEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_WORKERS_DAY_ENGLISH_NATURALNESS_PATTERN.test(text);
+}
+
 function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
   if (!(question.tags || []).includes('council-of-europe')) return null;
 
@@ -7448,6 +7459,7 @@ let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionStateWelfareCoverageSplitValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
+let questionWorkersDayEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
@@ -17377,6 +17389,8 @@ if (Array.isArray(questions)) {
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
+      const workersDayEnglishNaturalnessIssue =
+        findQuestionWorkersDayEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const saltsjobadenAgreementEnglishNaturalnessIssue =
@@ -17440,6 +17454,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses literal First of May English wording`);
       } else {
         questionMayDayEnglishNaturalnessValidated += 1;
+      }
+      if (workersDayEnglishNaturalnessIssue) {
+        fail(`${label} uses lower-case workers-day holiday wording`);
+      } else {
+        questionWorkersDayEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -17949,6 +17968,7 @@ console.log(
       questionStateWelfareCoverageSplitValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
+      questionWorkersDayEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
