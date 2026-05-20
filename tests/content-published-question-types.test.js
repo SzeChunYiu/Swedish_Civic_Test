@@ -116,6 +116,35 @@ function contentMutationFixtureFiles() {
   return [...testFiles, ...scriptFiles].sort();
 }
 
+test('published source parity localizes only q160-q169 source option maps', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const paritySetMatch = validatorSource.match(
+    /const LOCALIZED_ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set\(\[([\s\S]*?)\]\);/,
+  );
+
+  assert.ok(paritySetMatch, 'validator should declare a localized source-option parity set');
+  const parityIds = [...paritySetMatch[1].matchAll(/'q\d{3}'/g)].map((match) =>
+    match[0].slice(1, -1),
+  );
+
+  assert.deepEqual(parityIds, [
+    'q160',
+    'q161',
+    'q162',
+    'q163',
+    'q164',
+    'q165',
+    'q166',
+    'q167',
+    'q168',
+    'q169',
+  ]);
+  assert.match(validatorSource, /applyQuestionLocalizationPilot\(question\)/);
+});
+
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',

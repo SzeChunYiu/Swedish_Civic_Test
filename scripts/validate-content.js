@@ -7078,6 +7078,8 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
+const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -14838,6 +14840,18 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'difficulty',
   'tags',
 ];
+const LOCALIZED_ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set([
+  'q160',
+  'q161',
+  'q162',
+  'q163',
+  'q164',
+  'q165',
+  'q166',
+  'q167',
+  'q168',
+  'q169',
+]);
 
 function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
   if (!Array.isArray(questionsToValidate)) return;
@@ -14864,13 +14878,20 @@ function validateAuthoredSourcePartition(questionsToValidate, label, startQuesti
 }
 
 function expectedPublishedSourceField(question, field) {
+  const comparableQuestion =
+    field === 'options' &&
+    LOCALIZED_ADDITIONAL_SOURCE_OPTION_PARITY_IDS.has(question.id) &&
+    typeof applyQuestionLocalizationPilot === 'function'
+      ? applyQuestionLocalizationPilot(question)
+      : question;
+
   if (question.type === 'true_false' && field === 'questionSv') {
-    return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
+    return ensureSentence(stripTrueFalsePromptSv(comparableQuestion.questionSv));
   }
   if (question.type === 'true_false' && field === 'questionEn') {
-    return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
+    return ensureSentence(stripTrueFalsePromptEn(comparableQuestion.questionEn));
   }
-  return question[field];
+  return comparableQuestion[field];
 }
 
 function validateAuthoredSourceParity() {
