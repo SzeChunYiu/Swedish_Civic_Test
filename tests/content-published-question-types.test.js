@@ -128,6 +128,10 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.generatedBecomeImportantForEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -2747,6 +2751,52 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('generated English guard rejects stale become-important-for derived wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const staleGeneratedBecomeImportantForRows = {",
+        "  [generatedFixtureId('q001', 1)]: { questionEn: 'Sweden became important for the Nordic region.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  staleGeneratedBecomeImportantForRows[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...staleGeneratedBecomeImportantForRows[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /contains stale generated become-important-for English wording/,
   );
 });
 

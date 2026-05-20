@@ -1908,12 +1908,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^In which year was (.+)$/i);
   if (match) return `${upperFirst(match[1])} was in ${answer}`;
 
-  match = q.match(/^What did (.+?) become important for$/i);
-  if (match)
-    return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(
-      answer,
-    ).replace(/^Cooperation\b/, 'cooperation')}`;
-
   match = q.match(/^What was (.+?) important for$/i);
   if (match)
     return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(

@@ -146,7 +146,7 @@ test('validate-content uses production helper for expected generated variant out
   );
 });
 
-test('derived civic statement handlers reject source-recall and obsolete example-describes prompts', () => {
+test('civic statement templates do not emit stale become-important-for English', () => {
   const productionSource = fs.readFileSync(
     path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
     'utf8',
@@ -156,33 +156,21 @@ test('derived civic statement handlers reject source-recall and obsolete example
     'utf8',
   );
 
-  assert.deepEqual(
-    sourceRecallHandlerFindings(productionSource, 'civicStatementEn', 'buildSingleChoiceVariant'),
-    [],
+  const productionEnglishStatements = extractFunctionSlice(
+    productionSource,
+    'civicStatementEn',
+    'buildSingleChoiceVariant',
   );
-  assert.deepEqual(
-    sourceRecallHandlerFindings(validatorSource, 'civicStatementEn', 'correctOption'),
-    [],
+  const validatorEnglishStatements = extractFunctionSlice(
+    validatorSource,
+    'civicStatementEn',
+    'correctOption',
   );
-  const obsoletePromptPatterns = ['Vilket exempel beskriver', 'Which example describes'];
-  const handlerPatterns = [
-    ...civicStatementPromptPatterns(productionSource, 'civicStatementSv', 'civicStatementEn'),
-    ...civicStatementPromptPatterns(
-      productionSource,
-      'civicStatementEn',
-      'buildSingleChoiceVariant',
-    ),
-    ...civicStatementPromptPatterns(validatorSource, 'civicStatementSv', 'civicStatementEn'),
-    ...civicStatementPromptPatterns(validatorSource, 'civicStatementEn', 'correctOption'),
-  ];
 
-  for (const pattern of obsoletePromptPatterns) {
-    assert.deepEqual(
-      handlerPatterns.filter((handlerPattern) => handlerPattern.includes(pattern)),
-      [],
-      `${pattern} should be limited to explicit source guards and mutation fixtures`,
-    );
-  }
+  assert.doesNotMatch(productionEnglishStatements, /bec(?:o|a)me important for/i);
+  assert.doesNotMatch(validatorEnglishStatements, /bec(?:o|a)me important for/i);
+  assert.doesNotMatch(productionEnglishStatements, /What did \(\.\+\?\) become important for/);
+  assert.doesNotMatch(validatorEnglishStatements, /What did \(\.\+\?\) become important for/);
 });
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {

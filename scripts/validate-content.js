@@ -290,6 +290,10 @@ const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
   /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
   /\bIn a Lucia procession,\s+one person is Lucia\b/i,
 ];
+const GENERATED_BECOME_IMPORTANT_FOR_ENGLISH_PATTERNS = [
+  /\bbecome important for\b/i,
+  /\bbecame important for\b/i,
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -4585,6 +4589,18 @@ function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
   return QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findGeneratedBecomeImportantForEnglishIssue(question) {
+  if (!question.tags?.includes('published-variant')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return GENERATED_BECOME_IMPORTANT_FOR_ENGLISH_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -7451,6 +7467,7 @@ let questionMayDayEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
+let generatedBecomeImportantForEnglishNaturalnessValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
@@ -17383,6 +17400,8 @@ if (Array.isArray(questions)) {
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
       const luciaExplanationRoleScaffoldIssue =
         findQuestionLuciaExplanationRoleScaffoldIssue(question);
+      const generatedBecomeImportantForEnglishIssue =
+        findGeneratedBecomeImportantForEnglishIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const successionVatDistractorIssue = findQuestionSuccessionVatDistractorIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
@@ -17455,6 +17474,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses Lucia role-scaffold explanation wording`);
       } else {
         questionLuciaExplanationRoleScaffoldValidated += 1;
+      }
+      if (generatedBecomeImportantForEnglishIssue) {
+        fail(`${label} uses stale become-important-for English wording`);
+      } else {
+        generatedBecomeImportantForEnglishNaturalnessValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -17952,6 +17976,7 @@ console.log(
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
+      generatedBecomeImportantForEnglishNaturalnessValidated,
       questionSecretBallotSvPronounNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
