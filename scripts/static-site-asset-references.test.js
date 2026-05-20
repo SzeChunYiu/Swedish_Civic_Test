@@ -5,6 +5,7 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const siteRoot = path.join(repoRoot, 'site');
+const { checkAssetManifest } = require('./update-site-asset-manifest');
 
 function readSiteIndex() {
   return fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
@@ -33,6 +34,12 @@ test('static site index references only shipped local assets', () => {
 
   assert.deepEqual(missingAssets, []);
   assert.doesNotMatch(indexHtml, /signin\.js/);
+});
+
+test('committed static site asset manifest matches shipped assets', () => {
+  const result = checkAssetManifest();
+
+  assert.equal(result.ok, true, result.mismatches.join('\n'));
 });
 
 test('static site index does not depend on runtime CDN transpilation', () => {
