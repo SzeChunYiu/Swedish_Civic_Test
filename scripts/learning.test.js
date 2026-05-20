@@ -299,6 +299,22 @@ test('dashboard mock history ignores invalid completions and nulls invalid durat
   assert.equal(bestMockScore(progress), 0.81);
 });
 
+test('dashboard selectors clamp bad day-window options before rendering bins', () => {
+  const { MAX_DASHBOARD_DAYS_BACK, dailyActivityHistogram, mistakeConvergence, xpSparkline } =
+    loadAllTs('lib/learning/dashboardStats.ts');
+  const progress = { sessions: [] };
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  assert.equal(dailyActivityHistogram(progress, { daysBack: Infinity, now }).length, 53 * 7);
+  assert.equal(
+    dailyActivityHistogram(progress, { daysBack: MAX_DASHBOARD_DAYS_BACK + 1, now }).length,
+    MAX_DASHBOARD_DAYS_BACK,
+  );
+  assert.equal(mistakeConvergence(progress, { daysBack: 0, now }).length, 1);
+  assert.equal(xpSparkline(progress, { daysBack: 4.6, now }).length, 4);
+  assert.equal(xpSparkline(progress, { daysBack: Number.NaN, now }).length, 30);
+});
+
 test('mock exam completion XP is awarded once per stored session', () => {
   const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
   const store = useProgressStore;
