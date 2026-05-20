@@ -2125,6 +2125,11 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
+  {
+    label: 'local study data import section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.importTitle\}\s*<\/Text>/,
+  },
 ];
 const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
   sv: [
@@ -2144,6 +2149,32 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Inställningar',
     'Svenska',
     'Engelskt stöd',
+    'Bekräfta import',
+    'Bekräfta lokal studiedataimport',
+    'Klistra in JSON innan du förhandsgranskar.',
+    'JSON kunde inte läsas.',
+    'Importen har fel format eller okända toppnivåfält.',
+    'Importversionen stöds inte.',
+    'Importen innehåller köp-, kvitto- eller IAP-fält. Ta bort dem och återställ köp via appbutiken.',
+    'Importen innehåller inga stödda studiedata.',
+    'Klistra in JSON-export',
+    'Klistra in exporten här',
+    'Förhandsgranska import',
+    'Förhandsgranska lokal studiedataimport',
+    'Köp, kvitton och IAP-data importeras inte. Använd appbutikens återställning för köp.',
+    'Återställ importfält',
+    'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
+    'Importen är klar.',
+    '${count} bokmärken',
+    '${count} frågor med sparad progression',
+    '${count} dagar med FSRS-repetition',
+    '${count} FSRS-repetitionskort',
+    '${count} provhistorikposter',
+    '${count} inställningar',
+    'Studiesvit och frysstatus ingår',
+    'Sammanfattning före import',
+    '${count} granskningar av fel svar',
+    'Importera studiedata',
   ],
   en: [
     'Audio disabled',
@@ -2162,6 +2193,32 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Settings',
     'Swedish',
     'English support',
+    'Confirm import',
+    'Confirm local study data import',
+    'Paste JSON before previewing.',
+    'JSON could not be read.',
+    'The import has the wrong format or unknown top-level fields.',
+    'This import version is not supported.',
+    'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.',
+    'The import does not contain supported study data.',
+    'Paste JSON export',
+    'Paste the export here',
+    'Preview import',
+    'Preview local study data import',
+    'Purchases, receipts, and IAP data are not imported. Use the app store restore flow for purchases.',
+    'Reset import field',
+    'Paste a local study data export in JSON format. You will see a summary before anything is written.',
+    'Import complete.',
+    '${count} bookmarks',
+    '${count} questions with saved progress',
+    '${count} FSRS review days',
+    '${count} FSRS review cards',
+    '${count} mock exam history entries',
+    '${count} settings',
+    'Study streak and freeze status included',
+    'Summary before import',
+    '${count} wrong-answer reviews',
+    'Import study data',
   ],
 };
 const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
@@ -2220,6 +2277,28 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     'accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}',
     'settings daily-goal buttons must expose localized accessibility copy',
+  ],
+  ['{copy.importTitle}', 'settings import section must render localized title copy'],
+  ['{copy.importSectionSubtitle}', 'settings import section must render localized body copy'],
+  [
+    'accessibilityLabel={copy.importPasteLabel}',
+    'settings import input must expose localized accessibility copy',
+  ],
+  [
+    'placeholder={copy.importPastePlaceholder}',
+    'settings import input must render localized placeholder copy',
+  ],
+  [
+    'previewLocalStudyDataImport(importText)',
+    'settings import flow must validate local study data before writing',
+  ],
+  [
+    'applyLocalStudyDataImport(result.preview)',
+    'settings import flow must apply only a validated preview',
+  ],
+  [
+    'accessibilityLabel={copy.confirmImportAccessibilityLabel}',
+    'settings import confirmation must expose localized accessibility copy',
   ],
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
@@ -2337,7 +2416,8 @@ const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern:
+      /import \{ Pressable, ScrollView, StyleSheet, Text, TextInput, View \} from 'react-native';/,
   },
   {
     label: 'scroll root container',
