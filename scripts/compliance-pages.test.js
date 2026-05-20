@@ -82,3 +82,54 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Legal and sources/);
   assert.match(complianceLinks, /Support/);
 });
+
+test('static learner-facing slogans avoid pass and passport outcome promises', () => {
+  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+  assert.match(read('site/index.html'), /data-i18n="hero\.h1a">Study the material\./);
+  assert.match(read('site/index.html'), /data-i18n="footer\.t1">Study the material\./);
+  const siteAppSource = read('site/app.js');
+  assert.match(siteAppSource, /['"]hero\.h1a['"]:\s*['"]Study the material\.['"]/);
+  assert.match(siteAppSource, /['"]hero\.h1b['"]:\s*['"]Practice with sources\.['"]/);
+  assert.match(siteAppSource, /['"]hero\.h1a['"]:\s*['"]Plugga materialet\.['"]/);
+  assert.match(siteAppSource, /['"]hero\.h1b['"]:\s*['"]Öva med källor\.['"]/);
+});
+
+test('static head metadata description is neutral and non-empty', () => {
+  const indexHtml = read('site/index.html');
+
+  assert.equal(assertStaticHeadMetadataDescriptionSource(indexHtml), 1);
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(/<meta\s+name="description"[\s\S]*?\/>\n/, ''),
+      ),
+    /missing static meta description/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(/(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/, '$1$2'),
+      ),
+    /blank static meta description/,
+  );
+  assert.throws(
+    () =>
+      assertStaticHeadMetadataDescriptionSource(
+        indexHtml.replace(
+          /(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/,
+          '$1Pass the test.$2',
+        ),
+      ),
+    /static meta description English pass-the-test slogan/,
+  );
+});
+
+test('static Swedish mock exam copy stays clearly unofficial practice wording', () => {
+  const practice = read('site/practice.js');
+
+  assert.match(practice, /['"]Övningsprov['"]/);
+  assert.match(practice, /['"]Bygg ditt övningsprov\.['"]/);
+  assert.match(practice, /['"]Starta övningsprov['"]/);
+  assert.doesNotMatch(practice, /Skarp tentamen|Bygg din tentamen|Starta tentamen|\btentamen\b/i);
+  assert.match(practice, /['"]Mock exam['"]/);
+});
