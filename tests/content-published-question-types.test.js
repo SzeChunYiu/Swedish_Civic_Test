@@ -1566,6 +1566,51 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 3);
 });
 
+test('published question schema rejects generated proportional-party referent splices', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const proportionalPartyResiduals = {",
+        "  [generatedFixtureId('q034', 1)]: { questionSv: 'I ett proportionellt val får partiet 20 procent av platserna om ett parti får 20 procent av rösterna.', questionEn: 'In a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.' },",
+        "  [generatedFixtureId('q034', 2)]: { questionSv: 'I ett proportionellt val får partiet alla platser om ett parti får 20 procent av rösterna.', questionEn: 'In a proportional election, the party receives all seats if a party receives 20 percent of the votes.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  proportionalPartyResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...proportionalPartyResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
+});
+
 test('published question schema rejects source-material generated option fallbacks', () => {
   const result = spawnSync(
     process.execPath,

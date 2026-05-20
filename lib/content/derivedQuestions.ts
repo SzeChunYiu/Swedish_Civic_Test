@@ -656,6 +656,29 @@ function supportStatementEn(subject: string, answer: string): string {
   return replaceLeadingEnglishSubject(subject, answer);
 }
 
+function conditionalPartyOutcomeSv(context: string, condition: string, answer: string): string {
+  const partyCondition = condition.match(/^ett parti får (.+)$/i);
+  const partyOutcome = answer.trim().match(/^partiet får (.+)$/i);
+  if (partyCondition && partyOutcome) {
+    return `I ${context} får ett parti som får ${partyCondition[1]} ${lowerFirst(partyOutcome[1])}`;
+  }
+
+  const outcome = lowerFirst(answer).replace(/^partiet får\s+/i, 'partiet ');
+  return `I ${context} får ${outcome} om ${condition}`;
+}
+
+function conditionalPartyOutcomeEn(context: string, condition: string, answer: string): string {
+  const partyCondition = condition.match(/^a party receives (.+)$/i);
+  const partyOutcome = answer.trim().match(/^the party receives (.+)$/i);
+  if (partyCondition && partyOutcome) {
+    return `In ${context}, a party that receives ${partyCondition[1]} receives ${lowerFirst(
+      partyOutcome[1],
+    )}`;
+  }
+
+  return `In ${context}, ${lowerFirst(answer)} if ${condition}`;
+}
+
 function stripTrueFalsePromptSv(value: string): string {
   return stripFinalPunctuation(value.replace(/^Sant eller falskt:\s*/i, ''));
 }
@@ -1165,10 +1188,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return commonStatementSv(match[1], answer);
 
   match = q.match(/^Vad händer i (.+?) om (.+)$/i);
-  if (match) {
-    const outcome = lowerFirst(answer).replace(/^partiet får\s+/i, 'partiet ');
-    return `I ${match[1]} får ${outcome} om ${match[2]}`;
-  }
+  if (match) return conditionalPartyOutcomeSv(match[1], match[2], answer);
 
   match = q.match(/^Vilken lista innehåller (.+)$/i);
   if (match) return `Listan med ${lowerFirst(answer)} innehåller ${match[1]}`;
@@ -1612,7 +1632,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) return commonStatementEn(match[1], answer);
 
   match = q.match(/^What happens in (.+?) if (.+)$/i);
-  if (match) return `In ${match[1]}, ${lowerFirst(answer)} if ${match[2]}`;
+  if (match) return conditionalPartyOutcomeEn(match[1], match[2], answer);
 
   match = q.match(/^Which list contains (.+)$/i);
   if (match) return `The list with ${lowerLeadingEnglishArticle(answer)} contains ${match[1]}`;
