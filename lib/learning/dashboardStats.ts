@@ -68,15 +68,12 @@ export function perChapterProgress(
   chapters: ReadonlyArray<{ id: string; questionCount: number }>,
   questionChapterIndex: Record<string, string>,
 ): ChapterProgressBar[] {
-  const perChapter = new Map<
-    string,
-    {
-      correct: number;
-      total: number;
-      questionIds: Set<string>;
-      lastAnsweredAt: string | null;
-    }
-  >();
+  const perChapter = new Map<string, {
+    correct: number;
+    total: number;
+    questionIds: Set<string>;
+    lastAnsweredAt: string | null;
+  }>();
 
   for (const chapter of chapters) {
     perChapter.set(chapter.id, {
@@ -107,7 +104,8 @@ export function perChapterProgress(
     return {
       chapterId: chapter.id,
       accuracy: bucket.total === 0 ? null : bucket.correct / bucket.total,
-      coverage: chapter.questionCount === 0 ? 0 : bucket.questionIds.size / chapter.questionCount,
+      coverage:
+        chapter.questionCount === 0 ? 0 : bucket.questionIds.size / chapter.questionCount,
       answers: bucket.total,
       uniqueQuestionsAnswered: bucket.questionIds.size,
       lastAnsweredAt: bucket.lastAnsweredAt,
