@@ -2,11 +2,17 @@ import { Link } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import {
+  GuidedPracticePath,
+  type GuidedPracticePathCopy,
+  type GuidedPracticePathStage,
+} from '../../components/learning/GuidedPracticePath';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
+import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
@@ -16,6 +22,8 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
+import { dashboardSummary } from '../../lib/learning/dashboardStats';
+import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
@@ -25,7 +33,7 @@ import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/
 import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
-import { useProgressStore } from '../../lib/storage/progressStore';
+import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -34,10 +42,30 @@ type StudyLoopItemCopy = {
   lesson: string;
 };
 
+type GuidedPathStageCopy = {
+  accessibilityLabel: (
+    title: string,
+    chapterRange: string,
+    progress: string,
+    status: string,
+  ) => string;
+  chapterRange: string;
+  cta: (isCompleted: boolean) => string;
+  ctaAccessibilityLabel: (title: string, isCompleted: boolean) => string;
+  description: string;
+  levelLabel: string;
+  progressLabel: (completedChapters: number, totalChapters: number) => string;
+  title: string;
+};
+
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
   dailyGoalTitle: string;
+  dashboardAccessibilityLabel: (summary: string) => string;
+  dashboardCta: string;
+  dashboardSummary: (count: number) => string;
+  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -47,6 +75,20 @@ type HomeCopy = {
   feedbackLinkAccessibilityLabel: string;
   feedbackText: string;
   feedbackTitle: string;
+  guidedPathDailyAccessibilityLabel: (completed: number, goal: number) => string;
+  guidedPathDailyCta: string;
+  guidedPathDailyText: (completed: number, goal: number) => string;
+  guidedPathDailyTitle: string;
+  guidedPathResumeAccessibilityLabel: (stageTitle: string) => string;
+  guidedPathResumeCta: string;
+  guidedPathStageStatuses: {
+    active: string;
+    completed: string;
+    upcoming: string;
+  };
+  guidedPathStages: GuidedPathStageCopy[];
+  guidedPathSubtitle: string;
+  guidedPathTitle: string;
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
@@ -73,11 +115,98 @@ type HomeCopy = {
   xpBasedHelper: string;
 };
 
+const guidedPathChapterGroups = [
+  { id: 'beginner', chapterIds: ['ch01', 'ch02', 'ch03', 'ch04'] },
+  { id: 'builder', chapterIds: ['ch05', 'ch06', 'ch07', 'ch08', 'ch09'] },
+  { id: 'advanced', chapterIds: ['ch10', 'ch11', 'ch12', 'ch13'] },
+] as const;
+
+function getAnsweredChapterIds(questionProgress: Record<string, QuestionProgress>) {
+  const answeredChapterIds = new Set<string>();
+
+  questions.forEach((question) => {
+    const progress = questionProgress[question.id];
+    const hasAnswered =
+      (progress?.seenCount ?? 0) > 0 ||
+      (progress?.correctCount ?? 0) > 0 ||
+      (progress?.wrongCount ?? 0) > 0;
+
+    if (hasAnswered) answeredChapterIds.add(question.chapterId);
+  });
+
+  return answeredChapterIds;
+}
+
+function buildGuidedPracticePathStages(
+  copy: HomeCopy,
+  questionProgress: Record<string, QuestionProgress>,
+): GuidedPracticePathStage[] {
+  const answeredChapterIds = getAnsweredChapterIds(questionProgress);
+  const progressByGroup = guidedPathChapterGroups.map((group) => {
+    const completedChapterCount = group.chapterIds.filter((chapterId) =>
+      answeredChapterIds.has(chapterId),
+    ).length;
+
+    return {
+      ...group,
+      completedChapterCount,
+      progress: completedChapterCount / group.chapterIds.length,
+    };
+  });
+  const activeGroupId =
+    progressByGroup.find((group) => group.completedChapterCount < group.chapterIds.length)?.id ??
+    'advanced';
+
+  return progressByGroup.map((group, index) => {
+    const stageCopy = copy.guidedPathStages[index];
+    const progressLabel = stageCopy.progressLabel(
+      group.completedChapterCount,
+      group.chapterIds.length,
+    );
+    const isCompleted = group.completedChapterCount === group.chapterIds.length;
+    const isActive = group.id === activeGroupId;
+    const statusLabel = isCompleted
+      ? copy.guidedPathStageStatuses.completed
+      : isActive
+        ? copy.guidedPathStageStatuses.active
+        : copy.guidedPathStageStatuses.upcoming;
+    const nextChapterId = group.chapterIds.find((chapterId) => !answeredChapterIds.has(chapterId));
+    const href = nextChapterId
+      ? (`/chapter/${nextChapterId}` as GuidedPracticePathStage['href'])
+      : '/exam';
+
+    return {
+      accessibilityLabel: stageCopy.accessibilityLabel(
+        stageCopy.title,
+        stageCopy.chapterRange,
+        progressLabel,
+        statusLabel,
+      ),
+      chapterRange: stageCopy.chapterRange,
+      cta: stageCopy.cta(isCompleted),
+      ctaAccessibilityLabel: stageCopy.ctaAccessibilityLabel(stageCopy.title, isCompleted),
+      description: stageCopy.description,
+      href,
+      id: group.id,
+      isActive,
+      levelLabel: stageCopy.levelLabel,
+      progress: group.progress,
+      progressLabel,
+      statusLabel,
+      title: stageCopy.title,
+    };
+  });
+}
+
 const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
     dailyGoalTitle: 'Dagens mål',
+    dashboardAccessibilityLabel: (summary) => `Öppna framstegsöversikten. ${summary}`,
+    dashboardCta: 'Visa översikt',
+    dashboardSummary: (count) => `${count} svar den här veckan`,
+    dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
@@ -88,6 +217,69 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     feedbackTitle: 'Håll koll på det som behöver övas',
+    guidedPathDailyAccessibilityLabel: (completed, goal) =>
+      `Starta dagens övning. ${completed} av ${goal} svar klara idag.`,
+    guidedPathDailyCta: 'Starta dagens övning',
+    guidedPathDailyText: (completed, goal) => `${completed}/${goal} svar idag håller vanan synlig.`,
+    guidedPathDailyTitle: 'Daglig övning',
+    guidedPathResumeAccessibilityLabel: (stageTitle) => `Fortsätt på ${stageTitle}`,
+    guidedPathResumeCta: 'Fortsätt på nästa kapitel',
+    guidedPathStageStatuses: {
+      active: 'Pågår',
+      completed: 'Klar',
+      upcoming: 'Nästa',
+    },
+    guidedPathStages: [
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 1-4',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
+        description: 'Börja med landet, demokratin, styret och valen.',
+        levelLabel: 'Nybörjare',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Grunderna i Sverige och demokrati',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 5-9',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
+        description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
+        levelLabel: 'Fortsättning',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Rättigheter, medier och samhällsliv',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 10-13',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
+        description:
+          'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
+        levelLabel: 'Avancerad',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Historia, omvärld, religion och traditioner',
+      },
+    ],
+    guidedPathSubtitle:
+      'Följ 13 samhällskapitel i tre steg, fortsätt där du var och håll igång dagens övning.',
+    guidedPathTitle: 'Väg från grund till provträning',
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
@@ -128,15 +320,14 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       },
       {
         label: 'Provredo',
-        lesson:
-          'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
       'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',
@@ -146,6 +337,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
     dailyGoalTitle: "Today's goal",
+    dashboardAccessibilityLabel: (summary) => `Open the progress dashboard. ${summary}`,
+    dashboardCta: 'View dashboard',
+    dashboardSummary: (count) => `${count} answers this week`,
+    dashboardTitle: 'Progress dashboard',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
@@ -156,6 +351,70 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     feedbackTitle: 'Keep track of what needs review',
+    guidedPathDailyAccessibilityLabel: (completed, goal) =>
+      `Start today's practice. ${completed} of ${goal} answers complete today.`,
+    guidedPathDailyCta: "Start today's practice",
+    guidedPathDailyText: (completed, goal) =>
+      `${completed}/${goal} answers today keeps the habit visible.`,
+    guidedPathDailyTitle: 'Daily practice',
+    guidedPathResumeAccessibilityLabel: (stageTitle) => `Continue with ${stageTitle}`,
+    guidedPathResumeCta: 'Continue the next chapter',
+    guidedPathStageStatuses: {
+      active: 'In progress',
+      completed: 'Done',
+      upcoming: 'Next',
+    },
+    guidedPathStages: [
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 1-4',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
+        description: 'Start with Sweden, democracy, government, and elections.',
+        levelLabel: 'Beginner',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'Sweden and democracy basics',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 5-9',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
+        description: 'Build through law, media, rights, working life, and welfare.',
+        levelLabel: 'Builder',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'Rights, media, and civic life',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 10-13',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
+        description:
+          'Finish with modern Sweden, international topics, freedom of religion, and holidays.',
+        levelLabel: 'Advanced',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'History, the wider world, religion, and traditions',
+      },
+    ],
+    guidedPathSubtitle:
+      "Follow 13 civic chapters in three stages, resume where you left off, and keep today's practice visible.",
+    guidedPathTitle: 'Guided path from basics to exam practice',
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
@@ -197,7 +456,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       {
         label: 'Exam readiness',
         lesson:
-          'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
@@ -215,6 +474,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady: monetizationEntitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -262,6 +522,46 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
+  const dashboardProgress = useMemo(
+    () =>
+      buildDashboardProgressSnapshot({
+        answerDates,
+        dailyGoalAnswers,
+        mockExamSessions,
+        questionProgress,
+        totalXp,
+      }),
+    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+  );
+  const dashboardQuestionChapterIndex = useMemo(
+    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
+    [],
+  );
+  const dashboard = useMemo(
+    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
+    [dashboardProgress, dashboardQuestionChapterIndex],
+  );
+  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
+  const guidedPathStages = useMemo(
+    () => buildGuidedPracticePathStages(copy, questionProgress),
+    [copy, questionProgress],
+  );
+  const guidedPathActiveStage =
+    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
+  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
+  const guidedPathCopy: GuidedPracticePathCopy = {
+    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
+      completedToday,
+      dailyGoalAnswers,
+    ),
+    dailyPracticeCta: copy.guidedPathDailyCta,
+    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
+    dailyPracticeTitle: copy.guidedPathDailyTitle,
+    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
+      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
+    ),
+    resumeCta: copy.guidedPathResumeCta,
+  };
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -286,6 +586,7 @@ export default function Screen() {
       }
     >
       <SwedishFlagBand />
+      <CountdownBanner language={language} />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -294,6 +595,18 @@ export default function Screen() {
           tone="accent"
         />
       </View>
+      <Link
+        accessibilityLabel={copy.dashboardAccessibilityLabel(dashboardSummaryLine)}
+        accessibilityRole="link"
+        href="/dashboard"
+        style={styles.dashboardLink}
+      >
+        <View style={styles.dashboardLinkContent}>
+          <Text style={styles.dashboardTitle}>{copy.dashboardTitle}</Text>
+          <Text style={styles.dashboardSummaryText}>{dashboardSummaryLine}</Text>
+          <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
+        </View>
+      </Link>
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -327,7 +640,7 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      {!monetizationEntitlements.adsDisabled ? (
+      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -352,6 +665,15 @@ export default function Screen() {
           {copy.browseChapters}
         </Link>
       </View>
+
+      <SectionHeader title={copy.guidedPathTitle} subtitle={copy.guidedPathSubtitle} />
+      <GuidedPracticePath
+        copy={guidedPathCopy}
+        dailyProgress={progress}
+        language={language}
+        resumeHref={guidedPathResumeHref}
+        stages={guidedPathStages}
+      />
 
       <View style={styles.statsRow}>
         <MetricCard
@@ -412,13 +734,15 @@ export default function Screen() {
         })}
       </View>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
-      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
+      {monetizationEntitlementsReady ? (
+        <PremiumBanner
+          entitlements={monetizationEntitlements}
+          language={language}
+          onEntitlementsChange={setMonetizationEntitlements}
+          runtimeOptions={purchaseRuntime}
+        />
+      ) : null}
+      <AdBanner placement="home_banner" />
     </ScreenShell>
   );
 }
@@ -428,6 +752,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
+  },
+  dashboardLink: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    minHeight: space[6],
+    padding: space[2],
+    textDecorationLine: 'none',
+  },
+  dashboardLinkContent: {
+    gap: space[0.5],
+  },
+  dashboardTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  dashboardSummaryText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dashboardCta: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
   },
   readinessCard: {
     gap: space[1.5],

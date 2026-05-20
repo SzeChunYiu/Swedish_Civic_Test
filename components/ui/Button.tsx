@@ -67,7 +67,13 @@ export function Button({
       ]}
       {...pressableProps}
     >
-      <Text style={[styles.label, variant === 'primary' ? styles.primaryLabel : styles.darkLabel]}>
+      <Text
+        style={[
+          styles.label,
+          variant === 'primary' ? styles.primaryLabel : styles.darkLabel,
+          disabled ? styles.disabledLabel : null,
+        ]}
+      >
         {children}
       </Text>
       {buttonAccessibilityHintId ? (
@@ -122,7 +128,8 @@ const styles = StyleSheet.create({
     paddingVertical: space[1.5],
   },
   disabled: {
-    opacity: 0.45,
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
   },
   pressed: {
     transform: [{ scale: motion.pressedScale }],
@@ -144,5 +151,8 @@ const styles = StyleSheet.create({
   },
   darkLabel: {
     color: colors.text,
+  },
+  disabledLabel: {
+    color: colors.textMuted,
   },
 });
