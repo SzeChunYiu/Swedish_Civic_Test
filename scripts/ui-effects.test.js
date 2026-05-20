@@ -452,7 +452,7 @@ test('routed quiz answer state resets when the shuffle session seed changes', ()
 
   assert.match(
     source,
-    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
+    /useEffect\(\(\) => \{\n\s+stopSpeech\(\);\n\s+setSelectedOptionId\(null\);\n\s+return \(\) => \{\n\s+stopSpeech\(\);\n\s+\};\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
   );
   assert.doesNotMatch(source, /\}, \[question\?\.id\]\);/);
 });

@@ -2358,6 +2358,10 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
   },
   {
+    label: 'React cleanup hook import',
+    pattern: /import \{ useEffect \} from 'react';/,
+  },
+  {
     label: 'speech runtime imports',
     pattern: /import \{ speakSwedish, stopSpeech \} from '\.\.\/\.\.\/lib\/audio\/speak';/,
   },
@@ -2408,6 +2412,11 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'trimmed speech playback',
     pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [

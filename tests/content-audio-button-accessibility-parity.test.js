@@ -22,8 +22,9 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
     'utf8',
   );
 
-  assert.equal(summary.audioButtonAccessibilityRulesValidated, 13);
+  assert.equal(summary.audioButtonAccessibilityRulesValidated, 15);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
+  assert.match(source, /import \{ useEffect \} from 'react';/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
   assert.match(source, /language = 'sv'/);
@@ -45,6 +46,10 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /if \(!canPlayAudio\) return;/);
   assert.match(source, /stopSpeech\(\);/);
   assert.match(source, /speakSwedish\(speechText\);/);
+  assert.match(
+    source,
+    /useEffect\(\(\) => \{[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
+  );
 });
 
 test('AudioButton accessibility parity rejects untrimmed playback drift', () => {
@@ -74,5 +79,35 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /AudioButton missing trimmed speech playback for accessibility parity/,
+  );
+});
+
+test('AudioButton accessibility parity rejects missing speech cleanup', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/learning/AudioButton.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('return () => {\\n      stopSpeech();\\n    };', 'return undefined;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AudioButton missing speech cleanup on text change and unmount for accessibility parity/,
   );
 });

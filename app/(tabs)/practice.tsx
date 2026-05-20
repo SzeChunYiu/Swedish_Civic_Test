@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -13,7 +13,7 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildQuestionSpeechText } from '../../lib/audio/speak';
+import { buildQuestionSpeechText, stopSpeech } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -161,6 +161,13 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
 
+  useEffect(() => {
+    stopSpeech();
+    return () => {
+      stopSpeech();
+    };
+  }, [question?.id]);
+
   if (!question) {
     return (
       <View style={styles.emptyContainer}>
@@ -191,6 +198,14 @@ export default function Screen() {
         selectedOptionTextSv: selectedOption.textSv,
       });
     }
+  };
+  const handleAdvanceQuestion = () => {
+    stopSpeech();
+    advanceQuestion();
+  };
+  const handleResetSelection = () => {
+    stopSpeech();
+    resetSelection();
   };
 
   return (
@@ -331,7 +346,7 @@ export default function Screen() {
             <Button
               accessibilityLabel={copy.nextQuestionAccessibilityLabel}
               accessibilityRole="button"
-              onPress={advanceQuestion}
+              onPress={handleAdvanceQuestion}
               style={styles.feedbackButton}
             >
               {copy.nextQuestion}
@@ -339,7 +354,7 @@ export default function Screen() {
             <Button
               accessibilityLabel={copy.tryAgainAccessibilityLabel}
               accessibilityRole="button"
-              onPress={resetSelection}
+              onPress={handleResetSelection}
               style={styles.feedbackButton}
               variant="secondary"
             >
