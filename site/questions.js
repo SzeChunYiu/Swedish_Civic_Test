@@ -305,30 +305,90 @@
     "type": "single_choice",
     "q": {
       "en": "What is the sea along Sweden's eastern coast called?",
-      "sv": "Vad heter havet vid Sveriges östra kust?"
+      "sv": "Vad heter havet vid Sveriges östra kust?",
+      "zh-Hant": "瑞典東海岸沿岸的海叫什麼？",
+      "zh-Hans": "瑞典东海岸沿岸的海叫什么？",
+      "ar": "ما اسم البحر على الساحل الشرقي للسويد؟",
+      "ckb": "دەریای کەناری ڕۆژهەڵاتی سوید چییە؟",
+      "fa": "دریای کنار ساحل شرقی سوئد چه نام دارد؟",
+      "pl": "Jak nazywa się morze przy wschodnim wybrzeżu Szwecji?",
+      "so": "Badda ku teedsan xeebta bari ee Iswiidhan maxaa la yiraahdaa?",
+      "ti": "ኣብ ምብራቓዊ ገምገም ባሕሪ ሽወደን ዘሎ ባሕሪ እንታይ ይበሃል?",
+      "tr": "İsveç’in doğu kıyısındaki denizin adı nedir?",
+      "uk": "Як називається море біля східного узбережжя Швеції?"
     },
     "opts": [
       {
         "en": "The North Sea",
-        "sv": "Nordsjön"
+        "sv": "Nordsjön",
+        "zh-Hant": "北海",
+        "zh-Hans": "北海",
+        "ar": "بحر الشمال",
+        "ckb": "دەریای باکوور",
+        "fa": "دریای شمال",
+        "pl": "Morze Północne",
+        "so": "Badda Waqooyi",
+        "ti": "ሰሜናዊ ባሕሪ",
+        "tr": "Kuzey Denizi",
+        "uk": "Північне море"
       },
       {
         "en": "The Mediterranean Sea",
-        "sv": "Medelhavet"
+        "sv": "Medelhavet",
+        "zh-Hant": "地中海",
+        "zh-Hans": "地中海",
+        "ar": "البحر الأبيض المتوسط",
+        "ckb": "دەریای ناوەڕاست",
+        "fa": "دریای مدیترانه",
+        "pl": "Morze Śródziemne",
+        "so": "Badda Mediterranean",
+        "ti": "ባሕሪ ሜዲተራንያን",
+        "tr": "Akdeniz",
+        "uk": "Середземне море"
       },
       {
         "en": "The Baltic Sea",
-        "sv": "Östersjön"
+        "sv": "Östersjön",
+        "zh-Hant": "波羅的海",
+        "zh-Hans": "波罗的海",
+        "ar": "بحر البلطيق",
+        "ckb": "دەریای بەڵتیک",
+        "fa": "دریای بالتیک",
+        "pl": "Morze Bałtyckie",
+        "so": "Badda Baltic",
+        "ti": "ባሕሪ ባልቲክ",
+        "tr": "Baltık Denizi",
+        "uk": "Балтійське море"
       },
       {
         "en": "The Atlantic Ocean",
-        "sv": "Atlanten"
+        "sv": "Atlanten",
+        "zh-Hant": "大西洋",
+        "zh-Hans": "大西洋",
+        "ar": "المحيط الأطلسي",
+        "ckb": "زەریای ئەتڵەسی",
+        "fa": "اقیانوس اطلس",
+        "pl": "Ocean Atlantycki",
+        "so": "Badweynta Atlantic",
+        "ti": "ውቅያኖስ ኣትላንቲክ",
+        "tr": "Atlas Okyanusu",
+        "uk": "Атлантичний океан"
       }
     ],
     "answer": 2,
     "why": {
       "en": "The sea along Sweden's eastern coast is the Baltic Sea. The North Sea, the Mediterranean Sea, and the Atlantic Ocean are not the sea along Sweden's eastern coast.",
-      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust."
+      "sv": "Havet vid Sveriges östra kust heter Östersjön. Nordsjön, Medelhavet och Atlanten är inte namnet på havet vid Sveriges östra kust.",
+      "zh-Hant": "瑞典東海岸沿岸的海是波羅的海。北海、地中海和大西洋都不是瑞典東海岸沿岸的海名。",
+      "zh-Hans": "瑞典东海岸沿岸的海是波罗的海。北海、地中海和大西洋都不是瑞典东海岸沿岸的海名。",
+      "ar": "البحر على الساحل الشرقي للسويد هو بحر البلطيق. أما بحر الشمال والبحر الأبيض المتوسط والمحيط الأطلسي فليست أسماء البحر الواقع على الساحل الشرقي للسويد.",
+      "ckb": "دەریای کەناری ڕۆژهەڵاتی سوید دەریای بەڵتیکە. دەریای باکوور، دەریای ناوەڕاست و زەریای ئەتڵەسی ناوی ئەو دەریایە نین.",
+      "fa": "دریای کنار ساحل شرقی سوئد دریای بالتیک است. دریای شمال، دریای مدیترانه و اقیانوس اطلس نام دریای کنار ساحل شرقی سوئد نیستند.",
+      "pl": "Morze przy wschodnim wybrzeżu Szwecji to Morze Bałtyckie. Morze Północne, Morze Śródziemne i Ocean Atlantycki nie są morzem przy wschodnim wybrzeżu Szwecji.",
+      "so": "Badda ku teedsan xeebta bari ee Iswiidhan waa Badda Baltic. Badda Waqooyi, Badda Mediterranean iyo Badweynta Atlantic ma aha magaca badda xeebta bari ee Iswiidhan.",
+      "ti": "ኣብ ምብራቓዊ ገምገም ባሕሪ ሽወደን ዘሎ ባሕሪ ባልቲክ ይበሃል። ሰሜናዊ ባሕሪ፣ ባሕሪ ሜዲተራንያንን ውቅያኖስ ኣትላንቲክን ናይዚ ባሕሪ ስም ኣይኮኑን።",
+      "tr": "İsveç’in doğu kıyısındaki deniz Baltık Denizi’dir. Kuzey Denizi, Akdeniz ve Atlas Okyanusu İsveç’in doğu kıyısındaki denizin adı değildir.",
+      "uk": "Море біля східного узбережжя Швеції називається Балтійським морем. Північне море, Середземне море й Атлантичний океан не є морем біля східного узбережжя Швеції."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -351,30 +411,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which islands are Sweden's two largest?",
-      "sv": "Vilka öar är Sveriges två största?"
+      "sv": "Vilka öar är Sveriges två största?",
+      "zh-Hant": "瑞典最大的兩座島是哪兩座？",
+      "zh-Hans": "瑞典最大的两座岛是哪两座？",
+      "ar": "ما أكبر جزيرتين في السويد؟",
+      "ckb": "دوو گەورەترین دوورگەی سوید کامانەن؟",
+      "fa": "دو جزیره بزرگ سوئد کدام‌اند؟",
+      "pl": "Które wyspy są dwiema największymi wyspami Szwecji?",
+      "so": "Jasiiradaha ugu waaweyn ee Iswiidhan waa kuwee?",
+      "ti": "ክልተ ዝዓበያ ደሴታት ሽወደን ኣየኖት እየን?",
+      "tr": "İsveç’in en büyük iki adası hangileridir?",
+      "uk": "Які острови є двома найбільшими у Швеції?"
     },
     "opts": [
       {
         "en": "Gotland and Öland",
-        "sv": "Gotland och Öland"
+        "sv": "Gotland och Öland",
+        "zh-Hant": "Gotland 和 Öland",
+        "zh-Hans": "Gotland 和 Öland",
+        "ar": "Gotland و Öland",
+        "ckb": "Gotland و Öland",
+        "fa": "Gotland و Öland",
+        "pl": "Gotlandia i Olandia",
+        "so": "Gotland iyo Öland",
+        "ti": "Gotlandን Ölandን",
+        "tr": "Gotland ve Öland",
+        "uk": "Готланд і Еланд"
       },
       {
         "en": "Hisingen and Orust",
-        "sv": "Hisingen och Orust"
+        "sv": "Hisingen och Orust",
+        "zh-Hant": "Hisingen 和 Orust",
+        "zh-Hans": "Hisingen 和 Orust",
+        "ar": "Hisingen و Orust",
+        "ckb": "Hisingen و Orust",
+        "fa": "Hisingen و Orust",
+        "pl": "Hisingen i Orust",
+        "so": "Hisingen iyo Orust",
+        "ti": "Hisingenን Orustን",
+        "tr": "Hisingen ve Orust",
+        "uk": "Hisingen і Orust"
       },
       {
         "en": "Värmdö and Tjörn",
-        "sv": "Värmdö och Tjörn"
+        "sv": "Värmdö och Tjörn",
+        "zh-Hant": "Värmdö 和 Tjörn",
+        "zh-Hans": "Värmdö 和 Tjörn",
+        "ar": "Värmdö و Tjörn",
+        "ckb": "Värmdö و Tjörn",
+        "fa": "Värmdö و Tjörn",
+        "pl": "Värmdö i Tjörn",
+        "so": "Värmdö iyo Tjörn",
+        "ti": "Värmdöን Tjörnን",
+        "tr": "Värmdö ve Tjörn",
+        "uk": "Värmdö і Tjörn"
       },
       {
         "en": "Malmö and Gothenburg",
-        "sv": "Malmö och Göteborg"
+        "sv": "Malmö och Göteborg",
+        "zh-Hant": "Malmö 和 Göteborg",
+        "zh-Hans": "Malmö 和 Göteborg",
+        "ar": "Malmö و Göteborg",
+        "ckb": "Malmö و Göteborg",
+        "fa": "Malmö و Göteborg",
+        "pl": "Malmö i Göteborg",
+        "so": "Malmö iyo Göteborg",
+        "ti": "Malmöን Göteborgን",
+        "tr": "Malmö ve Göteborg",
+        "uk": "Мальме і Гетеборг"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden's two largest islands are Gotland and Öland. Hisingen, Orust, Värmdö, and Tjörn are also Swedish islands but are not the two largest, and Malmö and Gothenburg are cities.",
-      "sv": "Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn är också svenska öar men är inte de två största, och Malmö och Göteborg är städer."
+      "sv": "Sveriges två största öar är Gotland och Öland. Hisingen, Orust, Värmdö och Tjörn är också svenska öar men är inte de två största, och Malmö och Göteborg är städer.",
+      "zh-Hant": "瑞典最大的兩座島是 Gotland 和 Öland。Hisingen、Orust、Värmdö 和 Tjörn 也是瑞典島嶼，但不是最大的兩座；Malmö 和 Göteborg 是城市。",
+      "zh-Hans": "瑞典最大的两座岛是 Gotland 和 Öland。Hisingen、Orust、Värmdö 和 Tjörn 也是瑞典岛屿，但不是最大的两座；Malmö 和 Göteborg 是城市。",
+      "ar": "أكبر جزيرتين في السويد هما Gotland وÖland. وتُعد Hisingen وOrust وVärmdö وTjörn جزرًا سويدية أيضًا لكنها ليست الأكبر، أما Malmö وGöteborg فهما مدينتان.",
+      "ckb": "دوو گەورەترین دوورگەی سوید Gotland و Öland ن. Hisingen و Orust و Värmdö و Tjörnیش دوورگەی سویدین بەڵام دوو گەورەترینەکان نین، و Malmö و Göteborg شارن.",
+      "fa": "دو جزیره بزرگ سوئد Gotland و Öland هستند. Hisingen، Orust، Värmdö و Tjörn نیز جزیره‌های سوئدی‌اند اما دو جزیره بزرگ نیستند، و Malmö و Göteborg شهر هستند.",
+      "pl": "Dwie największe wyspy Szwecji to Gotlandia i Olandia. Hisingen, Orust, Värmdö i Tjörn też są szwedzkimi wyspami, ale nie dwiema największymi, a Malmö i Göteborg to miasta.",
+      "so": "Labada jasiiradood ee ugu waaweyn Iswiidhan waa Gotland iyo Öland. Hisingen, Orust, Värmdö iyo Tjörn iyaguna waa jasiirado Iswiidhish ah laakiin ma aha labada ugu waaweyn, Malmö iyo Göteborg-na waa magaalooyin.",
+      "ti": "ክልተ ዝዓበያ ደሴታት ሽወደን Gotlandን Ölandን እየን። Hisingen፣ Orust፣ Värmdöን Tjörnን እውን ደሴታት ሽወደን እየን፣ ግን ክልተ ዝዓበያ ኣይኮናን፤ Malmöን Göteborgን ድማ ከተማታት እየን።",
+      "tr": "İsveç’in en büyük iki adası Gotland ve Öland’dır. Hisingen, Orust, Värmdö ve Tjörn de İsveç adalarıdır ama en büyük iki ada değildir; Malmö ve Göteborg ise şehirlerdir.",
+      "uk": "Два найбільші острови Швеції — Gotland і Öland. Hisingen, Orust, Värmdö і Tjörn також є шведськими островами, але не двома найбільшими, а Malmö і Göteborg — це міста."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -398,22 +518,62 @@
     "type": "true_false",
     "q": {
       "en": "The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
-      "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat."
+      "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.",
+      "zh-Hant": "墨西哥灣流和北大西洋洋流有助於讓瑞典氣候溫和。",
+      "zh-Hans": "墨西哥湾流和北大西洋洋流有助于让瑞典气候温和。",
+      "ar": "يساعد تيار الخليج وتيار شمال الأطلسي في جعل مناخ السويد معتدلًا.",
+      "ckb": "ڕەوتی گەلف و ڕەوتی باکووری ئەتڵەسی یارمەتی دەدەن کە ئاووهەوای سوید نەرمو مامناوەند بێت.",
+      "fa": "جریان گلف استریم و جریان اقیانوس اطلس شمالی به ملایم بودن آب‌وهوای سوئد کمک می‌کنند.",
+      "pl": "Golfsztrom i Prąd Północnoatlantycki przyczyniają się do łagodnego klimatu Szwecji.",
+      "so": "Gulf Stream iyo qulqulka Waqooyiga Atlantic waxay ka qayb qaataan cimilada deggan ee Iswiidhan.",
+      "ti": "ጎልፍ ስትሪምን ሰሜናዊ ኣትላንቲክ ዋሕዝን ንለስላሳ ክሊማ ሽወደን ይሕግዙ።",
+      "tr": "Golfstream ve Kuzey Atlantik Akıntısı, İsveç’in ikliminin ılıman olmasına katkı sağlar.",
+      "uk": "Гольфстрім і Північно-Атлантична течія сприяють м’якому клімату Швеції."
     },
     "opts": [
       {
         "en": "True",
-        "sv": "Sant"
+        "sv": "Sant",
+        "zh-Hant": "正確",
+        "zh-Hans": "正确",
+        "ar": "صحيح",
+        "ckb": "ڕاستە",
+        "fa": "درست",
+        "pl": "Prawda",
+        "so": "Sax",
+        "ti": "ትኽክል",
+        "tr": "Doğru",
+        "uk": "Правда"
       },
       {
         "en": "False",
-        "sv": "Falskt"
+        "sv": "Falskt",
+        "zh-Hant": "錯誤",
+        "zh-Hans": "错误",
+        "ar": "خطأ",
+        "ckb": "هەڵەیە",
+        "fa": "نادرست",
+        "pl": "Fałsz",
+        "so": "Khalad",
+        "ti": "ጌጋ",
+        "tr": "Yanlış",
+        "uk": "Неправда"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.",
-      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige."
+      "sv": "Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.",
+      "zh-Hant": "與許多同緯度地區相比，瑞典氣候較溫和。墨西哥灣流和北大西洋洋流把暖水帶向歐洲，讓吹向瑞典的空氣變暖。",
+      "zh-Hans": "与许多同纬度地区相比，瑞典气候较温和。墨西哥湾流和北大西洋洋流把暖水带向欧洲，让吹向瑞典的空气变暖。",
+      "ar": "لدى السويد مناخ معتدل مقارنة بكثير من المناطق الأخرى الواقعة على خط العرض نفسه. ينقل تيار الخليج وتيار شمال الأطلسي مياهًا دافئة نحو أوروبا، فتدفئ الهواء الذي تحمله الرياح إلى السويد.",
+      "ckb": "سوید بە بەراورد لەگەڵ زۆر ناوچەی تر لە هەمان پانی جوگرافی، ئاووهەوایەکی نەرمتری هەیە. ڕەوتی گەلف و ڕەوتی باکووری ئەتڵەسی ئاوی گەرم بەرەو ئەوروپا دەگوازنەوە و ئەو هەوایە گەرم دەکەن کە با بەرەو سوید دەیهێنێت.",
+      "fa": "سوئد در مقایسه با بسیاری از مناطق دیگر در همان عرض جغرافیایی آب‌وهوای ملایمی دارد. گلف استریم و جریان اقیانوس اطلس شمالی آب گرم را به سوی اروپا می‌برند و هوایی را که بادها به سوئد می‌آورند گرم می‌کنند.",
+      "pl": "Szwecja ma łagodny klimat w porównaniu z wieloma innymi obszarami na tej samej szerokości geograficznej. Golfsztrom i Prąd Północnoatlantycki niosą ciepłą wodę ku Europie, ogrzewając powietrze przynoszone przez wiatry nad Szwecję.",
+      "so": "Iswiidhan waxay leedahay cimilo deggan marka loo barbardhigo meelo badan oo kale oo isla loolkaas ku yaal. Gulf Stream iyo qulqulka Waqooyiga Atlantic waxay biyo diirran u qaadaan Yurub, taas oo diirisa hawada dabayluhu u keenaan Iswiidhan.",
+      "ti": "ሽወደን ካብ ብዙሓት ኣብ ተመሳሳሊ ኬክሮስ ዘለዋ ከባቢታት ጋር ክትነጻጸር ከላ ለስላሳ ክሊማ ኣለዋ። ጎልፍ ስትሪምን ሰሜናዊ ኣትላንቲክ ዋሕዝን ሞቃት ማይ ናብ ኤውሮጳ ይወስዱ፣ እዚ ድማ ነቲ ንሽወደን ዝመጽእ ኣየር የሞቕ።",
+      "tr": "İsveç, aynı enlemdeki birçok bölgeye göre ılıman bir iklime sahiptir. Golfstream ve Kuzey Atlantik Akıntısı Avrupa’ya sıcak su taşır; bu da rüzgârların İsveç’e getirdiği havayı ısıtır.",
+      "uk": "Швеція має м’який клімат порівняно з багатьма іншими територіями на тій самій широті. Гольфстрім і Північно-Атлантична течія несуть теплу воду до Європи, зігріваючи повітря, яке вітри приносять до Швеції."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -8169,19 +8329,59 @@
     "opts": [
       {
         "en": "The North Sea",
-        "sv": "Nordsjön"
+        "sv": "Nordsjön",
+        "zh-Hant": "北海",
+        "zh-Hans": "北海",
+        "ar": "بحر الشمال",
+        "ckb": "دەریای باکوور",
+        "fa": "دریای شمال",
+        "pl": "Morze Północne",
+        "so": "Badda Waqooyi",
+        "ti": "ሰሜናዊ ባሕሪ",
+        "tr": "Kuzey Denizi",
+        "uk": "Північне море"
       },
       {
         "en": "The Mediterranean Sea",
-        "sv": "Medelhavet"
+        "sv": "Medelhavet",
+        "zh-Hant": "地中海",
+        "zh-Hans": "地中海",
+        "ar": "البحر الأبيض المتوسط",
+        "ckb": "دەریای ناوەڕاست",
+        "fa": "دریای مدیترانه",
+        "pl": "Morze Śródziemne",
+        "so": "Badda Mediterranean",
+        "ti": "ባሕሪ ሜዲተራንያን",
+        "tr": "Akdeniz",
+        "uk": "Середземне море"
       },
       {
         "en": "The Baltic Sea",
-        "sv": "Östersjön"
+        "sv": "Östersjön",
+        "zh-Hant": "波羅的海",
+        "zh-Hans": "波罗的海",
+        "ar": "بحر البلطيق",
+        "ckb": "دەریای بەڵتیک",
+        "fa": "دریای بالتیک",
+        "pl": "Morze Bałtyckie",
+        "so": "Badda Baltic",
+        "ti": "ባሕሪ ባልቲክ",
+        "tr": "Baltık Denizi",
+        "uk": "Балтійське море"
       },
       {
         "en": "The Atlantic Ocean",
-        "sv": "Atlanten"
+        "sv": "Atlanten",
+        "zh-Hant": "大西洋",
+        "zh-Hans": "大西洋",
+        "ar": "المحيط الأطلسي",
+        "ckb": "زەریای ئەتڵەسی",
+        "fa": "اقیانوس اطلس",
+        "pl": "Ocean Atlantycki",
+        "so": "Badweynta Atlantic",
+        "ti": "ውቅያኖስ ኣትላንቲክ",
+        "tr": "Atlas Okyanusu",
+        "uk": "Атлантичний океан"
       }
     ],
     "answer": 2,
@@ -8297,19 +8497,59 @@
     "opts": [
       {
         "en": "The North Sea",
-        "sv": "Nordsjön"
+        "sv": "Nordsjön",
+        "zh-Hant": "北海",
+        "zh-Hans": "北海",
+        "ar": "بحر الشمال",
+        "ckb": "دەریای باکوور",
+        "fa": "دریای شمال",
+        "pl": "Morze Północne",
+        "so": "Badda Waqooyi",
+        "ti": "ሰሜናዊ ባሕሪ",
+        "tr": "Kuzey Denizi",
+        "uk": "Північне море"
       },
       {
         "en": "The Mediterranean Sea",
-        "sv": "Medelhavet"
+        "sv": "Medelhavet",
+        "zh-Hant": "地中海",
+        "zh-Hans": "地中海",
+        "ar": "البحر الأبيض المتوسط",
+        "ckb": "دەریای ناوەڕاست",
+        "fa": "دریای مدیترانه",
+        "pl": "Morze Śródziemne",
+        "so": "Badda Mediterranean",
+        "ti": "ባሕሪ ሜዲተራንያን",
+        "tr": "Akdeniz",
+        "uk": "Середземне море"
       },
       {
         "en": "The Baltic Sea",
-        "sv": "Östersjön"
+        "sv": "Östersjön",
+        "zh-Hant": "波羅的海",
+        "zh-Hans": "波罗的海",
+        "ar": "بحر البلطيق",
+        "ckb": "دەریای بەڵتیک",
+        "fa": "دریای بالتیک",
+        "pl": "Morze Bałtyckie",
+        "so": "Badda Baltic",
+        "ti": "ባሕሪ ባልቲክ",
+        "tr": "Baltık Denizi",
+        "uk": "Балтійське море"
       },
       {
         "en": "The Atlantic Ocean",
-        "sv": "Atlanten"
+        "sv": "Atlanten",
+        "zh-Hant": "大西洋",
+        "zh-Hans": "大西洋",
+        "ar": "المحيط الأطلسي",
+        "ckb": "زەریای ئەتڵەسی",
+        "fa": "اقیانوس اطلس",
+        "pl": "Ocean Atlantycki",
+        "so": "Badweynta Atlantic",
+        "ti": "ውቅያኖስ ኣትላንቲክ",
+        "tr": "Atlas Okyanusu",
+        "uk": "Атлантичний океан"
       }
     ],
     "answer": 2,
@@ -8345,19 +8585,59 @@
     "opts": [
       {
         "en": "Gotland and Öland",
-        "sv": "Gotland och Öland"
+        "sv": "Gotland och Öland",
+        "zh-Hant": "Gotland 和 Öland",
+        "zh-Hans": "Gotland 和 Öland",
+        "ar": "Gotland و Öland",
+        "ckb": "Gotland و Öland",
+        "fa": "Gotland و Öland",
+        "pl": "Gotlandia i Olandia",
+        "so": "Gotland iyo Öland",
+        "ti": "Gotlandን Ölandን",
+        "tr": "Gotland ve Öland",
+        "uk": "Готланд і Еланд"
       },
       {
         "en": "Hisingen and Orust",
-        "sv": "Hisingen och Orust"
+        "sv": "Hisingen och Orust",
+        "zh-Hant": "Hisingen 和 Orust",
+        "zh-Hans": "Hisingen 和 Orust",
+        "ar": "Hisingen و Orust",
+        "ckb": "Hisingen و Orust",
+        "fa": "Hisingen و Orust",
+        "pl": "Hisingen i Orust",
+        "so": "Hisingen iyo Orust",
+        "ti": "Hisingenን Orustን",
+        "tr": "Hisingen ve Orust",
+        "uk": "Hisingen і Orust"
       },
       {
         "en": "Värmdö and Tjörn",
-        "sv": "Värmdö och Tjörn"
+        "sv": "Värmdö och Tjörn",
+        "zh-Hant": "Värmdö 和 Tjörn",
+        "zh-Hans": "Värmdö 和 Tjörn",
+        "ar": "Värmdö و Tjörn",
+        "ckb": "Värmdö و Tjörn",
+        "fa": "Värmdö و Tjörn",
+        "pl": "Värmdö i Tjörn",
+        "so": "Värmdö iyo Tjörn",
+        "ti": "Värmdöን Tjörnን",
+        "tr": "Värmdö ve Tjörn",
+        "uk": "Värmdö і Tjörn"
       },
       {
         "en": "Malmö and Gothenburg",
-        "sv": "Malmö och Göteborg"
+        "sv": "Malmö och Göteborg",
+        "zh-Hant": "Malmö 和 Göteborg",
+        "zh-Hans": "Malmö 和 Göteborg",
+        "ar": "Malmö و Göteborg",
+        "ckb": "Malmö و Göteborg",
+        "fa": "Malmö و Göteborg",
+        "pl": "Malmö i Göteborg",
+        "so": "Malmö iyo Göteborg",
+        "ti": "Malmöን Göteborgን",
+        "tr": "Malmö ve Göteborg",
+        "uk": "Мальме і Гетеборг"
       }
     ],
     "answer": 0,
@@ -8476,19 +8756,59 @@
     "opts": [
       {
         "en": "Gotland and Öland",
-        "sv": "Gotland och Öland"
+        "sv": "Gotland och Öland",
+        "zh-Hant": "Gotland 和 Öland",
+        "zh-Hans": "Gotland 和 Öland",
+        "ar": "Gotland و Öland",
+        "ckb": "Gotland و Öland",
+        "fa": "Gotland و Öland",
+        "pl": "Gotlandia i Olandia",
+        "so": "Gotland iyo Öland",
+        "ti": "Gotlandን Ölandን",
+        "tr": "Gotland ve Öland",
+        "uk": "Готланд і Еланд"
       },
       {
         "en": "Hisingen and Orust",
-        "sv": "Hisingen och Orust"
+        "sv": "Hisingen och Orust",
+        "zh-Hant": "Hisingen 和 Orust",
+        "zh-Hans": "Hisingen 和 Orust",
+        "ar": "Hisingen و Orust",
+        "ckb": "Hisingen و Orust",
+        "fa": "Hisingen و Orust",
+        "pl": "Hisingen i Orust",
+        "so": "Hisingen iyo Orust",
+        "ti": "Hisingenን Orustን",
+        "tr": "Hisingen ve Orust",
+        "uk": "Hisingen і Orust"
       },
       {
         "en": "Värmdö and Tjörn",
-        "sv": "Värmdö och Tjörn"
+        "sv": "Värmdö och Tjörn",
+        "zh-Hant": "Värmdö 和 Tjörn",
+        "zh-Hans": "Värmdö 和 Tjörn",
+        "ar": "Värmdö و Tjörn",
+        "ckb": "Värmdö و Tjörn",
+        "fa": "Värmdö و Tjörn",
+        "pl": "Värmdö i Tjörn",
+        "so": "Värmdö iyo Tjörn",
+        "ti": "Värmdöን Tjörnን",
+        "tr": "Värmdö ve Tjörn",
+        "uk": "Värmdö і Tjörn"
       },
       {
         "en": "Malmö and Gothenburg",
-        "sv": "Malmö och Göteborg"
+        "sv": "Malmö och Göteborg",
+        "zh-Hant": "Malmö 和 Göteborg",
+        "zh-Hans": "Malmö 和 Göteborg",
+        "ar": "Malmö و Göteborg",
+        "ckb": "Malmö و Göteborg",
+        "fa": "Malmö و Göteborg",
+        "pl": "Malmö i Göteborg",
+        "so": "Malmö iyo Göteborg",
+        "ti": "Malmöን Göteborgን",
+        "tr": "Malmö ve Göteborg",
+        "uk": "Мальме і Гетеборг"
       }
     ],
     "answer": 0,
