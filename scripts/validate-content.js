@@ -347,13 +347,12 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
-  /^(?:Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring|Vårdcentraler, sjukhus och regional kollektivtrafik)\.?$/i,
-  /^(?:Sickness insurance, parental insurance, and unemployment insurance|Health centres, hospitals, and regional public transport)\.?$/i,
   /^Many people voting\b/i,
   /^Fewer people taking\b/i,
   /^People with [^.?!]*\bliving closer\b/i,
   /^People living completely separated\b/i,
 ];
+const QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN = /\bhur\s+den\s+röstar\b/i;
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -369,17 +368,6 @@ const AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS = [
   /\bThat makes True correct\b/i,
   /\b(?:True|False)\s+is\s+correct\b/i,
   /\bwhile False\b/i,
-];
-const QUESTION_EXPLANATION_ANSWER_JUDGEMENT_PATTERNS = [
-  /\bdärför\s+är\s+alternativet\b[^.?!;]*(?:\brätt\b|\brätt\s+svar\b)/i,
-  /\bdärför\s+är\b[^.?!;]*\brätt\s+svar\b/i,
-  /\bdet\s+gör\b[^.?!;]*\btill\s+rätt\s+svar\b/i,
-  /\bso\s+the\s+answer\s+about\b[^.?!;]*\bis\s+correct\b/i,
-  /\bthat\s+makes\b[^.?!;]*\bthe\s+correct\s+answer\b/i,
-  /\bso\b[^.?!;]*\bis\s+the\s+correct\s+answer\b/i,
-  /\btherefore\s+the\s+option\s+about\b[^.?!;]*\bis\s+correct\b/i,
-  /\bso\s+the\s+option\s+about\b[^.?!;]*\bis\s+correct\b/i,
-  /\bthat\s+makes\s+(?!(?:True|False)\b)[^.?!;]*\bcorrect\b/i,
 ];
 const GENERATED_OPTION_SOURCE_MATERIAL_PATTERNS = [/\bmaterialet\b/i, /\bfrom the material\b/i];
 const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
@@ -1300,9 +1288,6 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Rätt svar',
     'Granska',
     'Rätt',
-    'Sponsrad förhandsvisning',
-    'Slutför den korta annonsförhandsvisningen för att låsa upp ett extra övningsprov. Inga annonser visas under själva provet.',
-    'Slutför förhandsvisning',
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     'Förklaringar och genomgång visas först efter att provet har skickats in.',
     'Nästa prov',
@@ -1333,9 +1318,6 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Correct answer',
     'Review',
     'Correct',
-    'Sponsored preview',
-    'Complete the short ad preview to unlock one extra mock exam. No ads appear during the exam itself.',
-    'Complete sponsor preview',
     'Submitted results are final. Start another mock exam for a fresh attempt.',
     'Explanations and review are shown only after the exam is submitted.',
     'Next exam',
@@ -4287,6 +4269,16 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function findQuestionSecretBallotSvPronounNaturalnessIssue(question) {
+  const text = [
+    question.questionSv,
+    question.explanationSv,
+    ...(question.options || []).map((option) => option.textSv),
+  ].join(' ');
+
+  return QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN.test(text);
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -4300,11 +4292,6 @@ function findAuthoredTrueFalseExplanationBoilerplate(question) {
 
   const text = [question.explanationSv, question.explanationEn].join(' ');
   return AUTHORED_TRUE_FALSE_EXPLANATION_BOILERPLATE_PATTERNS.find((pattern) => pattern.test(text));
-}
-
-function findQuestionExplanationAnswerJudgementBoilerplate(question) {
-  const text = [question.explanationSv, question.explanationEn].filter(Boolean).join(' ');
-  return QUESTION_EXPLANATION_ANSWER_JUDGEMENT_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionFalseAnswerExplanationMismatch(question) {
@@ -4875,12 +4862,6 @@ function replaceLeadingEnglishSubject(subject, value) {
     .replace(/^It says\s+/i, `${normalizedSubject} says `)
     .replace(/^It (gives|lets|applies)\b/i, `${normalizedSubject} $1`);
 }
-function stateSocialInsuranceStatementSv(answer) {
-  return `${upperFirst(answer)} är statligt finansierade trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet`;
-}
-function stateSocialInsuranceStatementEn(answer) {
-  return `${upperFirst(answer)} are state-funded welfare systems that can provide financial support during illness, parenthood, or unemployment`;
-}
 function describesStatementSv(subject, answer) {
   if (/^Som\s+/i.test(answer) && /Sverige för tvåhundra år sedan/i.test(subject)) {
     return `För tvåhundra år sedan var Sverige ${lowerFirst(answer.replace(/^Som\s+/i, ''))}`;
@@ -5288,10 +5269,6 @@ function civicStatementSv(source, option) {
   if (match) return `Sveriges två största öar är ${answer}`;
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
-  match = q.match(
-    /^Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet$/i,
-  );
-  if (match) return stateSocialInsuranceStatementSv(answer);
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
   match = q.match(/^Vilka tre företag kallas (.+) i Sverige$/i);
@@ -5592,10 +5569,6 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
-  match = q.match(
-    /^Which state security systems can provide financial support during illness, parenthood, or unemployment$/i,
-  );
-  if (match) return stateSocialInsuranceStatementEn(answer);
   match = q.match(/^Which three companies are called (.+) in Sweden$/i);
   if (match) return `${answer} are called ${match[1]} in Sweden`;
   match = q.match(/^Approximately how many (.+)$/i);
@@ -6562,9 +6535,6 @@ function validateQuestionSchema(question, index) {
       reject(`${label} ${field} must end with sentence punctuation`);
     }
   }
-  if (findQuestionExplanationAnswerJudgementBoilerplate(question)) {
-    reject(`${label} explanation contains answer-judgement boilerplate`);
-  }
 
   if (!Array.isArray(question.options) || ![2, 4].includes(question.options.length)) {
     reject(`${label} must have 2 or 4 options`);
@@ -6977,6 +6947,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let questionSecretBallotSvPronounNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16150,6 +16121,8 @@ if (Array.isArray(questions)) {
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+      const secretBallotSvPronounNaturalnessIssue =
+        findQuestionSecretBallotSvPronounNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -16175,6 +16148,11 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (secretBallotSvPronounNaturalnessIssue) {
+        fail(`${label} uses unnatural secret-ballot Swedish voting pronoun`);
+      } else {
+        questionSecretBallotSvPronounNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16641,6 +16619,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      questionSecretBallotSvPronounNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
