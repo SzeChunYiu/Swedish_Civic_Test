@@ -29,7 +29,7 @@ try {
   reviewStorage = null;
 }
 
-interface PersistedReviews {
+export interface PersistedReviews {
   byId: Record<string, ReviewCard>;
   /** Day key → number of reviews graded that day. Caps the Free tier. */
   gradedPerDay: Record<string, number>;
@@ -70,6 +70,10 @@ function normalize(value: unknown): PersistedReviews {
     }
   }
   return { byId, gradedPerDay };
+}
+
+export function normalizeImportedReviewState(value: unknown): PersistedReviews {
+  return normalize(value);
 }
 
 function read(): PersistedReviews {
@@ -135,6 +139,12 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   },
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
+
+export function importReviewSnapshot(reviews: PersistedReviews): void {
+  const normalizedReviews = normalizeImportedReviewState(reviews);
+  write(normalizedReviews);
+  useReviewStore.setState(normalizedReviews);
+}
 
 // ---- Pure selectors (usable outside React) ---------------------------------
 

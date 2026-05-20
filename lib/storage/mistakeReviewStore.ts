@@ -2,9 +2,6 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
-import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
-
 export type MistakeAnswerReview = {
   answeredAt: string;
   questionId: string;
@@ -13,12 +10,11 @@ export type MistakeAnswerReview = {
 };
 
 const mistakeReviewStateKey = 'mistakeReviewState';
-const mistakeReviewStorageId = 'mistake-review';
 
 let mistakeReviewStorage: MMKV | null = null;
 
 try {
-  mistakeReviewStorage = createMMKV({ id: mistakeReviewStorageId });
+  mistakeReviewStorage = createMMKV({ id: 'mistake-review' });
 } catch {
   mistakeReviewStorage = null;
 }
@@ -67,59 +63,36 @@ export function normalizeImportedMistakeReview(value: unknown): PersistedMistake
 }
 
 function readMistakeReview(): PersistedMistakeReview {
-  try {
-    const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
-    if (!rawReview) return emptyMistakeReview;
+  const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
+  if (!rawReview) return emptyMistakeReview;
 
+  try {
     return normalizeMistakeReview(JSON.parse(rawReview));
   } catch {
     return emptyMistakeReview;
   }
 }
 
-function writeMistakeReview(review: PersistedMistakeReview): RecoverablePersistenceWarning | null {
-  return writeRecoverably(
-    mistakeReviewStorage,
-    mistakeReviewStorageId,
-    mistakeReviewStateKey,
-    JSON.stringify(review),
-  );
-}
-
-function mergeMistakeReview(
-  current: PersistedMistakeReview,
-  imported: PersistedMistakeReview,
-): PersistedMistakeReview {
-  const wrongAnswerReviews = { ...current.wrongAnswerReviews };
-  for (const [questionId, importedReview] of Object.entries(imported.wrongAnswerReviews)) {
-    const currentReview = wrongAnswerReviews[questionId];
-    if (!currentReview || importedReview.answeredAt >= currentReview.answeredAt) {
-      wrongAnswerReviews[questionId] = importedReview;
-    }
-  }
-
-  return { wrongAnswerReviews };
+function writeMistakeReview(review: PersistedMistakeReview): void {
+  mistakeReviewStorage?.set(mistakeReviewStateKey, JSON.stringify(review));
 }
 
 type MistakeReviewState = PersistedMistakeReview & {
-  persistenceWarning: RecoverablePersistenceWarning | null;
   clearWrongAnswerReviews: () => void;
   recordWrongAnswerReview: (review: {
     questionId: string;
     selectedOptionTextEn: string;
     selectedOptionTextSv: string;
   }) => void;
-  clearPersistenceWarning: () => void;
 };
 
 const initialMistakeReview = readMistakeReview();
 
 export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   ...initialMistakeReview,
-  persistenceWarning: null,
   clearWrongAnswerReviews: () => {
-    const persistenceWarning = writeMistakeReview(emptyMistakeReview);
-    set({ ...emptyMistakeReview, persistenceWarning });
+    writeMistakeReview(emptyMistakeReview);
+    set(emptyMistakeReview);
   },
   recordWrongAnswerReview: ({ questionId, selectedOptionTextEn, selectedOptionTextSv }) =>
     set((state) => {
@@ -134,17 +107,14 @@ export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
           },
         },
       };
-      const persistenceWarning = writeMistakeReview(nextReview);
+      writeMistakeReview(nextReview);
 
-      return { ...nextReview, persistenceWarning };
+      return nextReview;
     }),
-  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
-export function importMistakeReviewSnapshot(value: unknown): PersistedMistakeReview {
-  const importedReview = normalizeImportedMistakeReview(value);
-  const nextReview = mergeMistakeReview(useMistakeReviewStore.getState(), importedReview);
-  writeMistakeReview(nextReview);
-  useMistakeReviewStore.setState(nextReview);
-  return nextReview;
+export function importMistakeReviewSnapshot(review: PersistedMistakeReview): void {
+  const normalizedReview = normalizeImportedMistakeReview(review);
+  writeMistakeReview(normalizedReview);
+  useMistakeReviewStore.setState(normalizedReview);
 }

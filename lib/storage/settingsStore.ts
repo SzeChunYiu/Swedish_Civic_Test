@@ -2,9 +2,6 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
-import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
-
 export type AppLanguage = 'sv' | 'en';
 
 const languageKey = 'language';
@@ -12,96 +9,68 @@ const audioEnabledKey = 'audioEnabled';
 const dailyGoalKey = 'dailyGoalAnswers';
 const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
-const settingsStorageId = 'settings';
-const defaultDailyGoalAnswers = 10;
-const minDailyGoalAnswers = 1;
-const maxDailyGoalAnswers = 50;
 
 let settingsStorage: MMKV | null = null;
 
 try {
-  settingsStorage = createMMKV({ id: settingsStorageId });
+  settingsStorage = createMMKV({ id: 'settings' });
 } catch {
   settingsStorage = null;
 }
 
-function readStorageString(key: string): string | undefined {
-  try {
-    return settingsStorage?.getString(key);
-  } catch {
-    return undefined;
-  }
-}
-
-function readStorageBoolean(key: string): boolean | undefined {
-  try {
-    return settingsStorage?.getBoolean(key);
-  } catch {
-    return undefined;
-  }
-}
-
-function readStorageNumber(key: string): number | undefined {
-  try {
-    return settingsStorage?.getNumber(key);
-  } catch {
-    return undefined;
-  }
-}
-
 function readLanguage(): AppLanguage {
-  const language = readStorageString(languageKey);
+  const language = settingsStorage?.getString(languageKey);
   return language === 'en' ? 'en' : 'sv';
 }
 
 function readAudioEnabled(): boolean {
-  const storedValue = readStorageBoolean(audioEnabledKey);
+  const storedValue = settingsStorage?.getBoolean(audioEnabledKey);
   return storedValue ?? true;
 }
 
-function normalizeDailyGoalAnswers(answerCount: number | undefined): number {
-  if (
-    typeof answerCount !== 'number' ||
-    !Number.isFinite(answerCount) ||
-    !Number.isInteger(answerCount)
-  ) {
-    return defaultDailyGoalAnswers;
-  }
-
-  if (answerCount < minDailyGoalAnswers || answerCount > maxDailyGoalAnswers) {
-    return defaultDailyGoalAnswers;
-  }
-
-  return answerCount;
-}
-
 function readDailyGoalAnswers(): number {
-  const storedValue = readStorageNumber(dailyGoalKey);
-  return normalizeDailyGoalAnswers(storedValue);
+  const storedValue = settingsStorage?.getNumber(dailyGoalKey);
+  return storedValue && storedValue > 0 ? storedValue : 10;
 }
 
 function readIncludeSupplementary(): boolean {
-  const storedValue = readStorageBoolean(includeSupplementaryKey);
+  const storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
   return storedValue ?? false;
 }
 
 function readHasSeenAboutTheTest(): boolean {
-  const storedValue = readStorageBoolean(hasSeenAboutTheTestKey);
+  const storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
   return storedValue ?? false;
 }
 
-export type ImportableSettings = Partial<{
+type SettingsState = {
   language: AppLanguage;
   audioEnabled: boolean;
   dailyGoalAnswers: number;
   includeSupplementaryQuestions: boolean;
   hasSeenAboutTheTest: boolean;
-}>;
+  setLanguage: (language: AppLanguage) => void;
+  setAudioEnabled: (enabled: boolean) => void;
+  setDailyGoalAnswers: (answerCount: number) => void;
+  setIncludeSupplementaryQuestions: (include: boolean) => void;
+  markAboutTheTestSeen: () => void;
+};
+
+export type ImportableSettings = Partial<
+  Pick<
+    SettingsState,
+    | 'language'
+    | 'audioEnabled'
+    | 'dailyGoalAnswers'
+    | 'includeSupplementaryQuestions'
+    | 'hasSeenAboutTheTest'
+  >
+>;
 
 export function normalizeImportedSettings(value: unknown): ImportableSettings {
   if (!value || typeof value !== 'object') return {};
 
-  const candidate = value as Record<string, unknown>;
+  const candidate = value as Partial<SettingsState>;
   const settings: ImportableSettings = {};
   if (candidate.language === 'sv' || candidate.language === 'en') {
     settings.language = candidate.language;
@@ -109,9 +78,11 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   if (typeof candidate.audioEnabled === 'boolean') {
     settings.audioEnabled = candidate.audioEnabled;
   }
-  if (typeof candidate.dailyGoalAnswers === 'number') {
-    const safeGoal = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);
-    if (safeGoal === candidate.dailyGoalAnswers) settings.dailyGoalAnswers = safeGoal;
+  if (
+    typeof candidate.dailyGoalAnswers === 'number' &&
+    Number.isFinite(candidate.dailyGoalAnswers)
+  ) {
+    settings.dailyGoalAnswers = Math.max(1, Math.min(50, Math.round(candidate.dailyGoalAnswers)));
   }
   if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
     settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;
@@ -123,97 +94,51 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   return settings;
 }
 
-type SettingsState = {
-  language: AppLanguage;
-  audioEnabled: boolean;
-  dailyGoalAnswers: number;
-  includeSupplementaryQuestions: boolean;
-  hasSeenAboutTheTest: boolean;
-  persistenceWarning: RecoverablePersistenceWarning | null;
-  setLanguage: (language: AppLanguage) => void;
-  setAudioEnabled: (enabled: boolean) => void;
-  setDailyGoalAnswers: (answerCount: number) => void;
-  setIncludeSupplementaryQuestions: (include: boolean) => void;
-  markAboutTheTestSeen: () => void;
-  clearPersistenceWarning: () => void;
-};
-
 export const useSettingsStore = create<SettingsState>((set) => ({
   language: readLanguage(),
   audioEnabled: readAudioEnabled(),
   dailyGoalAnswers: readDailyGoalAnswers(),
   includeSupplementaryQuestions: readIncludeSupplementary(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
-  persistenceWarning: null,
   setLanguage: (language) => {
-    const persistenceWarning = writeRecoverably(
-      settingsStorage,
-      settingsStorageId,
-      languageKey,
-      language,
-    );
-    set({ language, persistenceWarning });
+    settingsStorage?.set(languageKey, language);
+    set({ language });
   },
   setAudioEnabled: (audioEnabled) => {
-    const persistenceWarning = writeRecoverably(
-      settingsStorage,
-      settingsStorageId,
-      audioEnabledKey,
-      audioEnabled,
-    );
-    set({ audioEnabled, persistenceWarning });
+    settingsStorage?.set(audioEnabledKey, audioEnabled);
+    set({ audioEnabled });
   },
   setDailyGoalAnswers: (dailyGoalAnswers) => {
-    const safeGoal = normalizeDailyGoalAnswers(
-      Math.max(minDailyGoalAnswers, Math.min(maxDailyGoalAnswers, Math.round(dailyGoalAnswers))),
-    );
-    const persistenceWarning = writeRecoverably(
-      settingsStorage,
-      settingsStorageId,
-      dailyGoalKey,
-      safeGoal,
-    );
-    set({ dailyGoalAnswers: safeGoal, persistenceWarning });
+    const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));
+    settingsStorage?.set(dailyGoalKey, safeGoal);
+    set({ dailyGoalAnswers: safeGoal });
   },
   setIncludeSupplementaryQuestions: (include) => {
-    const persistenceWarning = writeRecoverably(
-      settingsStorage,
-      settingsStorageId,
-      includeSupplementaryKey,
-      include,
-    );
-    set({ includeSupplementaryQuestions: include, persistenceWarning });
+    settingsStorage?.set(includeSupplementaryKey, include);
+    set({ includeSupplementaryQuestions: include });
   },
   markAboutTheTestSeen: () => {
-    const persistenceWarning = writeRecoverably(
-      settingsStorage,
-      settingsStorageId,
-      hasSeenAboutTheTestKey,
-      true,
-    );
-    set({ hasSeenAboutTheTest: true, persistenceWarning });
+    settingsStorage?.set(hasSeenAboutTheTestKey, true);
+    set({ hasSeenAboutTheTest: true });
   },
-  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
-export function importSettingsSnapshot(value: unknown): ImportableSettings {
-  const importedSettings = normalizeImportedSettings(value);
-  if (importedSettings.language !== undefined) {
-    settingsStorage?.set(languageKey, importedSettings.language);
+export function importSettingsSnapshot(settings: ImportableSettings): void {
+  const normalizedSettings = normalizeImportedSettings(settings);
+  if (normalizedSettings.language !== undefined) {
+    settingsStorage?.set(languageKey, normalizedSettings.language);
   }
-  if (importedSettings.audioEnabled !== undefined) {
-    settingsStorage?.set(audioEnabledKey, importedSettings.audioEnabled);
+  if (normalizedSettings.audioEnabled !== undefined) {
+    settingsStorage?.set(audioEnabledKey, normalizedSettings.audioEnabled);
   }
-  if (importedSettings.dailyGoalAnswers !== undefined) {
-    settingsStorage?.set(dailyGoalKey, importedSettings.dailyGoalAnswers);
+  if (normalizedSettings.dailyGoalAnswers !== undefined) {
+    settingsStorage?.set(dailyGoalKey, normalizedSettings.dailyGoalAnswers);
   }
-  if (importedSettings.includeSupplementaryQuestions !== undefined) {
-    settingsStorage?.set(includeSupplementaryKey, importedSettings.includeSupplementaryQuestions);
+  if (normalizedSettings.includeSupplementaryQuestions !== undefined) {
+    settingsStorage?.set(includeSupplementaryKey, normalizedSettings.includeSupplementaryQuestions);
   }
-  if (importedSettings.hasSeenAboutTheTest !== undefined) {
-    settingsStorage?.set(hasSeenAboutTheTestKey, importedSettings.hasSeenAboutTheTest);
+  if (normalizedSettings.hasSeenAboutTheTest !== undefined) {
+    settingsStorage?.set(hasSeenAboutTheTestKey, normalizedSettings.hasSeenAboutTheTest);
   }
-
-  useSettingsStore.setState(importedSettings);
-  return importedSettings;
+  useSettingsStore.setState(normalizedSettings);
 }
