@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
@@ -23,8 +22,6 @@ type RemoveAdsPlacementCtaCopy = {
   buyIdle: (price: string) => string;
   buying: string;
   eyebrow: string;
-  profileLink: string;
-  profileLinkAccessibilityLabel: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
@@ -44,8 +41,6 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrow: 'Ta bort annonser',
-    profileLink: 'Visa panelen',
-    profileLinkAccessibilityLabel: 'Öppna Ta bort annonser-panelen i profilen',
     restoreAccessibilityHint:
       'Kontrollerar butikskontot efter ett tidigare köp av Ta bort annonser.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
@@ -67,8 +62,6 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrow: 'Remove Ads',
-    profileLink: 'Open panel',
-    profileLinkAccessibilityLabel: 'Open the Remove Ads panel in Profile',
     restoreAccessibilityHint: 'Checks the store account for a previous Remove Ads purchase.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
     restoreIdle: 'Restore',
@@ -150,21 +143,6 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           >
             {activeAction === 'restore' ? copy.restoring : copy.restoreIdle}
           </Button>
-          <Link
-            accessibilityLabel={copy.profileLinkAccessibilityLabel}
-            accessibilityRole="link"
-            asChild
-            href="/profile?focus=remove-ads"
-          >
-            <Button
-              accessibilityLabel={copy.profileLinkAccessibilityLabel}
-              accessibilityRole="link"
-              style={styles.button}
-              variant="secondary"
-            >
-              {copy.profileLink}
-            </Button>
-          </Link>
         </View>
       </View>
       {statusMessage ? (

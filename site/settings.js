@@ -2,7 +2,7 @@
    - Theme (light/dark/auto)
    - Color palette (5 Swedish-named presets)
    - Buddy picker (10 buddies)
-   - Language selector
+   - Language (EN/SV)
    - Text size (small/regular/large)
    - Reduce motion
    - Hero flag-cross toggle

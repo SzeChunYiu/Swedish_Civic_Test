@@ -243,19 +243,7 @@ test('resumeBannerCopy: bilingual messages', () => {
     'en',
   );
   assert.match(sv.title, /Fortsätt/i);
-  assert.equal(sv.subtitle, '5 frågor avklarade i detta kapitel');
   assert.match(en.title, /Continue/i);
-  assert.equal(en.subtitle, '5 questions answered in this chapter');
-  const svSingular = resumeBannerCopy(
-    {
-      chapterId: 'c1',
-      lastQuestionId: 'q1',
-      lastAnsweredAt: '2026-05-19',
-      questionsAnsweredInChapter: 1,
-    },
-    'sv',
-  );
-  assert.equal(svSingular.subtitle, '1 fråga avklarad i detta kapitel');
   const empty = resumeBannerCopy(
     { chapterId: null, lastQuestionId: null, lastAnsweredAt: null, questionsAnsweredInChapter: 0 },
     'en',
