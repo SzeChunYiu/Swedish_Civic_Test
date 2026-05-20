@@ -326,10 +326,15 @@ test('tierComparison: Swedish Pro labels use natural learner-facing copy', () =>
 
 test('tierComparison: three columns in canonical order', () => {
   const { TIER_COLUMNS } = loadTs('lib/monetization/tierComparison.ts');
+  const columnsById = Object.fromEntries(TIER_COLUMNS.map((column) => [column.id, column]));
   assert.deepEqual(
     TIER_COLUMNS.map((c) => c.id),
     ['free', 'adFree', 'pro'],
   );
+  assert.equal(columnsById.adFree.priceSv, '29 SEK · engångsköp');
+  assert.equal(columnsById.adFree.priceEn, '29 SEK · one-time');
+  assert.equal(columnsById.pro.priceSv, '59 SEK · engångsköp');
+  assert.equal(columnsById.pro.priceEn, '59 SEK · one-time');
 });
 
 test('tierComparison: every row has all three cells present', () => {
@@ -367,6 +372,9 @@ test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', 
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
+  assert.equal(fresh.primarySv, 'Köp Pro · 59 SEK');
+  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 SEK');
+  assert.equal(fresh.secondaryEn, 'Just remove ads · 29 SEK');
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
 });
@@ -386,8 +394,10 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.match(source, /rowSummary:/);
   assert.match(source, /accessibilityRole="summary"/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
-  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
+  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
+  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
+  assert.doesNotMatch(source, /29 kr|29 kronor/);
   assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
