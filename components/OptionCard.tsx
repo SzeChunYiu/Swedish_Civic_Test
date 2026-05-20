@@ -23,8 +23,9 @@ const defaultStateLabels: Record<AppLanguage, Record<OptionCardState, string | u
 
 /**
  * Defaults: `state="idle"`, `disabled=false`, `accessibilityRole="radio"`,
- * `accessibilityState.checked=true` for non-idle states, localized state
- * fallback labels from settings, and a token-sized `hitSlop`. Pass
+ * `accessibilityState.checked=true` only for selected state or an explicit
+ * checked override, localized state fallback labels from settings, and a
+ * token-sized `hitSlop`. Pass
  * `accessibilityLabel`, `stateLabel`, or `languageOverride` when the spoken
  * copy needs screen-specific localization.
  */
@@ -75,15 +76,21 @@ export function OptionCard({
   const language = languageOverride ?? settingsLanguage;
   const resolvedStateLabel = stateLabel ?? defaultStateLabels[language][state];
   const isDisabled = disabled === true;
-  const isChecked = state !== 'idle';
+  const defaultChecked = state === 'selected';
+  const isChecked = accessibilityState?.checked ?? defaultChecked;
+  const defaultSelected = isChecked === true;
+  const isSelected = accessibilityState?.selected ?? defaultSelected;
   const resolvedAccessibilityState = {
     ...accessibilityState,
-    checked: accessibilityState?.checked ?? isChecked,
+    checked: isChecked,
+    selected: isSelected,
     disabled: isDisabled || accessibilityState?.disabled,
   };
 
   return (
     <Pressable
+      aria-checked={resolvedAccessibilityState.checked}
+      aria-selected={resolvedAccessibilityState.selected}
       accessibilityLabel={
         accessibilityLabel ??
         getAccessibilityLabel({
