@@ -72,6 +72,68 @@ const STATIC_VALIDATION_IMPORT_CHECKS = Object.freeze([
     script: "require('./scripts/static-outcome-copy-guard')",
   },
 ]);
+const STATIC_I18N_ARABIC_HIGH_FREQUENCY_KEYS = Object.freeze([
+  'hero.eyebrow',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'nav.ebook',
+  'consent.title',
+  'consent.body',
+  'consent.min',
+  'consent.all',
+  'settings.title',
+  'settings.theme',
+  'settings.theme.light',
+  'settings.theme.dark',
+  'settings.theme.auto',
+  'settings.language',
+  'settings.text',
+  'settings.misc',
+  'settings.consent.reset',
+  'settings.savedHint',
+  'settings.done',
+  'footer.t1',
+  'footer.t2',
+  'footer.h.study',
+  'footer.h.legal',
+  'footer.h.about',
+  'footer.h.fika',
+  'footer.about.p',
+  'footer.fika',
+]);
+const STATIC_I18N_ARABIC_EXPECTED_COPY = Object.freeze({
+  'hero.lede':
+    'أداة هادئة وغير رسمية لمراجعة المعرفة المدنية السويدية. فصول قصيرة، تدريب مركز، واختبارات تجريبية تساعدك على فهم المادة دون تعقيد.',
+  'hero.cta1': 'ابدأ التدريب',
+  'hero.cta2': 'جرّب سؤالاً',
+  'nav.ebook': 'دليل الدراسة',
+  'consent.body':
+    'نستخدم Google AdSense لعرض عدد قليل من الإعلانات. قد يستخدم AdSense ملفات تعريف الارتباط، وقد يستعملها للإعلانات المخصّصة. اقبل الكل، أو الضروري فقط، أو اقرأ <a href="#/privacy">صفحة الخصوصية</a>.',
+  'settings.theme': 'المظهر',
+  'settings.consent.reset': 'إعادة ضبط موافقة ملفات تعريف الارتباط / الإعلانات…',
+  'footer.about.p':
+    'هذه أداة دراسة مستقلة. يمكنك البدء مجاناً، ومراجعة الدروس، وتجربة الاختبارات التدريبية.',
+  'footer.fika': 'صُنع بروح لاغوم · جُرِّب مع القهوة.',
+});
+const STATIC_I18N_ARABIC_FORBIDDEN_FRAGMENTS = Object.freeze([
+  'اختبار وهمي',
+  'موافقة الكوكيز',
+  'مُختبر بالقهوة',
+  'بناها أشخاص اجتازوا الاختبار',
+]);
+const STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY = Object.freeze({
+  'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
+  'consent.body': 'We use Google AdSense',
+  'settings.title': 'Settings',
+  'settings.theme': 'Theme',
+  'settings.theme.auto': 'Auto',
+  'settings.consent.reset': 'Reset cookie',
+  'settings.done': 'Done',
+  'footer.about.p': 'built by people',
+  'footer.fika': 'Fika-tested',
+  'nav.ebook': 'Ebook',
+});
 const EXPECTED_UHR_SOURCE = {
   titleKeyword: 'Sverige i fokus',
   publisher: 'Universitets- och högskolerådet (UHR)',
@@ -3685,6 +3747,13 @@ function loadText(relativePath) {
   return fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8');
 }
 
+function loadStaticI18nExtras() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(loadText('site/i18n-extras.js'), sandbox, { timeout: 3000 });
+  return sandbox.window.__i18n_extra || {};
+}
+
 function fail(message) {
   failures.push(message);
 }
@@ -3749,6 +3818,59 @@ function validateStaticValidationSyntaxGate() {
   }
 
   if (valid) staticValidationSyntaxGateValidated = true;
+}
+
+function validateStaticI18nArabicNaturalness() {
+  const result = {
+    requiredCopyValidated: 0,
+    highFrequencyLabelsValidated: 0,
+    forbiddenFragmentsValidated: 0,
+    englishFallbacksValidated: 0,
+  };
+  const extra = loadStaticI18nExtras();
+  const arabic = extra.ar;
+
+  if (!arabic || typeof arabic !== 'object' || Array.isArray(arabic)) {
+    fail('static Arabic i18n dictionary must exist');
+    return result;
+  }
+
+  for (const [key, expected] of Object.entries(STATIC_I18N_ARABIC_EXPECTED_COPY)) {
+    if (arabic[key] === expected) {
+      result.requiredCopyValidated += 1;
+    } else {
+      fail(`Arabic static-site ${key} should use reviewed local copy`);
+    }
+  }
+
+  for (const key of STATIC_I18N_ARABIC_HIGH_FREQUENCY_KEYS) {
+    const value = arabic[key];
+    if (typeof value === 'string' && value.trim()) {
+      result.highFrequencyLabelsValidated += 1;
+    } else {
+      fail(`Arabic static-site ${key} must be a non-empty string`);
+      continue;
+    }
+
+    const englishFallback = STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY[key];
+    if (!englishFallback) continue;
+    if (new RegExp(escapeRegExp(englishFallback), 'i').test(value)) {
+      fail(`Arabic static-site ${key} still uses English fallback`);
+    } else {
+      result.englishFallbacksValidated += 1;
+    }
+  }
+
+  const serializedArabic = Object.values(arabic).join('\n');
+  for (const fragment of STATIC_I18N_ARABIC_FORBIDDEN_FRAGMENTS) {
+    if (new RegExp(escapeRegExp(fragment), 'i').test(serializedArabic)) {
+      fail(`Arabic static-site dictionary still contains ${fragment}`);
+    } else {
+      result.forbiddenFragmentsValidated += 1;
+    }
+  }
+
+  return result;
 }
 
 function exitWithValidationFailures() {
@@ -6934,6 +7056,11 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
+let staticI18nArabicRequiredCopyValidated = 0;
+let staticI18nArabicHighFrequencyLabelsValidated = 0;
+let staticI18nArabicForbiddenFragmentsValidated = 0;
+let staticI18nArabicEnglishFallbacksValidated = 0;
+let staticI18nArabicNaturalnessValidated = false;
 let staticValidationSyntaxFilesValidated = 0;
 let staticValidationImportChecksValidated = 0;
 let staticValidationSyntaxGateValidated = false;
@@ -7067,6 +7194,21 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
+}
+{
+  const arabicI18nValidation = validateStaticI18nArabicNaturalness();
+  staticI18nArabicRequiredCopyValidated = arabicI18nValidation.requiredCopyValidated;
+  staticI18nArabicHighFrequencyLabelsValidated = arabicI18nValidation.highFrequencyLabelsValidated;
+  staticI18nArabicForbiddenFragmentsValidated = arabicI18nValidation.forbiddenFragmentsValidated;
+  staticI18nArabicEnglishFallbacksValidated = arabicI18nValidation.englishFallbacksValidated;
+  staticI18nArabicNaturalnessValidated =
+    staticI18nArabicRequiredCopyValidated ===
+      Object.keys(STATIC_I18N_ARABIC_EXPECTED_COPY).length &&
+    staticI18nArabicHighFrequencyLabelsValidated ===
+      STATIC_I18N_ARABIC_HIGH_FREQUENCY_KEYS.length &&
+    staticI18nArabicForbiddenFragmentsValidated === STATIC_I18N_ARABIC_FORBIDDEN_FRAGMENTS.length &&
+    staticI18nArabicEnglishFallbacksValidated ===
+      Object.keys(STATIC_I18N_ENGLISH_FALLBACKS_BY_KEY).length;
 }
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
@@ -15372,6 +15514,11 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
+      staticI18nArabicRequiredCopyValidated,
+      staticI18nArabicHighFrequencyLabelsValidated,
+      staticI18nArabicForbiddenFragmentsValidated,
+      staticI18nArabicEnglishFallbacksValidated,
+      staticI18nArabicNaturalnessValidated,
       staticValidationSyntaxFilesValidated,
       staticValidationImportChecksValidated,
       staticValidationSyntaxGateValidated,
