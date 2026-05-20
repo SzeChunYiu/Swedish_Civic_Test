@@ -6,7 +6,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName, moduleCache = new Map()) {
+function loadTs(relativePath, exportName, moduleCache = new Map(), moduleStubs = {}) {
   const filePath = path.join(repoRoot, relativePath);
   if (moduleCache.has(filePath)) {
     const cached = moduleCache.get(filePath);
@@ -31,8 +31,12 @@ function loadTs(relativePath, exportName, moduleCache = new Map()) {
       const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
 
       if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, moduleStubs);
       }
+    }
+
+    if (Object.hasOwn(moduleStubs, specifier)) {
+      return moduleStubs[specifier];
     }
 
     return require(specifier);
@@ -40,6 +44,19 @@ function loadTs(relativePath, exportName, moduleCache = new Map()) {
 
   new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
   return exportName ? mod.exports[exportName] : mod.exports;
+}
+
+function loadUseMobileAdsConsentModule() {
+  return loadTs('lib/monetization/useMobileAdsConsent.ts', undefined, new Map(), {
+    react: {
+      useEffect() {},
+      useMemo: (factory) => factory(),
+      useState: (initialValue) => [initialValue, () => {}],
+    },
+    'react-native': {
+      Platform: { OS: 'ios' },
+    },
+  });
 }
 
 function withEnv(overrides, fn) {
@@ -1700,6 +1717,59 @@ test('ad consent decision covers ATT and UMP prompts before real ad serving', ()
   });
   assert.equal(testUnitInit.canInitializeGoogleMobileAds, true);
   assert.equal(testUnitInit.blockReason, undefined);
+});
+
+test('Mobile Ads consent hook cache selector isolates platform and Remove Ads initial state', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: 'true',
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const { createInitialResult, selectMobileAdsConsentInitialResult } =
+        loadUseMobileAdsConsentModule();
+      const cachedIosInitialization = {
+        ...createInitialResult({ adsDisabled: false }, 'ios'),
+        initialized: true,
+      };
+
+      const samePlatformSelection = selectMobileAdsConsentInitialResult({
+        cachedInitializationPlatform: 'ios',
+        cachedInitializationResult: cachedIosInitialization,
+        entitlements: { adsDisabled: false },
+        platform: 'ios',
+      });
+      assert.strictEqual(samePlatformSelection, cachedIosInitialization);
+
+      const androidSelection = selectMobileAdsConsentInitialResult({
+        cachedInitializationPlatform: 'ios',
+        cachedInitializationResult: cachedIosInitialization,
+        entitlements: { adsDisabled: false },
+        platform: 'android',
+      });
+      assert.notStrictEqual(androidSelection, cachedIosInitialization);
+      assert.equal(androidSelection.state.platform, 'android');
+      assert.equal(androidSelection.state.trackingTransparencyStatus, 'unavailable');
+      assert.equal(androidSelection.state.umpConsentStatus, 'unknown');
+
+      const removeAdsSelection = selectMobileAdsConsentInitialResult({
+        cachedInitializationPlatform: 'ios',
+        cachedInitializationResult: cachedIosInitialization,
+        entitlements: { adsDisabled: true },
+        platform: 'ios',
+      });
+      assert.notStrictEqual(removeAdsSelection, cachedIosInitialization);
+      assert.equal(removeAdsSelection.state.entitlements.adsDisabled, true);
+      assert.equal(removeAdsSelection.state.trackingTransparencyStatus, 'unavailable');
+      assert.equal(removeAdsSelection.state.umpConsentStatus, 'not_required');
+      assert.equal(removeAdsSelection.decision.blockReason, 'remove_ads_entitlement');
+
+      const iosFallbackAfterError = createInitialResult({ adsDisabled: false }, 'ios');
+      assert.equal(iosFallbackAfterError.state.platform, 'ios');
+      assert.equal(iosFallbackAfterError.state.trackingTransparencyStatus, 'not_determined');
+      assert.equal(iosFallbackAfterError.state.umpConsentStatus, 'unknown');
+    },
+  );
 });
 
 test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', async () => {

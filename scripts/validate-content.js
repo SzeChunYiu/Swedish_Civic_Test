@@ -7539,6 +7539,16 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
+  validateMobileAdsConsentHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mobileAdsConsentHookCasesValidated,
+    mobileAdsConsentHookParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -12713,9 +12723,10 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must cache successful non-disabled initialization and reset after errors',
     ],
     [
-      /if\s*\([\s\S]*!entitlements\.adsDisabled[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
+      /if\s*\([\s\S]*!entitlements\.adsDisabled[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization(?:Result)?;\s*\}/.test(
         hookSource,
       ) &&
+        normalizedHookSource.includes('selectMobileAdsConsentInitialResult({') &&
         normalizedHookSource.includes('setResult(initialResult);') &&
         normalizedHookSource.includes('void initializeOnce(entitlements, platform)') &&
         /\.\s*catch\(\(\)\s*=>\s*\{\s*if\s*\(\s*isMounted\s*\)\s*setResult\(createInitialResult\(entitlements,\s*platform\)\);\s*\}\);/.test(

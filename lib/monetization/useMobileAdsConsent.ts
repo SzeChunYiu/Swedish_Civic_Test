@@ -16,7 +16,7 @@ let cachedInitializationPlatform: string | undefined;
 let initializationPromise: Promise<MobileAdsConsentInitializationResult> | undefined;
 let initializationPromisePlatform: string | undefined;
 
-function createInitialResult(
+export function createInitialResult(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   platform: string,
 ): MobileAdsConsentInitializationResult {
@@ -38,6 +38,27 @@ function createInitialResult(
     initialized: false,
     state,
   };
+}
+
+export function selectMobileAdsConsentInitialResult({
+  cachedInitializationPlatform,
+  cachedInitializationResult,
+  entitlements,
+  platform,
+}: {
+  cachedInitializationPlatform: string | undefined;
+  cachedInitializationResult: MobileAdsConsentInitializationResult | undefined;
+  entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
+  platform: string;
+}): MobileAdsConsentInitializationResult {
+  if (
+    !entitlements.adsDisabled &&
+    cachedInitializationResult &&
+    cachedInitializationPlatform === platform
+  ) {
+    return cachedInitializationResult;
+  }
+  return createInitialResult(entitlements, platform);
 }
 
 function initializeOnce(
@@ -79,14 +100,12 @@ export function useMobileAdsConsent(
 ) {
   const platform = options.platform ?? Platform.OS;
   const initialResult = useMemo(() => {
-    if (
-      !entitlements.adsDisabled &&
-      cachedInitialization &&
-      cachedInitializationPlatform === platform
-    ) {
-      return cachedInitialization;
-    }
-    return createInitialResult(entitlements, platform);
+    return selectMobileAdsConsentInitialResult({
+      cachedInitializationPlatform,
+      cachedInitializationResult: cachedInitialization,
+      entitlements,
+      platform,
+    });
   }, [entitlements, platform]);
   const [result, setResult] = useState(initialResult);
 

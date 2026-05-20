@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mobile-ads-consent-hook'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -28,8 +32,9 @@ test('mobile ads consent hook fails closed around Remove Ads and cached initiali
   assert.match(hookSource, /trackingTransparencyStatus:/);
   assert.match(hookSource, /umpConsentStatus:/);
   assert.match(hookSource, /getAdSdkInitializationDecision\(state\)/);
-  assert.match(hookSource, /if \(!entitlements\.adsDisabled && cachedInitialization\)/);
-  assert.match(hookSource, /setResult\(createInitialResult\(entitlements\)\)/);
+  assert.match(hookSource, /selectMobileAdsConsentInitialResult/);
+  assert.match(hookSource, /cachedInitializationPlatform === platform/);
+  assert.match(hookSource, /setResult\(createInitialResult\(entitlements, platform\)\)/);
 });
 
 test('mobile ads consent hook parity rejects Remove Ads prompt drift', () => {
@@ -52,6 +57,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mobile-ads-consent-hook');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -79,12 +85,21 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'if (!entitlements.adsDisabled && cachedInitialization) return cachedInitialization;',
-        'if (cachedInitialization) return cachedInitialization;'
+        \`if (
+    !entitlements.adsDisabled &&
+    cachedInitializationResult &&
+    cachedInitializationPlatform === platform
+  ) {
+    return cachedInitializationResult;
+  }\`,
+        \`if (cachedInitializationResult) {
+    return cachedInitializationResult;
+  }\`
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mobile-ads-consent-hook');
 require('./scripts/validate-content.js');
 `,
     ],
