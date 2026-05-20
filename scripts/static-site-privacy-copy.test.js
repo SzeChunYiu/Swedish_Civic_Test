@@ -74,7 +74,7 @@ test('static site Swedish study copy uses natural Swedish study terms', () => {
     (pattern) => assert.doesNotMatch(swedishDictionary, pattern),
   );
 
-  [/Repetition med intervall/, /kort övning/, /realistisk tidskänsla/].forEach((pattern) =>
+  [/Repetition med intervall/, /kort övning/, /tidsatt övning/].forEach((pattern) =>
     assert.match(swedishDictionary, pattern),
   );
 });

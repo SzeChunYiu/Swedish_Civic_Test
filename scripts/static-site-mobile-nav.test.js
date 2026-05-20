@@ -22,6 +22,23 @@ function contentType(filePath) {
   return 'application/octet-stream';
 }
 
+function read(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function unsupportedMockClaimPatterns() {
+  return [
+    new RegExp(['real', 'timing'].join('\\s+'), 'i'),
+    new RegExp(['real', 'format'].join('\\s+'), 'i'),
+    new RegExp(['look', 'and', 'feel', 'like', 'the', 'real', 'thing'].join('\\s+'), 'i'),
+    new RegExp(['ready', 'for', 'the', 'real', 'thing'].join('\\s+'), 'i'),
+    new RegExp(['känns', 'som', 'det', 'riktiga'].join('\\s+'), 'i'),
+    new RegExp(['Kör', 'riktigt', 'format'].join('\\s+'), 'i'),
+    new RegExp(['riktig', 'tid'].join('\\s+'), 'i'),
+    new RegExp(['Nästan', 'redo', 'för', 'det', 'riktiga'].join('\\s+'), 'i'),
+  ];
+}
+
 function createStaticServer() {
   const server = http.createServer((request, response) => {
     const url = new URL(request.url || '/', 'http://127.0.0.1');
@@ -75,6 +92,17 @@ function assertReachableBox(box, label) {
   assert.ok(box.left >= 0, `${label} should not start off-screen`);
   assert.ok(box.right <= 390, `${label} should fit inside the 390px viewport`);
 }
+
+test('static mobile route source avoids unsupported mock-exam parity wording', () => {
+  const source = read('site/app.js');
+
+  unsupportedMockClaimPatterns().forEach((pattern) => {
+    assert.doesNotMatch(source, pattern);
+  });
+  assert.match(source, /timed practice flow/);
+  assert.match(source, /without claiming to mirror the official test/);
+  assert.match(source, /Fortsätt repetera källmaterialet/);
+});
 
 test('static mobile topbar reaches key routes and settings without horizontal overflow', async (t) => {
   const server = await createStaticServer();
