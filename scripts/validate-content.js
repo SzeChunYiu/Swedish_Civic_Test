@@ -860,8 +860,6 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
-  { name: 'persistenceWarning', type: 'StoragePersistenceWarning | null', optional: false },
-  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
@@ -1078,9 +1076,9 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     'Förklaringar och genomgång visas först efter att provet har skickats in.',
     'Nästa prov',
+    'Försök spara igen',
     'Sparat',
     'Sparar',
-    'Ej sparat',
   ],
   en: [
     'Mock exam',
@@ -1109,9 +1107,9 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Submitted results are final. Start another mock exam for a fresh attempt.',
     'Explanations and review are shown only after the exam is submitted.',
     'Next exam',
+    'Try saving again',
     'Saved',
     'Saving',
-    'Not saved',
   ],
 };
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
@@ -2896,8 +2894,6 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'answerDates', type: 'string[]', optional: false },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
   { name: 'streakFreezeState', type: 'StreakFreezeState', optional: false },
-  { name: 'persistenceWarning', type: 'StoragePersistenceWarning | null', optional: false },
-  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
@@ -7543,25 +7539,41 @@ function validateExamSubmissionFinalityParity() {
     reject('exam result screen must not directly reopen submitted answers');
   }
   if (
-    !/disabled:\s*!completionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam/.test(
-      examRoute,
+    !examRoute.includes(
+      'const [completionWriteFailed, setCompletionWriteFailed] = useState(false)',
     ) ||
-    !/disabled=\{\s*!completionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\}/.test(
-      examRoute,
+    !examRoute.includes('const nextExamCompletionAccessConfirmed =') ||
+    !examRoute.includes(
+      "(completionWriteFailed && accessDecision.reason === 'premium_unlimited_mock_exams')",
     )
   ) {
     reject(
-      'next-exam control must stay disabled until the submitted completion is stored or premium-unlimited access is confirmed',
+      'next-exam access must track completion write failures and only bypass them for confirmed premium unlimited access',
     );
   }
   if (
-    !examRoute.includes(
-      "completionRecorded || accessDecision.reason === 'premium_unlimited_mock_exams'",
+    !/disabled:\s*!nextExamCompletionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\|\|\s*completionRetrying/.test(
+      examRoute,
     ) ||
-    !examRoute.includes('setCompletionWriteFailed(true)') ||
-    /\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\)/.test(examRoute)
+    !/disabled=\{\s*!nextExamCompletionAccessConfirmed\s*\|\|\s*!canStartAccessibleExam\s*\|\|\s*startingAccessibleExam\s*\|\|\s*completionRetrying\s*\}/.test(
+      examRoute,
+    )
   ) {
-    reject('completion write failures must fail closed instead of marking the result as recorded');
+    reject('next-exam control must stay disabled until submitted completion access is confirmed');
+  }
+  if (/\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\)/.test(examRoute)) {
+    reject('completion write failures must not mark the submitted mock exam as recorded');
+  }
+  if (
+    !/const handleRetryCompletionWrite = useCallback\(async \(\) => \{[\s\S]*?await recordExamCompletion\(\);[\s\S]*?setCompletionRecorded\(true\);[\s\S]*?setCompletionWriteFailed\(false\);/.test(
+      examRoute,
+    ) ||
+    !examRoute.includes('{copy.retryCompletionLabel}') ||
+    !examRoute.includes('disabled={completionRetrying}')
+  ) {
+    reject(
+      'completion write failures must expose a localized retry-save control before next-exam access is re-enabled',
+    );
   }
   if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||
@@ -9851,13 +9863,16 @@ function validateSettingsStoreSchemaParity() {
       'dailyGoalAnswers: readDailyGoalAnswers()',
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
-    ['writeSetting(languageKey, language);', 'setLanguage must persist through languageKey'],
     [
-      'writeSetting(audioEnabledKey, audioEnabled);',
+      'settingsStorage?.set(languageKey, language);',
+      'setLanguage must persist through languageKey',
+    ],
+    [
+      'settingsStorage?.set(audioEnabledKey, audioEnabled);',
       'setAudioEnabled must persist through audioEnabledKey',
     ],
     [
-      'writeSetting(dailyGoalKey, safeGoal);',
+      'settingsStorage?.set(dailyGoalKey, safeGoal);',
       'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
     ],
   ];
@@ -10018,7 +10033,7 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('audioEnabled: readAudioEnabled()')) {
     reject('SettingsState must initialize audioEnabled from persisted storage');
   }
-  if (!normalizedSettingsStore.includes('writeSetting(audioEnabledKey, audioEnabled);')) {
+  if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
 
