@@ -48,14 +48,16 @@ const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = {
 /**
  * Defaults: `language="sv"`, `completedCount=0`, inferred `questionCount`
  * from the chapter when present, and a grouped accessibility summary for
- * standalone cards. Set `accessibilitySummary={false}` when the card is inside
- * a parent link that already owns the accessible name.
+ * standalone cards. Set `accessibilitySummary={false}` and
+ * `progressPresentationOnly` when the card is inside a parent link that already
+ * owns the accessible name and progress summary.
  */
 export interface ChapterCardProps {
   accessibilitySummary?: boolean;
   chapter?: Chapter;
   completedCount?: number;
   language?: AppLanguage;
+  progressPresentationOnly?: boolean;
   questionCount?: number;
 }
 
@@ -65,6 +67,7 @@ export function ChapterCard({
   questionCount = chapter?.questionCount ?? 0,
   completedCount = 0,
   language = 'sv',
+  progressPresentationOnly = false,
 }: ChapterCardProps) {
   const copy = chapterCardCopy[language];
   const progress = questionCount > 0 ? completedCount / questionCount : 0;
@@ -103,7 +106,11 @@ export function ChapterCard({
       <Text style={styles.title}>{title}</Text>
       {secondaryName ? <Text style={styles.subtitle}>{secondaryName}</Text> : null}
       {description ? <Text style={styles.description}>{description}</Text> : null}
-      <ProgressBar language={language} progress={progress} />
+      <ProgressBar
+        language={language}
+        presentationOnly={progressPresentationOnly}
+        progress={progress}
+      />
     </Card>
   );
 }
