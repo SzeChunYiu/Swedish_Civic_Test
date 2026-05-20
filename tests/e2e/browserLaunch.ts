@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
-import { expect, type Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -36,117 +37,22 @@ export function getChromiumLaunchOptions(): ChromiumLaunchOptions | undefined {
   return executablePath ? { executablePath } : undefined;
 }
 
-export async function seedSettingsLanguage(page: Page, language: AppLanguage): Promise<void> {
-  await page.addInitScript(
-    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
-      window.localStorage.setItem(languageKey, seededLanguage);
-    },
-    { language, languageKey: settingsLanguageKey },
-  );
-}
-
-export async function seedFreshFirstRunSettingsLanguage(
-  page: Page,
-  language: AppLanguage,
-): Promise<void> {
-  await page.addInitScript(
-    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
-      window.localStorage.clear();
-      window.sessionStorage.clear();
-      window.localStorage.setItem(languageKey, seededLanguage);
-    },
-    { language, languageKey: settingsLanguageKey },
-  );
-}
-
-export async function markAboutTheTestSeen(page: Page): Promise<void> {
-  await page.addInitScript(
-    ({ seenKey }: { seenKey: string }) => {
-      window.localStorage.setItem(seenKey, 'true');
-    },
-    { seenKey: settingsSeenAboutKey },
-  );
-}
-
 export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
-  const closeLaunchAd = page
-    .getByRole('button', {
-      name: /Close launch sponsor ad|Stäng startannons/,
-    })
-    .first();
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
 
-  if (await closeLaunchAd.isVisible().catch(() => false)) {
-    await closeLaunchAd.click();
-    await expect(page.locator(dialogLocator)).toHaveCount(0);
+  if (
+    await closeLaunchAd
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
+    await closeLaunchAd.first().click();
+    await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
     return true;
   }
 
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
   return false;
-}
-
-export async function dismissLanguagePickerIfPresent(page: Page): Promise<boolean> {
-  const closeLanguagePicker = page
-    .getByRole('button', {
-      name: /Close language picker|Stäng språkväljaren/,
-    })
-    .first();
-
-  if (await closeLanguagePicker.isVisible().catch(() => false)) {
-    await closeLanguagePicker.click();
-    await expect(page.getByRole('menu', { name: /Language picker|Språkväljare/ })).toHaveCount(0);
-    return true;
-  }
-
-  return false;
-}
-
-export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<boolean> {
-  const skipGuide = page
-    .getByRole('button', {
-      name: /Skip the guide|Hoppa över guiden/,
-    })
-    .first();
-
-  if (await skipGuide.isVisible().catch(() => false)) {
-    await skipGuide.click();
-    await expect(page.locator(dialogLocator)).toHaveCount(0);
-    return true;
-  }
-
-  return false;
-}
-
-export async function dismissBlockingModals(page: Page): Promise<BlockingModalDismissal> {
-  const languagePickerDismissed = await dismissLanguagePickerIfPresent(page);
-  const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
-  const firstRunAboutDismissed = await dismissFirstRunAboutModalIfPresent(page);
-
-  await expect(page.locator(dialogLocator)).toHaveCount(0);
-
-  return {
-    firstRunAboutDismissed,
-    languagePickerDismissed,
-    launchOverlayDismissed,
-  };
-}
-
-export async function selectQuestionLanguageInSettings(
-  page: Page,
-  language: AppLanguage,
-): Promise<void> {
-  await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-
-  const targetLanguageLabel =
-    language === 'en'
-      ? /Byt frågespråk till Engelskt stöd|Set question language to English support/
-      : /Byt frågespråk till Svenska|Set question language to Swedish/;
-  const selectedLanguageLabel =
-    language === 'en' ? 'Set question language to English support' : 'Byt frågespråk till Svenska';
-
-  await page.getByRole('radio', { name: targetLanguageLabel }).click();
-  await expect(page.getByRole('radio', { name: selectedLanguageLabel })).toHaveAttribute(
-    'aria-checked',
-    'true',
-  );
 }

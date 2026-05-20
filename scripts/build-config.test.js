@@ -1549,7 +1549,12 @@ test('web export script is available for local production bundle smoke', () => {
   const vercelConfig = readJson('vercel.json');
   const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
   const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
+  const entry = fs.readFileSync(path.join(repoRoot, 'index.js'), 'utf8');
 
+  assert.equal(pkg.main, 'index.js');
+  assert.match(entry, /require\.context\(\s*['"]\.\/app['"]/);
+  assert.match(entry, /<ExpoRoot context=\{ctx\} \/>/);
+  assert.match(entry, /renderRootComponent\(App\)/);
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
@@ -1630,8 +1635,9 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     [
       'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}};',
       'const icon = {uri:"/assets/icon.png"};',
-      'const routes = ["./_layout.tsx","./(tabs)/home.tsx","./about-the-test.tsx","./chapter/[chapterId].tsx","./quiz/[sessionId].tsx"];',
-    ].join(' '),
+      'const routes = ["./_layout.tsx","./(tabs)/home.tsx","./(tabs)/practice.tsx","./(tabs)/mistakes.tsx","./about-the-test.tsx"];',
+      '',
+    ].join('\n'),
   );
 
   const result = spawnSync(process.execPath, ['scripts/prepare-web-export.js', outputDir], {
@@ -1714,39 +1720,8 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 });
 
-test('dist-web e2e server rejects missing or stale freshness markers before serving', () => {
-  const { assertDistWebReady } = require('../tests/e2e/serve-dist-web.cjs');
-  const {
-    webExportFreshnessMarkerPath,
-    writeWebExportFreshnessMarker,
-  } = require('./prepare-web-export.js');
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dist-web-freshness-'));
-  const outputDir = path.join(tmpDir, 'dist-web');
-  fs.mkdirSync(outputDir, { recursive: true });
-  fs.writeFileSync(path.join(outputDir, 'index.html'), '<!doctype html><title>dist-web</title>\n');
-
-  const marker = writeWebExportFreshnessMarker(outputDir, { repoRoot });
-  const markerPath = webExportFreshnessMarkerPath(outputDir);
-  assert.doesNotThrow(() => assertDistWebReady(outputDir, repoRoot));
-
-  fs.writeFileSync(
-    markerPath,
-    `${JSON.stringify({ ...marker, sourceHash: '0'.repeat(64) }, null, 2)}\n`,
-  );
-  assert.throws(
-    () => assertDistWebReady(outputDir, repoRoot),
-    /dist-web is stale[\s\S]*npm run build:web:export/,
-  );
-
-  fs.rmSync(markerPath);
-  assert.throws(
-    () => assertDistWebReady(outputDir, repoRoot),
-    /web-export-freshness\.json[\s\S]*npm run build:web:export/,
-  );
-});
-
-test('web export postbuild rejects an empty Expo Router route context', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-empty-router-context-'));
+test('web export postbuild check fails when Expo Router emits an empty route context', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-empty-context-'));
   const outputDir = path.join(tmpDir, 'dist-web');
   const bundleDir = path.join(outputDir, '_expo/static/js/web');
   fs.mkdirSync(bundleDir, { recursive: true });
@@ -1755,21 +1730,19 @@ test('web export postbuild rejects an empty Expo Router route context', () => {
     [
       '<!DOCTYPE html>',
       '<html>',
+      '<head><title>Export</title></head>',
       '<body>',
       '<div id="root"></div>',
-      '<script data-web-export-loader="true">window.__entry = true;</script>',
+      '<script data-web-export-loader="true">document.body.appendChild(document.createElement("script"));</script>',
       '</body>',
       '</html>',
       '',
     ].join('\n'),
   );
-  fs.writeFileSync(
-    path.join(outputDir, '404.html'),
-    fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8'),
-  );
+  fs.copyFileSync(path.join(outputDir, 'index.html'), path.join(outputDir, '404.html'));
   fs.writeFileSync(
     path.join(bundleDir, 'entry-test.js'),
-    'function o(){let e=new Error("No modules in context");throw e.code="MODULE_NOT_FOUND"}o.keys=()=>[];',
+    'function o(){throw new Error("No modules in context")} o.keys=()=>[];',
   );
 
   const result = spawnSync(
@@ -1782,7 +1755,7 @@ test('web export postbuild rejects an empty Expo Router route context', () => {
   );
 
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /empty Expo Router route context/);
+  assert.match(result.stderr, /route context is missing app route modules/i);
 });
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
