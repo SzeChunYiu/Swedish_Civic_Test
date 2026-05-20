@@ -29,7 +29,7 @@
       body: {
         en: `
           <h2>What this book is</h2>
-          <p>A plain-language reader for Sweden's citizenship test (medborgarskapsprovet). Written for adults learning Swedish civic life from scratch, by someone who's been there.</p>
+          <p>A plain-language reader for Sweden's citizenship test (medborgarskapsprovet). It turns public study material into calm, unofficial practice reading for adults building Swedish civic vocabulary and context from scratch.</p>
           <h2>What it's <em>not</em></h2>
           <p>Not the official material. Not a legal document. Not a substitute for UHR's public study material. Use the <a href="#/sources">Sources page</a> for question-bank citations, and check UHR's material when a fact matters.</p>
           <h2>How to use it</h2>
