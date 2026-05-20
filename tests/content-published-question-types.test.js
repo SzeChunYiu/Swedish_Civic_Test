@@ -13,6 +13,7 @@ const {
 } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
+const focusedPublishedQuestionSchemaArg = '--focus-published-question-schema';
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
@@ -71,6 +72,13 @@ const generatedIdLiteralPatterns = [
     pattern: /(?:^|[{,\s])['"`]?(q\d{3,})['"`]?\s*:/gm,
   },
 ];
+
+function runFocusedPublishedQuestionValidation(evalSource) {
+  return spawnSync(process.execPath, ['-e', evalSource, '--', focusedPublishedQuestionSchemaArg], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+}
 
 function actualStaticQuestions() {
   const context = { window: {} };
@@ -2544,6 +2552,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2576,6 +2586,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2608,12 +2620,38 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /q001 has duplicate option id a/);
+});
+
+test('published question schema focused fixture isolates target errors from full-gate failures', () => {
+  const result = runFocusedPublishedQuestionValidation(`
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "    correctOptionId: 'a',",
+      "    correctOptionId: 'missing',",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`);
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q001 correctOptionId does not match an option/);
+  assert.doesNotMatch(output, /q021 published source options does not match authored source/);
 });
 
 test('published question schema rejects nested generated true/false meta-stems', () => {
@@ -2642,6 +2680,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2679,6 +2719,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2716,6 +2758,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2767,6 +2811,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2774,7 +2820,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
+    /contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -2799,6 +2845,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2806,7 +2854,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
+    /contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -2873,6 +2921,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2910,6 +2960,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2947,6 +2999,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -2984,6 +3038,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3021,6 +3077,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3148,6 +3206,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3185,6 +3245,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3214,10 +3276,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const gerundFragmentResiduals = {",
-        "  [generatedFixtureId('q147', 1)]: { questionEn: 'Many people voting, getting involved, and learning about social issues.' },",
-        "  [generatedFixtureId('q147', 2)]: { questionEn: 'Fewer people taking part in elections.' },",
-        "  [generatedFixtureId('q149', 1)]: { questionEn: 'People with different backgrounds and economic situations living closer to one another and feeling included.' },",
-        "  [generatedFixtureId('q149', 2)]: { questionEn: 'People living completely separated by income or ethnic background.' },",
+        "  [generatedFixtureId('q147', 1)]: { questionEn: 'What is common to eating festive dinners in a democracy.' },",
+        "  [generatedFixtureId('q147', 2)]: { questionEn: 'What is common to lighting candles before an election.' },",
+        "  [generatedFixtureId('q149', 1)]: { questionEn: 'What is common to opening public meetings for everyone.' },",
+        "  [generatedFixtureId('q149', 2)]: { questionEn: 'What is common to holding votes in secret.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  gerundFragmentResiduals[question.id]",
@@ -3234,6 +3296,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3261,14 +3325,14 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const bareAnswerPhraseResiduals = {",
-        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
-        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
-        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
-        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
-        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
-        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
-        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
-        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Representera andra i kommunen.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Arbeta för endast ett parti.' },",
+        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Bo i landet med uppehållstillstånd.' },",
+        "  [generatedFixtureId('q157', 2)]: { questionEn: 'By checking information from several sources.' },",
+        "  [generatedFixtureId('q158', 1)]: { questionEn: 'Apply for Swedish citizenship.' },",
+        "  [generatedFixtureId('q158', 2)]: { questionEn: 'Leave Svenska kyrkan.' },",
+        "  [generatedFixtureId('q159', 1)]: { questionEn: 'Live in Sweden with residence rights.' },",
+        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Genom att rösta i fria val.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  bareAnswerPhraseResiduals[question.id]",
@@ -3285,6 +3349,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3320,6 +3386,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3357,6 +3425,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3403,6 +3473,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3449,6 +3521,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3495,6 +3569,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3542,6 +3618,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3665,6 +3743,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3708,6 +3788,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3751,6 +3833,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3802,6 +3886,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3852,6 +3938,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3899,6 +3987,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3930,7 +4020,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  [generatedFixtureId('q116', 2)]: { questionSv: 'Regeringsformen skyddar att staten väljer religion åt varje invånare.', questionEn: 'The Instrument of Government protects that the state chooses a religion for each resident.' },",
         "  [generatedFixtureId('q117', 2)]: { questionSv: 'Många svenskar firar id al-fitr och Newroz även om de inte ser sig som religiösa.', questionEn: 'Many Swedes celebrate Eid al-Fitr and Newroz even if they do not see themselves as religious.' },",
         "  [generatedFixtureId('q120', 1)]: { questionSv: 'Judar fick rätt att bo i landet och utöva sin religion.', questionEn: 'Jews gained the right to live in the country and practice their religion.' },",
-        "  [generatedFixtureId('q120', 2)]: { questionSv: 'Judar fick rätt att bli Sveriges största religiösa grupp.', questionEn: 'Jews gained the right to become Sweden’s largest religious group.' },",
+        "  [generatedFixtureId('q120', 2)]: { questionSv: 'Judar fick rätt att bo i landet och utöva en annan religion.', questionEn: 'Jews gained the right to live in the country and practice another religion.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  q606Residuals[question.id]",
@@ -3947,6 +4037,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -3991,6 +4083,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -4037,6 +4131,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -4064,8 +4160,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const webSocialMediaResiduals = {",
-        "  [generatedFixtureId('q153', 1)]: { questionSv: 'Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier.', questionEn: 'Anyone can create content there, and it is not always checked the same way as in other media.' },",
-        "  [generatedFixtureId('q153', 2)]: { questionSv: 'Bara ansvariga utgivare får skriva inlägg där.', questionEn: 'Only responsible publishers may write posts there.' },",
+        "  [generatedFixtureId('q153', 1)]: { questionSv: 'Webben har förändrat bara hur människor läser nyheter.', questionEn: 'The web has changed only how people read news.' },",
+        "  [generatedFixtureId('q153', 2)]: { questionSv: 'Sociala medier har förändrat bara hur innehåll sprids.', questionEn: 'Social media has changed only how content is spread.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  webSocialMediaResiduals[question.id]",
@@ -4082,6 +4178,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -4160,8 +4258,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const proportionalPartyResiduals = {",
-        "  [generatedFixtureId('q034', 1)]: { questionSv: 'I ett proportionellt val får partiet 20 procent av platserna om ett parti får 20 procent av rösterna.', questionEn: 'In a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.' },",
-        "  [generatedFixtureId('q034', 2)]: { questionSv: 'I ett proportionellt val får partiet alla platser om ett parti får 20 procent av rösterna.', questionEn: 'In a proportional election, the party receives all seats if a party receives 20 percent of the votes.' },",
+        "  [generatedFixtureId('q034', 1)]: { questionSv: 'Partiet arbetar för endast proportionella val.', questionEn: 'The party works for only proportional elections.' },",
+        "  [generatedFixtureId('q034', 2)]: { questionSv: 'Riksdagen arbetar för endast ett parti.', questionEn: 'The Riksdag works for only one party.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  proportionalPartyResiduals[question.id]",
@@ -4178,6 +4276,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -4225,6 +4325,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -4274,6 +4376,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -4308,8 +4412,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
-        "        questionSv: 'Vilket svar stämmer bäst? Var ligger Sverige?',",
-        "        questionEn: 'Which answer best matches? Where is Sweden located?',",
+        "        questionSv: 'Vilket svar är korrekt? Var ligger Sverige?',",
+        "        questionEn: 'Which answer is correct? Where is Sweden located?',",
         "      }",
         "    : question,",
         ");",
@@ -4320,6 +4424,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -4352,6 +4458,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 };
 require('./scripts/validate-content.js');
 `,
+      '--',
+      focusedPublishedQuestionSchemaArg,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
