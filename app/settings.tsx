@@ -88,10 +88,10 @@ export default function Screen() {
     return (
       <Pressable
         key={value}
-        aria-selected={language === value}
+        aria-checked={language === value}
         accessibilityLabel={copy.languageAccessibilityLabel(label)}
-        accessibilityRole="button"
-        accessibilityState={{ selected: language === value }}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: language === value }}
         hitSlop={space[1]}
         onPress={() => setLanguage(value)}
         style={({ pressed }) => [
@@ -126,7 +126,12 @@ export default function Screen() {
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.questionLanguageTitle}
         </Text>
-        <View style={styles.row}>
+        <View
+          aria-label={copy.questionLanguageTitle}
+          accessibilityLabel={copy.questionLanguageTitle}
+          accessibilityRole="radiogroup"
+          style={styles.row}
+        >
           {[
             renderLanguageButton('sv', 'Swedish', 'Svenska'),
             renderLanguageButton('en', 'English support', 'Engelskt stöd'),
@@ -163,17 +168,22 @@ export default function Screen() {
           {copy.dailyGoalTitle}
         </Text>
         <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
-        <View style={styles.row}>
+        <View
+          aria-label={copy.dailyGoalTitle}
+          accessibilityLabel={copy.dailyGoalTitle}
+          accessibilityRole="radiogroup"
+          style={styles.row}
+        >
           {[5, 10, 20, 40].map((goal) => {
             const selected = dailyGoalAnswers === goal;
 
             return (
               <Pressable
                 key={goal}
-                aria-selected={dailyGoalAnswers === goal}
+                aria-checked={dailyGoalAnswers === goal}
                 accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
-                accessibilityRole="button"
-                accessibilityState={{ selected: dailyGoalAnswers === goal }}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: dailyGoalAnswers === goal }}
                 hitSlop={space[1]}
                 onPress={() => setDailyGoalAnswers(goal)}
                 style={({ pressed }) => [

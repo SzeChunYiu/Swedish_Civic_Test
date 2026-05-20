@@ -10133,6 +10133,40 @@ function validateSettingsRouteCopyParity() {
     if (!settingsRoute.includes(snippet)) reject(message);
   });
 
+  const settingsRadiogroupCount =
+    settingsRoute.match(/accessibilityRole="radiogroup"/g)?.length || 0;
+  const settingsRadioCount = settingsRoute.match(/accessibilityRole="radio"/g)?.length || 0;
+  if (settingsRadiogroupCount !== 2) {
+    reject('settings route must expose language and daily-goal controls as radiogroups');
+  }
+  if (settingsRadioCount !== 2) {
+    reject('settings route language and daily-goal options must use radio semantics');
+  }
+  if (!settingsRoute.includes('aria-label={copy.questionLanguageTitle}')) {
+    reject('settings route language radiogroup must expose a localized group label');
+  }
+  if (!settingsRoute.includes('aria-label={copy.dailyGoalTitle}')) {
+    reject('settings route daily-goal radiogroup must expose a localized group label');
+  }
+  if (!settingsRoute.includes('aria-checked={language === value}')) {
+    reject('settings route language radios must mirror checked state to web');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: language === value }}')) {
+    reject('settings route language radios must expose checked accessibility state');
+  }
+  if (!settingsRoute.includes('aria-checked={dailyGoalAnswers === goal}')) {
+    reject('settings route daily-goal radios must mirror checked state to web');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: dailyGoalAnswers === goal }}')) {
+    reject('settings route daily-goal radios must expose checked accessibility state');
+  }
+  if (settingsRoute.includes('aria-selected={language === value}')) {
+    reject('settings route language options must not use aria-selected instead of radio checked');
+  }
+  if (settingsRoute.includes('aria-selected={dailyGoalAnswers === goal}')) {
+    reject('settings route daily-goal options must not use aria-selected instead of radio checked');
+  }
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
