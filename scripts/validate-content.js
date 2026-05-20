@@ -1555,7 +1555,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 22;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -15154,6 +15154,7 @@ function validatePurchaseTypeSchemaParity() {
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let placementCtaSource = '';
+  let premiumBannerSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -15166,6 +15167,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
       'utf8',
     );
+    premiumBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
@@ -15173,6 +15178,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
@@ -15304,7 +15310,19 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
         normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
         normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
-      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
+      'RemoveAdsPlacementCta buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
+    ],
+    [
+      normalizedPremiumBannerSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
+        normalizedPremiumBannerSource.includes('if (purchaseActionInFlightRef.current) return;') &&
+        normalizedPremiumBannerSource.includes('purchaseActionInFlightRef.current = true;') &&
+        normalizedPremiumBannerSource.includes('purchaseActionInFlightRef.current = false;'),
+      'PremiumBanner buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
+    ],
+    [
+      normalizedPremiumBannerSource.includes("busy: activeAction === 'buy'") &&
+        normalizedPremiumBannerSource.includes("busy: activeAction === 'restore'"),
+      'PremiumBanner buy/restore actions must expose busy accessibility state while store calls are in flight',
     ],
   ];
 

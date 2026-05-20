@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -121,6 +121,7 @@ export function PremiumBanner({
   const [currentEntitlements, setCurrentEntitlements] = useState(entitlements);
   const [activeAction, setActiveAction] = useState<PurchaseAction | null>(null);
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
+  const purchaseActionInFlightRef = useRef(false);
   const adsDisabled = currentEntitlements.adsDisabled;
   const updateEntitlements = useCallback(
     (nextEntitlements: PremiumEntitlements) => {
@@ -137,6 +138,9 @@ export function PremiumBanner({
   const statusMessage = getStatusMessage(adsDisabled ? 'purchased' : status, copy);
 
   async function runPurchaseAction(action: PurchaseAction) {
+    if (purchaseActionInFlightRef.current) return;
+
+    purchaseActionInFlightRef.current = true;
     setActiveAction(action);
 
     try {
@@ -150,6 +154,7 @@ export function PremiumBanner({
     } catch {
       setStatus('error');
     } finally {
+      purchaseActionInFlightRef.current = false;
       setActiveAction(null);
     }
   }
@@ -166,7 +171,10 @@ export function PremiumBanner({
           accessibilityHint={copy.buyAccessibilityHint}
           accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
           accessibilityRole="button"
-          accessibilityState={{ disabled: activeAction !== null || adsDisabled }}
+          accessibilityState={{
+            busy: activeAction === 'buy',
+            disabled: activeAction !== null || adsDisabled,
+          }}
           disabled={activeAction !== null || adsDisabled}
           onPress={() => void runPurchaseAction('buy')}
           style={styles.actionButton}
@@ -177,7 +185,7 @@ export function PremiumBanner({
           accessibilityHint={copy.restoreAccessibilityHint}
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
-          accessibilityState={{ disabled: activeAction !== null }}
+          accessibilityState={{ busy: activeAction === 'restore', disabled: activeAction !== null }}
           disabled={activeAction !== null}
           onPress={() => void runPurchaseAction('restore')}
           style={styles.actionButton}
