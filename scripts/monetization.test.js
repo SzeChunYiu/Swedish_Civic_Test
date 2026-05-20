@@ -1714,15 +1714,33 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
   const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
-  const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
-    'lib/monetization/releasePolicy.ts',
-  );
+  const { isProRuntimeScopeEnabled, isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } =
+    loadTs('lib/monetization/releasePolicy.ts');
 
   assert.equal(isReleaseMonetizationPolicyReady(), true);
+  const previousProScopeEnv = process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+  try {
+    delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+    assert.equal(isProRuntimeScopeEnabled(), false);
+    process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = 'true';
+    assert.equal(isProRuntimeScopeEnabled(), true);
+  } finally {
+    if (previousProScopeEnv === undefined) {
+      delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+    } else {
+      process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = previousProScopeEnv;
+    }
+  }
   assert.equal(releaseMonetizationPolicy.adSupportedByDefault, true);
   assert.equal(releaseMonetizationPolicy.adMobAppRecordRequired, true);
   assert.equal(releaseMonetizationPolicy.appAdsTxtReviewRequired, true);
   assert.equal(releaseMonetizationPolicy.privacyReviewRequiresBinary, true);
+  assert.equal(releaseMonetizationPolicy.proRuntimeScopeDefaultEnabled, false);
+  assert.equal(
+    releaseMonetizationPolicy.proRuntimeScopeEnvFlag,
+    'EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE',
+  );
+  assert.equal(releaseMonetizationPolicy.proRuntimeScopeOverrideGate, 'release-scope-v11');
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
