@@ -66,7 +66,7 @@
             <li>If you forget something, that's normal. The practice quiz brings it back.</li>
           </ul>
           <blockquote><p>You don't need to remember everything. You need to remember the right things. That's what we're here for.</p></blockquote>
-          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Most people who pass this way do it in three weeks, not three days.</p></div>
+          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Short, repeated sessions are easier to keep than a last-minute cram.</p></div>
         `,
         sv: `
           <h2>Vad den här boken är</h2>
@@ -481,7 +481,7 @@
             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
             <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
             <li>Have led an orderly life — no significant criminal record.</li>
-            <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
+            <li>(From 2026) Meet the applicable civic-knowledge and Swedish-language requirements, unless an exemption or another way to show the knowledge applies.</li>
           </ul>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
@@ -512,7 +512,7 @@
         en: `
           <h2>What UHR has published</h2>
           <p>UHR says the first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. The August sitting covers basic knowledge of Swedish society, while the Swedish-language part will be introduced later.</p>
-          <p>Only people who receive a letter from Migrationsverket can sign up. Registration opens in early June, seats are limited, and the August 2026 sitting is free of charge.</p>
+          <p>UHR says only people who receive a letter from Migrationsverket can sign up. Registration opens in early June, seats are limited, and the August 2026 sitting is free of charge.</p>
           <p>UHR has not yet published the exact time and place. UHR describes the August sitting as a trial test and says participants will have generous time.</p>
           <h2>How to study</h2>
           <ol>
@@ -523,7 +523,7 @@
           </ol>
           <h2>Use the mock exam</h2>
           <p>The mock exam in this app is practice only. Use it to mix topics, notice weak chapters, and rehearse careful reading without pretending to know the final UHR format.</p>
-          ${ebookFactBox('en', 'Facts to review', 'First civic-knowledge sitting: 15 August 2026 in Stockholm · Only people who receive a letter from Migrationsverket can sign up · Seats are limited · August 2026 sitting is free of charge · UHR has not yet published the exact time and place.', OFFICIAL_TEST_SOURCE_NOTES)}
+          ${ebookFactBox('en', 'Facts to review', 'First civic-knowledge sitting: 15 August 2026 in Stockholm · only people who receive a letter from Migrationsverket can sign up · Seats are limited · August 2026 sitting is free of charge · UHR has not yet published the exact time and place.', OFFICIAL_TEST_SOURCE_NOTES)}
         `,
         sv: svStudyBrief(
           [
