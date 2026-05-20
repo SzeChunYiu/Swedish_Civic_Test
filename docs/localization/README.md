@@ -19,6 +19,7 @@ copy feels written for the reader, not converted from English or Swedish.
   observations, approved micro-samples, and translation risks.
 - `sample-corpus/<lang>/sources.tsv` — machine-readable source cards for future
   sessions.
+- `sample-corpus/<lang>/style-guide.md` — mechanical-translation repairs, civic glossary, UI patterns, humor/culture rules, and word-by-word audit gates.
 
 Do not paste long copyrighted passages here. Store links, metadata, short
 micro-excerpts only when needed, and your own style observations. If a source is
@@ -33,8 +34,9 @@ few words.
    translating a new domain. Prefer official Swedish authority material in the
    target language; add community/media sources only for tone or humor, never
    for legal facts.
-4. Update `locales/<lang>/glossary.md` with sourced terminology decisions.
-5. Translate in two passes: faithful meaning first, native reader polish second.
+4. Read or create `sample-corpus/<lang>/style-guide.md` before writing app copy.
+5. Update `locales/<lang>/glossary.md` with sourced terminology decisions.
+6. Translate in two passes: faithful meaning first, native reader polish second.
 
 ## Best materials for this project
 

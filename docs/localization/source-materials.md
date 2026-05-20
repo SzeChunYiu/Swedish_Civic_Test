@@ -32,6 +32,7 @@ languages and often align page-by-page across languages.
 | `fa` Persian | Informationsverige Persian rights/obligations and religion-freedom pages. | Current repo labels this as Farsi/Dari; workers must decide whether the atom targets Iran Farsi, Dari, or neutral Persian before writing. |
 | `so` Somali | Informationsverige Somali rights/obligations, discrimination, child rights, housing pages. | Strong Swedish-official source coverage; record Somali civic terms before translating questions. |
 | `ti` Tigrinya | Informationsverige Tigrinya healthcare rights/duties and downloadable method-support PDFs. | Coverage is thinner; gather at least one rights/democracy source before UI or question translation. |
+| `tr` Turkish | Sweden Abroad Turkish migration/consular pages plus English/Swedish official civic facts. | The picker lists Turkish, but Swedish official Turkish civic-orientation coverage is limited; use Turkish pages for register and source Swedish facts separately. |
 | `ckb` Kurdish Sorani | No strong Swedish-official Sorani civic page found in this seed pass. Use Swedish/English official facts plus Sorani public-service/union material for register. | Mark facts as sourced from Swedish/English until a Sorani official Swedish source is found. |
 | `en` English | Informationsverige English, Government.se, Migrationsverket, DO, JO. | English is also the bridge language for second-pass checks. Keep it plain, not bureaucratic. |
 | `pl` Polish | If Swedish Polish pages are missing, use official Polish public-service/legal texts for register plus English/Swedish official facts. | Avoid importing Poland-specific institutions into Swedish civics. |
@@ -54,14 +55,15 @@ languages and often align page-by-page across languages.
 - Ukrainian social orientation: https://www.informationsverige.se/uk/om-sverige/samhallsorientering-om-sverige.html
 - Swedish Migration Agency citizenship for adults: https://www.migrationsverket.se/en/you-want-to-apply/swedish-citizenship/citizenship-for-adults.html
 - Swedish Migration Agency 2026 rule-change notice: https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html
+- Sweden Abroad Turkish residence-permit application process: https://www.swedenabroad.se/tr/about-sweden-non-swedish-citizens/t%C3%BCrk%C3%A7e/%C4%B0sve%C3%A7e-gitmek/isve%C3%A7te-%C3%A7al%C4%B1%C5%9Fmak-ve-ya%C5%9Famak-aile-birle%C5%9Fimi/nas%C4%B1l-ba%C5%9Fvuru-yap%C4%B1l%C4%B1r/
+- Sweden Abroad Turkish education residence pages: https://www.swedenabroad.se/tr/about-sweden-non-swedish-citizens/t%C3%BCrk%C3%A7e/%C4%B0sve%C3%A7e-gitmek/%C4%B0sve%C3%A7te-e%C4%9Fitim/
 - Länsstyrelsen human rights page: https://www.lansstyrelsen.se/english/society/social-sustainability/human-rights.html
 - Government.se How Sweden is governed: https://www.regeringen.se/other-languages/english---how-sweden-is-governed/
 - Kommunal Sorani information: https://www.kommunal.se/sorani-information-om-kommunal
 
 ## Gaps to fill next
 
-1. Dedicated `sample-corpus` pages for `ar`, `fa`, `so`, `ti`, `ckb`, `en`,
-   `pl`, `uk`, and `zh-Hant`.
+1. Dedicated source expansion for domains that are still thin, especially Turkish, Sorani, Polish, and Traditional Chinese civic facts.
 2. Native-speaker review notes, especially for humor, warmth, and error-state
    copy.
 3. Domain packs: citizenship requirements, democracy/government, rights and
