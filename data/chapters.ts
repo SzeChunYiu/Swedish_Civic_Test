@@ -62,7 +62,7 @@ export const chapters: Chapter[] = [
       'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',
     descriptionEn:
       "Human rights, gender equality, children's rights, minority rights, and discrimination.",
-    questionCount: 55,
+    questionCount: 80,
   },
   {
     id: 'ch08',
