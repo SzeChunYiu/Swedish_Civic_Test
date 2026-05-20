@@ -24,7 +24,7 @@
       title_em: { en: "We've got coffee.", sv: 'Vi har kaffe.' },
       lede: {
         en: "This is a companion, not a textbook. Read a chapter, take a quiz, take a fika. The order doesn't matter — but if you finish in order you get a feel for how Sweden's pieces fit together.",
-        sv: 'Det här är ett sällskap, inte en lärobok. Läs ett kapitel, gör ett quiz, ta en fika. Ordningen spelar mindre roll — men i ordning får du en känsla för hur Sveriges delar passar ihop.',
+        sv: 'Det här är ett sällskap, inte en lärobok. Läs ett kapitel, gör en övning, ta en fika. Ordningen spelar mindre roll — men i ordning får du en känsla för hur Sveriges delar passar ihop.',
       },
       body: {
         en: `
