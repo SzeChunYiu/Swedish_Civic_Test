@@ -18,9 +18,21 @@ function normalizeDashboardDaysBack(daysBack: number, fallback: number): number 
   return Math.min(MAX_DASHBOARD_DAYS_BACK, Math.max(1, Math.floor(daysBack)));
 }
 
-function normalizeChapterQuestionCount(questionCount: number): number {
-  if (!Number.isInteger(questionCount) || questionCount < 0) return 0;
-  return questionCount;
+function validChapterQuestionCount(questionCount: number): number {
+  return Number.isInteger(questionCount) && questionCount >= 0 ? questionCount : 0;
+}
+
+function clampRatio(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(1, Math.max(0, value));
+}
+
+function isCorrectAnswer(answer: QuizAnswer): boolean {
+  return answer.isCorrect === true;
+}
+
+function isIncorrectAnswer(answer: QuizAnswer): boolean {
+  return answer.isCorrect === false;
 }
 
 // ----------------------------------------------------------- daily activity
@@ -115,7 +127,7 @@ export function perChapterProgress(
       const bucket = perChapter.get(chapterId);
       if (!bucket) continue;
       bucket.total += 1;
-      if (answer.isCorrect === true) bucket.correct += 1;
+      if (isCorrectAnswer(answer)) bucket.correct += 1;
       bucket.questionIds.add(answer.questionId);
       if (bucket.lastAnsweredAtMs === null || answeredAtMs > bucket.lastAnsweredAtMs) {
         bucket.lastAnsweredAtMs = answeredAtMs;
@@ -126,11 +138,11 @@ export function perChapterProgress(
 
   return chapters.map((chapter) => {
     const bucket = perChapter.get(chapter.id)!;
-    const questionCount = normalizeChapterQuestionCount(chapter.questionCount);
+    const questionCount = validChapterQuestionCount(chapter.questionCount);
     return {
       chapterId: chapter.id,
       accuracy: bucket.total === 0 ? null : bucket.correct / bucket.total,
-      coverage: questionCount === 0 ? 0 : Math.min(1, bucket.questionIds.size / questionCount),
+      coverage: questionCount === 0 ? 0 : clampRatio(bucket.questionIds.size / questionCount),
       answers: bucket.total,
       uniqueQuestionsAnswered: bucket.questionIds.size,
       lastAnsweredAt: bucket.lastAnsweredAt,
@@ -213,7 +225,7 @@ export function timeOfDayPattern(
       if (!d) continue;
       const hour = d.getHours();
       buckets[hour].answers += 1;
-      if (answer.isCorrect) buckets[hour].correct += 1;
+      if (isCorrectAnswer(answer)) buckets[hour].correct += 1;
     }
   }
 
@@ -264,8 +276,8 @@ export function mistakeConvergence(
     const correctAt = new Set<string>();
     for (const { answer, answeredAtMs } of allAnswers) {
       if (answeredAtMs > cutoffMs) break;
-      if (answer.isCorrect) correctAt.add(answer.questionId);
-      else wrongAt.add(answer.questionId);
+      if (isCorrectAnswer(answer)) correctAt.add(answer.questionId);
+      if (isIncorrectAnswer(answer)) wrongAt.add(answer.questionId);
     }
     let unresolved = 0;
     for (const qid of wrongAt) if (!correctAt.has(qid)) unresolved += 1;
@@ -298,7 +310,7 @@ export function xpSparkline(
     for (const answer of session.answers) {
       const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
       if (answeredAtMs === null) continue;
-      if (!answer.isCorrect) continue;
+      if (!isCorrectAnswer(answer)) continue;
       const d = new Date(answeredAtMs);
       const key = getLocalDateKey(d);
       correctByDay.set(key, (correctByDay.get(key) ?? 0) + 1);
@@ -340,8 +352,8 @@ export function dashboardSummary(
       const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
       if (answeredAtMs === null) continue;
       if (answeredAtMs >= weekStart.getTime()) questionsThisWeek += 1;
-      if (answer.isCorrect) correctIds.add(answer.questionId);
-      else wrongIds.add(answer.questionId);
+      if (isCorrectAnswer(answer)) correctIds.add(answer.questionId);
+      if (isIncorrectAnswer(answer)) wrongIds.add(answer.questionId);
       const chapterId = questionChapterIndex[answer.questionId];
       if (chapterId) chaptersTouched.add(chapterId);
     }
