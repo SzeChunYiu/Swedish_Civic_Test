@@ -3087,22 +3087,62 @@
     "type": "true_false",
     "q": {
       "en": "Politicians in Sweden must follow the result of a referendum.",
-      "sv": "Politiker i Sverige måste följa resultatet av en folkomröstning."
+      "sv": "Politiker i Sverige måste följa resultatet av en folkomröstning.",
+      "zh-Hant": "瑞典政治人物必須遵循公投結果。",
+      "zh-Hans": "瑞典政治人物必须遵循公投结果。",
+      "ar": "يجب على السياسيين في السويد اتباع نتيجة الاستفتاء.",
+      "ckb": "سیاسەتمەداران لە سوید دەبێ ئەنجامی ڕاپرسی پەیڕەو بکەن.",
+      "fa": "سیاستمداران در سوئد باید نتیجه همه‌پرسی را دنبال کنند.",
+      "pl": "Politycy w Szwecji muszą stosować się do wyniku referendum.",
+      "so": "Siyaasiyiinta Iswiidhan waa inay raacaan natiijada aftida.",
+      "ti": "ፖለቲከኛታት ኣብ ሽወደን ውጽኢት ረፈረንደም ክኽተሉ ኣለዎም።",
+      "tr": "İsveç’te siyasetçiler referandum sonucuna uymak zorundadır.",
+      "uk": "Політики у Швеції зобов’язані дотримуватися результату референдуму."
     },
     "opts": [
       {
         "en": "True",
-        "sv": "Sant"
+        "sv": "Sant",
+        "zh-Hant": "正確",
+        "zh-Hans": "正确",
+        "ar": "صحيح",
+        "ckb": "ڕاستە",
+        "fa": "درست",
+        "pl": "Prawda",
+        "so": "Sax",
+        "ti": "ትኽክል",
+        "tr": "Doğru",
+        "uk": "Правда"
       },
       {
         "en": "False",
-        "sv": "Falskt"
+        "sv": "Falskt",
+        "zh-Hant": "錯誤",
+        "zh-Hans": "错误",
+        "ar": "خطأ",
+        "ckb": "هەڵەیە",
+        "fa": "نادرست",
+        "pl": "Fałsz",
+        "so": "Khalad",
+        "ti": "ጌጋ",
+        "tr": "Yanlış",
+        "uk": "Неправда"
       }
     ],
     "answer": 1,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
+      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet.",
+      "zh-Hant": "瑞典的公投可以在全國、區域或市鎮舉行。公投是諮詢性的，這表示政治人物不一定必須遵循結果。",
+      "zh-Hans": "瑞典的公投可以在全国、区域或市镇举行。公投是咨询性的，这表示政治人物不一定必须遵循结果。",
+      "ar": "يمكن إجراء الاستفتاءات في السويد على المستوى الوطني أو في إقليم أو بلدية. وهي استشارية، وهذا يعني أن السياسيين لا يجب عليهم بالضرورة اتباع النتيجة.",
+      "ckb": "ڕاپرسییەکان لە سوید دەتوانن لە ئاستی نیشتیمانی، هەرێم یان شارەوانی ئەنجام بدرێن. ئەوان ڕاوێژکارین، واتە سیاسەتمەداران پێویست ناکات ئەنجامەکە پەیڕەو بکەن.",
+      "fa": "همه‌پرسی‌ها در سوئد می‌توانند در سطح ملی، منطقه یا کمون برگزار شوند. آن‌ها مشورتی هستند، یعنی سیاستمداران مجبور نیستند نتیجه را دنبال کنند.",
+      "pl": "Referenda w Szwecji mogą odbywać się na poziomie krajowym, w regionie lub w gminie. Mają charakter doradczy, co oznacza, że politycy nie muszą stosować się do wyniku.",
+      "so": "Aftida Iswiidhan waxaa lagu qaban karaa heer qaran, gobol ama degmo. Waa talo-bixin, taas oo ka dhigan in siyaasiyiintu qasab ku ahayn inay raacaan natiijada.",
+      "ti": "ረፈረንደማት ኣብ ሽወደን ኣብ ሃገራዊ ደረጃ፣ ኣብ ክልል ወይ ኣብ ምምሕዳር ከባቢ ክካየዱ ይኽእሉ። ናይ ምኽሪ እዮም፣ እዚ ድማ ፖለቲከኛታት ውጽኢቱ ክኽተሉ ግድን ከምዘይኮነ ማለት እዩ።",
+      "tr": "İsveç’te referandumlar ulusal düzeyde, bir bölgede veya bir belediyede yapılabilir. Referandumlar danışma niteliğindedir; bu, siyasetçilerin sonucu takip etmek zorunda olmadığı anlamına gelir.",
+      "uk": "Референдуми у Швеції можуть проводитися на національному рівні, у регіоні або в комуні. Вони є дорадчими, тобто політики не зобов’язані дотримуватися результату."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3125,30 +3165,90 @@
     "type": "single_choice",
     "q": {
       "en": "Why do voters vote behind a screen at the polling station?",
-      "sv": "Varför röstar väljare bakom en skärm i vallokalen?"
+      "sv": "Varför röstar väljare bakom en skärm i vallokalen?",
+      "zh-Hant": "為什麼選民在投票站的屏風後投票？",
+      "zh-Hans": "为什么选民在投票站的屏风后投票？",
+      "ar": "لماذا يصوت الناخبون خلف حاجز في مركز الاقتراع؟",
+      "ckb": "بۆچی دەنگدەران لە پشتی پەردەیەک لە شوێنی دەنگدان دەنگ دەدەن؟",
+      "fa": "چرا رأی‌دهندگان در محل رأی‌گیری پشت پرده رأی می‌دهند؟",
+      "pl": "Dlaczego wyborcy głosują za zasłoną w lokalu wyborczym?",
+      "so": "Maxay codbixiyayaashu uga codeeyaan shaashad gadaasheeda goobta codbixinta?",
+      "ti": "ስለምንታይ መረጽቲ ኣብ መደበር ምርጫ ብድሕሪ መከላኸሊ ይመርጹ?",
+      "tr": "Seçmenler oy verme yerinde neden bir paravanın arkasında oy kullanır?",
+      "uk": "Чому виборці голосують за ширмою на виборчій дільниці?"
     },
     "opts": [
       {
         "en": "Because the vote is secret and no one else should see their choice",
-        "sv": "För att valet är hemligt och ingen annan ska se vilket val de gör"
+        "sv": "För att valet är hemligt och ingen annan ska se vilket val de gör",
+        "zh-Hant": "因為投票是秘密的，其他人不應看到他們的選擇",
+        "zh-Hans": "因为投票是秘密的，其他人不应看到他们的选择",
+        "ar": "لأن التصويت سري ولا ينبغي أن يرى أحد آخر اختيارهم",
+        "ckb": "چونکە دەنگدان نهێنییە و کەسی تر نابێ هەڵبژاردنیان ببینێت",
+        "fa": "زیرا رأی‌گیری مخفی است و هیچ‌کس نباید انتخاب آن‌ها را ببیند",
+        "pl": "Ponieważ głosowanie jest tajne i nikt inny nie powinien widzieć ich wyboru",
+        "so": "Sababtoo ah codbixintu waa qarsoodi, qof kalena waa inuusan arkin doorashadooda",
+        "ti": "ምኽንያቱ ምርጫ ምስጢራዊ እዩ፣ ካልእ ሰብ ምርጫኦም ክርኢ የብሉን",
+        "tr": "Oy gizli olduğu ve başka kimsenin seçimi görmemesi gerektiği için",
+        "uk": "Тому що голосування таємне, й ніхто інший не має бачити їхній вибір"
       },
       {
         "en": "So votes are counted faster",
-        "sv": "För att rösterna ska räknas snabbare"
+        "sv": "För att rösterna ska räknas snabbare",
+        "zh-Hant": "為了讓選票更快計算",
+        "zh-Hans": "为了让选票更快计算",
+        "ar": "لكي تعد الأصوات بسرعة أكبر",
+        "ckb": "بۆ ئەوەی دەنگەکان خێراتر بژمێردرێن",
+        "fa": "تا رأی‌ها سریع‌تر شمرده شوند",
+        "pl": "Aby głosy liczono szybciej",
+        "so": "Si codadka dhaqso loogu tiriyo",
+        "ti": "ድምጽታት ብፍጥነት ንኽቑጸሩ",
+        "tr": "Oylar daha hızlı sayılsın diye",
+        "uk": "Щоб голоси рахували швидше"
       },
       {
         "en": "So parties can see the choice",
-        "sv": "För att partierna ska kunna se valet"
+        "sv": "För att partierna ska kunna se valet",
+        "zh-Hant": "為了讓政黨能看到選擇",
+        "zh-Hans": "为了让政党能看到选择",
+        "ar": "لكي تتمكن الأحزاب من رؤية الاختيار",
+        "ckb": "بۆ ئەوەی پارتەکان بتوانن هەڵبژاردنەکە ببینن",
+        "fa": "تا حزب‌ها بتوانند انتخاب را ببینند",
+        "pl": "Aby partie mogły zobaczyć wybór",
+        "so": "Si xisbiyadu u arkaan doorashada",
+        "ti": "ፓርቲታት ምርጫኡ ንኽርእዩ",
+        "tr": "Partiler seçimi görebilsin diye",
+        "uk": "Щоб партії могли бачити вибір"
       },
       {
         "en": "So only some voters can vote",
-        "sv": "För att bara vissa väljare ska kunna rösta"
+        "sv": "För att bara vissa väljare ska kunna rösta",
+        "zh-Hant": "為了只有部分選民能投票",
+        "zh-Hans": "为了只有部分选民能投票",
+        "ar": "لكي يستطيع بعض الناخبين فقط التصويت",
+        "ckb": "بۆ ئەوەی تەنها هەندێک دەنگدەر بتوانن دەنگ بدەن",
+        "fa": "تا فقط برخی رأی‌دهندگان بتوانند رأی دهند",
+        "pl": "Aby tylko niektórzy wyborcy mogli głosować",
+        "so": "Si kaliya codbixiyayaal qaar u codeeyaan",
+        "ti": "ገለ መረጽቲ ጥራይ ንኽመርጹ",
+        "tr": "Sadece bazı seçmenler oy kullanabilsin diye",
+        "uk": "Щоб голосувати могли лише деякі виборці"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The vote is secret, so voters mark their choice behind a screen at the polling station. The screen prevents others from seeing the choice; faster counting, party oversight, or limiting who may vote is not the purpose.",
-      "sv": "Valet är hemligt, därför röstar alla bakom en skärm i vallokalen. Skärmen gör att ingen annan kan se vilket val väljaren gör; snabbare rösträkning, partiers insyn eller begränsad rösträtt är inte syftet."
+      "sv": "Valet är hemligt, därför röstar alla bakom en skärm i vallokalen. Skärmen gör att ingen annan kan se vilket val väljaren gör; snabbare rösträkning, partiers insyn eller begränsad rösträtt är inte syftet.",
+      "zh-Hant": "投票是秘密的，所以所有人在投票站的屏風後投票。屏風讓其他人看不到選民的選擇；更快計票、政黨查看或限制投票權都不是目的。",
+      "zh-Hans": "投票是秘密的，所以所有人在投票站的屏风后投票。屏风让其他人看不到选民的选择；更快计票、政党查看或限制投票权都不是目的。",
+      "ar": "التصويت سري، لذلك يصوت الجميع خلف حاجز في مركز الاقتراع. يمنع الحاجز الآخرين من رؤية اختيار الناخب؛ أما العد الأسرع أو اطلاع الأحزاب أو تقييد حق التصويت فليست هي الهدف.",
+      "ckb": "دەنگدان نهێنییە، بۆیە هەمووان لە پشتی پەردەیەک لە شوێنی دەنگدان دەنگ دەدەن. پەردەکە ڕێ لەوانی تر دەگرێت هەڵبژاردنی دەنگدەر ببینن؛ ژماردنی خێراتر، ئاگاداربوونی پارتەکان یان سنووردارکردنی مافی دەنگدان ئامانج نین.",
+      "fa": "رأی‌گیری مخفی است، بنابراین همه در محل رأی‌گیری پشت پرده رأی می‌دهند. پرده مانع می‌شود دیگران انتخاب رأی‌دهنده را ببینند؛ شمارش سریع‌تر، نظارت حزب‌ها یا محدود کردن حق رأی هدف نیست.",
+      "pl": "Głosowanie jest tajne, dlatego wszyscy głosują za zasłoną w lokalu wyborczym. Zasłona sprawia, że nikt inny nie widzi wyboru wyborcy; szybsze liczenie, wgląd partii lub ograniczenie prawa głosu nie są celem.",
+      "so": "Codbixintu waa qarsoodi, sidaa darteed qof walba wuxuu ka codeeyaa shaashad gadaasheeda goobta codbixinta. Shaashaddu waxay ka hortagtaa in dadka kale arkaan doorashada codbixiyaha; tirin degdeg ah, kormeer xisbi ama xaddidid xaqa codbixinta ma aha ujeeddada.",
+      "ti": "ምርጫ ምስጢራዊ እዩ፣ ስለዚ ኩሉ ሰብ ኣብ መደበር ምርጫ ብድሕሪ መከላኸሊ ይመርጽ። እቲ መከላኸሊ ካልኦት ሰባት ምርጫ መራጺ ከይርእዩ ይከላኸል፤ ቅልጡፍ ቁጽሪ፣ ምትዕዛብ ፓርቲታት ወይ ምግዳብ መሰል ምርጫ ዕላማ ኣይኮኑን።",
+      "tr": "Oy gizlidir; bu yüzden herkes oy verme yerinde bir paravanın arkasında oy kullanır. Paravan, başkalarının seçmenin tercihini görmesini engeller; daha hızlı sayım, partilerin görmesi veya oy hakkını sınırlamak amaç değildir.",
+      "uk": "Голосування таємне, тому всі голосують за ширмою на виборчій дільниці. Ширма не дає іншим бачити вибір виборця; швидший підрахунок, контроль партій або обмеження права голосу не є метою."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3171,30 +3271,90 @@
     "type": "single_choice",
     "q": {
       "en": "What do people in a political party have in common?",
-      "sv": "Vad har människor i ett politiskt parti gemensamt?"
+      "sv": "Vad har människor i ett politiskt parti gemensamt?",
+      "zh-Hant": "政治政黨中的人們有什麼共同點？",
+      "zh-Hans": "政治政党中的人们有什么共同点？",
+      "ar": "ما الشيء المشترك بين الأشخاص في حزب سياسي؟",
+      "ckb": "خەڵکی ناو پارتێکی سیاسی چییان هاوبەشە؟",
+      "fa": "افراد در یک حزب سیاسی چه چیز مشترکی دارند؟",
+      "pl": "Co mają wspólnego ludzie w partii politycznej?",
+      "so": "Maxay dadka ku jira xisbi siyaasadeed wadaagaan?",
+      "ti": "ሰባት ኣብ ፖለቲካዊ ፓርቲ እንታይ ይሓብሩ?",
+      "tr": "Bir siyasi partideki insanların ortak noktası nedir?",
+      "uk": "Що спільного мають люди в політичній партії?"
     },
     "opts": [
       {
         "en": "Shared ideas about how society should be governed",
-        "sv": "Gemensamma idéer om hur samhället ska styras"
+        "sv": "Gemensamma idéer om hur samhället ska styras",
+        "zh-Hant": "對社會應如何治理有共同想法",
+        "zh-Hans": "对社会应如何治理有共同想法",
+        "ar": "أفكار مشتركة حول كيفية حكم المجتمع",
+        "ckb": "بیرۆکەی هاوبەش دەربارەی چۆنیەتی بەڕێوەبردنی کۆمەڵگە",
+        "fa": "ایده‌های مشترک درباره اینکه جامعه چگونه باید اداره شود",
+        "pl": "Wspólne idee o tym, jak powinno być rządzone społeczeństwo",
+        "so": "Fikrado wadaag ah oo ku saabsan sida bulshada loo maamuli lahaa",
+        "ti": "ሓባራዊ ሓሳባት ብዛዕባ ሕብረተሰብ ከመይ ክመሓደር ከምዘለዎ",
+        "tr": "Toplumun nasıl yönetilmesi gerektiğine dair ortak fikirler",
+        "uk": "Спільні ідеї про те, як має керуватися суспільство"
       },
       {
         "en": "They replace the courts",
-        "sv": "De ersätter domstolarna"
+        "sv": "De ersätter domstolarna",
+        "zh-Hant": "他們取代法院",
+        "zh-Hans": "他们取代法院",
+        "ar": "إنهم يحلون محل المحاكم",
+        "ckb": "جێگای دادگاکان دەگرنەوە",
+        "fa": "آن‌ها جای دادگاه‌ها را می‌گیرند",
+        "pl": "Zastępują sądy",
+        "so": "Waxay beddelaan maxkamadaha",
+        "ti": "ንቤት ፍርዲ ይትክኡ",
+        "tr": "Mahkemelerin yerini alırlar",
+        "uk": "Вони замінюють суди"
       },
       {
         "en": "They handle passports and national ID cards",
-        "sv": "De ansvarar för pass och nationella id-kort"
+        "sv": "De ansvarar för pass och nationella id-kort",
+        "zh-Hant": "他們負責護照和國民身分證",
+        "zh-Hans": "他们负责护照和国民身份证",
+        "ar": "إنهم مسؤولون عن جوازات السفر وبطاقات الهوية الوطنية",
+        "ckb": "بەرپرسی پاسپۆرت و ناسنامەی نیشتیمانین",
+        "fa": "آن‌ها مسئول گذرنامه و کارت شناسایی ملی هستند",
+        "pl": "Zajmują się paszportami i krajowymi dowodami tożsamości",
+        "so": "Waxay qaabilsan yihiin baasaboorrada iyo kaararka aqoonsiga qaranka",
+        "ti": "ንፓስፖርትን ሃገራዊ መንነት ካርድን ሓላፍነት ይወስዱ",
+        "tr": "Pasaportlar ve ulusal kimlik kartlarıyla ilgilenirler",
+        "uk": "Вони відповідають за паспорти й національні ID-картки"
       },
       {
         "en": "They directly decide all wages",
-        "sv": "De bestämmer alla löner direkt"
+        "sv": "De bestämmer alla löner direkt",
+        "zh-Hant": "他們直接決定所有工資",
+        "zh-Hans": "他们直接决定所有工资",
+        "ar": "إنهم يقررون كل الأجور مباشرة",
+        "ckb": "هەموو مووچەکان ڕاستەوخۆ دیاری دەکەن",
+        "fa": "آن‌ها همه دستمزدها را مستقیم تعیین می‌کنند",
+        "pl": "Bezpośrednio decydują o wszystkich wynagrodzeniach",
+        "so": "Waxay si toos ah u go’aamiyaan dhammaan mushaharrada",
+        "ti": "ኩሉ ደሞዝ ብቐጥታ ይውስኑ",
+        "tr": "Tüm ücretleri doğrudan belirlerler",
+        "uk": "Вони безпосередньо визначають усі зарплати"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Political parties bring together people with shared ideas about how society should be governed. They propose solutions, promote issues, and give voters different alternatives; they do not replace courts, passport authorities, or wage bargaining.",
-      "sv": "Politiska partier samlar människor med gemensamma idéer om hur samhället ska styras. De föreslår lösningar, driver frågor och ger väljare olika alternativ; de ersätter inte domstolar, passmyndigheter eller löneförhandlingar."
+      "sv": "Politiska partier samlar människor med gemensamma idéer om hur samhället ska styras. De föreslår lösningar, driver frågor och ger väljare olika alternativ; de ersätter inte domstolar, passmyndigheter eller löneförhandlingar.",
+      "zh-Hant": "政治政黨聚集了對社會應如何治理有共同想法的人。他們提出解決方案、推動議題，並讓選民有不同選擇；他們不取代法院、護照機關或工資談判。",
+      "zh-Hans": "政治政党聚集了对社会应如何治理有共同想法的人。他们提出解决方案、推动议题，并让选民有不同选择；他们不取代法院、护照机关或工资谈判。",
+      "ar": "تجمع الأحزاب السياسية أشخاصًا لديهم أفكار مشتركة حول كيفية حكم المجتمع. فهي تقترح حلولًا وتدفع قضايا وتمنح الناخبين بدائل مختلفة؛ ولا تحل محل المحاكم أو سلطات الجوازات أو مفاوضات الأجور.",
+      "ckb": "پارتە سیاسییەکان ئەو خەڵکانە کۆدەکەنەوە کە بیرۆکەی هاوبەشیان هەیە دەربارەی چۆنیەتی بەڕێوەبردنی کۆمەڵگە. ئەوان چارەسەر پێشنیار دەکەن، پرسەکان دەبەنە پێش و هەڵبژاردەی جیاواز بە دەنگدەران دەدەن؛ جێگای دادگا، دامەزراوەی پاسپۆرت یان دانوستانی مووچە ناگرنەوە.",
+      "fa": "حزب‌های سیاسی افرادی را با ایده‌های مشترک درباره چگونگی اداره جامعه گرد هم می‌آورند. آن‌ها راه‌حل پیشنهاد می‌کنند، موضوع‌ها را پیش می‌برند و به رأی‌دهندگان گزینه‌های متفاوت می‌دهند؛ جای دادگاه‌ها، اداره‌های گذرنامه یا مذاکرات دستمزد را نمی‌گیرند.",
+      "pl": "Partie polityczne skupiają ludzi ze wspólnymi ideami o tym, jak powinno być rządzone społeczeństwo. Proponują rozwiązania, prowadzą sprawy i dają wyborcom różne alternatywy; nie zastępują sądów, urzędów paszportowych ani negocjacji płacowych.",
+      "so": "Xisbiyada siyaasadeed waxay isu keenaan dad leh fikrado wadaag ah oo ku saabsan sida bulshada loo maamuli lahaa. Waxay soo jeediyaan xalal, waxay riixaan arrimo, waxayna codbixiyayaasha siiyaan ikhtiyaarro kala duwan; ma beddelaan maxkamadaha, hay’adaha baasaboorka ama wada-xaajoodyada mushaharka.",
+      "ti": "ፖለቲካዊ ፓርቲታት ብዛዕባ ሕብረተሰብ ከመይ ክመሓደር ከምዘለዎ ሓባራዊ ሓሳባት ዘለዎም ሰባት ይእክቡ። መፍትሒታት ይቕርቡ፣ ጉዳያት ይደፍኡ፣ ንመረጽቲ ድማ ተፈላለዩ ምርጫታት ይህቡ፤ ንቤት ፍርዲ፣ ትካላት ፓስፖርት ወይ ድርድር ደሞዝ ኣይትክኡን።",
+      "tr": "Siyasi partiler, toplumun nasıl yönetilmesi gerektiğine dair ortak fikirlere sahip insanları bir araya getirir. Çözümler önerir, konuları savunur ve seçmenlere farklı alternatifler sunarlar; mahkemelerin, pasaport makamlarının veya ücret görüşmelerinin yerini almazlar.",
+      "uk": "Політичні партії об’єднують людей зі спільними ідеями про те, як має керуватися суспільство. Вони пропонують рішення, просувають питання й дають виборцям різні варіанти; вони не замінюють суди, паспортні органи чи переговори про зарплати."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3217,30 +3377,90 @@
     "type": "single_choice",
     "q": {
       "en": "What happens in a proportional election if a party receives 20 percent of the votes?",
-      "sv": "Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?"
+      "sv": "Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?",
+      "zh-Hant": "在比例選舉中，如果一個政黨獲得 20% 的選票，會發生什麼？",
+      "zh-Hans": "在比例选举中，如果一个政党获得 20% 的选票，会发生什么？",
+      "ar": "ماذا يحدث في انتخابات نسبية إذا حصل حزب على 20 في المئة من الأصوات؟",
+      "ckb": "لە هەڵبژاردنی ڕێژەییدا ئەگەر پارتێک ٢٠ لە سەدی دەنگەکان وەربگرێت چی دەبێت؟",
+      "fa": "در انتخابات تناسبی اگر یک حزب ۲۰ درصد رأی‌ها را بگیرد چه می‌شود؟",
+      "pl": "Co dzieje się w wyborach proporcjonalnych, jeśli partia otrzyma 20 procent głosów?",
+      "so": "Maxaa dhaca doorasho saami-qaybsi ah haddii xisbi helo 20 boqolkiiba codadka?",
+      "ti": "ኣብ ምርጫ ብመጠን ውክልና፣ ፓርቲ 20 ሚእታዊት ድምጺ እንተረኺቡ እንታይ ይኸውን?",
+      "tr": "Bir parti orantılı seçimde oyların yüzde 20’sini alırsa ne olur?",
+      "uk": "Що відбувається на пропорційних виборах, якщо партія отримує 20 відсотків голосів?"
     },
     "opts": [
       {
         "en": "The party receives 20 percent of the seats",
-        "sv": "Partiet får 20 procent av platserna"
+        "sv": "Partiet får 20 procent av platserna",
+        "zh-Hant": "該政黨獲得 20% 的席位",
+        "zh-Hans": "该政党获得 20% 的席位",
+        "ar": "يحصل الحزب على 20 في المئة من المقاعد",
+        "ckb": "پارتەکە ٢٠ لە سەدی کورسییەکان وەردەگرێت",
+        "fa": "آن حزب ۲۰ درصد کرسی‌ها را می‌گیرد",
+        "pl": "Partia otrzymuje 20 procent mandatów",
+        "so": "Xisbigu wuxuu helaa 20 boqolkiiba kuraasta",
+        "ti": "ፓርቲ 20 ሚእታዊት መናብር ይረክብ",
+        "tr": "Parti sandalyelerin yüzde 20’sini alır",
+        "uk": "Партія отримує 20 відсотків місць"
       },
       {
         "en": "The party receives all seats",
-        "sv": "Partiet får alla platser"
+        "sv": "Partiet får alla platser",
+        "zh-Hant": "該政黨獲得所有席位",
+        "zh-Hans": "该政党获得所有席位",
+        "ar": "يحصل الحزب على كل المقاعد",
+        "ckb": "پارتەکە هەموو کورسییەکان وەردەگرێت",
+        "fa": "آن حزب همه کرسی‌ها را می‌گیرد",
+        "pl": "Partia otrzymuje wszystkie mandaty",
+        "so": "Xisbigu wuxuu helaa dhammaan kuraasta",
+        "ti": "ፓርቲ ኩሉ መናብር ይረክብ",
+        "tr": "Parti tüm sandalyeleri alır",
+        "uk": "Партія отримує всі місця"
       },
       {
         "en": "The party receives no seats regardless of vote share",
-        "sv": "Partiet får inga platser oavsett röstandel"
+        "sv": "Partiet får inga platser oavsett röstandel",
+        "zh-Hant": "無論得票比例如何，該政黨都沒有席位",
+        "zh-Hans": "无论得票比例如何，该政党都没有席位",
+        "ar": "لا يحصل الحزب على أي مقعد مهما كانت حصته من الأصوات",
+        "ckb": "پارتەکە هیچ کورسییەک وەرناگرێت هەرچەند ڕێژەی دەنگەکانی چۆن بێت",
+        "fa": "آن حزب بدون توجه به سهم رأی‌ها هیچ کرسی نمی‌گیرد",
+        "pl": "Partia nie otrzymuje żadnych mandatów niezależnie od udziału głosów",
+        "so": "Xisbigu ma helo wax kursi ah iyadoo aan loo eegin saamiga codadka",
+        "ti": "ፓርቲ ድርሻ ድምጺ ዝኾነ ይኹን መንበር ኣይረክብን",
+        "tr": "Parti oy payı ne olursa olsun sandalye alamaz",
+        "uk": "Партія не отримує жодного місця незалежно від частки голосів"
       },
       {
         "en": "The party receives seats only if the government approves it",
-        "sv": "Partiet får platser först om regeringen godkänner det"
+        "sv": "Partiet får platser först om regeringen godkänner det",
+        "zh-Hant": "只有政府批准時，該政黨才獲得席位",
+        "zh-Hans": "只有政府批准时，该政党才获得席位",
+        "ar": "يحصل الحزب على مقاعد فقط إذا وافقت الحكومة",
+        "ckb": "پارتەکە تەنها ئەگەر حکومەت پەسەندی بکات کورسی وەردەگرێت",
+        "fa": "آن حزب فقط اگر دولت تأیید کند کرسی می‌گیرد",
+        "pl": "Partia otrzymuje mandaty tylko wtedy, gdy rząd to zatwierdzi",
+        "so": "Xisbigu wuxuu kuraas helaa oo keliya haddii dowladdu oggolaato",
+        "ti": "ፓርቲ መናብር ዝረክብ መንግስቲ እንተፈቒዱ ጥራይ እዩ",
+        "tr": "Parti yalnızca hükümet onaylarsa sandalye alır",
+        "uk": "Партія отримує місця лише якщо це схвалить уряд"
       }
     ],
     "answer": 0,
     "why": {
       "en": "In proportional elections, parties receive seats based on their share of the votes. If a party receives twenty percent of the votes, it receives twenty percent of the seats; the alternatives about all seats, no seats, or government approval are therefore incorrect.",
-      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Om ett parti får tjugo procent av rösterna får det tjugo procent av platserna; därför är alternativen med alla platser, inga platser eller krav på regeringens godkännande fel."
+      "sv": "I proportionella val får partier platser utifrån sin andel av rösterna. Om ett parti får tjugo procent av rösterna får det tjugo procent av platserna; därför är alternativen med alla platser, inga platser eller krav på regeringens godkännande fel.",
+      "zh-Hant": "在比例選舉中，政黨依照得票比例獲得席位。如果一個政黨獲得 20% 的選票，就獲得 20% 的席位；所有席位、沒有席位或需要政府批准的說法都不正確。",
+      "zh-Hans": "在比例选举中，政党依照得票比例获得席位。如果一个政党获得 20% 的选票，就获得 20% 的席位；所有席位、没有席位或需要政府批准的说法都不正确。",
+      "ar": "في الانتخابات النسبية تحصل الأحزاب على مقاعد بناءً على حصتها من الأصوات. إذا حصل حزب على عشرين في المئة من الأصوات فإنه يحصل على عشرين في المئة من المقاعد؛ أما كل المقاعد أو لا مقاعد أو شرط موافقة الحكومة فهي بدائل غير صحيحة.",
+      "ckb": "لە هەڵبژاردنی ڕێژەییدا پارتەکان بە پێی بەشیان لە دەنگەکان کورسی وەردەگرن. ئەگەر پارتێک بیست لە سەدی دەنگەکان وەربگرێت، بیست لە سەدی کورسییەکان وەردەگرێت؛ هەموو کورسییەکان، هیچ کورسییەک یان پێویستی بە پەسەندی حکومەت ڕاست نین.",
+      "fa": "در انتخابات تناسبی، حزب‌ها بر اساس سهمشان از رأی‌ها کرسی می‌گیرند. اگر حزبی بیست درصد رأی‌ها را بگیرد، بیست درصد کرسی‌ها را می‌گیرد؛ گزینه‌های همه کرسی‌ها، هیچ کرسی یا نیاز به تأیید دولت درست نیستند.",
+      "pl": "W wyborach proporcjonalnych partie otrzymują mandaty według swojego udziału w głosach. Jeśli partia otrzyma dwadzieścia procent głosów, otrzyma dwadzieścia procent mandatów; odpowiedzi o wszystkich mandatach, braku mandatów lub zgodzie rządu są niepoprawne.",
+      "so": "Doorashooyinka saami-qaybsiga ah, xisbiyadu waxay kuraas ku helaan saamiga codadka ay heleen. Haddii xisbi helo labaatan boqolkiiba codadka, wuxuu helaa labaatan boqolkiiba kuraasta; dhammaan kuraasta, kursi la’aan ama oggolaansho dowladda sax ma aha.",
+      "ti": "ኣብ ምርጫታት ብመጠን ውክልና፣ ፓርቲታት ብመሰረት ድርሻ ድምጺ መናብር ይረኽቡ። ፓርቲ 20 ሚእታዊት ድምጺ እንተረኺቡ፣ 20 ሚእታዊት መናብር ይረክብ፤ ኩሉ መናብር፣ ምንም መንበር ዘይምርካብ ወይ ፍቓድ መንግስቲ ዘድሊ ምርጫታት ትኽክል ኣይኮኑን።",
+      "tr": "Orantılı seçimlerde partiler oy paylarına göre sandalye alır. Bir parti oyların yüzde yirmisini alırsa sandalyelerin yüzde yirmisini alır; tüm sandalyeler, hiç sandalye yok veya hükümet onayı gerekir seçenekleri doğru değildir.",
+      "uk": "На пропорційних виборах партії отримують місця відповідно до своєї частки голосів. Якщо партія отримує двадцять відсотків голосів, вона отримує двадцять відсотків місць; варіанти про всі місця, жодні місця або схвалення уряду неправильні."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3263,30 +3483,90 @@
     "type": "single_choice",
     "q": {
       "en": "What minimum share of votes must a party receive to enter the Riksdag?",
-      "sv": "Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?"
+      "sv": "Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?",
+      "zh-Hant": "政黨至少需要獲得多少比例的選票才能進入國會？",
+      "zh-Hans": "政党至少需要获得多少比例的选票才能进入国会？",
+      "ar": "ما الحد الأدنى من نسبة الأصوات التي يجب أن يحصل عليها حزب لدخول البرلمان السويدي؟",
+      "ckb": "پارتێک دەبێ بە لانی کەم چەند ڕێژەی دەنگەکان وەربگرێت بۆ ئەوەی بچێتە ڕیکسداگ؟",
+      "fa": "یک حزب برای ورود به ریکسداگ باید حداقل چه سهمی از رأی‌ها را بگیرد؟",
+      "pl": "Jaki minimalny udział głosów musi otrzymać partia, aby wejść do Riksdagu?",
+      "so": "Saamiga ugu yar ee codadka ee xisbi u baahan yahay si uu Riksdag-ka u galo waa intee?",
+      "ti": "ፓርቲ ናብ ሪክስዳግ ንምእታው ብውሕዱ ክንደይ ድርሻ ድምጺ ክረክብ ኣለዎ?",
+      "tr": "Bir partinin Riksdag’a girmek için en az ne kadar oy payı alması gerekir?",
+      "uk": "Яку мінімальну частку голосів має отримати партія, щоб потрапити до Риксдагу?"
     },
     "opts": [
       {
         "en": "At least 4 percent of the votes",
-        "sv": "Minst 4 procent av rösterna"
+        "sv": "Minst 4 procent av rösterna",
+        "zh-Hant": "至少 4% 的選票",
+        "zh-Hans": "至少 4% 的选票",
+        "ar": "ما لا يقل عن 4 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٤ لە سەدی دەنگەکان",
+        "fa": "حداقل ۴ درصد رأی‌ها",
+        "pl": "Co najmniej 4 procent głosów",
+        "so": "Ugu yaraan 4 boqolkiiba codadka",
+        "ti": "ብውሕዱ 4 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 4’ü",
+        "uk": "Щонайменше 4 відсотки голосів"
       },
       {
         "en": "At least 1 percent of the votes",
-        "sv": "Minst 1 procent av rösterna"
+        "sv": "Minst 1 procent av rösterna",
+        "zh-Hant": "至少 1% 的選票",
+        "zh-Hans": "至少 1% 的选票",
+        "ar": "ما لا يقل عن 1 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ١ لە سەدی دەنگەکان",
+        "fa": "حداقل ۱ درصد رأی‌ها",
+        "pl": "Co najmniej 1 procent głosów",
+        "so": "Ugu yaraan 1 boqolkiiba codadka",
+        "ti": "ብውሕዱ 1 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 1’i",
+        "uk": "Щонайменше 1 відсоток голосів"
       },
       {
         "en": "At least 20 percent of the votes",
-        "sv": "Minst 20 procent av rösterna"
+        "sv": "Minst 20 procent av rösterna",
+        "zh-Hant": "至少 20% 的選票",
+        "zh-Hans": "至少 20% 的选票",
+        "ar": "ما لا يقل عن 20 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٢٠ لە سەدی دەنگەکان",
+        "fa": "حداقل ۲۰ درصد رأی‌ها",
+        "pl": "Co najmniej 20 procent głosów",
+        "so": "Ugu yaraan 20 boqolkiiba codadka",
+        "ti": "ብውሕዱ 20 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 20’si",
+        "uk": "Щонайменше 20 відсотків голосів"
       },
       {
         "en": "At least 50 percent of the votes",
-        "sv": "Minst 50 procent av rösterna"
+        "sv": "Minst 50 procent av rösterna",
+        "zh-Hant": "至少 50% 的選票",
+        "zh-Hans": "至少 50% 的选票",
+        "ar": "ما لا يقل عن 50 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٥٠ لە سەدی دەنگەکان",
+        "fa": "حداقل ۵۰ درصد رأی‌ها",
+        "pl": "Co najmniej 50 procent głosów",
+        "so": "Ugu yaraan 50 boqolkiiba codadka",
+        "ti": "ብውሕዱ 50 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 50’si",
+        "uk": "Щонайменше 50 відсотків голосів"
       }
     ],
     "answer": 0,
     "why": {
       "en": "A party must receive at least four percent of the votes in the election to enter the Riksdag. The four-percent rule exists to prevent too many parties from entering, because that would make stable majorities harder to form.",
-      "sv": "Ett parti måste få minst fyra procent av rösterna i valet för att komma in i riksdagen. Fyrprocentsregeln finns för att hindra att för många partier kommer in, eftersom det skulle göra stabila majoriteter svårare att skapa."
+      "sv": "Ett parti måste få minst fyra procent av rösterna i valet för att komma in i riksdagen. Fyrprocentsregeln finns för att hindra att för många partier kommer in, eftersom det skulle göra stabila majoriteter svårare att skapa.",
+      "zh-Hant": "政黨必須在選舉中獲得至少 4% 的選票才能進入國會。4% 規則是為了避免太多政黨進入，因為那會讓穩定多數更難形成。",
+      "zh-Hans": "政党必须在选举中获得至少 4% 的选票才能进入国会。4% 规则是为了避免太多政党进入，因为那会让稳定多数更难形成。",
+      "ar": "يجب أن يحصل الحزب على ما لا يقل عن أربعة في المئة من الأصوات في الانتخابات لدخول البرلمان. توجد قاعدة الأربعة في المئة لمنع دخول عدد كبير جدًا من الأحزاب، لأن ذلك سيجعل تكوين أغلبيات مستقرة أصعب.",
+      "ckb": "پارتێک دەبێ لە هەڵبژاردندا بە لانی کەم چوار لە سەدی دەنگەکان وەربگرێت بۆ ئەوەی بچێتە ڕیکسداگ. یاسای چوار لە سەد بۆ ئەوەیە زۆر پارت نەچنە ناوەوە، چونکە ئەوە دروستکردنی زۆرینەی جێگیر قورستر دەکات.",
+      "fa": "یک حزب باید در انتخابات حداقل چهار درصد رأی‌ها را به دست آورد تا وارد ریکسداگ شود. قاعده چهار درصد برای جلوگیری از ورود حزب‌های بیش از حد زیاد است، چون این کار تشکیل اکثریت‌های پایدار را دشوارتر می‌کند.",
+      "pl": "Partia musi otrzymać co najmniej cztery procent głosów w wyborach, aby wejść do Riksdagu. Reguła czterech procent istnieje, aby zapobiec wejściu zbyt wielu partii, ponieważ utrudniałoby to tworzenie stabilnych większości.",
+      "so": "Xisbi waa inuu doorashada ka helo ugu yaraan afar boqolkiiba codadka si uu Riksdag-ka u galo. Xeerka afarta boqolkiiba wuxuu jiraa si looga hortago in xisbiyo aad u badan galaan, sababtoo ah taasi waxay adkayn lahayd samaynta aqlabiyad deggan.",
+      "ti": "ፓርቲ ናብ ሪክስዳግ ንምእታው ኣብ ምርጫ ብውሕዱ ኣርባዕተ ሚእታዊት ድምጺ ክረክብ ኣለዎ። ሕጊ ኣርባዕተ ሚእታዊት ብዙሓት ፓርቲታት ከይኣትዉ ንምክልኻል እዩ፣ ምኽንያቱ እዚ ጽኑዕ ብዝሒ ንምፍጣር ዝያዳ ከቢድ ይገብሮ።",
+      "tr": "Bir partinin Riksdag’a girebilmesi için seçimde oyların en az yüzde dördünü alması gerekir. Yüzde dört kuralı, çok fazla partinin girmesini önlemek içindir; çünkü bu, istikrarlı çoğunluklar oluşturmayı zorlaştırır.",
+      "uk": "Партія має отримати на виборах щонайменше чотири відсотки голосів, щоб потрапити до Риксдагу. Правило чотирьох відсотків існує, щоб не допустити входження надто багатьох партій, адже це ускладнило б формування стабільних більшостей."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17060,19 +17340,59 @@
     "opts": [
       {
         "en": "Because the vote is secret and no one else should see their choice",
-        "sv": "För att valet är hemligt och ingen annan ska se vilket val de gör"
+        "sv": "För att valet är hemligt och ingen annan ska se vilket val de gör",
+        "zh-Hant": "因為投票是秘密的，其他人不應看到他們的選擇",
+        "zh-Hans": "因为投票是秘密的，其他人不应看到他们的选择",
+        "ar": "لأن التصويت سري ولا ينبغي أن يرى أحد آخر اختيارهم",
+        "ckb": "چونکە دەنگدان نهێنییە و کەسی تر نابێ هەڵبژاردنیان ببینێت",
+        "fa": "زیرا رأی‌گیری مخفی است و هیچ‌کس نباید انتخاب آن‌ها را ببیند",
+        "pl": "Ponieważ głosowanie jest tajne i nikt inny nie powinien widzieć ich wyboru",
+        "so": "Sababtoo ah codbixintu waa qarsoodi, qof kalena waa inuusan arkin doorashadooda",
+        "ti": "ምኽንያቱ ምርጫ ምስጢራዊ እዩ፣ ካልእ ሰብ ምርጫኦም ክርኢ የብሉን",
+        "tr": "Oy gizli olduğu ve başka kimsenin seçimi görmemesi gerektiği için",
+        "uk": "Тому що голосування таємне, й ніхто інший не має бачити їхній вибір"
       },
       {
         "en": "So votes are counted faster",
-        "sv": "För att rösterna ska räknas snabbare"
+        "sv": "För att rösterna ska räknas snabbare",
+        "zh-Hant": "為了讓選票更快計算",
+        "zh-Hans": "为了让选票更快计算",
+        "ar": "لكي تعد الأصوات بسرعة أكبر",
+        "ckb": "بۆ ئەوەی دەنگەکان خێراتر بژمێردرێن",
+        "fa": "تا رأی‌ها سریع‌تر شمرده شوند",
+        "pl": "Aby głosy liczono szybciej",
+        "so": "Si codadka dhaqso loogu tiriyo",
+        "ti": "ድምጽታት ብፍጥነት ንኽቑጸሩ",
+        "tr": "Oylar daha hızlı sayılsın diye",
+        "uk": "Щоб голоси рахували швидше"
       },
       {
         "en": "So parties can see the choice",
-        "sv": "För att partierna ska kunna se valet"
+        "sv": "För att partierna ska kunna se valet",
+        "zh-Hant": "為了讓政黨能看到選擇",
+        "zh-Hans": "为了让政党能看到选择",
+        "ar": "لكي تتمكن الأحزاب من رؤية الاختيار",
+        "ckb": "بۆ ئەوەی پارتەکان بتوانن هەڵبژاردنەکە ببینن",
+        "fa": "تا حزب‌ها بتوانند انتخاب را ببینند",
+        "pl": "Aby partie mogły zobaczyć wybór",
+        "so": "Si xisbiyadu u arkaan doorashada",
+        "ti": "ፓርቲታት ምርጫኡ ንኽርእዩ",
+        "tr": "Partiler seçimi görebilsin diye",
+        "uk": "Щоб партії могли бачити вибір"
       },
       {
         "en": "So only some voters can vote",
-        "sv": "För att bara vissa väljare ska kunna rösta"
+        "sv": "För att bara vissa väljare ska kunna rösta",
+        "zh-Hant": "為了只有部分選民能投票",
+        "zh-Hans": "为了只有部分选民能投票",
+        "ar": "لكي يستطيع بعض الناخبين فقط التصويت",
+        "ckb": "بۆ ئەوەی تەنها هەندێک دەنگدەر بتوانن دەنگ بدەن",
+        "fa": "تا فقط برخی رأی‌دهندگان بتوانند رأی دهند",
+        "pl": "Aby tylko niektórzy wyborcy mogli głosować",
+        "so": "Si kaliya codbixiyayaal qaar u codeeyaan",
+        "ti": "ገለ መረጽቲ ጥራይ ንኽመርጹ",
+        "tr": "Sadece bazı seçmenler oy kullanabilsin diye",
+        "uk": "Щоб голосувати могли лише деякі виборці"
       }
     ],
     "answer": 0,
@@ -17188,19 +17508,59 @@
     "opts": [
       {
         "en": "Because the vote is secret and no one else should see their choice",
-        "sv": "För att valet är hemligt och ingen annan ska se vilket val de gör"
+        "sv": "För att valet är hemligt och ingen annan ska se vilket val de gör",
+        "zh-Hant": "因為投票是秘密的，其他人不應看到他們的選擇",
+        "zh-Hans": "因为投票是秘密的，其他人不应看到他们的选择",
+        "ar": "لأن التصويت سري ولا ينبغي أن يرى أحد آخر اختيارهم",
+        "ckb": "چونکە دەنگدان نهێنییە و کەسی تر نابێ هەڵبژاردنیان ببینێت",
+        "fa": "زیرا رأی‌گیری مخفی است و هیچ‌کس نباید انتخاب آن‌ها را ببیند",
+        "pl": "Ponieważ głosowanie jest tajne i nikt inny nie powinien widzieć ich wyboru",
+        "so": "Sababtoo ah codbixintu waa qarsoodi, qof kalena waa inuusan arkin doorashadooda",
+        "ti": "ምኽንያቱ ምርጫ ምስጢራዊ እዩ፣ ካልእ ሰብ ምርጫኦም ክርኢ የብሉን",
+        "tr": "Oy gizli olduğu ve başka kimsenin seçimi görmemesi gerektiği için",
+        "uk": "Тому що голосування таємне, й ніхто інший не має бачити їхній вибір"
       },
       {
         "en": "So votes are counted faster",
-        "sv": "För att rösterna ska räknas snabbare"
+        "sv": "För att rösterna ska räknas snabbare",
+        "zh-Hant": "為了讓選票更快計算",
+        "zh-Hans": "为了让选票更快计算",
+        "ar": "لكي تعد الأصوات بسرعة أكبر",
+        "ckb": "بۆ ئەوەی دەنگەکان خێراتر بژمێردرێن",
+        "fa": "تا رأی‌ها سریع‌تر شمرده شوند",
+        "pl": "Aby głosy liczono szybciej",
+        "so": "Si codadka dhaqso loogu tiriyo",
+        "ti": "ድምጽታት ብፍጥነት ንኽቑጸሩ",
+        "tr": "Oylar daha hızlı sayılsın diye",
+        "uk": "Щоб голоси рахували швидше"
       },
       {
         "en": "So parties can see the choice",
-        "sv": "För att partierna ska kunna se valet"
+        "sv": "För att partierna ska kunna se valet",
+        "zh-Hant": "為了讓政黨能看到選擇",
+        "zh-Hans": "为了让政党能看到选择",
+        "ar": "لكي تتمكن الأحزاب من رؤية الاختيار",
+        "ckb": "بۆ ئەوەی پارتەکان بتوانن هەڵبژاردنەکە ببینن",
+        "fa": "تا حزب‌ها بتوانند انتخاب را ببینند",
+        "pl": "Aby partie mogły zobaczyć wybór",
+        "so": "Si xisbiyadu u arkaan doorashada",
+        "ti": "ፓርቲታት ምርጫኡ ንኽርእዩ",
+        "tr": "Partiler seçimi görebilsin diye",
+        "uk": "Щоб партії могли бачити вибір"
       },
       {
         "en": "So only some voters can vote",
-        "sv": "För att bara vissa väljare ska kunna rösta"
+        "sv": "För att bara vissa väljare ska kunna rösta",
+        "zh-Hant": "為了只有部分選民能投票",
+        "zh-Hans": "为了只有部分选民能投票",
+        "ar": "لكي يستطيع بعض الناخبين فقط التصويت",
+        "ckb": "بۆ ئەوەی تەنها هەندێک دەنگدەر بتوانن دەنگ بدەن",
+        "fa": "تا فقط برخی رأی‌دهندگان بتوانند رأی دهند",
+        "pl": "Aby tylko niektórzy wyborcy mogli głosować",
+        "so": "Si kaliya codbixiyayaal qaar u codeeyaan",
+        "ti": "ገለ መረጽቲ ጥራይ ንኽመርጹ",
+        "tr": "Sadece bazı seçmenler oy kullanabilsin diye",
+        "uk": "Щоб голосувати могли лише деякі виборці"
       }
     ],
     "answer": 0,
@@ -17236,19 +17596,59 @@
     "opts": [
       {
         "en": "Shared ideas about how society should be governed",
-        "sv": "Gemensamma idéer om hur samhället ska styras"
+        "sv": "Gemensamma idéer om hur samhället ska styras",
+        "zh-Hant": "對社會應如何治理有共同想法",
+        "zh-Hans": "对社会应如何治理有共同想法",
+        "ar": "أفكار مشتركة حول كيفية حكم المجتمع",
+        "ckb": "بیرۆکەی هاوبەش دەربارەی چۆنیەتی بەڕێوەبردنی کۆمەڵگە",
+        "fa": "ایده‌های مشترک درباره اینکه جامعه چگونه باید اداره شود",
+        "pl": "Wspólne idee o tym, jak powinno być rządzone społeczeństwo",
+        "so": "Fikrado wadaag ah oo ku saabsan sida bulshada loo maamuli lahaa",
+        "ti": "ሓባራዊ ሓሳባት ብዛዕባ ሕብረተሰብ ከመይ ክመሓደር ከምዘለዎ",
+        "tr": "Toplumun nasıl yönetilmesi gerektiğine dair ortak fikirler",
+        "uk": "Спільні ідеї про те, як має керуватися суспільство"
       },
       {
         "en": "They replace the courts",
-        "sv": "De ersätter domstolarna"
+        "sv": "De ersätter domstolarna",
+        "zh-Hant": "他們取代法院",
+        "zh-Hans": "他们取代法院",
+        "ar": "إنهم يحلون محل المحاكم",
+        "ckb": "جێگای دادگاکان دەگرنەوە",
+        "fa": "آن‌ها جای دادگاه‌ها را می‌گیرند",
+        "pl": "Zastępują sądy",
+        "so": "Waxay beddelaan maxkamadaha",
+        "ti": "ንቤት ፍርዲ ይትክኡ",
+        "tr": "Mahkemelerin yerini alırlar",
+        "uk": "Вони замінюють суди"
       },
       {
         "en": "They handle passports and national ID cards",
-        "sv": "De ansvarar för pass och nationella id-kort"
+        "sv": "De ansvarar för pass och nationella id-kort",
+        "zh-Hant": "他們負責護照和國民身分證",
+        "zh-Hans": "他们负责护照和国民身份证",
+        "ar": "إنهم مسؤولون عن جوازات السفر وبطاقات الهوية الوطنية",
+        "ckb": "بەرپرسی پاسپۆرت و ناسنامەی نیشتیمانین",
+        "fa": "آن‌ها مسئول گذرنامه و کارت شناسایی ملی هستند",
+        "pl": "Zajmują się paszportami i krajowymi dowodami tożsamości",
+        "so": "Waxay qaabilsan yihiin baasaboorrada iyo kaararka aqoonsiga qaranka",
+        "ti": "ንፓስፖርትን ሃገራዊ መንነት ካርድን ሓላፍነት ይወስዱ",
+        "tr": "Pasaportlar ve ulusal kimlik kartlarıyla ilgilenirler",
+        "uk": "Вони відповідають за паспорти й національні ID-картки"
       },
       {
         "en": "They directly decide all wages",
-        "sv": "De bestämmer alla löner direkt"
+        "sv": "De bestämmer alla löner direkt",
+        "zh-Hant": "他們直接決定所有工資",
+        "zh-Hans": "他们直接决定所有工资",
+        "ar": "إنهم يقررون كل الأجور مباشرة",
+        "ckb": "هەموو مووچەکان ڕاستەوخۆ دیاری دەکەن",
+        "fa": "آن‌ها همه دستمزدها را مستقیم تعیین می‌کنند",
+        "pl": "Bezpośrednio decydują o wszystkich wynagrodzeniach",
+        "so": "Waxay si toos ah u go’aamiyaan dhammaan mushaharrada",
+        "ti": "ኩሉ ደሞዝ ብቐጥታ ይውስኑ",
+        "tr": "Tüm ücretleri doğrudan belirlerler",
+        "uk": "Вони безпосередньо визначають усі зарплати"
       }
     ],
     "answer": 0,
@@ -17364,19 +17764,59 @@
     "opts": [
       {
         "en": "Shared ideas about how society should be governed",
-        "sv": "Gemensamma idéer om hur samhället ska styras"
+        "sv": "Gemensamma idéer om hur samhället ska styras",
+        "zh-Hant": "對社會應如何治理有共同想法",
+        "zh-Hans": "对社会应如何治理有共同想法",
+        "ar": "أفكار مشتركة حول كيفية حكم المجتمع",
+        "ckb": "بیرۆکەی هاوبەش دەربارەی چۆنیەتی بەڕێوەبردنی کۆمەڵگە",
+        "fa": "ایده‌های مشترک درباره اینکه جامعه چگونه باید اداره شود",
+        "pl": "Wspólne idee o tym, jak powinno być rządzone społeczeństwo",
+        "so": "Fikrado wadaag ah oo ku saabsan sida bulshada loo maamuli lahaa",
+        "ti": "ሓባራዊ ሓሳባት ብዛዕባ ሕብረተሰብ ከመይ ክመሓደር ከምዘለዎ",
+        "tr": "Toplumun nasıl yönetilmesi gerektiğine dair ortak fikirler",
+        "uk": "Спільні ідеї про те, як має керуватися суспільство"
       },
       {
         "en": "They replace the courts",
-        "sv": "De ersätter domstolarna"
+        "sv": "De ersätter domstolarna",
+        "zh-Hant": "他們取代法院",
+        "zh-Hans": "他们取代法院",
+        "ar": "إنهم يحلون محل المحاكم",
+        "ckb": "جێگای دادگاکان دەگرنەوە",
+        "fa": "آن‌ها جای دادگاه‌ها را می‌گیرند",
+        "pl": "Zastępują sądy",
+        "so": "Waxay beddelaan maxkamadaha",
+        "ti": "ንቤት ፍርዲ ይትክኡ",
+        "tr": "Mahkemelerin yerini alırlar",
+        "uk": "Вони замінюють суди"
       },
       {
         "en": "They handle passports and national ID cards",
-        "sv": "De ansvarar för pass och nationella id-kort"
+        "sv": "De ansvarar för pass och nationella id-kort",
+        "zh-Hant": "他們負責護照和國民身分證",
+        "zh-Hans": "他们负责护照和国民身份证",
+        "ar": "إنهم مسؤولون عن جوازات السفر وبطاقات الهوية الوطنية",
+        "ckb": "بەرپرسی پاسپۆرت و ناسنامەی نیشتیمانین",
+        "fa": "آن‌ها مسئول گذرنامه و کارت شناسایی ملی هستند",
+        "pl": "Zajmują się paszportami i krajowymi dowodami tożsamości",
+        "so": "Waxay qaabilsan yihiin baasaboorrada iyo kaararka aqoonsiga qaranka",
+        "ti": "ንፓስፖርትን ሃገራዊ መንነት ካርድን ሓላፍነት ይወስዱ",
+        "tr": "Pasaportlar ve ulusal kimlik kartlarıyla ilgilenirler",
+        "uk": "Вони відповідають за паспорти й національні ID-картки"
       },
       {
         "en": "They directly decide all wages",
-        "sv": "De bestämmer alla löner direkt"
+        "sv": "De bestämmer alla löner direkt",
+        "zh-Hant": "他們直接決定所有工資",
+        "zh-Hans": "他们直接决定所有工资",
+        "ar": "إنهم يقررون كل الأجور مباشرة",
+        "ckb": "هەموو مووچەکان ڕاستەوخۆ دیاری دەکەن",
+        "fa": "آن‌ها همه دستمزدها را مستقیم تعیین می‌کنند",
+        "pl": "Bezpośrednio decydują o wszystkich wynagrodzeniach",
+        "so": "Waxay si toos ah u go’aamiyaan dhammaan mushaharrada",
+        "ti": "ኩሉ ደሞዝ ብቐጥታ ይውስኑ",
+        "tr": "Tüm ücretleri doğrudan belirlerler",
+        "uk": "Вони безпосередньо визначають усі зарплати"
       }
     ],
     "answer": 0,
@@ -17412,19 +17852,59 @@
     "opts": [
       {
         "en": "The party receives 20 percent of the seats",
-        "sv": "Partiet får 20 procent av platserna"
+        "sv": "Partiet får 20 procent av platserna",
+        "zh-Hant": "該政黨獲得 20% 的席位",
+        "zh-Hans": "该政党获得 20% 的席位",
+        "ar": "يحصل الحزب على 20 في المئة من المقاعد",
+        "ckb": "پارتەکە ٢٠ لە سەدی کورسییەکان وەردەگرێت",
+        "fa": "آن حزب ۲۰ درصد کرسی‌ها را می‌گیرد",
+        "pl": "Partia otrzymuje 20 procent mandatów",
+        "so": "Xisbigu wuxuu helaa 20 boqolkiiba kuraasta",
+        "ti": "ፓርቲ 20 ሚእታዊት መናብር ይረክብ",
+        "tr": "Parti sandalyelerin yüzde 20’sini alır",
+        "uk": "Партія отримує 20 відсотків місць"
       },
       {
         "en": "The party receives all seats",
-        "sv": "Partiet får alla platser"
+        "sv": "Partiet får alla platser",
+        "zh-Hant": "該政黨獲得所有席位",
+        "zh-Hans": "该政党获得所有席位",
+        "ar": "يحصل الحزب على كل المقاعد",
+        "ckb": "پارتەکە هەموو کورسییەکان وەردەگرێت",
+        "fa": "آن حزب همه کرسی‌ها را می‌گیرد",
+        "pl": "Partia otrzymuje wszystkie mandaty",
+        "so": "Xisbigu wuxuu helaa dhammaan kuraasta",
+        "ti": "ፓርቲ ኩሉ መናብር ይረክብ",
+        "tr": "Parti tüm sandalyeleri alır",
+        "uk": "Партія отримує всі місця"
       },
       {
         "en": "The party receives no seats regardless of vote share",
-        "sv": "Partiet får inga platser oavsett röstandel"
+        "sv": "Partiet får inga platser oavsett röstandel",
+        "zh-Hant": "無論得票比例如何，該政黨都沒有席位",
+        "zh-Hans": "无论得票比例如何，该政党都没有席位",
+        "ar": "لا يحصل الحزب على أي مقعد مهما كانت حصته من الأصوات",
+        "ckb": "پارتەکە هیچ کورسییەک وەرناگرێت هەرچەند ڕێژەی دەنگەکانی چۆن بێت",
+        "fa": "آن حزب بدون توجه به سهم رأی‌ها هیچ کرسی نمی‌گیرد",
+        "pl": "Partia nie otrzymuje żadnych mandatów niezależnie od udziału głosów",
+        "so": "Xisbigu ma helo wax kursi ah iyadoo aan loo eegin saamiga codadka",
+        "ti": "ፓርቲ ድርሻ ድምጺ ዝኾነ ይኹን መንበር ኣይረክብን",
+        "tr": "Parti oy payı ne olursa olsun sandalye alamaz",
+        "uk": "Партія не отримує жодного місця незалежно від частки голосів"
       },
       {
         "en": "The party receives seats only if the government approves it",
-        "sv": "Partiet får platser först om regeringen godkänner det"
+        "sv": "Partiet får platser först om regeringen godkänner det",
+        "zh-Hant": "只有政府批准時，該政黨才獲得席位",
+        "zh-Hans": "只有政府批准时，该政党才获得席位",
+        "ar": "يحصل الحزب على مقاعد فقط إذا وافقت الحكومة",
+        "ckb": "پارتەکە تەنها ئەگەر حکومەت پەسەندی بکات کورسی وەردەگرێت",
+        "fa": "آن حزب فقط اگر دولت تأیید کند کرسی می‌گیرد",
+        "pl": "Partia otrzymuje mandaty tylko wtedy, gdy rząd to zatwierdzi",
+        "so": "Xisbigu wuxuu kuraas helaa oo keliya haddii dowladdu oggolaato",
+        "ti": "ፓርቲ መናብር ዝረክብ መንግስቲ እንተፈቒዱ ጥራይ እዩ",
+        "tr": "Parti yalnızca hükümet onaylarsa sandalye alır",
+        "uk": "Партія отримує місця лише якщо це схвалить уряд"
       }
     ],
     "answer": 0,
@@ -17540,19 +18020,59 @@
     "opts": [
       {
         "en": "The party receives 20 percent of the seats",
-        "sv": "Partiet får 20 procent av platserna"
+        "sv": "Partiet får 20 procent av platserna",
+        "zh-Hant": "該政黨獲得 20% 的席位",
+        "zh-Hans": "该政党获得 20% 的席位",
+        "ar": "يحصل الحزب على 20 في المئة من المقاعد",
+        "ckb": "پارتەکە ٢٠ لە سەدی کورسییەکان وەردەگرێت",
+        "fa": "آن حزب ۲۰ درصد کرسی‌ها را می‌گیرد",
+        "pl": "Partia otrzymuje 20 procent mandatów",
+        "so": "Xisbigu wuxuu helaa 20 boqolkiiba kuraasta",
+        "ti": "ፓርቲ 20 ሚእታዊት መናብር ይረክብ",
+        "tr": "Parti sandalyelerin yüzde 20’sini alır",
+        "uk": "Партія отримує 20 відсотків місць"
       },
       {
         "en": "The party receives all seats",
-        "sv": "Partiet får alla platser"
+        "sv": "Partiet får alla platser",
+        "zh-Hant": "該政黨獲得所有席位",
+        "zh-Hans": "该政党获得所有席位",
+        "ar": "يحصل الحزب على كل المقاعد",
+        "ckb": "پارتەکە هەموو کورسییەکان وەردەگرێت",
+        "fa": "آن حزب همه کرسی‌ها را می‌گیرد",
+        "pl": "Partia otrzymuje wszystkie mandaty",
+        "so": "Xisbigu wuxuu helaa dhammaan kuraasta",
+        "ti": "ፓርቲ ኩሉ መናብር ይረክብ",
+        "tr": "Parti tüm sandalyeleri alır",
+        "uk": "Партія отримує всі місця"
       },
       {
         "en": "The party receives no seats regardless of vote share",
-        "sv": "Partiet får inga platser oavsett röstandel"
+        "sv": "Partiet får inga platser oavsett röstandel",
+        "zh-Hant": "無論得票比例如何，該政黨都沒有席位",
+        "zh-Hans": "无论得票比例如何，该政党都没有席位",
+        "ar": "لا يحصل الحزب على أي مقعد مهما كانت حصته من الأصوات",
+        "ckb": "پارتەکە هیچ کورسییەک وەرناگرێت هەرچەند ڕێژەی دەنگەکانی چۆن بێت",
+        "fa": "آن حزب بدون توجه به سهم رأی‌ها هیچ کرسی نمی‌گیرد",
+        "pl": "Partia nie otrzymuje żadnych mandatów niezależnie od udziału głosów",
+        "so": "Xisbigu ma helo wax kursi ah iyadoo aan loo eegin saamiga codadka",
+        "ti": "ፓርቲ ድርሻ ድምጺ ዝኾነ ይኹን መንበር ኣይረክብን",
+        "tr": "Parti oy payı ne olursa olsun sandalye alamaz",
+        "uk": "Партія не отримує жодного місця незалежно від частки голосів"
       },
       {
         "en": "The party receives seats only if the government approves it",
-        "sv": "Partiet får platser först om regeringen godkänner det"
+        "sv": "Partiet får platser först om regeringen godkänner det",
+        "zh-Hant": "只有政府批准時，該政黨才獲得席位",
+        "zh-Hans": "只有政府批准时，该政党才获得席位",
+        "ar": "يحصل الحزب على مقاعد فقط إذا وافقت الحكومة",
+        "ckb": "پارتەکە تەنها ئەگەر حکومەت پەسەندی بکات کورسی وەردەگرێت",
+        "fa": "آن حزب فقط اگر دولت تأیید کند کرسی می‌گیرد",
+        "pl": "Partia otrzymuje mandaty tylko wtedy, gdy rząd to zatwierdzi",
+        "so": "Xisbigu wuxuu kuraas helaa oo keliya haddii dowladdu oggolaato",
+        "ti": "ፓርቲ መናብር ዝረክብ መንግስቲ እንተፈቒዱ ጥራይ እዩ",
+        "tr": "Parti yalnızca hükümet onaylarsa sandalye alır",
+        "uk": "Партія отримує місця лише якщо це схвалить уряд"
       }
     ],
     "answer": 0,
@@ -17588,19 +18108,59 @@
     "opts": [
       {
         "en": "At least 4 percent of the votes",
-        "sv": "Minst 4 procent av rösterna"
+        "sv": "Minst 4 procent av rösterna",
+        "zh-Hant": "至少 4% 的選票",
+        "zh-Hans": "至少 4% 的选票",
+        "ar": "ما لا يقل عن 4 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٤ لە سەدی دەنگەکان",
+        "fa": "حداقل ۴ درصد رأی‌ها",
+        "pl": "Co najmniej 4 procent głosów",
+        "so": "Ugu yaraan 4 boqolkiiba codadka",
+        "ti": "ብውሕዱ 4 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 4’ü",
+        "uk": "Щонайменше 4 відсотки голосів"
       },
       {
         "en": "At least 1 percent of the votes",
-        "sv": "Minst 1 procent av rösterna"
+        "sv": "Minst 1 procent av rösterna",
+        "zh-Hant": "至少 1% 的選票",
+        "zh-Hans": "至少 1% 的选票",
+        "ar": "ما لا يقل عن 1 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ١ لە سەدی دەنگەکان",
+        "fa": "حداقل ۱ درصد رأی‌ها",
+        "pl": "Co najmniej 1 procent głosów",
+        "so": "Ugu yaraan 1 boqolkiiba codadka",
+        "ti": "ብውሕዱ 1 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 1’i",
+        "uk": "Щонайменше 1 відсоток голосів"
       },
       {
         "en": "At least 20 percent of the votes",
-        "sv": "Minst 20 procent av rösterna"
+        "sv": "Minst 20 procent av rösterna",
+        "zh-Hant": "至少 20% 的選票",
+        "zh-Hans": "至少 20% 的选票",
+        "ar": "ما لا يقل عن 20 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٢٠ لە سەدی دەنگەکان",
+        "fa": "حداقل ۲۰ درصد رأی‌ها",
+        "pl": "Co najmniej 20 procent głosów",
+        "so": "Ugu yaraan 20 boqolkiiba codadka",
+        "ti": "ብውሕዱ 20 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 20’si",
+        "uk": "Щонайменше 20 відсотків голосів"
       },
       {
         "en": "At least 50 percent of the votes",
-        "sv": "Minst 50 procent av rösterna"
+        "sv": "Minst 50 procent av rösterna",
+        "zh-Hant": "至少 50% 的選票",
+        "zh-Hans": "至少 50% 的选票",
+        "ar": "ما لا يقل عن 50 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٥٠ لە سەدی دەنگەکان",
+        "fa": "حداقل ۵۰ درصد رأی‌ها",
+        "pl": "Co najmniej 50 procent głosów",
+        "so": "Ugu yaraan 50 boqolkiiba codadka",
+        "ti": "ብውሕዱ 50 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 50’si",
+        "uk": "Щонайменше 50 відсотків голосів"
       }
     ],
     "answer": 0,
@@ -17716,19 +18276,59 @@
     "opts": [
       {
         "en": "At least 4 percent of the votes",
-        "sv": "Minst 4 procent av rösterna"
+        "sv": "Minst 4 procent av rösterna",
+        "zh-Hant": "至少 4% 的選票",
+        "zh-Hans": "至少 4% 的选票",
+        "ar": "ما لا يقل عن 4 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٤ لە سەدی دەنگەکان",
+        "fa": "حداقل ۴ درصد رأی‌ها",
+        "pl": "Co najmniej 4 procent głosów",
+        "so": "Ugu yaraan 4 boqolkiiba codadka",
+        "ti": "ብውሕዱ 4 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 4’ü",
+        "uk": "Щонайменше 4 відсотки голосів"
       },
       {
         "en": "At least 1 percent of the votes",
-        "sv": "Minst 1 procent av rösterna"
+        "sv": "Minst 1 procent av rösterna",
+        "zh-Hant": "至少 1% 的選票",
+        "zh-Hans": "至少 1% 的选票",
+        "ar": "ما لا يقل عن 1 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ١ لە سەدی دەنگەکان",
+        "fa": "حداقل ۱ درصد رأی‌ها",
+        "pl": "Co najmniej 1 procent głosów",
+        "so": "Ugu yaraan 1 boqolkiiba codadka",
+        "ti": "ብውሕዱ 1 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 1’i",
+        "uk": "Щонайменше 1 відсоток голосів"
       },
       {
         "en": "At least 20 percent of the votes",
-        "sv": "Minst 20 procent av rösterna"
+        "sv": "Minst 20 procent av rösterna",
+        "zh-Hant": "至少 20% 的選票",
+        "zh-Hans": "至少 20% 的选票",
+        "ar": "ما لا يقل عن 20 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٢٠ لە سەدی دەنگەکان",
+        "fa": "حداقل ۲۰ درصد رأی‌ها",
+        "pl": "Co najmniej 20 procent głosów",
+        "so": "Ugu yaraan 20 boqolkiiba codadka",
+        "ti": "ብውሕዱ 20 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 20’si",
+        "uk": "Щонайменше 20 відсотків голосів"
       },
       {
         "en": "At least 50 percent of the votes",
-        "sv": "Minst 50 procent av rösterna"
+        "sv": "Minst 50 procent av rösterna",
+        "zh-Hant": "至少 50% 的選票",
+        "zh-Hans": "至少 50% 的选票",
+        "ar": "ما لا يقل عن 50 في المئة من الأصوات",
+        "ckb": "بە لانی کەم ٥٠ لە سەدی دەنگەکان",
+        "fa": "حداقل ۵۰ درصد رأی‌ها",
+        "pl": "Co najmniej 50 procent głosów",
+        "so": "Ugu yaraan 50 boqolkiiba codadka",
+        "ti": "ብውሕዱ 50 ሚእታዊት ድምጺ",
+        "tr": "Oyların en az yüzde 50’si",
+        "uk": "Щонайменше 50 відсотків голосів"
       }
     ],
     "answer": 0,
