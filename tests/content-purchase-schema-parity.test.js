@@ -37,6 +37,8 @@ test('purchase TypeScript schema stays in parity with validator expectations', (
     purchaseSource,
     /restorePurchases\(productIds: readonly string\[\]\): Promise<RemoveAdsPurchaseRecord\[\]>;/,
   );
+  assert.match(purchaseSource, /iapModule\?: NativeIapModule;/);
+  assert.match(purchaseSource, /platform\?: RemoveAdsStorePlatform;/);
 });
 
 test('purchase schema parity rejects result optionality drift', () => {

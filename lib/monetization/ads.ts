@@ -2,7 +2,9 @@ import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types
 import type { AdConsentDecision } from './consent';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
-export type AdRuntimePlatform = 'ios' | 'android' | 'web' | string;
+
+type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
+type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 type AdUnitEnvKeys = Record<AdPlacement, { android: string; ios: string }>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;

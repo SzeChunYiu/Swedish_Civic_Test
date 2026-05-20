@@ -20,7 +20,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 42);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 36);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
@@ -32,20 +32,8 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /<ScreenShell eyebrow=\{copy\.eyebrow\} title=\{copy\.title\}/);
   assert.match(source, /<MetricCard label=\{copy\.levelMetric\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
-  assert.match(
-    source,
-    /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
-  );
-  assert.match(
-    source,
-    /const audioBadge = audioEnabled \? copy\.audioEnabledBadge : copy\.audioMutedBadge;/,
-  );
-  assert.match(source, /<Badge tone=\{audioEnabled \? 'green' : 'warm'\}>\{audioBadge\}<\/Badge>/);
-  assert.match(source, /accessibilityHint=\{copy\.openSettingsHint\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
-  assert.match(source, /Justera mål, språk och ljud/);
-  assert.match(source, /Adjust goal, language, and audio/);
 });
 
 test('profile route copy parity rejects bypassing the settings language', () => {

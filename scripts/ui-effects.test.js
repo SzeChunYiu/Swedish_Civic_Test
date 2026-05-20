@@ -881,6 +881,37 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('remove-ads placement CTA stays adjacent, localized, and entitlement-gated', () => {
+  const source = read('components/monetization/RemoveAdsPlacementCta.tsx');
+  const learnSource = read('app/(tabs)/learn.tsx');
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const mistakesSource = read('app/(tabs)/mistakes.tsx');
+
+  assert.match(
+    source,
+    /const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy>/,
+  );
+  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(source, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(source, /!entitlementsReady \|\| !shouldShowAd\(placement, resolvedEntitlements\)/);
+  assert.match(source, /href="\/profile"/);
+  assert.match(source, /Öppna Ta bort annonser/);
+  assert.match(source, /Open Remove Ads/);
+  assert.match(
+    learnSource,
+    /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>\s*<AdBanner placement="chapter_list_banner" \/>/,
+  );
+  assert.match(
+    practiceSource,
+    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>\s*<AdBanner placement="quiz_completed_interstitial" \/>/,
+  );
+  assert.match(
+    mistakesSource,
+    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
+  );
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('profile shell copy follows Swedish and English settings language', () => {
   const source = read('app/(tabs)/profile.tsx');
 
@@ -910,14 +941,14 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Ljud av/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
-  assert.match(source, /Justera mål, språk och ljud/);
+  assert.match(source, /Öppna inställningar/);
   assert.match(source, /Första övningen/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
   assert.match(source, /Audio on/);
   assert.match(source, /Audio off/);
   assert.match(source, /No badges yet/);
-  assert.match(source, /Adjust goal, language, and audio/);
+  assert.match(source, /Open settings/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

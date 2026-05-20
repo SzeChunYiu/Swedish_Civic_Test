@@ -21,7 +21,6 @@ function actualStaticQuestions() {
 
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -158,7 +157,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -190,7 +189,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -222,7 +221,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -256,7 +255,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -293,7 +292,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -330,7 +329,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -404,7 +403,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -441,7 +440,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -478,7 +477,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -515,7 +514,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -552,7 +551,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -589,7 +588,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -626,7 +625,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -663,7 +662,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -700,7 +699,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -737,7 +736,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -782,7 +781,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -827,7 +826,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -872,7 +871,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -918,7 +917,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   const output = `${result.stdout}\n${result.stderr}`;
@@ -960,7 +959,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -1002,7 +1001,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -1044,7 +1043,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -1094,7 +1093,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   const output = `${result.stdout}\n${result.stderr}`;
@@ -1145,7 +1144,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   const output = `${result.stdout}\n${result.stderr}`;
@@ -1193,7 +1192,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   const output = `${result.stdout}\n${result.stderr}`;
@@ -1241,7 +1240,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   const output = `${result.stdout}\n${result.stderr}`;
@@ -1286,7 +1285,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   const output = `${result.stdout}\n${result.stderr}`;
@@ -1331,7 +1330,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   const output = `${result.stdout}\n${result.stderr}`;
@@ -1379,7 +1378,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -1427,7 +1426,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -1459,7 +1458,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);

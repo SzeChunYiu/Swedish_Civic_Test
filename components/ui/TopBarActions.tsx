@@ -27,13 +27,6 @@ type TopBarActionLinkProps = {
   href: Href;
 };
 
-type TopBarAudioSwitchProps = {
-  accessibilityLabel: string;
-  audioEnabled: boolean;
-  iconSize: number;
-  onToggle: () => void;
-};
-
 const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
   sv: {
     audioEnabled: 'Ljud är på, tryck för att stänga av',
@@ -70,12 +63,16 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
   return (
     <View style={styles.row}>
       <LanguagePicker />
-      <TopBarAudioSwitch
+      <Pressable
+        accessibilityRole="switch"
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
-        audioEnabled={audioEnabled}
-        iconSize={iconSize}
-        onToggle={() => setAudioEnabled(!audioEnabled)}
-      />
+        accessibilityState={{ checked: audioEnabled }}
+        hitSlop={space[1]}
+        onPress={() => setAudioEnabled(!audioEnabled)}
+        style={({ pressed }) => [styles.iconButton, pressed ? styles.iconButtonPressed : null]}
+      >
+        <AudioIcon size={iconSize} muted={!audioEnabled} />
+      </Pressable>
       <TopBarActionLink href="/search" accessibilityLabel={copy.search}>
         <SearchIcon size={iconSize} />
       </TopBarActionLink>
@@ -86,47 +83,6 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
         <SettingsIcon size={iconSize} />
       </TopBarActionLink>
     </View>
-  );
-}
-
-function TopBarAudioSwitch({
-  accessibilityLabel,
-  audioEnabled,
-  iconSize,
-  onToggle,
-}: TopBarAudioSwitchProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
-
-  return (
-    <Pressable
-      aria-checked={audioEnabled}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="switch"
-      accessibilityState={{ checked: audioEnabled }}
-      hitSlop={space[1]}
-      onBlur={() => {
-        setIsFocused(false);
-        setIsPressed(false);
-      }}
-      onFocus={() => setIsFocused(true)}
-      onHoverIn={() => setIsHovered(true)}
-      onHoverOut={() => {
-        setIsHovered(false);
-        setIsPressed(false);
-      }}
-      onPress={onToggle}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
-      style={[
-        styles.iconButton,
-        isFocused || isHovered ? styles.iconButtonHover : null,
-        isPressed ? styles.iconButtonPressed : null,
-      ]}
-    >
-      <AudioIcon size={iconSize} muted={!audioEnabled} />
-    </Pressable>
   );
 }
 
@@ -180,10 +136,6 @@ const styles = StyleSheet.create({
     minHeight: space[6],
     minWidth: space[6],
     width: space[6],
-  },
-  iconButtonHover: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.hoverScale }],
   },
   iconButtonPressed: {
     backgroundColor: colors.focusSoft,

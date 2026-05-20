@@ -132,6 +132,15 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoStaleEbookCopy(source);
 });
 
+test('static ebook chapter 11 uses current citizenship requirement metadata', () => {
+  const source = readSiteFile('site/ebook.js');
+
+  for (const requiredText of citizenshipCurrentnessRequiredTexts) {
+    assert.match(source, new RegExp(requiredText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  assertNoStaleCitizenshipRequirementCopy(source);
+});
+
 test('static ebook does not promise source-backed footnotes without citation coverage', () => {
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 

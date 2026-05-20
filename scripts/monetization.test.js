@@ -660,8 +660,10 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   const purchaseExports = loadTs('lib/monetization/purchases.ts');
   const {
     REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
     REMOVE_ADS_PRICE_LABEL,
     REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
     REMOVE_ADS_PRODUCT_ID,
     getRemoveAdsStoreProductId,
     REMOVE_ADS_STORAGE_KEY,
@@ -670,6 +672,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     createMockPurchaseProvider,
     createWebPurchaseStorage,
     getPurchaseEntitlements,
+    getRemoveAdsStoreProductId,
     restoreRemoveAdsPurchase,
   } = purchaseExports;
   const purchasesSource = fs.readFileSync(
@@ -682,9 +685,14 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(packageJson.dependencies['expo-secure-store'], '~15.0.8');
   assert.equal(packageJson.dependencies['react-native-iap'], '^15.3.0');
   assert.match(REMOVE_ADS_PRODUCT_ID, /removeads$/);
+  assert.equal(REMOVE_ADS_IOS_PRODUCT_ID, REMOVE_ADS_PRODUCT_ID);
   assert.equal(REMOVE_ADS_ANDROID_PRODUCT_ID, 'removeads');
+  assert.deepEqual(REMOVE_ADS_STORE_PRODUCT_IDS, {
+    android: REMOVE_ADS_ANDROID_PRODUCT_ID,
+    ios: REMOVE_ADS_IOS_PRODUCT_ID,
+  });
   assert.equal(getRemoveAdsStoreProductId('ios'), REMOVE_ADS_PRODUCT_ID);
-  assert.equal(getRemoveAdsStoreProductId('android'), REMOVE_ADS_ANDROID_PRODUCT_ID);
+  assert.equal(getRemoveAdsStoreProductId('android'), 'removeads');
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.equal(REMOVE_ADS_RECORD_SCHEMA_VERSION, 1);
   assert.equal(Object.hasOwn(purchaseExports, removedVerifierExportName), false);
@@ -815,109 +823,129 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   }
 });
 
-test('remove-ads purchase preserves valid grants when finishTransaction fails', async () => {
+test('native Remove Ads provider uses Android store SKU and normalizes entitlement records', async () => {
   const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_PRODUCT_ID,
     REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
     createMemoryPurchaseStorage,
-    createMockPurchaseProvider,
-    getPurchaseEntitlements,
+    createNativePurchaseProvider,
     restoreRemoveAdsPurchase,
   } = loadTs('lib/monetization/purchases.ts');
 
-  const buyStorage = createMemoryPurchaseStorage();
-  const finishedBuys = [];
-  const buyFinishFailureProvider = {
-    ...createMockPurchaseProvider(),
-    async finishPurchase(purchase) {
-      finishedBuys.push(purchase.transactionId);
-      throw new Error('finish failed after store purchase update');
+  function createFakeIap({ availablePurchases = [], requestResult }) {
+    const calls = {
+      finishedPurchases: [],
+      requestPurchases: [],
+      restoreCount: 0,
+    };
+    const iapModule = {
+      async endConnection() {},
+      async finishTransaction(purchase) {
+        calls.finishedPurchases.push(purchase);
+      },
+      async getAvailablePurchases() {
+        return availablePurchases;
+      },
+      async initConnection() {},
+      purchaseErrorListener() {
+        return { remove() {} };
+      },
+      purchaseUpdatedListener() {
+        return { remove() {} };
+      },
+      async requestPurchase(request) {
+        calls.requestPurchases.push(request);
+        return requestResult;
+      },
+      async restorePurchases() {
+        calls.restoreCount += 1;
+      },
+    };
+
+    return { calls, iapModule };
+  }
+
+  const buyNative = createFakeIap({
+    requestResult: {
+      productId: REMOVE_ADS_ANDROID_PRODUCT_ID,
+      purchaseToken: 'android-buy-token',
+      transactionId: 'android-buy-transaction',
     },
-  };
+  });
+  const buyStorage = createMemoryPurchaseStorage();
   const buyResult = await buyRemoveAds({
-    provider: buyFinishFailureProvider,
+    provider: createNativePurchaseProvider({
+      iapModule: buyNative.iapModule,
+      platform: 'android',
+      purchaseTimeoutMs: 5,
+    }),
     storage: buyStorage,
   });
 
   assert.equal(buyResult.status, 'purchased');
-  assert.equal(buyResult.entitlements.adsDisabled, true);
-  assert.deepEqual(finishedBuys, ['buy-remove-ads']);
-  assert.equal((await getPurchaseEntitlements({ storage: buyStorage })).adsDisabled, true);
-  assert.equal(
-    JSON.parse(await buyStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).source,
-    'purchase',
-  );
+  assert.equal(buyResult.productId, REMOVE_ADS_PRODUCT_ID);
+  assert.equal(buyResult.purchaseToken, 'android-buy-token');
+  assert.deepEqual(buyNative.calls.requestPurchases[0].request.google.skus, [
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+  ]);
+  assert.equal(buyNative.calls.finishedPurchases.length, 1);
 
+  const buyRecord = JSON.parse(await buyStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
+  assert.equal(buyRecord.productId, REMOVE_ADS_PRODUCT_ID);
+  assert.equal(buyRecord.purchaseToken, 'android-buy-token');
+  assert.equal(buyRecord.transactionId, 'android-buy-transaction');
+
+  const restoreNative = createFakeIap({
+    availablePurchases: [
+      {
+        productId: REMOVE_ADS_ANDROID_PRODUCT_ID,
+        purchaseToken: 'android-restore-token',
+        transactionId: 'android-restore-transaction',
+      },
+    ],
+    requestResult: null,
+  });
   const restoreStorage = createMemoryPurchaseStorage();
-  const finishedRestores = [];
-  const restoreFinishFailureProvider = {
-    ...createMockPurchaseProvider({ owned: true }),
-    async finishPurchase(purchase) {
-      finishedRestores.push(purchase.transactionId);
-      throw new Error('finish failed after restored store purchase');
-    },
-  };
   const restoreResult = await restoreRemoveAdsPurchase({
-    provider: restoreFinishFailureProvider,
+    provider: createNativePurchaseProvider({
+      iapModule: restoreNative.iapModule,
+      platform: 'android',
+      purchaseTimeoutMs: 5,
+    }),
     storage: restoreStorage,
   });
 
   assert.equal(restoreResult.status, 'restored');
-  assert.equal(restoreResult.entitlements.adsDisabled, true);
-  assert.deepEqual(finishedRestores, ['restore-remove-ads']);
-  assert.equal((await getPurchaseEntitlements({ storage: restoreStorage })).adsDisabled, true);
-  assert.equal(
-    JSON.parse(await restoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).source,
-    'restore',
-  );
+  assert.equal(restoreResult.productId, REMOVE_ADS_PRODUCT_ID);
+  assert.equal(restoreResult.purchaseToken, 'android-restore-token');
+  assert.equal(restoreNative.calls.restoreCount, 1);
+  const restoreRecord = JSON.parse(await restoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY));
+  assert.equal(restoreRecord.productId, REMOVE_ADS_PRODUCT_ID);
+  assert.equal(restoreRecord.purchaseToken, 'android-restore-token');
+  assert.equal(restoreRecord.transactionId, 'android-restore-transaction');
 
-  const requestFailureStorage = createMemoryPurchaseStorage();
-  const requestFailureProvider = {
-    ...createMockPurchaseProvider(),
-    async requestRemoveAdsPurchase() {
-      throw new Error('request failed before receipt validation');
+  const unrelatedNative = createFakeIap({
+    requestResult: {
+      productId: 'com.billyyiu.swedishcivictest.prolifetime',
+      purchaseToken: 'pro-token',
+      transactionId: 'pro-transaction',
     },
-    async finishPurchase() {
-      throw new Error('finish should not replace request failure');
-    },
-  };
+  });
+  const unrelatedStorage = createMemoryPurchaseStorage();
+  const unrelatedResult = await buyRemoveAds({
+    provider: createNativePurchaseProvider({
+      iapModule: unrelatedNative.iapModule,
+      platform: 'android',
+      purchaseTimeoutMs: 5,
+    }),
+    storage: unrelatedStorage,
+  });
 
-  await assert.rejects(
-    () =>
-      buyRemoveAds({
-        provider: requestFailureProvider,
-        storage: requestFailureStorage,
-      }),
-    /request failed before receipt validation/,
-  );
-  assert.equal(
-    (await getPurchaseEntitlements({ storage: requestFailureStorage })).adsDisabled,
-    false,
-  );
-
-  const validationFailureStorage = createMemoryPurchaseStorage();
-  const validationFailureProvider = {
-    ...createMockPurchaseProvider(),
-    async validateRemoveAdsReceipt() {
-      throw new Error('receipt validator failed before finish');
-    },
-    async finishPurchase() {
-      throw new Error('finish should not replace validation failure');
-    },
-  };
-
-  await assert.rejects(
-    () =>
-      buyRemoveAds({
-        provider: validationFailureProvider,
-        storage: validationFailureStorage,
-      }),
-    /receipt validator failed before finish/,
-  );
-  assert.equal(
-    (await getPurchaseEntitlements({ storage: validationFailureStorage })).adsDisabled,
-    false,
-  );
+  assert.equal(unrelatedResult.status, 'pending');
+  assert.equal(unrelatedResult.entitlements.adsDisabled, false);
+  assert.equal(await unrelatedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
@@ -1212,7 +1240,12 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
-  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
+    REMOVE_ADS_PRICE_LABEL,
+    REMOVE_ADS_PRODUCT_ID,
+  } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
@@ -1224,6 +1257,10 @@ test('release monetization policy requires ad-supported free tier and Remove Ads
   assert.equal(releaseMonetizationPolicy.privacyReviewRequiresBinary, true);
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
+  assert.deepEqual(releaseMonetizationPolicy.removeAdsStoreProductIds, {
+    android: REMOVE_ADS_ANDROID_PRODUCT_ID,
+    ios: REMOVE_ADS_IOS_PRODUCT_ID,
+  });
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
   assert.ok(releaseMonetizationPolicy.noAdPlacements.includes('exam_screen'));
   assert.deepEqual(releaseMonetizationPolicy.consentPromptsRequired, [

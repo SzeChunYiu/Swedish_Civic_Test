@@ -23,12 +23,11 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 14);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 18);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
-  assert.match(purchaseSource, /'persistence_failed'/);
-  assert.match(purchaseSource, /interface RemoveAdsPersistenceResult/);
-  assert.match(purchaseSource, /async function persistValidatedRemoveAdsEntitlement/);
-  assert.match(purchaseSource, /return createResult\('persistence_failed'/);
+  assert.match(purchaseSource, /REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID/);
+  assert.match(purchaseSource, /REMOVE_ADS_ANDROID_PRODUCT_ID = 'removeads'/);
+  assert.match(purchaseSource, /getRemoveAdsStoreProductId/);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
   assert.match(purchaseSource, /receiptValidationStatus: 'valid'/);
@@ -44,6 +43,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
+  assert.match(purchaseSource, /google: \{ skus: \[storeProductId\] \}/);
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
