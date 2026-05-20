@@ -1793,6 +1793,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(paywallSource, /export interface PremiumBannerProps/);
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
@@ -1847,6 +1848,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /status === 'restored' \? 'restored' : 'purchased'/);
   assert.doesNotMatch(paywallSource, /adsDisabled \? copy\.bodyIdle/);
   assert.doesNotMatch(paywallSource, /activeAction !== null \|\| adsDisabled/);
+  assert.match(paywallSource, /minWidth: space\[15\]/);
+  assert.doesNotMatch(paywallSource, /minWidth: 128/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
