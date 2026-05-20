@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
@@ -55,6 +56,17 @@ const TRUE_FALSE_OPTIONS = [
   { id: 'true', textSv: 'Sant', textEn: 'True' },
   { id: 'false', textSv: 'Falskt', textEn: 'False' },
 ];
+const STATIC_VALIDATION_SYNTAX_FILES = Object.freeze([
+  'scripts/static-outcome-copy-guard.js',
+  'scripts/compliance-pages.test.js',
+  'scripts/static-site-source-provenance-copy.test.js',
+]);
+const STATIC_VALIDATION_IMPORT_CHECKS = Object.freeze([
+  {
+    label: 'static outcome copy guard',
+    script: "require('./scripts/static-outcome-copy-guard')",
+  },
+]);
 const EXPECTED_UHR_SOURCE = {
   titleKeyword: 'Sverige i fokus',
   publisher: 'Universitets- och högskolerådet (UHR)',
@@ -3579,6 +3591,57 @@ function dateIsoDay(value) {
     : '';
 }
 
+function validateStaticValidationSyntaxGate() {
+  let valid = true;
+
+  for (const fileName of STATIC_VALIDATION_SYNTAX_FILES) {
+    const result = spawnSync(process.execPath, ['--check', fileName], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    });
+    if (result.status !== 0) {
+      valid = false;
+      fail(
+        `${fileName} must parse before content validation runs:\n${(
+          result.stderr ||
+          result.stdout ||
+          ''
+        ).trim()}`,
+      );
+    } else {
+      staticValidationSyntaxFilesValidated += 1;
+    }
+  }
+
+  for (const check of STATIC_VALIDATION_IMPORT_CHECKS) {
+    const result = spawnSync(process.execPath, ['-e', check.script], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    });
+    if (result.status !== 0) {
+      valid = false;
+      fail(
+        `${check.label} must be importable before content validation runs:\n${(
+          result.stderr ||
+          result.stdout ||
+          ''
+        ).trim()}`,
+      );
+    } else {
+      staticValidationImportChecksValidated += 1;
+    }
+  }
+
+  if (valid) staticValidationSyntaxGateValidated = true;
+}
+
+function exitWithValidationFailures() {
+  if (failures.length === 0) return;
+  console.error('Content validation failed:');
+  for (const failure of failures) console.error(`- ${failure}`);
+  process.exit(1);
+}
+
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -6387,6 +6450,9 @@ let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
+let staticValidationSyntaxFilesValidated = 0;
+let staticValidationImportChecksValidated = 0;
+let staticValidationSyntaxGateValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -13862,6 +13928,8 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+validateStaticValidationSyntaxGate();
+exitWithValidationFailures();
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
@@ -14193,9 +14261,7 @@ validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
 
 if (failures.length) {
-  console.error('Content validation failed:');
-  for (const failure of failures) console.error(`- ${failure}`);
-  process.exit(1);
+  exitWithValidationFailures();
 }
 
 const publishedQuestions = Array.isArray(questions)
@@ -14482,6 +14548,9 @@ console.log(
       staticEbookPracticalTestRequiredCopyValidated,
       staticEbookPracticalTestSourceUrlsValidated,
       staticEbookPracticalTestCurrentnessValidated,
+      staticValidationSyntaxFilesValidated,
+      staticValidationImportChecksValidated,
+      staticValidationSyntaxGateValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,

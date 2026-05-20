@@ -206,6 +206,8 @@ function assertStaticHeadMetadataDescriptionSource(source, file = 'site/index.ht
 function assertStaticHeadMetadataDescription(repoRoot = DEFAULT_REPO_ROOT) {
   const source = fs.readFileSync(path.join(repoRoot, 'site/index.html'), 'utf8');
   return assertStaticHeadMetadataDescriptionSource(source);
+}
+
 function formatUnsupportedStaticTeamCredentialClaims(offenders) {
   return offenders
     .map(({ file, line, label, match }) => `${file}:${line} ${label}: ${JSON.stringify(match)}`)
