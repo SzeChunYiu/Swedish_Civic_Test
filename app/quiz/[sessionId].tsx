@@ -9,6 +9,7 @@ import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
@@ -211,6 +212,12 @@ export default function QuizSessionScreen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
+          <QuestionReportLink
+            language={language}
+            question={question}
+            screen="quiz"
+            selectedOptionId={selectedOptionId}
+          />
           <View style={styles.actions}>
             <Button
               accessibilityLabel={copy.tryAgainAccessibilityLabel}

@@ -2942,6 +2942,121 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
       /\{questionTranslation \? <Text style=\{styles\.translation\}>\{questionTranslation\}<\/Text> : null\}/,
   },
 ];
+const EXPECTED_QUESTION_REPORT_LINK_RULES = [
+  {
+    file: 'component',
+    label: 'typed report-link props',
+    pattern:
+      /type QuestionReportScreen = 'chapter' \| 'practice' \| 'quiz';[\s\S]*export interface QuestionReportLinkProps \{[\s\S]*question: PracticeQuestion;[\s\S]*screen: QuestionReportScreen;[\s\S]*selectedOptionId\?: string \| null;/,
+  },
+  {
+    file: 'component',
+    label: 'localized visible and spoken labels',
+    pattern:
+      /const questionReportLinkCopy: Record<AppLanguage, QuestionReportLinkCopy> = \{[\s\S]*Rapportera frågan \$\{questionId\}[\s\S]*Rapportera den här frågan[\s\S]*Report question \$\{questionId\}[\s\S]*Report this question/,
+  },
+  {
+    file: 'component',
+    label: 'source citation context',
+    pattern: /getQuestionSourceCitation\(question, language\)/,
+  },
+  {
+    file: 'component',
+    label: 'selected answer only from completed answer state',
+    pattern:
+      /function getSelectedAnswerText\([\s\S]*selectedOptionId: string \| null \| undefined[\s\S]*if \(!selectedOptionId\) return undefined;[\s\S]*question\.options\.find/,
+  },
+  {
+    file: 'component',
+    label: 'support query context keys',
+    pattern:
+      /\['questionId', question\.id\][\s\S]*\['source', getQuestionSourceCitation\(question, language\)\][\s\S]*\['language', language\][\s\S]*\['screen', screen\][\s\S]*selectedAnswer \? \['selectedAnswer', selectedAnswer\] : null/,
+  },
+  {
+    file: 'component',
+    label: 'encoded support href',
+    pattern:
+      /encodeURIComponent\(key\)}=\$\{encodeURIComponent\(value\)\}[\s\S]*return `\/support\?\$\{query\}`;/,
+  },
+  {
+    file: 'component',
+    label: 'link role and target',
+    pattern:
+      /<Link[\s\S]*accessibilityLabel=\{copy\.accessibilityLabel\(question\.id\)\}[\s\S]*accessibilityRole="link"[\s\S]*asChild[\s\S]*href=\{supportHref\}/,
+  },
+  {
+    file: 'component',
+    label: '48px button target',
+    pattern:
+      /<Button[\s\S]*accessibilityRole="link"[\s\S]*size="sm"[\s\S]*variant="ghost"[\s\S]*minHeight: space\[6\]/,
+  },
+  {
+    file: 'practice',
+    label: 'practice feedback import',
+    pattern: /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
+  },
+  {
+    file: 'practice',
+    label: 'practice feedback selected answer context',
+    pattern:
+      /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="practice"[\s\S]*selectedOptionId=\{selectedOptionId\}/,
+  },
+  {
+    file: 'quiz',
+    label: 'routed quiz feedback import',
+    pattern: /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
+  },
+  {
+    file: 'quiz',
+    label: 'routed quiz selected answer context',
+    pattern:
+      /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="quiz"[\s\S]*selectedOptionId=\{selectedOptionId\}/,
+  },
+  {
+    file: 'chapter',
+    label: 'chapter question-row import',
+    pattern: /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
+  },
+  {
+    file: 'chapter',
+    label: 'chapter row report link without selected answer',
+    pattern: /<QuestionReportLink language=\{language\} question=\{question\} screen="chapter" \/>/,
+  },
+  {
+    file: 'support',
+    label: 'support route reads report params',
+    pattern: /const params = useLocalSearchParams<QuestionReportSearchParams>\(\);/,
+  },
+  {
+    file: 'support',
+    label: 'support route renders context only when question id exists',
+    pattern:
+      /const questionReportContext = getQuestionReportContext\(params\);[\s\S]*\{questionReportContext \? \(/,
+  },
+  {
+    file: 'support',
+    label: 'support context non-PII copy',
+    pattern:
+      /Lägg inte till namn, personnummer, ärendenummer eller andra personuppgifter[\s\S]*Do not add names, personal identity numbers, case numbers, or other personal data/,
+  },
+  {
+    file: 'support',
+    label: 'support context fields',
+    pattern:
+      /Aktivt språk[\s\S]*Fråge-ID[\s\S]*Skärm[\s\S]*Valt svar[\s\S]*Källa[\s\S]*Active language[\s\S]*Question ID[\s\S]*Screen[\s\S]*Selected answer[\s\S]*Source/,
+  },
+  {
+    file: 'support',
+    label: 'selected answer is rendered only when present',
+    pattern:
+      /questionReportContext\.selectedAnswer \? \([\s\S]*label=\{copy\.questionReportContext\.selectedAnswer\}/,
+  },
+  {
+    file: 'support',
+    label: 'support route does not auto-send reports',
+    pattern: /href=\{PUBLIC_SUPPORT_URL\}/,
+  },
+];
 const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
@@ -7214,6 +7329,8 @@ let flashcardAccessibilityParityValidated = false;
 let swedishFlashcardCopyNaturalnessValidated = false;
 let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
+let questionReportLinkRulesValidated = 0;
+let questionReportLinkParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
 let questionCardAccessibilityParityValidated = false;
 let answerOptionAccessibilityRulesValidated = 0;
@@ -11052,6 +11169,49 @@ function validateAudioButtonAccessibilityParity() {
     audioButtonAccessibilityRulesValidated === EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.length
   ) {
     audioButtonAccessibilityParityValidated = true;
+  }
+}
+
+function validateQuestionReportLinkParity() {
+  let valid = true;
+  const sources = {};
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const sourcePaths = {
+    chapter: 'app/chapter/[chapterId].tsx',
+    component: 'components/quiz/QuestionReportLink.tsx',
+    practice: 'app/(tabs)/practice.tsx',
+    quiz: 'app/quiz/[sessionId].tsx',
+    support: 'app/support.tsx',
+  };
+
+  for (const [key, relativePath] of Object.entries(sourcePaths)) {
+    try {
+      sources[key] = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    } catch (error) {
+      reject(`${relativePath} could not be read for question-report parity: ${error.message}`);
+      return;
+    }
+  }
+
+  EXPECTED_QUESTION_REPORT_LINK_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(sources[expectedRule.file])) {
+      reject(`QuestionReportLink missing ${expectedRule.label}`);
+      return;
+    }
+    questionReportLinkRulesValidated += 1;
+  });
+
+  if (/mailto:|Linking\.openURL|fetch\(/.test(sources.support)) {
+    reject('support route must display question report context without auto-sending reports');
+  }
+
+  if (valid && questionReportLinkRulesValidated === EXPECTED_QUESTION_REPORT_LINK_RULES.length) {
+    questionReportLinkParityValidated = true;
   }
 }
 
@@ -16936,6 +17096,7 @@ validateChapterCardAccessibilityParity();
 validateFlashcardAccessibilityParity();
 validateSwedishFlashcardCopyNaturalness();
 validateAudioButtonAccessibilityParity();
+validateQuestionReportLinkParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
@@ -17111,6 +17272,8 @@ console.log(
       swedishFlashcardCopyNaturalnessValidated,
       audioButtonAccessibilityRulesValidated,
       audioButtonAccessibilityParityValidated,
+      questionReportLinkRulesValidated,
+      questionReportLinkParityValidated,
       questionCardAccessibilityRulesValidated,
       questionCardAccessibilityParityValidated,
       answerOptionAccessibilityRulesValidated,

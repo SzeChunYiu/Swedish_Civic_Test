@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
-import { PracticeInterstitialAd } from '../../components/monetization/PracticeInterstitialAd';
+import { AdBanner } from '../../components/monetization/AdBanner';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
@@ -13,6 +13,7 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { Button } from '../../components/ui/Button';
@@ -31,10 +32,7 @@ import {
   getQuestionsForPracticeScope,
   type PracticeScope,
 } from '../../lib/quiz/practiceFlow';
-import {
-  getPracticeInterstitialShowKey,
-  usePracticeSessionStore,
-} from '../../lib/quiz/practiceSessionStore';
+import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -481,7 +479,6 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
-  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
@@ -679,7 +676,13 @@ export default function Screen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <PracticeInterstitialAd showKey={practiceInterstitialShowKey} />
+          <QuestionReportLink
+            language={language}
+            question={question}
+            screen="practice"
+            selectedOptionId={selectedOptionId}
+          />
+          <AdBanner placement="quiz_completed_interstitial" />
           <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Button
