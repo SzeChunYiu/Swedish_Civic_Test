@@ -44,6 +44,76 @@ test('default mock exam config stays UHR-based and ad-free during exams', () => 
   assert.ok(config.durationMinutes > 0);
 });
 
+test('mock exam config panel uses unofficial practice-result copy', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'components/MockExamConfigPanel.tsx'), 'utf8');
+  const unsupportedFragments = [
+    ['pass', 'ing', 'Percent'].join(''),
+    ['pass', 'ing', 'Label'].join(''),
+    ['Gräns för ', 'godkänt'].join(''),
+    ['Pass', 'ing line'].join(''),
+    '75' + '%',
+  ];
+
+  assert.match(source, /scoreModeLabel: 'Övningsresultat'/);
+  assert.match(source, /scoreModeLabel: 'Practice result'/);
+  assert.match(source, /sourceScopeLabel: 'UHR-baserade frågor'/);
+  assert.match(source, /sourceScopeLabel: 'UHR-based questions'/);
+  assert.match(source, /<PillBadge variant="accent">\{resolvedSourceScopeLabel\}<\/PillBadge>/);
+  assert.match(source, /<PillBadge>\{resolvedScoreModeLabel\}<\/PillBadge>/);
+
+  for (const fragment of unsupportedFragments) {
+    assert.doesNotMatch(
+      source,
+      new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+      `MockExamConfigPanel should not expose unsupported score-source copy: ${fragment}`,
+    );
+  }
+
+  assert.doesNotMatch(source, /Resultat är övning/);
+});
+
+test('mock exam config panel separates summary semantics from controls', () => {
+  assertMockExamConfigPanelA11ySeparation(
+    fs.readFileSync(path.join(repoRoot, 'components/MockExamConfigPanel.tsx'), 'utf8'),
+  );
+});
+
+test('mock exam config panel a11y separation rejects grouped summary regressions', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'components/MockExamConfigPanel.tsx'), 'utf8');
+  const groupedPanel = source
+    .replace('accessibilityRole="none"', 'accessibilityRole={accessibilityRole}')
+    .replace('{...surfaceProps}\n      accessible={false}', '{...surfaceProps}');
+  const groupedChapters = source.replace(
+    '<View style={styles.chips}>',
+    '<View\n          accessibilityLabel={resolvedChaptersLabel}\n          accessibilityRole="summary"\n          style={styles.chips}\n        >',
+  );
+  const missingStepperActions = source.replace(
+    '\n      accessibilityActions={stepperAccessibilityActions}',
+    '',
+  );
+  const missingStepperActionHandler = source.replace(
+    '\n      onAccessibilityAction={handleAccessibilityAction}',
+    '',
+  );
+
+  assert.throws(
+    () => assertMockExamConfigPanelA11ySeparation(groupedPanel),
+    /outer Surface must not be the labelled grouped element/,
+  );
+  assert.throws(
+    () => assertMockExamConfigPanelA11ySeparation(groupedChapters),
+    /chapter checkbox group should not be a labelled summary wrapper/,
+  );
+  assert.throws(
+    () => assertMockExamConfigPanelA11ySeparation(missingStepperActions),
+    /must expose increment and decrement accessibility actions/,
+  );
+  assert.throws(
+    () => assertMockExamConfigPanelA11ySeparation(missingStepperActionHandler),
+    /must handle screen-reader action gestures/,
+  );
+});
+
 test('mock exam config TypeScript schema parity rejects optional field drift', () => {
   const result = spawnSync(
     process.execPath,

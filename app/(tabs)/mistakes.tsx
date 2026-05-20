@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
@@ -103,6 +103,21 @@ export default function Screen() {
     (question) => questionProgress[question.id]?.bookmarked,
   );
 
+export default function Screen() {
+  const router = useRouter();
+  const language = useSettingsStore((state) => state.language);
+  const copy = mistakesCopy[language];
+  const questionProgress = useProgressStore((state) => state.questionProgress);
+  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
+  const mistakenQuestions = questions.filter(
+    (question) => questionProgress[question.id]?.wrongCount > 0,
+  );
+  const bookmarkedReviewQuestions = questions.filter(
+    (question) =>
+      questionProgress[question.id]?.bookmarked &&
+      (questionProgress[question.id]?.wrongCount ?? 0) === 0,
+  );
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
@@ -115,8 +130,9 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <NativeAdCard />
+      <RemoveAdsPlacementCta placement="results_native" />
 
-      {bookmarkedQuestions.length > 0 ? (
+      {bookmarkedReviewQuestions.length > 0 ? (
         <View style={styles.list}>
           <View style={styles.sectionHeading}>
             <Badge tone="blue">{copy.bookmarkedBadge}</Badge>
@@ -124,18 +140,25 @@ export default function Screen() {
               {copy.bookmarkedTitle}
             </Text>
           </View>
-          {bookmarkedQuestions.map((question) => (
-            <View key={question.id} style={styles.questionBlock}>
-              <QuestionCard question={question} language={language} />
-              <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
-              <ExplanationPanel
-                explanationEn={question.explanationEn}
-                explanationSv={question.explanationSv}
-                language={language}
-              />
-              <UHRReferenceCard language={language} reference={question.uhrReference} />
-            </View>
-          ))}
+          {bookmarkedReviewQuestions.map((question) => {
+            const correctAnswer = getOptionLabel(question, question.correctOptionId, language);
+
+            return (
+              <View key={question.id} style={styles.questionBlock}>
+                <QuestionCard question={question} language={language} />
+                <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
+                {correctAnswer ? (
+                  <AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />
+                ) : null}
+                <ExplanationPanel
+                  explanationEn={question.explanationEn}
+                  explanationSv={question.explanationSv}
+                  language={language}
+                />
+                <UHRReferenceCard language={language} reference={question.uhrReference} />
+              </View>
+            );
+          })}
         </View>
       ) : null}
 
@@ -163,27 +186,11 @@ export default function Screen() {
                   {copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}
                 </Text>
                 {correctAnswer ? (
-                  <View
-                    accessible
-                    accessibilityLabel={copy.answerReviewAccessibilityLabel(
-                      correctAnswer,
-                      selectedWrongAnswer,
-                    )}
-                    style={styles.answerReview}
-                  >
-                    {selectedWrongAnswer ? (
-                      <View style={styles.answerReviewRow}>
-                        <Text style={styles.answerReviewLabel}>
-                          {copy.selectedWrongAnswerLabel}
-                        </Text>
-                        <Text style={styles.answerReviewValue}>{selectedWrongAnswer}</Text>
-                      </View>
-                    ) : null}
-                    <View style={styles.answerReviewRow}>
-                      <Text style={styles.answerReviewLabel}>{copy.correctAnswerLabel}</Text>
-                      <Text style={styles.correctAnswerValue}>{correctAnswer}</Text>
-                    </View>
-                  </View>
+                  <AnswerReviewBlock
+                    copy={copy}
+                    correctAnswer={correctAnswer}
+                    selectedWrongAnswer={selectedWrongAnswer}
+                  />
                 ) : null}
                 <ExplanationPanel
                   explanationEn={question.explanationEn}
@@ -195,20 +202,20 @@ export default function Screen() {
             );
           })}
         </View>
-      ) : bookmarkedQuestions.length === 0 ? (
+      ) : bookmarkedReviewQuestions.length === 0 ? (
         <View style={styles.emptyCard}>
           <Text accessibilityRole="header" style={styles.emptyTitle}>
             {copy.emptyTitle}
           </Text>
           <Text style={styles.emptyText}>{copy.emptyText}</Text>
-          <Link
+          <Button
             accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
-            accessibilityRole="link"
-            href="/practice"
-            style={styles.practiceLink}
+            accessibilityRole="button"
+            onPress={() => router.push('/practice')}
+            style={styles.practiceButton}
           >
             {copy.emptyPracticeLink}
-          </Link>
+          </Button>
         </View>
       ) : null}
     </ScrollView>
