@@ -1,21 +1,63 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { daysUntil, EXAM_REFORM_DATE, formatExamDate } from '../../lib/learning/examDate';
+import {
+  CITIZENSHIP_RULES_EFFECTIVE_DATE,
+  CITIZENSHIP_TIMELINE_SOURCE_URLS,
+  CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
+  daysUntil,
+  formatExamDate,
+} from '../../lib/learning/examDate';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (date: string) =>
-      `Det nya samhällskunskapstestet träder i kraft ${date}. Förbered dig nu.`,
-    untilLabel: 'tills nya provet',
+    body: (rulesDate: string, firstSittingDate: string) =>
+      `Nya medborgarskapsregler gäller från ${rulesDate}. Första samhällskunskapsprovet genomförs den ${firstSittingDate} i Stockholm. Förbered dig nu.`,
+    sourceLabel: 'Officiella datumkällor:',
+    sources: [
+      {
+        accessibilityLabel: 'Öppna Migrationsverkets källa om nya medborgarskapsregler',
+        label: 'Migrationsverket',
+        sourceKey: 'rulesEffectiveDate',
+      },
+      {
+        accessibilityLabel: 'Öppna UHR:s källa om första samhällskunskapsprovet',
+        label: 'UHR',
+        sourceKey: 'civicKnowledgeTestFirstSitting',
+      },
+      {
+        accessibilityLabel: 'Öppna regeringens källa om uppdraget för medborgarskapsprovet',
+        label: 'Regeringen',
+        sourceKey: 'civicKnowledgeTestDeadline',
+      },
+    ] satisfies TimelineSourceLink[],
+    untilLabel: 'tills nya reglerna',
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (date: string) =>
-      `The new civic knowledge test takes effect on ${date}. Start preparing now.`,
-    untilLabel: 'until new exam',
+    body: (rulesDate: string, firstSittingDate: string) =>
+      `New citizenship rules apply from ${rulesDate}. The first civic-knowledge test will be held on ${firstSittingDate} in Stockholm. Start preparing now.`,
+    sourceLabel: 'Official date sources:',
+    sources: [
+      {
+        accessibilityLabel: 'Open the Swedish Migration Agency source about new citizenship rules',
+        label: 'Migrationsverket',
+        sourceKey: 'rulesEffectiveDate',
+      },
+      {
+        accessibilityLabel: 'Open the UHR source about the first civic-knowledge test',
+        label: 'UHR',
+        sourceKey: 'civicKnowledgeTestFirstSitting',
+      },
+      {
+        accessibilityLabel: 'Open the government source about the citizenship-test assignment',
+        label: 'Regeringen',
+        sourceKey: 'civicKnowledgeTestDeadline',
+      },
+    ] satisfies TimelineSourceLink[],
+    untilLabel: 'until new rules',
   },
 } as const;
 
@@ -54,7 +96,24 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
         <Text style={styles.daysNumber}>{days}</Text>
         <Text style={styles.daysLabel}>{t.untilLabel}</Text>
       </View>
-      <Text style={styles.body}>{t.body(dateString)}</Text>
+      <View style={styles.contentBlock}>
+        <Text style={styles.body}>{t.body(rulesDateString, firstSittingDateString)}</Text>
+        <View style={styles.sourceRow}>
+          <Text style={styles.sourceLabel}>{t.sourceLabel}</Text>
+          {t.sources.map((source) => (
+            <Link
+              accessibilityLabel={source.accessibilityLabel}
+              accessibilityRole="link"
+              href={CITIZENSHIP_TIMELINE_SOURCE_URLS[source.sourceKey]}
+              key={source.sourceKey}
+              style={styles.sourceLink}
+              target="_blank"
+            >
+              {source.label}
+            </Link>
+          ))}
+        </View>
+      </View>
     </View>
   );
 }
