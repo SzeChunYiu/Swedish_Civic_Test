@@ -2,6 +2,17 @@ import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 import { dismissBlockingModals } from './browserLaunch';
 
+const REMOVE_ADS_PRICE = '29 SEK';
+const ENGLISH_BUY_REMOVE_ADS_LABEL = `Buy Remove Ads for ${REMOVE_ADS_PRICE}`;
+const SWEDISH_BUY_REMOVE_ADS_LABEL = `Köp Ta bort annonser för ${REMOVE_ADS_PRICE}`;
+const SWEDISH_PLACEMENT_CTA_BODY =
+  'Döljer den här och andra studieannonser efter butikens bekräftelse. Tidsatta övningsprov är redan annonsfria.';
+const SWEDISH_REMOVE_ADS_TITLES = {
+  learn: 'Ta bort annonser vid annons i kapitellistan',
+  mistakes: 'Ta bort annonser vid annons i resultat och misstag',
+  practice: 'Ta bort annonser vid annons efter övning',
+} as const;
+
 async function useEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
@@ -15,6 +26,18 @@ async function useEnglishSupport(page: Page) {
   ).toHaveAttribute('aria-checked', 'true');
 }
 
+async function useDefaultSwedishUi(page: Page) {
+  await page.addInitScript(() => {
+    if (window.sessionStorage.getItem('remove-ads-placement-sv-e2e-reset')) return;
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('settings\\language', 'sv');
+    window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
+    window.sessionStorage.setItem('remove-ads-placement-sv-e2e-reset', 'true');
+  });
+}
+
 async function expectReachableButton(locator: Locator) {
   await locator.scrollIntoViewIfNeeded();
   await expect(locator).toBeVisible();
@@ -26,18 +49,38 @@ async function expectReachableButton(locator: Locator) {
 
 async function expectPlacementCta({
   ad,
+  body,
+  buyAccessibilityName = ENGLISH_BUY_REMOVE_ADS_LABEL,
+  buyText = `Buy ${REMOVE_ADS_PRICE}`,
   ctaTitle,
   page,
 }: {
   ad: Locator;
+  body?: string;
+  buyAccessibilityName?: string;
+  buyText?: string;
   ctaTitle: string;
   page: Page;
 }) {
   await ad.scrollIntoViewIfNeeded();
   await expect(ad).toBeVisible();
   await expect(page.getByText(ctaTitle)).toBeVisible();
-  await expectReachableButton(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' }));
-  await expect(page.getByText('Buy 29 SEK')).toBeVisible();
+  if (body) {
+    await expect(page.getByText(body)).toBeVisible();
+  }
+  await expectReachableButton(page.getByRole('button', { name: buyAccessibilityName }));
+  await expect(page.getByText(buyText)).toBeVisible();
+}
+
+async function revealSwedishPracticeFeedback(page: Page) {
+  const nextQuestion = page.getByRole('button', { name: 'Gå till nästa övningsfråga' }).first();
+  if (await nextQuestion.isVisible().catch(() => false)) return;
+
+  await page
+    .getByLabel(/Välj svaret /)
+    .first()
+    .click();
+  await expect(nextQuestion).toBeVisible();
 }
 
 test('ad placements announce Remove Ads in web accessible names', async ({ page }) => {
@@ -78,6 +121,110 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
 
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await expect(page.getByLabel(/Hidden after Remove Ads is active\./)).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('remove-ads placement CTA uses default Swedish copy and purchase flow', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  await useDefaultSwedishUi(page);
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.goto('/learn', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByText('Studieväg')).toBeVisible();
+  const learnAd = page
+    .getByLabel(/Google AdMob: Annons i kapitellistan\..*Döljs när Ta bort annonser är aktivt\./i)
+    .first();
+  await expectPlacementCta({
+    ad: learnAd,
+    body: SWEDISH_PLACEMENT_CTA_BODY,
+    buyAccessibilityName: SWEDISH_BUY_REMOVE_ADS_LABEL,
+    buyText: `Köp ${REMOVE_ADS_PRICE}`,
+    ctaTitle: SWEDISH_REMOVE_ADS_TITLES.learn,
+    page,
+  });
+
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await revealSwedishPracticeFeedback(page);
+  const practiceAd = page
+    .getByLabel(/Google AdMob: Annons efter övning\..*Döljs när Ta bort annonser är aktivt\./i)
+    .first();
+  await expectPlacementCta({
+    ad: practiceAd,
+    body: SWEDISH_PLACEMENT_CTA_BODY,
+    buyAccessibilityName: SWEDISH_BUY_REMOVE_ADS_LABEL,
+    buyText: `Köp ${REMOVE_ADS_PRICE}`,
+    ctaTitle: SWEDISH_REMOVE_ADS_TITLES.practice,
+    page,
+  });
+
+  await page.goto('/mistakes', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  const mistakesAd = page
+    .getByLabel(
+      /Inbyggd testannons: AdMob-testplacering\..*Döljs när Ta bort annonser är aktivt\./i,
+    )
+    .first();
+  await expectPlacementCta({
+    ad: mistakesAd,
+    body: SWEDISH_PLACEMENT_CTA_BODY,
+    buyAccessibilityName: SWEDISH_BUY_REMOVE_ADS_LABEL,
+    buyText: `Köp ${REMOVE_ADS_PRICE}`,
+    ctaTitle: SWEDISH_REMOVE_ADS_TITLES.mistakes,
+    page,
+  });
+
+  await page.getByRole('button', { name: SWEDISH_BUY_REMOVE_ADS_LABEL }).click();
+
+  await expect(
+    page.getByLabel(
+      /Inbyggd testannons: AdMob-testplacering\..*Döljs när Ta bort annonser är aktivt\./i,
+    ),
+  ).toHaveCount(0);
+  await expect(page.getByText(SWEDISH_REMOVE_ADS_TITLES.mistakes)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: SWEDISH_BUY_REMOVE_ADS_LABEL })).toHaveCount(0);
+
+  await page.goto('/learn', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByText('Studieväg')).toBeVisible();
+  await expect(
+    page.getByLabel(
+      /Google AdMob: Annons i kapitellistan\..*Döljs när Ta bort annonser är aktivt\./i,
+    ),
+  ).toHaveCount(0);
+  await expect(page.getByText(SWEDISH_REMOVE_ADS_TITLES.learn)).toHaveCount(0);
+
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await revealSwedishPracticeFeedback(page);
+  await expect(
+    page.getByLabel(/Google AdMob: Annons efter övning\..*Döljs när Ta bort annonser är aktivt\./i),
+  ).toHaveCount(0);
+  await expect(page.getByText(SWEDISH_REMOVE_ADS_TITLES.practice)).toHaveCount(0);
+
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByText('Annonsfri studie är aktiv')).toBeVisible();
+  await expect(
+    page.getByLabel(
+      /Google AdMob: Annons på startsidan\..*Döljs när Ta bort annonser är aktivt\./i,
+    ),
+  ).toHaveCount(0);
+  await expect(page.getByText(`Köp ${REMOVE_ADS_PRICE}`)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: SWEDISH_BUY_REMOVE_ADS_LABEL })).toHaveCount(0);
+
+  await page.goto('/exam', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByLabel(/Döljs när Ta bort annonser är aktivt\./i)).toHaveCount(0);
+  await expect(page.getByText(/Ta bort annonser vid /)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: SWEDISH_BUY_REMOVE_ADS_LABEL })).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
@@ -146,7 +293,7 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
     ),
   ).toHaveCount(0);
   await expect(page.getByText('Remove ads near results and mistakes ad')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: ENGLISH_BUY_REMOVE_ADS_LABEL })).toHaveCount(0);
 
   await page.goto('/learn', { waitUntil: 'networkidle' });
   await expect(page.getByText('Learning path')).toBeVisible();
@@ -173,14 +320,14 @@ test('remove-ads placement CTA buys once and hides study ads', async ({ page }) 
   ).toBeVisible();
   await expect(page.getByText(/Pay 29 SEK once/)).toHaveCount(0);
   await expect(page.getByText('Buy 29 SEK')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: ENGLISH_BUY_REMOVE_ADS_LABEL })).toHaveCount(0);
   await expectReachableButton(page.getByRole('button', { name: 'Restore Remove Ads purchase' }));
 
   await page.goto('/profile', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await expect(page.getByText('Ad-free study is active')).toBeVisible();
   await expect(page.getByText(/Pay 29 SEK once/)).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: ENGLISH_BUY_REMOVE_ADS_LABEL })).toHaveCount(0);
   await expectReachableButton(page.getByRole('button', { name: 'Restore Remove Ads purchase' }));
 
   expect(consoleErrors).toEqual([]);
