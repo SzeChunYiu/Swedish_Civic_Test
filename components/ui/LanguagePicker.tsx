@@ -253,6 +253,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
           />
           <Pressable
             {...(Platform.OS === 'web' ? { onKeyDown: handleMenuKeyDown } : {})}
+            aria-modal={true}
             accessibilityLabel={copy.menuLabel}
             accessibilityRole="menu"
             hitSlop={space[0]}
