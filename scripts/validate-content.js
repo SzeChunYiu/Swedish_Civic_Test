@@ -1704,6 +1704,11 @@ const EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS = [
     'search route full result count must render localized copy',
   ],
   [
+    'accessibilityLiveRegion="polite"',
+    'search result summary must announce count changes on native',
+  ],
+  ['aria-live="polite"', 'search result summary must announce count changes on web'],
+  [
     'accessibilityLabel={copy.searchInputAccessibilityLabel}',
     'search input must expose localized accessibility copy',
   ],
