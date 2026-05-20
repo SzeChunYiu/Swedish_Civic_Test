@@ -491,3 +491,40 @@ test('router shell tooling guard is wired into package scripts', () => {
     'aggregate npm test should include the router shell scaffold guard',
   );
 });
+
+test('top bar route links keep token-sized web anchors with feedback states', () => {
+  const topBarActions = read('components/ui/TopBarActions.tsx');
+
+  for (const href of ['/search', '/mistakes', '/settings']) {
+    assertContains(
+      topBarActions,
+      `href="${href}"`,
+      `${href} should remain a real route link in the top bar`,
+    );
+  }
+  assert.equal(
+    /<Link[\s\S]{0,360}asChild/.test(topBarActions),
+    false,
+    'top-bar route links should not use asChild on web because it can shrink exported anchors',
+  );
+  assertMatches(
+    topBarActions,
+    /<Link[\s\S]*accessibilityRole="link"[\s\S]*onPressIn=\{\(\) => setIsPressed\(true\)\}[\s\S]*onPressOut=\{\(\) => setIsPressed\(false\)\}[\s\S]*style=\{\[[\s\S]*styles\.iconLink,[\s\S]*isFocused \|\| isHovered \? styles\.iconLinkHover : null,[\s\S]*isPressed \? styles\.iconLinkPressed : null,[\s\S]*\]\}/,
+    'route links should expose link semantics and pressed/focused/hover feedback',
+  );
+  assertMatches(
+    topBarActions,
+    /iconLink:\s*\{[\s\S]*display:\s*'flex',[\s\S]*height:\s*space\[6\],[\s\S]*minHeight:\s*space\[6\],[\s\S]*minWidth:\s*space\[6\],[\s\S]*width:\s*space\[6\],[\s\S]*\}/,
+    'web anchors should keep a token-sized 48px layout box, not only the 24px icon glyph',
+  );
+  assertMatches(
+    topBarActions,
+    /iconLinkHover:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.hoverScale \}\],[\s\S]*\}/,
+    'hover feedback should stay token-driven',
+  );
+  assertMatches(
+    topBarActions,
+    /iconLinkPressed:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft,[\s\S]*transform:\s*\[\{ scale:\s*motion\.pressedScale \}\],[\s\S]*\}/,
+    'pressed feedback should stay token-driven',
+  );
+});

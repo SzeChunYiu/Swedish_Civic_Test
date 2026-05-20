@@ -166,7 +166,10 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
-          onBlur: () => setIsFocused(false),
+          onBlur: () => {
+            setIsFocused(false);
+            setIsPressed(false);
+          },
           onFocus: () => setIsFocused(true),
           onMouseEnter: () => setIsHovered(true),
           onMouseLeave: () => {
@@ -220,9 +223,12 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
+    display: 'flex',
+    height: space[6],
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],
+    width: space[6],
   },
   iconLinkHover: {
     backgroundColor: colors.focusSoft,
