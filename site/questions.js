@@ -7543,44 +7543,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Why do trees not grow in the coldest and windiest parts of the Swedish mountain region?",
-      "sv": "Varför växer det inte träd i fjällens kallaste och blåsigaste delar?"
+      "en": "Which statement is correct about Sweden's counties and municipalities?",
+      "sv": "Vilket påstående stämmer om Sveriges län och kommuner?"
     },
     "opts": [
       {
-        "en": "The climate is too cold and windy",
-        "sv": "Klimatet är för kallt och blåsigt"
+        "en": "Sweden is divided into 21 counties and 290 municipalities.",
+        "sv": "Sverige är indelat i 21 län och 290 kommuner."
       },
       {
-        "en": "The ground is covered by tropical rainforest",
-        "sv": "Marken är täckt av tropisk regnskog"
+        "en": "Sweden is divided into 290 counties and 21 municipalities.",
+        "sv": "Sverige är indelat i 290 län och 21 kommuner."
       },
       {
-        "en": "The area is below sea level",
-        "sv": "Området ligger under havsytan"
+        "en": "Sweden is divided into 25 counties and three municipalities.",
+        "sv": "Sverige är indelat i 25 län och tre kommuner."
       },
       {
-        "en": "Farming takes up all the land there",
-        "sv": "Jordbruket tar upp all mark där"
+        "en": "Sweden has neither counties nor municipalities.",
+        "sv": "Sverige saknar både län och kommuner."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
-      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
+      "en": "Sweden is divided into 21 counties and 290 municipalities. That makes the option with 21 counties and 290 municipalities correct; the other options mix up the numbers or say the divisions do not exist.",
+      "sv": "Sverige är indelat i 21 län och 290 kommuner. Därför är alternativet med 21 län och 290 kommuner rätt; de andra alternativen blandar ihop antal eller säger att indelningarna saknas."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Fjäll",
+      "section": "Sveriges indelning",
       "page": 6
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "geography",
-      "mountains",
-      "climate",
-      "skanderna"
+      "counties",
+      "municipalities",
+      "regional-division"
     ]
   },
   {
@@ -7589,44 +7589,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which trees are more common in northern Sweden's forests?",
-      "sv": "Vilka träd är vanligare i norra Sveriges skogar?"
+      "en": "Which statement describes the role of Sweden's historical provinces?",
+      "sv": "Vilket påstående beskriver landskapens roll i Sverige?"
     },
     "opts": [
       {
-        "en": "Conifers such as spruce and pine",
-        "sv": "Barrträd som gran och tall"
+        "en": "The historical provinces used to have their own laws, but Sweden is not governed through them today.",
+        "sv": "Landskapen hade egna lagar förr, men Sverige styrs inte genom dem i dag."
       },
       {
-        "en": "Palms and bamboo",
-        "sv": "Palmer och bambu"
+        "en": "The historical provinces are the same thing as today's municipalities.",
+        "sv": "Landskapen är samma sak som dagens kommuner."
       },
       {
-        "en": "Fruit trees from tropical climates",
-        "sv": "Fruktträd från tropiskt klimat"
+        "en": "The historical provinces are the same thing as today's counties.",
+        "sv": "Landskapen är samma sak som dagens län."
       },
       {
-        "en": "Deciduous trees that only grow by the Mediterranean Sea",
-        "sv": "Lövträd som bara växer vid Medelhavet"
+        "en": "The historical provinces are the three major parts Götaland, Svealand, and Norrland.",
+        "sv": "Landskapen är de tre landsdelarna Götaland, Svealand och Norrland."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
-      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
+      "en": "Sweden is divided into 25 historical provinces. The provinces used to have their own laws, but present-day Sweden is not governed through them. Municipalities, counties, and the three major parts are other kinds of divisions.",
+      "sv": "Sverige är indelat i 25 landskap. Landskapen hade förr egna lagar, men dagens Sverige styrs inte genom landskapen. Kommuner, län och de tre landsdelarna är andra slags indelningar."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Skogar, sjöar och öar",
+      "section": "Sveriges indelning",
       "page": 6
     },
     "difficulty": "medium",
     "tags": [
       "geography",
-      "forest",
-      "conifers",
-      "climate"
+      "landskap",
+      "historical-provinces",
+      "regional-division"
     ]
   },
   {
@@ -7635,31 +7635,77 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Where do most people in Sweden live?",
-      "sv": "Var bor de flesta människor i Sverige?"
+      "en": "Which statement is correct about Norrland?",
+      "sv": "Vilket påstående stämmer om Norrland?"
     },
     "opts": [
       {
-        "en": "In southern Sweden and along the coasts",
-        "sv": "I södra Sverige och längs kusterna"
+        "en": "Norrland is in northern Sweden and covers more than half of the country's area.",
+        "sv": "Norrland ligger i norra Sverige och omfattar mer än hälften av landets yta."
       },
       {
-        "en": "Evenly spread across the whole country",
-        "sv": "Jämnt fördelat över hela landet"
+        "en": "Norrland is in southern Sweden and is the smallest major part.",
+        "sv": "Norrland ligger i södra Sverige och är den minsta landsdelen."
       },
       {
-        "en": "Mainly on uninhabited islands",
-        "sv": "Främst på obebodda öar"
+        "en": "Norrland is one of Sweden's 25 historical provinces.",
+        "sv": "Norrland är ett av Sveriges 25 landskap."
       },
       {
-        "en": "Only in the mountain areas",
-        "sv": "Bara i fjällområdena"
+        "en": "Norrland is Sweden's largest municipality.",
+        "sv": "Norrland är Sveriges största kommun."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
-      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
+      "en": "Norrland is the northern major part and covers more than half of Sweden's area. It is a major part, not a single historical province or municipality, and it is not in southern Sweden.",
+      "sv": "Norrland är den norra landsdelen och omfattar mer än hälften av Sveriges yta. Det är en landsdel, inte ett enskilt landskap eller en kommun, och det ligger inte i södra Sverige."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Sveriges indelning",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "norrland",
+      "landsdelar",
+      "regional-division"
+    ]
+  },
+  {
+    "id": "q153",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which statement is correct about Sweden's population?",
+      "sv": "Vilket påstående stämmer om Sveriges befolkning?"
+    },
+    "opts": [
+      {
+        "en": "Sweden's population is largest in southern Sweden and along the coasts.",
+        "sv": "Sveriges befolkning är störst i södra Sverige och längs kusterna."
+      },
+      {
+        "en": "Sweden's population is largest in the mountains far from the coasts.",
+        "sv": "Sveriges befolkning är störst i fjällen långt från kusterna."
+      },
+      {
+        "en": "Sweden's population is evenly distributed across the whole country.",
+        "sv": "Sveriges befolkning är jämnt fördelad över hela landet."
+      },
+      {
+        "en": "Sweden's population lives almost entirely north of the Arctic Circle.",
+        "sv": "Sveriges befolkning bor nästan helt norr om polcirkeln."
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, not mainly in the mountains or north of the Arctic Circle.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, inte främst i fjällen eller norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -7671,54 +7717,8 @@
     "tags": [
       "population",
       "demography",
-      "cities",
+      "southern-sweden",
       "coasts"
-    ]
-  },
-  {
-    "id": "q153",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "single_choice",
-    "q": {
-      "en": "Why is most Swedish farming in southern Sweden?",
-      "sv": "Varför finns det mesta av Sveriges jordbruk i södra Sverige?"
-    },
-    "opts": [
-      {
-        "en": "The milder climate makes it easier to farm there",
-        "sv": "Det mildare klimatet gör det lättare att odla där"
-      },
-      {
-        "en": "Northern Sweden has no drinking water",
-        "sv": "Norra Sverige saknar allt dricksvatten"
-      },
-      {
-        "en": "Southern Sweden has no cities",
-        "sv": "Södra Sverige har inga städer"
-      },
-      {
-        "en": "Farming is banned near the coasts",
-        "sv": "Jordbruk är förbjudet nära kusterna"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
-      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Naturresurser",
-      "page": 8
-    },
-    "difficulty": "medium",
-    "tags": [
-      "natural-resources",
-      "agriculture",
-      "climate",
-      "southern-sweden"
     ]
   },
   {
@@ -7727,44 +7727,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What can climate change lead to in Sweden?",
-      "sv": "Vad kan klimatförändringar leda till i Sverige?"
+      "en": "Which statement is correct about municipalities in Sweden's division?",
+      "sv": "Vilket påstående stämmer om kommuner i Sveriges indelning?"
     },
     "opts": [
       {
-        "en": "More heavy rain, heat periods, drought, and forest fires",
-        "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder"
+        "en": "Municipalities are the local division, and Sweden has 290 municipalities.",
+        "sv": "Kommuner är den lokala indelningen, och Sverige har 290 kommuner."
       },
       {
-        "en": "Sea levels always falling everywhere",
-        "sv": "Att havsnivån alltid sjunker överallt"
+        "en": "Municipalities are historical provinces with their own laws today.",
+        "sv": "Kommuner är historiska landskap med egna lagar i dag."
       },
       {
-        "en": "Extreme weather disappearing completely",
-        "sv": "Att extremt väder försvinner helt"
+        "en": "Municipalities are the same thing as the three major parts.",
+        "sv": "Kommuner är samma sak som de tre landsdelarna."
       },
       {
-        "en": "All emissions automatically becoming zero",
-        "sv": "Att alla utsläpp automatiskt blir noll"
+        "en": "Municipalities exist only in Norrland.",
+        "sv": "Kommuner finns bara i Norrland."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
-      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
+      "en": "Municipalities are Sweden's local division, and the country has 290 municipalities. They should not be confused with historical provinces, major parts, or only one part of the country.",
+      "sv": "Kommunerna är den lokala indelningen i Sverige, och landet har 290 kommuner. De ska inte blandas ihop med landskap, landsdelar eller en enda del av landet."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Klimatförändringar",
-      "page": 8
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "climate-change",
-      "flooding",
-      "drought",
-      "forest-fires"
+      "geography",
+      "municipalities",
+      "local-division",
+      "regional-division"
     ]
   },
   {
@@ -34263,44 +34263,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why do trees not grow in the coldest and windiest parts of the Swedish mountain region?",
-      "sv": "Vilket svar stämmer bäst? Varför växer det inte träd i fjällens kallaste och blåsigaste delar?"
+      "en": "Which answer best matches? Which statement is correct about Sweden's counties and municipalities?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om Sveriges län och kommuner?"
     },
     "opts": [
       {
-        "en": "The climate is too cold and windy",
-        "sv": "Klimatet är för kallt och blåsigt"
+        "en": "Sweden is divided into 21 counties and 290 municipalities.",
+        "sv": "Sverige är indelat i 21 län och 290 kommuner."
       },
       {
-        "en": "The ground is covered by tropical rainforest",
-        "sv": "Marken är täckt av tropisk regnskog"
+        "en": "Sweden is divided into 290 counties and 21 municipalities.",
+        "sv": "Sverige är indelat i 290 län och 21 kommuner."
       },
       {
-        "en": "The area is below sea level",
-        "sv": "Området ligger under havsytan"
+        "en": "Sweden is divided into 25 counties and three municipalities.",
+        "sv": "Sverige är indelat i 25 län och tre kommuner."
       },
       {
-        "en": "Farming takes up all the land there",
-        "sv": "Jordbruket tar upp all mark där"
+        "en": "Sweden has neither counties nor municipalities.",
+        "sv": "Sverige saknar både län och kommuner."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
-      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
+      "en": "Sweden is divided into 21 counties and 290 municipalities. That makes the option with 21 counties and 290 municipalities correct; the other options mix up the numbers or say the divisions do not exist.",
+      "sv": "Sverige är indelat i 21 län och 290 kommuner. Därför är alternativet med 21 län och 290 kommuner rätt; de andra alternativen blandar ihop antal eller säger att indelningarna saknas."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Fjäll",
+      "section": "Sveriges indelning",
       "page": 6
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "geography",
-      "mountains",
-      "climate",
-      "skanderna",
+      "counties",
+      "municipalities",
+      "regional-division",
       "published-variant",
       "section-practice"
     ]
@@ -34311,8 +34311,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "One reason is that The climate is too cold and windy.",
-      "sv": "En anledning är klimatet är för kallt och blåsigt."
+      "en": "Sweden is divided into 21 counties and 290 municipalities.",
+      "sv": "Sverige är indelat i 21 län och 290 kommuner."
     },
     "opts": [
       {
@@ -34326,21 +34326,21 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
-      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
+      "en": "Sweden is divided into 21 counties and 290 municipalities. That makes the option with 21 counties and 290 municipalities correct; the other options mix up the numbers or say the divisions do not exist.",
+      "sv": "Sverige är indelat i 21 län och 290 kommuner. Därför är alternativet med 21 län och 290 kommuner rätt; de andra alternativen blandar ihop antal eller säger att indelningarna saknas."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Fjäll",
+      "section": "Sveriges indelning",
       "page": 6
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "geography",
-      "mountains",
-      "climate",
-      "skanderna",
+      "counties",
+      "municipalities",
+      "regional-division",
       "published-variant",
       "true-false"
     ]
@@ -34351,8 +34351,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "One reason is that The ground is covered by tropical rainforest.",
-      "sv": "En anledning är marken är täckt av tropisk regnskog."
+      "en": "Sweden is divided into 290 counties and 21 municipalities.",
+      "sv": "Sverige är indelat i 290 län och 21 kommuner."
     },
     "opts": [
       {
@@ -34366,21 +34366,21 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
-      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
+      "en": "Sweden is divided into 21 counties and 290 municipalities. That makes the option with 21 counties and 290 municipalities correct; the other options mix up the numbers or say the divisions do not exist.",
+      "sv": "Sverige är indelat i 21 län och 290 kommuner. Därför är alternativet med 21 län och 290 kommuner rätt; de andra alternativen blandar ihop antal eller säger att indelningarna saknas."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Fjäll",
+      "section": "Sveriges indelning",
       "page": 6
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "geography",
-      "mountains",
-      "climate",
-      "skanderna",
+      "counties",
+      "municipalities",
+      "regional-division",
       "published-variant",
       "false-statement"
     ]
@@ -34391,44 +34391,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Why do trees not grow in the coldest and windiest parts of the Swedish mountain region?",
-      "sv": "Välj rätt alternativ: Varför växer det inte träd i fjällens kallaste och blåsigaste delar?"
+      "en": "Choose the correct option: Which statement is correct about Sweden's counties and municipalities?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om Sveriges län och kommuner?"
     },
     "opts": [
       {
-        "en": "The climate is too cold and windy",
-        "sv": "Klimatet är för kallt och blåsigt"
+        "en": "Sweden is divided into 21 counties and 290 municipalities.",
+        "sv": "Sverige är indelat i 21 län och 290 kommuner."
       },
       {
-        "en": "The ground is covered by tropical rainforest",
-        "sv": "Marken är täckt av tropisk regnskog"
+        "en": "Sweden is divided into 290 counties and 21 municipalities.",
+        "sv": "Sverige är indelat i 290 län och 21 kommuner."
       },
       {
-        "en": "The area is below sea level",
-        "sv": "Området ligger under havsytan"
+        "en": "Sweden is divided into 25 counties and three municipalities.",
+        "sv": "Sverige är indelat i 25 län och tre kommuner."
       },
       {
-        "en": "Farming takes up all the land there",
-        "sv": "Jordbruket tar upp all mark där"
+        "en": "Sweden has neither counties nor municipalities.",
+        "sv": "Sverige saknar både län och kommuner."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The Swedish mountain region lies along the border with Norway in the Scandinavian Mountains. Where the climate is too cold and windy for trees, the landscape is mainly stone, grass, and low plants.",
-      "sv": "Fjällen ligger längs gränsen mot Norge i bergskedjan Skanderna. Där klimatet är för kallt och blåsigt för träd består landskapet främst av sten, gräs och låga växter."
+      "en": "Sweden is divided into 21 counties and 290 municipalities. That makes the option with 21 counties and 290 municipalities correct; the other options mix up the numbers or say the divisions do not exist.",
+      "sv": "Sverige är indelat i 21 län och 290 kommuner. Därför är alternativet med 21 län och 290 kommuner rätt; de andra alternativen blandar ihop antal eller säger att indelningarna saknas."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Fjäll",
+      "section": "Sveriges indelning",
       "page": 6
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
       "geography",
-      "mountains",
-      "climate",
-      "skanderna",
+      "counties",
+      "municipalities",
+      "regional-division",
       "published-variant",
       "judgement"
     ]
@@ -34439,44 +34439,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which trees are more common in northern Sweden's forests?",
-      "sv": "Vilket svar stämmer bäst? Vilka träd är vanligare i norra Sveriges skogar?"
+      "en": "Which answer best matches? Which statement describes the role of Sweden's historical provinces?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver landskapens roll i Sverige?"
     },
     "opts": [
       {
-        "en": "Conifers such as spruce and pine",
-        "sv": "Barrträd som gran och tall"
+        "en": "The historical provinces used to have their own laws, but Sweden is not governed through them today.",
+        "sv": "Landskapen hade egna lagar förr, men Sverige styrs inte genom dem i dag."
       },
       {
-        "en": "Palms and bamboo",
-        "sv": "Palmer och bambu"
+        "en": "The historical provinces are the same thing as today's municipalities.",
+        "sv": "Landskapen är samma sak som dagens kommuner."
       },
       {
-        "en": "Fruit trees from tropical climates",
-        "sv": "Fruktträd från tropiskt klimat"
+        "en": "The historical provinces are the same thing as today's counties.",
+        "sv": "Landskapen är samma sak som dagens län."
       },
       {
-        "en": "Deciduous trees that only grow by the Mediterranean Sea",
-        "sv": "Lövträd som bara växer vid Medelhavet"
+        "en": "The historical provinces are the three major parts Götaland, Svealand, and Norrland.",
+        "sv": "Landskapen är de tre landsdelarna Götaland, Svealand och Norrland."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
-      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
+      "en": "Sweden is divided into 25 historical provinces. The provinces used to have their own laws, but present-day Sweden is not governed through them. Municipalities, counties, and the three major parts are other kinds of divisions.",
+      "sv": "Sverige är indelat i 25 landskap. Landskapen hade förr egna lagar, men dagens Sverige styrs inte genom landskapen. Kommuner, län och de tre landsdelarna är andra slags indelningar."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Skogar, sjöar och öar",
+      "section": "Sveriges indelning",
       "page": 6
     },
     "difficulty": "medium",
     "tags": [
       "geography",
-      "forest",
-      "conifers",
-      "climate",
+      "landskap",
+      "historical-provinces",
+      "regional-division",
       "published-variant",
       "section-practice"
     ]
@@ -34487,8 +34487,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "Conifers such as spruce and pine.",
-      "sv": "Barrträd som gran och tall."
+      "en": "The historical provinces used to have their own laws, but Sweden is not governed through them today.",
+      "sv": "Landskapen hade egna lagar förr, men Sverige styrs inte genom dem i dag."
     },
     "opts": [
       {
@@ -34502,21 +34502,21 @@
     ],
     "answer": 0,
     "why": {
-      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
-      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
+      "en": "Sweden is divided into 25 historical provinces. The provinces used to have their own laws, but present-day Sweden is not governed through them. Municipalities, counties, and the three major parts are other kinds of divisions.",
+      "sv": "Sverige är indelat i 25 landskap. Landskapen hade förr egna lagar, men dagens Sverige styrs inte genom landskapen. Kommuner, län och de tre landsdelarna är andra slags indelningar."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Skogar, sjöar och öar",
+      "section": "Sveriges indelning",
       "page": 6
     },
     "difficulty": "medium",
     "tags": [
       "geography",
-      "forest",
-      "conifers",
-      "climate",
+      "landskap",
+      "historical-provinces",
+      "regional-division",
       "published-variant",
       "true-false"
     ]
@@ -34527,8 +34527,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "Palms and bamboo.",
-      "sv": "Palmer och bambu."
+      "en": "The historical provinces are the same thing as today's municipalities.",
+      "sv": "Landskapen är samma sak som dagens kommuner."
     },
     "opts": [
       {
@@ -34542,21 +34542,21 @@
     ],
     "answer": 1,
     "why": {
-      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
-      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
+      "en": "Sweden is divided into 25 historical provinces. The provinces used to have their own laws, but present-day Sweden is not governed through them. Municipalities, counties, and the three major parts are other kinds of divisions.",
+      "sv": "Sverige är indelat i 25 landskap. Landskapen hade förr egna lagar, men dagens Sverige styrs inte genom landskapen. Kommuner, län och de tre landsdelarna är andra slags indelningar."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Skogar, sjöar och öar",
+      "section": "Sveriges indelning",
       "page": 6
     },
     "difficulty": "medium",
     "tags": [
       "geography",
-      "forest",
-      "conifers",
-      "climate",
+      "landskap",
+      "historical-provinces",
+      "regional-division",
       "published-variant",
       "false-statement"
     ]
@@ -34567,44 +34567,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which trees are more common in northern Sweden's forests?",
-      "sv": "Välj rätt alternativ: Vilka träd är vanligare i norra Sveriges skogar?"
+      "en": "Choose the correct option: Which statement describes the role of Sweden's historical provinces?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver landskapens roll i Sverige?"
     },
     "opts": [
       {
-        "en": "Conifers such as spruce and pine",
-        "sv": "Barrträd som gran och tall"
+        "en": "The historical provinces used to have their own laws, but Sweden is not governed through them today.",
+        "sv": "Landskapen hade egna lagar förr, men Sverige styrs inte genom dem i dag."
       },
       {
-        "en": "Palms and bamboo",
-        "sv": "Palmer och bambu"
+        "en": "The historical provinces are the same thing as today's municipalities.",
+        "sv": "Landskapen är samma sak som dagens kommuner."
       },
       {
-        "en": "Fruit trees from tropical climates",
-        "sv": "Fruktträd från tropiskt klimat"
+        "en": "The historical provinces are the same thing as today's counties.",
+        "sv": "Landskapen är samma sak som dagens län."
       },
       {
-        "en": "Deciduous trees that only grow by the Mediterranean Sea",
-        "sv": "Lövträd som bara växer vid Medelhavet"
+        "en": "The historical provinces are the three major parts Götaland, Svealand, and Norrland.",
+        "sv": "Landskapen är de tre landsdelarna Götaland, Svealand och Norrland."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "More than half of Sweden's land area is covered by forest. In the colder north, conifers such as spruce and pine are more common, while the milder climate farther south makes deciduous trees more common there.",
-      "sv": "Mer än hälften av Sveriges yta täcks av skog. I det kallare norr är barrträd som gran och tall vanligare, medan det mildare klimatet längre söderut gör lövträd vanligare där."
+      "en": "Sweden is divided into 25 historical provinces. The provinces used to have their own laws, but present-day Sweden is not governed through them. Municipalities, counties, and the three major parts are other kinds of divisions.",
+      "sv": "Sverige är indelat i 25 landskap. Landskapen hade förr egna lagar, men dagens Sverige styrs inte genom landskapen. Kommuner, län och de tre landsdelarna är andra slags indelningar."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Skogar, sjöar och öar",
+      "section": "Sveriges indelning",
       "page": 6
     },
     "difficulty": "medium",
     "tags": [
       "geography",
-      "forest",
-      "conifers",
-      "climate",
+      "landskap",
+      "historical-provinces",
+      "regional-division",
       "published-variant",
       "judgement"
     ]
@@ -34615,44 +34615,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Where do most people in Sweden live?",
-      "sv": "Vilket svar stämmer bäst? Var bor de flesta människor i Sverige?"
+      "en": "Which answer best matches? Which statement is correct about Norrland?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om Norrland?"
     },
     "opts": [
       {
-        "en": "In southern Sweden and along the coasts",
-        "sv": "I södra Sverige och längs kusterna"
+        "en": "Norrland is in northern Sweden and covers more than half of the country's area.",
+        "sv": "Norrland ligger i norra Sverige och omfattar mer än hälften av landets yta."
       },
       {
-        "en": "Evenly spread across the whole country",
-        "sv": "Jämnt fördelat över hela landet"
+        "en": "Norrland is in southern Sweden and is the smallest major part.",
+        "sv": "Norrland ligger i södra Sverige och är den minsta landsdelen."
       },
       {
-        "en": "Mainly on uninhabited islands",
-        "sv": "Främst på obebodda öar"
+        "en": "Norrland is one of Sweden's 25 historical provinces.",
+        "sv": "Norrland är ett av Sveriges 25 landskap."
       },
       {
-        "en": "Only in the mountain areas",
-        "sv": "Bara i fjällområdena"
+        "en": "Norrland is Sweden's largest municipality.",
+        "sv": "Norrland är Sveriges största kommun."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
-      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
+      "en": "Norrland is the northern major part and covers more than half of Sweden's area. It is a major part, not a single historical province or municipality, and it is not in southern Sweden.",
+      "sv": "Norrland är den norra landsdelen och omfattar mer än hälften av Sveriges yta. Det är en landsdel, inte ett enskilt landskap eller en kommun, och det ligger inte i södra Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Befolkning",
-      "page": 7
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "easy",
     "tags": [
-      "population",
-      "demography",
-      "cities",
-      "coasts",
+      "geography",
+      "norrland",
+      "landsdelar",
+      "regional-division",
       "published-variant",
       "section-practice"
     ]
@@ -34663,8 +34663,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "In southern Sweden and along the coasts.",
-      "sv": "I södra Sverige och längs kusterna."
+      "en": "Norrland is in northern Sweden and covers more than half of the country's area.",
+      "sv": "Norrland ligger i norra Sverige och omfattar mer än hälften av landets yta."
     },
     "opts": [
       {
@@ -34678,21 +34678,21 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
-      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
+      "en": "Norrland is the northern major part and covers more than half of Sweden's area. It is a major part, not a single historical province or municipality, and it is not in southern Sweden.",
+      "sv": "Norrland är den norra landsdelen och omfattar mer än hälften av Sveriges yta. Det är en landsdel, inte ett enskilt landskap eller en kommun, och det ligger inte i södra Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Befolkning",
-      "page": 7
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "easy",
     "tags": [
-      "population",
-      "demography",
-      "cities",
-      "coasts",
+      "geography",
+      "norrland",
+      "landsdelar",
+      "regional-division",
       "published-variant",
       "true-false"
     ]
@@ -34703,8 +34703,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "Evenly spread across the whole country.",
-      "sv": "Jämnt fördelat över hela landet."
+      "en": "Norrland is in southern Sweden and is the smallest major part.",
+      "sv": "Norrland ligger i södra Sverige och är den minsta landsdelen."
     },
     "opts": [
       {
@@ -34718,21 +34718,21 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
-      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
+      "en": "Norrland is the northern major part and covers more than half of Sweden's area. It is a major part, not a single historical province or municipality, and it is not in southern Sweden.",
+      "sv": "Norrland är den norra landsdelen och omfattar mer än hälften av Sveriges yta. Det är en landsdel, inte ett enskilt landskap eller en kommun, och det ligger inte i södra Sverige."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Befolkning",
-      "page": 7
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "easy",
     "tags": [
-      "population",
-      "demography",
-      "cities",
-      "coasts",
+      "geography",
+      "norrland",
+      "landsdelar",
+      "regional-division",
       "published-variant",
       "false-statement"
     ]
@@ -34743,31 +34743,79 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Where do most people in Sweden live?",
-      "sv": "Välj rätt alternativ: Var bor de flesta människor i Sverige?"
+      "en": "Choose the correct option: Which statement is correct about Norrland?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om Norrland?"
     },
     "opts": [
       {
-        "en": "In southern Sweden and along the coasts",
-        "sv": "I södra Sverige och längs kusterna"
+        "en": "Norrland is in northern Sweden and covers more than half of the country's area.",
+        "sv": "Norrland ligger i norra Sverige och omfattar mer än hälften av landets yta."
       },
       {
-        "en": "Evenly spread across the whole country",
-        "sv": "Jämnt fördelat över hela landet"
+        "en": "Norrland is in southern Sweden and is the smallest major part.",
+        "sv": "Norrland ligger i södra Sverige och är den minsta landsdelen."
       },
       {
-        "en": "Mainly on uninhabited islands",
-        "sv": "Främst på obebodda öar"
+        "en": "Norrland is one of Sweden's 25 historical provinces.",
+        "sv": "Norrland är ett av Sveriges 25 landskap."
       },
       {
-        "en": "Only in the mountain areas",
-        "sv": "Bara i fjällområdena"
+        "en": "Norrland is Sweden's largest municipality.",
+        "sv": "Norrland är Sveriges största kommun."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, and a large share live in or around Stockholm, Gothenburg, and Malmö.",
-      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, och en stor del av befolkningen bor i eller runt Stockholm, Göteborg och Malmö."
+      "en": "Norrland is the northern major part and covers more than half of Sweden's area. It is a major part, not a single historical province or municipality, and it is not in southern Sweden.",
+      "sv": "Norrland är den norra landsdelen och omfattar mer än hälften av Sveriges yta. Det är en landsdel, inte ett enskilt landskap eller en kommun, och det ligger inte i södra Sverige."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Landet Sverige",
+      "section": "Sveriges indelning",
+      "page": 6
+    },
+    "difficulty": "easy",
+    "tags": [
+      "geography",
+      "norrland",
+      "landsdelar",
+      "regional-division",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q763",
+    "chapterId": 1,
+    "chapter": "Ch. 01 · The country of Sweden",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which statement is correct about Sweden's population?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om Sveriges befolkning?"
+    },
+    "opts": [
+      {
+        "en": "Sweden's population is largest in southern Sweden and along the coasts.",
+        "sv": "Sveriges befolkning är störst i södra Sverige och längs kusterna."
+      },
+      {
+        "en": "Sweden's population is largest in the mountains far from the coasts.",
+        "sv": "Sveriges befolkning är störst i fjällen långt från kusterna."
+      },
+      {
+        "en": "Sweden's population is evenly distributed across the whole country.",
+        "sv": "Sveriges befolkning är jämnt fördelad över hela landet."
+      },
+      {
+        "en": "Sweden's population lives almost entirely north of the Arctic Circle.",
+        "sv": "Sveriges befolkning bor nästan helt norr om polcirkeln."
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, not mainly in the mountains or north of the Arctic Circle.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, inte främst i fjällen eller norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -34779,56 +34827,8 @@
     "tags": [
       "population",
       "demography",
-      "cities",
-      "coasts",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q763",
-    "chapterId": 1,
-    "chapter": "Ch. 01 · The country of Sweden",
-    "type": "single_choice",
-    "q": {
-      "en": "Which answer best matches? Why is most Swedish farming in southern Sweden?",
-      "sv": "Vilket svar stämmer bäst? Varför finns det mesta av Sveriges jordbruk i södra Sverige?"
-    },
-    "opts": [
-      {
-        "en": "The milder climate makes it easier to farm there",
-        "sv": "Det mildare klimatet gör det lättare att odla där"
-      },
-      {
-        "en": "Northern Sweden has no drinking water",
-        "sv": "Norra Sverige saknar allt dricksvatten"
-      },
-      {
-        "en": "Southern Sweden has no cities",
-        "sv": "Södra Sverige har inga städer"
-      },
-      {
-        "en": "Farming is banned near the coasts",
-        "sv": "Jordbruk är förbjudet nära kusterna"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
-      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Landet Sverige",
-      "section": "Naturresurser",
-      "page": 8
-    },
-    "difficulty": "medium",
-    "tags": [
-      "natural-resources",
-      "agriculture",
-      "climate",
       "southern-sweden",
+      "coasts",
       "published-variant",
       "section-practice"
     ]
@@ -34839,8 +34839,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "One reason is the milder climate makes it easier to farm there.",
-      "sv": "En anledning är att Det mildare klimatet gör det lättare att odla där."
+      "en": "Sweden's population is largest in southern Sweden and along the coasts.",
+      "sv": "Sveriges befolkning är störst i södra Sverige och längs kusterna."
     },
     "opts": [
       {
@@ -34854,21 +34854,21 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
-      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, not mainly in the mountains or north of the Arctic Circle.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, inte främst i fjällen eller norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Naturresurser",
-      "page": 8
+      "section": "Befolkning",
+      "page": 7
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "natural-resources",
-      "agriculture",
-      "climate",
+      "population",
+      "demography",
       "southern-sweden",
+      "coasts",
       "published-variant",
       "true-false"
     ]
@@ -34879,8 +34879,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "One reason is northern Sweden has no drinking water.",
-      "sv": "En anledning är norra Sverige saknar allt dricksvatten."
+      "en": "Sweden's population is largest in the mountains far from the coasts.",
+      "sv": "Sveriges befolkning är störst i fjällen långt från kusterna."
     },
     "opts": [
       {
@@ -34894,21 +34894,21 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
-      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, not mainly in the mountains or north of the Arctic Circle.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, inte främst i fjällen eller norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Naturresurser",
-      "page": 8
+      "section": "Befolkning",
+      "page": 7
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "natural-resources",
-      "agriculture",
-      "climate",
+      "population",
+      "demography",
       "southern-sweden",
+      "coasts",
       "published-variant",
       "false-statement"
     ]
@@ -34919,44 +34919,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Why is most Swedish farming in southern Sweden?",
-      "sv": "Välj rätt alternativ: Varför finns det mesta av Sveriges jordbruk i södra Sverige?"
+      "en": "Choose the correct option: Which statement is correct about Sweden's population?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om Sveriges befolkning?"
     },
     "opts": [
       {
-        "en": "The milder climate makes it easier to farm there",
-        "sv": "Det mildare klimatet gör det lättare att odla där"
+        "en": "Sweden's population is largest in southern Sweden and along the coasts.",
+        "sv": "Sveriges befolkning är störst i södra Sverige och längs kusterna."
       },
       {
-        "en": "Northern Sweden has no drinking water",
-        "sv": "Norra Sverige saknar allt dricksvatten"
+        "en": "Sweden's population is largest in the mountains far from the coasts.",
+        "sv": "Sveriges befolkning är störst i fjällen långt från kusterna."
       },
       {
-        "en": "Southern Sweden has no cities",
-        "sv": "Södra Sverige har inga städer"
+        "en": "Sweden's population is evenly distributed across the whole country.",
+        "sv": "Sveriges befolkning är jämnt fördelad över hela landet."
       },
       {
-        "en": "Farming is banned near the coasts",
-        "sv": "Jordbruk är förbjudet nära kusterna"
+        "en": "Sweden's population lives almost entirely north of the Arctic Circle.",
+        "sv": "Sveriges befolkning bor nästan helt norr om polcirkeln."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Swedish farming is adapted to the climate. The colder climate in the north makes cultivation harder, so most farming is in southern Sweden.",
-      "sv": "Sveriges jordbruk är anpassat till klimatet. Det kallare klimatet i norr gör odling svårare, därför finns det mesta av jordbruket i södra Sverige."
+      "en": "Sweden's population is not evenly distributed. Most people live in the southern part of the country and along the coasts, not mainly in the mountains or north of the Arctic Circle.",
+      "sv": "Sveriges befolkning är inte jämnt fördelad. De flesta bor i den södra delen av landet och längs kusterna, inte främst i fjällen eller norr om polcirkeln."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Naturresurser",
-      "page": 8
+      "section": "Befolkning",
+      "page": 7
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "natural-resources",
-      "agriculture",
-      "climate",
+      "population",
+      "demography",
       "southern-sweden",
+      "coasts",
       "published-variant",
       "judgement"
     ]
@@ -34967,44 +34967,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What can climate change lead to in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad kan klimatförändringar leda till i Sverige?"
+      "en": "Which answer best matches? Which statement is correct about municipalities in Sweden's division?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om kommuner i Sveriges indelning?"
     },
     "opts": [
       {
-        "en": "More heavy rain, heat periods, drought, and forest fires",
-        "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder"
+        "en": "Municipalities are the local division, and Sweden has 290 municipalities.",
+        "sv": "Kommuner är den lokala indelningen, och Sverige har 290 kommuner."
       },
       {
-        "en": "Sea levels always falling everywhere",
-        "sv": "Att havsnivån alltid sjunker överallt"
+        "en": "Municipalities are historical provinces with their own laws today.",
+        "sv": "Kommuner är historiska landskap med egna lagar i dag."
       },
       {
-        "en": "Extreme weather disappearing completely",
-        "sv": "Att extremt väder försvinner helt"
+        "en": "Municipalities are the same thing as the three major parts.",
+        "sv": "Kommuner är samma sak som de tre landsdelarna."
       },
       {
-        "en": "All emissions automatically becoming zero",
-        "sv": "Att alla utsläpp automatiskt blir noll"
+        "en": "Municipalities exist only in Norrland.",
+        "sv": "Kommuner finns bara i Norrland."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
-      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
+      "en": "Municipalities are Sweden's local division, and the country has 290 municipalities. They should not be confused with historical provinces, major parts, or only one part of the country.",
+      "sv": "Kommunerna är den lokala indelningen i Sverige, och landet har 290 kommuner. De ska inte blandas ihop med landskap, landsdelar eller en enda del av landet."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Klimatförändringar",
-      "page": 8
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "climate-change",
-      "flooding",
-      "drought",
-      "forest-fires",
+      "geography",
+      "municipalities",
+      "local-division",
+      "regional-division",
       "published-variant",
       "section-practice"
     ]
@@ -35015,8 +35015,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "More heavy rain, heat periods, drought, and forest fires.",
-      "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder."
+      "en": "Municipalities are the local division, and Sweden has 290 municipalities.",
+      "sv": "Kommuner är den lokala indelningen, och Sverige har 290 kommuner."
     },
     "opts": [
       {
@@ -35030,21 +35030,21 @@
     ],
     "answer": 0,
     "why": {
-      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
-      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
+      "en": "Municipalities are Sweden's local division, and the country has 290 municipalities. They should not be confused with historical provinces, major parts, or only one part of the country.",
+      "sv": "Kommunerna är den lokala indelningen i Sverige, och landet har 290 kommuner. De ska inte blandas ihop med landskap, landsdelar eller en enda del av landet."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Klimatförändringar",
-      "page": 8
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "climate-change",
-      "flooding",
-      "drought",
-      "forest-fires",
+      "geography",
+      "municipalities",
+      "local-division",
+      "regional-division",
       "published-variant",
       "true-false"
     ]
@@ -35055,8 +35055,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
     "q": {
-      "en": "Sea levels always falling everywhere.",
-      "sv": "Havsnivån alltid sjunker överallt."
+      "en": "Municipalities are historical provinces with their own laws today.",
+      "sv": "Kommuner är historiska landskap med egna lagar i dag."
     },
     "opts": [
       {
@@ -35070,21 +35070,21 @@
     ],
     "answer": 1,
     "why": {
-      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
-      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
+      "en": "Municipalities are Sweden's local division, and the country has 290 municipalities. They should not be confused with historical provinces, major parts, or only one part of the country.",
+      "sv": "Kommunerna är den lokala indelningen i Sverige, och landet har 290 kommuner. De ska inte blandas ihop med landskap, landsdelar eller en enda del av landet."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Klimatförändringar",
-      "page": 8
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "climate-change",
-      "flooding",
-      "drought",
-      "forest-fires",
+      "geography",
+      "municipalities",
+      "local-division",
+      "regional-division",
       "published-variant",
       "false-statement"
     ]
@@ -35095,44 +35095,44 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What can climate change lead to in Sweden?",
-      "sv": "Välj rätt alternativ: Vad kan klimatförändringar leda till i Sverige?"
+      "en": "Choose the correct option: Which statement is correct about municipalities in Sweden's division?",
+      "sv": "Välj rätt alternativ: Vilket påstående stämmer om kommuner i Sveriges indelning?"
     },
     "opts": [
       {
-        "en": "More heavy rain, heat periods, drought, and forest fires",
-        "sv": "Fler kraftiga regn, värmeperioder, torka och skogsbränder"
+        "en": "Municipalities are the local division, and Sweden has 290 municipalities.",
+        "sv": "Kommuner är den lokala indelningen, och Sverige har 290 kommuner."
       },
       {
-        "en": "Sea levels always falling everywhere",
-        "sv": "Att havsnivån alltid sjunker överallt"
+        "en": "Municipalities are historical provinces with their own laws today.",
+        "sv": "Kommuner är historiska landskap med egna lagar i dag."
       },
       {
-        "en": "Extreme weather disappearing completely",
-        "sv": "Att extremt väder försvinner helt"
+        "en": "Municipalities are the same thing as the three major parts.",
+        "sv": "Kommuner är samma sak som de tre landsdelarna."
       },
       {
-        "en": "All emissions automatically becoming zero",
-        "sv": "Att alla utsläpp automatiskt blir noll"
+        "en": "Municipalities exist only in Norrland.",
+        "sv": "Kommuner finns bara i Norrland."
       }
     ],
     "answer": 0,
     "why": {
-      "en": "As the climate gets warmer, Sweden may see more heavy rain that causes flooding. Longer and more intense heat periods can also contribute to drought and forest fires.",
-      "sv": "När klimatet blir varmare kan Sverige få fler kraftiga regn som leder till översvämningar. Längre och mer intensiva värmeperioder kan också bidra till torka och skogsbränder."
+      "en": "Municipalities are Sweden's local division, and the country has 290 municipalities. They should not be confused with historical provinces, major parts, or only one part of the country.",
+      "sv": "Kommunerna är den lokala indelningen i Sverige, och landet har 290 kommuner. De ska inte blandas ihop med landskap, landsdelar eller en enda del av landet."
     },
     "source": {
       "title": "Sverige i fokus",
       "chapter": "Landet Sverige",
-      "section": "Klimatförändringar",
-      "page": 8
+      "section": "Sveriges indelning",
+      "page": 6
     },
     "difficulty": "medium",
     "tags": [
-      "climate-change",
-      "flooding",
-      "drought",
-      "forest-fires",
+      "geography",
+      "municipalities",
+      "local-division",
+      "regional-division",
       "published-variant",
       "judgement"
     ]
