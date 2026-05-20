@@ -7539,6 +7539,24 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-answer-feedback-parity')) {
+  validateAnswerValidationTypeSchemaParity();
+  validateAnswerFeedbackParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    publishedQuestions: Array.isArray(questions)
+      ? questions.filter((question) => question.reviewStatus === 'published').length
+      : 0,
+    answerValidationTypeUnionsValidated,
+    answerValidationTypeInterfacesValidated,
+    answerValidationTypeSchemaParityValidated,
+    answerFeedbackQuestionsValidated,
+    answerFeedbackOptionsValidated,
+    answerFeedbackRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
