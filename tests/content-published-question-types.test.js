@@ -30,6 +30,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
+const allSaintsGraveCandlePrimaryPattern =
+  /\b(?:tända ljus på gravar|går? till kyrkogården[^.?!;]*tänder ljus|light candles on graves|go(?:es)? to cemeteries[^.?!;]*light candles)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -997,6 +999,94 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q081 uses stilted Saltsjöbaden Agreement English wording/,
+  );
+});
+
+test('All Saints Day source questions cover distinct primary concepts', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const primaryConceptText = (question) =>
+    [
+      question.opts?.[question.answer]?.sv,
+      question.opts?.[question.answer]?.en,
+      question.why?.sv,
+      question.why?.en,
+    ].join(' ');
+  const allSaintsPrimaryGraveCandleRows = sourceQuestions
+    .filter((question) => question.source?.section === 'Alla helgons dag')
+    .filter((question) => allSaintsGraveCandlePrimaryPattern.test(primaryConceptText(question)))
+    .map((question) => question.id);
+  const q136 = generatedSiteBank.find((question) => question.id === 'q136');
+  const actualQ136 = actualSiteBank.find((question) => question.id === 'q136');
+  const q136SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q136', 'singleChoice'),
+  );
+  const q136TrueStatement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q136', 'trueStatement'),
+  );
+
+  assert.deepEqual(allSaintsPrimaryGraveCandleRows, ['q104']);
+  assert.ok(q136, 'q136 should be published in the generated site bank');
+  assert.ok(actualQ136, 'q136 should be published in the committed static bank');
+  assert.equal(q136.q.sv, 'Vilken typ av helgdag är Alla helgons dag i Sverige?');
+  assert.equal(q136.q.en, 'What kind of holiday is All Saints’ Day in Sweden?');
+  assert.equal(
+    q136.opts[q136.answer].sv,
+    'Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött',
+  );
+  assert.equal(
+    q136.opts[q136.answer].en,
+    'All Saints’ Day is a Christian holiday for remembering and honouring people who have died',
+  );
+  assert.equal(actualQ136.q.en, q136.q.en);
+  assert.equal(
+    q136SingleChoice?.q.en,
+    'Which answer best matches? What kind of holiday is All Saints’ Day in Sweden?',
+  );
+  assert.equal(
+    q136TrueStatement?.q.en,
+    'All Saints’ Day is a Christian holiday for remembering and honouring people who have died.',
+  );
+});
+
+test('All Saints Day duplicate-concept guard rejects repeated grave-candle answers', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött',
+        'Går till kyrkogården och tänder ljus på gravar',
+      )
+      .replace(
+        'All Saints’ Day is a Christian holiday for remembering and honouring people who have died',
+        'Go to cemeteries and light candles on graves',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /q136 duplicates All Saints Day grave-candle remembrance source concept from q104/,
   );
 });
 

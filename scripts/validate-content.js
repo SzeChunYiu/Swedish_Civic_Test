@@ -314,6 +314,20 @@ const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
   /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
   /\bIn a Lucia procession,\s+one person is Lucia\b/i,
 ];
+const SOURCE_PRIMARY_ANSWER_CONCEPT_PATTERNS = [
+  {
+    id: 'all-saints-day-grave-candles',
+    chapter: 'Traditioner och högtider',
+    section: 'Alla helgons dag',
+    label: 'All Saints Day grave-candle remembrance',
+    patterns: [
+      /\bt(?:ä|a)nd(?:a|er)?\s+ljus\s+p(?:å|a)\s+gravar\b/i,
+      /\bkyrkog(?:å|a)rd(?:en|ar)?[^.?!;]*\bt(?:ä|a)nd(?:a|er)?\s+ljus\b/i,
+      /\blight(?:ing)?\s+candles?\s+on\s+graves\b/i,
+      /\bcemeter(?:y|ies)[^.?!;]*\blight(?:ing)?\s+candles?\b/i,
+    ],
+  },
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
   /\btax and VAT\b/i,
@@ -5109,6 +5123,66 @@ function findDuplicateOptionTextLabels(question) {
   return duplicates;
 }
 
+function correctOptionFor(question) {
+  if (!Array.isArray(question.options)) return null;
+  return question.options.find((option) => option.id === question.correctOptionId) || null;
+}
+
+function firstSentence(value) {
+  return normalizeOptionText(value).split(/[.!?;]/, 1)[0] || '';
+}
+
+function sourcePrimaryAnswerConceptText(question) {
+  const correctOption = correctOptionFor(question);
+  return [
+    correctOption?.textSv,
+    correctOption?.textEn,
+    firstSentence(question.explanationSv),
+    firstSentence(question.explanationEn),
+  ]
+    .filter(hasText)
+    .join(' ');
+}
+
+function findSourcePrimaryAnswerConcept(question) {
+  if (!question?.uhrReference) return null;
+  const text = sourcePrimaryAnswerConceptText(question);
+  if (!text) return null;
+
+  return SOURCE_PRIMARY_ANSWER_CONCEPT_PATTERNS.find(
+    (concept) =>
+      question.uhrReference.chapter === concept.chapter &&
+      question.uhrReference.section === concept.section &&
+      concept.patterns.some((pattern) => pattern.test(text)),
+  );
+}
+
+function validateSourcePrimaryAnswerConcepts(authoredQuestions) {
+  const seenConcepts = new Map();
+  const duplicateQuestionIds = new Set();
+
+  authoredQuestions.forEach((question) => {
+    const concept = findSourcePrimaryAnswerConcept(question);
+    if (!concept || !hasText(question.id)) return;
+
+    const key = `${question.uhrReference.chapter}|${question.uhrReference.section}|${concept.id}`;
+    const previousQuestion = seenConcepts.get(key);
+    if (previousQuestion) {
+      duplicateQuestionIds.add(previousQuestion.id);
+      duplicateQuestionIds.add(question.id);
+      fail(`${question.id} duplicates ${concept.label} source concept from ${previousQuestion.id}`);
+    } else {
+      seenConcepts.set(key, question);
+    }
+  });
+
+  authoredQuestions.forEach((question) => {
+    if (!duplicateQuestionIds.has(question.id)) {
+      sourceQuestionPrimaryAnswerConceptsValidated += 1;
+    }
+  });
+}
+
 function optionCountMatchesQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   if (question.type === 'single_choice') return question.options.length === 4;
@@ -7851,6 +7925,7 @@ let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
 let authoredSourcePartitionQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
+let sourceQuestionPrimaryAnswerConceptsValidated = 0;
 let generationParityValidated = false;
 let chapterGenerationParityValidated = 0;
 let generatedSourceMetadataParityValidated = 0;
@@ -17098,6 +17173,8 @@ function validateAuthoredSourceParity() {
     }
     if (publicationParityIsValid) sourcePublicationParityValidated += 1;
   });
+
+  validateSourcePrimaryAnswerConcepts(authoredQuestions);
 }
 
 validateAuthoredSourceParity();
@@ -18447,6 +18524,7 @@ console.log(
       authoredSourceQuestionsValidated,
       authoredSourcePartitionQuestionsValidated,
       sourcePublicationParityValidated,
+      sourceQuestionPrimaryAnswerConceptsValidated,
       generationParityValidated,
       chapterGenerationParityValidated,
       generatedSourceMetadataParityValidated,
