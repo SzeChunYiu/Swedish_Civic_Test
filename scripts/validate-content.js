@@ -693,6 +693,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
     'Ändra mål, språk och ljud',
+    'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     'Första övningen',
     'Nivå 2',
     'Missade frågor',
@@ -717,6 +718,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
     'Edit goal, language, and audio',
+    'Remove Ads is highlighted. Buy and Restore controls are here.',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -771,9 +773,28 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
   ['entitlementsReady,', 'profile premium banner must read Remove Ads entitlement readiness'],
   [
-    '{entitlementsReady ? (\n        <PremiumBanner',
+    'const { focus } = useLocalSearchParams<{ focus?: string }>();',
+    'profile route must read the focus search param',
+  ],
+  [
+    "const removeAdsFocused = focus === 'remove-ads';",
+    'profile route must detect the Remove Ads focus target',
+  ],
+  [
+    'const removeAdsPaywall = entitlementsReady ? (',
     'profile premium banner must fail closed while entitlements load',
   ],
+  ['nativeID="remove-ads-paywall"', 'profile Remove Ads paywall must expose a stable anchor'],
+  ['testID="remove-ads-paywall"', 'profile Remove Ads paywall must expose a stable test target'],
+  [
+    '{removeAdsFocused ? removeAdsPaywall : null}',
+    'profile route must move focused Remove Ads paywall near the top',
+  ],
+  [
+    '{!removeAdsFocused ? removeAdsPaywall : null}',
+    'profile route must preserve the default Remove Ads paywall position',
+  ],
+  ['{copy.removeAdsFocusCue}', 'profile Remove Ads focus cue must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
   ['import { ProPaywall }', 'profile route must import the Pro tier comparison surface'],
   ['<ProPaywall', 'profile route must render the Pro tier comparison surface'],
