@@ -18,6 +18,8 @@ const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
+const saltsjobadenAgreementStiltedEnglishPattern =
+  /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const generatedIdLiteralPatterns = [
@@ -322,6 +324,99 @@ require('./scripts/validate-content.js');
   assert.match(output, /q097 uses literal common-to-do English wording/);
   assert.match(output, /q104 uses literal common-to-do English wording/);
   assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 6, output);
+});
+
+test('Saltsjöbaden Agreement source and exports use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q081GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q081', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q081', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q081', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q081', 'judgement'),
+  ];
+  const q081Ids = ['q081', ...q081GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q081Ids.includes(question.id))
+    .filter((question) =>
+      saltsjobadenAgreementStiltedEnglishPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q081Ids.includes(question.id))
+    .filter((question) =>
+      saltsjobadenAgreementStiltedEnglishPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q081Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => saltsjobadenAgreementStiltedEnglishPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q081 = generatedSiteBank.find((question) => question.id === 'q081');
+  const q081True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q081', 'trueStatement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q081, 'q081 should be published in the site bank');
+  assert.equal(q081.q.en, 'What was the 1938 Saltsjöbaden Agreement important for?');
+  assert.equal(
+    q081.why.en,
+    'The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.',
+  );
+  assert.ok(q081True, 'q081 true generated variant should be published');
+  assert.equal(
+    q081True.q.en,
+    'The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.',
+  );
+});
+
+test('Saltsjöbaden Agreement English naturalness guard rejects the old phrasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'What was the 1938 Saltsjöbaden Agreement important for?',
+        'What did the 1938 Saltsjöbaden Agreement become important for?',
+      )
+      .replace(
+        'It was important for cooperation between them',
+        'It became important for cooperation between them',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q081 uses stilted Saltsjöbaden Agreement English wording/,
+  );
 });
 
 test('free-media source prompts ask the civic concept directly in exports', () => {

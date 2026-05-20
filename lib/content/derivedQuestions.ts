@@ -1855,6 +1855,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
       answer,
     ).replace(/^Cooperation\b/, 'cooperation')}`;
 
+  match = q.match(/^What was (.+?) important for$/i);
+  if (match)
+    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(
+      /^Cooperation\b/,
+      'cooperation',
+    )}`;
+
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
     return `The goal of ${match[1]} during ${match[2]} was to ${lowerFirst(
