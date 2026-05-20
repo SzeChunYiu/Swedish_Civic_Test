@@ -4052,7 +4052,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "en": "Sweden has been a member of the European Union since 1995. The EU is a form of political and economic cooperation among European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
       "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
     },
     "source": {
@@ -22653,7 +22653,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "en": "Sweden has been a member of the European Union since 1995. The EU is a form of political and economic cooperation among European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
       "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
     },
     "source": {
@@ -22693,7 +22693,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "en": "Sweden has been a member of the European Union since 1995. The EU is a form of political and economic cooperation among European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
       "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
     },
     "source": {
@@ -22733,7 +22733,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "en": "Sweden has been a member of the European Union since 1995. The EU is a form of political and economic cooperation among European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
       "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
     },
     "source": {
@@ -22781,7 +22781,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden has been a member of the European Union since 1995. The EU is political and economic cooperation between European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
+      "en": "Sweden has been a member of the European Union since 1995. The EU is a form of political and economic cooperation among European countries, so 1995 is the correct year and the alternatives 1949, 2005, and 2024 are wrong.",
       "sv": "Sverige har varit medlem i Europeiska unionen sedan 1995. EU är ett politiskt och ekonomiskt samarbete mellan europeiska länder, därför är 1995 rätt år och alternativen 1949, 2005 och 2024 fel."
     },
     "source": {

@@ -329,6 +329,9 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bgained the right to live in the country and practice\b/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
+const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bThe EU is political and economic cooperation between European countries\b/i,
+];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -4023,6 +4026,16 @@ function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
   return QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -6777,6 +6790,7 @@ let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
+let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -14656,6 +14670,8 @@ if (Array.isArray(questions)) {
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const luciaRoleEnglishNaturalnessIssue =
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
+      const euCooperationEnglishNaturalnessIssue =
+        findQuestionEuCooperationEnglishNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -14686,6 +14702,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted Lucia role English wording`);
       } else {
         questionLuciaRoleEnglishNaturalnessValidated += 1;
+      }
+      if (euCooperationEnglishNaturalnessIssue) {
+        fail(`${label} uses missing-article EU cooperation English wording`);
+      } else {
+        questionEuCooperationEnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -15135,6 +15156,7 @@ console.log(
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
+      questionEuCooperationEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
