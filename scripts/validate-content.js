@@ -1227,8 +1227,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     file: 'app/(tabs)/practice.tsx',
     component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern:
-      /<PracticeInterstitialAd\s+showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\}\s+\/>/,
+    pattern: /<PracticeInterstitialAd\s+showKey=\{practiceInterstitialShowKey\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -6774,6 +6773,7 @@ const getCompletedQuestionIdsForQuestionBank =
   practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
+const getPracticeInterstitialShowKey = practiceSessionStoreModule.getPracticeInterstitialShowKey;
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
@@ -7856,6 +7856,22 @@ function validateAdPlacementRouteParity() {
         routeIsValid = false;
       }
       if (
+        !/getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\)/.test(source)
+      ) {
+        reject(
+          'Practice completion interstitial key must use the active question and stable practice session seed',
+        );
+        routeIsValid = false;
+      }
+      if (
+        /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/.test(
+          source,
+        )
+      ) {
+        reject('Practice completion interstitial key must not include selectedOptionId');
+        routeIsValid = false;
+      }
+      if (
         !practiceInterstitialSource.includes(
           `shouldShowAd('${spec.placement}', resolvedEntitlements)`,
         )
@@ -7878,6 +7894,18 @@ function validateAdPlacementRouteParity() {
       if (!practiceInterstitialNativeSource.includes('AdEventType.LOADED')) {
         reject(
           'PracticeInterstitialAd native placement must wait for the interstitial loaded event',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.OPENED')) {
+        reject(
+          'PracticeInterstitialAd native placement must record the show key only after the interstitial opens',
+        );
+        routeIsValid = false;
+      }
+      if (!practiceInterstitialNativeSource.includes('AdEventType.CLOSED')) {
+        reject(
+          'PracticeInterstitialAd native placement must clear show state when the interstitial closes',
         );
         routeIsValid = false;
       }
@@ -7920,6 +7948,36 @@ function validateAdPlacementRouteParity() {
       if (!practiceInterstitialNativeSource.includes('lastInterstitialShowKey === showKey')) {
         reject(
           'PracticeInterstitialAd native placement must show at most once per answer feedback key',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !/AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/.test(
+          practiceInterstitialNativeSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must set the shown key from the opened event',
+        );
+        routeIsValid = false;
+      }
+      if (
+        /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/.test(
+          practiceInterstitialNativeSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must not mark a key as shown before SDK show succeeds',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !/Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/.test(
+          practiceInterstitialNativeSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must clear show state so SDK show failures can retry',
         );
         routeIsValid = false;
       }
@@ -14083,6 +14141,13 @@ function validatePracticeSessionStoreParity() {
     });
 
     usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
+    const firstFeedbackShowKey =
+      typeof getPracticeInterstitialShowKey === 'function'
+        ? getPracticeInterstitialShowKey(
+            usePracticeSessionStore.getState().activeQuestionId,
+            usePracticeSessionStore.getState().shuffleSessionId,
+          )
+        : null;
     let state = usePracticeSessionStore.getState();
     if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
       rejectRuntime('practice session selectOption must lock question id and selected option id');
@@ -14100,6 +14165,23 @@ function validatePracticeSessionStoreParity() {
     }
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session resetSelection must keep the current shuffle session seed');
+    }
+    usePracticeSessionStore.getState().selectOption('q-validator', 'option-b');
+    if (typeof getPracticeInterstitialShowKey !== 'function') {
+      rejectRuntime('practice session must export getPracticeInterstitialShowKey');
+    } else {
+      const retryFeedbackShowKey = getPracticeInterstitialShowKey(
+        usePracticeSessionStore.getState().activeQuestionId,
+        usePracticeSessionStore.getState().shuffleSessionId,
+      );
+      if (retryFeedbackShowKey !== firstFeedbackShowKey) {
+        rejectRuntime(
+          'practice interstitial key must remain stable when retrying the same active question',
+        );
+      }
+      if (/option-a|option-b/.test(retryFeedbackShowKey)) {
+        rejectRuntime('practice interstitial key must not include selected option ids');
+      }
     }
 
     usePracticeSessionStore.getState().advanceQuestion();
