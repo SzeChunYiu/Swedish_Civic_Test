@@ -677,6 +677,10 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
     'accessibilitySummary={false}',
     'learn route chapter cards must not expose nested summaries inside links',
   ],
+  [
+    'progressPresentationOnly',
+    'learn route chapter cards must hide redundant nested progressbar semantics',
+  ],
 ];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
@@ -2561,9 +2565,21 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
+    label: 'explicit ProgressBar props interface',
+    pattern: /export interface ProgressBarProps \{/,
+  },
+  {
+    label: 'presentation-only prop contract',
+    pattern: /presentationOnly\?: boolean;/,
+  },
+  {
     label: 'localized progress copy',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
+  },
+  {
+    label: 'semantic progress default',
+    pattern: /presentationOnly = false,/,
   },
   {
     label: 'clamped progress source',
@@ -2580,6 +2596,15 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
     label: 'readable localized progress label',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
+  },
+  {
+    label: 'presentation-only branch',
+    pattern: /if \(presentationOnly\) \{/,
+  },
+  {
+    label: 'presentation-only hidden from accessibility tree',
+    pattern:
+      /aria-hidden[\s\S]*accessibilityElementsHidden[\s\S]*accessibilityRole="none"[\s\S]*importantForAccessibility="no-hide-descendants"/,
   },
   {
     label: 'web aria label',
@@ -2765,6 +2790,14 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /accessibilitySummary = true/,
   },
   {
+    label: 'optional presentation-only progress contract',
+    pattern: /progressPresentationOnly\?: boolean;/,
+  },
+  {
+    label: 'semantic progress default',
+    pattern: /progressPresentationOnly = false,/,
+  },
+  {
     label: 'Swedish practiced status copy',
     pattern: /\$\{completedCount\}\/\$\{questionCount\} besvarade/,
   },
@@ -2829,7 +2862,8 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'visible progress bar',
-    pattern: /<ProgressBar language=\{language\} progress=\{progress\} \/>/,
+    pattern:
+      /<ProgressBar\s+language=\{language\}\s+presentationOnly=\{progressPresentationOnly\}\s+progress=\{progress\}\s+\/>/,
   },
 ];
 const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
