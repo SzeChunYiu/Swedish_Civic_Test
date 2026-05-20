@@ -975,8 +975,8 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       "The building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
     ],
     q606: [
-      'Regeringsformen skyddar rätten att utöva sin religion och ger skydd mot diskriminering på grund av tro.',
-      'The Instrument of Government protects the right to practice one’s religion and protects against discrimination because of belief.',
+      'Regeringsformen skyddar rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro.',
+      'The Instrument of Government protects the right to practice one’s religion and to be protected from discrimination because of belief.',
     ],
     q607: [
       'Regeringsformen låter staten välja religion åt varje invånare.',

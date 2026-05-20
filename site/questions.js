@@ -11966,8 +11966,8 @@
     },
     "opts": [
       {
-        "en": "The right to practice one’s religion and protection from discrimination because of belief",
-        "sv": "Rätten att utöva sin religion och skydd mot diskriminering på grund av tro",
+        "en": "The right to practice one’s religion and to be protected from discrimination because of belief",
+        "sv": "Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro",
         "zh-Hant": "實踐自己宗教的權利，以及因信仰而免受歧視的保護",
         "zh-Hans": "实践自己宗教的权利，以及因信仰而免受歧视的保护",
         "ar": "الحق في ممارسة الدين والحماية من التمييز بسبب المعتقد",
@@ -46455,8 +46455,8 @@
     },
     "opts": [
       {
-        "en": "The right to practice one’s religion and protection from discrimination because of belief",
-        "sv": "Rätten att utöva sin religion och skydd mot diskriminering på grund av tro",
+        "en": "The right to practice one’s religion and to be protected from discrimination because of belief",
+        "sv": "Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro",
         "zh-Hant": "實踐自己宗教的權利，以及因信仰而免受歧視的保護",
         "zh-Hans": "实践自己宗教的权利，以及因信仰而免受歧视的保护",
         "ar": "الحق في ممارسة الدين والحماية من التمييز بسبب المعتقد",
@@ -46539,8 +46539,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "The Instrument of Government protects the right to practice one’s religion and protects against discrimination because of belief.",
-      "sv": "Regeringsformen skyddar rätten att utöva sin religion och ger skydd mot diskriminering på grund av tro."
+      "en": "The Instrument of Government protects the right to practice one’s religion and to be protected from discrimination because of belief.",
+      "sv": "Regeringsformen skyddar rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro."
     },
     "opts": [
       {
@@ -46626,8 +46626,8 @@
     },
     "opts": [
       {
-        "en": "The right to practice one’s religion and protection from discrimination because of belief",
-        "sv": "Rätten att utöva sin religion och skydd mot diskriminering på grund av tro",
+        "en": "The right to practice one’s religion and to be protected from discrimination because of belief",
+        "sv": "Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro",
         "zh-Hant": "實踐自己宗教的權利，以及因信仰而免受歧視的保護",
         "zh-Hans": "实践自己宗教的权利，以及因信仰而免受歧视的保护",
         "ar": "الحق في ممارسة الدين والحماية من التمييز بسبب المعتقد",

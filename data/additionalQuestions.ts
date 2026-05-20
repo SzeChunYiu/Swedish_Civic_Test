@@ -2221,8 +2221,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'What does the Instrument of Government protect regarding religion?',
     [
       [
-        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
-        'The right to practice one’s religion and protection from discrimination because of belief',
+        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
+        'The right to practice one’s religion and to be protected from discrimination because of belief',
       ],
       [
         'Att staten väljer religion åt varje invånare',

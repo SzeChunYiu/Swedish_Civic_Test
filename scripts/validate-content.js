@@ -612,6 +612,10 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
+const QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_PATTERNS = [
+  /\bRätten att utöva sin religion och skydd mot diskriminering på grund av tro\b/i,
+  /\bThe right to practice (?:one’s|one's) religion and protection from discrimination because of belief\b/i,
+];
 const QUESTION_UMEA_DEMONYM_SWEDISH_NATURALNESS_PATTERNS = [/\bumebor\b/i];
 const QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS = [
   /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i,
@@ -5044,6 +5048,18 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionReligiousFreedomParallelismIssue(question) {
+  const text = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  return QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionUmeaDemonymSwedishNaturalnessIssue(question) {
   const text = [
     question.questionSv,
@@ -7919,6 +7935,7 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionReligiousFreedomParallelismValidated = 0;
 let questionUmeaDemonymSwedishNaturalnessValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionWorkersDayHolidayEnglishNaturalnessValidated = 0;
@@ -17200,6 +17217,8 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
+      const religiousFreedomParallelismIssue =
+        findQuestionReligiousFreedomParallelismIssue(question);
       const umeaDemonymSwedishNaturalnessIssue =
         findQuestionUmeaDemonymSwedishNaturalnessIssue(question);
       const goodFridayEnglishNaturalnessIssue =
@@ -17241,6 +17260,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
+      }
+      if (religiousFreedomParallelismIssue) {
+        fail(`${label} uses nonparallel religious-freedom option wording`);
+      } else {
+        questionReligiousFreedomParallelismValidated += 1;
       }
       if (umeaDemonymSwedishNaturalnessIssue) {
         fail(`${label} uses nonstandard Umeå demonym Swedish wording`);
@@ -17738,6 +17762,7 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
+      questionReligiousFreedomParallelismValidated,
       questionUmeaDemonymSwedishNaturalnessValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionWorkersDayHolidayEnglishNaturalnessValidated,

@@ -22,6 +22,8 @@ const q071SocialInsuranceOverlapPattern =
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
+const religiousFreedomOptionParallelismPattern =
+  /\b(?:Rätten att utöva sin religion och skydd mot diskriminering på grund av tro|The right to practice (?:one’s|one's) religion and protection from discrimination because of belief)\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
 const workersDayHolidayEnglishPatterns = [
   /\bDemonstrations on workers[’'] day\b/i,
@@ -1341,6 +1343,85 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q093 uses stilted 1951 religious-freedom English wording/,
+  );
+});
+
+test('religious-freedom option parallelism stays natural in exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) =>
+    [
+      question.q?.sv,
+      question.q?.en,
+      question.why?.sv,
+      question.why?.en,
+      ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
+    ].join(' ');
+  const q116Ids = new Set(['q116', 'q630', 'q633']);
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q116Ids.has(question.id))
+    .filter((question) => religiousFreedomOptionParallelismPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => q116Ids.has(question.id))
+    .filter((question) => religiousFreedomOptionParallelismPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q116Ids.has(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => religiousFreedomOptionParallelismPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q116 = generatedSiteBank.find((question) => question.id === 'q116');
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q116, 'q116 should be published in the site bank');
+  assert.equal(
+    q116.opts?.[0]?.sv,
+    'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
+  );
+  assert.equal(
+    q116.opts?.[0]?.en,
+    'The right to practice one’s religion and to be protected from discrimination because of belief',
+  );
+});
+
+test('religious-freedom option parallelism guard rejects the old wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
+        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
+      )
+      .replace(
+        'The right to practice one’s religion and to be protected from discrimination because of belief',
+        'The right to practice one’s religion and protection from discrimination because of belief',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q116 uses nonparallel religious-freedom option wording/,
   );
 });
 
