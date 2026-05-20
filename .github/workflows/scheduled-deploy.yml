@@ -42,6 +42,7 @@ jobs:
       - name: Trigger production deploy hook
         env:
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+          SITE_LIVE_ASSET_MANIFEST_PATH: site/asset-manifest.json
           VERCEL_PRODUCTION_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
         run: |
           set -e
