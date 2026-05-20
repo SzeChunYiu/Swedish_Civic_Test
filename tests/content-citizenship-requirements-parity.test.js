@@ -144,9 +144,15 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /href=\{source\.url\}/);
   assert.match(routeSource, /rel="noreferrer"/);
   assert.match(routeSource, /target="_blank"/);
+  assert.match(
+    routeSource,
+    /<ComplianceActionLink[\s\S]*href="\/practice"[\s\S]*variant="primary"/,
+  );
+  assert.match(routeSource, /<ComplianceActionLink[\s\S]*href="\/about-the-test"/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
   assert.doesNotMatch(routeSource, /Linking\.openURL\(source\.url\)/);
+  assert.doesNotMatch(routeSource, /styles\.(primaryLink|secondaryLink)/);
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
 });
 

@@ -34,6 +34,36 @@ function expectedSourceLinkLabel(
   return `Open source: ${source.publisher}, ${title}`;
 }
 
+function expectedInternalLinks(language: AppLanguage) {
+  if (language === 'sv') {
+    return [
+      {
+        href: /\/practice$/,
+        label: 'Öppna övningsläget för samhällskunskap',
+        name: 'practice link',
+      },
+      {
+        href: /\/about-the-test$/,
+        label: 'Gå tillbaka till sidan om medborgarskapsprovet',
+        name: 'about-the-test link',
+      },
+    ];
+  }
+
+  return [
+    {
+      href: /\/practice$/,
+      label: 'Open civic knowledge practice mode',
+      name: 'practice link',
+    },
+    {
+      href: /\/about-the-test$/,
+      label: 'Go back to the page about the citizenship test',
+      name: 'about-the-test link',
+    },
+  ];
+}
+
 async function openCitizenshipRequirements(page: Page, language: AppLanguage) {
   await seedSettingsLanguage(page, language);
   await markAboutTheTestSeen(page);
@@ -94,6 +124,14 @@ for (const language of ['sv', 'en'] as const) {
       const sourceCard = link.locator('xpath=..');
       await expect(sourceCard).toContainText(source.publisher);
       await expect(sourceCard).toContainText(source.retrievedDate);
+    }
+
+    for (const internalLink of expectedInternalLinks(language)) {
+      const link = page.getByRole('link', { exact: true, name: internalLink.label });
+
+      await expect(link, `${internalLink.name} should stay reachable`).toHaveCount(1);
+      await expect(link).toHaveAttribute('href', internalLink.href);
+      await expectMinimumLinkTarget(link, internalLink.name);
     }
 
     await expectNoHorizontalOverflow(page, `citizenship requirements ${language}`);

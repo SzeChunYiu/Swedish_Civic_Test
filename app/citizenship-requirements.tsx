@@ -1,4 +1,3 @@
-import { Link } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -312,22 +311,17 @@ export default function CitizenshipRequirementsScreen() {
       </Card>
 
       <View style={styles.actions}>
-        <Link
+        <ComplianceActionLink
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
-        >
-          {copy.openPractice}
-        </Link>
-        <Link
+          label={copy.openPractice}
+          variant="primary"
+        />
+        <ComplianceActionLink
           accessibilityLabel={copy.backAboutAccessibilityLabel}
-          accessibilityRole="link"
           href="/about-the-test"
-          style={styles.secondaryLink}
-        >
-          {copy.backAbout}
-        </Link>
+          label={copy.backAbout}
+        />
       </View>
     </ScreenShell>
   );
@@ -475,25 +469,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
 });
