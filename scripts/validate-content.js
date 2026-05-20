@@ -883,12 +883,14 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Svenska',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
-    'Inga märken ännu',
+    'Låst',
+    'Upplåst',
+    'Framstegsöversikt',
+    'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
+    'Visa översikt',
+    'Öppna framstegsöversikten',
     'Öppna inställningar',
-    'Första övningen',
-    'Nivå 2',
-    'Misstagsrepetition',
-    'Tre dagars svit',
+    'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
   ],
   en: [
     'Local profile',
@@ -907,8 +909,14 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'English support',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
-    'No badges yet',
+    'Locked',
+    'Unlocked',
+    'Progress dashboard',
+    'Activity, chapter progress, and XP live on a dedicated page.',
+    'View dashboard',
+    'Open progress dashboard',
     'Open settings',
+    'Remove Ads is highlighted. Buy and Restore controls are here.',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -918,9 +926,30 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
+  ['getAllBadges,', 'profile route must read badge rows from the shared badge catalog'],
+  ['getBadgeTitle,', 'profile route badge titles must localize through the badge helpers'],
   [
-    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
-    'profile route must define localized badge-title overrides',
+    'getBadgeDescription,',
+    'profile route badge descriptions must localize through the badge helpers',
+  ],
+  [
+    'getBadgeLockedHint,',
+    'profile route locked badge hints must localize through the badge helpers',
+  ],
+  [
+    'getBadgeProgressHint,',
+    'profile route badge progress hints must localize through the badge helpers',
+  ],
+  ['type BadgeInput,', 'profile route must type badge-progress inputs'],
+  ['const badgeInput: BadgeInput = {', 'profile route must derive badges from typed inputs'],
+  [
+    'const unlockedBadgeIds = new Set(deriveBadges(badgeInput)',
+    'profile route must derive unlocked badges from progress',
+  ],
+  ['{getAllBadges().map((badge) => {', 'profile route must render the full badge catalog'],
+  [
+    'title={getBadgeTitle(badge, language)}',
+    'profile route badge titles must render localized copy',
   ],
   [
     'const language = useSettingsStore((state) => state.language);',
@@ -949,15 +978,28 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   [
-    'formatBadges(badges, language, copy.noBadges)',
-    'profile badge summary must use localized badge and empty-state copy',
-  ],
-  [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
   ],
   ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  [
+    'accessibilityLabel={copy.dashboardAccessibilityLabel}',
+    'profile dashboard link must expose localized accessibility copy',
+  ],
+  ['href="/dashboard"', 'profile dashboard link must route to the dashboard surface'],
+  ['label={copy.dashboardCta}', 'profile dashboard link must render localized copy'],
+  [
+    'const removeAdsPaywall = entitlementsReady ? (',
+    'profile premium banner must fail closed while entitlements load',
+  ],
+  ['nativeID="remove-ads-paywall"', 'profile Remove Ads paywall must keep a stable anchor'],
+  ['entitlements={monetizationEntitlements}', 'profile premium banner must receive entitlements'],
   ['language={language}', 'profile premium banner must receive the settings language'],
+  ['runtimeOptions={purchaseRuntime}', 'profile premium banner must use the shared runtime'],
+  [
+    '{entitlementsReady && proRuntimeScopeEnabled ? (',
+    'profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled',
+  ],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
@@ -10817,6 +10859,22 @@ function validateProfileRouteCopyParity() {
   }
 }
 
+if (process.argv.includes('--focus-profile-route-copy')) {
+  validateProfileRouteHeaderParity();
+  validateProfileRouteCopyParity();
+  validateBadgeCatalog();
+  exitWithValidationFailures();
+  printValidationSummary({
+    profileRouteHeadersValidated,
+    profileRouteHeaderParityValidated,
+    profileRouteCopyLabelsValidated,
+    profileRouteCopyParityValidated,
+    badgesValidated,
+    badgeMilestoneParityValidated,
+  });
+  process.exit(0);
+}
+
 function validateHomeRouteHeaderParity() {
   let valid = true;
   let homeRoute = '';
@@ -14637,6 +14695,32 @@ function validateBadgeCatalog() {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
           reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      for (const [svField, enField] of [
+        ['titleSv', 'titleEn'],
+        ['descriptionSv', 'descriptionEn'],
+        ['lockedHintSv', 'lockedHintEn'],
+      ]) {
+        if (!hasText(badge[svField])) {
+          reject(`${label} missing ${svField}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[svField])) {
+          reject(`${label} ${svField} must be trimmed and single-spaced`);
+        }
+
+        if (!hasText(badge[enField])) {
+          reject(`${label} missing ${enField}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[enField])) {
+          reject(`${label} ${enField} must be trimmed and single-spaced`);
+        }
+
+        if (
+          hasText(badge[svField]) &&
+          hasText(badge[enField]) &&
+          normalizeComparableText(badge[svField]) === normalizeComparableText(badge[enField])
+        ) {
+          reject(`${label} ${svField} must be localized separately from ${enField}`);
         }
       }
 

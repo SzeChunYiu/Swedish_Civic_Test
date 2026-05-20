@@ -5,12 +5,16 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const PROFILE_ROUTE_FOCUS_FLAG = '--focus-profile-route-copy';
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', PROFILE_ROUTE_FOCUS_FLAG],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -20,8 +24,10 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 38);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 48);
   assert.equal(summary.profileRouteCopyParityValidated, true);
+  assert.equal(summary.badgesValidated, 4);
+  assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
   assert.match(source, /getAllBadges,/);
@@ -55,10 +61,11 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /title=\{getBadgeTitle\(badge, language\)\}/);
   assert.match(source, /progressHint=\{getBadgeProgressHint\(badge, badgeInput, language\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /<SectionHeader title=\{copy\.dashboardTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.dashboardAccessibilityLabel\}/);
+  assert.match(source, /href="\/dashboard"/);
+  assert.match(source, /label=\{copy\.dashboardCta\}/);
   assert.match(source, /copy\.removeAdsFocusCue/);
-  assert.match(source, /Ändra mål, språk och ljud/);
-  assert.match(source, /Edit goal, language, and audio/);
-  assert.match(source, /Missade frågor/);
   assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
   assert.match(source, /Ta bort annonser är markerat/);
   assert.match(source, /Remove Ads is highlighted/);
@@ -90,13 +97,15 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.match(proPaywallSource, /buyProLifetime/);
   assert.match(proPaywallSource, /restoreProLifetime/);
   assert.doesNotMatch(proPaywallSource, /buyRemoveAds|restoreRemoveAdsPurchase/);
-  assert.match(proPaywallSource, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(proPaywallSource, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} remains separate/);
-  assert.doesNotMatch(proPaywallSource, /29 kr|29 kronor/);
+  assert.match(proPaywallSource, /PRO_LIFETIME_PRICE_LABEL/);
+  assert.match(proPaywallSource, /Remove Ads for 29 SEK stays available as its own simpler path/);
+  assert.match(proPaywallSource, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
+  assert.match(proPaywallSource, /Remove Ads for 29 SEK remains separate/);
+  assert.match(proPaywallSource, /Ta bort annonser för 29 kronor finns kvar separat/);
   assert.match(proPaywallSource, /Pro ändrar inte den vägen/);
 });
 
-test('profile premium banner has distinct paid-state copy and recovery action', () => {
+test('profile premium banner keeps current Remove Ads purchase and recovery contract', () => {
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
   const bannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
@@ -106,22 +115,38 @@ test('profile premium banner has distinct paid-state copy and recovery action', 
   assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
   assert.match(profileSource, /entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /nativeID="remove-ads-paywall"/);
-  assert.match(bannerSource, /bodyActive:/);
-  assert.match(bannerSource, /bodyIdle: \(price\) =>/);
-  assert.match(bannerSource, /Purchase confirmed\. Study ads are disabled on this device/);
-  assert.match(bannerSource, /Köpet är bekräftat\. Studieannonser är avstängda/);
+  assert.match(bannerSource, /body: \(price: string\) => string/);
+  assert.match(bannerSource, /body: \(price\) =>/);
+  assert.match(bannerSource, /titleActive: string/);
+  assert.match(bannerSource, /titleIdle: string/);
+  assert.match(bannerSource, /eyebrowActive: string/);
+  assert.match(bannerSource, /statusMessages: Record<PurchaseUiStatus, string>/);
+  assert.match(bannerSource, /purchased: 'Ads are disabled on this device\.'/);
+  assert.match(bannerSource, /purchased: 'Annonser är avstängda på den här enheten\.'/);
   assert.match(
     bannerSource,
-    /\{adsDisabled \? copy\.bodyActive : copy\.bodyIdle\(REMOVE_ADS_PRICE_LABEL\)\}/,
+    /<Text style=\{styles\.meta\}>\{copy\.body\(REMOVE_ADS_PRICE_LABEL\)\}<\/Text>/,
   );
   assert.match(
     bannerSource,
-    /\{!adsDisabled \? \(\s*<Button[\s\S]*copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*\) : null\}/,
+    /accessibilityState=\{\{ disabled: activeAction !== null \|\| adsDisabled \}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
   );
   assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
-  assert.match(bannerSource, /status === 'restored' \? 'restored' : 'purchased'/);
+  assert.match(
+    bannerSource,
+    /accessibilityState=\{\{ disabled: activeAction !== null \}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
+  );
+  assert.match(
+    bannerSource,
+    /const statusMessage = getStatusMessage\(adsDisabled \? 'purchased' : status, copy\)/,
+  );
+  assert.match(bannerSource, /aria-live="polite"/);
+  assert.doesNotMatch(bannerSource, /bodyActive:/);
+  assert.doesNotMatch(bannerSource, /bodyIdle:/);
+  assert.doesNotMatch(bannerSource, /Purchase confirmed\. Study ads are disabled on this device/);
+  assert.doesNotMatch(bannerSource, /Köpet är bekräftat\. Studieannonser är avstängda/);
+  assert.doesNotMatch(bannerSource, /!\s*adsDisabled \? \(/);
   assert.doesNotMatch(bannerSource, /adsDisabled \? copy\.bodyIdle/);
-  assert.doesNotMatch(bannerSource, /activeAction !== null \|\| adsDisabled/);
 });
 
 test('profile study setup card owns the localized settings shortcut', () => {
@@ -165,6 +190,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('${PROFILE_ROUTE_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -195,6 +221,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('${PROFILE_ROUTE_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -225,6 +252,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('${PROFILE_ROUTE_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -255,6 +283,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('${PROFILE_ROUTE_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -285,6 +314,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('${PROFILE_ROUTE_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],

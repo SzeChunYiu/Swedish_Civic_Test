@@ -5,8 +5,6 @@ import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
   createMockPurchaseProvider,
-  createNativePurchaseProvider,
-  createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
@@ -19,7 +17,12 @@ const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
 
 export type RemoveAdsEntitlementStatus = 'loading' | 'ready' | 'read_failed';
 
-let defaultNativePurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
+type RemoveAdsE2ERuntime = typeof globalThis & {
+  __SMT_E2E__?: boolean;
+  __SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS?: number;
+  __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
+};
+
 let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
 let sharedRemoveAdsEntitlementsVersion = 0;
@@ -40,28 +43,41 @@ function subscribeToRemoveAdsEntitlements(listener: (entitlements: PremiumEntitl
   return () => removeAdsEntitlementListeners.delete(listener);
 }
 
-function getNativePurchasePlatform(): 'android' | 'ios' {
-  return Platform.OS === 'android' ? 'android' : 'ios';
+function getE2ERemoveAdsEntitlementDelayMs(): number {
+  if (Platform.OS !== 'web') return 0;
+
+  const runtime = globalThis as RemoveAdsE2ERuntime;
+  if (!runtime.__SMT_E2E__) return 0;
+
+  const delayMs = runtime.__SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS;
+  if (typeof delayMs !== 'number' || !Number.isFinite(delayMs) || delayMs <= 0) return 0;
+  return Math.min(Math.round(delayMs), 10000);
+}
+
+function waitForEntitlementDelay(delayMs: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delayMs);
+  });
+}
+
+function getE2ERemoveAdsMockOwned(): boolean {
+  if (Platform.OS !== 'web') return false;
+
+  const runtime = globalThis as RemoveAdsE2ERuntime;
+  return runtime.__SMT_E2E__ === true && runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ === true;
 }
 
 export function createDefaultPurchaseRuntimeOptions(
   initialAdsDisabled = false,
-): PurchaseRuntimeOptions {
-  if (Platform.OS === 'web') {
-    defaultWebPurchaseRuntimeOptions ??= {
-      provider: createMockPurchaseProvider(),
-      storage: createWebPurchaseStorage(initialAdsDisabled),
-    };
+): PurchaseRuntimeOptions | undefined {
+  if (Platform.OS !== 'web') return undefined;
 
-    return defaultWebPurchaseRuntimeOptions;
-  }
-
-  defaultNativePurchaseRuntimeOptions ??= {
-    provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
-    storage: createSecureStorePurchaseStorage(),
+  defaultWebPurchaseRuntimeOptions ??= {
+    provider: createMockPurchaseProvider({ owned: getE2ERemoveAdsMockOwned() }),
+    storage: createWebPurchaseStorage(initialAdsDisabled),
   };
 
-  return defaultNativePurchaseRuntimeOptions;
+  return defaultWebPurchaseRuntimeOptions;
 }
 
 export function useRemoveAdsEntitlements({
@@ -102,6 +118,11 @@ export function useRemoveAdsEntitlements({
     }
 
     void getPurchaseEntitlements(purchaseRuntime)
+      .then(async (storedEntitlements) => {
+        const delayMs = getE2ERemoveAdsEntitlementDelayMs();
+        if (delayMs > 0) await waitForEntitlementDelay(delayMs);
+        return storedEntitlements;
+      })
       .then((storedEntitlements) => {
         if (!isMounted) return;
 

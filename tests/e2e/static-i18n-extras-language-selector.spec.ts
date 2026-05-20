@@ -10,7 +10,18 @@ declare global {
 }
 
 const siteRoot = path.resolve('site');
-const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'] as const;
+const extraLocales = [
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+] as const;
 
 type ExtraLocale = (typeof extraLocales)[number];
 
