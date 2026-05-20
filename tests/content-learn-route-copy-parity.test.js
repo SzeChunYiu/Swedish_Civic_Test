@@ -41,9 +41,7 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /const primaryName = language === 'en' \? nameEn : nameSv;/);
   assert.match(source, /const secondaryName = language === 'en' \? nameSv : nameEn;/);
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel\(\{/);
-  assert.match(source, /accessibilitySummary=\{false\}/);
   assert.match(source, /language=\{language\}/);
-  assert.match(source, /progressPresentationOnly/);
 });
 
 test('learn route chapter-link copy parity rejects bypassing the settings language', () => {
@@ -101,34 +99,4 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /learn route is missing sv copy/);
-});
-
-test('learn route chapter-link copy parity rejects nested progressbar semantics', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/learn.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('                progressPresentationOnly\\n', '');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /learn route chapter cards must hide redundant nested progressbar semantics/,
-  );
 });

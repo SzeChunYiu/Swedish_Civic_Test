@@ -347,35 +347,35 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q013',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Hur kan människor påverka samhället och delta i demokratin?',
-    questionEn: 'How can people influence society and participate in democracy?',
+    questionSv: 'Vilket är ett sätt att påverka och delta i samhället?',
+    questionEn: 'Which is a way to influence and participate in society?',
     options: [
       {
         id: 'a',
-        textSv: 'Genom att kontakta politiker, demonstrera eller skriva på en namninsamling',
-        textEn: 'By contacting politicians, demonstrating, or signing a petition',
+        textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
+        textEn: 'Contact politicians, demonstrate, or sign a petition',
       },
       {
         id: 'b',
-        textSv: 'Genom att förbjuda andra från att rösta i politiska val',
-        textEn: 'By banning others from voting in political elections',
+        textSv: 'Förbjuda andra från att rösta i politiska val',
+        textEn: 'Ban others from voting in political elections',
       },
       {
         id: 'c',
-        textSv: 'Genom att tvinga journalister att skriva vissa åsikter',
-        textEn: 'By forcing journalists to write certain opinions',
+        textSv: 'Tvinga journalister att skriva vissa åsikter',
+        textEn: 'Force journalists to write certain opinions',
       },
       {
         id: 'd',
-        textSv: 'Genom att stoppa människor från att prata om politik',
-        textEn: 'By stopping people from talking about politics',
+        textSv: 'Stoppa människor från att prata om politik',
+        textEn: 'Stop people from talking about politics',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Det finns flera demokratiska sätt att påverka samhället och delta i demokratin, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin.',
+      'Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin.',
     explanationEn:
-      'People can influence society and participate in democracy in several ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.',
+      'People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'En stark demokrati',

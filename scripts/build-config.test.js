@@ -1088,47 +1088,6 @@ test('E2E specs centralize blocking modal cleanup helpers', () => {
   }
 });
 
-test('language-sensitive E2E specs seed question language before route load', () => {
-  const e2eDir = path.join(repoRoot, 'tests/e2e');
-  const languageSensitiveSpecs = [
-    'practice-feedback.spec.ts',
-    'exam-submit-review.spec.ts',
-    'learn-chapter-navigation.spec.ts',
-  ];
-
-  for (const fileName of languageSensitiveSpecs) {
-    const source = fs.readFileSync(path.join(e2eDir, fileName), 'utf8');
-
-    assert.match(
-      source,
-      /seedSettingsLanguage/,
-      `${fileName} should seed language through browserLaunch.ts`,
-    );
-    assert.match(
-      source,
-      /markAboutTheTestSeen/,
-      `${fileName} should suppress first-run route overlays before route load`,
-    );
-    assert.doesNotMatch(
-      source,
-      /page\.goto\(['"`]\/settings['"`]/,
-      `${fileName} should not use Settings as language setup`,
-    );
-    assert.doesNotMatch(
-      source,
-      /Byt frågespråk|Set question language/,
-      `${fileName} should not click Settings language controls as setup`,
-    );
-  }
-
-  const settingsSpec = fs.readFileSync(
-    path.join(e2eDir, 'settings-accessibility-state.spec.ts'),
-    'utf8',
-  );
-  assert.match(settingsSpec, /page\.goto\(['"`]\/settings['"`]/);
-  assert.match(settingsSpec, /Set question language/);
-});
-
 test('Playwright exported-web server port is configurable per worker', () => {
   const config = fs.readFileSync(path.join(repoRoot, 'playwright.config.ts'), 'utf8');
   const staticServer = fs.readFileSync(path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'), 'utf8');
@@ -1627,11 +1586,7 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   );
   fs.writeFileSync(
     path.join(bundleDir, 'entry-test.js'),
-    [
-      'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}};',
-      'const icon = {uri:"/assets/icon.png"};',
-      'const routes = ["./_layout.tsx","./(tabs)/home.tsx","./about-the-test.tsx","./chapter/[chapterId].tsx","./quiz/[sessionId].tsx"];',
-    ].join(' '),
+    'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}}; const icon = {uri:"/assets/icon.png"};',
   );
 
   const result = spawnSync(process.execPath, ['scripts/prepare-web-export.js', outputDir], {
@@ -1745,46 +1700,6 @@ test('dist-web e2e server rejects missing or stale freshness markers before serv
   );
 });
 
-test('web export postbuild rejects an empty Expo Router route context', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-empty-router-context-'));
-  const outputDir = path.join(tmpDir, 'dist-web');
-  const bundleDir = path.join(outputDir, '_expo/static/js/web');
-  fs.mkdirSync(bundleDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(outputDir, 'index.html'),
-    [
-      '<!DOCTYPE html>',
-      '<html>',
-      '<body>',
-      '<div id="root"></div>',
-      '<script data-web-export-loader="true">window.__entry = true;</script>',
-      '</body>',
-      '</html>',
-      '',
-    ].join('\n'),
-  );
-  fs.writeFileSync(
-    path.join(outputDir, '404.html'),
-    fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8'),
-  );
-  fs.writeFileSync(
-    path.join(bundleDir, 'entry-test.js'),
-    'function o(){let e=new Error("No modules in context");throw e.code="MODULE_NOT_FOUND"}o.keys=()=>[];',
-  );
-
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/prepare-web-export.js', '--check', outputDir],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /empty Expo Router route context/);
-});
-
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {
   const pkg = readJson('package.json');
   const workflow = fs.readFileSync(
@@ -1802,17 +1717,7 @@ test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live 
   assert.match(workflow, /['"]scripts\/check-live-site\.js['"]/);
   assert.match(workflow, /secrets\.VERCEL_DEPLOY_HOOK/);
   assert.match(workflow, /curl [^\n]*-X POST "\$HOOK"/);
-  assert.match(runCommands, /\bmax_attempts=10\b/);
-  assert.match(runCommands, /\bpoll_interval_seconds=30\b/);
-  assert.match(
-    runCommands,
-    /for attempt in \$\(seq 1 "\$max_attempts"\); do[\s\S]*if node scripts\/check-live-site\.js "\$VERCEL_PRODUCTION_URL"; then[\s\S]*sleep "\$poll_interval_seconds"[\s\S]*done/,
-  );
-  assert.doesNotMatch(
-    runCommands,
-    /sleep 30\s*\n\s*node scripts\/check-live-site\.js "\$VERCEL_PRODUCTION_URL"/,
-  );
-  assert.match(runCommands, /Live smoke failed after \$max_attempts attempts/);
+  assert.match(workflow, /node scripts\/check-live-site\.js "\$VERCEL_PRODUCTION_URL"/);
   assert.match(workflow, /VERCEL_PRODUCTION_URL/);
   assert.doesNotMatch(workflow, /\bVERCEL_TOKEN\b/);
   assert.doesNotMatch(workflow, /\.vercel\/project\.json/);

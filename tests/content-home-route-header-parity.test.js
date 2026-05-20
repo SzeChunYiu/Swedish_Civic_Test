@@ -34,16 +34,23 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
   assert.match(source, /computeReadinessFromQuestionProgress/);
+  assert.match(source, /countAnswerAttemptsForLocalDate/);
+  assert.match(
+    source,
+    /const answerAttempts = useProgressStore\(\(state\) => state\.answerAttempts\);/,
+  );
+  assert.match(source, /countAnswerAttemptsForLocalDate\(\{ answerAttempts, questionProgress \}\)/);
   assert.match(
     source,
     /const mockExamSessions = useProgressStore\(\(state\) => state\.mockExamSessions\);/,
   );
+  assert.match(source, /answerAttempts,/);
   assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
-  assert.match(source, /Förberedelsesignal/);
-  assert.match(source, /Preparation signal/);
+  assert.match(source, /Redoindikator/);
+  assert.match(source, /Readiness indicator/);
   assert.match(source, /Väg från grund till provträning/);
   assert.match(source, /Guided path from basics to exam practice/);
   assert.match(source, /const guidedPathChapterGroups = \[/);
@@ -74,13 +81,13 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Smart study habits/);
   assert.match(
     source,
-    /Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal\./,
+    /Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator\./,
   );
   assert.match(source, /genomgång av frågor du missat/);
   assert.doesNotMatch(source, /felspårning|repetition av misstag/);
   assert.match(
     source,
-    /Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals\./,
+    /Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals\./,
   );
   assert.doesNotMatch(source, /flashcards/);
   assert.match(source, /calculateStreakWithFreeze/);
@@ -94,7 +101,6 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /helper=\{dayStreakHelper\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
   assert.match(source, /\{copy\.readinessTitle\}/);
-  assert.match(source, /\{copy\.readinessCaveat\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.doesNotMatch(
@@ -119,8 +125,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
-        'Växla mellan tidsatta övningsprov, flashcards, bokmärken, missade frågor, ljud och förberedelsesignal.',
+        'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
+        'Växla mellan tidsatta prov, flashcards, bokmärken, missade frågor, ljud och redoindikator.',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -152,8 +158,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
-        'Växla mellan tidsatta övningsprov, bokmärken, felspårning, ljud och förberedelsesignal.',
+        'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
+        'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
       )
       .replace(
         'genomgång av frågor du missat',
@@ -204,37 +210,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route learner copy must not expose internal benchmark phrase/,
-  );
-});
-
-test('home route copy parity rejects unsupported readiness prediction wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('Preparation signal', 'Readiness indicator')
-      .replace('Förberedelsesignal', 'Redoindikator');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route preparation signal copy must not expose official-readiness wording/,
   );
 });
 

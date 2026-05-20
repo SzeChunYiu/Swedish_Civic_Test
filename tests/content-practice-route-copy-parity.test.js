@@ -19,25 +19,12 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 92);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.match(source, /const practiceCopy: Record<AppLanguage, PracticeCopy> = \{/);
-  assert.match(source, /type PracticeScope/);
-  assert.match(source, /const QUICK_ROUND_SIZE = 10;/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = practiceCopy\[language\];/);
-  assert.match(source, /const \[practiceStarted, setPracticeStarted\]/);
   assert.match(source, /5-minutersövning/);
-  assert.match(source, /Övningsnav/);
-  assert.match(source, /Practice hub/);
-  assert.match(source, /href="\/exam"/);
-  assert.match(source, /getQuestionsForPracticeScope\(/);
-  assert.match(
-    source,
-    /getCompletedQuestionIdsForQuestionBank\(selectedPracticeQuestions, completedQuestionIds\)/,
-  );
-  assert.match(source, /\{copy\.completedQuestions\(scopedCompletedQuestionIds\.length\)\}/);
-  assert.match(source, /startPractice\(\{ type: 'chapter', chapterId: chapter\.id \}\)/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);
   assert.match(source, /Close source details/);

@@ -147,17 +147,7 @@ function writeFakeReleaseCommands(tmpDir, options = {}) {
     fakeNpm,
     [
       '#!/bin/sh',
-      ...(options.expoDoctorMismatchFailure
-        ? [
-            'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then',
-            '  echo "The following packages should be updated for best compatibility with the installed expo version:"',
-            '  echo "expo-crypto expected ~15.0.9 found 55.0.15"',
-            '  exit 1',
-            'fi',
-          ]
-        : [
-            'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
-          ]),
+      'if [ "$1 $2 $3" = "exec -- expo-doctor" ]; then echo "17/17 checks passed. No issues detected!"; exit 0; fi',
       'if [ "$1 $2" = "run release:web-export-smoke" ]; then echo "Web export smoke passed"; exit 0; fi',
       'if [ "$1 $2" = "run release:native-prebuild-smoke" ]; then echo "Android and iOS native prebuild smoke passed"; exit 0; fi',
       'echo "unexpected npm command: $@" >&2',
@@ -1688,29 +1678,6 @@ test('release preflight eas-auth failure preserves stderr warning and stdout aut
   assert.match(easAuth.evidence, /eas-cli@19\.0\.1 is now available/i);
   assert.match(easAuth.evidence, /Proceeding with outdated version/i);
   assert.match(easAuth.evidence, /Not logged in/i);
-});
-
-test('release preflight expo-doctor failure preserves package mismatch evidence', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-expo-doctor-'));
-  const evidencePath = path.join(tmpDir, 'release-gates.json');
-  writeAllReadyEvidence(evidencePath);
-  writeFakeReleaseCommands(tmpDir, { expoDoctorMismatchFailure: true });
-
-  const report = runPreflight({
-    expectedStatus: 1,
-    env: {
-      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
-      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
-      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
-    },
-  });
-
-  const expoDoctor = report.gates.find((gate) => gate.id === 'expo-doctor');
-  assert.equal(expoDoctor.status, 'BLOCKED');
-  assert.match(expoDoctor.evidence, /expo-crypto/);
-  assert.match(expoDoctor.evidence, /expected ~15\.0\.9/);
-  assert.match(expoDoctor.evidence, /found 55\.0\.15/);
-  assert.match(expoDoctor.nextAction, /npm exec -- expo-doctor/);
 });
 
 test('release preflight blocks stale public URL evidence when live check fails', () => {

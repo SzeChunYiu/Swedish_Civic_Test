@@ -34,12 +34,7 @@ export function NativeAdCard({
   const visible =
     entitlementsReady &&
     mobileAdsConsent.initialized &&
-    shouldShowAd(
-      'results_native',
-      resolvedEntitlements,
-      mobileAdsConsent.decision.consentDecision,
-      Platform.OS,
-    );
+    shouldShowAd('results_native', resolvedEntitlements, mobileAdsConsent.decision.consentDecision);
 
   useEffect(() => {
     if (!visible) {

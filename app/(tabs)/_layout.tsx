@@ -1,56 +1,18 @@
-import { Tabs, usePathname } from 'expo-router';
+import { Tabs } from 'expo-router';
 
-import { TabBarIcon, type TabBarIconName } from '../../components/ui/icons/TabBarIcon';
-import { colors } from '../../lib/theme';
 import { TopBarActions } from '../../components/ui/TopBarActions';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 
 type TabRouteName = 'home' | 'learn' | 'practice' | 'exam' | 'mistakes' | 'profile';
 type TabTitleCopy = Record<TabRouteName, string>;
-type TabIconMap = Record<TabRouteName, TabBarIconName>;
-type TabPathMap = Record<TabRouteName, string>;
 
-const tabIconMap: TabIconMap = {
-  home: 'home',
-  learn: 'learn',
-  practice: 'practice',
-  exam: 'exam',
-  mistakes: 'mistakes',
-  profile: 'profile',
-};
+const hiddenTabIcon = () => null;
 
-const tabPathMap: TabPathMap = {
-  home: '/home',
-  learn: '/learn',
-  practice: '/practice',
-  exam: '/exam',
-  mistakes: '/mistakes',
-  profile: '/profile',
-};
-
-function isActiveTab(routeName: TabRouteName, pathname: string) {
-  return pathname === tabPathMap[routeName];
-}
-
-function TabRouteIcon({ routeName, size }: { routeName: TabRouteName; size: number }) {
-  const pathname = usePathname();
-
-  return (
-    <TabBarIcon
-      focused={isActiveTab(routeName, pathname)}
-      name={tabIconMap[routeName]}
-      size={size}
-    />
-  );
-}
-
-function getTabOptions(routeName: TabRouteName, title: string) {
+function getTabOptions(title: string) {
   return {
     title,
     tabBarAccessibilityLabel: title,
-    tabBarIcon: ({ size }: { color: string; focused: boolean; size: number }) => (
-      <TabRouteIcon routeName={routeName} size={size} />
-    ),
+    tabBarIcon: hiddenTabIcon,
   };
 }
 
@@ -82,16 +44,14 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: true,
         headerRight: () => <TopBarActions />,
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.textSecondary,
       }}
     >
-      <Tabs.Screen name="home" options={getTabOptions('home', copy.home)} />
-      <Tabs.Screen name="learn" options={getTabOptions('learn', copy.learn)} />
-      <Tabs.Screen name="practice" options={getTabOptions('practice', copy.practice)} />
-      <Tabs.Screen name="exam" options={getTabOptions('exam', copy.exam)} />
-      <Tabs.Screen name="mistakes" options={getTabOptions('mistakes', copy.mistakes)} />
-      <Tabs.Screen name="profile" options={getTabOptions('profile', copy.profile)} />
+      <Tabs.Screen name="home" options={getTabOptions(copy.home)} />
+      <Tabs.Screen name="learn" options={getTabOptions(copy.learn)} />
+      <Tabs.Screen name="practice" options={getTabOptions(copy.practice)} />
+      <Tabs.Screen name="exam" options={getTabOptions(copy.exam)} />
+      <Tabs.Screen name="mistakes" options={getTabOptions(copy.mistakes)} />
+      <Tabs.Screen name="profile" options={getTabOptions(copy.profile)} />
     </Tabs>
   );
 }

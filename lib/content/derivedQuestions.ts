@@ -392,6 +392,24 @@ function englishTraditionalCelebrationAnswer(answer: string): string {
   return lowerFirst(answer);
 }
 
+function swedishMentionedExample(answer: string, category: string): string {
+  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
+  if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
+  return `${answer} nämns som exempel på ${category}`;
+}
+
+function englishMentionedExample(answer: string, category: string): string {
+  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
+  if (built) {
+    return `The building of ${built[1]} ${built[2]} is mentioned as an example of ${category}`;
+  }
+  return `${answer} ${englishSubjectVerb(answer, 'is', 'are')} mentioned as ${englishSubjectVerb(
+    answer,
+    'an example',
+    'examples',
+  )} of ${category}`;
+}
+
 function swedishPurposeClause(value: string): string {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
 }
@@ -670,14 +688,14 @@ function importantRolesStatementEn(subject: string, context: string, answer: str
 }
 
 function commonStatementSv(subject: string, answer: string): string {
-  if (/^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i.test(answer)) {
+  if (/^Gemensamma\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
   }
   return replaceLeadingSwedishSubject(subject, answer);
 }
 
 function commonStatementEn(subject: string, answer: string): string {
-  if (/^(?:Shared|The power|Responsibility|Direct)\s+/i.test(answer)) {
+  if (/^Shared\s+/i.test(answer)) {
     return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
@@ -1088,90 +1106,6 @@ function generatedTrueFalseStatementEn(
   return truthStatementEn(civicStatementEn(source, option));
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function usableClozeCandidate(value: string): boolean {
-  const trimmed = value.trim();
-  return trimmed.length >= 3 || /^[A-ZÅÄÖ]{2,}$/.test(trimmed);
-}
-
-function uniqueClozeCandidates(candidates: string[]): string[] {
-  return [
-    ...new Set(
-      candidates
-        .map((candidate) => candidate.trim())
-        .filter((candidate) => candidate && usableClozeCandidate(candidate)),
-    ),
-  ].sort((a, b) => b.length - a.length);
-}
-
-function replaceClozeCandidate(statement: string, candidates: string[]): string | null {
-  for (const candidate of uniqueClozeCandidates(candidates)) {
-    const pattern = new RegExp(escapeRegExp(candidate), 'i');
-    if (pattern.test(statement)) {
-      const replaced = statement.replace(pattern, '...');
-      if (/[A-Za-zÅÄÖåäö0-9]/.test(replaced.replace(/\.\.\./g, ''))) return replaced;
-    }
-  }
-  return null;
-}
-
-function singleChoiceClozePromptSv(source: PracticeQuestion): string {
-  const option = correctOption(source);
-  const answer = stripFinalPunctuation(answerLabel(option));
-  const strippedPurpose = stripLeadingPurposeSv(answer);
-  const strippedMust = stripLeadingMustSv(answer);
-  const statement = stripFinalPunctuation(civicStatementSv(source, option));
-  const cloze = replaceClozeCandidate(statement, [
-    answer,
-    lowerFirst(answer),
-    upperFirst(answer),
-    strippedPurpose,
-    lowerFirst(strippedPurpose),
-    upperFirst(strippedPurpose),
-    strippedMust,
-    lowerFirst(strippedMust),
-    swedishCalledAnswer(answer),
-    swedishPurposeClause(answer),
-    frontedManyActionSv(answer),
-    reasonAnswerClauseSv(answer),
-    swedishTraditionalCelebrationAnswer(answer),
-  ]);
-
-  if (cloze) return ensureSentence(cloze);
-  return `${stripFinalPunctuation(source.questionSv)} ...?`;
-}
-
-function singleChoiceClozePromptEn(source: PracticeQuestion): string {
-  const option = correctOption(source);
-  const answer = stripFinalPunctuation(answerTextEn(option));
-  const strippedPurpose = stripLeadingPurposeEn(answer);
-  const strippedBy = stripLeadingByEn(answer);
-  const statement = stripFinalPunctuation(civicStatementEn(source, option));
-  const cloze = replaceClozeCandidate(statement, [
-    answer,
-    lowerFirst(answer),
-    upperFirst(answer),
-    strippedPurpose,
-    lowerFirst(strippedPurpose),
-    upperFirst(strippedPurpose),
-    strippedBy,
-    lowerFirst(strippedBy),
-    englishCalledAnswer(answer),
-    englishGerundPhrase(answer),
-    englishCivicActionClause(answer),
-    englishInfinitive(answer),
-    manyPeopleActionEn(answer),
-    reasonAnswerClauseEn(answer),
-    englishTraditionalCelebrationAnswer(answer),
-  ]);
-
-  if (cloze) return ensureSentence(cloze);
-  return `${stripFinalPunctuation(source.questionEn)} ...?`;
-}
-
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
@@ -1190,14 +1124,14 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  return singleChoiceClozePromptSv(source);
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  return singleChoiceClozePromptEn(source);
+  return `Which answer best matches? ${source.questionEn}`;
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
@@ -1222,12 +1156,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vilka är Sveriges fyra grundlagar$/i);
-  if (match) return `Sveriges fyra grundlagar är ${lowerFirst(answer)}`;
-
-  match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
-  if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
-
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
 
@@ -1246,13 +1174,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
 
-  match = q.match(/^Hur kan (.+?) påverka (.+?) och delta i (.+)$/i);
-  if (match) {
-    const method = answer.replace(/^Genom att\s+/i, '');
-    return `${upperFirst(match[1])} kan påverka ${match[2]} och delta i ${
-      match[3]
-    } genom att ${lowerFirst(method)}`;
-  }
+  match = q.match(/^Vilket är ett sätt att (.+)$/i);
+  if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
@@ -1321,6 +1244,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilken är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vilket exempel beskriver (.+)$/i);
+  if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
 
   match = q.match(/^Hur ofta hålls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
@@ -1435,6 +1361,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
     return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
+
+  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
+  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
 
   match = q.match(/^När firas (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
@@ -1558,6 +1487,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[1]}`;
 
+  match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
+  if (match) return `${answer} nämns som exempel i ${match[1]}`;
+
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
@@ -1583,8 +1515,14 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[2]}`;
 
+  match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
+  if (match) return `${answer} nämns som exempel i ${match[2]}`;
+
   match = q.match(/^Vad bidrog till (.+)$/i);
   if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
+
+  match = q.match(/^Vad nämns som exempel på (.+)$/i);
+  if (match) return swedishMentionedExample(answer, match[1]);
 
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
@@ -1673,14 +1611,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
 
-  match = q.match(/^What are (.+)$/i);
-  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
-
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
-
-  match = q.match(/^Which (.+?) are (.+?) responsible for$/i);
-  if (match) return `${upperFirst(match[2])} are responsible for ${lowerFirst(answer)}`;
 
   match = q.match(/^Which three companies are called (.+) in Sweden$/i);
   if (match) return `${answer} are called ${match[1]} in Sweden`;
@@ -1697,12 +1629,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which of the following is part of (.+)$/i);
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
 
-  match = q.match(/^How can (.+?) influence (.+?) and participate in (.+)$/i);
-  if (match) {
-    return `${upperFirst(match[1])} can influence ${match[2]} and participate in ${
-      match[3]
-    } by ${lowerFirst(stripLeadingByEn(answer))}`;
-  }
+  match = q.match(/^Which is a way to (.+)$/i);
+  if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
@@ -1781,6 +1709,10 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
       stripLeadingPurposeEn(answer),
     )}`;
   }
+
+  match = q.match(/^Which example describes (.+)$/i);
+  if (match)
+    return `${upperFirst(answer)} ${englishSubjectVerb(answer, 'belongs', 'belong')} among ${match[1]}`;
 
   match = q.match(/^How often are (.+) held in Sweden$/i);
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
@@ -1896,6 +1828,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
 
+  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
+  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
+
   match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
 
@@ -1919,13 +1854,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(
       answer,
     ).replace(/^Cooperation\b/, 'cooperation')}`;
-
-  match = q.match(/^What was (.+?) important for$/i);
-  if (match)
-    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(
-      /^Cooperation\b/,
-      'cooperation',
-    )}`;
 
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
@@ -1955,14 +1883,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What does (.+?) work to do$/i);
   if (match) return `${upperFirst(match[1])} works to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
-
-  match = q.match(/^What does (.+?) promote$/i);
-  if (match) {
-    if (/^Only\s+/i.test(answer)) {
-      return `${upperFirst(match[1])} promotes only ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
-    }
-    return `${upperFirst(match[1])} promotes ${lowerFirst(answer)}`;
-  }
 
   match = q.match(/^What does (.+?) work for$/i);
   if (match) {
@@ -2055,6 +1975,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
   if (match) return `${answer} exist in ${match[1]}`;
 
+  match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
+  if (match) return `${answer} are mentioned as examples in ${match[1]}`;
+
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
 
@@ -2080,8 +2003,14 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
 
+  match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
+  if (match) return `${answer} are mentioned as examples in ${match[2]}`;
+
   match = q.match(/^What contributed to (.+)$/i);
   if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
+
+  match = q.match(/^What is mentioned as an example of (.+)$/i);
+  if (match) return englishMentionedExample(answer, match[1]);
 
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;
@@ -2117,9 +2046,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
-
-  match = q.match(/^At (.+?) in Sweden, what do many people do with (.+)$/i);
-  if (match) return `At ${match[1]}, ${manyPeopleActionEn(answer)}`;
 
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
@@ -2214,26 +2140,20 @@ function buildAnswerJudgementVariant(source: PracticeQuestion, id: string): Prac
   );
 }
 
-export function derivePublishedQuestionVariants(
-  source: PracticeQuestion,
-  startId: number,
-): PracticeQuestion[] {
-  const published = publishedCopy(source);
-  return [
-    buildSingleChoiceVariant(published, nextId(startId, 0)),
-    buildTrueStatementVariant(published, nextId(startId, 1)),
-    buildFalseStatementVariant(published, nextId(startId, 2)),
-    buildAnswerJudgementVariant(published, nextId(startId, 3)),
-  ];
-}
-
 export function derivePublishedQuestions(
   sourceQuestions: PracticeQuestion[],
   startId = 101,
 ): PracticeQuestion[] {
-  return sourceQuestions.flatMap((source, index) =>
-    derivePublishedQuestionVariants(source, startId + index * 4),
-  );
+  return sourceQuestions.flatMap((source, index) => {
+    const published = publishedCopy(source);
+    const offset = index * 4;
+    return [
+      buildSingleChoiceVariant(published, nextId(startId, offset)),
+      buildTrueStatementVariant(published, nextId(startId, offset + 1)),
+      buildFalseStatementVariant(published, nextId(startId, offset + 2)),
+      buildAnswerJudgementVariant(published, nextId(startId, offset + 3)),
+    ];
+  });
 }
 
 export function publishQuestions(sourceQuestions: PracticeQuestion[]): PracticeQuestion[] {
