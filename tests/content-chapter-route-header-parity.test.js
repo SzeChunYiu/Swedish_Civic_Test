@@ -33,7 +33,7 @@ test('chapter route title, disclaimer, missing state, and question section stay 
   assert.match(source, /chapterDescription: \(chapter\) => chapter\.descriptionEn/);
   assert.match(source, /Kapitlet hittades inte/);
   assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
-  assert.match(source, /Starta övning för \$\{chapterTitle\}/);
+  assert.match(source, /Starta frågepass för \$\{chapterTitle\}/);
   assert.match(source, /Chapter not found/);
   assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.match(source, /Start quiz for \$\{chapterTitle\}/);
@@ -140,8 +140,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/chapter/[chapterId].tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'Starta övning'", "'" + oldStart + "'")
-      .replace("\`Starta övning för \${chapterTitle}\`", "\`" + oldStart + " för \${chapterTitle}\`");
+      .replace("'Starta frågepass'", "'" + oldStart + "'")
+      .replace("\`Starta frågepass för \${chapterTitle}\`", "\`" + oldStart + " för \${chapterTitle}\`");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
