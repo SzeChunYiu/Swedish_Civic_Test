@@ -5,7 +5,7 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const staticSiteLanguageValues = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'fa', 'so', 'tr'];
+const staticSiteLanguageValues = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'fa', 'pl', 'so', 'tr'];
 
 const sampleQuestion = {
   id: 'q-settings-language',
@@ -346,7 +346,7 @@ test('Settings language change persists extra locales and updates root direction
     languageChanges.push(event.detail.lang);
   });
 
-  for (const language of ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'so', 'tr']) {
+  for (const language of ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'pl', 'so', 'tr']) {
     const direction = language === 'ar' || language === 'fa' ? 'rtl' : 'ltr';
 
     context.clickSettingsLanguage(language);
@@ -358,7 +358,7 @@ test('Settings language change persists extra locales and updates root direction
     assert.equal(context.reloadCount, 0);
   }
 
-  assert.deepEqual(languageChanges, ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'so', 'tr']);
+  assert.deepEqual(languageChanges, ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'pl', 'so', 'tr']);
 });
 
 test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {
