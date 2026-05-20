@@ -16,6 +16,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
+const privateWelfareTaxFundingStiltedEnglishPattern = /\b(?:tax-funded|tax revenue pays for it)\b/i;
 const q071SocialInsuranceOverlapPattern =
   /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring|sickness insurance|parental insurance|unemployment insurance)\b/i;
 const traditionCommonToDoEnglishPattern =
@@ -334,6 +335,90 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q156 uses stilted state-welfare English wording/,
+  );
+});
+
+test('private welfare source and exports use natural tax-funding English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    privateWelfareTaxFundingStiltedEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) =>
+      privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const q155 = generatedSiteBank.find((question) => question.id === 'q155');
+  const welfareVariantIds = ['q155', 'q776', 'q777', 'q778', 'q779'];
+  const welfareVariants = generatedSiteBank.filter((question) =>
+    welfareVariantIds.includes(question.id),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q155, 'q155 should be published in the site bank');
+  assert.equal(
+    q155.q.en,
+    'How can a welfare service be provided by a private company but still be funded by tax revenue?',
+  );
+  assert.equal(
+    q155.opts[q155.answer].en,
+    'A private company can provide the service while tax revenue funds it',
+  );
+  assert.equal(welfareVariants.length, welfareVariantIds.length);
+  for (const question of welfareVariants) {
+    assert.equal(
+      privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
+      false,
+    );
+  }
+});
+
+test('private welfare English naturalness guard rejects tax-funded calques', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'How can a welfare service be provided by a private company but still be funded by tax revenue?',
+        'How can a welfare service be private and still tax-funded?',
+      )
+      .replace(
+        'A private company can provide the service while tax revenue funds it',
+        'A private company can provide the service while tax revenue pays for it',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q155 uses stilted state-welfare English wording/,
   );
 });
 
