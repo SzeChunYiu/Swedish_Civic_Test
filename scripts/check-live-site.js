@@ -4,9 +4,25 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const {
+  findStaticHeadMetadataDescriptionIssues,
+  formatUnsupportedStaticOutcomeSlogans,
+} = require('./static-outcome-copy-guard');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
-const LOCAL_SITE_QUESTIONS_PATH = path.join(__dirname, '..', 'site', 'questions.js');
+const REPO_ROOT = path.join(__dirname, '..');
+const LOCAL_SITE_DIR = path.join(REPO_ROOT, 'site');
+const LOCAL_SITE_QUESTIONS_PATH = path.join(LOCAL_SITE_DIR, 'questions.js');
+const DEFAULT_ASSET_MANIFEST_PATH = path.join(LOCAL_SITE_DIR, 'asset-manifest.json');
+const REQUIRED_STATIC_ASSETS = [
+  'index.html',
+  'styles.css',
+  'app.js',
+  'practice.js',
+  'ebook.js',
+  'settings.js',
+  'questions.js',
+];
 
 function normalizeBaseUrl(input) {
   const raw = String(input || process.env.SITE_LIVE_URL || '').trim();
@@ -19,7 +35,7 @@ function normalizeBaseUrl(input) {
   return url.toString().replace(/\/$/, '');
 }
 
-async function fetchText(baseUrl, assetPath) {
+async function fetchAsset(baseUrl, assetPath) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
   const url = `${baseUrl}/${assetPath.replace(/^\//, '')}`;
@@ -29,10 +45,14 @@ async function fetchText(baseUrl, assetPath) {
     if (!response.ok) {
       throw new Error(`${url} returned HTTP ${response.status}`);
     }
-    return await response.text();
+    return { headers: response.headers, text: await response.text(), url };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchText(baseUrl, assetPath) {
+  return (await fetchAsset(baseUrl, assetPath)).text;
 }
 
 function readStaticQuestionCount(source) {
@@ -46,6 +66,82 @@ function readStaticQuestionCount(source) {
 
 function hashStaticQuestionBank(source) {
   return crypto.createHash('sha256').update(String(source).replace(/\r\n/g, '\n')).digest('hex');
+}
+
+function hashStaticAsset(source) {
+  return crypto.createHash('sha256').update(String(source).replace(/\r\n/g, '\n')).digest('hex');
+}
+
+function normalizeManifestPath(assetPath) {
+  return String(assetPath || '').replace(/^\/+/, '');
+}
+
+function normalizeRequiredAssetManifest(manifest) {
+  if (!manifest || typeof manifest !== 'object') {
+    throw new Error('Static asset manifest must be an object');
+  }
+  if (manifest.algorithm !== 'sha256') {
+    throw new Error('Static asset manifest algorithm must be sha256');
+  }
+  if (!manifest.assets || typeof manifest.assets !== 'object') {
+    throw new Error('Static asset manifest must include an assets object');
+  }
+
+  const assets = {};
+  for (const [assetPath, hash] of Object.entries(manifest.assets)) {
+    const normalizedPath = normalizeManifestPath(assetPath);
+    const normalizedHash = String(hash || '')
+      .trim()
+      .toLowerCase();
+    if (!normalizedPath) {
+      throw new Error('Static asset manifest includes an empty asset path');
+    }
+    if (!/^[0-9a-f]{64}$/.test(normalizedHash)) {
+      throw new Error(`Static asset manifest hash for ${normalizedPath} must be SHA-256 hex`);
+    }
+    assets[normalizedPath] = normalizedHash;
+  }
+
+  for (const requiredAsset of REQUIRED_STATIC_ASSETS) {
+    if (!assets[requiredAsset]) {
+      throw new Error(`Static asset manifest is missing ${requiredAsset}`);
+    }
+  }
+
+  return {
+    version: manifest.version ?? 1,
+    algorithm: 'sha256',
+    assets,
+  };
+}
+
+function readManifestFile(manifestPath) {
+  const absolutePath = path.isAbsolute(manifestPath)
+    ? manifestPath
+    : path.join(REPO_ROOT, manifestPath);
+  return normalizeRequiredAssetManifest(JSON.parse(fs.readFileSync(absolutePath, 'utf8')));
+}
+
+function resolveRequiredAssetManifest(options = {}) {
+  if (options.requiredAssetManifest) {
+    return normalizeRequiredAssetManifest(options.requiredAssetManifest);
+  }
+
+  if (process.env.SITE_LIVE_ASSET_MANIFEST_JSON) {
+    return normalizeRequiredAssetManifest(JSON.parse(process.env.SITE_LIVE_ASSET_MANIFEST_JSON));
+  }
+
+  if (process.env.SITE_LIVE_ASSET_MANIFEST_PATH) {
+    return readManifestFile(process.env.SITE_LIVE_ASSET_MANIFEST_PATH);
+  }
+
+  if (!fs.existsSync(DEFAULT_ASSET_MANIFEST_PATH)) {
+    throw new Error(
+      'Cannot derive expected live asset fingerprints; set SITE_LIVE_ASSET_MANIFEST_PATH',
+    );
+  }
+
+  return readManifestFile(DEFAULT_ASSET_MANIFEST_PATH);
 }
 
 function resolveRequiredQuestionCount(options = {}) {
@@ -102,21 +198,98 @@ function containsAll(source, needles) {
   return needles.every((needle) => source.includes(needle));
 }
 
+function findStaticAdSenseSlotConfigIssues(indexSource, appSource) {
+  const surface = `${indexSource}\n${appSource}`;
+  const issues = [];
+  const staleSetupPatterns = [
+    /Replace ca-pub-XXX/i,
+    /data-ad-slot value with your AdSense IDs/i,
+    /data-ad-slot=["'](?:0{8,}|000000000[0-9])["']/i,
+    /Your AdSense slot will render here/i,
+    /AdSense-yta visas här/i,
+    /Anchor ad slot/i,
+    /AdSense 广告将显示在此处/,
+    /AdSense 廣告將顯示在此處/,
+    /ستظهر إعلانات AdSense هنا/,
+    /AdSense halkan ayey ka soo bixi doontaa/i,
+  ];
+
+  for (const pattern of staleSetupPatterns) {
+    if (pattern.test(surface)) {
+      issues.push(`stale static AdSense setup or render copy: ${pattern.source}`);
+    }
+  }
+
+  if (/ca-pub-[0-9]{16}/.test(surface)) {
+    if (!/slots:\s*{[\s\S]*inline:[\s\S]*anchor:/m.test(appSource)) {
+      issues.push('static AdSense publisher is present without an explicit slot config');
+    }
+    if (!/function\s+smtStaticAdsAreConfigured\s*\(/.test(appSource)) {
+      issues.push('static AdSense publisher is present without a fail-closed config gate');
+    }
+    if (!/function\s+smtIsRealAdSenseSlotId\s*\(/.test(appSource)) {
+      issues.push('static AdSense publisher is present without reviewed slot-id validation');
+    }
+  }
+
+  return issues;
+}
+
+function normalizeHeaderValue(value) {
+  return String(value ?? '')
+    .trim()
+    .replace(/\s*,\s*/g, ', ')
+    .replace(/\s+/g, ' ');
+}
+
+function findRequiredSecurityHeaderIssues(headers) {
+  return REQUIRED_SECURITY_HEADERS.flatMap((expected) => {
+    const actual = headers.get(expected.key);
+    if (!actual) {
+      return [`missing ${expected.name}`];
+    }
+
+    const normalizedActual = normalizeHeaderValue(actual).toLowerCase();
+    const normalizedExpected = normalizeHeaderValue(expected.value).toLowerCase();
+    if (normalizedActual !== normalizedExpected) {
+      return [
+        `${expected.name} expected "${expected.value}", found "${normalizeHeaderValue(actual)}"`,
+      ];
+    }
+
+    return [];
+  });
+}
+
 async function checkLiveSite(inputUrl, options = {}) {
   const baseUrl = normalizeBaseUrl(inputUrl);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [index, styles, practice, ebook, questions] = await Promise.all([
-    fetchText(baseUrl, 'index.html'),
-    fetchText(baseUrl, 'styles.css'),
-    fetchText(baseUrl, 'practice.js'),
-    fetchText(baseUrl, 'ebook.js'),
-    fetchText(baseUrl, 'questions.js'),
-  ]);
+  const requiredAssetManifest = resolveRequiredAssetManifest(options);
+  const requiredAssetPaths = Array.from(
+    new Set([...REQUIRED_STATIC_ASSETS, ...Object.keys(requiredAssetManifest.assets)]),
+  );
+  const fetchedAssets = Object.fromEntries(
+    await Promise.all(
+      requiredAssetPaths.map(async (assetPath) => [assetPath, await fetchText(baseUrl, assetPath)]),
+    ),
+  );
+  const index = fetchedAssets['index.html'];
+  const styles = fetchedAssets['styles.css'];
+  const practice = fetchedAssets['practice.js'];
+  const ebook = fetchedAssets['ebook.js'];
+  const questions = fetchedAssets['questions.js'];
 
   const questionCount = readStaticQuestionCount(questions);
   const questionBankHash = hashStaticQuestionBank(questions);
   const checks = [];
+
+  const staticSecurityHeaderIssues = findRequiredSecurityHeaderIssues(indexAsset.headers);
+  checks.push(
+    staticSecurityHeaderIssues.length === 0
+      ? pass('static security headers')
+      : fail('static security headers', staticSecurityHeaderIssues.join('; ')),
+  );
 
   checks.push(
     questionCount === requiredQuestionCount
@@ -136,6 +309,33 @@ async function checkLiveSite(inputUrl, options = {}) {
         ),
   );
 
+  const assetMismatches = Object.entries(requiredAssetManifest.assets)
+    .map(([assetPath, expectedHash]) => ({
+      assetPath,
+      expectedHash,
+      foundHash: hashStaticAsset(fetchedAssets[assetPath]),
+    }))
+    .filter(({ expectedHash, foundHash }) => expectedHash !== foundHash);
+  checks.push(
+    assetMismatches.length === 0
+      ? pass(
+          'static asset fingerprints',
+          `${Object.keys(requiredAssetManifest.assets).length} assets`,
+        )
+      : fail(
+          'static asset fingerprints',
+          assetMismatches
+            .map(
+              ({ assetPath, expectedHash, foundHash }) =>
+                `${assetPath} expected ${expectedHash.slice(0, 12)}, found ${foundHash.slice(
+                  0,
+                  12,
+                )}`,
+            )
+            .join('; '),
+        ),
+  );
+
   checks.push(
     containsAll(index, [
       'data-page="/practice"',
@@ -146,6 +346,26 @@ async function checkLiveSite(inputUrl, options = {}) {
     ]) && containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
       ? pass('practice hub assets')
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
+  );
+
+  const staticHeadMetadataDescriptionIssues = findStaticHeadMetadataDescriptionIssues(
+    index,
+    'index.html',
+  );
+  checks.push(
+    staticHeadMetadataDescriptionIssues.length === 0
+      ? pass('static head metadata description')
+      : fail(
+          'static head metadata description',
+          formatUnsupportedStaticOutcomeSlogans(staticHeadMetadataDescriptionIssues),
+        ),
+  );
+
+  const staticAdSenseIssues = findStaticAdSenseSlotConfigIssues(index, app);
+  checks.push(
+    staticAdSenseIssues.length === 0
+      ? pass('static AdSense slot config')
+      : fail('static AdSense slot config', staticAdSenseIssues.join('; ')),
   );
 
   checks.push(
@@ -203,9 +423,11 @@ if (require.main === module) {
 
 module.exports = {
   checkLiveSite,
+  hashStaticAsset,
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
+  resolveRequiredAssetManifest,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 };
