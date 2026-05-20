@@ -34,7 +34,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 154;
+const EXPECTED_SOURCE_QUESTIONS = 159;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -171,6 +171,52 @@ const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
   'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
   'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
 ];
+const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
+  sourceId: 'q044',
+  retrievedAt: '2026-05-20',
+  proposalSubmittedAt: '2026-04-16',
+  proposalEffectiveDate: '2026-08-02',
+  officialSources: [
+    {
+      label: 'current-law-main-rule',
+      url: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700.',
+    },
+    {
+      label: 'proposal-government-pdf',
+      url: 'https://www.regeringen.se/contentassets/c776976adafb4f6890297223ae109e4e/skarpta-regler-for-unga-lagovertradare-prop.-202526246.pdf',
+    },
+    {
+      label: 'proposal-riksdag-html',
+      url: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/skarpta-regler-for-unga-lagovertradare_hd03246/html/',
+    },
+  ],
+  requiredQuestionSv: /\bhuvudregeln\b/i,
+  requiredQuestionEn: /\bmain rule\b/i,
+  requiredTextSv: [
+    /\bhuvudregeln\b/i,
+    /\b15 års?\b/i,
+    /\bProposition 2025\/26:246\b/,
+    /\b16 april 2026\b/i,
+    /\b2 augusti 2026\b/i,
+    /\btidsbegränsad sänkning till 13 år\b/i,
+    /\bkontrolleras på nytt efter det datumet\b/i,
+  ],
+  requiredTextEn: [
+    /\bmain rule\b/i,
+    /\bage 15\b/i,
+    /\bProposition 2025\/26:246\b/,
+    /\b16 April 2026\b/,
+    /\b2 August 2026\b/,
+    /\btime-limited lowering to age 13\b/i,
+    /\bshould be rechecked after that date\b/i,
+  ],
+  stalePatterns: [
+    /\bregeringsförslag under 2026\b/i,
+    /\b2026 government proposal\b/i,
+    /\b13 år gäller ett regeringsförslag\b/i,
+    /\bage 13 option refers to\b/i,
+  ],
+};
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -648,7 +694,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Redoindikator',
     'redo',
@@ -716,7 +762,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
     'Provredo',
-    'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+    'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',
@@ -803,6 +849,7 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
 const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
+const FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY = /\b(?:felspårning|repetition av misstag)\b/i;
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['GuidedPracticePath', 'home route must render the guided practice path component'],
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -1052,22 +1099,9 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
 ];
 const EXPECTED_TAB_NAVIGATION_RULES = [
   {
-    label: 'tabs pathname import',
-    pattern: /import \{ Tabs, usePathname \} from 'expo-router';/,
-  },
-  {
     label: 'settings language import',
     pattern:
       /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
-  },
-  {
-    label: 'semantic tab icon import',
-    pattern:
-      /import \{ TabBarIcon, type TabBarIconName \} from '\.\.\/\.\.\/components\/ui\/icons\/TabBarIcon';/,
-  },
-  {
-    label: 'theme token import',
-    pattern: /import \{ colors \} from '\.\.\/\.\.\/lib\/theme';/,
   },
   {
     label: 'tab route-name union',
@@ -1079,37 +1113,16 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /type TabTitleCopy = Record<TabRouteName, string>;/,
   },
   {
-    label: 'tab icon map contract',
-    pattern: /type TabIconMap = Record<TabRouteName, TabBarIconName>;/,
-  },
-  {
-    label: 'tab path map contract',
-    pattern: /type TabPathMap = Record<TabRouteName, string>;/,
-  },
-  {
-    label: 'semantic tab icon map',
-    pattern: /const tabIconMap: TabIconMap = \{/,
-  },
-  {
-    label: 'tab route path map',
-    pattern: /const tabPathMap: TabPathMap = \{/,
-  },
-  {
-    label: 'path-based active tab helper',
-    pattern: /function isActiveTab\(routeName: TabRouteName, pathname: string\)/,
-  },
-  {
-    label: 'route-aware icon component',
-    pattern:
-      /function TabRouteIcon\(\{ routeName, size \}: \{ routeName: TabRouteName; size: number \}\)/,
-  },
-  {
     label: 'localized tab copy map',
     pattern: /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/,
   },
   {
+    label: 'hidden icon helper',
+    pattern: /const hiddenTabIcon = \(\) => null;/,
+  },
+  {
     label: 'tab options helper',
-    pattern: /function getTabOptions\(routeName: TabRouteName, title: string\)/,
+    pattern: /function getTabOptions\(title: string\)/,
   },
   {
     label: 'plain tab title',
@@ -1120,16 +1133,8 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /tabBarAccessibilityLabel: title/,
   },
   {
-    label: 'semantic tab icon renderer',
-    pattern: /<TabRouteIcon routeName=\{routeName\} size=\{size\} \/>/,
-  },
-  {
-    label: 'active tab token color',
-    pattern: /tabBarActiveTintColor: colors\.accent/,
-  },
-  {
-    label: 'inactive tab token color',
-    pattern: /tabBarInactiveTintColor: colors\.textSecondary/,
+    label: 'placeholder glyph suppression',
+    pattern: /tabBarIcon: hiddenTabIcon/,
   },
   {
     label: 'settings language read',
@@ -1188,6 +1193,8 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     pattern: /<NativeAdCard\s+\/>/,
   },
 ];
+const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
+const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
@@ -1436,6 +1443,125 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz back-to-practice link must expose localized accessibility copy',
   ],
   ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
+];
+const EXPECTED_SEARCH_ROUTE_COPY_LABELS = {
+  sv: [
+    '${count} samhällsbegrepp i referensen',
+    'Bläddra bland kapitel',
+    'Gå till alla kapitel',
+    'Rensa sökning',
+    'Rensa sökfältet',
+    'Prova ett annat ord, en myndighet eller ett kapitelnamn.',
+    'Inga begrepp matchar din sökning',
+    'Sökbar referens',
+    '${visibleCount} av ${totalCount} samhällsbegrepp visas',
+    'Öppna kapitlet ${chapterName}',
+    'Sök bland samhällsbegrepp och kapitelkopplingar',
+    'Sök samhällsbegrepp',
+    'Sök begrepp',
+    'Sök demokrati, kommun, välfärd ...',
+    'Slå upp centrala ord och öppna kapitlet där begreppet används i frågebanken.',
+    'Begreppsreferens',
+    'En snabb ordlista för centrala samhällsbegrepp, med svenska och engelska förklaringar.',
+    '${primaryTerm}. ${explanation}. Kopplat kapitel: ${chapterName}.',
+    'Sök begrepp, kapitel och förklaringar',
+  ],
+  en: [
+    '${count} civic reference terms',
+    'Browse chapters',
+    'Go to all chapters',
+    'Clear search',
+    'Clear the search field',
+    'Try another word, authority, or chapter name.',
+    'No terms match your search',
+    'Searchable reference',
+    '${visibleCount} of ${totalCount} civic reference terms shown',
+    'Open the chapter ${chapterName}',
+    'Search civic reference terms and chapter links',
+    'Search civic terms',
+    'Search terms',
+    'Search democracy, municipality, welfare ...',
+    'Look up central words and open the chapter where the term appears in the question bank.',
+    'Civic reference terms',
+    'A quick glossary for key civic terms, with Swedish and English explanations.',
+    '${primaryTerm}. ${explanation}. Linked chapter: ${chapterName}.',
+    'Search terms, chapters, and explanations',
+  ],
+};
+const EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'search route must import AppLanguage from settings'],
+  ['type SearchRouteCopy = {', 'search route must define a typed copy contract'],
+  [
+    'const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {',
+    'search route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'search route must read language from settings store',
+  ],
+  [
+    'const copy = searchRouteCopy[language];',
+    'search route must select copy from settings language',
+  ],
+  ["import { chapters } from '../data/chapters';", 'search route must import chapters'],
+  ["import { glossaryTerms } from '../data/glossary';", 'search route must import glossary terms'],
+  [
+    'copy.filteredSummary(filteredTerms.length, termsWithChapters.length)',
+    'search route filtered result count must render localized copy',
+  ],
+  [
+    'copy.allTermsSummary(termsWithChapters.length)',
+    'search route full result count must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.searchInputAccessibilityLabel}',
+    'search input must expose localized accessibility copy',
+  ],
+  ['placeholder={copy.searchPlaceholder}', 'search input placeholder must render localized copy'],
+  [
+    'accessibilityLabel={copy.clearSearchAccessibilityLabel}',
+    'clear action must expose localized accessibility copy',
+  ],
+  ['disabled={query.length === 0}', 'clear action must be disabled when search is empty'],
+  ["onPress={() => setQuery('')}", 'clear action must reset the search query'],
+  ['{copy.clearSearch}', 'clear action must render localized copy'],
+  [
+    "const primaryTerm = language === 'en' ? term.termEn : term.termSv;",
+    'search results must render primary glossary terms in the selected language',
+  ],
+  [
+    "const secondaryTerm = language === 'en' ? term.termSv : term.termEn;",
+    'search results must keep the opposite-language glossary term as secondary context',
+  ],
+  [
+    "const explanation = language === 'en' ? term.explanationEn : term.explanationSv;",
+    'search results must render explanations in the selected language',
+  ],
+  [
+    'const termSummary = copy.termAccessibilityLabel({',
+    'search results must build localized term accessibility summaries',
+  ],
+  [
+    'accessibilityLabel={copy.openChapterAccessibilityLabel(chapterName)}',
+    'chapter links must expose localized accessibility copy',
+  ],
+  [
+    'href={`/chapter/${term.chapterId}`}',
+    'chapter links must route to the matching glossary chapter',
+  ],
+  [
+    'accessibilityLabel={copy.browseChaptersAccessibilityLabel}',
+    'browse chapters link must expose localized accessibility copy',
+  ],
+  ['href="/(tabs)/learn"', 'browse chapters link must route to Learn'],
+  [
+    'glossaryTermMatchesQuery(term, chapter, normalizedQuery)',
+    'search route must use the glossary result matching contract',
+  ],
+  [
+    'function glossaryTermMatchesQuery(',
+    'search route must keep glossary result matching in a named contract',
+  ],
 ];
 const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
@@ -1901,7 +2027,7 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Välkommen',
     'Börja studera',
     'Studera svenska samhällsbegrepp med engelskt stöd vid behov.',
-    'Öva med UHR-refererade frågor och förklaringar.',
+    'Hela frågebanken är gratis; Ta bort annonser påverkar bara annonser, inte tillgången till frågor.',
     'Följ framsteg lokalt på din enhet utan konto.',
     'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
     'Förbered dig lugnt för samhällskunskapsprovet',
@@ -1911,7 +2037,7 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Welcome',
     'Start studying',
     'Study Swedish civic concepts with English support when needed.',
-    'Practice with UHR-referenced questions and explanations.',
+    'The full question bank stays free; Remove Ads only changes ads, not question access.',
     'Track progress locally on your device without an account.',
     'A small, independent study companion for daily practice, mock exams, and mistake review.',
     'Prepare calmly for the civic test',
@@ -3377,6 +3503,10 @@ const EXPECTED_MONETIZATION_TYPE_UNIONS = [
       'rewarded_extra_exam',
       'app_open_launch',
     ],
+  },
+  {
+    typeName: 'BannerAdPlacement',
+    values: ['home_banner', 'chapter_list_banner'],
   },
 ];
 const EXPECTED_MONETIZATION_INTERFACES = [
@@ -6478,6 +6608,7 @@ let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
+let bannerAdPlacementTypeCasesValidated = 0;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let nativeAdAssetDirectChildrenValidated = 0;
@@ -6496,6 +6627,7 @@ let mockExamConfigExactSchemaKeysValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
+let mockExamSessionRotationParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
@@ -6506,6 +6638,8 @@ let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
 let quizRouteCopyParityValidated = false;
+let searchRouteCopyParityCasesValidated = 0;
+let searchRouteCopyParityValidated = false;
 let practiceRouteHeadersValidated = 0;
 let practiceRouteHeaderParityValidated = false;
 let chapterRouteHeadersValidated = 0;
@@ -6710,6 +6844,12 @@ let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
 const questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
+let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
+let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
+let criminalResponsibilityCurrentnessProposalEffectiveDate = null;
+let criminalResponsibilityCurrentnessQuestionsValidated = 0;
+let criminalResponsibilityCurrentnessParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
@@ -7112,9 +7252,6 @@ function validateTabNavigationParity() {
   if (tabLayout.includes('⏷')) {
     reject('tab layout must not include visible placeholder tab glyphs');
   }
-  if (/hiddenTabIcon|tabBarIcon:\s*(?:undefined|null)|=>\s*null/.test(tabLayout)) {
-    reject('tab layout must render semantic SVG tab icons instead of hidden/null placeholders');
-  }
 
   const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
   const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
@@ -7122,16 +7259,12 @@ function validateTabNavigationParity() {
     reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
   }
 
-  const iconMapBlock = tabLayout.match(/const tabIconMap: TabIconMap = \{([\s\S]*?)\};/)?.[1] ?? '';
-  const seenIcons = new Set();
-
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
-      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\('${route.routeName}', copy\\.${route.routeName}\\)\\}`,
+      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
     );
     const svPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.sv)}'`);
     const enPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.en)}'`);
-    const iconPattern = new RegExp(`${route.routeName}: '${route.routeName}'`);
 
     if (!routePattern.test(tabLayout)) {
       reject(`${route.routeName} tab must use getTabOptions(copy.${route.routeName})`);
@@ -7141,15 +7274,6 @@ function validateTabNavigationParity() {
       reject(`${route.routeName} tab must define Swedish and English titles`);
       continue;
     }
-    if (!iconPattern.test(iconMapBlock)) {
-      reject(`${route.routeName} tab must map to its own semantic icon`);
-      continue;
-    }
-    if (seenIcons.has(route.routeName)) {
-      reject(`${route.routeName} tab icon must be unique`);
-      continue;
-    }
-    seenIcons.add(route.routeName);
 
     tabNavigationRoutesValidated += 1;
   }
@@ -7175,6 +7299,82 @@ function validateAdPlacementRouteParity() {
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
+  let webBannerSource = '';
+  let nativeBannerSource = '';
+
+  try {
+    webBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+    nativeBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`AdBanner sources could not be read for banner placement parity: ${error.message}`);
+    return;
+  }
+
+  for (const { label, source } of [
+    { label: 'web AdBanner', source: webBannerSource },
+    { label: 'native AdBanner', source: nativeBannerSource },
+  ]) {
+    let sourceIsValid = true;
+
+    if (!/\bBannerAdPlacement\b/.test(source)) {
+      reject(`${label} props must use BannerAdPlacement`);
+      sourceIsValid = false;
+    }
+    if (!/placement\?: BannerAdPlacement;/.test(source)) {
+      reject(`${label} placement prop must be typed as optional BannerAdPlacement`);
+      sourceIsValid = false;
+    }
+    if (/\bAdPlacement\b/.test(source)) {
+      reject(`${label} must not accept the full AdPlacement union`);
+      sourceIsValid = false;
+    }
+
+    if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
+  }
+
+  let bannerUsageIsValid = true;
+  const bannerUsageRoots = ['app', 'components'];
+
+  function scanBannerUsages(directory) {
+    const entries = fs.readdirSync(directory, { withFileTypes: true });
+
+    entries.forEach((entry) => {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        scanBannerUsages(fullPath);
+        return;
+      }
+      if (!entry.isFile() || !/\.(?:tsx|ts)$/.test(entry.name)) return;
+
+      const relativePath = path.relative(repoRoot, fullPath).replace(/\\/g, '/');
+      const source = fs.readFileSync(fullPath, 'utf8');
+      const adBannerPlacementPattern = /<AdBanner\b[^>]*\bplacement="([^"]+)"/g;
+      let match;
+
+      while ((match = adBannerPlacementPattern.exec(source))) {
+        const placement = match[1];
+        if (!EXPECTED_BANNER_AD_PLACEMENTS.includes(placement)) {
+          bannerUsageIsValid = false;
+          reject(`${relativePath} must not pass non-banner placement ${placement} to AdBanner`);
+        }
+      }
+    });
+  }
+
+  try {
+    bannerUsageRoots.forEach((root) => scanBannerUsages(path.join(repoRoot, root)));
+  } catch (error) {
+    reject(`AdBanner call sites could not be scanned: ${error.message}`);
+    bannerUsageIsValid = false;
+  }
+
+  if (bannerUsageIsValid) bannerAdPlacementTypeCasesValidated += 1;
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -7494,6 +7694,7 @@ function validateAdPlacementRouteParity() {
 
   if (
     valid &&
+    bannerAdPlacementTypeCasesValidated === EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES &&
     adPlacementRoutesValidated === EXPECTED_ROUTE_AD_PLACEMENTS.length &&
     noAdRoutesValidated === EXPECTED_NO_AD_ROUTE_FILES.length
   ) {
@@ -8145,8 +8346,40 @@ function validateMockExamRuntimeParity(config) {
     }
   }
 
-  if (valid) mockExamRuntimeParityValidated = true;
-  if (valid) mockExamChapterBalanceParityValidated = true;
+  const sessionIds = ['mock-exam-0', 'mock-exam-1', 'mock-exam-2'];
+  const sessionQuestionIds = sessionIds.map((sessionId) =>
+    generateExam(questions, { questionCount: config.questionCount, sessionId }).map(
+      (question) => question.id,
+    ),
+  );
+  const repeatedSessionQuestionIds = generateExam(questions, {
+    questionCount: config.questionCount,
+    sessionId: sessionIds[0],
+  }).map((question) => question.id);
+
+  if (JSON.stringify(sessionQuestionIds[0]) !== JSON.stringify(repeatedSessionQuestionIds)) {
+    reject('mock exam question rotation is not deterministic for the same session seed');
+  }
+
+  for (let index = 1; index < sessionQuestionIds.length; index += 1) {
+    if (
+      JSON.stringify(sessionQuestionIds[index - 1]) === JSON.stringify(sessionQuestionIds[index])
+    ) {
+      reject('mock exam question rotation ignores the session seed');
+    }
+  }
+
+  sessionQuestionIds.forEach((questionIds, index) => {
+    if (new Set(questionIds).size !== questionIds.length) {
+      reject(`${sessionIds[index]} repeats question ids after session rotation`);
+    }
+  });
+
+  if (valid) {
+    mockExamRuntimeParityValidated = true;
+    mockExamChapterBalanceParityValidated = true;
+    mockExamSessionRotationParityValidated = true;
+  }
 }
 
 function expectedFormattedExamTime(totalSeconds) {
@@ -8493,6 +8726,63 @@ function validateQuizRouteCopyParity() {
   );
   if (valid && quizRouteCopyLabelsValidated === expectedLabelCount) {
     quizRouteCopyParityValidated = true;
+  }
+}
+
+function validateSearchRouteCopyParity() {
+  let valid = true;
+  let searchRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!searchRoute.includes(snippet)) {
+      reject(message);
+      return;
+    }
+    searchRouteCopyParityCasesValidated += 1;
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_SEARCH_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`search route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!searchRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`search route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`search route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) searchRouteCopyParityCasesValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_SEARCH_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  const expectedCaseCount = EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS.length + expectedLabelCount;
+  if (valid && searchRouteCopyParityCasesValidated === expectedCaseCount) {
+    searchRouteCopyParityValidated = true;
   }
 }
 
@@ -9037,6 +9327,10 @@ function validateHomeRouteCopyParity() {
       reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
     }
   });
+
+  if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
+    reject('home route Swedish missed-question review copy must use natural learner wording');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -9962,7 +10256,7 @@ function validateSwedishFlashcardCopyNaturalness() {
 
   if (
     !homeRoute.includes(
-      'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+      'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
     )
   ) {
     reject('home route Swedish study-loop copy must not include unreachable flashcard copy');
@@ -11643,7 +11937,7 @@ function validateReviewStoreHydrationParity() {
       'review store hydration must keep only normalized graded-day counters',
     ],
     [
-      'return normalize(JSON.parse(raw));',
+      'state: normalize(JSON.parse(result.value))',
       'review store hydration must normalize parsed persisted JSON',
     ],
   ];
@@ -12921,11 +13215,8 @@ function validateThemeTokenSchema() {
         if (!['400', '500', '600', '700'].includes(style.fontWeight)) {
           rejectToken(`theme typography.${token}.fontWeight must use a supported weight`);
         }
-        if (
-          style.letterSpacing !== undefined &&
-          (!Number.isFinite(style.letterSpacing) || Math.abs(style.letterSpacing) > 4)
-        ) {
-          rejectToken(`theme typography.${token}.letterSpacing must be a bounded number`);
+        if (style.letterSpacing !== undefined && style.letterSpacing !== 0) {
+          rejectToken(`theme typography.${token}.letterSpacing must be 0 when defined`);
         }
       }
 
@@ -14601,6 +14892,127 @@ function validateQuestionBankCsvContract() {
   });
 }
 
+function criminalResponsibilityCurrentnessRows() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) return [];
+
+  const sourceIndex = sourceQuestions.findIndex(
+    (question) => question.id === CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId,
+  );
+  if (sourceIndex < 0) return [];
+
+  const sourceQuestion = sourceQuestions[sourceIndex];
+  const generatedStart = sourceIndex * GENERATED_VARIANTS_PER_SOURCE;
+  const generatedRows = generatedPublishedQuestions.slice(
+    generatedStart,
+    generatedStart + GENERATED_VARIANTS_PER_SOURCE,
+  );
+
+  return [sourceQuestion, ...generatedRows].filter(Boolean);
+}
+
+function validateCriminalResponsibilityCurrentness() {
+  const rows = criminalResponsibilityCurrentnessRows();
+  let allRowsAreValid = true;
+  let sourceMetadataIsValid = true;
+
+  function rejectMetadata(message) {
+    sourceMetadataIsValid = false;
+    allRowsAreValid = false;
+    fail(message);
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt)) {
+    rejectMetadata('criminal-responsibility currentness retrievedAt metadata is invalid');
+  }
+  if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalSubmittedAt !== '2026-04-16') {
+    rejectMetadata('criminal-responsibility proposal submitted-at metadata is invalid');
+  }
+  if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate !== '2026-08-02') {
+    rejectMetadata('criminal-responsibility proposal effective-date metadata is invalid');
+  }
+
+  CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.forEach((source) => {
+    if (!/^https:\/\/www\.(?:riksdagen|regeringen)\.se\//.test(source.url)) {
+      rejectMetadata(
+        `criminal-responsibility currentness source ${source.label} must be an official HTTPS source`,
+      );
+    } else {
+      criminalResponsibilityCurrentnessOfficialSourcesValidated += 1;
+    }
+  });
+
+  criminalResponsibilityCurrentnessSourceMetadataValidated =
+    sourceMetadataIsValid &&
+    criminalResponsibilityCurrentnessOfficialSourcesValidated ===
+      CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.length;
+  criminalResponsibilityCurrentnessSourceRetrievedAt =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt;
+  criminalResponsibilityCurrentnessProposalEffectiveDate =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
+
+  if (rows.length !== GENERATED_VARIANTS_PER_SOURCE + 1) {
+    allRowsAreValid = false;
+    fail(
+      `${CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId} criminal-responsibility currentness expected ${
+        GENERATED_VARIANTS_PER_SOURCE + 1
+      } source/generated rows, found ${rows.length}`,
+    );
+  }
+
+  rows.forEach((question) => {
+    let rowIsValid = true;
+
+    function reject(message) {
+      rowIsValid = false;
+      allRowsAreValid = false;
+      fail(message);
+    }
+
+    const combinedText = [
+      question.questionSv,
+      question.questionEn,
+      question.explanationSv,
+      question.explanationEn,
+    ].join('\n');
+
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.stalePatterns.forEach((pattern) => {
+      if (pattern.test(combinedText)) {
+        reject(
+          `${question.id} criminal-responsibility age currentness uses stale proposal wording`,
+        );
+      }
+    });
+
+    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionSv.test(question.questionSv)) {
+      reject(
+        `${question.id} criminal-responsibility Swedish stem must say the question tests huvudregeln`,
+      );
+    }
+    if (!CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredQuestionEn.test(question.questionEn)) {
+      reject(
+        `${question.id} criminal-responsibility English stem must say the question tests the main rule`,
+      );
+    }
+
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredTextSv.forEach((pattern) => {
+      if (!pattern.test(combinedText)) {
+        reject(`${question.id} criminal-responsibility Swedish copy is missing ${pattern}`);
+      }
+    });
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.requiredTextEn.forEach((pattern) => {
+      if (!pattern.test(combinedText)) {
+        reject(`${question.id} criminal-responsibility English copy is missing ${pattern}`);
+      }
+    });
+
+    if (rowIsValid) criminalResponsibilityCurrentnessQuestionsValidated += 1;
+  });
+
+  criminalResponsibilityCurrentnessParityValidated =
+    allRowsAreValid &&
+    criminalResponsibilityCurrentnessQuestionsValidated === GENERATED_VARIANTS_PER_SOURCE + 1;
+}
+
 function validateStaticSiteQuestionBankParity() {
   if (failures.length > 0) return;
 
@@ -15655,6 +16067,7 @@ validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
 validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
+validateSearchRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateChapterRouteHeaderParity();
@@ -15733,6 +16146,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateQuestionBankCsvContract();
+validateCriminalResponsibilityCurrentness();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
 
@@ -15761,6 +16175,7 @@ console.log(
       tabNavigationRulesValidated,
       tabNavigationRoutesValidated,
       tabNavigationParityValidated,
+      bannerAdPlacementTypeCasesValidated,
       adPlacementRoutesValidated,
       noAdRoutesValidated,
       nativeAdAssetDirectChildrenValidated,
@@ -15781,6 +16196,7 @@ console.log(
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
+      mockExamSessionRotationParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,
@@ -15791,6 +16207,8 @@ console.log(
       quizRouteHeaderParityValidated,
       quizRouteCopyLabelsValidated,
       quizRouteCopyParityValidated,
+      searchRouteCopyParityCasesValidated,
+      searchRouteCopyParityValidated,
       practiceRouteHeadersValidated,
       practiceRouteHeaderParityValidated,
       practiceRouteCopyLabelsValidated,
@@ -16022,6 +16440,12 @@ console.log(
       questionTagsValidated,
       questionBankCsvRowsValidated,
       questionBankCsvProvenanceCounts,
+      criminalResponsibilityCurrentnessOfficialSourcesValidated,
+      criminalResponsibilityCurrentnessSourceMetadataValidated,
+      criminalResponsibilityCurrentnessSourceRetrievedAt,
+      criminalResponsibilityCurrentnessProposalEffectiveDate,
+      criminalResponsibilityCurrentnessQuestionsValidated,
+      criminalResponsibilityCurrentnessParityValidated,
       staticSiteQuestionBankQuestionsValidated,
       staticSiteQuestionBankChaptersValidated,
       staticSiteQuestionBankParityValidated,
