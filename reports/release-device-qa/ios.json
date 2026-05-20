@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "status": "pending",
+  "platform": "ios",
+  "device": "",
+  "osVersion": "",
+  "build": {
+    "id": "",
+    "url": "",
+    "version": ""
+  },
+  "reviewer": "",
+  "reviewedAt": "",
+  "proof": {
+    "screenshots": [],
+    "logs": []
+  },
+  "checks": []
+}
