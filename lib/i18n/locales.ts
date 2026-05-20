@@ -52,6 +52,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: true,
     fallback: 'en',
+    comingSoonLabel: 'قيد الإعداد',
   },
   {
     code: 'fa',
@@ -61,6 +62,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: true,
     fallback: 'en',
+    comingSoonLabel: 'در حال آماده‌سازی',
   },
   {
     code: 'so',
@@ -70,6 +72,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: false,
     fallback: 'en',
+    comingSoonLabel: 'Weli waa la diyaarinayaa',
   },
   {
     code: 'ti',
@@ -79,6 +82,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: false,
     fallback: 'en',
+    comingSoonLabel: 'ይዳሎ ኣሎ',
   },
   {
     code: 'pl',
@@ -88,6 +92,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: false,
     fallback: 'en',
+    comingSoonLabel: 'W przygotowaniu',
   },
   {
     code: 'tr',
@@ -97,6 +102,7 @@ export const locales: LocaleOption[] = [
     available: false,
     rtl: false,
     fallback: 'en',
+    comingSoonLabel: 'Hazırlanıyor',
   },
   {
     code: 'zh-Hans',

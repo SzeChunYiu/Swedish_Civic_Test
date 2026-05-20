@@ -67,17 +67,31 @@ test('runtime availability stays fail-closed until readiness gate allows it', ()
 });
 
 
-test('Chinese picker rows carry native coming-soon badges without enabling release', () => {
+test('target picker rows carry native coming-soon badges without enabling release', () => {
   const localesSource = fs.readFileSync(localesPath, 'utf8');
   const pickerSource = fs.readFileSync(path.join(repoRoot, 'components/ui/LanguagePicker.tsx'), 'utf8');
   const readiness = readJson(readinessPath);
+  const expectedBadges = {
+    ar: 'قيد الإعداد',
+    fa: 'در حال آماده‌سازی',
+    so: 'Weli waa la diyaarinayaa',
+    ti: 'ይዳሎ ኣሎ',
+    pl: 'W przygotowaniu',
+    tr: 'Hazırlanıyor',
+    'zh-Hans': '正在准备',
+    'zh-Hant': '準備中',
+  };
 
-  assert.match(localesSource, /code: 'zh-Hans',[\s\S]*comingSoonLabel: '正在准备'/);
-  assert.match(localesSource, /code: 'zh-Hant',[\s\S]*comingSoonLabel: '準備中'/);
+  for (const [code, label] of Object.entries(expectedBadges)) {
+    assert.match(
+      localesSource,
+      new RegExp(`code: '${code}',[\\s\\S]*comingSoonLabel: '${label}'`),
+      `${code} should have native coming-soon badge copy`,
+    );
+    assert.equal(readiness.locales[code].appAvailable, false);
+    assert.equal(readiness.locales[code].releaseGate, 'blocked');
+  }
+
   assert.match(pickerSource, /const comingSoonLabel = opt\.comingSoonLabel \?\? copy\.comingSoon;/);
   assert.match(pickerSource, /<Text style=\{styles\.comingSoonText\}>\{comingSoonLabel\}<\/Text>/);
-  assert.equal(readiness.locales['zh-Hans'].appAvailable, false);
-  assert.equal(readiness.locales['zh-Hans'].releaseGate, 'blocked');
-  assert.equal(readiness.locales['zh-Hant'].appAvailable, false);
-  assert.equal(readiness.locales['zh-Hant'].releaseGate, 'blocked');
 });
