@@ -25,6 +25,11 @@ const {
   findUnsupportedStaticV11ReadinessCopyInSource,
   formatStaticV11ReadinessCopyIssues,
 } = require('./static-v11-readiness-copy-guard');
+const {
+  collectValidateContentExecFileSyncCalls,
+  sourceLineNumberForIndex,
+  summarizePinnedCwdCalls,
+} = require('./content-exec-cwd-guards');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -7280,6 +7285,9 @@ let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
 let chapterLocalizedTextMapsValidated = 0;
 let validationScriptSyntaxChecksValidated = 0;
+let contentTestValidateContentExecCallsValidated = 0;
+let contentTestValidateContentExecCwdPinnedValidated = 0;
+let contentTestValidateContentExecCwdParityValidated = false;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
@@ -15886,7 +15894,59 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+function contentTestFilePaths() {
+  return fs
+    .readdirSync(path.join(repoRoot, 'tests'))
+    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
+    .sort()
+    .map((fileName) => path.join(repoRoot, 'tests', fileName));
+}
+
+function validateContentTestValidateContentExecCwdParity() {
+  const unpinnedCalls = [];
+
+  for (const filePath of contentTestFilePaths()) {
+    const source = fs.readFileSync(filePath, 'utf8');
+    const calls = collectValidateContentExecFileSyncCalls(source);
+    const summary = summarizePinnedCwdCalls(calls);
+    contentTestValidateContentExecCallsValidated += summary.total;
+    contentTestValidateContentExecCwdPinnedValidated += summary.pinned;
+
+    for (const call of calls) {
+      if (!call.hasPinnedCwd) {
+        unpinnedCalls.push(
+          `${path.relative(repoRoot, filePath)}:${sourceLineNumberForIndex(source, call.index)}`,
+        );
+      }
+    }
+  }
+
+  contentTestValidateContentExecCwdParityValidated =
+    contentTestValidateContentExecCallsValidated > 0 &&
+    contentTestValidateContentExecCallsValidated ===
+      contentTestValidateContentExecCwdPinnedValidated;
+
+  if (!contentTestValidateContentExecCwdParityValidated) {
+    fail(
+      `content tests must pin direct validate-content execFileSync cwd: ${unpinnedCalls.join(', ')}`,
+    );
+  }
+}
+
+if (process.argv.includes('--focus-content-exec-cwd')) {
+  validateStaticValidationSyntaxGate();
+  validateContentTestValidateContentExecCwdParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    contentTestValidateContentExecCallsValidated,
+    contentTestValidateContentExecCwdPinnedValidated,
+    contentTestValidateContentExecCwdParityValidated,
+  });
+  process.exit(0);
+}
+
 validateStaticValidationSyntaxGate();
+validateContentTestValidateContentExecCwdParity();
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
@@ -16433,6 +16493,9 @@ console.log(
       themeShadowTokensValidated,
       themeMotionTokensValidated,
       themeTokenSchemaValidated,
+      contentTestValidateContentExecCallsValidated,
+      contentTestValidateContentExecCwdPinnedValidated,
+      contentTestValidateContentExecCwdParityValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
