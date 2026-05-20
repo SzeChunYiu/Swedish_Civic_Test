@@ -17,6 +17,17 @@ Allowed statuses: `ok`, `defect`, `restate`.
 - Generated published variants: 576
 - Initial verification state: all rows are `restate` pending independent citation checks.
 
+## Current Inventory Gap
+
+2026-05-20 rolling check: `content/question-bank.csv` currently contains 795
+published rows, while the rolling table below still reflects the 720-row
+inventory from 2026-05-18. Current rows beyond q720 need a full inventory
+refresh before the table can again be treated as complete. Focused rolling
+reports may still record current-row evidence while that refresh is pending.
+
+- `docs/verify/q156-social-insurance-2026-05-20.md` records current evidence
+  for authored source row q156 and generated rows q780-q783.
+
 ## Rolling Queue
 
 | ID | Kind | Source ID | Source path | Chapter ID | UHR chapter | UHR section | Page | Last verified commit | Status | Next recheck |
