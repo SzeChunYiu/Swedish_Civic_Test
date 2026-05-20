@@ -1529,7 +1529,10 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Förklaringar och genomgång visas först efter att provet har skickats in.',
     'Nästa prov',
     'Sparat',
+    'Sparfel',
     'Sparar',
+    'Försök spara igen',
+    'Försök spara övningsprovresultatet igen',
   ],
   en: [
     'Mock exam',
@@ -1559,7 +1562,10 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Explanations and review are shown only after the exam is submitted.',
     'Next exam',
     'Saved',
+    'Save failed',
     'Saving',
+    'Retry saving result',
+    'Retry saving mock exam result',
   ],
 };
 const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
@@ -9455,6 +9461,23 @@ function validateExamSubmissionFinalityParity() {
     )
   ) {
     reject('next-exam control must stay disabled until the submitted completion is stored');
+  }
+  if (
+    !examRoute.includes(
+      'const [completionSaveFailed, setCompletionSaveFailed] = useState(false)',
+    ) ||
+    !examRoute.includes('const handleRetryCompletionSave = useCallback(async () => {') ||
+    !examRoute.includes('accessibilityLabel={copy.completionRetryAccessibilityLabel}') ||
+    !examRoute.includes('onPress={handleRetryCompletionSave}')
+  ) {
+    reject('exam result screen must expose a retry-save action after completion persistence fails');
+  }
+  if (
+    examRoute.includes(
+      'setCompletionRecorded(true);\n        setAccessStatusMessage(copy.completionStoreFailure);',
+    )
+  ) {
+    reject('completion persistence failures must not mark the submitted exam as stored');
   }
   if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||

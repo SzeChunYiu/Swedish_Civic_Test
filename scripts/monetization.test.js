@@ -2344,6 +2344,30 @@ test('exam screen does not import ad components', () => {
   assert.match(accessHookSource, /createSecureStoreMockExamAccessStorage/);
 });
 
+test('mock exam completion save retry fails closed before the next exam gate', () => {
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const accessHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    examSource,
+    /const \[completionSaveFailed, setCompletionSaveFailed\] = useState\(false\)/,
+  );
+  assert.match(examSource, /const handleRetryCompletionSave = useCallback\(async \(\) => \{/);
+  assert.match(examSource, /completionRetryLabel: 'Retry saving result'/);
+  assert.match(examSource, /accessibilityLabel=\{copy\.completionRetryAccessibilityLabel\}/);
+  assert.match(examSource, /onPress=\{handleRetryCompletionSave\}/);
+  assert.match(examSource, /setCompletionRecorded\(false\);\s*setCompletionSaveFailed\(true\);/);
+  assert.doesNotMatch(
+    examSource,
+    /setCompletionRecorded\(true\);\s*setAccessStatusMessage\(copy\.completionStoreFailure\)/,
+  );
+  assert.match(accessHookSource, /__SMT_TEST_FAIL_MOCK_EXAM_COMPLETION_ONCE__/);
+  assert.match(accessHookSource, /navigator\.webdriver === true/);
+});
+
 test('global launch popup ad is suppressed on active question and compliance routes', () => {
   const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
   const entitlementHookSource = fs.readFileSync(
