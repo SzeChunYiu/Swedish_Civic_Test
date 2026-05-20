@@ -1,23 +1,10 @@
 import * as Speech from 'expo-speech';
 import type { QuestionOption } from '../../types/content';
-import {
-  getQuestionDisplayText,
-  getQuestionOptionText,
-  stripSourceAuthorityPhrasing,
-} from '../quiz/questionText';
+import { stripSourceAuthorityPhrasing } from '../quiz/questionText';
 
 type SpeakableQuestion = {
-  questionSv?: string;
-  questionText?: {
-    sv?: string;
-    en?: string;
-  };
+  questionSv: string;
   options: QuestionOption[];
-};
-
-type SpeakableFeedbackQuestion = SpeakableQuestion & {
-  correctOptionId: string;
-  explanationSv: string;
 };
 
 function optionLetter(index: number): string {
@@ -25,41 +12,22 @@ function optionLetter(index: number): string {
 }
 
 export function buildQuestionSpeechText(question: SpeakableQuestion): string {
-  const promptText = getQuestionDisplayText(question, 'sv', '');
+  const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;
   const optionText = question.options
-    .map(
-      (option, index) =>
-        `Alternativ ${optionLetter(index)}. ${getQuestionOptionText(option, 'sv')}.`,
-    )
+    .map((option, index) => `Alternativ ${optionLetter(index)}. ${option.textSv}.`)
     .join(' ');
   return `${promptText} ${optionText}`.trim();
-}
-
-export function buildAnswerFeedbackSpeechText(
-  question: SpeakableFeedbackQuestion,
-  selectedOptionId: string | null | undefined,
-): string {
-  const selectedOption = question.options.find((option) => option.id === selectedOptionId);
-  if (!selectedOption) return '';
-
-  const correctOption = question.options.find((option) => option.id === question.correctOptionId);
-  const explanationText =
-    stripSourceAuthorityPhrasing(question.explanationSv) || question.explanationSv;
-  const selectedAnswerText = `Ditt svar: ${selectedOption.textSv}.`;
-  const correctAnswerText =
-    correctOption && correctOption.id !== selectedOption.id
-      ? `Rätt svar: ${correctOption.textSv}.`
-      : 'Det är rätt.';
-
-  return `${selectedAnswerText} ${correctAnswerText} Förklaring: ${explanationText}`.trim();
 }
 
 export interface SpeakSwedishOptions {
   /** Playback rate. Default 1.0. expo-speech clamps engine-supported range. */
   rate?: number;
-  onDone?: () => void;
-  onError?: (error: Error) => void;
-  onStopped?: () => void;
+  /** Called by expo-speech when playback finishes naturally. */
+  onDone?: Speech.SpeechOptions['onDone'];
+  /** Called by expo-speech when playback fails. */
+  onError?: Speech.SpeechOptions['onError'];
+  /** Called by expo-speech when playback is stopped. */
+  onStopped?: Speech.SpeechOptions['onStopped'];
 }
 
 export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): void {
@@ -73,13 +41,12 @@ export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): v
     Speech.speak(speechText, {
       language: 'sv-SE',
       ...(rate !== undefined ? { rate } : {}),
-      ...(options.onDone ? { onDone: options.onDone } : {}),
-      ...(options.onError ? { onError: options.onError } : {}),
-      ...(options.onStopped ? { onStopped: options.onStopped } : {}),
+      onDone: options.onDone,
+      onError: options.onError,
+      onStopped: options.onStopped,
     });
   } catch (error) {
     console.warn('Speech unavailable:', error);
-    options.onError?.(error instanceof Error ? error : new Error(String(error)));
   }
 }
 
