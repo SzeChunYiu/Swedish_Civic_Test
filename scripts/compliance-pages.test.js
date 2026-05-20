@@ -98,6 +98,19 @@ test('sources route cites the current UHR authority-boundary page', () => {
   );
 });
 
+test('sources route back affordance returns to Home instead of Profile', () => {
+  const sourcesRoute = read('app/sources.tsx');
+
+  assert.match(sourcesRoute, /backAccessibilityLabel: 'Tillbaka till startsidan'/);
+  assert.match(sourcesRoute, /backLabel: '← Tillbaka till startsidan'/);
+  assert.match(sourcesRoute, /backAccessibilityLabel: 'Back to Home'/);
+  assert.match(sourcesRoute, /backLabel: '← Back to Home'/);
+  assert.match(sourcesRoute, /backHref="\/home"/);
+  assert.match(sourcesRoute, /backLabel=\{copy\.backLabel\}/);
+  assert.match(sourcesRoute, /backAccessibilityLabel=\{copy\.backAccessibilityLabel\}/);
+  assert.doesNotMatch(sourcesRoute, /backHref="\/\(tabs\)\/profile"/);
+});
+
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
@@ -138,6 +151,14 @@ test('compliance pages and source links are present', () => {
   assert.match(legalPage, /← Back to Profile/);
   assert.match(legalPage, /Back to profile/);
   const sourcesRoute = read('app/sources.tsx');
+  assert.match(sourcesRoute, /backAccessibilityLabel: 'Tillbaka till startsidan'/);
+  assert.match(sourcesRoute, /backLabel: '← Tillbaka till startsidan'/);
+  assert.match(sourcesRoute, /backAccessibilityLabel: 'Back to Home'/);
+  assert.match(sourcesRoute, /backLabel: '← Back to Home'/);
+  assert.match(sourcesRoute, /backHref="\/home"/);
+  assert.match(sourcesRoute, /backLabel=\{copy\.backLabel\}/);
+  assert.match(sourcesRoute, /backAccessibilityLabel=\{copy\.backAccessibilityLabel\}/);
+  assert.doesNotMatch(sourcesRoute, /backHref="\/\(tabs\)\/profile"/);
   assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/utbildningsmaterial/i);
   assert.match(sourcesRoute, /Sverige i fokus/i);
   assert.match(sourcesRoute, /Källor/);
