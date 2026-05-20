@@ -821,6 +821,9 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Nästan redo',
     'Stark förberedelse',
     'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    'Senaste övning',
+    'Fortsätt där du slutade i ${chapterTitle}. ${subtitle}',
+    'Fortsätt ${chapterTitle}',
     '${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade',
     'Redoindikator: ${score} procent. ${verdict}. ${details}',
     'Starta ett mockprov för att kontrollera din redoindikator',
@@ -898,6 +901,9 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Almost ready',
     'Strong preparation',
     'Based on your answers so far. Answer more questions for a steadier signal.',
+    'Recent practice',
+    'Continue where you left off in ${chapterTitle}. ${subtitle}',
+    'Resume ${chapterTitle}',
     '${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried',
     'Readiness indicator: ${score} percent. ${verdict}. ${details}',
     'Start a mock exam to check your readiness indicator',
@@ -997,6 +1003,29 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'computeReadinessFromQuestionProgress({',
     'home route must derive the readiness indicator from stored progress',
   ],
+  [
+    'import { resumeBannerCopy, resumeWhereLeftOff }',
+    'home route must import the resume selector and localized banner copy',
+  ],
+  [
+    'function buildResumeProgress(questionProgress: Record<string, QuestionProgress>): UserProgress',
+    'home route must adapt persisted question progress into the resume selector shape',
+  ],
+  ['resumeWhereLeftOff({', 'home route must derive the resume CTA from stored recent answers'],
+  [
+    'const resumeCopy = resumeBannerCopy(resumeCandidate, language);',
+    'home route must render localized resume banner copy from the selector result',
+  ],
+  [
+    'href={`/chapter/${resumeChapter.id}`}',
+    'home route resume CTA must deep-link to the latest chapter',
+  ],
+  [
+    'accessibilityLabel={resumeAccessibilityLabel}',
+    'home route resume CTA must expose a localized accessible label',
+  ],
+  ['resumeLink: {', 'home route resume CTA must define a stable link style'],
+  ['minHeight: space[6]', 'home route resume CTA must keep a minimum tap target height'],
   ['const guidedPathChapterGroups = [', 'home route must define the guided path chapter groups'],
   [
     "{ id: 'beginner', chapterIds: ['ch01', 'ch02', 'ch03', 'ch04'] }",
@@ -1855,6 +1884,11 @@ const EXPECTED_HOME_ROUTE_HEADERS = [
     label: 'readiness card title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.readinessTitle\}>\s*\{copy\.readinessTitle\}\s*<\/Text>/,
+  },
+  {
+    label: 'resume card title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.resumeTitle\}>\s*\{resumeCopy\.title\}\s*<\/Text>/,
   },
   {
     label: 'feedback card title',
@@ -9888,7 +9922,9 @@ function validateHomeRouteHeaderParity() {
   }
 
   const unheaderedCardHeadings =
-    homeRoute.match(/<Text\s+style=\{styles\.(?:goalLabel|readinessTitle|feedbackTitle)\}>/g) || [];
+    homeRoute.match(
+      /<Text\s+style=\{styles\.(?:goalLabel|readinessTitle|resumeTitle|feedbackTitle)\}>/g,
+    ) || [];
   if (unheaderedCardHeadings.length > 0) {
     reject('home route card headings must expose accessibilityRole="header"');
   }
