@@ -1059,19 +1059,19 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad för fokuserad repetition',
+    'Sparad för att öva igen',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
-    'Svara fel på en övningsfråga så visas den här.',
-    'Inga misstag ännu',
-    'Fellogg',
-    'Fel svar att repetera',
-    'Ditt senaste felaktiga svar',
-    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
-    'Misstag',
-    'Fel svar: ${count}',
+    'När du missar en övningsfråga visas den här.',
+    'Inga missade frågor ännu',
+    'Öva igen',
+    'Frågor att öva igen',
+    'Ditt senaste svar',
+    'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
+    'Missade frågor',
+    'Antal missar: ${count}',
   ],
   en: [
     'Smart review',
@@ -1091,6 +1091,14 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
+const FORBIDDEN_MISTAKES_ROUTE_SWEDISH_COPY = [
+  ['Fell', 'ogg'],
+  ['Fel svar att', ' repetera'],
+  ['Gå igenom fel svar', ' med fråga'],
+  ['repetitionsantal på', ' samma plats'],
+  ['Sparad för fokuserad', ' repetition'],
+  ['Ditt senaste felaktiga', ' svar'],
+].map((parts) => parts.join(''));
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -9560,6 +9568,12 @@ function validateMistakesRouteCopyParity() {
       if (normalizedLabel) seenLabels.add(normalizedLabel);
       if (labelIsValid) mistakesRouteCopyLabelsValidated += 1;
     });
+  });
+
+  FORBIDDEN_MISTAKES_ROUTE_SWEDISH_COPY.forEach((copy) => {
+    if (mistakesRoute.includes(copy)) {
+      reject(`mistakes route Swedish copy must not expose stale label ${JSON.stringify(copy)}`);
+    }
   });
 
   const expectedLabelCount = Object.values(EXPECTED_MISTAKES_ROUTE_COPY_LABELS).reduce(
