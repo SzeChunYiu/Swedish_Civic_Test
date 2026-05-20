@@ -113,10 +113,7 @@
     const tags = Array.isArray(question && question.tags) ? question.tags : [];
     if (tags.includes('editorial')) return 'editorial';
     if (tags.includes('published-variant')) return 'derived';
-    // Unmarked questions are treated as derived (NOT 'uhr') so we never
-    // silently mislabel non-official content as official. Editorial fix
-    // 2026-05-20: bank is currently 169 uhr / 676 derived / 13 unmarked.
-    return 'derived';
+    return question && question.source ? 'uhr' : 'derived';
   }
   // ---- Question-source filter (user-controllable) ----------------------
   // Setting key: 'smt_question_sources'.
@@ -408,11 +405,8 @@
     return questionProvenance(question) === 'uhr';
   }
   function mockQuestionPool() {
-    // Mock exam respects the user's source preference. Default 'all' means
-    // the mock pool is the full bank; 'uhr' restricts to ~169 UHR-cited
-    // questions ("real-exam-style" subset).
     const all = window.SMT_QUESTIONS || [];
-    return questionSourcesPref() === 'uhr' ? all.filter(isStaticMockUhrQuestion) : all.slice();
+    return all.filter(isStaticMockUhrQuestion);
   }
 
   function pickMockQuestions() {
@@ -512,7 +506,7 @@
     stage.innerHTML = `
       <div class="mock-landing">
         <div class="mock-landing__inner">
-          <span class="eyebrow">${tr({ sv: 'Övningsprov', en: 'Mock exam', 'zh-Hans': '模拟考试', 'zh-Hant': '模擬考試', ar: 'اختبار تجريبي', ckb: 'تاقیکردنەوەی ئەزموونی', fa: 'آزمون آزمایشی', pl: 'Egzamin próbny', so: 'Imtixaan tijaabo ah', ti: 'ናይ ልምምድ ፈተና', tr: 'Deneme sınavı', uk: 'Пробний іспит' })}</span>
+          <span class="eyebrow">${tr({ sv: 'Tidsatt övning', en: 'Timed practice', 'zh-Hans': '限时练习', 'zh-Hant': '限時練習', ar: 'تدريب موقوت', ckb: 'مەشقی کاتدار', fa: 'تمرین زمان‌دار', pl: 'Ćwiczenie na czas', so: 'Tababar waqti leh', ti: 'ግዜ ዘለዎ ልምምድ', tr: 'Süreli alıştırma', uk: 'Тренування на час' })}</span>
           <h1 class="practice__title">
             <span>${tr({ sv: 'Bygg ditt övningsprov.', en: 'Build your practice round.', 'zh-Hans': '自定义你的练习。', 'zh-Hant': '自訂你的練習。', ar: 'كوّن جولة تدريبك.', ckb: 'خولی مەشقی خۆت دروست بکە.', fa: 'دور تمرین خود را بسازید.', pl: 'Zbuduj swoją rundę ćwiczeniową.', so: 'Dhis wareeggaaga tababarka.', ti: 'ዙር ልምምድካ ስራሕ።', tr: 'Alıştırma turunu oluşturun.', uk: 'Створіть свій тренувальний раунд.' })}</span>
           </h1>
@@ -747,7 +741,7 @@
       <div class="mock-shell">
         <header class="mock-bar">
           <div class="mock-bar__title">
-            <span class="eyebrow">${tr({ sv: 'Övningsprov', en: 'Mock exam', 'zh-Hans': '模拟考试', 'zh-Hant': '模擬考試', ar: 'اختبار تجريبي', ckb: 'تاقیکردنەوەی ئەزموونی', fa: 'آزمون آزمایشی', pl: 'Egzamin próbny', so: 'Imtixaan tijaabo ah', ti: 'ናይ ልምምድ ፈተና', tr: 'Deneme sınavı', uk: 'Пробний іспит' })}</span>
+            <span class="eyebrow">${tr({ sv: 'Tidsatt övning', en: 'Timed practice', 'zh-Hans': '限时练习', 'zh-Hant': '限時練習', ar: 'تدريب موقوت', ckb: 'مەشقی کاتدار', fa: 'تمرین زمان‌دار', pl: 'Ćwiczenie na czas', so: 'Tababar waqti leh', ti: 'ግዜ ዘለዎ ልምምድ', tr: 'Süreli alıştırma', uk: 'Тренування на час' })}</span>
             <span class="mock-bar__counter">${i + 1} / ${n}</span>
           </div>
           <div class="mock-bar__timer">
@@ -887,7 +881,7 @@
         <p class="quiz__score">
           <span id="mock-score-num">0</span><em>/</em>${total}
         </p>
-        <h2 class="mock-result__verdict">${tr({ sv: 'Övningen är klar.', en: 'Practice round complete.', 'zh-Hans': '本轮练习已完成。', 'zh-Hant': '本輪練習已完成。', ar: 'اكتملت جولة التدريب.', ckb: 'خولی مەشق تەواو بوو.', fa: 'دور تمرین کامل شد.', pl: 'Ćwiczenie ukończone.', so: 'Wareegga tababarka waa dhammaaday.', ti: 'ዙር ልምምድ ተወዲኡ።', tr: 'Alıştırma turu tamamlandı.', uk: 'Тренувальний раунд завершено.' })}</h2>
+        <h2 class="mock-result__verdict">${tr({ sv: 'Övningspass klart.', en: 'Practice round complete.', 'zh-Hans': '本轮练习已完成。', 'zh-Hant': '本輪練習已完成。', ar: 'اكتملت جولة التدريب.', ckb: 'خولی مەشق تەواو بوو.', fa: 'دور تمرین کامل شد.', pl: 'Ćwiczenie ukończone.', so: 'Wareegga tababarka waa dhammaaday.', ti: 'ዙር ልምምድ ተወዲኡ።', tr: 'Alıştırma turu tamamlandı.', uk: 'Тренувальний раунд завершено.' })}</h2>
         <p class="mock-result__pct">${pct}% — ${correct}/${total} ${tr({ sv: 'rätt', en: 'correct', 'zh-Hans': '答对', 'zh-Hant': '答對', ar: 'صحيحة', ckb: 'ڕاست', fa: 'درست', pl: 'poprawnie', so: 'sax', ti: 'ቅኑዕ', tr: 'doğru', uk: 'правильно' })}</p>
 
         <ul class="result-chapters">${chapterRows}</ul>
