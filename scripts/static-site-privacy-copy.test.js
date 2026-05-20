@@ -9,17 +9,11 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
-function staticSwedishDictionaryEntries() {
+function readStaticSwedishDictionary() {
   const source = read('site/app.js');
   const match = source.match(/\n  sv: \{([\s\S]*?)\n  \}\n\};/);
-  assert.ok(match, 'site/app.js Swedish dictionary block should stay parseable');
-
-  return [...match[1].matchAll(/^\s+"([^"]+)":\s+"((?:\\"|[^"])*)",?$/gm)].map(
-    ([, key, value]) => ({
-      key,
-      value,
-    }),
-  );
+  assert.ok(match, 'site/app.js Swedish i18n dictionary must stay parseable');
+  return match[1];
 }
 
 test('static site privacy copy rejects stale monetization claims', () => {
@@ -56,21 +50,10 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
-test('static Swedish dictionary uses natural svit wording instead of English streak loanwords', () => {
-  const entries = staticSwedishDictionaryEntries();
-  const offenders = entries.filter(({ value }) => /\bstreaks?\b/i.test(value));
+test('static site Swedish dictionary avoids obvious English loanwords', () => {
+  const swedishDictionary = readStaticSwedishDictionary();
 
-  assert.deepEqual(offenders, []);
-  assert.ok(
-    entries.some(({ value }) => value.includes('18 dagars svit')),
-    'static Swedish phone hint should use "18 dagars svit"',
-  );
-  assert.ok(
-    entries.some(({ value }) => value.includes('studiesviter')),
-    'static Swedish privacy copy should name study streaks as studiesviter',
-  );
-  assert.ok(
-    entries.some(({ value }) => value.includes('en studiesvit som bröts utan anledning')),
-    'static Swedish support copy should describe a broken study svit naturally',
+  [/\bdrills\b/i, /\bMVP(?::n)?\b/i, /studieflöde-bug/i, /bygge-problem/i, /\bstreaks?\b/i].forEach(
+    (pattern) => assert.doesNotMatch(swedishDictionary, pattern),
   );
 });

@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------
-   Sveriges Medborgartest — site behaviour
+   Almost Swedish — site behaviour
    - hash routing (/, /privacy, /support, /terms, /sources)
    - language toggle (EN/SV) with localStorage persistence
    - try-a-question demo card
@@ -85,7 +85,7 @@ window.addEventListener("smt:languagechange", () => {
 
 const i18n = window.i18n = {
   en: {
-    "brand": "Sveriges Medborgartest",
+    "brand": "Almost Swedish",
     "nav.home": "Home",
     "nav.practice": "Practice",
     "nav.mock": "Mock exam",
@@ -231,7 +231,7 @@ const i18n = window.i18n = {
     "privacy.kicker": "Privacy policy",
     "privacy.h1a": "Your data",
     "privacy.h1b": "stays on your phone.",
-    "privacy.lede": "Sveriges Medborgartest is an independent study app. We don't ask for an account, and study progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
+    "privacy.lede": "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
     "privacy.meta1.b": "Effective",
     "privacy.meta1.v": "2026-05-15",
     "privacy.meta2.b": "Version",
@@ -240,7 +240,7 @@ const i18n = window.i18n = {
     "privacy.meta3.v": "~3 min",
     "privacy.toc": "In this policy",
     "privacy.s1.t": "Independence",
-    "privacy.s1.p": "Sveriges Medborgartest is an independent study app for Swedish civic knowledge practice. It is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Anything you read here represents what <em>this app</em> does — nothing more.",
+    "privacy.s1.p": "Almost Swedish is an independent study app for Swedish civic knowledge practice. It is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Anything you read here represents what <em>this app</em> does — nothing more.",
     "privacy.s2.t": "No account required",
     "privacy.s2.p": "The MVP requires no account, email address, phone number, or profile registration. You open the app, you study, you close the app. That's the deal.",
     "privacy.s3.t": "Local study progress",
@@ -303,7 +303,7 @@ const i18n = window.i18n = {
     "terms.meta3.v": "~2 min read",
     "terms.toc": "In these terms",
     "terms.s1.t": "What this is",
-    "terms.s1.p": "Sveriges Medborgartest is an unofficial study app. It is not the exam, it is not run by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score here does not grant citizenship.",
+    "terms.s1.p": "Almost Swedish is an unofficial study app. It is not the exam, it is not run by UHR, Skolverket, Migrationsverket, or the Swedish government, and a perfect score here does not grant citizenship.",
     "terms.s2.t": "Acceptable use",
     "terms.s2.p": "Use the app to study. Don't scrape it, reverse-engineer it, or rebrand it as your own product. Don't use it to harass anyone. Treat the app the way you'd treat a borrowed bicycle: well.",
     "terms.s3.t": "Content & accuracy",
@@ -357,7 +357,7 @@ const i18n = window.i18n = {
     "footer.about.p": "An independent study tool, built by people who've taken the test themselves. Free to start, study, and take mock exams.",
     "footer.h.honest": "Honest disclaimer",
     "footer.honest.p": "Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. We just really like helping people study.",
-    "footer.copyright": "© 2026 Sveriges Medborgartest. Made with kanelbullar in Stockholm.",
+    "footer.copyright": "© 2026 Almost Swedish. Made with kanelbullar in Stockholm.",
     "footer.fika": "Lagom built. Fika tested.",
 
     "ad.label": "Sponsored",
@@ -379,7 +379,7 @@ const i18n = window.i18n = {
   },
 
   sv: {
-    "brand": "Sveriges Medborgartest",
+    "brand": "Almost Swedish",
     "nav.home": "Hem",
     "nav.practice": "Öva",
     "nav.mock": "Provexempel",
@@ -390,7 +390,7 @@ const i18n = window.i18n = {
     "nav.sources": "Källor",
     "nav.cta": "Hämta appen ↗",
 
-    "hero.eyebrow": "Inofficiell · Gratis MVP · Källstödda frågor",
+    "hero.eyebrow": "Inofficiell · Gratis version · Källstödda frågor",
     "hero.h1a": "Klara provet.",
     "hero.h1b": "Få passet.",
     "hero.h1c": "Skryt på midsommar.",
@@ -403,7 +403,7 @@ const i18n = window.i18n = {
 
     "phone.crumb": "Kapitel 3 · Samhälle & Rättigheter",
     "phone.q": "Vilken svensk princip ger alla rätt att vistas fritt i naturen?",
-    "phone.hint": "Snyggt. 18 dagars svit. Fortsätt.",
+    "phone.hint": "Snyggt. 18 dagar i rad. Fortsätt.",
 
     "marquee.1": "Allemansrätten",
     "marquee.2": "Riksdagen",
@@ -418,7 +418,7 @@ const i18n = window.i18n = {
     "demo.h1": "Inga läroböcker.",
     "demo.h2": "Bara klick.",
     "demo.deck": "Varje fråga har en förklaring på begriplig svenska och en länk till källan. Fel svar? Den dyker upp igen senare, i lugn och ro. Rätt svar? Gå vidare, häll upp ett kaffe till.",
-    "demo.li1": "<b>Intervallrepetition</b> tar upp svåra frågor på rätt dag.",
+    "demo.li1": "<b>Spaced repetition</b> tar fram svåra frågor på rätt dag.",
     "demo.li2": "<b>Begripliga förklaringar</b> — ingen juridiska, ingen byråkratdjungel.",
     "demo.li3": "<b>Provläge</b> med riktig tidsbegränsning, så provdagen känns bekant.",
 
@@ -498,10 +498,10 @@ const i18n = window.i18n = {
     "how.h2": "Klara stort.",
     "how.deck": "Tre lägen, en app. Använd i valfri ordning — de flesta cyklar genom alla tre veckan innan provet.",
     "how.s1.t": "Lär — korta kapitel",
-    "how.s1.p": "Läs en förklaring på fem minuter och gör sedan en kort övning. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
-    "how.s2.t": "Öva — smarta drills",
+    "how.s1.p": "Läs en 5-minuters förklaring, gör sedan ett litet quiz. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
+    "how.s2.t": "Öva — smarta övningar",
     "how.s2.p": "Misstag dyker upp igen på rätt dag. Du kommer bli förvånad över hur snabbt Riksdagen slutar låta som möbler.",
-    "how.s3.t": "Provläge — realistisk tidskänsla",
+    "how.s3.t": "Provläge — riktig timing",
     "how.s3.p": "Kör riktigt format med riktig tid. Provdagen blir en tisdag med sämre stol.",
 
     "faq.eyebrow": "Ofta och uppriktigt ställda",
@@ -512,7 +512,7 @@ const i18n = window.i18n = {
     "faq.2.q": "Hjälper det mig verkligen att klara provet?",
     "faq.2.a": "Det hjälper dig att <em>plugga</em>. Resten beror på dig, det officiella materialet och hur många fikapauser du tar. Vi hämtar frågor från den offentliga banken och förklarar varje en på enkel svenska.",
     "faq.3.q": "Behöver jag ett konto?",
-    "faq.3.a": "Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.",
+    "faq.3.a": "Nej. Appen kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.",
     "faq.4.q": "Är den gratis?",
     "faq.4.a": "Gratis att börja, plugga och göra provexempel. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.",
     "faq.5.q": "Fungerar den på svenska också?",
@@ -525,18 +525,18 @@ const i18n = window.i18n = {
     "privacy.kicker": "Integritetspolicy",
     "privacy.h1a": "Dina data",
     "privacy.h1b": "stannar i telefonen.",
-    "privacy.lede": "Sveriges Medborgartest är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.",
+    "privacy.lede": "Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.",
     "privacy.meta1.b": "Gäller från",
     "privacy.meta1.v": "2026-05-15",
     "privacy.meta2.b": "Version",
-    "privacy.meta2.v": "1.0 MVP",
+    "privacy.meta2.v": "1.0",
     "privacy.meta3.b": "Lästid",
     "privacy.meta3.v": "~3 min",
     "privacy.toc": "I denna policy",
     "privacy.s1.t": "Oberoende",
-    "privacy.s1.p": "Sveriges Medborgartest är en fristående studieapp för övning av svensk samhällskunskap. Den är inte officiell och inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Allt du läser här gäller bara vad <em>denna app</em> gör — inget mer.",
+    "privacy.s1.p": "Almost Swedish är en fristående studieapp för övning av svensk samhällskunskap. Den är inte officiell och inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Allt du läser här gäller bara vad <em>denna app</em> gör — inget mer.",
     "privacy.s2.t": "Inget konto krävs",
-    "privacy.s2.p": "MVP:n kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.",
+    "privacy.s2.p": "Appen kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.",
     "privacy.s3.t": "Lokala studieframsteg",
     "privacy.s3.p": "Framsteg, inställningar, misstag, XP, studiesviter, märken, bokmärken och ljudpreferenser lagras lokalt på din enhet. De lämnar den aldrig. Avinstallerar du appen är de borta — bra att veta.",
     "privacy.s4.t": "Nuvarande datahantering",
@@ -551,7 +551,7 @@ const i18n = window.i18n = {
     "support.kicker": "Support",
     "support.h1a": "Är något trasigt?",
     "support.h1b": "Vi fixar det.",
-    "support.lede": "Vi kan hjälpa med buggar, faktafel, trasigt ljud och otydlig svenska. Vi kan inte ge svar på det riktiga provet, ge migrationsråd eller skynda på Migrationsverket. Tyvärr.",
+    "support.lede": "Vi kan hjälpa med appfel, faktafel, trasigt ljud och otydlig svenska. Vi kan inte ge svar på det riktiga provet, ge migrationsråd eller skynda på Migrationsverket. Tyvärr.",
     "support.meta1.b": "Svarstid",
     "support.meta1.v": "~2 arbetsdagar",
     "support.meta2.b": "Språk",
@@ -565,8 +565,8 @@ const i18n = window.i18n = {
     "support.s1.li2": "Otydlig svenska i en fråga eller förklaring.",
     "support.s1.li3": "En trasig källänk eller saknad referens.",
     "support.s1.li4": "Ett ljudproblem — klipp som hackar, fel uttal, tystnad där det borde vara tal.",
-    "support.s1.li5": "Ett studieflöde-bug — framsteg som inte sparades, en studiesvit som bröts utan anledning, ett provexempel som inte går att avsluta.",
-    "support.s1.li6": "Ett butik- eller bygge-problem — krasch vid start, betalningskrångel, en nedladdning som vägrar.",
+    "support.s1.li5": "Ett fel i studieflödet — framsteg som inte sparas, en studiesvit som bryts utan anledning, ett provexempel som inte går att avsluta.",
+    "support.s1.li6": "Ett problem med butiken eller installationen — appen kraschar vid start, betalningen krånglar eller en nedladdning vägrar.",
     "support.s2.t": "Vad du bör inkludera",
     "support.s2.p": "Hjälp oss hjälpa dig snabbare:",
     "support.s2.li1": "Enhet + OS-version (Pixel 7, Android 14 / iPhone 13, iOS 17).",
@@ -597,7 +597,7 @@ const i18n = window.i18n = {
     "terms.meta3.v": "~2 min läsning",
     "terms.toc": "I villkoren",
     "terms.s1.t": "Vad det här är",
-    "terms.s1.p": "Sveriges Medborgartest är en inofficiell studieapp. Det är inte provet, det drivs inte av UHR, Skolverket, Migrationsverket eller svenska staten, och full pott här ger inte medborgarskap.",
+    "terms.s1.p": "Almost Swedish är en inofficiell studieapp. Det är inte provet, det drivs inte av UHR, Skolverket, Migrationsverket eller svenska staten, och full pott här ger inte medborgarskap.",
     "terms.s2.t": "Acceptabel användning",
     "terms.s2.p": "Använd appen för att plugga. Skrapa den inte, reverse-engineera den inte, bygg inte om den och kalla den din. Använd den inte för att trakassera någon. Behandla appen som du behandlar en lånad cykel: väl.",
     "terms.s3.t": "Innehåll & korrekthet",
@@ -651,7 +651,7 @@ const i18n = window.i18n = {
     "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.",
     "footer.h.honest": "Ärlig friskrivning",
     "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
-    "footer.copyright": "© 2026 Sveriges Medborgartest. Gjort med kanelbullar i Stockholm.",
+    "footer.copyright": "© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.",
     "footer.fika": "Lagom byggt. Fika-testat.",
 
     "ad.label": "Annons",
