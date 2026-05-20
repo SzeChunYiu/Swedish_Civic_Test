@@ -19,13 +19,19 @@ test('authored source questions stay reviewed and publish without field drift', 
   assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
 });
 
-test('derived q160 explanation expectation stays anchored to authored q002 source', () => {
+test('derived q155 explanation expectation stays anchored to authored q002 source', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
 
   assert.match(source, /const \{ questions, sourceQuestions \} = loadTs\('data\/questions\.ts'\);/);
   assert.match(source, /question\.id === 'q002'/);
-  assert.match(source, /byId\.get\('q160'\)\?\.explanationSv, sourceQ002\.explanationSv/);
-  assert.match(source, /byId\.get\('q160'\)\?\.explanationEn, sourceQ002\.explanationEn/);
+  assert.match(
+    source,
+    /byId\.get\(shiftedGeneratedQuestionId\('q155', sourceQuestions\)\)\?\.explanationSv,\s+sourceQ002\.explanationSv/s,
+  );
+  assert.match(
+    source,
+    /byId\.get\(shiftedGeneratedQuestionId\('q155', sourceQuestions\)\)\?\.explanationEn,\s+sourceQ002\.explanationEn/s,
+  );
   assert.doesNotMatch(
     source,
     /Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området\./,

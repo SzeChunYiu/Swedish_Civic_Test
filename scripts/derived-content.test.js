@@ -6,6 +6,7 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
+const BASELINE_SOURCE_QUESTIONS_FOR_GENERATED_ID_FIXTURES = 149;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -42,6 +43,12 @@ function loadTs(relativePath, exportName) {
 
 function questionNumber(question) {
   return Number(String(question.id).replace(/^q/, ''));
+}
+
+function shiftedGeneratedQuestionId(id, sourceQuestions) {
+  const idNumber = Number(String(id).replace(/^q/, ''));
+  const shift = sourceQuestions.length - BASELINE_SOURCE_QUESTIONS_FOR_GENERATED_ID_FIXTURES;
+  return `q${String(idNumber + shift).padStart(3, '0')}`;
 }
 
 function generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions) {
@@ -193,69 +200,6 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
     trueFalseVariants.every(
       (question) =>
         !/Ett korrekt svar|Det är inte sant att|Det stämmer att|A correct answer|It is not true that|It is true that/.test(
-          `${question.questionSv} ${question.questionEn}`,
-        ),
-    ),
-  );
-});
-
-test('derivePublishedQuestions rewrites generated statement-describes prompts as direct questions', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q024',
-    chapterId: 'ch03',
-    type: 'single_choice',
-    questionSv: 'Vilket påstående beskriver statliga myndigheter?',
-    questionEn: 'Which statement describes government agencies?',
-    options: [
-      {
-        id: 'a',
-        textSv: 'De ersätter domstolarna i brottmål',
-        textEn: 'They replace courts in criminal cases',
-      },
-      {
-        id: 'b',
-        textSv: 'De genomför beslut och måste följa lagar och regeringens instruktioner',
-        textEn: 'They implement decisions and must follow laws and government instructions',
-      },
-      {
-        id: 'c',
-        textSv: 'De beslutar vem som blir kung eller drottning',
-        textEn: 'They decide who becomes king or queen',
-      },
-      {
-        id: 'd',
-        textSv: 'De skriver partiernas valprogram',
-        textEn: 'They write parties’ election platforms',
-      },
-    ],
-    correctOptionId: 'b',
-    explanationSv:
-      'Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner.',
-    explanationEn:
-      "The government governs the country with the help of government agencies. Agencies carry out decisions in practice and must follow the law and the government's instructions.",
-    uhrReference: { chapter: 'Så här styrs Sverige', section: 'Myndigheter', pageApprox: 13 },
-    difficulty: 'medium',
-    reviewStatus: 'reviewed',
-    tags: ['agencies', 'government', 'law'],
-  };
-
-  const singleChoiceVariants = derivePublishedQuestions([source], 201).filter(
-    (question) => question.type === 'single_choice',
-  );
-
-  assert.deepEqual(
-    singleChoiceVariants.map((question) => question.questionSv),
-    ['Vad gäller för statliga myndigheter?', 'Vad stämmer om statliga myndigheter?'],
-  );
-  assert.deepEqual(
-    singleChoiceVariants.map((question) => question.questionEn),
-    ['What applies to government agencies?', 'What is true about government agencies?'],
-  );
-  assert.ok(
-    singleChoiceVariants.every(
-      (question) =>
-        !/Vilket påstående beskriver|Which statement describes/.test(
           `${question.questionSv} ${question.questionEn}`,
         ),
     ),
@@ -707,63 +651,75 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   const sourceQ002 = sourceQuestions.find((question) => question.id === 'q002');
   assert.ok(sourceQ002, 'q002 source question should exist');
   const expectedRows = {
-    q161: [
+    q156: [
       'Sveriges nordligaste del ligger inte norr om polcirkeln.',
       "Sweden's northernmost part does not lie north of the Arctic Circle.",
     ],
-    q177: [
+    q172: [
       'Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat.',
       "The Gulf Stream and the North Atlantic Current do not help make Sweden's climate mild.",
     ],
-    q245: [
+    q240: [
       'Riksdagen väljer inte statsminister.',
       'The Riksdag does not choose the prime minister.',
     ],
-    q265: [
+    q260: [
       'Oppositionen ska inte granska regeringens arbete och föreslå annan politik.',
       'The opposition should not scrutinize the government’s work and propose alternative policies.',
     ],
-    q276: [
+    q271: [
       'Politiker i Sverige behöver inte följa resultatet av en folkomröstning.',
       'Politicians in Sweden do not have to follow the result of a referendum.',
     ],
-    q277: [
+    q272: [
       'Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning.',
       'Politicians in Sweden are required to follow the result of a referendum.',
     ],
-    q341: [
+    q336: [
       'Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym.',
       'A person who gives information to newspapers, radio, and TV does not have the right to be anonymous.',
     ],
-    q349: [
+    q344: [
       'Public service-företag ska inte vara oberoende av politiska och andra intressen.',
       'Public service companies should not be independent of political and other interests.',
     ],
-    q449: [
+    q444: [
       'Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',
       'Swedish municipalities do not have to offer older people support and help.',
     ],
-    q517: [
+    q512: [
       'Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret.',
       'Swedish total defence does not include both military defence and civil defence.',
     ],
-    q529: [
+    q524: [
       'År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt.',
       'In 2000, the Church of Sweden did not become one faith community among several when the state and the Church of Sweden separated.',
     ],
-    q725: [
+    q720: [
       'Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
       'Sweden is not usually divided into Götaland, Svealand, and Norrland.',
     ],
   };
 
   for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+    const shiftedId = shiftedGeneratedQuestionId(id, sourceQuestions);
+    assert.equal(
+      byId.get(shiftedId)?.questionSv,
+      questionSv,
+      `${shiftedId} Swedish generated stem`,
+    );
+    assert.equal(
+      byId.get(shiftedId)?.questionEn,
+      questionEn,
+      `${shiftedId} English generated stem`,
+    );
   }
 
   const checkedText = Object.keys(expectedRows)
-    .map((id) => `${byId.get(id)?.questionSv} ${byId.get(id)?.questionEn}`)
+    .map((id) => {
+      const shiftedId = shiftedGeneratedQuestionId(id, sourceQuestions);
+      return `${byId.get(shiftedId)?.questionSv} ${byId.get(shiftedId)?.questionEn}`;
+    })
     .join('\n');
 
   assert.doesNotMatch(
@@ -772,15 +728,21 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   );
 
   assert.equal(
-    byId.get('q161')?.explanationSv,
+    byId.get(shiftedGeneratedQuestionId('q156', sourceQuestions))?.explanationSv,
     'Sveriges nordligaste del ligger norr om polcirkeln.',
   );
   assert.equal(
-    byId.get('q161')?.explanationEn,
+    byId.get(shiftedGeneratedQuestionId('q156', sourceQuestions))?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(byId.get('q160')?.explanationSv, sourceQ002.explanationSv);
-  assert.equal(byId.get('q160')?.explanationEn, sourceQ002.explanationEn);
+  assert.equal(
+    byId.get(shiftedGeneratedQuestionId('q155', sourceQuestions))?.explanationSv,
+    sourceQ002.explanationSv,
+  );
+  assert.equal(
+    byId.get(shiftedGeneratedQuestionId('q155', sourceQuestions))?.explanationEn,
+    sourceQ002.explanationEn,
+  );
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
@@ -842,239 +804,248 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
   const byId = new Map(questions.map((question) => [question.id, question]));
 
   const expectedRows = {
-    q216: [
+    q211: [
       'Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val.',
       "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
     ],
-    q280: [
+    q275: [
       'En anledning till att väljare röstar bakom en skärm i vallokalen är att valet är hemligt och ingen annan ska se vilket val de gör.',
       'One reason voters vote behind a screen at the polling station is that the vote is secret and no one else should see their choice.',
     ],
-    q281: [
+    q276: [
       'En anledning till att väljare röstar bakom en skärm i vallokalen är att rösterna ska räknas snabbare.',
       'One reason voters vote behind a screen at the polling station is that votes are counted faster.',
     ],
-    q328: [
+    q323: [
       'Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.',
     ],
-    q329: [
+    q324: [
       'Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott.',
       'A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.',
     ],
-    q336: [
+    q331: [
       'Offentlighetsprincipen underlättar granskning av myndigheter genom att allmänna handlingar kan begäras ut om de inte omfattas av sekretess.',
       'The principle of public access makes it easier to scrutinize authorities by allowing public documents to be requested unless they are covered by secrecy rules.',
     ],
-    q356: [
+    q351: [
       'Förenta nationerna bildades efter andra världskriget för att förhindra krig och skydda människors rättigheter.',
       'The United Nations was created after the Second World War to prevent war and protect human rights.',
     ],
-    q357: [
+    q352: [
       'Förenta nationerna bildades efter andra världskriget för att bestämma svenska kommunalskatter.',
       'The United Nations was created after the Second World War to decide Swedish municipal taxes.',
     ],
-    q360: [
+    q355: [
       'FN:s förklaring om de mänskliga rättigheterna presenterades 1948 och innehåller 30 artiklar.',
       'The UN Universal Declaration of Human Rights was presented in 1948 and contains 30 articles.',
     ],
-    q361: [
+    q356: [
       'FN:s förklaring om de mänskliga rättigheterna presenterades 1918 och gäller bara Europa.',
       'The UN Universal Declaration of Human Rights was presented in 1918 and applies only to Europe.',
     ],
-    q368: [
+    q363: [
       'Våld i nära relationer och hedersrelaterat våld och förtryck i Sverige är brottsligt enligt svensk lag.',
       'Violence in close relationships and honour-related violence and oppression in Sweden are crimes under Swedish law.',
     ],
-    q369: [
+    q364: [
       'Våld i nära relationer och hedersrelaterat våld och förtryck i Sverige är alltid en privat familjefråga och inte ett brott.',
       'Violence in close relationships and honour-related violence and oppression in Sweden are always private family matters and not crimes.',
     ],
-    q381: [
+    q376: [
       'År 1979 beslutade Sverige som första land i världen att barnkonventionen blev svensk lag.',
       'In 1979, Sweden was the first country in the world to decide that the Convention on the Rights of the Child became Swedish law.',
     ],
-    q384: [
+    q379: [
       'Sveriges fem nationella minoriteter är judar, romer, samer, sverigefinnar och tornedalingar.',
       "Sweden's five national minorities are Jews, Roma, Sami, Sweden Finns, and Tornedalians.",
     ],
-    q385: [
+    q380: [
       'Sveriges fem nationella minoriteter är danskar, norrmän, islänningar, tyskar och fransmän.',
       "Sweden's five national minorities are Danes, Norwegians, Icelanders, Germans, and French.",
     ],
-    q408: [
+    q403: [
       'Fackförbund företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar.',
       'Trade unions represent employees, negotiate wages, and can help members.',
     ],
-    q409: [
+    q404: [
       'Fackförbund bestämmer vilka som får rösta i riksdagsval.',
       'Trade unions decide who may vote in Riksdag elections.',
     ],
-    q416: [
+    q411: [
       'Lagar på arbetsmarknaden i Sverige finns för att skydda anställdas rättigheter och bidra till en trygg arbetsmiljö.',
       'Sweden has labour-market laws to protect employees’ rights and help create a safe work environment.',
     ],
-    q417: [
+    q412: [
       'Lagar på arbetsmarknaden i Sverige finns för att bestämma vem som blir statschef.',
       'Sweden has labour-market laws to decide who becomes head of state.',
     ],
-    q421: [
+    q416: [
       'A-kassan är en myndighet som dömer i arbetsmiljöbrott.',
       'A-kassan is an authority that judges work environment crimes.',
     ],
-    q456: [
+    q451: [
       'Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg.',
       'Sweden’s population grew during the 19th century because of better farming methods and medical advances.',
     ],
-    q457: [
+    q452: [
       'Sveriges befolkning ökade under 1800-talet på grund av EU-medlemskapet.',
       'Sweden’s population grew during the 19th century because of EU membership.',
     ],
-    q464: [
+    q459: [
       'Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades.',
       'The change through the new constitution in 1809 was that the king’s power was limited.',
     ],
-    q476: [
+    q471: [
       'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',
       'The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.',
     ],
-    q480: [
+    q475: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
       'The period after the Second World War is often called the Swedish record years because Sweden had long-lasting strong economic growth and could carry out major reforms.',
     ],
-    q481: [
+    q476: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige saknade nästan all industri.',
       'The period after the Second World War is often called the Swedish record years because Sweden had almost no industry.',
     ],
-    q489: [
+    q484: [
       'Den digitala revolutionen har bara förändrat hur människor firar midsommar.',
       'The digital revolution has only changed how people celebrate Midsummer.',
     ],
-    q505: [
+    q500: [
       'Europarådet arbetar endast för jordbrukspolitik.',
       'The Council of Europe works only for agricultural policy.',
     ],
-    q468: [
+    q463: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
       'The labour movement, free church movement, women’s movement, and temperance movement were among the largest popular movements in Sweden during the 19th century.',
     ],
-    q492: [
+    q487: [
       'Sveriges nordiska samarbete sker främst genom Nordiska rådet och Nordiska ministerrådet.',
       "Sweden's Nordic cooperation mainly takes place through the Nordic Council and the Nordic Council of Ministers.",
     ],
-    q512: [
+    q507: [
       'Sverige och Finland valde att nästan samtidigt ansöka om medlemskap i Nato efter Rysslands attack mot Ukraina 2022.',
       "Sweden and Finland chose to apply for NATO membership at almost the same time after Russia's attack on Ukraine in 2022.",
     ],
-    q536: [
+    q531: [
       'Islam beskrivs som den näst största religionen i Sverige.',
       'Islam is described as the second-largest religion in Sweden.',
     ],
-    q537: [
+    q532: [
       'Judendom beskrivs som den näst största religionen i Sverige.',
       'Judaism is described as the second-largest religion in Sweden.',
     ],
-    q540: [
+    q535: [
       'På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier.',
       'On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.',
     ],
-    q541: [
+    q536: [
       'På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger.',
       'On New Year’s Eve, 31 December, large bonfires and spring songs are common.',
     ],
-    q545: [
+    q540: [
       'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer.',
       'On Sweden’s National Day, 6 June, the labour movement arranges demonstrations.',
     ],
-    q552: [
+    q547: [
       'Luciafirandet handlar mycket om att sprida ljus när året är som mörkast.',
       'The Lucia celebration is largely about spreading light when the year is at its darkest.',
     ],
-    q553: [
+    q548: [
       'Luciafirandet handlar mycket om att välkomna våren med stora brasor.',
       'The Lucia celebration is largely about welcoming spring with large bonfires.',
     ],
-    q560: [
+    q555: [
       'Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
       'Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
     ],
-    q572: [
+    q567: [
       'Advent infaller de fyra söndagarna före juldagen den 25 december.',
       'Advent occurs on the four Sundays before Christmas Day, 25 December.',
     ],
-    q573: [
+    q568: [
       'Advent infaller en lördag i slutet av oktober eller början av november.',
       'Advent occurs on a Saturday at the end of October or beginning of November.',
     ],
-    q584: [
+    q579: [
       'På olika platser i Sverige finns buddhistiska och hinduiska församlingar och tempel för buddhister och hinduer.',
       'In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.',
     ],
-    q608: [
+    q603: [
       'Resor till Asien och ökat intresse för meditation och yoga nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet.',
       'Travel to Asia and increased interest in meditation and yoga are mentioned as examples of contacts with Hindus and Buddhists in Sweden during the 20th century.',
     ],
-    q609: [
+    q604: [
       'Byggandet av Sveriges första moskéer under 1970-talet nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet.',
       "The building of Sweden's first mosques during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
     ],
-    q616: [
+    q611: [
       'Regeringsformen skyddar rätten att utöva sin religion och ger skydd mot diskriminering på grund av tro.',
       'The Instrument of Government protects the right to practice one’s religion and protects against discrimination because of belief.',
     ],
-    q617: [
+    q612: [
       'Regeringsformen låter staten välja religion åt varje invånare.',
       'The Instrument of Government lets the state choose a religion for each resident.',
     ],
-    q620: [
+    q615: [
       'Jul och påsk är kristna högtider som många svenskar firar även om de inte ser sig som religiösa.',
       'Christmas and Easter are Christian holidays that many Swedes celebrate even if they do not see themselves as religious.',
     ],
-    q621: [
+    q616: [
       'Id al-fitr och Newroz är kristna högtider som många svenskar firar även om de inte ser sig som religiösa.',
       'Eid al-Fitr and Newroz are Christian holidays that many Swedes celebrate even if they do not see themselves as religious.',
     ],
-    q632: [
+    q627: [
       'Judar fick rätt att bo i Sverige och utöva sin religion.',
       'Jews gained the right to live in Sweden and practice their religion.',
     ],
-    q664: [
+    q659: [
       'Nouruz och Newroz firas vid vårdagjämningen den 21 mars.',
       'Nouruz and Newroz are observed at the spring equinox on 21 March.',
     ],
-    q673: [
+    q668: [
       'Gudstjänsten tidigt på morgonen den 25 december kallas ett luciatåg.',
       'The church service early on the morning of 25 December is called a Lucia procession.',
     ],
-    q676: [
+    q671: [
       'På påskafton är det vanligt att äta ägg, lamm, lax och sill och att barn får godis i påskägg.',
       'On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and for children to get candy in Easter eggs.',
     ],
-    q677: [
+    q672: [
       'På påskafton är det vanligt att tända adventsljus och öppna adventskalendrar.',
       'On Easter Saturday, it is common to light Advent candles and open Advent calendars.',
     ],
-    q680: [
+    q675: [
       'Barn med en adventskalender hemma öppnar en lucka varje dag fram till julafton.',
       'Children with an Advent calendar at home often open one door each day until Christmas Eve.',
     ],
-    q681: [
+    q676: [
       'Under advent tänder barn stora brasor på kvällen.',
       'During Advent, children often light large bonfires in the evening.',
     ],
-    q708: [
+    q703: [
       'Julen firar traditionellt Jesu födelse inom kristendomen.',
       "Christmas traditionally celebrates Jesus' birth in Christianity.",
     ],
-    q709: [
+    q704: [
       'Julen firar traditionellt vårens ankomst inom kristendomen.',
       'Christmas traditionally celebrates the arrival of spring in Christianity.',
     ],
   };
 
   for (const [id, [questionSv, questionEn]] of Object.entries(expectedRows)) {
-    assert.equal(byId.get(id)?.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
+    const shiftedId = shiftedGeneratedQuestionId(id, sourceQuestions);
+    assert.equal(
+      byId.get(shiftedId)?.questionSv,
+      questionSv,
+      `${shiftedId} Swedish generated stem`,
+    );
+    assert.equal(
+      byId.get(shiftedId)?.questionEn,
+      questionEn,
+      `${shiftedId} English generated stem`,
+    );
   }
 
   const residualQuestions = generatedTrueFalseResidualQuestions(

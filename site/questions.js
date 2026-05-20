@@ -6694,237 +6694,456 @@
   },
   {
     "id": "q150",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "What is one goal of the welfare society?",
-      "sv": "Vad är ett mål med välfärdssamhället?"
+      "en": "Which statement describes labour-market organizations?",
+      "sv": "Vilket påstående beskriver arbetsmarknadens organisationer?"
     },
     "opts": [
       {
-        "en": "That people can live securely with access to health care, education, and support when needed",
-        "sv": "Att människor ska kunna leva tryggt med tillgång till vård, utbildning och stöd vid behov"
+        "en": "Employer organizations represent employers, and trade unions represent employees",
+        "sv": "Arbetsgivarorganisationer företräder arbetsgivare och fackföreningar företräder arbetstagare"
       },
       {
-        "en": "That all welfare services should be paid for only privately",
-        "sv": "Att alla välfärdstjänster bara ska betalas privat"
+        "en": "Trade unions alone decide how the state should collect tax",
+        "sv": "Fackföreningar beslutar ensamma hur staten ska ta ut skatt"
       },
       {
-        "en": "That regions and municipalities should have no welfare responsibilities",
-        "sv": "Att regioner och kommuner inte ska ha några välfärdsuppgifter"
+        "en": "Employer organizations replace courts in labour-law cases",
+        "sv": "Arbetsgivarorganisationer ersätter domstolar i arbetsrättsliga mål"
       },
       {
-        "en": "That financial support should go only to companies",
-        "sv": "Att ekonomiskt stöd bara ska gå till företag"
+        "en": "Trade unions may only represent people without work",
+        "sv": "Fackföreningar får bara företräda personer utan arbete"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The welfare society is built on residents having basic economic and social security. That can include access to health care and education, and support during situations such as sickness or unemployment.",
-      "sv": "Välfärdssamhället bygger på att invånare ska ha en grundläggande ekonomisk och social trygghet. Det kan handla om tillgång till sjukvård och utbildning samt stöd vid till exempel sjukdom eller arbetslöshet."
+      "en": "Employer organizations bring employers together, while trade unions bring employees together. These organizations can negotiate wages and working conditions, often through collective agreements.",
+      "sv": "Arbetsgivarorganisationer samlar arbetsgivare, medan fackföreningar samlar arbetstagare. Organisationerna kan förhandla om löner och arbetsvillkor, ofta genom kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Organisationer",
+      "page": 28
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
-      "welfare",
-      "basic-security",
-      "health-care",
-      "education",
-      "social-support"
+      "labour-market",
+      "employer-organizations",
+      "trade-unions"
     ]
   },
   {
     "id": "q151",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "What are employer contributions in welfare funding?",
-      "sv": "Vad är arbetsgivaravgifter i välfärdens finansiering?"
+      "en": "Which statement describes an employer's contributions to the state?",
+      "sv": "Vilket påstående beskriver arbetsgivarens avgifter till staten?"
     },
     "opts": [
       {
-        "en": "Fees employers pay in addition to wages, which go to things such as sickness insurance and pensions",
-        "sv": "Avgifter som arbetsgivare betalar utöver lönen och som går till bland annat sjukförsäkring och pensioner"
+        "en": "The employer pays contributions that go partly to employees’ pensions and sickness insurance",
+        "sv": "Arbetsgivaren betalar avgifter som bland annat går till pension och sjukförsäkring för anställda"
       },
       {
-        "en": "A tax customers pay when they buy goods and services",
-        "sv": "En skatt som kunder betalar när de köper varor och tjänster"
+        "en": "The employer pays contributions only for employees who are union members",
+        "sv": "Arbetsgivaren betalar bara avgifter för anställda som är fackmedlemmar"
       },
       {
-        "en": "A municipal grant that goes only to private companies",
-        "sv": "Ett kommunalt bidrag som bara går till privata företag"
+        "en": "The employer replaces municipal income tax with a voluntary fee",
+        "sv": "Arbetsgivaren ersätter kommunalskatten genom en frivillig avgift"
       },
       {
-        "en": "A bank loan regions use to build hospitals",
-        "sv": "Ett banklån som regioner använder för att bygga sjukhus"
+        "en": "The employer pays contributions directly to A-kassan members every month",
+        "sv": "Arbetsgivaren betalar avgifter direkt till A-kassans medlemmar varje månad"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Employer contributions are fees employers pay to the state for their employees, in addition to wages. The money goes to things such as sickness insurance and pensions; VAT is instead a tax on goods and services.",
-      "sv": "Arbetsgivaravgifter är avgifter som arbetsgivare betalar till staten för sina anställda, utöver lönerna. Pengarna går bland annat till sjukförsäkring och pensioner; moms är i stället skatt på varor och tjänster."
+      "en": "An employer pays contributions to the state for its employees. These contributions help fund pensions, sickness insurance, and other parts of social insurance.",
+      "sv": "En arbetsgivare betalar avgifter till staten för sina anställda. Avgifterna bidrar bland annat till pension, sjukförsäkring och andra delar av socialförsäkringen."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Lagar och regler på arbetsmarknaden",
+      "page": 29
     },
     "difficulty": "medium",
     "tags": [
-      "welfare",
-      "taxes",
-      "employer-contributions",
-      "sickness-insurance",
-      "pensions"
+      "labour-law",
+      "social-contributions",
+      "pension"
     ]
   },
   {
     "id": "q152",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which example belongs to primary care?",
-      "sv": "Vilket exempel hör till primärvården?"
+      "en": "What applies to tax on work in Sweden?",
+      "sv": "Vad gäller för skatt på arbete i Sverige?"
     },
     "opts": [
       {
-        "en": "Health centres, child health centres, and maternity clinics",
-        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
+        "en": "Everyone who works pays tax on their wages, and the amount depends on income",
+        "sv": "Alla som arbetar betalar skatt på sin lön, och beloppet beror på inkomsten"
       },
       {
-        "en": "Emergency hospitals and university hospitals with advanced treatment",
-        "sv": "Akutsjukhus och universitetssjukhus med avancerad behandling"
+        "en": "Only people who work in the public sector pay tax on wages",
+        "sv": "Endast personer som arbetar i offentlig sektor betalar skatt på lön"
       },
       {
-        "en": "Psychiatric care, rehabilitation, and dental care",
-        "sv": "Psykiatrisk vård, rehabilitering och tandvård"
+        "en": "Tax on work is paid only by people who do not have employment",
+        "sv": "Skatt på arbete betalas bara av personer som saknar anställning"
       },
       {
-        "en": "Municipal adult education and upper-secondary schools",
-        "sv": "Kommunal vuxenutbildning och gymnasieskolor"
+        "en": "Everyone pays exactly the same tax amount regardless of income",
+        "sv": "Alla betalar exakt samma skattebelopp oavsett inkomst"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Primary care includes health centres, child health centres, and maternity clinics. Hospital care, psychiatric care, rehabilitation, dental care, and education belong to other parts of welfare.",
-      "sv": "Primärvård omfattar bland annat vårdcentraler, barnavårdscentraler och mödravårdscentraler. Sjukhusvård, psykiatrisk vård, rehabilitering, tandvård och utbildning hör till andra delar av välfärden."
+      "en": "A person who works in Sweden pays tax on wages. The amount paid depends on income and on the rules where the person lives and works.",
+      "sv": "Den som arbetar i Sverige betalar skatt på sin lön. Hur mycket skatt som betalas beror på inkomsten och reglerna där personen bor och arbetar."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Skatt på arbete",
+      "page": 29
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres"
+      "tax",
+      "income",
+      "work"
     ]
   },
   {
     "id": "q153",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "What counts as child care in municipal welfare?",
-      "sv": "Vad räknas som barnomsorg i kommunal välfärd?"
+      "en": "Which statement describes compensation from A-kassan?",
+      "sv": "Vilket påstående beskriver ersättningen från A-kassan?"
     },
     "opts": [
       {
-        "en": "Preschools and leisure-time centres",
-        "sv": "Förskolor och fritidshem"
+        "en": "The compensation is funded by the state and by fees from people who are members",
+        "sv": "Ersättningen finansieras av staten och av avgifter från dem som är medlemmar"
       },
       {
-        "en": "Pensions and sickness insurance",
-        "sv": "Pensioner och sjukförsäkring"
+        "en": "The compensation is always paid to everyone who changes jobs",
+        "sv": "Ersättningen betalas alltid ut till alla som byter arbete"
       },
       {
-        "en": "Hospitals and health centres",
-        "sv": "Sjukhus och vårdcentraler"
+        "en": "The compensation replaces all wages regardless of how long the person has been unemployed",
+        "sv": "Ersättningen ersätter all lön oavsett hur länge personen har varit arbetslös"
       },
       {
-        "en": "Courts and prisons",
-        "sv": "Domstolar och fängelser"
+        "en": "The compensation is funded only by employer organizations",
+        "sv": "Ersättningen finansieras bara av arbetsgivarorganisationer"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Child care in municipal welfare means preschools and leisure-time centres. Pensions and sickness insurance are funded by the state, regions are responsible for health care, and the justice system belongs to law and justice.",
-      "sv": "Barnomsorg i kommunal välfärd handlar om förskolor och fritidshem. Pensioner och sjukförsäkring finansieras av staten, regionerna ansvarar för sjukvård och rättsväsendet hör till lag och rätt."
+      "en": "A-kassan is unemployment insurance. Compensation is funded both by the state and by membership fees, and a person who wants compensation must meet the conditions.",
+      "sv": "A-kassan är en arbetslöshetsförsäkring. Ersättningen finansieras både av staten och av medlemsavgifter, och den som vill få ersättning behöver uppfylla villkoren."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "A-kassan",
+      "page": 29
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
-      "municipal-welfare",
-      "child-care",
-      "preschool",
-      "leisure-time-centres"
+      "a-kassa",
+      "unemployment-insurance",
+      "member-fees"
     ]
   },
   {
     "id": "q154",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "What help can a municipality give older people who cannot manage everyday life on their own?",
-      "sv": "Vilken hjälp kan kommunen ge äldre personer som inte klarar vardagen själva?"
+      "en": "Which statement describes personal finance in Sweden?",
+      "sv": "Vilket påstående beskriver privatekonomi i Sverige?"
     },
     "opts": [
       {
-        "en": "Care and services at home or housing adapted for older people",
-        "sv": "Vård och service i hemmet eller ett boende anpassat för äldre personer"
+        "en": "Personal finance concerns a person’s or household's income, expenses, savings, and loans",
+        "sv": "Privatekonomi handlar om en persons eller ett hushålls inkomster, utgifter, sparande och lån"
       },
       {
-        "en": "Decisions about all pensions and child allowances",
-        "sv": "Beslut om alla pensioner och barnbidrag"
+        "en": "Personal finance concerns only the state budget and municipal tax revenue",
+        "sv": "Privatekonomi handlar bara om statens budget och kommunernas skatteintäkter"
       },
       {
-        "en": "Running all hospitals and health centres",
-        "sv": "Drift av alla sjukhus och vårdcentraler"
+        "en": "Personal finance means all households must have the same income and expenses",
+        "sv": "Privatekonomi betyder att alla hushåll måste ha samma inkomster och utgifter"
       },
       {
-        "en": "Judgments in criminal cases and sentences in court",
-        "sv": "Domar i brottmål och straff i domstol"
+        "en": "Personal finance is another word for labour-market collective agreements",
+        "sv": "Privatekonomi är ett annat ord för arbetsmarknadens kollektivavtal"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The municipality is responsible for older people being able to get support when they cannot manage everyday life on their own. Help can mean care and services at home, or housing adapted for older people if staying at home no longer works.",
-      "sv": "Kommunen ansvarar för att äldre personer kan få stöd när de inte klarar vardagen själva. Hjälpen kan vara vård och service i hemmet, eller ett boende som är anpassat för äldre personer om det inte fungerar att bo kvar hemma."
+      "en": "Personal finance is about everyday money: income, expenses, savings, loans, and credit. If debts are not paid, the Enforcement Authority may become involved.",
+      "sv": "Privatekonomi handlar om pengar i vardagen: inkomster, utgifter, sparande, lån och krediter. Om skulder inte betalas kan Kronofogden bli inblandad."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Privatekonomi i Sverige",
+      "page": 29
     },
     "difficulty": "medium",
     "tags": [
-      "municipal-welfare",
-      "elderly-care",
-      "home-care",
-      "adapted-housing"
+      "personal-finance",
+      "income",
+      "expenses"
     ]
   },
   {
     "id": "q155",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "What is one of the UN's purposes?",
+      "sv": "Vilket är ett av FN:s syften?"
+    },
+    "opts": [
+      {
+        "en": "To preserve peace and security in the world",
+        "sv": "Att bevara fred och säkerhet i världen"
+      },
+      {
+        "en": "To decide Swedish municipal budgets",
+        "sv": "Att besluta svenska kommuners budgetar"
+      },
+      {
+        "en": "To replace every country's parliament",
+        "sv": "Att ersätta alla länders parlament"
+      },
+      {
+        "en": "To arrange only Nordic trade",
+        "sv": "Att bara ordna handel mellan nordiska länder"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The UN works, among other things, to preserve peace and security, solve conflicts, and stop wars. The organization also works for equal human worth, self-determination, human rights, and freedoms.",
+      "sv": "FN arbetar bland annat för att bevara fred och säkerhet, lösa konflikter och stoppa krig. Organisationen arbetar också för alla folks lika värde, självbestämmande, mänskliga rättigheter och friheter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Globalt samarbete",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "un",
+      "peace-and-security",
+      "human-rights"
+    ]
+  },
+  {
+    "id": "q156",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "What does total defence duty mean in Sweden?",
+      "sv": "Vad innebär totalförsvarsplikt i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "That people who live in Sweden and are aged 16-70 may need to help defend the country",
+        "sv": "Att personer som bor i Sverige och är 16-70 år kan behöva hjälpa till att försvara landet"
+      },
+      {
+        "en": "That only Armed Forces employees may help during a crisis",
+        "sv": "Att bara anställda i Försvarsmakten får hjälpa till vid kris"
+      },
+      {
+        "en": "That municipalities decide by themselves whether Sweden should be in NATO",
+        "sv": "Att kommuner själva bestämmer om Sverige ska vara med i Nato"
+      },
+      {
+        "en": "That total defence is only about voluntary sports",
+        "sv": "Att totalförsvaret bara handlar om frivillig idrott"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Total defence duty means that everyone who lives in Sweden and is between 16 and 70 can be required to help defend the country if needed. This is connected to total defence including both military and civil defence.",
+      "sv": "Totalförsvarsplikt betyder att alla som bor i Sverige och är mellan 16 och 70 år kan bli skyldiga att hjälpa till att försvara landet om det behövs. Det hänger ihop med att totalförsvaret omfattar både militärt och civilt försvar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 40
+    },
+    "difficulty": "medium",
+    "tags": [
+      "total-defence-duty",
+      "civil-defence",
+      "security-policy"
+    ]
+  },
+  {
+    "id": "q157",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Which parts are included in military defence?",
+      "sv": "Vilka delar ingår i det militära försvaret?"
+    },
+    "opts": [
+      {
+        "en": "The army, navy, and air force",
+        "sv": "Armén, marinen och flygvapnet"
+      },
+      {
+        "en": "The Riksdag, regions, and municipalities",
+        "sv": "Riksdagen, regionerna och kommunerna"
+      },
+      {
+        "en": "The courts, police, and Enforcement Authority",
+        "sv": "Domstolarna, polisen och Kronofogden"
+      },
+      {
+        "en": "The Nordic Council, EU, and Council of Europe",
+        "sv": "Nordiska rådet, EU och Europarådet"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Military defence consists of the Swedish Armed Forces: the army, navy, and air force. The Armed Forces must protect Sweden's territory and independence and also be able to take part in international missions.",
+      "sv": "Det militära försvaret består av Försvarsmakten: armén, marinen och flygvapnet. Försvarsmakten ska skydda Sveriges territorium och självständighet och även kunna delta i internationella insatser."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "easy",
+    "tags": [
+      "armed-forces",
+      "military-defence",
+      "international-missions"
+    ]
+  },
+  {
+    "id": "q158",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "What happens under general conscription when young adults are assessed?",
+      "sv": "Vad händer inom den allmänna värnplikten när unga vuxna prövas?"
+    },
+    "opts": [
+      {
+        "en": "Men and women who have turned 18 answer questions and take tests",
+        "sv": "Män och kvinnor som fyllt 18 år får svara på frågor och göra tester"
+      },
+      {
+        "en": "Everyone who has turned 18 is automatically sent abroad",
+        "sv": "Alla som fyllt 18 år skickas automatiskt utomlands"
+      },
+      {
+        "en": "Only people who already work for the state are assessed",
+        "sv": "Bara personer som redan arbetar i staten får prövas"
+      },
+      {
+        "en": "Conscription applies only to people older than 70",
+        "sv": "Värnplikten gäller bara den som är äldre än 70 år"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "General conscription covers men and women who have turned 18. They answer questions and take tests, and then a decision is made about who may be considered for basic military training.",
+      "sv": "Den allmänna värnplikten omfattar män och kvinnor som har fyllt 18 år. De får svara på frågor och göra tester, och därefter beslutas vilka som kan bli aktuella för grundläggande militär utbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "conscription",
+      "military-training",
+      "armed-forces"
+    ]
+  },
+  {
+    "id": "q159",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "What should civil defence help society manage?",
+      "sv": "Vad ska det civila försvaret hjälpa samhället att klara?"
+    },
+    "opts": [
+      {
+        "en": "That important activities such as school, work, and health care can continue during war or crisis",
+        "sv": "Att viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta vid krig eller kris"
+      },
+      {
+        "en": "That only military units can act during all societal crises",
+        "sv": "Att bara militära förband kan agera vid alla samhällskriser"
+      },
+      {
+        "en": "That Swedish courts close during every conflict",
+        "sv": "Att svenska domstolar stängs vid varje konflikt"
+      },
+      {
+        "en": "That the EU takes over municipalities’ daily services",
+        "sv": "Att EU tar över kommunernas dagliga service"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Civil defence means that more than the military should be able to meet threats and challenges. Important activities, such as school, work, and health care, should be able to keep functioning during war or crisis.",
+      "sv": "Det civila försvaret handlar om att fler än militären ska kunna möta hot och utmaningar. Viktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, ska kunna fortsätta fungera vid krig eller kris."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Det civila försvaret",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "civil-defence",
+      "crisis-preparedness",
+      "health-care"
+    ]
+  },
+  {
+    "id": "q160",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -6971,7 +7190,7 @@
     ]
   },
   {
-    "id": "q156",
+    "id": "q161",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7010,7 +7229,7 @@
     ]
   },
   {
-    "id": "q157",
+    "id": "q162",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7049,7 +7268,7 @@
     ]
   },
   {
-    "id": "q158",
+    "id": "q163",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7096,7 +7315,7 @@
     ]
   },
   {
-    "id": "q159",
+    "id": "q164",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7143,7 +7362,7 @@
     ]
   },
   {
-    "id": "q160",
+    "id": "q165",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7181,7 +7400,7 @@
     ]
   },
   {
-    "id": "q161",
+    "id": "q166",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7220,7 +7439,7 @@
     ]
   },
   {
-    "id": "q162",
+    "id": "q167",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7267,7 +7486,7 @@
     ]
   },
   {
-    "id": "q163",
+    "id": "q168",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7315,7 +7534,7 @@
     ]
   },
   {
-    "id": "q164",
+    "id": "q169",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7355,7 +7574,7 @@
     ]
   },
   {
-    "id": "q165",
+    "id": "q170",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7395,7 +7614,7 @@
     ]
   },
   {
-    "id": "q166",
+    "id": "q171",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7443,7 +7662,7 @@
     ]
   },
   {
-    "id": "q167",
+    "id": "q172",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7490,7 +7709,7 @@
     ]
   },
   {
-    "id": "q168",
+    "id": "q173",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7529,7 +7748,7 @@
     ]
   },
   {
-    "id": "q169",
+    "id": "q174",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7568,7 +7787,7 @@
     ]
   },
   {
-    "id": "q170",
+    "id": "q175",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7615,7 +7834,7 @@
     ]
   },
   {
-    "id": "q171",
+    "id": "q176",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7663,7 +7882,7 @@
     ]
   },
   {
-    "id": "q172",
+    "id": "q177",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7703,7 +7922,7 @@
     ]
   },
   {
-    "id": "q173",
+    "id": "q178",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7743,7 +7962,7 @@
     ]
   },
   {
-    "id": "q174",
+    "id": "q179",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7791,7 +8010,7 @@
     ]
   },
   {
-    "id": "q175",
+    "id": "q180",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7838,7 +8057,7 @@
     ]
   },
   {
-    "id": "q176",
+    "id": "q181",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7876,7 +8095,7 @@
     ]
   },
   {
-    "id": "q177",
+    "id": "q182",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -7915,7 +8134,7 @@
     ]
   },
   {
-    "id": "q178",
+    "id": "q183",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -7962,7 +8181,7 @@
     ]
   },
   {
-    "id": "q179",
+    "id": "q184",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8009,7 +8228,7 @@
     ]
   },
   {
-    "id": "q180",
+    "id": "q185",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8048,7 +8267,7 @@
     ]
   },
   {
-    "id": "q181",
+    "id": "q186",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8087,7 +8306,7 @@
     ]
   },
   {
-    "id": "q182",
+    "id": "q187",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8134,7 +8353,7 @@
     ]
   },
   {
-    "id": "q183",
+    "id": "q188",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8183,7 +8402,7 @@
     ]
   },
   {
-    "id": "q184",
+    "id": "q189",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8224,7 +8443,7 @@
     ]
   },
   {
-    "id": "q185",
+    "id": "q190",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8265,7 +8484,7 @@
     ]
   },
   {
-    "id": "q186",
+    "id": "q191",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8314,7 +8533,7 @@
     ]
   },
   {
-    "id": "q187",
+    "id": "q192",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8361,7 +8580,7 @@
     ]
   },
   {
-    "id": "q188",
+    "id": "q193",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8400,7 +8619,7 @@
     ]
   },
   {
-    "id": "q189",
+    "id": "q194",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8439,7 +8658,7 @@
     ]
   },
   {
-    "id": "q190",
+    "id": "q195",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8486,7 +8705,7 @@
     ]
   },
   {
-    "id": "q191",
+    "id": "q196",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8534,7 +8753,7 @@
     ]
   },
   {
-    "id": "q192",
+    "id": "q197",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8574,7 +8793,7 @@
     ]
   },
   {
-    "id": "q193",
+    "id": "q198",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -8614,7 +8833,7 @@
     ]
   },
   {
-    "id": "q194",
+    "id": "q199",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -8662,7 +8881,7 @@
     ]
   },
   {
-    "id": "q195",
+    "id": "q200",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8709,7 +8928,7 @@
     ]
   },
   {
-    "id": "q196",
+    "id": "q201",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8748,7 +8967,7 @@
     ]
   },
   {
-    "id": "q197",
+    "id": "q202",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8787,7 +9006,7 @@
     ]
   },
   {
-    "id": "q198",
+    "id": "q203",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8834,7 +9053,7 @@
     ]
   },
   {
-    "id": "q199",
+    "id": "q204",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -8881,7 +9100,7 @@
     ]
   },
   {
-    "id": "q200",
+    "id": "q205",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8920,7 +9139,7 @@
     ]
   },
   {
-    "id": "q201",
+    "id": "q206",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -8959,7 +9178,7 @@
     ]
   },
   {
-    "id": "q202",
+    "id": "q207",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9006,7 +9225,7 @@
     ]
   },
   {
-    "id": "q203",
+    "id": "q208",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9053,7 +9272,7 @@
     ]
   },
   {
-    "id": "q204",
+    "id": "q209",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9092,7 +9311,7 @@
     ]
   },
   {
-    "id": "q205",
+    "id": "q210",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9131,7 +9350,7 @@
     ]
   },
   {
-    "id": "q206",
+    "id": "q211",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9178,7 +9397,7 @@
     ]
   },
   {
-    "id": "q207",
+    "id": "q212",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9225,7 +9444,7 @@
     ]
   },
   {
-    "id": "q208",
+    "id": "q213",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9264,7 +9483,7 @@
     ]
   },
   {
-    "id": "q209",
+    "id": "q214",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9303,7 +9522,7 @@
     ]
   },
   {
-    "id": "q210",
+    "id": "q215",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9350,7 +9569,7 @@
     ]
   },
   {
-    "id": "q211",
+    "id": "q216",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9397,7 +9616,7 @@
     ]
   },
   {
-    "id": "q212",
+    "id": "q217",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9436,7 +9655,7 @@
     ]
   },
   {
-    "id": "q213",
+    "id": "q218",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -9475,7 +9694,7 @@
     ]
   },
   {
-    "id": "q214",
+    "id": "q219",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -9522,7 +9741,7 @@
     ]
   },
   {
-    "id": "q215",
+    "id": "q220",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9569,7 +9788,7 @@
     ]
   },
   {
-    "id": "q216",
+    "id": "q221",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9608,7 +9827,7 @@
     ]
   },
   {
-    "id": "q217",
+    "id": "q222",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9647,7 +9866,7 @@
     ]
   },
   {
-    "id": "q218",
+    "id": "q223",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9694,7 +9913,7 @@
     ]
   },
   {
-    "id": "q219",
+    "id": "q224",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9741,7 +9960,7 @@
     ]
   },
   {
-    "id": "q220",
+    "id": "q225",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9780,7 +9999,7 @@
     ]
   },
   {
-    "id": "q221",
+    "id": "q226",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9819,7 +10038,7 @@
     ]
   },
   {
-    "id": "q222",
+    "id": "q227",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9866,7 +10085,7 @@
     ]
   },
   {
-    "id": "q223",
+    "id": "q228",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -9913,7 +10132,7 @@
     ]
   },
   {
-    "id": "q224",
+    "id": "q229",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9952,7 +10171,7 @@
     ]
   },
   {
-    "id": "q225",
+    "id": "q230",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -9991,7 +10210,7 @@
     ]
   },
   {
-    "id": "q226",
+    "id": "q231",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10038,7 +10257,7 @@
     ]
   },
   {
-    "id": "q227",
+    "id": "q232",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10085,7 +10304,7 @@
     ]
   },
   {
-    "id": "q228",
+    "id": "q233",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10124,7 +10343,7 @@
     ]
   },
   {
-    "id": "q229",
+    "id": "q234",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10163,7 +10382,7 @@
     ]
   },
   {
-    "id": "q230",
+    "id": "q235",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10210,7 +10429,7 @@
     ]
   },
   {
-    "id": "q231",
+    "id": "q236",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10257,7 +10476,7 @@
     ]
   },
   {
-    "id": "q232",
+    "id": "q237",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10296,7 +10515,7 @@
     ]
   },
   {
-    "id": "q233",
+    "id": "q238",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -10335,7 +10554,7 @@
     ]
   },
   {
-    "id": "q234",
+    "id": "q239",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -10382,7 +10601,7 @@
     ]
   },
   {
-    "id": "q235",
+    "id": "q240",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10429,7 +10648,7 @@
     ]
   },
   {
-    "id": "q236",
+    "id": "q241",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10468,7 +10687,7 @@
     ]
   },
   {
-    "id": "q237",
+    "id": "q242",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10507,7 +10726,7 @@
     ]
   },
   {
-    "id": "q238",
+    "id": "q243",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10554,7 +10773,7 @@
     ]
   },
   {
-    "id": "q239",
+    "id": "q244",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10601,7 +10820,7 @@
     ]
   },
   {
-    "id": "q240",
+    "id": "q245",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10640,7 +10859,7 @@
     ]
   },
   {
-    "id": "q241",
+    "id": "q246",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10679,7 +10898,7 @@
     ]
   },
   {
-    "id": "q242",
+    "id": "q247",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10726,7 +10945,7 @@
     ]
   },
   {
-    "id": "q243",
+    "id": "q248",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10773,7 +10992,7 @@
     ]
   },
   {
-    "id": "q244",
+    "id": "q249",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10812,7 +11031,7 @@
     ]
   },
   {
-    "id": "q245",
+    "id": "q250",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10851,7 +11070,7 @@
     ]
   },
   {
-    "id": "q246",
+    "id": "q251",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10898,7 +11117,7 @@
     ]
   },
   {
-    "id": "q247",
+    "id": "q252",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -10945,7 +11164,7 @@
     ]
   },
   {
-    "id": "q248",
+    "id": "q253",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -10984,7 +11203,7 @@
     ]
   },
   {
-    "id": "q249",
+    "id": "q254",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11023,7 +11242,7 @@
     ]
   },
   {
-    "id": "q250",
+    "id": "q255",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11070,7 +11289,7 @@
     ]
   },
   {
-    "id": "q251",
+    "id": "q256",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11117,7 +11336,7 @@
     ]
   },
   {
-    "id": "q252",
+    "id": "q257",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11156,7 +11375,7 @@
     ]
   },
   {
-    "id": "q253",
+    "id": "q258",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11195,7 +11414,7 @@
     ]
   },
   {
-    "id": "q254",
+    "id": "q259",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11242,7 +11461,7 @@
     ]
   },
   {
-    "id": "q255",
+    "id": "q260",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11289,7 +11508,7 @@
     ]
   },
   {
-    "id": "q256",
+    "id": "q261",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11328,7 +11547,7 @@
     ]
   },
   {
-    "id": "q257",
+    "id": "q262",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11367,7 +11586,7 @@
     ]
   },
   {
-    "id": "q258",
+    "id": "q263",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11414,7 +11633,7 @@
     ]
   },
   {
-    "id": "q259",
+    "id": "q264",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11461,7 +11680,7 @@
     ]
   },
   {
-    "id": "q260",
+    "id": "q265",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11500,7 +11719,7 @@
     ]
   },
   {
-    "id": "q261",
+    "id": "q266",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11539,7 +11758,7 @@
     ]
   },
   {
-    "id": "q262",
+    "id": "q267",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11586,7 +11805,7 @@
     ]
   },
   {
-    "id": "q263",
+    "id": "q268",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11633,7 +11852,7 @@
     ]
   },
   {
-    "id": "q264",
+    "id": "q269",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11672,7 +11891,7 @@
     ]
   },
   {
-    "id": "q265",
+    "id": "q270",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
@@ -11711,7 +11930,7 @@
     ]
   },
   {
-    "id": "q266",
+    "id": "q271",
     "chapterId": 3,
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
@@ -11758,7 +11977,7 @@
     ]
   },
   {
-    "id": "q267",
+    "id": "q272",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11805,7 +12024,7 @@
     ]
   },
   {
-    "id": "q268",
+    "id": "q273",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11844,7 +12063,7 @@
     ]
   },
   {
-    "id": "q269",
+    "id": "q274",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -11883,7 +12102,7 @@
     ]
   },
   {
-    "id": "q270",
+    "id": "q275",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11930,7 +12149,7 @@
     ]
   },
   {
-    "id": "q271",
+    "id": "q276",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -11977,7 +12196,7 @@
     ]
   },
   {
-    "id": "q272",
+    "id": "q277",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12016,7 +12235,7 @@
     ]
   },
   {
-    "id": "q273",
+    "id": "q278",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12055,7 +12274,7 @@
     ]
   },
   {
-    "id": "q274",
+    "id": "q279",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12102,7 +12321,7 @@
     ]
   },
   {
-    "id": "q275",
+    "id": "q280",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12149,7 +12368,7 @@
     ]
   },
   {
-    "id": "q276",
+    "id": "q281",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12188,7 +12407,7 @@
     ]
   },
   {
-    "id": "q277",
+    "id": "q282",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12227,7 +12446,7 @@
     ]
   },
   {
-    "id": "q278",
+    "id": "q283",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12274,7 +12493,7 @@
     ]
   },
   {
-    "id": "q279",
+    "id": "q284",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12321,7 +12540,7 @@
     ]
   },
   {
-    "id": "q280",
+    "id": "q285",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12360,7 +12579,7 @@
     ]
   },
   {
-    "id": "q281",
+    "id": "q286",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12399,7 +12618,7 @@
     ]
   },
   {
-    "id": "q282",
+    "id": "q287",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12446,7 +12665,7 @@
     ]
   },
   {
-    "id": "q283",
+    "id": "q288",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12493,7 +12712,7 @@
     ]
   },
   {
-    "id": "q284",
+    "id": "q289",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12532,7 +12751,7 @@
     ]
   },
   {
-    "id": "q285",
+    "id": "q290",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12571,7 +12790,7 @@
     ]
   },
   {
-    "id": "q286",
+    "id": "q291",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12618,7 +12837,7 @@
     ]
   },
   {
-    "id": "q287",
+    "id": "q292",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12665,7 +12884,7 @@
     ]
   },
   {
-    "id": "q288",
+    "id": "q293",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12704,7 +12923,7 @@
     ]
   },
   {
-    "id": "q289",
+    "id": "q294",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12743,7 +12962,7 @@
     ]
   },
   {
-    "id": "q290",
+    "id": "q295",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12790,7 +13009,7 @@
     ]
   },
   {
-    "id": "q291",
+    "id": "q296",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12837,7 +13056,7 @@
     ]
   },
   {
-    "id": "q292",
+    "id": "q297",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12876,7 +13095,7 @@
     ]
   },
   {
-    "id": "q293",
+    "id": "q298",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
@@ -12915,7 +13134,7 @@
     ]
   },
   {
-    "id": "q294",
+    "id": "q299",
     "chapterId": 4,
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
@@ -12962,7 +13181,7 @@
     ]
   },
   {
-    "id": "q295",
+    "id": "q300",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13009,7 +13228,7 @@
     ]
   },
   {
-    "id": "q296",
+    "id": "q301",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13048,7 +13267,7 @@
     ]
   },
   {
-    "id": "q297",
+    "id": "q302",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13087,7 +13306,7 @@
     ]
   },
   {
-    "id": "q298",
+    "id": "q303",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13134,7 +13353,7 @@
     ]
   },
   {
-    "id": "q299",
+    "id": "q304",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13181,7 +13400,7 @@
     ]
   },
   {
-    "id": "q300",
+    "id": "q305",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13220,7 +13439,7 @@
     ]
   },
   {
-    "id": "q301",
+    "id": "q306",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13259,7 +13478,7 @@
     ]
   },
   {
-    "id": "q302",
+    "id": "q307",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13306,7 +13525,7 @@
     ]
   },
   {
-    "id": "q303",
+    "id": "q308",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13353,7 +13572,7 @@
     ]
   },
   {
-    "id": "q304",
+    "id": "q309",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13392,7 +13611,7 @@
     ]
   },
   {
-    "id": "q305",
+    "id": "q310",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13431,7 +13650,7 @@
     ]
   },
   {
-    "id": "q306",
+    "id": "q311",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13478,7 +13697,7 @@
     ]
   },
   {
-    "id": "q307",
+    "id": "q312",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13525,7 +13744,7 @@
     ]
   },
   {
-    "id": "q308",
+    "id": "q313",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13564,7 +13783,7 @@
     ]
   },
   {
-    "id": "q309",
+    "id": "q314",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13603,7 +13822,7 @@
     ]
   },
   {
-    "id": "q310",
+    "id": "q315",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13650,7 +13869,7 @@
     ]
   },
   {
-    "id": "q311",
+    "id": "q316",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13697,7 +13916,7 @@
     ]
   },
   {
-    "id": "q312",
+    "id": "q317",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13736,7 +13955,7 @@
     ]
   },
   {
-    "id": "q313",
+    "id": "q318",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13775,7 +13994,7 @@
     ]
   },
   {
-    "id": "q314",
+    "id": "q319",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13822,7 +14041,7 @@
     ]
   },
   {
-    "id": "q315",
+    "id": "q320",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13869,7 +14088,7 @@
     ]
   },
   {
-    "id": "q316",
+    "id": "q321",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13908,7 +14127,7 @@
     ]
   },
   {
-    "id": "q317",
+    "id": "q322",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -13947,7 +14166,7 @@
     ]
   },
   {
-    "id": "q318",
+    "id": "q323",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -13994,7 +14213,7 @@
     ]
   },
   {
-    "id": "q319",
+    "id": "q324",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14041,7 +14260,7 @@
     ]
   },
   {
-    "id": "q320",
+    "id": "q325",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14080,7 +14299,7 @@
     ]
   },
   {
-    "id": "q321",
+    "id": "q326",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14119,7 +14338,7 @@
     ]
   },
   {
-    "id": "q322",
+    "id": "q327",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14166,7 +14385,7 @@
     ]
   },
   {
-    "id": "q323",
+    "id": "q328",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14213,7 +14432,7 @@
     ]
   },
   {
-    "id": "q324",
+    "id": "q329",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14252,7 +14471,7 @@
     ]
   },
   {
-    "id": "q325",
+    "id": "q330",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14291,7 +14510,7 @@
     ]
   },
   {
-    "id": "q326",
+    "id": "q331",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14338,7 +14557,7 @@
     ]
   },
   {
-    "id": "q327",
+    "id": "q332",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14385,7 +14604,7 @@
     ]
   },
   {
-    "id": "q328",
+    "id": "q333",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14424,7 +14643,7 @@
     ]
   },
   {
-    "id": "q329",
+    "id": "q334",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
@@ -14463,7 +14682,7 @@
     ]
   },
   {
-    "id": "q330",
+    "id": "q335",
     "chapterId": 5,
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
@@ -14510,7 +14729,7 @@
     ]
   },
   {
-    "id": "q331",
+    "id": "q336",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14557,7 +14776,7 @@
     ]
   },
   {
-    "id": "q332",
+    "id": "q337",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14596,7 +14815,7 @@
     ]
   },
   {
-    "id": "q333",
+    "id": "q338",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14635,7 +14854,7 @@
     ]
   },
   {
-    "id": "q334",
+    "id": "q339",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14682,7 +14901,7 @@
     ]
   },
   {
-    "id": "q335",
+    "id": "q340",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14729,7 +14948,7 @@
     ]
   },
   {
-    "id": "q336",
+    "id": "q341",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14768,7 +14987,7 @@
     ]
   },
   {
-    "id": "q337",
+    "id": "q342",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14807,7 +15026,7 @@
     ]
   },
   {
-    "id": "q338",
+    "id": "q343",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14854,7 +15073,7 @@
     ]
   },
   {
-    "id": "q339",
+    "id": "q344",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -14901,7 +15120,7 @@
     ]
   },
   {
-    "id": "q340",
+    "id": "q345",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14940,7 +15159,7 @@
     ]
   },
   {
-    "id": "q341",
+    "id": "q346",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -14979,7 +15198,7 @@
     ]
   },
   {
-    "id": "q342",
+    "id": "q347",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15026,7 +15245,7 @@
     ]
   },
   {
-    "id": "q343",
+    "id": "q348",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15074,7 +15293,7 @@
     ]
   },
   {
-    "id": "q344",
+    "id": "q349",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15114,7 +15333,7 @@
     ]
   },
   {
-    "id": "q345",
+    "id": "q350",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15154,7 +15373,7 @@
     ]
   },
   {
-    "id": "q346",
+    "id": "q351",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15202,7 +15421,7 @@
     ]
   },
   {
-    "id": "q347",
+    "id": "q352",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15249,7 +15468,7 @@
     ]
   },
   {
-    "id": "q348",
+    "id": "q353",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15288,7 +15507,7 @@
     ]
   },
   {
-    "id": "q349",
+    "id": "q354",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15327,7 +15546,7 @@
     ]
   },
   {
-    "id": "q350",
+    "id": "q355",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15374,7 +15593,7 @@
     ]
   },
   {
-    "id": "q351",
+    "id": "q356",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15421,7 +15640,7 @@
     ]
   },
   {
-    "id": "q352",
+    "id": "q357",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15460,7 +15679,7 @@
     ]
   },
   {
-    "id": "q353",
+    "id": "q358",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
@@ -15499,7 +15718,7 @@
     ]
   },
   {
-    "id": "q354",
+    "id": "q359",
     "chapterId": 6,
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
@@ -15546,7 +15765,7 @@
     ]
   },
   {
-    "id": "q355",
+    "id": "q360",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15593,7 +15812,7 @@
     ]
   },
   {
-    "id": "q356",
+    "id": "q361",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15632,7 +15851,7 @@
     ]
   },
   {
-    "id": "q357",
+    "id": "q362",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15671,7 +15890,7 @@
     ]
   },
   {
-    "id": "q358",
+    "id": "q363",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15718,7 +15937,7 @@
     ]
   },
   {
-    "id": "q359",
+    "id": "q364",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15765,7 +15984,7 @@
     ]
   },
   {
-    "id": "q360",
+    "id": "q365",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15804,7 +16023,7 @@
     ]
   },
   {
-    "id": "q361",
+    "id": "q366",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15843,7 +16062,7 @@
     ]
   },
   {
-    "id": "q362",
+    "id": "q367",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15890,7 +16109,7 @@
     ]
   },
   {
-    "id": "q363",
+    "id": "q368",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -15937,7 +16156,7 @@
     ]
   },
   {
-    "id": "q364",
+    "id": "q369",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -15976,7 +16195,7 @@
     ]
   },
   {
-    "id": "q365",
+    "id": "q370",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16015,7 +16234,7 @@
     ]
   },
   {
-    "id": "q366",
+    "id": "q371",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16062,7 +16281,7 @@
     ]
   },
   {
-    "id": "q367",
+    "id": "q372",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16110,7 +16329,7 @@
     ]
   },
   {
-    "id": "q368",
+    "id": "q373",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16150,7 +16369,7 @@
     ]
   },
   {
-    "id": "q369",
+    "id": "q374",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16190,7 +16409,7 @@
     ]
   },
   {
-    "id": "q370",
+    "id": "q375",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16238,7 +16457,7 @@
     ]
   },
   {
-    "id": "q371",
+    "id": "q376",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16285,7 +16504,7 @@
     ]
   },
   {
-    "id": "q372",
+    "id": "q377",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16324,7 +16543,7 @@
     ]
   },
   {
-    "id": "q373",
+    "id": "q378",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16363,7 +16582,7 @@
     ]
   },
   {
-    "id": "q374",
+    "id": "q379",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16410,7 +16629,7 @@
     ]
   },
   {
-    "id": "q375",
+    "id": "q380",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16457,7 +16676,7 @@
     ]
   },
   {
-    "id": "q376",
+    "id": "q381",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16496,7 +16715,7 @@
     ]
   },
   {
-    "id": "q377",
+    "id": "q382",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16535,7 +16754,7 @@
     ]
   },
   {
-    "id": "q378",
+    "id": "q383",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16582,7 +16801,7 @@
     ]
   },
   {
-    "id": "q379",
+    "id": "q384",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16629,7 +16848,7 @@
     ]
   },
   {
-    "id": "q380",
+    "id": "q385",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16668,7 +16887,7 @@
     ]
   },
   {
-    "id": "q381",
+    "id": "q386",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16707,7 +16926,7 @@
     ]
   },
   {
-    "id": "q382",
+    "id": "q387",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16754,7 +16973,7 @@
     ]
   },
   {
-    "id": "q383",
+    "id": "q388",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16801,7 +17020,7 @@
     ]
   },
   {
-    "id": "q384",
+    "id": "q389",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16840,7 +17059,7 @@
     ]
   },
   {
-    "id": "q385",
+    "id": "q390",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -16879,7 +17098,7 @@
     ]
   },
   {
-    "id": "q386",
+    "id": "q391",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16926,7 +17145,7 @@
     ]
   },
   {
-    "id": "q387",
+    "id": "q392",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -16973,7 +17192,7 @@
     ]
   },
   {
-    "id": "q388",
+    "id": "q393",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17012,7 +17231,7 @@
     ]
   },
   {
-    "id": "q389",
+    "id": "q394",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17051,7 +17270,7 @@
     ]
   },
   {
-    "id": "q390",
+    "id": "q395",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17098,7 +17317,7 @@
     ]
   },
   {
-    "id": "q391",
+    "id": "q396",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17145,7 +17364,7 @@
     ]
   },
   {
-    "id": "q392",
+    "id": "q397",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17184,7 +17403,7 @@
     ]
   },
   {
-    "id": "q393",
+    "id": "q398",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17223,7 +17442,7 @@
     ]
   },
   {
-    "id": "q394",
+    "id": "q399",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17270,7 +17489,7 @@
     ]
   },
   {
-    "id": "q395",
+    "id": "q400",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17317,7 +17536,7 @@
     ]
   },
   {
-    "id": "q396",
+    "id": "q401",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17356,7 +17575,7 @@
     ]
   },
   {
-    "id": "q397",
+    "id": "q402",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
@@ -17395,7 +17614,7 @@
     ]
   },
   {
-    "id": "q398",
+    "id": "q403",
     "chapterId": 7,
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
@@ -17442,7 +17661,7 @@
     ]
   },
   {
-    "id": "q399",
+    "id": "q404",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17489,7 +17708,7 @@
     ]
   },
   {
-    "id": "q400",
+    "id": "q405",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17528,7 +17747,7 @@
     ]
   },
   {
-    "id": "q401",
+    "id": "q406",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17567,7 +17786,7 @@
     ]
   },
   {
-    "id": "q402",
+    "id": "q407",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17614,7 +17833,7 @@
     ]
   },
   {
-    "id": "q403",
+    "id": "q408",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17661,7 +17880,7 @@
     ]
   },
   {
-    "id": "q404",
+    "id": "q409",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17700,7 +17919,7 @@
     ]
   },
   {
-    "id": "q405",
+    "id": "q410",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17739,7 +17958,7 @@
     ]
   },
   {
-    "id": "q406",
+    "id": "q411",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17786,7 +18005,7 @@
     ]
   },
   {
-    "id": "q407",
+    "id": "q412",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17833,7 +18052,7 @@
     ]
   },
   {
-    "id": "q408",
+    "id": "q413",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17872,7 +18091,7 @@
     ]
   },
   {
-    "id": "q409",
+    "id": "q414",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -17911,7 +18130,7 @@
     ]
   },
   {
-    "id": "q410",
+    "id": "q415",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -17958,7 +18177,7 @@
     ]
   },
   {
-    "id": "q411",
+    "id": "q416",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18005,7 +18224,7 @@
     ]
   },
   {
-    "id": "q412",
+    "id": "q417",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18044,7 +18263,7 @@
     ]
   },
   {
-    "id": "q413",
+    "id": "q418",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18083,7 +18302,7 @@
     ]
   },
   {
-    "id": "q414",
+    "id": "q419",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18130,7 +18349,7 @@
     ]
   },
   {
-    "id": "q415",
+    "id": "q420",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18177,7 +18396,7 @@
     ]
   },
   {
-    "id": "q416",
+    "id": "q421",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18216,7 +18435,7 @@
     ]
   },
   {
-    "id": "q417",
+    "id": "q422",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18255,7 +18474,7 @@
     ]
   },
   {
-    "id": "q418",
+    "id": "q423",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18302,7 +18521,7 @@
     ]
   },
   {
-    "id": "q419",
+    "id": "q424",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18349,7 +18568,7 @@
     ]
   },
   {
-    "id": "q420",
+    "id": "q425",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18388,7 +18607,7 @@
     ]
   },
   {
-    "id": "q421",
+    "id": "q426",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18427,7 +18646,7 @@
     ]
   },
   {
-    "id": "q422",
+    "id": "q427",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18474,7 +18693,7 @@
     ]
   },
   {
-    "id": "q423",
+    "id": "q428",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18522,7 +18741,7 @@
     ]
   },
   {
-    "id": "q424",
+    "id": "q429",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18562,7 +18781,7 @@
     ]
   },
   {
-    "id": "q425",
+    "id": "q430",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
@@ -18602,7 +18821,7 @@
     ]
   },
   {
-    "id": "q426",
+    "id": "q431",
     "chapterId": 8,
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
@@ -18650,7 +18869,7 @@
     ]
   },
   {
-    "id": "q427",
+    "id": "q432",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18697,7 +18916,7 @@
     ]
   },
   {
-    "id": "q428",
+    "id": "q433",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18736,7 +18955,7 @@
     ]
   },
   {
-    "id": "q429",
+    "id": "q434",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18775,7 +18994,7 @@
     ]
   },
   {
-    "id": "q430",
+    "id": "q435",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18822,7 +19041,7 @@
     ]
   },
   {
-    "id": "q431",
+    "id": "q436",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18869,7 +19088,7 @@
     ]
   },
   {
-    "id": "q432",
+    "id": "q437",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18908,7 +19127,7 @@
     ]
   },
   {
-    "id": "q433",
+    "id": "q438",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -18947,7 +19166,7 @@
     ]
   },
   {
-    "id": "q434",
+    "id": "q439",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -18994,7 +19213,7 @@
     ]
   },
   {
-    "id": "q435",
+    "id": "q440",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19042,7 +19261,7 @@
     ]
   },
   {
-    "id": "q436",
+    "id": "q441",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19082,7 +19301,7 @@
     ]
   },
   {
-    "id": "q437",
+    "id": "q442",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19122,7 +19341,7 @@
     ]
   },
   {
-    "id": "q438",
+    "id": "q443",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19170,7 +19389,7 @@
     ]
   },
   {
-    "id": "q439",
+    "id": "q444",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19217,7 +19436,7 @@
     ]
   },
   {
-    "id": "q440",
+    "id": "q445",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19256,7 +19475,7 @@
     ]
   },
   {
-    "id": "q441",
+    "id": "q446",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19295,7 +19514,7 @@
     ]
   },
   {
-    "id": "q442",
+    "id": "q447",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19342,7 +19561,7 @@
     ]
   },
   {
-    "id": "q443",
+    "id": "q448",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19389,7 +19608,7 @@
     ]
   },
   {
-    "id": "q444",
+    "id": "q449",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19428,7 +19647,7 @@
     ]
   },
   {
-    "id": "q445",
+    "id": "q450",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19467,7 +19686,7 @@
     ]
   },
   {
-    "id": "q446",
+    "id": "q451",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19514,7 +19733,7 @@
     ]
   },
   {
-    "id": "q447",
+    "id": "q452",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19561,7 +19780,7 @@
     ]
   },
   {
-    "id": "q448",
+    "id": "q453",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19600,7 +19819,7 @@
     ]
   },
   {
-    "id": "q449",
+    "id": "q454",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
@@ -19639,7 +19858,7 @@
     ]
   },
   {
-    "id": "q450",
+    "id": "q455",
     "chapterId": 9,
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
@@ -19686,7 +19905,7 @@
     ]
   },
   {
-    "id": "q451",
+    "id": "q456",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19733,7 +19952,7 @@
     ]
   },
   {
-    "id": "q452",
+    "id": "q457",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19772,7 +19991,7 @@
     ]
   },
   {
-    "id": "q453",
+    "id": "q458",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19811,7 +20030,7 @@
     ]
   },
   {
-    "id": "q454",
+    "id": "q459",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19858,7 +20077,7 @@
     ]
   },
   {
-    "id": "q455",
+    "id": "q460",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -19906,7 +20125,7 @@
     ]
   },
   {
-    "id": "q456",
+    "id": "q461",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19946,7 +20165,7 @@
     ]
   },
   {
-    "id": "q457",
+    "id": "q462",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -19986,7 +20205,7 @@
     ]
   },
   {
-    "id": "q458",
+    "id": "q463",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20034,7 +20253,7 @@
     ]
   },
   {
-    "id": "q459",
+    "id": "q464",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20081,7 +20300,7 @@
     ]
   },
   {
-    "id": "q460",
+    "id": "q465",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20120,7 +20339,7 @@
     ]
   },
   {
-    "id": "q461",
+    "id": "q466",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20159,7 +20378,7 @@
     ]
   },
   {
-    "id": "q462",
+    "id": "q467",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20206,7 +20425,7 @@
     ]
   },
   {
-    "id": "q463",
+    "id": "q468",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20253,7 +20472,7 @@
     ]
   },
   {
-    "id": "q464",
+    "id": "q469",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20292,7 +20511,7 @@
     ]
   },
   {
-    "id": "q465",
+    "id": "q470",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20331,7 +20550,7 @@
     ]
   },
   {
-    "id": "q466",
+    "id": "q471",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20378,7 +20597,7 @@
     ]
   },
   {
-    "id": "q467",
+    "id": "q472",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20425,7 +20644,7 @@
     ]
   },
   {
-    "id": "q468",
+    "id": "q473",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20464,7 +20683,7 @@
     ]
   },
   {
-    "id": "q469",
+    "id": "q474",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20503,7 +20722,7 @@
     ]
   },
   {
-    "id": "q470",
+    "id": "q475",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20550,7 +20769,7 @@
     ]
   },
   {
-    "id": "q471",
+    "id": "q476",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20597,7 +20816,7 @@
     ]
   },
   {
-    "id": "q472",
+    "id": "q477",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20636,7 +20855,7 @@
     ]
   },
   {
-    "id": "q473",
+    "id": "q478",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20675,7 +20894,7 @@
     ]
   },
   {
-    "id": "q474",
+    "id": "q479",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20722,7 +20941,7 @@
     ]
   },
   {
-    "id": "q475",
+    "id": "q480",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20769,7 +20988,7 @@
     ]
   },
   {
-    "id": "q476",
+    "id": "q481",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20808,7 +21027,7 @@
     ]
   },
   {
-    "id": "q477",
+    "id": "q482",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20847,7 +21066,7 @@
     ]
   },
   {
-    "id": "q478",
+    "id": "q483",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20894,7 +21113,7 @@
     ]
   },
   {
-    "id": "q479",
+    "id": "q484",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -20941,7 +21160,7 @@
     ]
   },
   {
-    "id": "q480",
+    "id": "q485",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -20980,7 +21199,7 @@
     ]
   },
   {
-    "id": "q481",
+    "id": "q486",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21019,7 +21238,7 @@
     ]
   },
   {
-    "id": "q482",
+    "id": "q487",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21066,7 +21285,7 @@
     ]
   },
   {
-    "id": "q483",
+    "id": "q488",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21113,7 +21332,7 @@
     ]
   },
   {
-    "id": "q484",
+    "id": "q489",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21152,7 +21371,7 @@
     ]
   },
   {
-    "id": "q485",
+    "id": "q490",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21191,7 +21410,7 @@
     ]
   },
   {
-    "id": "q486",
+    "id": "q491",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21238,7 +21457,7 @@
     ]
   },
   {
-    "id": "q487",
+    "id": "q492",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21285,7 +21504,7 @@
     ]
   },
   {
-    "id": "q488",
+    "id": "q493",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21324,7 +21543,7 @@
     ]
   },
   {
-    "id": "q489",
+    "id": "q494",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
@@ -21363,7 +21582,7 @@
     ]
   },
   {
-    "id": "q490",
+    "id": "q495",
     "chapterId": 10,
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
@@ -21410,7 +21629,7 @@
     ]
   },
   {
-    "id": "q491",
+    "id": "q496",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21457,7 +21676,7 @@
     ]
   },
   {
-    "id": "q492",
+    "id": "q497",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21496,7 +21715,7 @@
     ]
   },
   {
-    "id": "q493",
+    "id": "q498",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21535,7 +21754,7 @@
     ]
   },
   {
-    "id": "q494",
+    "id": "q499",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21582,7 +21801,7 @@
     ]
   },
   {
-    "id": "q495",
+    "id": "q500",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21629,7 +21848,7 @@
     ]
   },
   {
-    "id": "q496",
+    "id": "q501",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21668,7 +21887,7 @@
     ]
   },
   {
-    "id": "q497",
+    "id": "q502",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21707,7 +21926,7 @@
     ]
   },
   {
-    "id": "q498",
+    "id": "q503",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21754,7 +21973,7 @@
     ]
   },
   {
-    "id": "q499",
+    "id": "q504",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21801,7 +22020,7 @@
     ]
   },
   {
-    "id": "q500",
+    "id": "q505",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21840,7 +22059,7 @@
     ]
   },
   {
-    "id": "q501",
+    "id": "q506",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -21879,7 +22098,7 @@
     ]
   },
   {
-    "id": "q502",
+    "id": "q507",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21926,7 +22145,7 @@
     ]
   },
   {
-    "id": "q503",
+    "id": "q508",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -21973,7 +22192,7 @@
     ]
   },
   {
-    "id": "q504",
+    "id": "q509",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22012,7 +22231,7 @@
     ]
   },
   {
-    "id": "q505",
+    "id": "q510",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22051,7 +22270,7 @@
     ]
   },
   {
-    "id": "q506",
+    "id": "q511",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22098,7 +22317,7 @@
     ]
   },
   {
-    "id": "q507",
+    "id": "q512",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22145,7 +22364,7 @@
     ]
   },
   {
-    "id": "q508",
+    "id": "q513",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22184,7 +22403,7 @@
     ]
   },
   {
-    "id": "q509",
+    "id": "q514",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22223,7 +22442,7 @@
     ]
   },
   {
-    "id": "q510",
+    "id": "q515",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22270,7 +22489,7 @@
     ]
   },
   {
-    "id": "q511",
+    "id": "q516",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22317,7 +22536,7 @@
     ]
   },
   {
-    "id": "q512",
+    "id": "q517",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22356,7 +22575,7 @@
     ]
   },
   {
-    "id": "q513",
+    "id": "q518",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22395,7 +22614,7 @@
     ]
   },
   {
-    "id": "q514",
+    "id": "q519",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22442,7 +22661,7 @@
     ]
   },
   {
-    "id": "q515",
+    "id": "q520",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22489,7 +22708,7 @@
     ]
   },
   {
-    "id": "q516",
+    "id": "q521",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22528,7 +22747,7 @@
     ]
   },
   {
-    "id": "q517",
+    "id": "q522",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
@@ -22567,7 +22786,7 @@
     ]
   },
   {
-    "id": "q518",
+    "id": "q523",
     "chapterId": 11,
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
@@ -22614,7 +22833,7 @@
     ]
   },
   {
-    "id": "q519",
+    "id": "q524",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22661,7 +22880,7 @@
     ]
   },
   {
-    "id": "q520",
+    "id": "q525",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22700,7 +22919,7 @@
     ]
   },
   {
-    "id": "q521",
+    "id": "q526",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22739,7 +22958,7 @@
     ]
   },
   {
-    "id": "q522",
+    "id": "q527",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22786,7 +23005,7 @@
     ]
   },
   {
-    "id": "q523",
+    "id": "q528",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22833,7 +23052,7 @@
     ]
   },
   {
-    "id": "q524",
+    "id": "q529",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22872,7 +23091,7 @@
     ]
   },
   {
-    "id": "q525",
+    "id": "q530",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -22911,7 +23130,7 @@
     ]
   },
   {
-    "id": "q526",
+    "id": "q531",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -22958,7 +23177,7 @@
     ]
   },
   {
-    "id": "q527",
+    "id": "q532",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23005,7 +23224,7 @@
     ]
   },
   {
-    "id": "q528",
+    "id": "q533",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23044,7 +23263,7 @@
     ]
   },
   {
-    "id": "q529",
+    "id": "q534",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23083,7 +23302,7 @@
     ]
   },
   {
-    "id": "q530",
+    "id": "q535",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23130,7 +23349,7 @@
     ]
   },
   {
-    "id": "q531",
+    "id": "q536",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23177,7 +23396,7 @@
     ]
   },
   {
-    "id": "q532",
+    "id": "q537",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23216,7 +23435,7 @@
     ]
   },
   {
-    "id": "q533",
+    "id": "q538",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23255,7 +23474,7 @@
     ]
   },
   {
-    "id": "q534",
+    "id": "q539",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23302,7 +23521,7 @@
     ]
   },
   {
-    "id": "q535",
+    "id": "q540",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23349,7 +23568,7 @@
     ]
   },
   {
-    "id": "q536",
+    "id": "q541",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23388,7 +23607,7 @@
     ]
   },
   {
-    "id": "q537",
+    "id": "q542",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -23427,7 +23646,7 @@
     ]
   },
   {
-    "id": "q538",
+    "id": "q543",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -23474,7 +23693,7 @@
     ]
   },
   {
-    "id": "q539",
+    "id": "q544",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23521,7 +23740,7 @@
     ]
   },
   {
-    "id": "q540",
+    "id": "q545",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23560,7 +23779,7 @@
     ]
   },
   {
-    "id": "q541",
+    "id": "q546",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23599,7 +23818,7 @@
     ]
   },
   {
-    "id": "q542",
+    "id": "q547",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23646,7 +23865,7 @@
     ]
   },
   {
-    "id": "q543",
+    "id": "q548",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23694,7 +23913,7 @@
     ]
   },
   {
-    "id": "q544",
+    "id": "q549",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23734,7 +23953,7 @@
     ]
   },
   {
-    "id": "q545",
+    "id": "q550",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23774,7 +23993,7 @@
     ]
   },
   {
-    "id": "q546",
+    "id": "q551",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23822,7 +24041,7 @@
     ]
   },
   {
-    "id": "q547",
+    "id": "q552",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23870,7 +24089,7 @@
     ]
   },
   {
-    "id": "q548",
+    "id": "q553",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23910,7 +24129,7 @@
     ]
   },
   {
-    "id": "q549",
+    "id": "q554",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -23950,7 +24169,7 @@
     ]
   },
   {
-    "id": "q550",
+    "id": "q555",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -23998,7 +24217,7 @@
     ]
   },
   {
-    "id": "q551",
+    "id": "q556",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24046,7 +24265,7 @@
     ]
   },
   {
-    "id": "q552",
+    "id": "q557",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24086,7 +24305,7 @@
     ]
   },
   {
-    "id": "q553",
+    "id": "q558",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24126,7 +24345,7 @@
     ]
   },
   {
-    "id": "q554",
+    "id": "q559",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24174,7 +24393,7 @@
     ]
   },
   {
-    "id": "q555",
+    "id": "q560",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24221,7 +24440,7 @@
     ]
   },
   {
-    "id": "q556",
+    "id": "q561",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24260,7 +24479,7 @@
     ]
   },
   {
-    "id": "q557",
+    "id": "q562",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24299,7 +24518,7 @@
     ]
   },
   {
-    "id": "q558",
+    "id": "q563",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24346,7 +24565,7 @@
     ]
   },
   {
-    "id": "q559",
+    "id": "q564",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24394,7 +24613,7 @@
     ]
   },
   {
-    "id": "q560",
+    "id": "q565",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24434,7 +24653,7 @@
     ]
   },
   {
-    "id": "q561",
+    "id": "q566",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24474,7 +24693,7 @@
     ]
   },
   {
-    "id": "q562",
+    "id": "q567",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24522,7 +24741,7 @@
     ]
   },
   {
-    "id": "q563",
+    "id": "q568",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24570,7 +24789,7 @@
     ]
   },
   {
-    "id": "q564",
+    "id": "q569",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24610,7 +24829,7 @@
     ]
   },
   {
-    "id": "q565",
+    "id": "q570",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24650,7 +24869,7 @@
     ]
   },
   {
-    "id": "q566",
+    "id": "q571",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24698,7 +24917,7 @@
     ]
   },
   {
-    "id": "q567",
+    "id": "q572",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24746,7 +24965,7 @@
     ]
   },
   {
-    "id": "q568",
+    "id": "q573",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24786,7 +25005,7 @@
     ]
   },
   {
-    "id": "q569",
+    "id": "q574",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24826,7 +25045,7 @@
     ]
   },
   {
-    "id": "q570",
+    "id": "q575",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24874,7 +25093,7 @@
     ]
   },
   {
-    "id": "q571",
+    "id": "q576",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -24922,7 +25141,7 @@
     ]
   },
   {
-    "id": "q572",
+    "id": "q577",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -24962,7 +25181,7 @@
     ]
   },
   {
-    "id": "q573",
+    "id": "q578",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25002,7 +25221,7 @@
     ]
   },
   {
-    "id": "q574",
+    "id": "q579",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25050,7 +25269,7 @@
     ]
   },
   {
-    "id": "q575",
+    "id": "q580",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25098,7 +25317,7 @@
     ]
   },
   {
-    "id": "q576",
+    "id": "q581",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25138,7 +25357,7 @@
     ]
   },
   {
-    "id": "q577",
+    "id": "q582",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25178,7 +25397,7 @@
     ]
   },
   {
-    "id": "q578",
+    "id": "q583",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25226,7 +25445,7 @@
     ]
   },
   {
-    "id": "q579",
+    "id": "q584",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25274,7 +25493,7 @@
     ]
   },
   {
-    "id": "q580",
+    "id": "q585",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25314,7 +25533,7 @@
     ]
   },
   {
-    "id": "q581",
+    "id": "q586",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -25354,7 +25573,7 @@
     ]
   },
   {
-    "id": "q582",
+    "id": "q587",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -25402,7 +25621,7 @@
     ]
   },
   {
-    "id": "q583",
+    "id": "q588",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25450,7 +25669,7 @@
     ]
   },
   {
-    "id": "q584",
+    "id": "q589",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25490,7 +25709,7 @@
     ]
   },
   {
-    "id": "q585",
+    "id": "q590",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25530,7 +25749,7 @@
     ]
   },
   {
-    "id": "q586",
+    "id": "q591",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25578,7 +25797,7 @@
     ]
   },
   {
-    "id": "q587",
+    "id": "q592",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25626,7 +25845,7 @@
     ]
   },
   {
-    "id": "q588",
+    "id": "q593",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25666,7 +25885,7 @@
     ]
   },
   {
-    "id": "q589",
+    "id": "q594",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25706,7 +25925,7 @@
     ]
   },
   {
-    "id": "q590",
+    "id": "q595",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25754,7 +25973,7 @@
     ]
   },
   {
-    "id": "q591",
+    "id": "q596",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25802,7 +26021,7 @@
     ]
   },
   {
-    "id": "q592",
+    "id": "q597",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25842,7 +26061,7 @@
     ]
   },
   {
-    "id": "q593",
+    "id": "q598",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -25882,7 +26101,7 @@
     ]
   },
   {
-    "id": "q594",
+    "id": "q599",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25930,7 +26149,7 @@
     ]
   },
   {
-    "id": "q595",
+    "id": "q600",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -25978,7 +26197,7 @@
     ]
   },
   {
-    "id": "q596",
+    "id": "q601",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26018,7 +26237,7 @@
     ]
   },
   {
-    "id": "q597",
+    "id": "q602",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26058,7 +26277,7 @@
     ]
   },
   {
-    "id": "q598",
+    "id": "q603",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26106,7 +26325,7 @@
     ]
   },
   {
-    "id": "q599",
+    "id": "q604",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26154,7 +26373,7 @@
     ]
   },
   {
-    "id": "q600",
+    "id": "q605",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26194,7 +26413,7 @@
     ]
   },
   {
-    "id": "q601",
+    "id": "q606",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26234,7 +26453,7 @@
     ]
   },
   {
-    "id": "q602",
+    "id": "q607",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26282,7 +26501,7 @@
     ]
   },
   {
-    "id": "q603",
+    "id": "q608",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26330,7 +26549,7 @@
     ]
   },
   {
-    "id": "q604",
+    "id": "q609",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26370,7 +26589,7 @@
     ]
   },
   {
-    "id": "q605",
+    "id": "q610",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26410,7 +26629,7 @@
     ]
   },
   {
-    "id": "q606",
+    "id": "q611",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26458,7 +26677,7 @@
     ]
   },
   {
-    "id": "q607",
+    "id": "q612",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26507,7 +26726,7 @@
     ]
   },
   {
-    "id": "q608",
+    "id": "q613",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26548,7 +26767,7 @@
     ]
   },
   {
-    "id": "q609",
+    "id": "q614",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26589,7 +26808,7 @@
     ]
   },
   {
-    "id": "q610",
+    "id": "q615",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26638,7 +26857,7 @@
     ]
   },
   {
-    "id": "q611",
+    "id": "q616",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26686,7 +26905,7 @@
     ]
   },
   {
-    "id": "q612",
+    "id": "q617",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26726,7 +26945,7 @@
     ]
   },
   {
-    "id": "q613",
+    "id": "q618",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26766,7 +26985,7 @@
     ]
   },
   {
-    "id": "q614",
+    "id": "q619",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26814,7 +27033,7 @@
     ]
   },
   {
-    "id": "q615",
+    "id": "q620",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26862,7 +27081,7 @@
     ]
   },
   {
-    "id": "q616",
+    "id": "q621",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26902,7 +27121,7 @@
     ]
   },
   {
-    "id": "q617",
+    "id": "q622",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -26942,7 +27161,7 @@
     ]
   },
   {
-    "id": "q618",
+    "id": "q623",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -26990,7 +27209,7 @@
     ]
   },
   {
-    "id": "q619",
+    "id": "q624",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27039,7 +27258,7 @@
     ]
   },
   {
-    "id": "q620",
+    "id": "q625",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27080,7 +27299,7 @@
     ]
   },
   {
-    "id": "q621",
+    "id": "q626",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27121,7 +27340,7 @@
     ]
   },
   {
-    "id": "q622",
+    "id": "q627",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27170,7 +27389,7 @@
     ]
   },
   {
-    "id": "q623",
+    "id": "q628",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27220,7 +27439,7 @@
     ]
   },
   {
-    "id": "q624",
+    "id": "q629",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27262,7 +27481,7 @@
     ]
   },
   {
-    "id": "q625",
+    "id": "q630",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27304,7 +27523,7 @@
     ]
   },
   {
-    "id": "q626",
+    "id": "q631",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27354,7 +27573,7 @@
     ]
   },
   {
-    "id": "q627",
+    "id": "q632",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27402,7 +27621,7 @@
     ]
   },
   {
-    "id": "q628",
+    "id": "q633",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27442,7 +27661,7 @@
     ]
   },
   {
-    "id": "q629",
+    "id": "q634",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27482,7 +27701,7 @@
     ]
   },
   {
-    "id": "q630",
+    "id": "q635",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27530,7 +27749,7 @@
     ]
   },
   {
-    "id": "q631",
+    "id": "q636",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27578,7 +27797,7 @@
     ]
   },
   {
-    "id": "q632",
+    "id": "q637",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27618,7 +27837,7 @@
     ]
   },
   {
-    "id": "q633",
+    "id": "q638",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27658,7 +27877,7 @@
     ]
   },
   {
-    "id": "q634",
+    "id": "q639",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27706,7 +27925,7 @@
     ]
   },
   {
-    "id": "q635",
+    "id": "q640",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27754,7 +27973,7 @@
     ]
   },
   {
-    "id": "q636",
+    "id": "q641",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27794,7 +28013,7 @@
     ]
   },
   {
-    "id": "q637",
+    "id": "q642",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27834,7 +28053,7 @@
     ]
   },
   {
-    "id": "q638",
+    "id": "q643",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27882,7 +28101,7 @@
     ]
   },
   {
-    "id": "q639",
+    "id": "q644",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -27931,7 +28150,7 @@
     ]
   },
   {
-    "id": "q640",
+    "id": "q645",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -27972,7 +28191,7 @@
     ]
   },
   {
-    "id": "q641",
+    "id": "q646",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28013,7 +28232,7 @@
     ]
   },
   {
-    "id": "q642",
+    "id": "q647",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28062,7 +28281,7 @@
     ]
   },
   {
-    "id": "q643",
+    "id": "q648",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28110,7 +28329,7 @@
     ]
   },
   {
-    "id": "q644",
+    "id": "q649",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28150,7 +28369,7 @@
     ]
   },
   {
-    "id": "q645",
+    "id": "q650",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
@@ -28190,7 +28409,7 @@
     ]
   },
   {
-    "id": "q646",
+    "id": "q651",
     "chapterId": 12,
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
@@ -28238,7 +28457,7 @@
     ]
   },
   {
-    "id": "q647",
+    "id": "q652",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28286,7 +28505,7 @@
     ]
   },
   {
-    "id": "q648",
+    "id": "q653",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28326,7 +28545,7 @@
     ]
   },
   {
-    "id": "q649",
+    "id": "q654",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28366,7 +28585,7 @@
     ]
   },
   {
-    "id": "q650",
+    "id": "q655",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28414,7 +28633,7 @@
     ]
   },
   {
-    "id": "q651",
+    "id": "q656",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28463,7 +28682,7 @@
     ]
   },
   {
-    "id": "q652",
+    "id": "q657",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28504,7 +28723,7 @@
     ]
   },
   {
-    "id": "q653",
+    "id": "q658",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28545,7 +28764,7 @@
     ]
   },
   {
-    "id": "q654",
+    "id": "q659",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28594,7 +28813,7 @@
     ]
   },
   {
-    "id": "q655",
+    "id": "q660",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28642,7 +28861,7 @@
     ]
   },
   {
-    "id": "q656",
+    "id": "q661",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28682,7 +28901,7 @@
     ]
   },
   {
-    "id": "q657",
+    "id": "q662",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28722,7 +28941,7 @@
     ]
   },
   {
-    "id": "q658",
+    "id": "q663",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28770,7 +28989,7 @@
     ]
   },
   {
-    "id": "q659",
+    "id": "q664",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28818,7 +29037,7 @@
     ]
   },
   {
-    "id": "q660",
+    "id": "q665",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28858,7 +29077,7 @@
     ]
   },
   {
-    "id": "q661",
+    "id": "q666",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -28898,7 +29117,7 @@
     ]
   },
   {
-    "id": "q662",
+    "id": "q667",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28946,7 +29165,7 @@
     ]
   },
   {
-    "id": "q663",
+    "id": "q668",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -28994,7 +29213,7 @@
     ]
   },
   {
-    "id": "q664",
+    "id": "q669",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29034,7 +29253,7 @@
     ]
   },
   {
-    "id": "q665",
+    "id": "q670",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29074,7 +29293,7 @@
     ]
   },
   {
-    "id": "q666",
+    "id": "q671",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29122,7 +29341,7 @@
     ]
   },
   {
-    "id": "q667",
+    "id": "q672",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29170,7 +29389,7 @@
     ]
   },
   {
-    "id": "q668",
+    "id": "q673",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29210,7 +29429,7 @@
     ]
   },
   {
-    "id": "q669",
+    "id": "q674",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29250,7 +29469,7 @@
     ]
   },
   {
-    "id": "q670",
+    "id": "q675",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29298,7 +29517,7 @@
     ]
   },
   {
-    "id": "q671",
+    "id": "q676",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29346,7 +29565,7 @@
     ]
   },
   {
-    "id": "q672",
+    "id": "q677",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29386,7 +29605,7 @@
     ]
   },
   {
-    "id": "q673",
+    "id": "q678",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29426,7 +29645,7 @@
     ]
   },
   {
-    "id": "q674",
+    "id": "q679",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29474,7 +29693,7 @@
     ]
   },
   {
-    "id": "q675",
+    "id": "q680",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29523,7 +29742,7 @@
     ]
   },
   {
-    "id": "q676",
+    "id": "q681",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29564,7 +29783,7 @@
     ]
   },
   {
-    "id": "q677",
+    "id": "q682",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29605,7 +29824,7 @@
     ]
   },
   {
-    "id": "q678",
+    "id": "q683",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29654,7 +29873,7 @@
     ]
   },
   {
-    "id": "q679",
+    "id": "q684",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29702,7 +29921,7 @@
     ]
   },
   {
-    "id": "q680",
+    "id": "q685",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29742,7 +29961,7 @@
     ]
   },
   {
-    "id": "q681",
+    "id": "q686",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29782,7 +30001,7 @@
     ]
   },
   {
-    "id": "q682",
+    "id": "q687",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29830,7 +30049,7 @@
     ]
   },
   {
-    "id": "q683",
+    "id": "q688",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -29879,7 +30098,7 @@
     ]
   },
   {
-    "id": "q684",
+    "id": "q689",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29920,7 +30139,7 @@
     ]
   },
   {
-    "id": "q685",
+    "id": "q690",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -29961,7 +30180,7 @@
     ]
   },
   {
-    "id": "q686",
+    "id": "q691",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30010,7 +30229,7 @@
     ]
   },
   {
-    "id": "q687",
+    "id": "q692",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30058,7 +30277,7 @@
     ]
   },
   {
-    "id": "q688",
+    "id": "q693",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30098,7 +30317,7 @@
     ]
   },
   {
-    "id": "q689",
+    "id": "q694",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30138,7 +30357,7 @@
     ]
   },
   {
-    "id": "q690",
+    "id": "q695",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30186,7 +30405,7 @@
     ]
   },
   {
-    "id": "q691",
+    "id": "q696",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30234,7 +30453,7 @@
     ]
   },
   {
-    "id": "q692",
+    "id": "q697",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30274,7 +30493,7 @@
     ]
   },
   {
-    "id": "q693",
+    "id": "q698",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30314,7 +30533,7 @@
     ]
   },
   {
-    "id": "q694",
+    "id": "q699",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30362,7 +30581,7 @@
     ]
   },
   {
-    "id": "q695",
+    "id": "q700",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30411,7 +30630,7 @@
     ]
   },
   {
-    "id": "q696",
+    "id": "q701",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30452,7 +30671,7 @@
     ]
   },
   {
-    "id": "q697",
+    "id": "q702",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30493,7 +30712,7 @@
     ]
   },
   {
-    "id": "q698",
+    "id": "q703",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30542,7 +30761,7 @@
     ]
   },
   {
-    "id": "q699",
+    "id": "q704",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30590,7 +30809,7 @@
     ]
   },
   {
-    "id": "q700",
+    "id": "q705",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30630,7 +30849,7 @@
     ]
   },
   {
-    "id": "q701",
+    "id": "q706",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30670,7 +30889,7 @@
     ]
   },
   {
-    "id": "q702",
+    "id": "q707",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30718,7 +30937,7 @@
     ]
   },
   {
-    "id": "q703",
+    "id": "q708",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30766,7 +30985,7 @@
     ]
   },
   {
-    "id": "q704",
+    "id": "q709",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30806,7 +31025,7 @@
     ]
   },
   {
-    "id": "q705",
+    "id": "q710",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30846,7 +31065,7 @@
     ]
   },
   {
-    "id": "q706",
+    "id": "q711",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30894,7 +31113,7 @@
     ]
   },
   {
-    "id": "q707",
+    "id": "q712",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -30942,7 +31161,7 @@
     ]
   },
   {
-    "id": "q708",
+    "id": "q713",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -30982,7 +31201,7 @@
     ]
   },
   {
-    "id": "q709",
+    "id": "q714",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31022,7 +31241,7 @@
     ]
   },
   {
-    "id": "q710",
+    "id": "q715",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31070,7 +31289,7 @@
     ]
   },
   {
-    "id": "q711",
+    "id": "q716",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31118,7 +31337,7 @@
     ]
   },
   {
-    "id": "q712",
+    "id": "q717",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31158,7 +31377,7 @@
     ]
   },
   {
-    "id": "q713",
+    "id": "q718",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31198,7 +31417,7 @@
     ]
   },
   {
-    "id": "q714",
+    "id": "q719",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31246,7 +31465,7 @@
     ]
   },
   {
-    "id": "q715",
+    "id": "q720",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31294,7 +31513,7 @@
     ]
   },
   {
-    "id": "q716",
+    "id": "q721",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31334,7 +31553,7 @@
     ]
   },
   {
-    "id": "q717",
+    "id": "q722",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
@@ -31374,7 +31593,7 @@
     ]
   },
   {
-    "id": "q718",
+    "id": "q723",
     "chapterId": 13,
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
@@ -31422,7 +31641,7 @@
     ]
   },
   {
-    "id": "q719",
+    "id": "q724",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31470,7 +31689,7 @@
     ]
   },
   {
-    "id": "q720",
+    "id": "q725",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31510,7 +31729,7 @@
     ]
   },
   {
-    "id": "q721",
+    "id": "q726",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31550,7 +31769,7 @@
     ]
   },
   {
-    "id": "q722",
+    "id": "q727",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31598,7 +31817,7 @@
     ]
   },
   {
-    "id": "q723",
+    "id": "q728",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31647,7 +31866,7 @@
     ]
   },
   {
-    "id": "q724",
+    "id": "q729",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31688,7 +31907,7 @@
     ]
   },
   {
-    "id": "q725",
+    "id": "q730",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31729,7 +31948,7 @@
     ]
   },
   {
-    "id": "q726",
+    "id": "q731",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31778,7 +31997,7 @@
     ]
   },
   {
-    "id": "q727",
+    "id": "q732",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31826,7 +32045,7 @@
     ]
   },
   {
-    "id": "q728",
+    "id": "q733",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31866,7 +32085,7 @@
     ]
   },
   {
-    "id": "q729",
+    "id": "q734",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "true_false",
@@ -31906,7 +32125,7 @@
     ]
   },
   {
-    "id": "q730",
+    "id": "q735",
     "chapterId": 1,
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
@@ -31954,7 +32173,7 @@
     ]
   },
   {
-    "id": "q731",
+    "id": "q736",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32001,7 +32220,7 @@
     ]
   },
   {
-    "id": "q732",
+    "id": "q737",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32040,7 +32259,7 @@
     ]
   },
   {
-    "id": "q733",
+    "id": "q738",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32079,7 +32298,7 @@
     ]
   },
   {
-    "id": "q734",
+    "id": "q739",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32126,7 +32345,7 @@
     ]
   },
   {
-    "id": "q735",
+    "id": "q740",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32173,7 +32392,7 @@
     ]
   },
   {
-    "id": "q736",
+    "id": "q741",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32212,7 +32431,7 @@
     ]
   },
   {
-    "id": "q737",
+    "id": "q742",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32251,7 +32470,7 @@
     ]
   },
   {
-    "id": "q738",
+    "id": "q743",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32298,7 +32517,7 @@
     ]
   },
   {
-    "id": "q739",
+    "id": "q744",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32345,7 +32564,7 @@
     ]
   },
   {
-    "id": "q740",
+    "id": "q745",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32384,7 +32603,7 @@
     ]
   },
   {
-    "id": "q741",
+    "id": "q746",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32423,7 +32642,7 @@
     ]
   },
   {
-    "id": "q742",
+    "id": "q747",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32470,7 +32689,7 @@
     ]
   },
   {
-    "id": "q743",
+    "id": "q748",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32518,7 +32737,7 @@
     ]
   },
   {
-    "id": "q744",
+    "id": "q749",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32558,7 +32777,7 @@
     ]
   },
   {
-    "id": "q745",
+    "id": "q750",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32598,7 +32817,7 @@
     ]
   },
   {
-    "id": "q746",
+    "id": "q751",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32646,7 +32865,7 @@
     ]
   },
   {
-    "id": "q747",
+    "id": "q752",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32694,7 +32913,7 @@
     ]
   },
   {
-    "id": "q748",
+    "id": "q753",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32734,7 +32953,7 @@
     ]
   },
   {
-    "id": "q749",
+    "id": "q754",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
@@ -32774,7 +32993,7 @@
     ]
   },
   {
-    "id": "q750",
+    "id": "q755",
     "chapterId": 2,
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
@@ -32822,283 +33041,60 @@
     ]
   },
   {
-    "id": "q751",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Which answer best matches? What is one goal of the welfare society?",
-      "sv": "Vilket svar stämmer bäst? Vad är ett mål med välfärdssamhället?"
-    },
-    "opts": [
-      {
-        "en": "That people can live securely with access to health care, education, and support when needed",
-        "sv": "Att människor ska kunna leva tryggt med tillgång till vård, utbildning och stöd vid behov"
-      },
-      {
-        "en": "That all welfare services should be paid for only privately",
-        "sv": "Att alla välfärdstjänster bara ska betalas privat"
-      },
-      {
-        "en": "That regions and municipalities should have no welfare responsibilities",
-        "sv": "Att regioner och kommuner inte ska ha några välfärdsuppgifter"
-      },
-      {
-        "en": "That financial support should go only to companies",
-        "sv": "Att ekonomiskt stöd bara ska gå till företag"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The welfare society is built on residents having basic economic and social security. That can include access to health care and education, and support during situations such as sickness or unemployment.",
-      "sv": "Välfärdssamhället bygger på att invånare ska ha en grundläggande ekonomisk och social trygghet. Det kan handla om tillgång till sjukvård och utbildning samt stöd vid till exempel sjukdom eller arbetslöshet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
-    },
-    "difficulty": "easy",
-    "tags": [
-      "welfare",
-      "basic-security",
-      "health-care",
-      "education",
-      "social-support",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q752",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "One goal of the welfare society is to that people can live securely with access to health care, education, and support when needed.",
-      "sv": "Ett mål med välfärdssamhället är att människor ska kunna leva tryggt med tillgång till vård, utbildning och stöd vid behov."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The welfare society is built on residents having basic economic and social security. That can include access to health care and education, and support during situations such as sickness or unemployment.",
-      "sv": "Välfärdssamhället bygger på att invånare ska ha en grundläggande ekonomisk och social trygghet. Det kan handla om tillgång till sjukvård och utbildning samt stöd vid till exempel sjukdom eller arbetslöshet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
-    },
-    "difficulty": "easy",
-    "tags": [
-      "welfare",
-      "basic-security",
-      "health-care",
-      "education",
-      "social-support",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q753",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "One goal of the welfare society is to that all welfare services should be paid for only privately.",
-      "sv": "Ett mål med välfärdssamhället är att alla välfärdstjänster bara ska betalas privat."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "The welfare society is built on residents having basic economic and social security. That can include access to health care and education, and support during situations such as sickness or unemployment.",
-      "sv": "Välfärdssamhället bygger på att invånare ska ha en grundläggande ekonomisk och social trygghet. Det kan handla om tillgång till sjukvård och utbildning samt stöd vid till exempel sjukdom eller arbetslöshet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
-    },
-    "difficulty": "easy",
-    "tags": [
-      "welfare",
-      "basic-security",
-      "health-care",
-      "education",
-      "social-support",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q754",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What is one goal of the welfare society?",
-      "sv": "Välj rätt alternativ: Vad är ett mål med välfärdssamhället?"
-    },
-    "opts": [
-      {
-        "en": "That people can live securely with access to health care, education, and support when needed",
-        "sv": "Att människor ska kunna leva tryggt med tillgång till vård, utbildning och stöd vid behov"
-      },
-      {
-        "en": "That all welfare services should be paid for only privately",
-        "sv": "Att alla välfärdstjänster bara ska betalas privat"
-      },
-      {
-        "en": "That regions and municipalities should have no welfare responsibilities",
-        "sv": "Att regioner och kommuner inte ska ha några välfärdsuppgifter"
-      },
-      {
-        "en": "That financial support should go only to companies",
-        "sv": "Att ekonomiskt stöd bara ska gå till företag"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "The welfare society is built on residents having basic economic and social security. That can include access to health care and education, and support during situations such as sickness or unemployment.",
-      "sv": "Välfärdssamhället bygger på att invånare ska ha en grundläggande ekonomisk och social trygghet. Det kan handla om tillgång till sjukvård och utbildning samt stöd vid till exempel sjukdom eller arbetslöshet."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
-    },
-    "difficulty": "easy",
-    "tags": [
-      "welfare",
-      "basic-security",
-      "health-care",
-      "education",
-      "social-support",
-      "published-variant",
-      "judgement"
-    ]
-  },
-  {
-    "id": "q755",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Which answer best matches? What are employer contributions in welfare funding?",
-      "sv": "Vilket svar stämmer bäst? Vad är arbetsgivaravgifter i välfärdens finansiering?"
-    },
-    "opts": [
-      {
-        "en": "Fees employers pay in addition to wages, which go to things such as sickness insurance and pensions",
-        "sv": "Avgifter som arbetsgivare betalar utöver lönen och som går till bland annat sjukförsäkring och pensioner"
-      },
-      {
-        "en": "A tax customers pay when they buy goods and services",
-        "sv": "En skatt som kunder betalar när de köper varor och tjänster"
-      },
-      {
-        "en": "A municipal grant that goes only to private companies",
-        "sv": "Ett kommunalt bidrag som bara går till privata företag"
-      },
-      {
-        "en": "A bank loan regions use to build hospitals",
-        "sv": "Ett banklån som regioner använder för att bygga sjukhus"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Employer contributions are fees employers pay to the state for their employees, in addition to wages. The money goes to things such as sickness insurance and pensions; VAT is instead a tax on goods and services.",
-      "sv": "Arbetsgivaravgifter är avgifter som arbetsgivare betalar till staten för sina anställda, utöver lönerna. Pengarna går bland annat till sjukförsäkring och pensioner; moms är i stället skatt på varor och tjänster."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
-    },
-    "difficulty": "medium",
-    "tags": [
-      "welfare",
-      "taxes",
-      "employer-contributions",
-      "sickness-insurance",
-      "pensions",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
     "id": "q756",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
     "q": {
-      "en": "Fees employers pay in addition to wages, which go to things such as sickness insurance and pensions.",
-      "sv": "Avgifter som arbetsgivare betalar utöver lönen och som går till bland annat sjukförsäkring och pensioner."
+      "en": "Which answer best matches? Which statement describes labour-market organizations?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver arbetsmarknadens organisationer?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "Employer organizations represent employers, and trade unions represent employees",
+        "sv": "Arbetsgivarorganisationer företräder arbetsgivare och fackföreningar företräder arbetstagare"
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "Trade unions alone decide how the state should collect tax",
+        "sv": "Fackföreningar beslutar ensamma hur staten ska ta ut skatt"
+      },
+      {
+        "en": "Employer organizations replace courts in labour-law cases",
+        "sv": "Arbetsgivarorganisationer ersätter domstolar i arbetsrättsliga mål"
+      },
+      {
+        "en": "Trade unions may only represent people without work",
+        "sv": "Fackföreningar får bara företräda personer utan arbete"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Employer contributions are fees employers pay to the state for their employees, in addition to wages. The money goes to things such as sickness insurance and pensions; VAT is instead a tax on goods and services.",
-      "sv": "Arbetsgivaravgifter är avgifter som arbetsgivare betalar till staten för sina anställda, utöver lönerna. Pengarna går bland annat till sjukförsäkring och pensioner; moms är i stället skatt på varor och tjänster."
+      "en": "Employer organizations bring employers together, while trade unions bring employees together. These organizations can negotiate wages and working conditions, often through collective agreements.",
+      "sv": "Arbetsgivarorganisationer samlar arbetsgivare, medan fackföreningar samlar arbetstagare. Organisationerna kan förhandla om löner och arbetsvillkor, ofta genom kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Organisationer",
+      "page": 28
     },
     "difficulty": "medium",
     "tags": [
-      "welfare",
-      "taxes",
-      "employer-contributions",
-      "sickness-insurance",
-      "pensions",
+      "labour-market",
+      "employer-organizations",
+      "trade-unions",
       "published-variant",
-      "true-false"
+      "section-practice"
     ]
   },
   {
     "id": "q757",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "A tax customers pay when they buy goods and services.",
-      "sv": "En skatt som kunder betalar när de köper varor och tjänster."
+      "en": "Employer organizations represent employers, and trade unions represent employees.",
+      "sv": "Arbetsgivarorganisationer företräder arbetsgivare och fackföreningar företräder arbetstagare."
     },
     "opts": [
       {
@@ -33110,171 +33106,167 @@
         "sv": "Falskt"
       }
     ],
-    "answer": 1,
+    "answer": 0,
     "why": {
-      "en": "Employer contributions are fees employers pay to the state for their employees, in addition to wages. The money goes to things such as sickness insurance and pensions; VAT is instead a tax on goods and services.",
-      "sv": "Arbetsgivaravgifter är avgifter som arbetsgivare betalar till staten för sina anställda, utöver lönerna. Pengarna går bland annat till sjukförsäkring och pensioner; moms är i stället skatt på varor och tjänster."
+      "en": "Employer organizations bring employers together, while trade unions bring employees together. These organizations can negotiate wages and working conditions, often through collective agreements.",
+      "sv": "Arbetsgivarorganisationer samlar arbetsgivare, medan fackföreningar samlar arbetstagare. Organisationerna kan förhandla om löner och arbetsvillkor, ofta genom kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Organisationer",
+      "page": 28
     },
     "difficulty": "medium",
     "tags": [
-      "welfare",
-      "taxes",
-      "employer-contributions",
-      "sickness-insurance",
-      "pensions",
+      "labour-market",
+      "employer-organizations",
+      "trade-unions",
       "published-variant",
-      "false-statement"
+      "true-false"
     ]
   },
   {
     "id": "q758",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
     "q": {
-      "en": "Choose the correct option: What are employer contributions in welfare funding?",
-      "sv": "Välj rätt alternativ: Vad är arbetsgivaravgifter i välfärdens finansiering?"
+      "en": "Trade unions alone decide how the state should collect tax.",
+      "sv": "Fackföreningar beslutar ensamma hur staten ska ta ut skatt."
     },
     "opts": [
       {
-        "en": "Fees employers pay in addition to wages, which go to things such as sickness insurance and pensions",
-        "sv": "Avgifter som arbetsgivare betalar utöver lönen och som går till bland annat sjukförsäkring och pensioner"
+        "en": "True",
+        "sv": "Sant"
       },
       {
-        "en": "A tax customers pay when they buy goods and services",
-        "sv": "En skatt som kunder betalar när de köper varor och tjänster"
-      },
-      {
-        "en": "A municipal grant that goes only to private companies",
-        "sv": "Ett kommunalt bidrag som bara går till privata företag"
-      },
-      {
-        "en": "A bank loan regions use to build hospitals",
-        "sv": "Ett banklån som regioner använder för att bygga sjukhus"
+        "en": "False",
+        "sv": "Falskt"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
-      "en": "Employer contributions are fees employers pay to the state for their employees, in addition to wages. The money goes to things such as sickness insurance and pensions; VAT is instead a tax on goods and services.",
-      "sv": "Arbetsgivaravgifter är avgifter som arbetsgivare betalar till staten för sina anställda, utöver lönerna. Pengarna går bland annat till sjukförsäkring och pensioner; moms är i stället skatt på varor och tjänster."
+      "en": "Employer organizations bring employers together, while trade unions bring employees together. These organizations can negotiate wages and working conditions, often through collective agreements.",
+      "sv": "Arbetsgivarorganisationer samlar arbetsgivare, medan fackföreningar samlar arbetstagare. Organisationerna kan förhandla om löner och arbetsvillkor, ofta genom kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Skatter för Sveriges välfärd",
-      "page": 30
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Organisationer",
+      "page": 28
     },
     "difficulty": "medium",
     "tags": [
-      "welfare",
-      "taxes",
-      "employer-contributions",
-      "sickness-insurance",
-      "pensions",
+      "labour-market",
+      "employer-organizations",
+      "trade-unions",
       "published-variant",
-      "judgement"
+      "false-statement"
     ]
   },
   {
     "id": "q759",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which example belongs to primary care?",
-      "sv": "Vilket svar stämmer bäst? Vilket exempel hör till primärvården?"
+      "en": "Choose the correct option: Which statement describes labour-market organizations?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver arbetsmarknadens organisationer?"
     },
     "opts": [
       {
-        "en": "Health centres, child health centres, and maternity clinics",
-        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
+        "en": "Employer organizations represent employers, and trade unions represent employees",
+        "sv": "Arbetsgivarorganisationer företräder arbetsgivare och fackföreningar företräder arbetstagare"
       },
       {
-        "en": "Emergency hospitals and university hospitals with advanced treatment",
-        "sv": "Akutsjukhus och universitetssjukhus med avancerad behandling"
+        "en": "Trade unions alone decide how the state should collect tax",
+        "sv": "Fackföreningar beslutar ensamma hur staten ska ta ut skatt"
       },
       {
-        "en": "Psychiatric care, rehabilitation, and dental care",
-        "sv": "Psykiatrisk vård, rehabilitering och tandvård"
+        "en": "Employer organizations replace courts in labour-law cases",
+        "sv": "Arbetsgivarorganisationer ersätter domstolar i arbetsrättsliga mål"
       },
       {
-        "en": "Municipal adult education and upper-secondary schools",
-        "sv": "Kommunal vuxenutbildning och gymnasieskolor"
+        "en": "Trade unions may only represent people without work",
+        "sv": "Fackföreningar får bara företräda personer utan arbete"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Primary care includes health centres, child health centres, and maternity clinics. Hospital care, psychiatric care, rehabilitation, dental care, and education belong to other parts of welfare.",
-      "sv": "Primärvård omfattar bland annat vårdcentraler, barnavårdscentraler och mödravårdscentraler. Sjukhusvård, psykiatrisk vård, rehabilitering, tandvård och utbildning hör till andra delar av välfärden."
+      "en": "Employer organizations bring employers together, while trade unions bring employees together. These organizations can negotiate wages and working conditions, often through collective agreements.",
+      "sv": "Arbetsgivarorganisationer samlar arbetsgivare, medan fackföreningar samlar arbetstagare. Organisationerna kan förhandla om löner och arbetsvillkor, ofta genom kollektivavtal."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Organisationer",
+      "page": 28
     },
     "difficulty": "medium",
     "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
+      "labour-market",
+      "employer-organizations",
+      "trade-unions",
       "published-variant",
-      "section-practice"
+      "judgement"
     ]
   },
   {
     "id": "q760",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
     "q": {
-      "en": "Health centres, child health centres, and maternity clinics.",
-      "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler."
+      "en": "Which answer best matches? Which statement describes an employer's contributions to the state?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver arbetsgivarens avgifter till staten?"
     },
     "opts": [
       {
-        "en": "True",
-        "sv": "Sant"
+        "en": "The employer pays contributions that go partly to employees’ pensions and sickness insurance",
+        "sv": "Arbetsgivaren betalar avgifter som bland annat går till pension och sjukförsäkring för anställda"
       },
       {
-        "en": "False",
-        "sv": "Falskt"
+        "en": "The employer pays contributions only for employees who are union members",
+        "sv": "Arbetsgivaren betalar bara avgifter för anställda som är fackmedlemmar"
+      },
+      {
+        "en": "The employer replaces municipal income tax with a voluntary fee",
+        "sv": "Arbetsgivaren ersätter kommunalskatten genom en frivillig avgift"
+      },
+      {
+        "en": "The employer pays contributions directly to A-kassan members every month",
+        "sv": "Arbetsgivaren betalar avgifter direkt till A-kassans medlemmar varje månad"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Primary care includes health centres, child health centres, and maternity clinics. Hospital care, psychiatric care, rehabilitation, dental care, and education belong to other parts of welfare.",
-      "sv": "Primärvård omfattar bland annat vårdcentraler, barnavårdscentraler och mödravårdscentraler. Sjukhusvård, psykiatrisk vård, rehabilitering, tandvård och utbildning hör till andra delar av välfärden."
+      "en": "An employer pays contributions to the state for its employees. These contributions help fund pensions, sickness insurance, and other parts of social insurance.",
+      "sv": "En arbetsgivare betalar avgifter till staten för sina anställda. Avgifterna bidrar bland annat till pension, sjukförsäkring och andra delar av socialförsäkringen."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Lagar och regler på arbetsmarknaden",
+      "page": 29
     },
     "difficulty": "medium",
     "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
+      "labour-law",
+      "social-contributions",
+      "pension",
       "published-variant",
-      "true-false"
+      "section-practice"
     ]
   },
   {
     "id": "q761",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "Emergency hospitals and university hospitals with advanced treatment.",
-      "sv": "Akutsjukhus och universitetssjukhus med avancerad behandling."
+      "en": "The employer pays contributions that go partly to employees’ pensions and sickness insurance.",
+      "sv": "Arbetsgivaren betalar avgifter som bland annat går till pension och sjukförsäkring för anställda."
     },
     "opts": [
       {
@@ -33286,305 +33278,167 @@
         "sv": "Falskt"
       }
     ],
-    "answer": 1,
+    "answer": 0,
     "why": {
-      "en": "Primary care includes health centres, child health centres, and maternity clinics. Hospital care, psychiatric care, rehabilitation, dental care, and education belong to other parts of welfare.",
-      "sv": "Primärvård omfattar bland annat vårdcentraler, barnavårdscentraler och mödravårdscentraler. Sjukhusvård, psykiatrisk vård, rehabilitering, tandvård och utbildning hör till andra delar av välfärden."
+      "en": "An employer pays contributions to the state for its employees. These contributions help fund pensions, sickness insurance, and other parts of social insurance.",
+      "sv": "En arbetsgivare betalar avgifter till staten för sina anställda. Avgifterna bidrar bland annat till pension, sjukförsäkring och andra delar av socialförsäkringen."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Lagar och regler på arbetsmarknaden",
+      "page": 29
     },
     "difficulty": "medium",
     "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
+      "labour-law",
+      "social-contributions",
+      "pension",
       "published-variant",
-      "false-statement"
+      "true-false"
     ]
   },
   {
     "id": "q762",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
     "q": {
-      "en": "Choose the correct option: Which example belongs to primary care?",
-      "sv": "Välj rätt alternativ: Vilket exempel hör till primärvården?"
+      "en": "The employer pays contributions only for employees who are union members.",
+      "sv": "Arbetsgivaren betalar bara avgifter för anställda som är fackmedlemmar."
     },
     "opts": [
       {
-        "en": "Health centres, child health centres, and maternity clinics",
-        "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler"
+        "en": "True",
+        "sv": "Sant"
       },
       {
-        "en": "Emergency hospitals and university hospitals with advanced treatment",
-        "sv": "Akutsjukhus och universitetssjukhus med avancerad behandling"
-      },
-      {
-        "en": "Psychiatric care, rehabilitation, and dental care",
-        "sv": "Psykiatrisk vård, rehabilitering och tandvård"
-      },
-      {
-        "en": "Municipal adult education and upper-secondary schools",
-        "sv": "Kommunal vuxenutbildning och gymnasieskolor"
+        "en": "False",
+        "sv": "Falskt"
       }
     ],
-    "answer": 0,
+    "answer": 1,
     "why": {
-      "en": "Primary care includes health centres, child health centres, and maternity clinics. Hospital care, psychiatric care, rehabilitation, dental care, and education belong to other parts of welfare.",
-      "sv": "Primärvård omfattar bland annat vårdcentraler, barnavårdscentraler och mödravårdscentraler. Sjukhusvård, psykiatrisk vård, rehabilitering, tandvård och utbildning hör till andra delar av välfärden."
+      "en": "An employer pays contributions to the state for its employees. These contributions help fund pensions, sickness insurance, and other parts of social insurance.",
+      "sv": "En arbetsgivare betalar avgifter till staten för sina anställda. Avgifterna bidrar bland annat till pension, sjukförsäkring och andra delar av socialförsäkringen."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Olika slags sjukvård",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Lagar och regler på arbetsmarknaden",
+      "page": 29
     },
     "difficulty": "medium",
     "tags": [
-      "health-care",
-      "primary-care",
-      "health-centres",
+      "labour-law",
+      "social-contributions",
+      "pension",
       "published-variant",
-      "judgement"
+      "false-statement"
     ]
   },
   {
     "id": "q763",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What counts as child care in municipal welfare?",
-      "sv": "Vilket svar stämmer bäst? Vad räknas som barnomsorg i kommunal välfärd?"
+      "en": "Choose the correct option: Which statement describes an employer's contributions to the state?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver arbetsgivarens avgifter till staten?"
     },
     "opts": [
       {
-        "en": "Preschools and leisure-time centres",
-        "sv": "Förskolor och fritidshem"
+        "en": "The employer pays contributions that go partly to employees’ pensions and sickness insurance",
+        "sv": "Arbetsgivaren betalar avgifter som bland annat går till pension och sjukförsäkring för anställda"
       },
       {
-        "en": "Pensions and sickness insurance",
-        "sv": "Pensioner och sjukförsäkring"
+        "en": "The employer pays contributions only for employees who are union members",
+        "sv": "Arbetsgivaren betalar bara avgifter för anställda som är fackmedlemmar"
       },
       {
-        "en": "Hospitals and health centres",
-        "sv": "Sjukhus och vårdcentraler"
+        "en": "The employer replaces municipal income tax with a voluntary fee",
+        "sv": "Arbetsgivaren ersätter kommunalskatten genom en frivillig avgift"
       },
       {
-        "en": "Courts and prisons",
-        "sv": "Domstolar och fängelser"
+        "en": "The employer pays contributions directly to A-kassan members every month",
+        "sv": "Arbetsgivaren betalar avgifter direkt till A-kassans medlemmar varje månad"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Child care in municipal welfare means preschools and leisure-time centres. Pensions and sickness insurance are funded by the state, regions are responsible for health care, and the justice system belongs to law and justice.",
-      "sv": "Barnomsorg i kommunal välfärd handlar om förskolor och fritidshem. Pensioner och sjukförsäkring finansieras av staten, regionerna ansvarar för sjukvård och rättsväsendet hör till lag och rätt."
+      "en": "An employer pays contributions to the state for its employees. These contributions help fund pensions, sickness insurance, and other parts of social insurance.",
+      "sv": "En arbetsgivare betalar avgifter till staten för sina anställda. Avgifterna bidrar bland annat till pension, sjukförsäkring och andra delar av socialförsäkringen."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Lagar och regler på arbetsmarknaden",
+      "page": 29
     },
-    "difficulty": "easy",
+    "difficulty": "medium",
     "tags": [
-      "municipal-welfare",
-      "child-care",
-      "preschool",
-      "leisure-time-centres",
-      "published-variant",
-      "section-practice"
-    ]
-  },
-  {
-    "id": "q764",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "Preschools and leisure-time centres.",
-      "sv": "Förskolor och fritidshem."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Child care in municipal welfare means preschools and leisure-time centres. Pensions and sickness insurance are funded by the state, regions are responsible for health care, and the justice system belongs to law and justice.",
-      "sv": "Barnomsorg i kommunal välfärd handlar om förskolor och fritidshem. Pensioner och sjukförsäkring finansieras av staten, regionerna ansvarar för sjukvård och rättsväsendet hör till lag och rätt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "difficulty": "easy",
-    "tags": [
-      "municipal-welfare",
-      "child-care",
-      "preschool",
-      "leisure-time-centres",
-      "published-variant",
-      "true-false"
-    ]
-  },
-  {
-    "id": "q765",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "true_false",
-    "q": {
-      "en": "Pensions and sickness insurance.",
-      "sv": "Pensioner och sjukförsäkring."
-    },
-    "opts": [
-      {
-        "en": "True",
-        "sv": "Sant"
-      },
-      {
-        "en": "False",
-        "sv": "Falskt"
-      }
-    ],
-    "answer": 1,
-    "why": {
-      "en": "Child care in municipal welfare means preschools and leisure-time centres. Pensions and sickness insurance are funded by the state, regions are responsible for health care, and the justice system belongs to law and justice.",
-      "sv": "Barnomsorg i kommunal välfärd handlar om förskolor och fritidshem. Pensioner och sjukförsäkring finansieras av staten, regionerna ansvarar för sjukvård och rättsväsendet hör till lag och rätt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "difficulty": "easy",
-    "tags": [
-      "municipal-welfare",
-      "child-care",
-      "preschool",
-      "leisure-time-centres",
-      "published-variant",
-      "false-statement"
-    ]
-  },
-  {
-    "id": "q766",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
-    "type": "single_choice",
-    "q": {
-      "en": "Choose the correct option: What counts as child care in municipal welfare?",
-      "sv": "Välj rätt alternativ: Vad räknas som barnomsorg i kommunal välfärd?"
-    },
-    "opts": [
-      {
-        "en": "Preschools and leisure-time centres",
-        "sv": "Förskolor och fritidshem"
-      },
-      {
-        "en": "Pensions and sickness insurance",
-        "sv": "Pensioner och sjukförsäkring"
-      },
-      {
-        "en": "Hospitals and health centres",
-        "sv": "Sjukhus och vårdcentraler"
-      },
-      {
-        "en": "Courts and prisons",
-        "sv": "Domstolar och fängelser"
-      }
-    ],
-    "answer": 0,
-    "why": {
-      "en": "Child care in municipal welfare means preschools and leisure-time centres. Pensions and sickness insurance are funded by the state, regions are responsible for health care, and the justice system belongs to law and justice.",
-      "sv": "Barnomsorg i kommunal välfärd handlar om förskolor och fritidshem. Pensioner och sjukförsäkring finansieras av staten, regionerna ansvarar för sjukvård och rättsväsendet hör till lag och rätt."
-    },
-    "source": {
-      "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
-    },
-    "difficulty": "easy",
-    "tags": [
-      "municipal-welfare",
-      "child-care",
-      "preschool",
-      "leisure-time-centres",
+      "labour-law",
+      "social-contributions",
+      "pension",
       "published-variant",
       "judgement"
     ]
   },
   {
-    "id": "q767",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "id": "q764",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What help can a municipality give older people who cannot manage everyday life on their own?",
-      "sv": "Vilket svar stämmer bäst? Vilken hjälp kan kommunen ge äldre personer som inte klarar vardagen själva?"
+      "en": "Which answer best matches? What applies to tax on work in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gäller för skatt på arbete i Sverige?"
     },
     "opts": [
       {
-        "en": "Care and services at home or housing adapted for older people",
-        "sv": "Vård och service i hemmet eller ett boende anpassat för äldre personer"
+        "en": "Everyone who works pays tax on their wages, and the amount depends on income",
+        "sv": "Alla som arbetar betalar skatt på sin lön, och beloppet beror på inkomsten"
       },
       {
-        "en": "Decisions about all pensions and child allowances",
-        "sv": "Beslut om alla pensioner och barnbidrag"
+        "en": "Only people who work in the public sector pay tax on wages",
+        "sv": "Endast personer som arbetar i offentlig sektor betalar skatt på lön"
       },
       {
-        "en": "Running all hospitals and health centres",
-        "sv": "Drift av alla sjukhus och vårdcentraler"
+        "en": "Tax on work is paid only by people who do not have employment",
+        "sv": "Skatt på arbete betalas bara av personer som saknar anställning"
       },
       {
-        "en": "Judgments in criminal cases and sentences in court",
-        "sv": "Domar i brottmål och straff i domstol"
+        "en": "Everyone pays exactly the same tax amount regardless of income",
+        "sv": "Alla betalar exakt samma skattebelopp oavsett inkomst"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The municipality is responsible for older people being able to get support when they cannot manage everyday life on their own. Help can mean care and services at home, or housing adapted for older people if staying at home no longer works.",
-      "sv": "Kommunen ansvarar för att äldre personer kan få stöd när de inte klarar vardagen själva. Hjälpen kan vara vård och service i hemmet, eller ett boende som är anpassat för äldre personer om det inte fungerar att bo kvar hemma."
+      "en": "A person who works in Sweden pays tax on wages. The amount paid depends on income and on the rules where the person lives and works.",
+      "sv": "Den som arbetar i Sverige betalar skatt på sin lön. Hur mycket skatt som betalas beror på inkomsten och reglerna där personen bor och arbetar."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Skatt på arbete",
+      "page": 29
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "municipal-welfare",
-      "elderly-care",
-      "home-care",
-      "adapted-housing",
+      "tax",
+      "income",
+      "work",
       "published-variant",
       "section-practice"
     ]
   },
   {
-    "id": "q768",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "id": "q765",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "Care and services at home or housing adapted for older people.",
-      "sv": "Vård och service i hemmet eller ett boende anpassat för äldre personer."
+      "en": "Everyone who works pays tax on their wages, and the amount depends on income.",
+      "sv": "Alla som arbetar betalar skatt på sin lön, och beloppet beror på inkomsten."
     },
     "opts": [
       {
@@ -33598,33 +33452,32 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The municipality is responsible for older people being able to get support when they cannot manage everyday life on their own. Help can mean care and services at home, or housing adapted for older people if staying at home no longer works.",
-      "sv": "Kommunen ansvarar för att äldre personer kan få stöd när de inte klarar vardagen själva. Hjälpen kan vara vård och service i hemmet, eller ett boende som är anpassat för äldre personer om det inte fungerar att bo kvar hemma."
+      "en": "A person who works in Sweden pays tax on wages. The amount paid depends on income and on the rules where the person lives and works.",
+      "sv": "Den som arbetar i Sverige betalar skatt på sin lön. Hur mycket skatt som betalas beror på inkomsten och reglerna där personen bor och arbetar."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Skatt på arbete",
+      "page": 29
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "municipal-welfare",
-      "elderly-care",
-      "home-care",
-      "adapted-housing",
+      "tax",
+      "income",
+      "work",
       "published-variant",
       "true-false"
     ]
   },
   {
-    "id": "q769",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "id": "q766",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "Decisions about all pensions and child allowances.",
-      "sv": "Beslut om alla pensioner och barnbidrag."
+      "en": "Only people who work in the public sector pay tax on wages.",
+      "sv": "Endast personer som arbetar i offentlig sektor betalar skatt på lön."
     },
     "opts": [
       {
@@ -33638,69 +33491,1271 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The municipality is responsible for older people being able to get support when they cannot manage everyday life on their own. Help can mean care and services at home, or housing adapted for older people if staying at home no longer works.",
-      "sv": "Kommunen ansvarar för att äldre personer kan få stöd när de inte klarar vardagen själva. Hjälpen kan vara vård och service i hemmet, eller ett boende som är anpassat för äldre personer om det inte fungerar att bo kvar hemma."
+      "en": "A person who works in Sweden pays tax on wages. The amount paid depends on income and on the rules where the person lives and works.",
+      "sv": "Den som arbetar i Sverige betalar skatt på sin lön. Hur mycket skatt som betalas beror på inkomsten och reglerna där personen bor och arbetar."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Skatt på arbete",
+      "page": 29
     },
-    "difficulty": "medium",
+    "difficulty": "easy",
     "tags": [
-      "municipal-welfare",
-      "elderly-care",
-      "home-care",
-      "adapted-housing",
+      "tax",
+      "income",
+      "work",
       "published-variant",
       "false-statement"
     ]
   },
   {
-    "id": "q770",
-    "chapterId": 9,
-    "chapter": "Ch. 09 · The welfare society",
+    "id": "q767",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What help can a municipality give older people who cannot manage everyday life on their own?",
-      "sv": "Välj rätt alternativ: Vilken hjälp kan kommunen ge äldre personer som inte klarar vardagen själva?"
+      "en": "Choose the correct option: What applies to tax on work in Sweden?",
+      "sv": "Välj rätt alternativ: Vad gäller för skatt på arbete i Sverige?"
     },
     "opts": [
       {
-        "en": "Care and services at home or housing adapted for older people",
-        "sv": "Vård och service i hemmet eller ett boende anpassat för äldre personer"
+        "en": "Everyone who works pays tax on their wages, and the amount depends on income",
+        "sv": "Alla som arbetar betalar skatt på sin lön, och beloppet beror på inkomsten"
       },
       {
-        "en": "Decisions about all pensions and child allowances",
-        "sv": "Beslut om alla pensioner och barnbidrag"
+        "en": "Only people who work in the public sector pay tax on wages",
+        "sv": "Endast personer som arbetar i offentlig sektor betalar skatt på lön"
       },
       {
-        "en": "Running all hospitals and health centres",
-        "sv": "Drift av alla sjukhus och vårdcentraler"
+        "en": "Tax on work is paid only by people who do not have employment",
+        "sv": "Skatt på arbete betalas bara av personer som saknar anställning"
       },
       {
-        "en": "Judgments in criminal cases and sentences in court",
-        "sv": "Domar i brottmål och straff i domstol"
+        "en": "Everyone pays exactly the same tax amount regardless of income",
+        "sv": "Alla betalar exakt samma skattebelopp oavsett inkomst"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The municipality is responsible for older people being able to get support when they cannot manage everyday life on their own. Help can mean care and services at home, or housing adapted for older people if staying at home no longer works.",
-      "sv": "Kommunen ansvarar för att äldre personer kan få stöd när de inte klarar vardagen själva. Hjälpen kan vara vård och service i hemmet, eller ett boende som är anpassat för äldre personer om det inte fungerar att bo kvar hemma."
+      "en": "A person who works in Sweden pays tax on wages. The amount paid depends on income and on the rules where the person lives and works.",
+      "sv": "Den som arbetar i Sverige betalar skatt på sin lön. Hur mycket skatt som betalas beror på inkomsten och reglerna där personen bor och arbetar."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Välfärdssamhället",
-      "section": "Kommunerna har ett stort ansvar",
-      "page": 31
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Skatt på arbete",
+      "page": 29
+    },
+    "difficulty": "easy",
+    "tags": [
+      "tax",
+      "income",
+      "work",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q768",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which statement describes compensation from A-kassan?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver ersättningen från A-kassan?"
+    },
+    "opts": [
+      {
+        "en": "The compensation is funded by the state and by fees from people who are members",
+        "sv": "Ersättningen finansieras av staten och av avgifter från dem som är medlemmar"
+      },
+      {
+        "en": "The compensation is always paid to everyone who changes jobs",
+        "sv": "Ersättningen betalas alltid ut till alla som byter arbete"
+      },
+      {
+        "en": "The compensation replaces all wages regardless of how long the person has been unemployed",
+        "sv": "Ersättningen ersätter all lön oavsett hur länge personen har varit arbetslös"
+      },
+      {
+        "en": "The compensation is funded only by employer organizations",
+        "sv": "Ersättningen finansieras bara av arbetsgivarorganisationer"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A-kassan is unemployment insurance. Compensation is funded both by the state and by membership fees, and a person who wants compensation must meet the conditions.",
+      "sv": "A-kassan är en arbetslöshetsförsäkring. Ersättningen finansieras både av staten och av medlemsavgifter, och den som vill få ersättning behöver uppfylla villkoren."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "A-kassan",
+      "page": 29
     },
     "difficulty": "medium",
     "tags": [
-      "municipal-welfare",
-      "elderly-care",
-      "home-care",
-      "adapted-housing",
+      "a-kassa",
+      "unemployment-insurance",
+      "member-fees",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q769",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
+    "q": {
+      "en": "The compensation is funded by the state and by fees from people who are members.",
+      "sv": "Ersättningen finansieras av staten och av avgifter från dem som är medlemmar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A-kassan is unemployment insurance. Compensation is funded both by the state and by membership fees, and a person who wants compensation must meet the conditions.",
+      "sv": "A-kassan är en arbetslöshetsförsäkring. Ersättningen finansieras både av staten och av medlemsavgifter, och den som vill få ersättning behöver uppfylla villkoren."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "A-kassan",
+      "page": 29
+    },
+    "difficulty": "medium",
+    "tags": [
+      "a-kassa",
+      "unemployment-insurance",
+      "member-fees",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q770",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
+    "q": {
+      "en": "The compensation is always paid to everyone who changes jobs.",
+      "sv": "Ersättningen betalas alltid ut till alla som byter arbete."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "A-kassan is unemployment insurance. Compensation is funded both by the state and by membership fees, and a person who wants compensation must meet the conditions.",
+      "sv": "A-kassan är en arbetslöshetsförsäkring. Ersättningen finansieras både av staten och av medlemsavgifter, och den som vill få ersättning behöver uppfylla villkoren."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "A-kassan",
+      "page": 29
+    },
+    "difficulty": "medium",
+    "tags": [
+      "a-kassa",
+      "unemployment-insurance",
+      "member-fees",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q771",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which statement describes compensation from A-kassan?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver ersättningen från A-kassan?"
+    },
+    "opts": [
+      {
+        "en": "The compensation is funded by the state and by fees from people who are members",
+        "sv": "Ersättningen finansieras av staten och av avgifter från dem som är medlemmar"
+      },
+      {
+        "en": "The compensation is always paid to everyone who changes jobs",
+        "sv": "Ersättningen betalas alltid ut till alla som byter arbete"
+      },
+      {
+        "en": "The compensation replaces all wages regardless of how long the person has been unemployed",
+        "sv": "Ersättningen ersätter all lön oavsett hur länge personen har varit arbetslös"
+      },
+      {
+        "en": "The compensation is funded only by employer organizations",
+        "sv": "Ersättningen finansieras bara av arbetsgivarorganisationer"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "A-kassan is unemployment insurance. Compensation is funded both by the state and by membership fees, and a person who wants compensation must meet the conditions.",
+      "sv": "A-kassan är en arbetslöshetsförsäkring. Ersättningen finansieras både av staten och av medlemsavgifter, och den som vill få ersättning behöver uppfylla villkoren."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "A-kassan",
+      "page": 29
+    },
+    "difficulty": "medium",
+    "tags": [
+      "a-kassa",
+      "unemployment-insurance",
+      "member-fees",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q772",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which statement describes personal finance in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver privatekonomi i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Personal finance concerns a person’s or household's income, expenses, savings, and loans",
+        "sv": "Privatekonomi handlar om en persons eller ett hushålls inkomster, utgifter, sparande och lån"
+      },
+      {
+        "en": "Personal finance concerns only the state budget and municipal tax revenue",
+        "sv": "Privatekonomi handlar bara om statens budget och kommunernas skatteintäkter"
+      },
+      {
+        "en": "Personal finance means all households must have the same income and expenses",
+        "sv": "Privatekonomi betyder att alla hushåll måste ha samma inkomster och utgifter"
+      },
+      {
+        "en": "Personal finance is another word for labour-market collective agreements",
+        "sv": "Privatekonomi är ett annat ord för arbetsmarknadens kollektivavtal"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Personal finance is about everyday money: income, expenses, savings, loans, and credit. If debts are not paid, the Enforcement Authority may become involved.",
+      "sv": "Privatekonomi handlar om pengar i vardagen: inkomster, utgifter, sparande, lån och krediter. Om skulder inte betalas kan Kronofogden bli inblandad."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Privatekonomi i Sverige",
+      "page": 29
+    },
+    "difficulty": "medium",
+    "tags": [
+      "personal-finance",
+      "income",
+      "expenses",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q773",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
+    "q": {
+      "en": "Personal finance concerns a person’s or household's income, expenses, savings, and loans.",
+      "sv": "Privatekonomi handlar om en persons eller ett hushålls inkomster, utgifter, sparande och lån."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Personal finance is about everyday money: income, expenses, savings, loans, and credit. If debts are not paid, the Enforcement Authority may become involved.",
+      "sv": "Privatekonomi handlar om pengar i vardagen: inkomster, utgifter, sparande, lån och krediter. Om skulder inte betalas kan Kronofogden bli inblandad."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Privatekonomi i Sverige",
+      "page": 29
+    },
+    "difficulty": "medium",
+    "tags": [
+      "personal-finance",
+      "income",
+      "expenses",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q774",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "true_false",
+    "q": {
+      "en": "Personal finance concerns only the state budget and municipal tax revenue.",
+      "sv": "Privatekonomi handlar bara om statens budget och kommunernas skatteintäkter."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Personal finance is about everyday money: income, expenses, savings, loans, and credit. If debts are not paid, the Enforcement Authority may become involved.",
+      "sv": "Privatekonomi handlar om pengar i vardagen: inkomster, utgifter, sparande, lån och krediter. Om skulder inte betalas kan Kronofogden bli inblandad."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Privatekonomi i Sverige",
+      "page": 29
+    },
+    "difficulty": "medium",
+    "tags": [
+      "personal-finance",
+      "income",
+      "expenses",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q775",
+    "chapterId": 8,
+    "chapter": "Ch. 08 · Labour market and personal finance",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which statement describes personal finance in Sweden?",
+      "sv": "Välj rätt alternativ: Vilket påstående beskriver privatekonomi i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "Personal finance concerns a person’s or household's income, expenses, savings, and loans",
+        "sv": "Privatekonomi handlar om en persons eller ett hushålls inkomster, utgifter, sparande och lån"
+      },
+      {
+        "en": "Personal finance concerns only the state budget and municipal tax revenue",
+        "sv": "Privatekonomi handlar bara om statens budget och kommunernas skatteintäkter"
+      },
+      {
+        "en": "Personal finance means all households must have the same income and expenses",
+        "sv": "Privatekonomi betyder att alla hushåll måste ha samma inkomster och utgifter"
+      },
+      {
+        "en": "Personal finance is another word for labour-market collective agreements",
+        "sv": "Privatekonomi är ett annat ord för arbetsmarknadens kollektivavtal"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Personal finance is about everyday money: income, expenses, savings, loans, and credit. If debts are not paid, the Enforcement Authority may become involved.",
+      "sv": "Privatekonomi handlar om pengar i vardagen: inkomster, utgifter, sparande, lån och krediter. Om skulder inte betalas kan Kronofogden bli inblandad."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Arbetsmarknad och privatekonomi",
+      "section": "Privatekonomi i Sverige",
+      "page": 29
+    },
+    "difficulty": "medium",
+    "tags": [
+      "personal-finance",
+      "income",
+      "expenses",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q776",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What is one of the UN's purposes?",
+      "sv": "Vilket svar stämmer bäst? Vilket är ett av FN:s syften?"
+    },
+    "opts": [
+      {
+        "en": "To preserve peace and security in the world",
+        "sv": "Att bevara fred och säkerhet i världen"
+      },
+      {
+        "en": "To decide Swedish municipal budgets",
+        "sv": "Att besluta svenska kommuners budgetar"
+      },
+      {
+        "en": "To replace every country's parliament",
+        "sv": "Att ersätta alla länders parlament"
+      },
+      {
+        "en": "To arrange only Nordic trade",
+        "sv": "Att bara ordna handel mellan nordiska länder"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The UN works, among other things, to preserve peace and security, solve conflicts, and stop wars. The organization also works for equal human worth, self-determination, human rights, and freedoms.",
+      "sv": "FN arbetar bland annat för att bevara fred och säkerhet, lösa konflikter och stoppa krig. Organisationen arbetar också för alla folks lika värde, självbestämmande, mänskliga rättigheter och friheter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Globalt samarbete",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "un",
+      "peace-and-security",
+      "human-rights",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q777",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "Preserve peace and security in the world.",
+      "sv": "Bevara fred och säkerhet i världen."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The UN works, among other things, to preserve peace and security, solve conflicts, and stop wars. The organization also works for equal human worth, self-determination, human rights, and freedoms.",
+      "sv": "FN arbetar bland annat för att bevara fred och säkerhet, lösa konflikter och stoppa krig. Organisationen arbetar också för alla folks lika värde, självbestämmande, mänskliga rättigheter och friheter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Globalt samarbete",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "un",
+      "peace-and-security",
+      "human-rights",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q778",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "Decide Swedish municipal budgets.",
+      "sv": "Besluta svenska kommuners budgetar."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "The UN works, among other things, to preserve peace and security, solve conflicts, and stop wars. The organization also works for equal human worth, self-determination, human rights, and freedoms.",
+      "sv": "FN arbetar bland annat för att bevara fred och säkerhet, lösa konflikter och stoppa krig. Organisationen arbetar också för alla folks lika värde, självbestämmande, mänskliga rättigheter och friheter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Globalt samarbete",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "un",
+      "peace-and-security",
+      "human-rights",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q779",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What is one of the UN's purposes?",
+      "sv": "Välj rätt alternativ: Vilket är ett av FN:s syften?"
+    },
+    "opts": [
+      {
+        "en": "To preserve peace and security in the world",
+        "sv": "Att bevara fred och säkerhet i världen"
+      },
+      {
+        "en": "To decide Swedish municipal budgets",
+        "sv": "Att besluta svenska kommuners budgetar"
+      },
+      {
+        "en": "To replace every country's parliament",
+        "sv": "Att ersätta alla länders parlament"
+      },
+      {
+        "en": "To arrange only Nordic trade",
+        "sv": "Att bara ordna handel mellan nordiska länder"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "The UN works, among other things, to preserve peace and security, solve conflicts, and stop wars. The organization also works for equal human worth, self-determination, human rights, and freedoms.",
+      "sv": "FN arbetar bland annat för att bevara fred och säkerhet, lösa konflikter och stoppa krig. Organisationen arbetar också för alla folks lika värde, självbestämmande, mänskliga rättigheter och friheter."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Globalt samarbete",
+      "page": 39
+    },
+    "difficulty": "medium",
+    "tags": [
+      "un",
+      "peace-and-security",
+      "human-rights",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q780",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What does total defence duty mean in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad innebär totalförsvarsplikt i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "That people who live in Sweden and are aged 16-70 may need to help defend the country",
+        "sv": "Att personer som bor i Sverige och är 16-70 år kan behöva hjälpa till att försvara landet"
+      },
+      {
+        "en": "That only Armed Forces employees may help during a crisis",
+        "sv": "Att bara anställda i Försvarsmakten får hjälpa till vid kris"
+      },
+      {
+        "en": "That municipalities decide by themselves whether Sweden should be in NATO",
+        "sv": "Att kommuner själva bestämmer om Sverige ska vara med i Nato"
+      },
+      {
+        "en": "That total defence is only about voluntary sports",
+        "sv": "Att totalförsvaret bara handlar om frivillig idrott"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Total defence duty means that everyone who lives in Sweden and is between 16 and 70 can be required to help defend the country if needed. This is connected to total defence including both military and civil defence.",
+      "sv": "Totalförsvarsplikt betyder att alla som bor i Sverige och är mellan 16 och 70 år kan bli skyldiga att hjälpa till att försvara landet om det behövs. Det hänger ihop med att totalförsvaret omfattar både militärt och civilt försvar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 40
+    },
+    "difficulty": "medium",
+    "tags": [
+      "total-defence-duty",
+      "civil-defence",
+      "security-policy",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q781",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "That people who live in Sweden and are aged 16-70 may need to help defend the country.",
+      "sv": "Totalförsvarsplikt i Sverige innebär att personer som bor i Sverige och är 16-70 år kan behöva hjälpa till att försvara landet."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Total defence duty means that everyone who lives in Sweden and is between 16 and 70 can be required to help defend the country if needed. This is connected to total defence including both military and civil defence.",
+      "sv": "Totalförsvarsplikt betyder att alla som bor i Sverige och är mellan 16 och 70 år kan bli skyldiga att hjälpa till att försvara landet om det behövs. Det hänger ihop med att totalförsvaret omfattar både militärt och civilt försvar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 40
+    },
+    "difficulty": "medium",
+    "tags": [
+      "total-defence-duty",
+      "civil-defence",
+      "security-policy",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q782",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "That only Armed Forces employees may help during a crisis.",
+      "sv": "Totalförsvarsplikt i Sverige innebär att bara anställda i Försvarsmakten får hjälpa till vid kris."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Total defence duty means that everyone who lives in Sweden and is between 16 and 70 can be required to help defend the country if needed. This is connected to total defence including both military and civil defence.",
+      "sv": "Totalförsvarsplikt betyder att alla som bor i Sverige och är mellan 16 och 70 år kan bli skyldiga att hjälpa till att försvara landet om det behövs. Det hänger ihop med att totalförsvaret omfattar både militärt och civilt försvar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 40
+    },
+    "difficulty": "medium",
+    "tags": [
+      "total-defence-duty",
+      "civil-defence",
+      "security-policy",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q783",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What does total defence duty mean in Sweden?",
+      "sv": "Välj rätt alternativ: Vad innebär totalförsvarsplikt i Sverige?"
+    },
+    "opts": [
+      {
+        "en": "That people who live in Sweden and are aged 16-70 may need to help defend the country",
+        "sv": "Att personer som bor i Sverige och är 16-70 år kan behöva hjälpa till att försvara landet"
+      },
+      {
+        "en": "That only Armed Forces employees may help during a crisis",
+        "sv": "Att bara anställda i Försvarsmakten får hjälpa till vid kris"
+      },
+      {
+        "en": "That municipalities decide by themselves whether Sweden should be in NATO",
+        "sv": "Att kommuner själva bestämmer om Sverige ska vara med i Nato"
+      },
+      {
+        "en": "That total defence is only about voluntary sports",
+        "sv": "Att totalförsvaret bara handlar om frivillig idrott"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Total defence duty means that everyone who lives in Sweden and is between 16 and 70 can be required to help defend the country if needed. This is connected to total defence including both military and civil defence.",
+      "sv": "Totalförsvarsplikt betyder att alla som bor i Sverige och är mellan 16 och 70 år kan bli skyldiga att hjälpa till att försvara landet om det behövs. Det hänger ihop med att totalförsvaret omfattar både militärt och civilt försvar."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 40
+    },
+    "difficulty": "medium",
+    "tags": [
+      "total-defence-duty",
+      "civil-defence",
+      "security-policy",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q784",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? Which parts are included in military defence?",
+      "sv": "Vilket svar stämmer bäst? Vilka delar ingår i det militära försvaret?"
+    },
+    "opts": [
+      {
+        "en": "The army, navy, and air force",
+        "sv": "Armén, marinen och flygvapnet"
+      },
+      {
+        "en": "The Riksdag, regions, and municipalities",
+        "sv": "Riksdagen, regionerna och kommunerna"
+      },
+      {
+        "en": "The courts, police, and Enforcement Authority",
+        "sv": "Domstolarna, polisen och Kronofogden"
+      },
+      {
+        "en": "The Nordic Council, EU, and Council of Europe",
+        "sv": "Nordiska rådet, EU och Europarådet"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Military defence consists of the Swedish Armed Forces: the army, navy, and air force. The Armed Forces must protect Sweden's territory and independence and also be able to take part in international missions.",
+      "sv": "Det militära försvaret består av Försvarsmakten: armén, marinen och flygvapnet. Försvarsmakten ska skydda Sveriges territorium och självständighet och även kunna delta i internationella insatser."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "easy",
+    "tags": [
+      "armed-forces",
+      "military-defence",
+      "international-missions",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q785",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "The army, navy, and air force.",
+      "sv": "Armén, marinen och flygvapnet."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Military defence consists of the Swedish Armed Forces: the army, navy, and air force. The Armed Forces must protect Sweden's territory and independence and also be able to take part in international missions.",
+      "sv": "Det militära försvaret består av Försvarsmakten: armén, marinen och flygvapnet. Försvarsmakten ska skydda Sveriges territorium och självständighet och även kunna delta i internationella insatser."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "easy",
+    "tags": [
+      "armed-forces",
+      "military-defence",
+      "international-missions",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q786",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "The Riksdag, regions, and municipalities.",
+      "sv": "Riksdagen, regionerna och kommunerna."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Military defence consists of the Swedish Armed Forces: the army, navy, and air force. The Armed Forces must protect Sweden's territory and independence and also be able to take part in international missions.",
+      "sv": "Det militära försvaret består av Försvarsmakten: armén, marinen och flygvapnet. Försvarsmakten ska skydda Sveriges territorium och självständighet och även kunna delta i internationella insatser."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "easy",
+    "tags": [
+      "armed-forces",
+      "military-defence",
+      "international-missions",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q787",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: Which parts are included in military defence?",
+      "sv": "Välj rätt alternativ: Vilka delar ingår i det militära försvaret?"
+    },
+    "opts": [
+      {
+        "en": "The army, navy, and air force",
+        "sv": "Armén, marinen och flygvapnet"
+      },
+      {
+        "en": "The Riksdag, regions, and municipalities",
+        "sv": "Riksdagen, regionerna och kommunerna"
+      },
+      {
+        "en": "The courts, police, and Enforcement Authority",
+        "sv": "Domstolarna, polisen och Kronofogden"
+      },
+      {
+        "en": "The Nordic Council, EU, and Council of Europe",
+        "sv": "Nordiska rådet, EU och Europarådet"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Military defence consists of the Swedish Armed Forces: the army, navy, and air force. The Armed Forces must protect Sweden's territory and independence and also be able to take part in international missions.",
+      "sv": "Det militära försvaret består av Försvarsmakten: armén, marinen och flygvapnet. Försvarsmakten ska skydda Sveriges territorium och självständighet och även kunna delta i internationella insatser."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "easy",
+    "tags": [
+      "armed-forces",
+      "military-defence",
+      "international-missions",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q788",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What happens under general conscription when young adults are assessed?",
+      "sv": "Vilket svar stämmer bäst? Vad händer inom den allmänna värnplikten när unga vuxna prövas?"
+    },
+    "opts": [
+      {
+        "en": "Men and women who have turned 18 answer questions and take tests",
+        "sv": "Män och kvinnor som fyllt 18 år får svara på frågor och göra tester"
+      },
+      {
+        "en": "Everyone who has turned 18 is automatically sent abroad",
+        "sv": "Alla som fyllt 18 år skickas automatiskt utomlands"
+      },
+      {
+        "en": "Only people who already work for the state are assessed",
+        "sv": "Bara personer som redan arbetar i staten får prövas"
+      },
+      {
+        "en": "Conscription applies only to people older than 70",
+        "sv": "Värnplikten gäller bara den som är äldre än 70 år"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "General conscription covers men and women who have turned 18. They answer questions and take tests, and then a decision is made about who may be considered for basic military training.",
+      "sv": "Den allmänna värnplikten omfattar män och kvinnor som har fyllt 18 år. De får svara på frågor och göra tester, och därefter beslutas vilka som kan bli aktuella för grundläggande militär utbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "conscription",
+      "military-training",
+      "armed-forces",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q789",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "Men and women who have turned 18 answer questions and take tests.",
+      "sv": "Män och kvinnor som fyllt 18 år får svara på frågor och göra tester."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "General conscription covers men and women who have turned 18. They answer questions and take tests, and then a decision is made about who may be considered for basic military training.",
+      "sv": "Den allmänna värnplikten omfattar män och kvinnor som har fyllt 18 år. De får svara på frågor och göra tester, och därefter beslutas vilka som kan bli aktuella för grundläggande militär utbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "conscription",
+      "military-training",
+      "armed-forces",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q790",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "Everyone who has turned 18 is automatically sent abroad.",
+      "sv": "Alla som fyllt 18 år skickas automatiskt utomlands."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "General conscription covers men and women who have turned 18. They answer questions and take tests, and then a decision is made about who may be considered for basic military training.",
+      "sv": "Den allmänna värnplikten omfattar män och kvinnor som har fyllt 18 år. De får svara på frågor och göra tester, och därefter beslutas vilka som kan bli aktuella för grundläggande militär utbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "conscription",
+      "military-training",
+      "armed-forces",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q791",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What happens under general conscription when young adults are assessed?",
+      "sv": "Välj rätt alternativ: Vad händer inom den allmänna värnplikten när unga vuxna prövas?"
+    },
+    "opts": [
+      {
+        "en": "Men and women who have turned 18 answer questions and take tests",
+        "sv": "Män och kvinnor som fyllt 18 år får svara på frågor och göra tester"
+      },
+      {
+        "en": "Everyone who has turned 18 is automatically sent abroad",
+        "sv": "Alla som fyllt 18 år skickas automatiskt utomlands"
+      },
+      {
+        "en": "Only people who already work for the state are assessed",
+        "sv": "Bara personer som redan arbetar i staten får prövas"
+      },
+      {
+        "en": "Conscription applies only to people older than 70",
+        "sv": "Värnplikten gäller bara den som är äldre än 70 år"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "General conscription covers men and women who have turned 18. They answer questions and take tests, and then a decision is made about who may be considered for basic military training.",
+      "sv": "Den allmänna värnplikten omfattar män och kvinnor som har fyllt 18 år. De får svara på frågor och göra tester, och därefter beslutas vilka som kan bli aktuella för grundläggande militär utbildning."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Sveriges försvar",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "conscription",
+      "military-training",
+      "armed-forces",
+      "published-variant",
+      "judgement"
+    ]
+  },
+  {
+    "id": "q792",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Which answer best matches? What should civil defence help society manage?",
+      "sv": "Vilket svar stämmer bäst? Vad ska det civila försvaret hjälpa samhället att klara?"
+    },
+    "opts": [
+      {
+        "en": "That important activities such as school, work, and health care can continue during war or crisis",
+        "sv": "Att viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta vid krig eller kris"
+      },
+      {
+        "en": "That only military units can act during all societal crises",
+        "sv": "Att bara militära förband kan agera vid alla samhällskriser"
+      },
+      {
+        "en": "That Swedish courts close during every conflict",
+        "sv": "Att svenska domstolar stängs vid varje konflikt"
+      },
+      {
+        "en": "That the EU takes over municipalities’ daily services",
+        "sv": "Att EU tar över kommunernas dagliga service"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Civil defence means that more than the military should be able to meet threats and challenges. Important activities, such as school, work, and health care, should be able to keep functioning during war or crisis.",
+      "sv": "Det civila försvaret handlar om att fler än militären ska kunna möta hot och utmaningar. Viktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, ska kunna fortsätta fungera vid krig eller kris."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Det civila försvaret",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "civil-defence",
+      "crisis-preparedness",
+      "health-care",
+      "published-variant",
+      "section-practice"
+    ]
+  },
+  {
+    "id": "q793",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "That important activities such as school, work, and health care can continue during war or crisis.",
+      "sv": "Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta vid krig eller kris."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Civil defence means that more than the military should be able to meet threats and challenges. Important activities, such as school, work, and health care, should be able to keep functioning during war or crisis.",
+      "sv": "Det civila försvaret handlar om att fler än militären ska kunna möta hot och utmaningar. Viktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, ska kunna fortsätta fungera vid krig eller kris."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Det civila försvaret",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "civil-defence",
+      "crisis-preparedness",
+      "health-care",
+      "published-variant",
+      "true-false"
+    ]
+  },
+  {
+    "id": "q794",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "true_false",
+    "q": {
+      "en": "That only military units can act during all societal crises.",
+      "sv": "Bara militära förband kan agera vid alla samhällskriser."
+    },
+    "opts": [
+      {
+        "en": "True",
+        "sv": "Sant"
+      },
+      {
+        "en": "False",
+        "sv": "Falskt"
+      }
+    ],
+    "answer": 1,
+    "why": {
+      "en": "Civil defence means that more than the military should be able to meet threats and challenges. Important activities, such as school, work, and health care, should be able to keep functioning during war or crisis.",
+      "sv": "Det civila försvaret handlar om att fler än militären ska kunna möta hot och utmaningar. Viktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, ska kunna fortsätta fungera vid krig eller kris."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Det civila försvaret",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "civil-defence",
+      "crisis-preparedness",
+      "health-care",
+      "published-variant",
+      "false-statement"
+    ]
+  },
+  {
+    "id": "q795",
+    "chapterId": 11,
+    "chapter": "Ch. 11 · Sweden and the outside world",
+    "type": "single_choice",
+    "q": {
+      "en": "Choose the correct option: What should civil defence help society manage?",
+      "sv": "Välj rätt alternativ: Vad ska det civila försvaret hjälpa samhället att klara?"
+    },
+    "opts": [
+      {
+        "en": "That important activities such as school, work, and health care can continue during war or crisis",
+        "sv": "Att viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta vid krig eller kris"
+      },
+      {
+        "en": "That only military units can act during all societal crises",
+        "sv": "Att bara militära förband kan agera vid alla samhällskriser"
+      },
+      {
+        "en": "That Swedish courts close during every conflict",
+        "sv": "Att svenska domstolar stängs vid varje konflikt"
+      },
+      {
+        "en": "That the EU takes over municipalities’ daily services",
+        "sv": "Att EU tar över kommunernas dagliga service"
+      }
+    ],
+    "answer": 0,
+    "why": {
+      "en": "Civil defence means that more than the military should be able to meet threats and challenges. Important activities, such as school, work, and health care, should be able to keep functioning during war or crisis.",
+      "sv": "Det civila försvaret handlar om att fler än militären ska kunna möta hot och utmaningar. Viktiga verksamheter, till exempel skola, arbete och hälso- och sjukvård, ska kunna fortsätta fungera vid krig eller kris."
+    },
+    "source": {
+      "title": "Sverige i fokus",
+      "chapter": "Sverige och omvärlden",
+      "section": "Det civila försvaret",
+      "page": 41
+    },
+    "difficulty": "medium",
+    "tags": [
+      "civil-defence",
+      "crisis-preparedness",
+      "health-care",
       "published-variant",
       "judgement"
     ]
@@ -33810,7 +34865,7 @@
       "en": "The labour market, labour-market parties, workplace rules, and personal finance.",
       "sv": "Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi."
     },
-    "questionCount": 35
+    "questionCount": 60
   },
   {
     "id": 9,
@@ -33823,7 +34878,7 @@
       "en": "Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.",
       "sv": "Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner."
     },
-    "questionCount": 55
+    "questionCount": 30
   },
   {
     "id": 10,
@@ -33849,7 +34904,7 @@
       "en": "Nordic, European, and global cooperation, plus defence and security policy.",
       "sv": "Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik."
     },
-    "questionCount": 35
+    "questionCount": 60
   },
   {
     "id": 12,
