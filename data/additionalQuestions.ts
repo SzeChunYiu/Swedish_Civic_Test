@@ -3524,4 +3524,157 @@ export const additionalQuestions: PracticeQuestion[] = [
     'Municipal and regional elections can include special parties with policies for their own municipality or region, not for the national level. Before elections, parties try to persuade voters through debates, meetings, political advertising, and campaigns.',
     ['local-parties', 'municipal-elections', 'regional-elections', 'campaign-methods'],
   ),
+  single(
+    'q170',
+    'ch05',
+    {
+      chapter: 'Lag och rätt',
+      section: 'Tryckfrihetsförordningen',
+      pageApprox: 16,
+    },
+    'Vad skyddar tryckfrihetsförordningen?',
+    'What does the Freedom of the Press Act protect?',
+    [
+      [
+        'Det fria ordet i tryckt form och rätten att ge ut böcker, tidningar och tidskrifter',
+        'Free expression in printed form and the right to publish books, newspapers, and magazines',
+      ],
+      [
+        'Rätten för staten att förhandsgranska alla privata brev',
+        'The right of the state to preview all private letters',
+      ],
+      [
+        'Kommunernas ansvar för skola och omsorg',
+        'Municipal responsibility for schools and care services',
+      ],
+      ['Reglerna för vem som blir kung eller drottning', 'The rules for who becomes king or queen'],
+    ],
+    0,
+    'Tryckfrihetsförordningen är en av Sveriges grundlagar. Den skyddar det fria ordet i tryckt form och ger alla rätt att fritt ge ut böcker, tidningar och tidskrifter.',
+    'The Freedom of the Press Act is one of Sweden’s constitutional laws. It protects free expression in printed form and gives everyone the right to freely publish books, newspapers, and magazines.',
+    ['freedom-of-press', 'constitutional-laws', 'printed-media'],
+  ),
+  single(
+    'q171',
+    'ch05',
+    {
+      chapter: 'Lag och rätt',
+      section: 'Yttrandefrihetsgrundlagen',
+      pageApprox: 16,
+    },
+    'Vad ger yttrandefrihetsgrundlagen alla rätt att göra?',
+    'What does the Fundamental Law on Freedom of Expression give everyone the right to do?',
+    [
+      [
+        'Att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar',
+        'To express thoughts and opinions freely, for example on radio, TV, and in newspapers',
+      ],
+      [
+        'Den gör alla yttranden lagliga oavsett innehåll',
+        'It makes every expression legal regardless of content',
+      ],
+      [
+        'Den bestämmer att domstolar ska döma efter riksdagens instruktioner',
+        'It decides that courts must judge according to instructions from the Riksdag',
+      ],
+      [
+        'Den ersätter rätten att bilda föreningar och demonstrera',
+        'It replaces the right to form associations and demonstrate',
+      ],
+    ],
+    0,
+    'Yttrandefrihetsgrundlagen ger alla rätt att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar. Den skyddar yttrandefriheten, men vissa yttranden är fortfarande förbjudna i lag, till exempel förtal, hets mot folkgrupp och information som kan skada Sveriges säkerhet.',
+    'The Fundamental Law on Freedom of Expression gives everyone the right to express thoughts and opinions freely, for example on radio, TV, and in newspapers. It protects freedom of expression, but some expressions remain prohibited by law, such as defamation, agitation against a population group, and information that can harm Sweden’s security.',
+    ['freedom-of-expression', 'constitutional-laws', 'legal-limits'],
+    'hard',
+  ),
+  single(
+    'q172',
+    'ch05',
+    { chapter: 'Lag och rätt', section: 'Brottsutredning', pageApprox: 18 },
+    'Vad händer under en förundersökning i en brottsutredning?',
+    'What happens during a preliminary investigation in a criminal investigation?',
+    [
+      [
+        'Polisen samlar bevis och pratar med vittnen',
+        'The police gather evidence and speak with witnesses',
+      ],
+      [
+        'Domaren bestämmer straffet innan rättegången börjar',
+        'The judge decides the sentence before the trial begins',
+      ],
+      [
+        'Brottsoffret väljer ensam om den misstänkte ska dömas',
+        'The crime victim alone chooses whether the suspect will be convicted',
+      ],
+      [
+        'Kommunfullmäktige röstar om den misstänkte är skyldig',
+        'The municipal council votes on whether the suspect is guilty',
+      ],
+    ],
+    0,
+    'I en brottsutredning ingår flera steg. Under förundersökningen samlar polisen bevis och pratar med vittnen för att utreda vad som har hänt.',
+    'A criminal investigation includes several steps. During the preliminary investigation, the police gather evidence and speak with witnesses to investigate what happened.',
+    ['criminal-investigation', 'preliminary-investigation', 'police', 'evidence'],
+    'easy',
+  ),
+  single(
+    'q173',
+    'ch05',
+    { chapter: 'Lag och rätt', section: 'Rättegång', pageApprox: 19 },
+    'Vilken rätt har den åtalade under en rättegång?',
+    'What right does the accused person have during a trial?',
+    [
+      [
+        'Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis',
+        'The right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own',
+      ],
+      [
+        'Rätt att ensam välja domare och nämndemän',
+        'The right to choose the judge and lay judges alone',
+      ],
+      [
+        'Rätt att förbjuda åklagaren från att tala',
+        'The right to forbid the prosecutor from speaking',
+      ],
+      [
+        'Rätt att slippa domstolens beslut om bevisen är många',
+        'The right to avoid the court’s decision if there is a lot of evidence',
+      ],
+    ],
+    0,
+    'Under rättegången försöker åklagaren bevisa att den åtalade är skyldig. Den åtalade har rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis.',
+    'During the trial, the prosecutor tries to prove that the accused person is guilty. The accused has the right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own.',
+    ['trial', 'defence-lawyer', 'prosecutor', 'evidence'],
+  ),
+  single(
+    'q174',
+    'ch05',
+    { chapter: 'Lag och rätt', section: 'Rättsväsendet', pageApprox: 17 },
+    'Hur fördelas rollerna mellan polis, åklagare och domstolar?',
+    'How are roles divided among the police, prosecutor, and courts?',
+    [
+      [
+        'Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis',
+        'The police prevent and investigate crimes, the prosecutor decides whether suspects should be brought before a court, and courts review evidence',
+      ],
+      [
+        'Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff',
+        'Courts investigate all crimes, municipalities prosecute cases, and the police decide sentences',
+      ],
+      [
+        'Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val',
+        'The Prosecution Authority runs prisons, the Crime Victim Authority makes laws, and the Prison and Probation Service holds elections',
+      ],
+      [
+        'Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande',
+        'The Riksdag judges criminal cases, the government questions witnesses, and regions decide acquittals',
+      ],
+    ],
+    0,
+    'Rättsväsendets myndigheter har olika roller. Polisen förhindrar och utreder brott, Åklagarmyndigheten avgör om misstänkta personer ska ställas inför domstol, och domstolar granskar bevis och beslutar om påföljd eller frikännande.',
+    'Justice-system authorities have different roles. The police prevent and investigate crimes, the Swedish Prosecution Authority decides whether suspected people should be brought before a court, and courts review evidence and decide on a penalty or acquittal.',
+    ['justice-system', 'police', 'prosecutor', 'courts'],
+    'hard',
+  ),
 ];
