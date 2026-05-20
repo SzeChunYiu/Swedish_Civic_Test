@@ -43,7 +43,7 @@ const ownerActions = {
     ownerAction:
       'Create App Store Connect and Google Play Console app records under the SzeChunYiu-owned accounts.',
     neededEvidence:
-      'App Store Connect URL, Google Play Console URL, bundle/package IDs, and support/privacy URLs entered in both stores.',
+      'App Store Connect URL, Google Play Console URL, bundle/package IDs, AdMob app readiness, Remove Ads IAP at 29 SEK, and support/privacy URLs entered in both stores.',
     recordAt: '`reports/store-records/store-records.json`.',
     nextCommand:
       'npm run release:gate -- --gate store-records --status READY --evidence-file reports/store-records/store-records.json',
@@ -61,7 +61,7 @@ const ownerActions = {
     ownerAction:
       'Review Apple privacy labels and Google Play Data safety against the generated binary/build.',
     neededEvidence:
-      'Reviewed build ID/version/commit, Apple privacy labels, Google Play Data safety, Google Mobile Ads test/real-ads-disabled posture, and disabled SDK audit.',
+      'Reviewed build ID/version/commit, Apple privacy labels, Google Play Data safety, Google Mobile Ads real-ad path, Remove Ads IAP at 29 SEK, ATT/UMP consent review, and analytics/crash SDK audit.',
     recordAt: '`reports/privacy-review/privacy-review.json`.',
     nextCommand:
       'npm run release:gate -- --gate privacy-review --status READY --evidence-file reports/privacy-review/privacy-review.json',
