@@ -1069,7 +1069,7 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /bookmarkedQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad för fokuserad repetition/);
+  assert.match(source, /Sparad för att öva igen/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
@@ -1134,7 +1134,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.match(source, /question\.correctOptionId/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
-  assert.match(source, /Ditt senaste felaktiga svar/);
+  assert.match(source, /Ditt senaste svar/);
   assert.match(source, /Your latest wrong answer/);
   assert.match(source, /Rätt svar/);
   assert.match(source, /Correct answer/);
