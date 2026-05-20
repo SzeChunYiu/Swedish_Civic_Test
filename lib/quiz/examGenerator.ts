@@ -132,6 +132,13 @@ export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap)
   };
 }
 
+export function countUnansweredExamQuestions(
+  questions: PracticeQuestion[],
+  answers: ExamAnswerMap,
+): number {
+  return questions.reduce((count, question) => (answers[question.id] ? count : count + 1), 0);
+}
+
 export function buildExamChapterBreakdownItems(
   chapterBreakdown: ExamChapterResult[],
   chapters: Chapter[],

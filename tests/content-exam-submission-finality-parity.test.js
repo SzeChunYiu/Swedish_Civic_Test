@@ -18,6 +18,11 @@ test('exam submission finality stays aligned with the result route', () => {
 
   assert.equal(summary.examSubmissionFinalityParityValidated, true);
   assert.match(examRoute, /Submitted results are final/);
+  assert.match(examRoute, /countUnansweredExamQuestions\(examQuestions, answers\)/);
+  assert.match(examRoute, /const canSubmit = examQuestions\.length > 0/);
+  assert.match(examRoute, /if \(unansweredCount > 0\) \{/);
+  assert.match(examRoute, /setConfirmingPartialSubmit\(true\)/);
+  assert.match(examRoute, /onPress=\{submitExam\}/);
   assert.match(examRoute, /disabled: !completionRecorded/);
   assert.doesNotMatch(examRoute, /Back to exam answers|Back to answers/);
   assert.doesNotMatch(examRoute, /onPress=\{\(\) => setSubmitted\(false\)\}/);
