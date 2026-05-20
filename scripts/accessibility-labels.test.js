@@ -184,3 +184,41 @@ test('MockExamConfigPanel summary header is separate from interactive controls',
   );
   assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
 });
+
+test('Dashboard summary text is separate from interactive links, buttons, and scrolling', () => {
+  const dashboardSource = fs.readFileSync(path.join(ROOT, 'app', 'dashboard.tsx'), 'utf8');
+  const activitySource = fs.readFileSync(
+    path.join(ROOT, 'components', 'dashboard', 'ActivityHeatmap.tsx'),
+    'utf8',
+  );
+  const chapterSource = fs.readFileSync(
+    path.join(ROOT, 'components', 'dashboard', 'PerChapterProgressBars.tsx'),
+    'utf8',
+  );
+
+  assert.match(
+    dashboardSource,
+    /const summaryAccessibilityLabel = copy\.summaryAccessibilityLabel\(/,
+  );
+  assert.match(
+    dashboardSource,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
+  );
+  assert.doesNotMatch(
+    dashboardSource,
+    /<Card[\s\S]{0,180}accessibilityLabel=\{summaryAccessibilityLabel\}[\s\S]{0,900}<Link/,
+  );
+  assert.match(
+    activitySource,
+    /<ScrollView[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*accessibilityRole="summary"[\s\S]*aria-label=\{accessibilityLabel\}/,
+  );
+  assert.doesNotMatch(
+    activitySource,
+    /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/,
+  );
+  assert.match(
+    chapterSource,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
+  );
+  assert.doesNotMatch(chapterSource, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
+});
