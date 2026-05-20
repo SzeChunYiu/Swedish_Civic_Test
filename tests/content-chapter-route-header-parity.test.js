@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -34,7 +33,8 @@ test('chapter route title, missing state, and question section stay accessible a
   assert.match(source, /chapterDescription: \(chapter\) => chapter\.descriptionEn/);
   assert.match(source, /Kapitlet hittades inte/);
   assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
-  assert.match(source, /Starta quiz för \$\{chapterTitle\}/);
+  assert.match(source, /Starta frågepass för \$\{chapterTitle\}/);
+  assert.doesNotMatch(source, new RegExp(['Starta', 'kapitelövning'].join(' ')));
   assert.match(source, /Chapter not found/);
   assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.match(source, /Start quiz for \$\{chapterTitle\}/);

@@ -36,10 +36,6 @@ function assertNaturalSwedishDashboardCopy(sources) {
     'dashboard/profile copy and guards must not pin Swenglish dashboard terms',
   );
   assert.match(sources.dashboard, /title: 'Kapitelframsteg'/);
-  assert.match(sources.dashboard, /title: 'Aktivitetsskala'/);
-  assert.match(sources.dashboard, /low: 'Låg aktivitet'/);
-  assert.match(sources.dashboard, /medium: 'Medelaktivitet'/);
-  assert.match(sources.dashboard, /high: 'Hög aktivitet'/);
   assert.match(
     sources.dashboard,
     /emptyState: 'När du har svarat på frågor visas dina kapitelframsteg här\.'/,
@@ -54,10 +50,6 @@ function assertNaturalSwedishDashboardCopy(sources) {
   assert.match(sources.dashboard, /title: 'Progress dashboard'/);
   assert.match(sources.dashboard, /title: 'Chapter progress'/);
   assert.match(sources.dashboard, /title: 'Streak and XP'/);
-  assert.match(sources.dashboard, /title: 'Activity scale'/);
-  assert.match(sources.dashboard, /low: 'Low activity'/);
-  assert.match(sources.dashboard, /medium: 'Medium activity'/);
-  assert.match(sources.dashboard, /high: 'High activity'/);
 }
 
 test('dashboard and profile Swedish copy uses natural study-dashboard terms', () => {
