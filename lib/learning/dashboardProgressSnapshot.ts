@@ -52,6 +52,7 @@ function answerAttemptForHistoryEntry(entry: AnswerHistoryEntry): QuizAnswer {
     questionId: entry.questionId,
     selectedOptionIds: [],
     timeSpentSeconds: entry.timeSpentSeconds ?? 0,
+    confidenceRating: entry.confidenceRating,
   };
 }
 
