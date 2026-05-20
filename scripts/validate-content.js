@@ -197,7 +197,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
   'questionProvenance',
-  'uhrSourcePublisher',
 ];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
@@ -461,6 +460,16 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /^Försöka övertyga andra om sina politiska idéer\.?$/i,
+  /^Hindra andra från att rösta\.?$/i,
+  /^Try to persuade others of their political ideas\.?$/i,
+  /^Stop others from voting\.?$/i,
+  /^(?:Vårdcentraler, barnavårdscentraler och mödravårdscentraler|Domstolar, åklagare och kriminalvård)\.?$/i,
+  /^(?:Health centres, child health centres, and maternity clinics|Courts, prosecutors, and prison and probation services)\.?$/i,
+  /^(?:Ordna förskolor, fritidshem, grundskolor och gymnasieskolor|Betala sjukförsäkring och statliga pensioner)\.?$/i,
+  /^(?:Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools|Pay sickness insurance and state pensions)\.?$/i,
+  /^(?:Vård och service hemma eller boende som är anpassat för äldre personer|Automatiskt studiestöd och plats på universitet)\.?$/i,
+  /^(?:Care and services at home or housing adapted for older people|Automatic study support and a university place)\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -3389,10 +3398,10 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'nameSv', type: 'string', optional: false },
       { name: 'nameEn', type: 'string', optional: false },
-      { name: 'nameText', type: 'LocalizedContentText', optional: true },
+      { name: 'nameText', type: 'Partial<LocalizedContentText>', optional: true },
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
-      { name: 'descriptionText', type: 'LocalizedContentText', optional: true },
+      { name: 'descriptionText', type: 'Partial<LocalizedContentText>', optional: true },
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
@@ -5718,6 +5727,10 @@ function civicStatementSv(source, option) {
   if (match) return `Man måste ha fyllt ${lowerFirst(answer)} för att ${match[1]}`;
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
+  match = q.match(/^Vilken rätt har (.+?) i en demokrati$/i);
+  if (match) {
+    return `I en demokrati har ${lowerFirst(match[1])} rätt att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  }
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
@@ -6042,6 +6055,10 @@ function civicStatementEn(source, option) {
   if (match) {
     const predicate = match[1].replace(/^(.+?)\s+(criminally responsible\b.*)$/i, '$1 is $2');
     return `${upperFirst(predicate)} from ${englishAgePhrase(lowerFirst(answer))}`;
+  }
+  match = q.match(/^What right do (.+?) have in a democracy$/i);
+  if (match) {
+    return `In a democracy, ${lowerFirst(match[1])} have the right to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   }
   match = q.match(/^What does it mean that (.+)$/i);
   if (match) return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -7075,6 +7092,7 @@ function validateQuestionSchema(question, index) {
 const chapters = loadTs('data/chapters.ts', 'chapters');
 const questionModule = loadTs('data/questions.ts');
 const baseQuestions = questionModule.baseQuestions;
+const localizedAdditionalQuestions = questionModule.localizedAdditionalQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
@@ -14877,6 +14895,7 @@ function validateAuthoredSourceParity() {
   if (
     !Array.isArray(baseQuestions) ||
     !Array.isArray(additionalQuestions) ||
+    !Array.isArray(localizedAdditionalQuestions) ||
     !Array.isArray(sourceQuestions)
   ) {
     return;
@@ -14895,7 +14914,7 @@ function validateAuthoredSourceParity() {
     EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
   );
 
-  const authoredQuestions = [...baseQuestions, ...additionalQuestions];
+  const authoredQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
     fail(
       `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,

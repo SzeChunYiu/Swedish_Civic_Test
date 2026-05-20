@@ -35,8 +35,8 @@ test('content TypeScript schema stays in parity with runtime validator expectati
   assert.match(contentTypes, /explanationText\?: LocalizedContentText;/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
-  assert.match(contentTypes, /nameText\?: LocalizedContentText;/);
-  assert.match(contentTypes, /descriptionText\?: LocalizedContentText;/);
+  assert.match(contentTypes, /nameText\?: Partial<LocalizedContentText>;/);
+  assert.match(contentTypes, /descriptionText\?: Partial<LocalizedContentText>;/);
   assert.match(contentTypes, /export interface GlossaryTerm/);
   assert.match(contentTypes, /chapterId\?: string;/);
 });

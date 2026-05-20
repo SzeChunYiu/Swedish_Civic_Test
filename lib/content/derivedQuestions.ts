@@ -1201,6 +1201,13 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
 
+  match = q.match(/^Vilken rätt har (.+?) i en demokrati$/i);
+  if (match) {
+    return `I en demokrati har ${lowerFirst(match[1])} rätt att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
@@ -1660,6 +1667,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) {
     const predicate = match[1].replace(/^(.+?)\s+(criminally responsible\b.*)$/i, '$1 is $2');
     return `${upperFirst(predicate)} from ${englishAgePhrase(lowerFirst(answer))}`;
+  }
+
+  match = q.match(/^What right do (.+?) have in a democracy$/i);
+  if (match) {
+    return `In a democracy, ${lowerFirst(match[1])} have the right to ${lowerFirst(
+      stripLeadingPurposeEn(answer),
+    )}`;
   }
 
   match = q.match(/^What does it mean that (.+)$/i);

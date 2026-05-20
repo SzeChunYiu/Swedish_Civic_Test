@@ -71,10 +71,10 @@ function assertQuestionSourceExportWiring(source) {
     source.includes(
       `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]);`,
     ),
-    'sourceQuestions export must publish baseQuestions followed by additionalQuestions',
+    'sourceQuestions export must publish baseQuestions followed by localizedAdditionalQuestions',
   );
   assert.ok(
     source.includes(
@@ -97,15 +97,21 @@ test('question source exports keep source/generated/published wiring parity', ()
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'data/questions.ts'), 'utf8');
   const { additionalQuestions } = loadTs('data/additionalQuestions.ts');
-  const { baseQuestions, sourceQuestions, generatedPublishedQuestions, questions } =
-    loadTs('data/questions.ts');
+  const {
+    baseQuestions,
+    localizedAdditionalQuestions,
+    sourceQuestions,
+    generatedPublishedQuestions,
+    questions,
+  } = loadTs('data/questions.ts');
 
   assertQuestionSourceExportWiring(source);
 
   assert.equal(summary.sourceQuestions, sourceQuestions.length);
   assert.equal(summary.generatedPublishedQuestions, generatedPublishedQuestions.length);
   assert.equal(summary.questions, questions.length);
-  assert.equal(sourceQuestions.length, baseQuestions.length + additionalQuestions.length);
+  assert.equal(localizedAdditionalQuestions.length, additionalQuestions.length);
+  assert.equal(sourceQuestions.length, baseQuestions.length + localizedAdditionalQuestions.length);
   assert.equal(
     generatedPublishedQuestions.length,
     sourceQuestions.length * generatedVariantsPerSource,
@@ -134,16 +140,16 @@ test('question source export wiring guard rejects reordered authored partitions'
   const source = fs.readFileSync(path.join(repoRoot, 'data/questions.ts'), 'utf8').replace(
     `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
 ]);`,
     `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
-  ...additionalQuestions,
+  ...localizedAdditionalQuestions,
   ...baseQuestions,
 ]);`,
   );
 
   assert.throws(
     () => assertQuestionSourceExportWiring(source),
-    /sourceQuestions export must publish baseQuestions followed by additionalQuestions/,
+    /sourceQuestions export must publish baseQuestions followed by localizedAdditionalQuestions/,
   );
 });
