@@ -1144,8 +1144,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which example describes municipal responsibilities?",
-      "sv": "Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Which everyday services are municipalities responsible for?",
+      "sv": "Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {
@@ -11730,8 +11730,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which example describes municipal responsibilities?",
-      "sv": "Vilket svar stämmer bäst? Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Which answer best matches? Which everyday services are municipalities responsible for?",
+      "sv": "Vilket svar stämmer bäst? Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {
@@ -11778,8 +11778,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.",
-      "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning är exempel på kommunernas ansvar."
+      "en": "Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.",
+      "sv": "Kommuner ansvarar för vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning."
     },
     "opts": [
       {
@@ -11818,8 +11818,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Sending ambassadors to other countries belongs among municipal responsibilities.",
-      "sv": "Att skicka ambassadörer till andra länder är exempel på kommunernas ansvar."
+      "en": "Municipalities are responsible for sending ambassadors to other countries.",
+      "sv": "Kommuner ansvarar för att skicka ambassadörer till andra länder."
     },
     "opts": [
       {
@@ -11858,8 +11858,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which example describes municipal responsibilities?",
-      "sv": "Välj rätt alternativ: Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Choose the correct option: Which everyday services are municipalities responsible for?",
+      "sv": "Välj rätt alternativ: Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {

@@ -317,6 +317,8 @@ const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
   /\bWhich answer describes\b/i,
   /\bVilket är ett sätt att\b/i,
   /\bWhich is a way to\b/i,
+  /\bVilket exempel beskriver kommunernas ansvar\??/i,
+  /\bWhich example describes municipal responsibilities\??/i,
   /\bVilket påstående stämmer om julfirande i Sverige\??/i,
   /\bWhich statement is correct about Christmas celebrations in Sweden\??/i,
 ];
@@ -5679,6 +5681,8 @@ function civicStatementSv(source, option) {
   if (match) return `Sveriges två största öar är ${answer}`;
   match = q.match(/^Vilka är Sveriges fem nationella minoriteter$/i);
   if (match) return `Sveriges fem nationella minoriteter är ${lowerFirst(answer)}`;
+  match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
+  if (match) return `${upperFirst(match[2])} ansvarar för ${lowerFirst(answer)}`;
   match = q.match(/^Vilka är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${answer}`;
   match = q.match(/^Vilka tre företag kallas (.+) i Sverige$/i);
@@ -5744,8 +5748,6 @@ function civicStatementSv(source, option) {
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vilken är (.+)$/i);
   if (match) return `${upperFirst(match[1])} är ${lowerFirst(answer)}`;
-  match = q.match(/^Vilket exempel beskriver (.+)$/i);
-  if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
   match = q.match(/^Hur ofta hålls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hålls ${lowerFirst(answer)}`;
   match = q.match(/^Vilka krav gäller för (.+)$/i);
@@ -5989,6 +5991,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^Which groups are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
+  match = q.match(/^Which (.+?) are (.+?) responsible for$/i);
+  if (match) return `${upperFirst(match[2])} are responsible for ${lowerFirst(answer)}`;
   match = q.match(/^Which three companies are called (.+) in Sweden$/i);
   if (match) return `${answer} are called ${match[1]} in Sweden`;
   match = q.match(/^Approximately how many (.+)$/i);
@@ -6062,9 +6066,6 @@ function civicStatementEn(source, option) {
   if (match) {
     return `The foremost task of ${lowerLeadingEnglishArticle(match[1])} is ${englishInfinitive(stripLeadingPurposeEn(answer))}`;
   }
-  match = q.match(/^Which example describes (.+)$/i);
-  if (match)
-    return `${upperFirst(answer)} ${englishSubjectVerb(answer, 'belongs', 'belong')} among ${match[1]}`;
   match = q.match(/^How often are (.+) held in Sweden$/i);
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
   match = q.match(/^Which requirements apply to (.+)$/i);
