@@ -1210,7 +1210,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 14;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
 const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
 const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -12327,6 +12327,7 @@ function validatePurchaseTypeSchemaParity() {
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let purchaseSource = '';
+  let placementCtaSource = '';
 
   function reject(message) {
     valid = false;
@@ -12335,12 +12336,17 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   try {
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
   } catch (error) {
-    reject(`lib/monetization/purchases.ts could not be read: ${error.message}`);
+    reject(`Remove Ads purchase runtime source could not be read: ${error.message}`);
     return;
   }
 
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -12424,6 +12430,33 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPurchaseSource.includes('setRemoveAdsEntitlement(true, {') &&
         normalizedPurchaseSource.includes('receiptValidation,'),
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
+    ],
+    [
+      /restoreRemoveAdsPurchase/.test(placementCtaSource) &&
+        normalizedPlacementCtaSource.includes(
+          "runPurchaseAction('restore', restoreRemoveAdsPurchase)",
+        ),
+      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'accessibilityLabel={copy.restoreAccessibilityLabel}',
+      ) &&
+        normalizedPlacementCtaSource.includes(
+          'accessibilityHint={copy.restoreAccessibilityHint}',
+        ) &&
+        normalizedPlacementCtaSource.includes('variant="secondary"'),
+      'RemoveAdsPlacementCta restore action must be an accessible secondary action',
+    ],
+    [
+      /not_found:\s*'No previous Remove Ads purchase was found\.'/.test(placementCtaSource) &&
+        /restored:\s*'Purchase restored\. Study ads are being removed\.'/.test(
+          placementCtaSource,
+        ) &&
+        /pending:\s*'Waiting for store confirmation before removing ads\.'/.test(
+          placementCtaSource,
+        ),
+      'RemoveAdsPlacementCta must expose localized pending, not_found, and restored status copy',
     ],
   ];
 
