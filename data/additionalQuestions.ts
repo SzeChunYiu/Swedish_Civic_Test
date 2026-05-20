@@ -1229,8 +1229,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q073',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Kommunerna har ett stort ansvar', pageApprox: 31 },
-    'Vilket svar ger exempel på kommunal välfärd?',
-    'Which answer gives examples of municipal welfare?',
+    'Vilka verksamheter är exempel på kommunal välfärd?',
+    'Which services are examples of municipal welfare?',
     [
       [
         'Barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst',

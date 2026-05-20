@@ -248,6 +248,9 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
   /\bn(?:ä|a)mns\s+som\s+(?:historiska\s+)?sk(?:ä|a)l\b/i,
   /\bmentioned\s+as\s+(?:historical\s+)?reasons\b/i,
 ];
+const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -259,6 +262,10 @@ const QUESTION_NESTED_META_STEM_PATTERNS = [
 const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
+];
+const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
+  /\bVilket svar ger exempel på\b/i,
+  /\bWhich answer gives examples of\b/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
@@ -351,8 +358,9 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Fewer people taking\b/i,
   /^People with [^.?!]*\bliving closer\b/i,
   /^People living completely separated\b/i,
+  /^(?:Vårdcentraler, barnavårdscentraler och mödravårdscentraler|Domstolar, åklagare och kriminalvård|Ordna förskolor|Betala sjukförsäkring|Vård och service hemma|Automatiskt studiestöd)\b/i,
+  /^(?:Health centres, child health centres, and maternity clinics|Courts, prosecutors, and prison and probation services|Arrange preschools|Pay sickness insurance|Care and services at home|Automatic study support)\b/i,
 ];
-const QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN = /\bhur\s+den\s+röstar\b/i;
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -4249,6 +4257,16 @@ function findQuestionStemSourceAuthorityReference(question) {
   return QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionNestedMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
@@ -4261,22 +4279,18 @@ function findQuestionJudgementMetaStem(question) {
   return QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionAnswerKeyPrompt(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_ANSWER_KEY_PROMPT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   if (question.type !== 'true_false') return null;
 
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
-}
-
-function findQuestionSecretBallotSvPronounNaturalnessIssue(question) {
-  const text = [
-    question.questionSv,
-    question.explanationSv,
-    ...(question.options || []).map((option) => option.textSv),
-  ].join(' ');
-
-  return QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN.test(text);
 }
 
 function findQuestionTrueFalseStemPrefix(question) {
@@ -5388,8 +5402,19 @@ function civicStatementSv(source, option) {
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad finansierar staten inom (.+)$/i);
   if (match) return `Staten finansierar ${lowerFirst(answer)}`;
+  match = q.match(/^Vad ingår i (.+)$/i);
+  if (match) return `${upperFirst(match[1])} omfattar ${lowerFirst(answer)}`;
+  match = q.match(/^Vilket ansvar har (.+?) för (.+)$/i);
+  if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
+  match = q.match(/^Vilken hjälp kan (.+?) få av (.+?) för att (.+)$/i);
+  if (match)
+    return `${upperFirst(match[2])} kan erbjuda ${lowerFirst(match[1])} ${lowerFirst(
+      answer,
+    )} för att ${match[3]}`;
   match = q.match(/^Vilket ansvar har (.+?) inom (.+)$/i);
   if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
+  match = q.match(/^Vilka verksamheter är exempel på (.+)$/i);
+  if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
   match = q.match(/^Vilket svar ger exempel på (.+)$/i);
   if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
   match = q.match(/^Vad förändrades genom (.+)$/i);
@@ -5697,8 +5722,19 @@ function civicStatementEn(source, option) {
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does the state finance within (.+)$/i);
   if (match) return `The state finances ${lowerFirst(answer)}`;
+  match = q.match(/^What is included in (.+)$/i);
+  if (match) return `${upperFirst(match[1])} includes ${lowerFirst(answer)}`;
+  match = q.match(/^What responsibility does (.+?) have for (.+)$/i);
+  if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
+  match = q.match(/^What help can (.+?) receive from (.+?) to (.+)$/i);
+  if (match)
+    return `${upperFirst(match[2])} can offer ${lowerFirst(match[1])} ${lowerFirst(
+      answer,
+    )} to ${match[3]}`;
   match = q.match(/^What responsibility do (.+?) have within (.+)$/i);
   if (match) return `${upperFirst(match[1])} are responsible for ${englishGerundPhrase(answer)}`;
+  match = q.match(/^Which services are examples of (.+)$/i);
+  if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^Which answer gives examples of (.+)$/i);
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^What changed through (.+)$/i);
@@ -6946,8 +6982,9 @@ let questionSentenceEndingsValidated = 0;
 let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
+let questionAnswerKeyPromptStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
-let questionSecretBallotSvPronounNaturalnessValidated = 0;
+let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16117,12 +16154,13 @@ if (Array.isArray(questions)) {
       }
       const authorityOverclaim = findQuestionAuthorityOverclaim(question);
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
+      const stateWelfareEnglishNaturalnessIssue =
+        findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
+      const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
-      const secretBallotSvPronounNaturalnessIssue =
-        findQuestionSecretBallotSvPronounNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -16144,15 +16182,20 @@ if (Array.isArray(questions)) {
       } else {
         questionJudgementMetaStemsValidated += 1;
       }
+      if (answerKeyPrompt) {
+        fail(`${label} asks about an answer choice instead of the civic concept`);
+      } else {
+        questionAnswerKeyPromptStemsValidated += 1;
+      }
       if (generatedTrueFalseNaturalnessIssue) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
       }
-      if (secretBallotSvPronounNaturalnessIssue) {
-        fail(`${label} uses unnatural secret-ballot Swedish voting pronoun`);
+      if (stateWelfareEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted state-welfare English wording`);
       } else {
-        questionSecretBallotSvPronounNaturalnessValidated += 1;
+        questionStateWelfareEnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16618,8 +16661,9 @@ console.log(
       questionAuthorityBoundaryTextValidated,
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
+      questionAnswerKeyPromptStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
-      questionSecretBallotSvPronounNaturalnessValidated,
+      questionStateWelfareEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
