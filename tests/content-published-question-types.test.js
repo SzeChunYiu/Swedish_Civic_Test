@@ -2482,8 +2482,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const q256Residuals = {",
+        "const q261Residuals = {",
         "  q280: { questionSv: 'En anledning är att valet är hemligt och ingen annan ska se vilket val de gör.', questionEn: 'One reason is the vote is secret and no one else should see their choice.' },",
         "  q281: { questionSv: 'En anledning är att rösterna ska räknas snabbare.', questionEn: 'One reason is votes are counted faster.' },",
         "};",
@@ -2658,8 +2657,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const q456Residuals = {",
+        "const q461Residuals = {",
         "  q464: { questionSv: 'Förändringen genom den nya grundlagen år 1809 var att Kungens makt begränsades.' },",
         "  q476: { questionSv: 'Saltsjöbadsavtalet från 1938 blev viktigt för Samarbetet mellan fackföreningar och arbetsgivare.', questionEn: 'The 1938 Saltsjöbaden Agreement became important for Cooperation between trade unions and employers.' },",
         "  q480: { questionSv: 'En anledning är att Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.', questionEn: 'One reason is that Sweden had long-lasting strong economic growth and could carry out major reforms.' },",
@@ -2709,8 +2707,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const q506Residuals = {",
+        "const q511Residuals = {",
         "  q536: { questionEn: 'Islam is described as the second largest in Sweden.' },",
         "  q537: { questionEn: 'Judaism is described as the second largest in Sweden.' },",
         "  q540: { questionEn: 'On New Year’s Eve, 31 December,, it is common to celebrate with parties and dinners and at night with fireworks.' },",
@@ -2761,8 +2758,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const q556Residuals = {",
+        "const q561Residuals = {",
         "  q573: { questionEn: 'Advent occurs a Saturday at the end of October or beginning of November.' },",
         "  q584: { questionEn: 'In different places in Sweden, there are buddhist and Hindu congregations and temples for Buddhists and Hindus.' },",
         "  q608: { questionEn: 'Travel to Asia and increased interest in meditation and yoga is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.' },",
@@ -2810,8 +2806,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const q606Residuals = {",
+        "const q611Residuals = {",
         "  q616: { questionSv: 'Regeringsformen skyddar rätten att utöva sin religion och skydd mot diskriminering på grund av tro.', questionEn: 'The Instrument of Government protects the right to practice one’s religion and protection from discrimination because of belief.' },",
         "  q617: { questionSv: 'Regeringsformen skyddar att staten väljer religion åt varje invånare.', questionEn: 'The Instrument of Government protects that the state chooses a religion for each resident.' },",
         "  q621: { questionSv: 'Många svenskar firar id al-fitr och Newroz även om de inte ser sig som religiösa.', questionEn: 'Many Swedes celebrate Eid al-Fitr and Newroz even if they do not see themselves as religious.' },",
@@ -2859,8 +2854,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const q656Residuals = {",
+        "const q661Residuals = {",
         "  q708: { questionSv: 'Julen firar traditionellt jesu födelse inom kristendomen.', questionEn: \\"Christmas traditionally celebrates jesus' birth in Christianity.\\" },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
@@ -2903,8 +2897,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents).replace(
       marker,
       [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const q656Residuals = {",
+        "const q661Residuals = {",
         "  q673: { questionSv: 'Gudstjänsten tidigt på morgonen den 25 december kallas Luciatåg.', questionEn: 'The church service early on the morning of 25 December is called Lucia procession.' },",
         "  q680: { questionSv: 'Barn öppnar en lucka varje dag fram till julafton med en adventskalender hemma.', questionEn: 'Children often open one door each day until Christmas Eve with an Advent calendar at home.' },",
         "  q681: { questionSv: 'Barn tänder stora brasor på kvällen med en adventskalender hemma.', questionEn: 'Children often light large bonfires in the evening with an Advent calendar at home.' },",
