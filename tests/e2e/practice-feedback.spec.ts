@@ -11,20 +11,23 @@ async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await page
-    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
+    .getByRole('radio', {
+      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
+    })
     .click();
-  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
+  await expect(
+    page.getByRole('radio', { name: 'Set question language to English support' }),
+  ).toHaveAttribute('aria-checked', 'true');
 }
 
 async function enableSwedish(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page.getByLabel(/Byt frågespråk till Svenska|Set question language to Swedish/).click();
-  await expect(page.getByLabel('Byt frågespråk till Svenska')).toHaveAttribute(
-    'aria-selected',
+  await page
+    .getByRole('radio', { name: /Byt frågespråk till Svenska|Set question language to Swedish/ })
+    .click();
+  await expect(page.getByRole('radio', { name: 'Byt frågespråk till Svenska' })).toHaveAttribute(
+    'aria-checked',
     'true',
   );
 }
