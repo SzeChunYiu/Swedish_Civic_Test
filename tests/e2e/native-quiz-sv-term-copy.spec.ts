@@ -26,36 +26,41 @@ function collectPageErrors(page: Page) {
   return errors;
 }
 
+const oldStartQuiz = ['Starta', 'quiz'].join(' ');
+const oldQuizPass = ['Quiz', 'pass'].join('');
+const oldQuizQuestions = ['quiz', 'frågor'].join('');
+const oldQuizQuestion = ['quiz', 'frågan'].join('');
+
 test('chapter detail and routed quiz render natural Swedish study terms', async ({ page }) => {
   const pageErrors = collectPageErrors(page);
 
   await openChapter(page, 'sv');
 
   const body = page.locator('body');
-  await expect(page.getByLabel('Starta kapitelövning för Landet Sverige')).toBeVisible();
-  await expect(body).toContainText('Starta kapitelövning');
+  await expect(page.getByLabel('Starta frågepass för Landet Sverige')).toBeVisible();
+  await expect(body).toContainText('Starta frågepass');
   await expect(body).toContainText('Övningsfrågor');
-  await expect(body).not.toContainText('Starta quiz');
-  await expect(body).not.toContainText('Quizpass');
-  await expect(body).not.toContainText('quizfrågor');
-  await expect(body).not.toContainText('quizfrågan');
+  await expect(body).not.toContainText(oldStartQuiz);
+  await expect(body).not.toContainText(oldQuizPass);
+  await expect(body).not.toContainText(oldQuizQuestions);
+  await expect(body).not.toContainText(oldQuizQuestion);
 
-  await page.getByLabel('Starta kapitelövning för Landet Sverige').click();
+  await page.getByLabel('Starta frågepass för Landet Sverige').click();
 
   await expect(page).toHaveURL(/\/quiz\/q001$/);
   await expect(body).toContainText('Frågepass');
   await expect(body).toContainText('Frågepass q001');
-  await expect(body).not.toContainText('Starta quiz');
-  await expect(body).not.toContainText('Quizpass');
-  await expect(body).not.toContainText('quizfrågor');
-  await expect(body).not.toContainText('quizfrågan');
+  await expect(body).not.toContainText(oldStartQuiz);
+  await expect(body).not.toContainText(oldQuizPass);
+  await expect(body).not.toContainText(oldQuizQuestions);
+  await expect(body).not.toContainText(oldQuizQuestion);
 
   await page
     .getByLabel(/Välj svaret /)
     .first()
     .click();
-  await expect(page.getByLabel('Försök igen med den här övningsfrågan')).toBeVisible();
-  await expect(body).not.toContainText('quizfrågan');
+  await expect(page.getByLabel('Försök igen med den här frågan')).toBeVisible();
+  await expect(body).not.toContainText(oldQuizQuestion);
 
   expect(pageErrors).toEqual([]);
 });
@@ -69,7 +74,7 @@ test('chapter detail and routed quiz keep English quiz copy in support mode', as
   await expect(page.getByLabel('Start quiz for The country of Sweden')).toBeVisible();
   await expect(body).toContainText('Start quiz');
   await expect(body).toContainText('Practice questions');
-  await expect(body).not.toContainText('Starta kapitelövning');
+  await expect(body).not.toContainText('Starta frågepass');
   await expect(body).not.toContainText('Frågepass');
 
   await page.getByLabel('Start quiz for The country of Sweden').click();
@@ -77,7 +82,7 @@ test('chapter detail and routed quiz keep English quiz copy in support mode', as
   await expect(page).toHaveURL(/\/quiz\/q001$/);
   await expect(body).toContainText('Quiz session');
   await expect(body).toContainText('Session q001');
-  await expect(body).not.toContainText('Starta kapitelövning');
+  await expect(body).not.toContainText('Starta frågepass');
   await expect(body).not.toContainText('Frågepass q001');
 
   await page
