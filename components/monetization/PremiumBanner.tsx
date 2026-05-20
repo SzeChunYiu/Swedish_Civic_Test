@@ -40,9 +40,9 @@ type PremiumBannerCopy = {
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
     body: (price) =>
-      `Den kostnadsfria versionen visar annonser från AdMob. Betala ${price} en gång för att ta bort annonser från studieskärmar medan prov förblir annonsfria.`,
+      `Den kostnadsfria versionen visar annonser från AdMob. Betala ${price} en gång för att ta bort annonser från studieskärmar medan tidsatta övningsprov i appen redan är annonsfria.`,
     buyAccessibilityHint:
-      'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
+      'Köpet tar bort annonser efter butikens bekräftelse. Tidsatta övningsprov i appen är redan annonsfria.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',

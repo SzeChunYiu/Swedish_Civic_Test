@@ -892,6 +892,12 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Ta bort annonser/);
   assert.match(source, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(source, /Återställ köp av Ta bort annonser/);
+  assert.match(source, /tidsatta övningsprov i appen redan är annonsfria/);
+  assert.match(source, /Tidsatta övningsprov i appen är redan annonsfria/);
+  assert.doesNotMatch(
+    source,
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
+  );
   assert.match(source, /Köpet bekräftades, men annonsfri status kunde inte sparas/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
   assert.match(source, /Remove Ads/);
