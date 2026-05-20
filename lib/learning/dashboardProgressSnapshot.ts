@@ -97,6 +97,7 @@ export function buildDashboardProgressSnapshot({
   return {
     currentStreak: answerDates.length,
     dailyGoalAnswers,
+    dailyChallengeCompletions: {},
     level: calculateLevel(totalXp),
     questionProgress,
     sessions: practiceSession ? [practiceSession, ...examSessions] : examSessions,
