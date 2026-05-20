@@ -6242,6 +6242,10 @@ const radius = themeModule.radius;
 const shadows = themeModule.shadows;
 const space = themeModule.space;
 const typography = themeModule.typography;
+const mascotModule = loadTs('lib/mascot/catalog.ts');
+const MASCOT_CATALOG = mascotModule.MASCOT_CATALOG;
+const MASCOT_EXPRESSIONS = mascotModule.MASCOT_EXPRESSIONS;
+const mascotAssetPath = mascotModule.mascotAssetPath;
 const adsModule = loadTs('lib/monetization/ads.ts');
 const adsConfig = adsModule.adsConfig;
 const shouldShowAd = adsModule.shouldShowAd;
@@ -6430,6 +6434,8 @@ let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
+let mascotAssetFilesValidated = 0;
+let mascotAssetContractValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
@@ -11810,6 +11816,141 @@ function validateThemeTokenSchema() {
   }
 }
 
+function validateMascotAssetContract() {
+  let valid = true;
+  const assetSizeLimitBytes = 8192;
+  const expectedAssetCount =
+    Array.isArray(MASCOT_CATALOG) && Array.isArray(MASCOT_EXPRESSIONS)
+      ? MASCOT_CATALOG.length * MASCOT_EXPRESSIONS.length
+      : 0;
+  const approvedColors = new Set([
+    themeModule.SWEDISH_FLAG_BLUE,
+    themeModule.SWEDISH_FLAG_GOLD,
+    colors.canvas,
+    colors.surface,
+    colors.surfaceWarm,
+    colors.border,
+    colors.text,
+    colors.textSoft,
+    colors.textSecondary,
+    colors.textPlaceholder,
+    colors.warning,
+    colors.warningSoft,
+    colors.success,
+    colors.successSoft,
+    colors.teal,
+    colors.pink,
+    colors.brown,
+    '#c84a31',
+    '#f2b879',
+    '#f7d9b0',
+  ]);
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Array.isArray(MASCOT_CATALOG) || MASCOT_CATALOG.length !== 10) {
+    reject('mascot catalog must contain exactly 10 entries before asset validation');
+    return;
+  }
+  if (!Array.isArray(MASCOT_EXPRESSIONS) || MASCOT_EXPRESSIONS.length !== 5) {
+    reject('mascot expressions must contain exactly 5 entries before asset validation');
+    return;
+  }
+  if (typeof mascotAssetPath !== 'function') {
+    reject('mascotAssetPath must be exported as a function');
+    return;
+  }
+
+  for (const mascot of MASCOT_CATALOG) {
+    for (const expression of MASCOT_EXPRESSIONS) {
+      const relativeAssetPath = mascotAssetPath(mascot.id, expression);
+      const expectedPath = `assets/mascot/${mascot.id}/${expression}.svg`;
+      let assetIsValid = true;
+
+      function rejectAsset(message) {
+        assetIsValid = false;
+        reject(message);
+      }
+
+      if (relativeAssetPath !== expectedPath) {
+        rejectAsset(`mascot asset path for ${mascot.id}/${expression} must be ${expectedPath}`);
+      }
+      if (
+        typeof relativeAssetPath !== 'string' ||
+        !relativeAssetPath.startsWith(`assets/mascot/${mascot.id}/`) ||
+        relativeAssetPath.includes('..')
+      ) {
+        rejectAsset(`mascot asset path ${relativeAssetPath} must stay inside assets/mascot`);
+      }
+
+      const absoluteAssetPath = path.resolve(repoRoot, relativeAssetPath);
+      if (!absoluteAssetPath.startsWith(path.resolve(repoRoot, 'assets/mascot'))) {
+        rejectAsset(`mascot asset ${relativeAssetPath} resolves outside the mascot asset root`);
+      }
+
+      let svg = '';
+      try {
+        const stat = fs.statSync(absoluteAssetPath);
+        if (!stat.isFile()) {
+          rejectAsset(`mascot asset ${relativeAssetPath} must be a file`);
+        }
+        if (stat.size <= 0 || stat.size > assetSizeLimitBytes) {
+          rejectAsset(
+            `mascot asset ${relativeAssetPath} must be 1-${assetSizeLimitBytes} bytes, found ${stat.size}`,
+          );
+        }
+        svg = fs.readFileSync(absoluteAssetPath, 'utf8');
+      } catch (error) {
+        rejectAsset(`mascot asset ${relativeAssetPath} could not be read: ${error.message}`);
+      }
+
+      if (
+        !/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"[^>]+viewBox="0 0 128 128"/.test(svg)
+      ) {
+        rejectAsset(`mascot asset ${relativeAssetPath} must be an inline 128x128 SVG`);
+      }
+      if (/<script\b|<foreignObject\b|<image\b|\b(?:href|xlink:href)=|url\(/i.test(svg)) {
+        rejectAsset(
+          `mascot asset ${relativeAssetPath} must not reference remote or embedded assets`,
+        );
+      }
+      if (/<linearGradient\b|<radialGradient\b|<filter\b/i.test(svg)) {
+        rejectAsset(`mascot asset ${relativeAssetPath} must use flat colors only`);
+      }
+
+      const assetColors = svg.match(/#[0-9a-fA-F]{6}/g) ?? [];
+      if (assetColors.length === 0) {
+        rejectAsset(`mascot asset ${relativeAssetPath} must use explicit flat colors`);
+      }
+      for (const color of assetColors) {
+        if (color !== color.toLowerCase()) {
+          rejectAsset(`mascot asset ${relativeAssetPath} color ${color} must be lower-case`);
+        }
+        if (!approvedColors.has(color.toLowerCase())) {
+          rejectAsset(`mascot asset ${relativeAssetPath} uses unapproved color ${color}`);
+        }
+      }
+      if (
+        !svg.includes(themeModule.SWEDISH_FLAG_BLUE) ||
+        !svg.includes(themeModule.SWEDISH_FLAG_GOLD)
+      ) {
+        rejectAsset(
+          `mascot asset ${relativeAssetPath} must use the official Swedish flag blue and gold constants`,
+        );
+      }
+
+      if (assetIsValid) mascotAssetFilesValidated += 1;
+    }
+  }
+
+  if (valid && mascotAssetFilesValidated === expectedAssetCount) {
+    mascotAssetContractValidated = true;
+  }
+}
+
 function validateGlossaryTerms() {
   if (!Array.isArray(glossaryTerms)) return;
 
@@ -14314,6 +14455,7 @@ validateMobileAdsConsentHookParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
+validateMascotAssetContract();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
@@ -14503,6 +14645,8 @@ console.log(
       themeShadowTokensValidated,
       themeMotionTokensValidated,
       themeTokenSchemaValidated,
+      mascotAssetFilesValidated,
+      mascotAssetContractValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
