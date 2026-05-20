@@ -888,31 +888,36 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
   assert.match(source, /const copy = profileCopy\[language\]/);
+  assert.match(
+    source,
+    /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
+  );
+  assert.match(
+    source,
+    /const audioBadge = audioEnabled \? copy\.audioEnabledBadge : copy\.audioMutedBadge;/,
+  );
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
-  assert.match(source, /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\)/);
-  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
-  assert.match(source, /\{copy\.settingsShortcutHelper\}/);
+  assert.match(source, /accessibilityHint=\{copy\.openSettingsHint\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /<Badge tone=\{audioEnabled \? 'green' : 'warm'\}>\{audioBadge\}<\/Badge>/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /så att dina studier förblir privata/);
   assert.match(source, /Studieinställningar/);
   assert.match(source, /Ljud på/);
   assert.match(source, /Ljud av/);
-  assert.match(source, /Dagligt mål, språk och ljud/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
-  assert.match(source, /Öppna inställningar/);
+  assert.match(source, /Justera mål, språk och ljud/);
   assert.match(source, /Första övningen/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
   assert.match(source, /Audio on/);
   assert.match(source, /Audio off/);
-  assert.match(source, /Daily goal, language, and audio/);
   assert.match(source, /No badges yet/);
-  assert.match(source, /Open settings/);
+  assert.match(source, /Adjust goal, language, and audio/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
