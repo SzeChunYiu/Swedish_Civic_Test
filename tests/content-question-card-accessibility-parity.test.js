@@ -25,22 +25,42 @@ function assertProvenanceBadgeSourceNoteDisclosure(source) {
     'utf8',
   );
   const requiredRules = [
-    [/import \{ useState \} from 'react';/, 'source-note state'],
+    [/import \{ useRef, useState \} from 'react';/, 'source-note state and pointer guard'],
     [/Pressable, StyleSheet, Text, View/, 'pressable badge imports'],
     [/getProvenanceDescription,/, 'localized provenance description import'],
     [/export interface ProvenanceBadgeProps \{/, 'explicit props interface'],
+    [/const pointerPressStarted = useRef\(false\);/, 'pointer press focus guard'],
     [/const \[sourceNoteVisible, setSourceNoteVisible\] = useState\(false\);/, 'collapsed default'],
     [
       /const sourceNoteText = getProvenanceDescription\(provenance, language\);/,
       'localized source note lookup',
     ],
+    [
+      /const showSourceNote = \(\) => \{[\s\S]*setSourceNoteVisible\(true\);[\s\S]*\};/,
+      'focus disclosure',
+    ],
+    [
+      /const toggleSourceNote = \(\) => setSourceNoteVisible\(\(visible\) => !visible\);/,
+      'press and keyboard toggle',
+    ],
+    [
+      /const beginPointerPress = \(\) => \{[\s\S]*pointerPressStarted\.current = true;/,
+      'pointer start guard',
+    ],
+    [
+      /const endPointerPress = \(\) => \{[\s\S]*pointerPressStarted\.current = false;/,
+      'pointer end guard',
+    ],
     [/sourceNotePrefix: 'Källanteckning'/, 'Swedish source-note prefix'],
     [/sourceNotePrefix: 'Source note'/, 'English source-note prefix'],
+    [/aria-expanded=\{sourceNoteVisible\}/, 'web expanded mirror'],
     [/accessibilityRole="button"/, 'button role'],
     [/accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/, 'expanded state'],
     [/hitSlop=\{space\[1\]\}/, 'token hit slop'],
-    [/onFocus=\{\(\) => setSourceNoteVisible\(true\)\}/, 'focus disclosure'],
-    [/onPress=\{\(\) => setSourceNoteVisible\(true\)\}/, 'press disclosure'],
+    [/onFocus=\{showSourceNote\}/, 'focus disclosure handler'],
+    [/onPress=\{toggleSourceNote\}/, 'dismissible press handler'],
+    [/onPressIn=\{beginPointerPress\}/, 'pointer press start handler'],
+    [/onPressOut=\{endPointerPress\}/, 'pointer press end handler'],
     [/sourceNoteVisible \? \(/, 'conditional source-note render'],
     [/\{noteLabel\}/, 'visible source-note label'],
   ];
@@ -117,17 +137,29 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/);
 });
 
-test('QuestionCard provenance badge reveals localized source notes on press or focus', () => {
+test('QuestionCard provenance badge toggles localized source notes on press or focus', () => {
   assertProvenanceBadgeSourceNoteDisclosure(readProvenanceBadgeSource());
 });
 
 test('QuestionCard provenance badge parity rejects static source-note drift', () => {
   const mutatedSource = readProvenanceBadgeSource().replace(
-    '        onFocus={() => setSourceNoteVisible(true)}\n',
+    '        onFocus={showSourceNote}\n',
     '',
   );
 
   assert.throws(() => assertProvenanceBadgeSourceNoteDisclosure(mutatedSource), /focus disclosure/);
+});
+
+test('QuestionCard provenance badge parity rejects one-way press disclosure', () => {
+  const mutatedSource = readProvenanceBadgeSource().replace(
+    '  const toggleSourceNote = () => setSourceNoteVisible((visible) => !visible);',
+    '  const toggleSourceNote = () => setSourceNoteVisible(true);',
+  );
+
+  assert.throws(
+    () => assertProvenanceBadgeSourceNoteDisclosure(mutatedSource),
+    /press and keyboard toggle/,
+  );
 });
 
 test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {

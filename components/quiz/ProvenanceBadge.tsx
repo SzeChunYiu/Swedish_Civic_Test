@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
@@ -46,6 +46,7 @@ export interface ProvenanceBadgeProps {
 }
 
 export function ProvenanceBadge({ question, language = 'sv' }: ProvenanceBadgeProps) {
+  const pointerPressStarted = useRef(false);
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
 
   if (!question) return null;
@@ -66,18 +67,32 @@ export function ProvenanceBadge({ question, language = 'sv' }: ProvenanceBadgePr
         ? { badge: styles.supplementaryBadge, label: styles.supplementaryLabel }
         : { badge: styles.editorialBadge, label: styles.editorialLabel };
   const noteLabel = `${copy.sourceNotePrefix}: ${sourceNoteText}`;
+  const showSourceNote = () => {
+    if (!pointerPressStarted.current) setSourceNoteVisible(true);
+  };
+  const toggleSourceNote = () => setSourceNoteVisible((visible) => !visible);
+  const beginPointerPress = () => {
+    pointerPressStarted.current = true;
+  };
+  const endPointerPress = () => {
+    pointerPressStarted.current = false;
+  };
 
   return (
     <View style={styles.container}>
       <Pressable
+        aria-expanded={sourceNoteVisible}
+        aria-label={`${copy.accessibilityPrefix}: ${label}. ${noteLabel}`}
         accessibilityHint={copy.sourceNoteHint}
         accessibilityLabel={`${copy.accessibilityPrefix}: ${label}. ${noteLabel}`}
         accessibilityRole="button"
         accessibilityState={{ expanded: sourceNoteVisible }}
         hitSlop={space[1]}
         onBlur={() => setSourceNoteVisible(false)}
-        onFocus={() => setSourceNoteVisible(true)}
-        onPress={() => setSourceNoteVisible(true)}
+        onFocus={showSourceNote}
+        onPress={toggleSourceNote}
+        onPressIn={beginPointerPress}
+        onPressOut={endPointerPress}
         style={({ pressed }) => [
           styles.badge,
           tone.badge,
