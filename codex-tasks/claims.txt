@@ -797,3 +797,4 @@ CLAIMED Q147-DEMOCRACY-STRONGER-EN-OPTION-FRAGMENTS-1 by billy-laptop-old-314167
 
 CLAIMED P0-GATE-VALIDATE-CONTENT-DERIVED-MIRROR-1 by pane4-data-integrity-takeover-369518 2026-05-20T08:08:44Z (takeover: prior claim has no remote branch and current origin/main validate:content is red on derived mirror drift)
 CLAIMED STATIC-SITE-E2E-SERVER-HARNESS-1 by pane3-uiux-1779265600 2026-05-20T08:26:40Z
+CLAIMED CITIZENSHIP-REQUIREMENTS-SOURCE-LINK-HREF-PARITY-1 by pane3-uiux-463677 2026-05-20T08:23:50Z
