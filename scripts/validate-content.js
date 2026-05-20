@@ -16153,6 +16153,20 @@ function validateQuestionSpeechTextParity() {
   }
 }
 
+if (process.argv.includes('--focus-question-speech-text-parity')) {
+  validateQuestionSpeechTextParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    publishedQuestions: Array.isArray(questions)
+      ? questions.filter((question) => question.reviewStatus === 'published').length
+      : 0,
+    questionSpeechTextQuestionsValidated,
+    questionSpeechTextOptionsValidated,
+    questionSpeechTextParityValidated,
+  });
+  process.exit(0);
+}
+
 function resetSpeechEvents() {
   speechEvents.length = 0;
 }
