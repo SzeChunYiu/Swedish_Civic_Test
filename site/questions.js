@@ -6621,7 +6621,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
@@ -32924,7 +32924,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
@@ -32967,7 +32967,7 @@
     "type": "true_false",
     "q": {
       "en": "That elections in a democracy are secret means no one has to reveal how they vote.",
-      "sv": "Att val i en demokrati är hemliga betyder att ingen behöver avslöja hur den röstar."
+      "sv": "Att val i en demokrati är hemliga betyder att väljare inte behöver avslöja hur de röstar."
     },
     "opts": [
       {
@@ -33052,7 +33052,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
