@@ -42943,174 +42943,434 @@
 ];
 
   window.SMT_CHAPTERS_META = [
-  {
-    "id": 1,
-    "emoji": "🌍",
-    "title": {
-      "en": "The country of Sweden",
-      "sv": "Landet Sverige"
+    {
+      "id": 1,
+      "emoji": "🌍",
+      "title": {
+        "en": "The country of Sweden",
+        "sv": "Landet Sverige",
+        "zh-Hans": "瑞典这个国家",
+        "zh-Hant": "瑞典這個國家",
+        "ar": "دولة السويد",
+        "ckb": "وڵاتی سوید",
+        "fa": "کشور سوئد",
+        "pl": "Kraj Szwecja",
+        "so": "Dalka Iswiidhan",
+        "ti": "ሃገረ ሽወደን",
+        "tr": "İsveç ülkesi",
+        "uk": "Країна Швеція"
+      },
+      "description": {
+        "en": "Geography, climate, nature, population, natural resources, and climate change.",
+        "sv": "Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.",
+        "zh-Hans": "地理、气候、自然、人口、自然资源与气候变化。",
+        "zh-Hant": "地理、氣候、自然、人口、自然資源與氣候變遷。",
+        "ar": "الجغرافيا والمناخ والطبيعة والسكان والموارد الطبيعية وتغيّر المناخ.",
+        "ckb": "جوگرافیا، کەشوهەوا، سروشت، دانیشتووان، سەرچاوە سروشتییەکان و گۆڕانی کەشوهەوا.",
+        "fa": "جغرافیا، آب‌وهوا، طبیعت، جمعیت، منابع طبیعی و تغییرات اقلیمی.",
+        "pl": "Geografia, klimat, przyroda, ludność, zasoby naturalne i zmiany klimatu.",
+        "so": "Juqraafi, cimilo, dabeecad, dadweyne, kheyraadka dabiiciga ah iyo isbeddelka cimilada.",
+        "ti": "ጂኦግራፊ፣ ክሊማ፣ ተፈጥሮ፣ ህዝቢ፣ ተፈጥሮኣዊ ጸጋታትን ለውጢ ኩነታት ኣየርን።",
+        "tr": "Coğrafya, iklim, doğa, nüfus, doğal kaynaklar ve iklim değişikliği.",
+        "uk": "Географія, клімат, природа, населення, природні ресурси та зміна клімату."
+      },
+      "questionCount": 65
     },
-    "description": {
-      "en": "Geography, climate, nature, population, natural resources, and climate change.",
-      "sv": "Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar."
+    {
+      "id": 2,
+      "emoji": "🏛",
+      "title": {
+        "en": "Sweden's democratic system",
+        "sv": "Sveriges demokratiska system",
+        "zh-Hans": "瑞典的民主制度",
+        "zh-Hant": "瑞典的民主制度",
+        "ar": "النظام الديمقراطي في السويد",
+        "ckb": "سیستەمی دیموکراتیی سوید",
+        "fa": "نظام دموکراتیک سوئد",
+        "pl": "Demokratyczny system Szwecji",
+        "so": "Nidaamka dimoqraadiga ah ee Iswiidhan",
+        "ti": "ደሞክራስያዊ ስርዓት ሽወደን",
+        "tr": "İsveç'in demokratik sistemi",
+        "uk": "Демократична система Швеції"
+      },
+      "description": {
+        "en": "Democracy, rule by the people, ways to influence society, and threats to democracy.",
+        "sv": "Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.",
+        "zh-Hans": "民主、人民主权、影响社会的途径，以及对民主的威胁。",
+        "zh-Hant": "民主、人民主權、影響社會的途徑，以及對民主的威脅。",
+        "ar": "الديمقراطية وحكم الشعب وسُبل التأثير في المجتمع والتهديدات التي تواجه الديمقراطية.",
+        "ckb": "دیموکراسی، فەرمانڕەوایی گەل، ڕێگاکانی کاریگەری لەسەر کۆمەڵگا و هەڕەشەکان لەسەر دیموکراسی.",
+        "fa": "دموکراسی، مردم‌سالاری، راه‌های تأثیرگذاری بر جامعه و تهدیدهای علیه دموکراسی.",
+        "pl": "Demokracja, rządy ludu, sposoby wpływania na społeczeństwo i zagrożenia dla demokracji.",
+        "so": "Dimoqraadiyad, xukunka dadweynaha, siyaabaha lagu saameeyo bulshada iyo hanjabaadaha ka dhanka ah dimoqraadiyadda.",
+        "ti": "ደሞክራሲ፣ ህዝባዊ ምሕደራ፣ ኣብ ሕብረተሰብ ጽልዋ ናይ ምግባር መንገድታትን ኣንጻር ደሞክራሲ ዘሎ ስግኣታትን።",
+        "tr": "Demokrasi, halkın yönetimi, topluma etki etme yolları ve demokrasiye yönelik tehditler.",
+        "uk": "Демократія, народовладдя, способи впливу на суспільство та загрози демократії."
+      },
+      "questionCount": 50
     },
-    "questionCount": 65
-  },
-  {
-    "id": 2,
-    "emoji": "🏛",
-    "title": {
-      "en": "Sweden's democratic system",
-      "sv": "Sveriges demokratiska system"
+    {
+      "id": 3,
+      "emoji": "🗳",
+      "title": {
+        "en": "How Sweden is governed",
+        "sv": "Så här styrs Sverige",
+        "zh-Hans": "瑞典如何治理",
+        "zh-Hant": "瑞典如何治理",
+        "ar": "كيف تُحكَم السويد",
+        "ckb": "سوید چۆن بەڕێوە دەبردرێت",
+        "fa": "سوئد چگونه اداره می‌شود",
+        "pl": "Jak rządzona jest Szwecja",
+        "so": "Sida Iswiidhan loo maamulo",
+        "ti": "ሽወደን ብኸመይ ከም እትመሓደር",
+        "tr": "İsveç nasıl yönetilir",
+        "uk": "Як управляється Швеція"
+      },
+      "description": {
+        "en": "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
+        "sv": "Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick.",
+        "zh-Hans": "政治权力如何在国家、region（大区）和 kommun（市镇）之间划分，以及瑞典的政体。",
+        "zh-Hant": "政治權力如何在國家、region（大區）和 kommun（市鎮）之間劃分，以及瑞典的政體。",
+        "ar": "كيف تُقسَّم السلطة السياسية بين الدولة والأقاليم (region) والبلديات (kommun)، إضافةً إلى نظام الحكم في السويد.",
+        "ckb": "ئەوەی هێزی سیاسی چۆن لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun) دابەش دەکرێت، هەروەها شێوەی فەرمانڕەواییی سوید.",
+        "fa": "اینکه قدرت سیاسی چگونه میان دولت، مناطق (region) و کمون‌ها (kommun) تقسیم می‌شود، و نیز شکل حکومت سوئد.",
+        "pl": "Jak władza polityczna jest dzielona między państwo, regiony (region) i kommun, oraz ustrój państwowy Szwecji.",
+        "so": "Sida awoodda siyaasadeed loogu qaybiyo dawladda, region-yada iyo kommun-yada, iyo nidaamka dawladnimo ee Iswiidhan.",
+        "ti": "ፖለቲካዊ ስልጣን ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun ብኸመይ ከም ዝመቓራሕ፣ ከምኡ’ውን ስርዓተ መንግስቲ ሽወደን።",
+        "tr": "Siyasi gücün devlet, region'lar ve kommun'lar arasında nasıl paylaşıldığı ve İsveç'in yönetim biçimi.",
+        "uk": "Як політична влада розподіляється між державою, region і kommun, а також державний устрій Швеції."
+      },
+      "questionCount": 55
     },
-    "description": {
-      "en": "Democracy, rule by the people, ways to influence society, and threats to democracy.",
-      "sv": "Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin."
+    {
+      "id": 4,
+      "emoji": "🗳",
+      "title": {
+        "en": "Political elections and parties",
+        "sv": "Politiska val och partier",
+        "zh-Hans": "政治选举与政党",
+        "zh-Hant": "政治選舉與政黨",
+        "ar": "الانتخابات السياسية والأحزاب",
+        "ckb": "هەڵبژاردنە سیاسییەکان و پارتەکان",
+        "fa": "انتخابات سیاسی و احزاب",
+        "pl": "Wybory polityczne i partie",
+        "so": "Doorashooyinka siyaasadeed iyo xisbiyada",
+        "ti": "ፖለቲካዊ ምርጫታትን ሰልፍታትን",
+        "tr": "Siyasi seçimler ve partiler",
+        "uk": "Політичні вибори та партії"
+      },
+      "description": {
+        "en": "Elections, voting, referendums, and the role of political parties in Sweden.",
+        "sv": "Val, röstning, folkomröstningar och politiska partiers roll i Sverige.",
+        "zh-Hans": "选举、投票、公民投票，以及政党在瑞典所扮演的角色。",
+        "zh-Hant": "選舉、投票、公民投票，以及政黨在瑞典所扮演的角色。",
+        "ar": "الانتخابات والتصويت والاستفتاءات ودور الأحزاب السياسية في السويد.",
+        "ckb": "هەڵبژاردن، دەنگدان، ڕاپرسییەکان و ڕۆڵی پارتە سیاسییەکان لە سوید.",
+        "fa": "انتخابات، رأی‌گیری، همه‌پرسی‌ها و نقش احزاب سیاسی در سوئد.",
+        "pl": "Wybory, głosowanie, referenda oraz rola partii politycznych w Szwecji.",
+        "so": "Doorashooyinka, codbixinta, afti iyo doorka xisbiyada siyaasadeed ee Iswiidhan.",
+        "ti": "ምርጫታት፣ ምድማጽ፣ ህዝበ-ውሳነታትን ኣብ ሽወደን ዘሎ ተራ ፖለቲካዊ ሰልፍታትን።",
+        "tr": "Seçimler, oy verme, referandumlar ve İsveç'te siyasi partilerin rolü.",
+        "uk": "Вибори, голосування, референдуми та роль політичних партій у Швеції."
+      },
+      "questionCount": 70
     },
-    "questionCount": 50
-  },
-  {
-    "id": 3,
-    "emoji": "🗳",
-    "title": {
-      "en": "How Sweden is governed",
-      "sv": "Så här styrs Sverige"
+    {
+      "id": 5,
+      "emoji": "⚖️",
+      "title": {
+        "en": "Law and justice",
+        "sv": "Lag och rätt",
+        "zh-Hans": "法律与司法",
+        "zh-Hant": "法律與司法",
+        "ar": "القانون والعدالة",
+        "ckb": "یاسا و دادپەروەری",
+        "fa": "قانون و عدالت",
+        "pl": "Prawo i sprawiedliwość",
+        "so": "Sharciga iyo caddaaladda",
+        "ti": "ሕግን ፍትሕን",
+        "tr": "Hukuk ve adalet",
+        "uk": "Право та правосуддя"
+      },
+      "description": {
+        "en": "The fundamental laws, the justice system, rule of law, and the right of public access.",
+        "sv": "Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.",
+        "zh-Hans": "基本法（Grundlagarna）、司法体系、法治保障与公众通行权（allemansrätten）。",
+        "zh-Hant": "基本法（Grundlagarna）、司法體系、法治保障與公眾通行權（allemansrätten）。",
+        "ar": "القوانين الأساسية (Grundlagarna) ونظام القضاء وسيادة القانون وحقّ الوصول العام إلى الطبيعة (Allemansrätten).",
+        "ckb": "یاسا بنەڕەتییەکان (Grundlagarna)، سیستەمی دادوەری، سەروەریی یاسا و مافی گشتیی دەستگەیشتن بە سروشت (Allemansrätten).",
+        "fa": "قوانین اساسی (Grundlagarna)، نظام قضایی، حاکمیت قانون و حق دسترسی همگانی به طبیعت (Allemansrätten).",
+        "pl": "Grundlagarna (ustawy zasadnicze), wymiar sprawiedliwości, państwo prawa i allemansrätten (prawo do swobodnego dostępu do przyrody).",
+        "so": "Grundlagarna (sharciyada aasaasiga ah), nidaamka caddaaladda, sharcinimada iyo allemansrätten (xaqa loo leeyahay helitaanka dabeecadda).",
+        "ti": "Grundlagarna (መሰረታውያን ሕግታት)፣ ስርዓተ ፍትሒ፣ ግዝኣተ ሕግን allemansrätten (ናጻ ናብ ተፈጥሮ ናይ ምብጻሕ መሰል)ን።",
+        "tr": "Grundlagarna (anayasal temel yasalar), yargı sistemi, hukukun üstünlüğü ve allemansrätten (doğaya serbest erişim hakkı).",
+        "uk": "Grundlagarna (основні закони), система правосуддя, верховенство права та allemansrätten (право вільного доступу до природи)."
+      },
+      "questionCount": 45
     },
-    "description": {
-      "en": "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
-      "sv": "Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick."
+    {
+      "id": 6,
+      "emoji": "📰",
+      "title": {
+        "en": "The role of the media",
+        "sv": "Mediernas roll",
+        "zh-Hans": "媒体的角色",
+        "zh-Hant": "媒體的角色",
+        "ar": "دور وسائل الإعلام",
+        "ckb": "ڕۆڵی ڕاگەیاندنەکان",
+        "fa": "نقش رسانه‌ها",
+        "pl": "Rola mediów",
+        "so": "Doorka warbaahinta",
+        "ti": "ተራ ማዕከናት ዜና",
+        "tr": "Medyanın rolü",
+        "uk": "Роль медіа"
+      },
+      "description": {
+        "en": "Free media, different types of media, public service broadcasting, and source criticism.",
+        "sv": "Fria medier, olika slags medier, public service och källkritik.",
+        "zh-Hans": "自由媒体、各类媒体、公共服务广播（public service）与信息来源辨析。",
+        "zh-Hant": "自由媒體、各類媒體、公共服務廣播（public service）與資料來源判讀。",
+        "ar": "الإعلام الحرّ وأنواع وسائل الإعلام المختلفة وإعلام الخدمة العامة (public service) وتقييم المصادر.",
+        "ckb": "ڕاگەیاندنی ئازاد، جۆرە جیاوازەکانی ڕاگەیاندن، ڕاگەیاندنی خزمەتگوزاریی گشتی (public service) و هەڵسەنگاندنی سەرچاوە.",
+        "fa": "رسانه‌های آزاد، انواع گوناگون رسانه‌ها، رسانهٔ خدمات عمومی (public service) و ارزیابی منابع.",
+        "pl": "Wolne media, różne rodzaje mediów, public service (media publiczne) i ocena wiarygodności źródeł (källkritik).",
+        "so": "Warbaahin xor ah, noocyo kala duwan oo warbaahin ah, public service (warbaahinta dadweynaha) iyo qiimeynta ilaha macluumaadka (källkritik).",
+        "ti": "ናጻ ማዕከናት ዜና፣ ዝተፈላለዩ ዓይነታት ማዕከናት ዜና፣ public service (ህዝባዊ መሰናድኦ ዜና) ከምኡ’ውን ነቐፌታዊ ኣረኣእያ ምንጪ (källkritik)።",
+        "tr": "Özgür medya, farklı medya türleri, public service (kamu yayıncılığı) ve kaynak değerlendirmesi (källkritik).",
+        "uk": "Вільні медіа, різні види медіа, public service (суспільне мовлення) та критична оцінка джерел (källkritik)."
+      },
+      "questionCount": 55
     },
-    "questionCount": 55
-  },
-  {
-    "id": 4,
-    "emoji": "🗳",
-    "title": {
-      "en": "Political elections and parties",
-      "sv": "Politiska val och partier"
+    {
+      "id": 7,
+      "emoji": "🤝",
+      "title": {
+        "en": "Human rights",
+        "sv": "Mänskliga rättigheter",
+        "zh-Hans": "人权",
+        "zh-Hant": "人權",
+        "ar": "حقوق الإنسان",
+        "ckb": "مافەکانی مرۆڤ",
+        "fa": "حقوق بشر",
+        "pl": "Prawa człowieka",
+        "so": "Xuquuqda bani'aadamka",
+        "ti": "ሰብኣዊ መሰላት",
+        "tr": "İnsan hakları",
+        "uk": "Права людини"
+      },
+      "description": {
+        "en": "Human rights, gender equality, children's rights, minority rights, and discrimination.",
+        "sv": "Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.",
+        "zh-Hans": "人权、性别平等、儿童权利、少数群体权利与歧视。",
+        "zh-Hant": "人權、性別平等、兒童權利、少數群體權利與歧視。",
+        "ar": "حقوق الإنسان والمساواة بين الجنسين وحقوق الطفل وحقوق الأقليات والتمييز.",
+        "ckb": "مافەکانی مرۆڤ، یەکسانیی ڕەگەزی، مافەکانی منداڵان، مافەکانی کەمینەکان و جیاکاری.",
+        "fa": "حقوق بشر، برابری جنسیتی، حقوق کودکان، حقوق اقلیت‌ها و تبعیض.",
+        "pl": "Prawa człowieka, równość płci, prawa dzieci, prawa mniejszości i dyskryminacja.",
+        "so": "Xuquuqda bani'aadamka, sinnaanta jinsiga, xuquuqda carruurta, xuquuqda laamiyada iyo takoorid.",
+        "ti": "ሰብኣዊ መሰላት፣ ጾታዊ ማዕርነት፣ መሰላት ቆልዑ፣ መሰላት ውሑዳትን ኣድልዎን።",
+        "tr": "İnsan hakları, toplumsal cinsiyet eşitliği, çocuk hakları, azınlık hakları ve ayrımcılık.",
+        "uk": "Права людини, гендерна рівність, права дітей, права меншин та дискримінація."
+      },
+      "questionCount": 55
     },
-    "description": {
-      "en": "Elections, voting, referendums, and the role of political parties in Sweden.",
-      "sv": "Val, röstning, folkomröstningar och politiska partiers roll i Sverige."
+    {
+      "id": 8,
+      "emoji": "💼",
+      "title": {
+        "en": "Labour market and personal finance",
+        "sv": "Arbetsmarknad och privatekonomi",
+        "zh-Hans": "劳动力市场与个人理财",
+        "zh-Hant": "勞動市場與個人理財",
+        "ar": "سوق العمل والاقتصاد الشخصي",
+        "ckb": "بازاڕی کار و ئابووریی کەسی",
+        "fa": "بازار کار و اقتصاد شخصی",
+        "pl": "Rynek pracy i finanse osobiste",
+        "so": "Suuqa shaqada iyo maaliyadda shakhsiga",
+        "ti": "ዕዳጋ ስራሕን ውልቃዊ ቍጠባን",
+        "tr": "İş gücü piyasası ve kişisel finans",
+        "uk": "Ринок праці та особисті фінанси"
+      },
+      "description": {
+        "en": "The labour market, labour-market parties, workplace rules, and personal finance.",
+        "sv": "Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.",
+        "zh-Hans": "劳动力市场、劳动力市场双方、劳动规则与个人理财。",
+        "zh-Hant": "勞動市場、勞資雙方、勞動規則與個人理財。",
+        "ar": "سوق العمل وأطراف سوق العمل وقواعد العمل والاقتصاد الشخصي.",
+        "ckb": "بازاڕی کار، لایەنەکانی بازاڕی کار، ڕێساکانی کار و ئابووریی کەسی.",
+        "fa": "بازار کار، طرف‌های بازار کار، قواعد کار و اقتصاد شخصی.",
+        "pl": "Rynek pracy, partnerzy rynku pracy, przepisy dotyczące pracy oraz finanse osobiste.",
+        "so": "Suuqa shaqada, dhinacyada suuqa shaqada, xeerarka shaqada iyo maaliyadda shakhsiga.",
+        "ti": "ዕዳጋ ስራሕ፣ ኣካላት ዕዳጋ ስራሕ፣ ሕግታት ስራሕን ውልቃዊ ቍጠባን።",
+        "tr": "İş gücü piyasası, iş gücü piyasası tarafları, çalışma kuralları ve kişisel finans.",
+        "uk": "Ринок праці, сторони ринку праці, правила праці та особисті фінанси."
+      },
+      "questionCount": 35
     },
-    "questionCount": 70
-  },
-  {
-    "id": 5,
-    "emoji": "⚖️",
-    "title": {
-      "en": "Law and justice",
-      "sv": "Lag och rätt"
+    {
+      "id": 9,
+      "emoji": "🏥",
+      "title": {
+        "en": "The welfare society",
+        "sv": "Välfärdssamhället",
+        "zh-Hans": "福利社会",
+        "zh-Hant": "福利社會",
+        "ar": "مجتمع الرفاه",
+        "ckb": "کۆمەڵگای خۆشگوزەرانی",
+        "fa": "جامعهٔ رفاه",
+        "pl": "Społeczeństwo dobrobytu",
+        "so": "Bulshada daryeelka (welfare)",
+        "ti": "ሕብረተሰብ ድሕነት (welfare)",
+        "tr": "Refah toplumu",
+        "uk": "Суспільство добробуту"
+      },
+      "description": {
+        "en": "Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.",
+        "sv": "Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.",
+        "zh-Hans": "税收、福利，以及国家、region（大区）和 kommun（市镇）之间的责任分配。",
+        "zh-Hant": "稅收、福利，以及國家、region（大區）和 kommun（市鎮）之間的責任分配。",
+        "ar": "الضرائب والرفاه وتوزيع المسؤوليات بين الدولة والأقاليم (region) والبلديات (kommun).",
+        "ckb": "باجەکان، خۆشگوزەرانی و دابەشکردنی بەرپرسیارێتی لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun).",
+        "fa": "مالیات‌ها، رفاه و تقسیم مسئولیت‌ها میان دولت، مناطق (region) و کمون‌ها (kommun).",
+        "pl": "Podatki, dobrobyt (welfare) i podział odpowiedzialności między państwo, regiony (region) i kommun.",
+        "so": "Canshuuraha, daryeelka (welfare) iyo qaybinta mas'uuliyadda inta u dhaxaysa dawladda, region-yada iyo kommun-yada.",
+        "ti": "ቀረጽ፣ ድሕነት (welfare) ከምኡ’ውን ምክፍፋል ሓላፍነት ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun።",
+        "tr": "Vergiler, refah (welfare) ve sorumlulukların devlet, region'lar ve kommun'lar arasında paylaşımı.",
+        "uk": "Податки, добробут (welfare) та розподіл відповідальності між державою, region і kommun."
+      },
+      "questionCount": 55
     },
-    "description": {
-      "en": "The fundamental laws, the justice system, rule of law, and the right of public access.",
-      "sv": "Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten."
+    {
+      "id": 10,
+      "emoji": "📜",
+      "title": {
+        "en": "Sweden's modern history",
+        "sv": "Sveriges moderna historia",
+        "zh-Hans": "瑞典近现代史",
+        "zh-Hant": "瑞典近現代史",
+        "ar": "تاريخ السويد الحديث",
+        "ckb": "مێژووی هاوچەرخی سوید",
+        "fa": "تاریخ معاصر سوئد",
+        "pl": "Współczesna historia Szwecji",
+        "so": "Taariikhda casriga ah ee Iswiidhan",
+        "ti": "ዘመናዊ ታሪኽ ሽወደን",
+        "tr": "İsveç'in modern tarihi",
+        "uk": "Сучасна історія Швеції"
+      },
+      "description": {
+        "en": "From agricultural society to industrial society, democratization, the people's home, and globalization.",
+        "sv": "Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering.",
+        "zh-Hans": "从农业社会到工业社会、民主化进程、人民之家（folkhemmet）与全球化。",
+        "zh-Hant": "從農業社會到工業社會、民主化進程、人民之家（folkhemmet）與全球化。",
+        "ar": "من مجتمع زراعي إلى مجتمع صناعي، والتحوّل الديمقراطي، و«بيت الشعب» (Folkhemmet)، والعولمة.",
+        "ckb": "لە کۆمەڵگای کشتوکاڵییەوە بۆ کۆمەڵگای پیشەسازی، دیموکراتیکبوون، «ماڵی گەل» (Folkhemmet) و جیهانیبوون.",
+        "fa": "از جامعهٔ کشاورزی به جامعهٔ صنعتی، دموکراتیک‌شدن، «خانهٔ مردم» (Folkhemmet) و جهانی‌شدن.",
+        "pl": "Od społeczeństwa rolniczego do przemysłowego, demokratyzacja, Folkhemmet (dom ludowy) i globalizacja.",
+        "so": "Laga soo bilaabo bulsho beeraley ah ilaa bulsho warshadeed, dimoqraadiyeyn, Folkhemmet (guriga dadweynaha) iyo caalamiyeyn.",
+        "ti": "ካብ ሕርሻዊ ሕብረተሰብ ናብ ኢንዱስትሪያዊ ሕብረተሰብ፣ ደሞክራሲ ምስፋን፣ Folkhemmet (ቤት ህዝቢ) ከምኡ’ውን ግሎባላይዜሽን።",
+        "tr": "Tarım toplumundan sanayi toplumuna, demokratikleşme, Folkhemmet (halkın evi) ve küreselleşme.",
+        "uk": "Від аграрного суспільства до промислового, демократизація, Folkhemmet (народний дім) та глобалізація."
+      },
+      "questionCount": 50
     },
-    "questionCount": 45
-  },
-  {
-    "id": 6,
-    "emoji": "📰",
-    "title": {
-      "en": "The role of the media",
-      "sv": "Mediernas roll"
+    {
+      "id": 11,
+      "emoji": "🌐",
+      "title": {
+        "en": "Sweden and the outside world",
+        "sv": "Sverige och omvärlden",
+        "zh-Hans": "瑞典与外部世界",
+        "zh-Hant": "瑞典與外部世界",
+        "ar": "السويد والعالم الخارجي",
+        "ckb": "سوید و جیهانی دەرەوە",
+        "fa": "سوئد و جهان بیرون",
+        "pl": "Szwecja i świat zewnętrzny",
+        "so": "Iswiidhan iyo dunida dibadda",
+        "ti": "ሽወደንን ግዳማዊ ዓለምን",
+        "tr": "İsveç ve dış dünya",
+        "uk": "Швеція та зовнішній світ"
+      },
+      "description": {
+        "en": "Nordic, European, and global cooperation, plus defence and security policy.",
+        "sv": "Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik.",
+        "zh-Hans": "北欧、欧洲和全球范围的合作，以及国防与安全政策。",
+        "zh-Hant": "北歐、歐洲和全球範圍的合作，以及國防與安全政策。",
+        "ar": "التعاون النوردي والأوروبي والعالمي، إضافةً إلى سياسة الدفاع والأمن.",
+        "ckb": "هاوکاریی باکووری ئەورووپا، ئەورووپی و جیهانی، هەروەها سیاسەتی بەرگری و ئاسایش.",
+        "fa": "همکاری شمال اروپا، اروپایی و جهانی، و نیز سیاست دفاعی و امنیتی.",
+        "pl": "Współpraca nordycka, europejska i globalna oraz polityka obronna i bezpieczeństwa.",
+        "so": "Iskaashiga waqooyiga Yurub, kan Yurub iyo kan caalamiga ah, iyo siyaasadda difaaca iyo amniga.",
+        "ti": "ኖርዲካዊ፣ ኤውሮጳዊን ዓለማውን ምትሕብባር፣ ከምኡ’ውን ፖሊሲ ምክልኻልን ጸጥታን።",
+        "tr": "İskandinav, Avrupa ve küresel iş birliği ile savunma ve güvenlik politikası.",
+        "uk": "Співпраця на рівні країн Північної Європи, європейська та глобальна, а також оборонна та безпекова політика."
+      },
+      "questionCount": 60
     },
-    "description": {
-      "en": "Free media, different types of media, public service broadcasting, and source criticism.",
-      "sv": "Fria medier, olika slags medier, public service och källkritik."
+    {
+      "id": 12,
+      "emoji": "🕊",
+      "title": {
+        "en": "A secular state and a multi-religious country",
+        "sv": "En sekulär stat och ett mångreligiöst land",
+        "zh-Hans": "世俗国家与多宗教的国度",
+        "zh-Hant": "世俗國家與多宗教的國度",
+        "ar": "دولة علمانية وبلد متعدّد الأديان",
+        "ckb": "دەوڵەتێکی سێکۆلار و وڵاتێکی فرە‌ئاینی",
+        "fa": "دولتی سکولار و کشوری چنددینی",
+        "pl": "Państwo świeckie i kraj wielowyznaniowy",
+        "so": "Dawlad cilmaani ah iyo dal diimo badan leh",
+        "ti": "ዓለማዊ መንግስትን ብዙሕ ሃይማኖት ዘለዋ ሃገርን",
+        "tr": "Laik bir devlet ve çok dinli bir ülke",
+        "uk": "Світська держава та багатоконфесійна країна"
+      },
+      "description": {
+        "en": "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
+        "sv": "Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället.",
+        "zh-Hans": "宗教自由、国家在宗教上的中立，以及宗教在社会中的角色。",
+        "zh-Hant": "宗教自由、國家在宗教上的中立，以及宗教在社會中的角色。",
+        "ar": "حرية الدين والحياد الديني للدولة ودور الدين في المجتمع.",
+        "ckb": "ئازادیی ئاین، بێلایەنیی ئاینیی دەوڵەت و ڕۆڵی ئاین لە کۆمەڵگادا.",
+        "fa": "آزادی دین، بی‌طرفی دینی دولت و نقش دین در جامعه.",
+        "pl": "Wolność wyznania, neutralność religijna państwa i rola religii w społeczeństwie.",
+        "so": "Xorriyadda diinta, dhexdhexaadnimada diineed ee dawladda iyo doorka diinta ee bulshada.",
+        "ti": "ናጽነት ሃይማኖት፣ ሃይማኖታዊ ገለልተኝነት መንግስትን ኣብ ሕብረተሰብ ዘሎ ተራ ሃይማኖትን።",
+        "tr": "Din özgürlüğü, devletin dini tarafsızlığı ve dinin toplumdaki rolü.",
+        "uk": "Свобода віросповідання, релігійна нейтральність держави та роль релігії в суспільстві."
+      },
+      "questionCount": 105
     },
-    "questionCount": 55
-  },
-  {
-    "id": 7,
-    "emoji": "🤝",
-    "title": {
-      "en": "Human rights",
-      "sv": "Mänskliga rättigheter"
-    },
-    "description": {
-      "en": "Human rights, gender equality, children's rights, minority rights, and discrimination.",
-      "sv": "Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering."
-    },
-    "questionCount": 55
-  },
-  {
-    "id": 8,
-    "emoji": "💼",
-    "title": {
-      "en": "Labour market and personal finance",
-      "sv": "Arbetsmarknad och privatekonomi"
-    },
-    "description": {
-      "en": "The labour market, labour-market parties, workplace rules, and personal finance.",
-      "sv": "Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi."
-    },
-    "questionCount": 35
-  },
-  {
-    "id": 9,
-    "emoji": "🏥",
-    "title": {
-      "en": "The welfare society",
-      "sv": "Välfärdssamhället"
-    },
-    "description": {
-      "en": "Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.",
-      "sv": "Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner."
-    },
-    "questionCount": 55
-  },
-  {
-    "id": 10,
-    "emoji": "📜",
-    "title": {
-      "en": "Sweden's modern history",
-      "sv": "Sveriges moderna historia"
-    },
-    "description": {
-      "en": "From agricultural society to industrial society, democratization, the people's home, and globalization.",
-      "sv": "Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering."
-    },
-    "questionCount": 50
-  },
-  {
-    "id": 11,
-    "emoji": "🌐",
-    "title": {
-      "en": "Sweden and the outside world",
-      "sv": "Sverige och omvärlden"
-    },
-    "description": {
-      "en": "Nordic, European, and global cooperation, plus defence and security policy.",
-      "sv": "Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik."
-    },
-    "questionCount": 60
-  },
-  {
-    "id": 12,
-    "emoji": "🕊",
-    "title": {
-      "en": "A secular state and a multi-religious country",
-      "sv": "En sekulär stat och ett mångreligiöst land"
-    },
-    "description": {
-      "en": "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
-      "sv": "Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället."
-    },
-    "questionCount": 105
-  },
-  {
-    "id": 13,
-    "emoji": "🕯",
-    "title": {
-      "en": "Traditions and holidays",
-      "sv": "Traditioner och högtider"
-    },
-    "description": {
-      "en": "Traditional holidays in Sweden and how traditions change over time.",
-      "sv": "Traditionella högtider i Sverige och hur traditioner förändras över tid."
-    },
-    "questionCount": 145
-  }
-];
+    {
+      "id": 13,
+      "emoji": "🕯",
+      "title": {
+        "en": "Traditions and holidays",
+        "sv": "Traditioner och högtider",
+        "zh-Hans": "传统与节日",
+        "zh-Hant": "傳統與節日",
+        "ar": "التقاليد والأعياد",
+        "ckb": "نەریت و جەژنەکان",
+        "fa": "سنت‌ها و جشن‌ها",
+        "pl": "Tradycje i święta",
+        "so": "Caadooyinka iyo ciidaha",
+        "ti": "ባህልታትን በዓላትን",
+        "tr": "Gelenekler ve özel günler",
+        "uk": "Традиції та свята"
+      },
+      "description": {
+        "en": "Traditional holidays in Sweden and how traditions change over time.",
+        "sv": "Traditionella högtider i Sverige och hur traditioner förändras över tid.",
+        "zh-Hans": "瑞典的传统节日，以及传统如何随时间而变化。",
+        "zh-Hant": "瑞典的傳統節日，以及傳統如何隨時間而變化。",
+        "ar": "الأعياد التقليدية في السويد وكيف تتغيّر التقاليد عبر الزمن.",
+        "ckb": "جەژنە نەریتییەکان لە سوید و ئەوەی نەریتەکان چۆن بە تێپەڕبوونی کاتدا دەگۆڕێن.",
+        "fa": "جشن‌های سنتی در سوئد و اینکه سنت‌ها چگونه در گذر زمان تغییر می‌کنند.",
+        "pl": "Tradycyjne święta w Szwecji oraz to, jak tradycje zmieniają się z biegiem czasu.",
+        "so": "Ciidaha dhaqameed ee Iswiidhan iyo sida caadooyinku ay isu beddelaan muddo ka dib.",
+        "ti": "ኣብ ሽወደን ዘለዉ ባህላዊ በዓላትን ባህልታት ብግዜ ብኸመይ ከም ዝቕየሩን።",
+        "tr": "İsveç'teki geleneksel özel günler ve geleneklerin zaman içinde nasıl değiştiği.",
+        "uk": "Традиційні свята у Швеції та те, як традиції змінюються з часом."
+      },
+      "questionCount": 145
+    }
+  ];
 })();
