@@ -22,7 +22,7 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     'utf8',
   );
 
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 23);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 25);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/);
   assert.match(source, /language = 'sv'/);
@@ -45,7 +45,13 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
   assert.match(source, /copy\.accessibilityLabel\.secondaryName\(secondaryName\)/);
   assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
   assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
-  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
+  assert.match(source, /accessibilitySummary\?: boolean/);
+  assert.match(source, /accessibilitySummary = true/);
+  assert.match(source, /accessible=\{accessibilitySummary\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{accessibilitySummary \? chapterAccessibilityLabel : undefined\}/,
+  );
   assert.match(source, /<Text style=\{styles\.title\}>\{title\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);

@@ -16,7 +16,7 @@ function chapterListAd(page: Page) {
 
 function nativeStudyAd(page: Page) {
   return page.getByLabel(
-    /(Test native ad: Sponsored study placement|Inbyggd testannons: Sponsrad studieplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
+    /(Test native ad: AdMob test placement preview|Inbyggd testannons: AdMob-testplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i,
   );
 }
 

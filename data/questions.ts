@@ -37,17 +37,17 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q002',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv: 'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-    questionEn: "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
+    questionSv: 'Sveriges nordligaste del ligger norr om polcirkeln.',
+    questionEn: "Sweden's northernmost part lies north of the Arctic Circle.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften.',
+      'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området. Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln.',
     explanationEn:
-      "The statement is true: Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. That makes True correct, while False contradicts the fact.",
+      "Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area. The northern part of the country therefore extends into the area north of the Arctic Circle.",
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
@@ -139,19 +139,17 @@ export const baseQuestions: PracticeQuestion[] = [
     id: 'q006',
     chapterId: 'ch01',
     type: 'true_false',
-    questionSv:
-      'Sant eller falskt: Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
-    questionEn:
-      "True or false: The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
+    questionSv: 'Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat.',
+    questionEn: "The Gulf Stream and the North Atlantic Current help make Sweden's climate mild.",
     options: [
       { id: 'true', textSv: 'Sant', textEn: 'True' },
       { id: 'false', textSv: 'Falskt', textEn: 'False' },
     ],
     correctOptionId: 'true',
     explanationSv:
-      'Påståendet är sant: Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
+      'Sverige har ett milt klimat jämfört med många andra områden på samma breddgrad. Golfströmmen och den Nordatlantiska strömmen transporterar varmt vatten mot Europa, vilket värmer luften som vindarna för in över Sverige.',
     explanationEn:
-      'The statement is true: Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.',
+      'Sweden has a mild climate compared with many other areas at the same latitude. The Gulf Stream and the North Atlantic Current carry warm water toward Europe, warming the air that winds bring over Sweden.',
     uhrReference: {
       chapter: 'Landet Sverige',
       section: 'Geografi, klimat och natur',
