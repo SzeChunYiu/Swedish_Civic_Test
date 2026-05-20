@@ -7816,6 +7816,10 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
         'utf8',
       );
+      const nativeAdCopySource = fs.readFileSync(
+        path.join(repoRoot, 'lib/monetization/adCopy.ts'),
+        'utf8',
+      );
       if (!adsSource.includes('export const WEB_AD_FALLBACK_CONSENT_DECISION')) {
         reject('ads.ts must export the shared web fallback consent decision');
         routeIsValid = false;
@@ -7834,6 +7838,15 @@ function validateAdPlacementRouteParity() {
       }
       if (nativeAdCardSource.includes('react-native-google-mobile-ads')) {
         reject('NativeAdCard web fallback must not import native-only ad SDK APIs');
+        routeIsValid = false;
+      }
+      if (
+        !nativeAdCardSource.includes("const resultsNativeUnit = getAdUnit('results_native');") ||
+        !nativeAdCardSource.includes(
+          'getNativeAdCardCopy(language, { testOnly: resultsNativeUnit?.testOnly })',
+        )
+      ) {
+        reject('NativeAdCard web fallback must choose live/test copy from the configured unit');
         routeIsValid = false;
       }
       if (!nativeAdCardNativeSource.includes('NativeAd.createForAdRequest')) {
@@ -7870,6 +7883,48 @@ function validateAdPlacementRouteParity() {
       }
       if (!/\.destroy\(\)/.test(nativeAdCardNativeSource)) {
         reject('NativeAdCard native placement must destroy loaded native ads on cleanup');
+        routeIsValid = false;
+      }
+      if (
+        !nativeAdCardNativeSource.includes(
+          "const resultsNativeUnit = getAdUnit('results_native');",
+        ) ||
+        !nativeAdCardNativeSource.includes(
+          'getNativeAdCardCopy(language, { testOnly: resultsNativeUnit?.testOnly })',
+        )
+      ) {
+        reject('NativeAdCard native placement must choose live/test copy from the configured unit');
+        routeIsValid = false;
+      }
+      if (!nativeAdCopySource.includes('getNativeAdCardCopy')) {
+        reject('NativeAdCard copy must expose a live/test selector');
+        routeIsValid = false;
+      }
+      if (!/live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/.test(nativeAdCopySource)) {
+        reject('NativeAdCard English live copy must identify the placement as an ad');
+        routeIsValid = false;
+      }
+      if (!/live:\s*\{[\s\S]*?accessibilityLabel:\s*'Annons:/.test(nativeAdCopySource)) {
+        reject('NativeAdCard Swedish live copy must identify the placement as an ad');
+        routeIsValid = false;
+      }
+      if (!/test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/.test(nativeAdCopySource)) {
+        reject('NativeAdCard test copy must keep explicit test-ad disclosure');
+        routeIsValid = false;
+      }
+      const liveNativeAdCopyBlocks = Array.from(
+        nativeAdCopySource.matchAll(/live:\s*\{([\s\S]*?)\n    \},\n    test:/g),
+        (match) => match[1],
+      );
+      if (
+        liveNativeAdCopyBlocks.length < 2 ||
+        liveNativeAdCopyBlocks.some((block) =>
+          /Test native ad|Inbyggd testannons|AdMob test placement preview|AdMob-testplacering/.test(
+            block,
+          ),
+        )
+      ) {
+        reject('NativeAdCard live copy must not announce test-ad wording');
         routeIsValid = false;
       }
     }

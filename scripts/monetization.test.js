@@ -307,6 +307,7 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
 
 test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
   const adBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
     'utf8',
@@ -331,6 +332,12 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.match(nativeAdCardSource, /NativeAssetType\.BODY/);
   assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
   assert.match(nativeAdCardSource, /NativeMediaView/);
+  assert.match(nativeAdCardSource, /getNativeAdCardCopy/);
+  assert.match(nativeAdCardSource, /const resultsNativeUnit = getAdUnit\('results_native'\);/);
+  assert.match(
+    nativeAdCardSource,
+    /const copy = getNativeAdCardCopy\(language, \{ testOnly: resultsNativeUnit\?\.testOnly \}\);/,
+  );
   assert.match(nativeAdCardSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(nativeAdCardSource, /requestNonPersonalizedAdsOnly/);
   assert.match(nativeAdCardSource, /\.destroy\(\)/);
@@ -341,6 +348,12 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd|Sponsored study placement/);
 
   assert.match(webAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(webAdCardSource, /getNativeAdCardCopy/);
+  assert.match(webAdCardSource, /const resultsNativeUnit = getAdUnit\('results_native'\);/);
+  assert.match(
+    webAdCardSource,
+    /const copy = getNativeAdCardCopy\(language, \{ testOnly: resultsNativeUnit\?\.testOnly \}\);/,
+  );
   assert.match(
     webAdCardSource,
     /shouldShowAd\('results_native', resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION\)/,
@@ -350,6 +363,40 @@ test('results native placement uses the native Google Mobile Ads surface on nati
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
   );
   assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
+  assert.match(adCopySource, /getNativeAdCardCopy/);
+  assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
+  assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Annons:/);
+  assert.match(adCopySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);
+  const liveCopyBlocks = Array.from(
+    adCopySource.matchAll(/live:\s*\{([\s\S]*?)\n    \},\n    test:/g),
+    (match) => match[1],
+  );
+  assert.equal(liveCopyBlocks.length, 2);
+  for (const liveCopyBlock of liveCopyBlocks) {
+    assert.doesNotMatch(
+      liveCopyBlock,
+      /Test native ad|Inbyggd testannons|AdMob test placement preview|AdMob-testplacering/,
+    );
+  }
+});
+
+test('native ad card copy switches between live attribution and test disclosure', () => {
+  const { getNativeAdCardCopy } = loadTs('lib/monetization/adCopy.ts');
+
+  const englishLiveCopy = JSON.stringify(getNativeAdCardCopy('en', { testOnly: false }));
+  const swedishLiveCopy = JSON.stringify(getNativeAdCardCopy('sv', { testOnly: false }));
+  const englishTestCopy = JSON.stringify(getNativeAdCardCopy('en', { testOnly: true }));
+  const swedishTestCopy = JSON.stringify(getNativeAdCardCopy('sv', { testOnly: true }));
+
+  assert.match(englishLiveCopy, /Ad:/);
+  assert.match(swedishLiveCopy, /Annons:/);
+  assert.match(englishTestCopy, /Test native ad|AdMob test placement preview/);
+  assert.match(swedishTestCopy, /Inbyggd testannons|AdMob-testplacering/);
+  assert.doesNotMatch(
+    englishLiveCopy,
+    /Test native ad|AdMob test placement preview|Sponsored study placement/,
+  );
+  assert.doesNotMatch(swedishLiveCopy, /Inbyggd testannons|AdMob-testplacering/);
 });
 
 test('native practice interstitial uses consent-aware ad gate and platform unit lookup', () => {
@@ -1068,7 +1115,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     }
   }
 });
-
 
 test('remove-ads buy persists before native finish and leaves failed persistence unfinished', async () => {
   const { REMOVE_ADS_PRODUCT_ID, REMOVE_ADS_STORAGE_KEY, buyRemoveAds } = loadTs(
