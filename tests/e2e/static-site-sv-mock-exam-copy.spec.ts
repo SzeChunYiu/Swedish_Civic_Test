@@ -1,107 +1,11 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import fs from 'node:fs';
-import http from 'node:http';
-import path from 'node:path';
-
-const siteRoot = path.resolve('site');
-
-const contentTypeByExtension: Record<string, string> = {
-  '.css': 'text/css; charset=utf-8',
-  '.html': 'text/html; charset=utf-8',
-  '.ico': 'image/x-icon',
-  '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.svg': 'image/svg+xml',
-};
-
-type StaticSite = {
-  baseUrl: string;
-  close: () => Promise<void>;
-};
-
-type Language = 'en' | 'sv';
-
-function sanitizedIndexHtml() {
-  return fs
-    .readFileSync(path.join(siteRoot, 'index.html'), 'utf8')
-    .replace(/\s*<script[\s\S]*?src="https:\/\/unpkg\.com\/[\s\S]*?<\/script>\s*/g, '\n')
-    .replace(/\s*<script\s+type="text\/babel"\s+src="[^"]+"><\/script>\s*/g, '\n');
-}
-
-async function startStaticSiteServer(): Promise<StaticSite> {
-  const server = http.createServer((request, response) => {
-    const url = new URL(request.url ?? '/', 'http://127.0.0.1');
-    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
-    const requestedPath = path.join(siteRoot, safePath === '/' ? 'index.html' : safePath);
-    const filePath =
-      requestedPath.startsWith(siteRoot) &&
-      fs.existsSync(requestedPath) &&
-      fs.statSync(requestedPath).isFile()
-        ? requestedPath
-        : path.join(siteRoot, 'index.html');
-    const extension = path.extname(filePath);
-    response.writeHead(200, {
-      'content-type': contentTypeByExtension[extension] ?? 'application/octet-stream',
-    });
-    response.end(
-      filePath.endsWith('index.html') ? sanitizedIndexHtml() : fs.readFileSync(filePath),
-    );
-  });
-
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-  const address = server.address();
-  if (!address || typeof address === 'string') {
-    throw new Error('Static site test server did not bind to a TCP port');
-  }
-
-  return {
-    baseUrl: `http://127.0.0.1:${address.port}`,
-    close: () =>
-      new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve())),
-      ),
-  };
-}
-
-function collectPageErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  page.on('pageerror', (error) => errors.push(error.message));
-  return errors;
-}
-
-async function openStaticPage(page: Page, baseUrl: string, language: Language, hash = '#/') {
-  await page.goto(`${baseUrl}/${hash}`, { waitUntil: 'load' });
-  await page.evaluate((nextLanguage) => {
-    localStorage.setItem('smt_consent', 'min');
-    localStorage.setItem('smt_buddy_hidden', '1');
-    localStorage.setItem('smt_lang', nextLanguage);
-    const staticWindow = window as typeof window & {
-      smtSetLanguage?: (language: string) => void;
-    };
-    staticWindow.smtSetLanguage?.(nextLanguage);
-  }, language);
-  await expect(page.locator('html')).toHaveAttribute('lang', language);
-}
-
-async function expectNoHorizontalOverflow(page: Page, label: string) {
-  await expect
-    .poll(
-      () =>
-        page.evaluate(() => {
-          const documentClientWidth = document.documentElement.clientWidth;
-          return (
-            document.body.scrollWidth <= documentClientWidth + 1 &&
-            document.documentElement.scrollWidth <= documentClientWidth + 1
-          );
-        }),
-      { message: `${label} should not overflow horizontally` },
-    )
-    .toBe(true);
-}
+import {
+  collectPageErrors,
+  expectNoHorizontalOverflow,
+  openStaticPage,
+  startStaticSiteServer,
+  type StaticSite,
+} from './staticSiteServer';
 
 async function expectReachableLink(link: Locator, label: string) {
   await link.scrollIntoViewIfNeeded();
