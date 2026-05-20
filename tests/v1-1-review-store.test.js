@@ -7,6 +7,13 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const {
+  createMemoryMMKV,
+  createThrowingGetMMKV,
+  createThrowingSetMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 // Stub react-native-mmkv and zustand so we can load store modules in Node
@@ -154,4 +161,172 @@ test('reviewStats: counts mastered (stability >= 21) and review days', () => {
   assert.equal(stats.totalCards, 4);
   assert.equal(stats.masteredCards, 2);
   assert.equal(stats.reviewDaysCount, 2); // days with > 0
+});
+
+test('review store: throwing MMKV writes keep graded card in memory and record warning', () => {
+  const storage = createThrowingSetMMKV('review disk full');
+  const { useReviewStore } = loadTsWithStorage(repoRoot, 'lib/storage/reviewStore.ts', {
+    reviews: storage,
+  });
+
+  const reviewed = useReviewStore.getState().grade('q1', 3, '2026-05-19T12:00:00.000Z');
+  const state = useReviewStore.getState();
+
+  assert.equal(reviewed.questionId, 'q1');
+  assert.equal(state.byId.q1.questionId, 'q1');
+  assert.equal(
+    Object.values(state.gradedPerDay).reduce((sum, count) => sum + count, 0),
+    1,
+  );
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.storageId, 'reviews');
+  assert.equal(state.persistenceWarning.key, 'learning.reviews.cards.v1');
+  assert.match(state.persistenceWarning.errorMessage, /disk full/);
+});
+
+test('review store: throwing MMKV reads fall back to empty state and record warning', () => {
+  const storage = createThrowingGetMMKV('review read failed');
+  const { useReviewStore } = loadTsWithStorage(repoRoot, 'lib/storage/reviewStore.ts', {
+    reviews: storage,
+  });
+  const state = useReviewStore.getState();
+
+  assert.deepEqual(state.byId, {});
+  assert.deepEqual(state.gradedPerDay, {});
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'reviews');
+  assert.equal(state.persistenceWarning.key, 'learning.reviews.cards.v1');
+  assert.match(state.persistenceWarning.errorMessage, /read failed/);
+});
+
+test('review store: successful writes persist JSON and corrupt reads still fall back', () => {
+  const storage = createMemoryMMKV();
+  const { REVIEW_STORE_KEY, useReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/reviewStore.ts',
+    {
+      reviews: storage,
+    },
+  );
+
+  useReviewStore.getState().ensureCard('q2', '2026-05-19T12:00:00.000Z');
+  assert.equal(useReviewStore.getState().persistenceWarning, null);
+
+  const persisted = JSON.parse(storage.values.get(REVIEW_STORE_KEY));
+  assert.equal(persisted.byId.q2.questionId, 'q2');
+
+  const corruptStorage = createMemoryMMKV({ [REVIEW_STORE_KEY]: '{not-json' });
+  const { useReviewStore: useCorruptReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/reviewStore.ts',
+    {
+      reviews: corruptStorage,
+    },
+  );
+  assert.deepEqual(useCorruptReviewStore.getState().byId, {});
+  assert.deepEqual(useCorruptReviewStore.getState().gradedPerDay, {});
+});
+
+test('review store: import snapshot merges normalized FSRS cards and graded-day counters', () => {
+  const existingCard = fakeCard('qExisting', '2026-05-18T08:00:00.000Z', {
+    reps: 2,
+  });
+  const importedCard = fakeCard('qImported', '2026-05-19T08:00:00.000Z', {
+    reps: 3,
+  });
+  const storage = createMemoryMMKV({
+    'learning.reviews.cards.v1': JSON.stringify({
+      byId: { qExisting: existingCard },
+      gradedPerDay: { '2026-05-18': 1 },
+    }),
+  });
+  const { REVIEW_STORE_KEY, importReviewSnapshot, useReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/reviewStore.ts',
+    {
+      reviews: storage,
+    },
+  );
+
+  const imported = importReviewSnapshot({
+    byId: {
+      qImported: importedCard,
+      qBadState: { ...importedCard, questionId: 'qBadState', state: 'bad' },
+    },
+    gradedPerDay: {
+      '2026-05-18': 2,
+      '2026-05-19': 1,
+      'not-a-day': 1,
+    },
+  });
+
+  assert.deepEqual(Object.keys(imported.byId).sort(), ['qExisting', 'qImported']);
+  assert.equal(imported.gradedPerDay['2026-05-18'], 2);
+  assert.equal(imported.gradedPerDay['2026-05-19'], 1);
+  assert.deepEqual(useReviewStore.getState().byId.qImported, importedCard);
+  assert.deepEqual(JSON.parse(storage.values.get(REVIEW_STORE_KEY)).byId.qImported, importedCard);
+});
+
+test('review store: corrupt persisted cards and graded days are dropped on hydration', () => {
+  const validCard = fakeCard('qValid', '2026-05-19T08:00:00.000Z', {
+    difficulty: 4.75,
+    stability: 30.5,
+    reps: 3,
+    lapses: 1,
+  });
+  const persisted = {
+    byId: {
+      qValid: validCard,
+      qMismatched: { ...validCard, questionId: 'other-id' },
+      '': { ...validCard, questionId: '' },
+      qBadState: { ...validCard, questionId: 'qBadState', state: 'banana' },
+      qBadDifficulty: { ...validCard, questionId: 'qBadDifficulty', difficulty: 999 },
+      qBadStability: { ...validCard, questionId: 'qBadStability', stability: -2 },
+      qBadReps: { ...validCard, questionId: 'qBadReps', reps: 1.5 },
+      qBadLapses: { ...validCard, questionId: 'qBadLapses', lapses: -1 },
+      qBadLastReviewAt: {
+        ...validCard,
+        questionId: 'qBadLastReviewAt',
+        lastReviewAt: 'not-a-date',
+      },
+      qBadDueAt: { ...validCard, questionId: 'qBadDueAt', dueAt: '2026-05-19' },
+    },
+    gradedPerDay: {
+      '2026-05-19': 2,
+      '2026-05-20': 0,
+      'not-a-day': 2,
+      '2026-02-29': 1,
+      '2026-05-21': 1.5,
+      '2026-05-22': -1,
+      '2026-05-23': 10001,
+    },
+  };
+  const storage = createMemoryMMKV({
+    'learning.reviews.cards.v1': JSON.stringify(persisted),
+  });
+  const { dueCards, reviewStats, useReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/reviewStore.ts',
+    {
+      reviews: storage,
+    },
+  );
+  const state = useReviewStore.getState();
+
+  assert.deepEqual(Object.keys(state.byId), ['qValid']);
+  assert.deepEqual(state.byId.qValid, validCard);
+  assert.deepEqual(state.gradedPerDay, {
+    '2026-05-19': 2,
+    '2026-05-20': 0,
+  });
+  assert.deepEqual(
+    dueCards(state, { now: '2026-05-20T00:00:00.000Z' }).map((card) => card.questionId),
+    ['qValid'],
+  );
+  assert.deepEqual(reviewStats(state), {
+    totalCards: 1,
+    masteredCards: 1,
+    reviewDaysCount: 1,
+  });
 });

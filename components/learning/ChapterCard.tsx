@@ -45,17 +45,30 @@ const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = {
   },
 };
 
+/**
+ * Defaults: `language="sv"`, `completedCount=0`, inferred `questionCount`
+ * from the chapter when present, and a grouped accessibility summary for
+ * standalone cards. Set `accessibilitySummary={false}` and
+ * `progressPresentationOnly` when the card is inside a parent link that already
+ * owns the accessible name and progress summary.
+ */
+export interface ChapterCardProps {
+  accessibilitySummary?: boolean;
+  chapter?: Chapter;
+  completedCount?: number;
+  language?: AppLanguage;
+  progressPresentationOnly?: boolean;
+  questionCount?: number;
+}
+
 export function ChapterCard({
+  accessibilitySummary = true,
   chapter,
   questionCount = chapter?.questionCount ?? 0,
   completedCount = 0,
   language = 'sv',
-}: {
-  chapter?: Chapter;
-  questionCount?: number;
-  completedCount?: number;
-  language?: AppLanguage;
-}) {
+  progressPresentationOnly = false,
+}: ChapterCardProps) {
   const copy = chapterCardCopy[language];
   const progress = questionCount > 0 ? completedCount / questionCount : 0;
   const status =
@@ -81,14 +94,23 @@ export function ChapterCard({
     .join('. ');
 
   return (
-    <Card accessibilityLabel={chapterAccessibilityLabel} elevated style={styles.card}>
+    <Card
+      accessible={accessibilitySummary}
+      accessibilityLabel={accessibilitySummary ? chapterAccessibilityLabel : undefined}
+      elevated
+      style={styles.card}
+    >
       <View style={styles.headerRow}>
         <Badge tone={questionCount > 0 ? 'blue' : 'warm'}>{status}</Badge>
       </View>
       <Text style={styles.title}>{title}</Text>
       {secondaryName ? <Text style={styles.subtitle}>{secondaryName}</Text> : null}
       {description ? <Text style={styles.description}>{description}</Text> : null}
-      <ProgressBar language={language} progress={progress} />
+      <ProgressBar
+        language={language}
+        presentationOnly={progressPresentationOnly}
+        progress={progress}
+      />
     </Card>
   );
 }

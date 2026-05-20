@@ -136,22 +136,3 @@ Sources checked:
   Riksdag.
 - Use Mainland punctuation and spacing conventions for Chinese prose, while
   preserving Swedish acronyms and source references exactly.
-
-
-## High-Frequency UI Term Decisions
-
-| English app term | Simplified Chinese | Notes |
-|---|---|---|
-| practice | 练习 | Use for normal study mode. |
-| mock exam | 模拟考试 | Never imply the official citizenship test. |
-| question | 题 / 题目 | Use `题` in counters and `题目` in labels. |
-| answer option | 选项 | Use `答案选项` only when extra clarity is needed. |
-| explanation | 答案解析 | Use in post-answer panels. |
-| mistake review | 错题复习 | More natural than literal error review. |
-| study streak | 连续学习天数 | Avoid literal `条纹`. |
-| source material | 参考材料 | UI label; `资料来源` for citation label. |
-| coming soon | 正在准备中 | Public-service tone for unavailable languages. |
-| local device | 本设备 | For privacy/local-storage copy. |
-
-See `phrasebook.md` for candidate UI strings and `audit.md` for current
-release blockers.
