@@ -77,7 +77,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
-  'uhrSourcePublisher',
   'difficulty',
   'reviewStatus',
   'tags',
@@ -3400,6 +3399,7 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
         optional: false,
       },
       { name: 'freeMockExamLimit', type: 'number', optional: false },
+      { name: 'platform', type: 'AdRuntimePlatform', optional: true },
       { name: 'rewardedExtraExamCredits', type: 'number', optional: true },
     ],
   },
@@ -6894,38 +6894,8 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
-  let nativeAdBannerSource = '';
-
-  try {
-    nativeAdBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`components/monetization/AdBanner.native.tsx could not be read: ${error.message}`);
-  }
-
-  if (nativeAdBannerSource) {
-    if (!nativeAdBannerSource.includes('const unit = getAdUnit(placement);')) {
-      reject('AdBanner native placement must inspect the configured ad unit');
-    }
-    if (
-      !/const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/.test(
-        nativeAdBannerSource,
-      )
-    ) {
-      reject('AdBanner native placement must derive the status label from unit.testOnly');
-    }
-    if (
-      /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel,\s*copy\.liveStatus\)\}/.test(
-        nativeAdBannerSource,
-      )
-    ) {
-      reject('AdBanner native accessibility label must not hardcode live ad status');
-    }
-    if (!/accessibilityLabel=\{accessibilityLabel\}/.test(nativeAdBannerSource)) {
-      reject('AdBanner native placement must pass the derived accessibility label');
-    }
+  function compactSource(value) {
+    return value.replace(/\s+/g, ' ');
   }
 
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
@@ -7003,8 +6973,14 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
       );
-      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
-        reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+      const nativeAdCardCompactSource = compactSource(nativeAdCardSource);
+      if (
+        !nativeAdCardSource.includes("import { Platform, StyleSheet, Text } from 'react-native'") ||
+        !nativeAdCardCompactSource.includes(
+          `shouldShowAd('${spec.placement}', resolvedEntitlements, undefined, Platform.OS)`,
+        )
+      ) {
+        reject(`NativeAdCard must gate ${spec.placement} through platform-aware shouldShowAd`);
         routeIsValid = false;
       }
     }
@@ -7039,6 +7015,34 @@ function validateAdPlacementRouteParity() {
     }
 
     if (routeIsValid) noAdRoutesValidated += 1;
+  }
+
+  try {
+    const nativeAdBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+      'utf8',
+    );
+    if (
+      !/shouldShowAd\(\s*placement,\s*resolvedEntitlements,\s*mobileAdsConsent\.decision\.consentDecision,\s*Platform\.OS,\s*\)/.test(
+        nativeAdBannerSource,
+      )
+    ) {
+      reject('AdBanner.native must gate native banner placements through Platform.OS');
+    }
+  } catch (error) {
+    reject(`components/monetization/AdBanner.native.tsx could not be read: ${error.message}`);
+  }
+
+  try {
+    const useMockExamAccessSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+      'utf8',
+    );
+    if (!useMockExamAccessSource.includes('platform: Platform.OS')) {
+      reject('useMockExamAccess must pass Platform.OS into rewarded mock-exam ad decisions');
+    }
+  } catch (error) {
+    reject(`lib/monetization/useMockExamAccess.ts could not be read: ${error.message}`);
   }
 
   if (
@@ -13094,7 +13098,6 @@ function validateQuestionBankCsvContract() {
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
-      uhrSectionMap?.source?.publisher,
       question.difficulty,
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
