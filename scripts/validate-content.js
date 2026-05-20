@@ -5068,6 +5068,46 @@ function validateCitizenshipTimeline() {
   };
 }
 
+function validateCountdownBannerHomeMountParity() {
+  let valid = true;
+  let rulesValidated = 0;
+  let homeRouteSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  } catch (error) {
+    reject(`home route countdown banner source could not be read: ${error.message}`);
+    return { homeMountParity: false, rulesValidated };
+  }
+
+  [
+    [
+      "import { CountdownBanner } from '../../components/ui/CountdownBanner';",
+      'Home route must import CountdownBanner for the currentness banner',
+    ],
+    [
+      '<CountdownBanner language={language} />',
+      'Home route must mount CountdownBanner with the selected language',
+    ],
+  ].forEach(([requiredSnippet, message]) => {
+    if (!homeRouteSource.includes(requiredSnippet)) {
+      reject(message);
+      return;
+    }
+    rulesValidated += 1;
+  });
+
+  return {
+    homeMountParity: valid && rulesValidated === 2,
+    rulesValidated,
+  };
+}
+
 function findQuestionAuthorityOverclaim(question) {
   const text = [
     question.questionSv,
@@ -8001,6 +8041,8 @@ let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
+let countdownBannerHomeMountRulesValidated = 0;
+let countdownBannerHomeMountParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -8413,6 +8455,11 @@ if (process.argv.includes('--focus-home-route-copy')) {
   validateHomeRouteHeaderParity();
   validateHomeRouteCopyParity();
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+  {
+    const homeMountValidation = validateCountdownBannerHomeMountParity();
+    countdownBannerHomeMountRulesValidated = homeMountValidation.rulesValidated;
+    countdownBannerHomeMountParityValidated = homeMountValidation.homeMountParity;
+  }
   exitWithValidationFailures();
   printValidationSummary({
     staticValidationSyntaxFilesValidated,
@@ -8424,6 +8471,8 @@ if (process.argv.includes('--focus-home-route-copy')) {
     homeRouteCopyParityValidated,
     homeRouteInternalBenchmarkCopyValidated,
     homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+    countdownBannerHomeMountRulesValidated,
+    countdownBannerHomeMountParityValidated,
   });
   process.exit(0);
 }
@@ -8577,6 +8626,9 @@ if (
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
   countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  const homeMountValidation = validateCountdownBannerHomeMountParity();
+  countdownBannerHomeMountRulesValidated = homeMountValidation.rulesValidated;
+  countdownBannerHomeMountParityValidated = homeMountValidation.homeMountParity;
 }
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
@@ -18193,6 +18245,8 @@ console.log(
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
       countdownBannerTimelineCopyParityValidated,
+      countdownBannerHomeMountRulesValidated,
+      countdownBannerHomeMountParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,
