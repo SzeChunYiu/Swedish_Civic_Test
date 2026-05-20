@@ -1,6 +1,6 @@
 # Persian Sample Corpus Notes
 
-Locale: Persian/Farsi (`fa`) for Sweden civic-test learners; keep distinct from Dari (`prs`) unless a future owner explicitly merges audiences.
+Locale: Persian; atom owner must decide Iran Farsi, Dari, or neutral Persian before shipping.
 
 ## Register target
 
@@ -15,19 +15,17 @@ Plain public-information Persian with explicit civic terms. Avoid over-literary 
 
 ## Translation risks
 
-- Do not mix Persian/Farsi (`fa`) and Dari (`prs`) conventions silently.
-- Use `سوئد`, `مدرسه`, `کودک`, and `اطلاعات` for `fa`; record any Dari alternatives separately.
-- Record whether terms use `حق و حقوق`, `حقوق`, `وظایف`, `تعهدات`, or `مسئولیت` based on context.
+- Do not mix Iran Farsi and Dari conventions silently.
+- Record whether terms use حق و حقوق, حقوق, وظایف, or مسئولیت based on audience.
 
 ## Reusable localization notes
 
-- See `style-guide.md` for Persian/Farsi civic voice, variant boundary, UI patterns, glossary, and word-by-word audit checklist.
 - Error encouragement should reassure and teach; never shame the learner.
 - Source labels must say the app is based on/reference material, not an official exam authority.
 - Institution names should teach the Swedish term when the term itself matters.
 
 ## Next tasks
 
-1. Native-speaker review of `style-guide.md` examples and the `fa` vs `prs` boundary.
-2. Apply the audit checklist before introducing Persian app strings.
-3. Add short source cards for any new Persian government/newcomer pages used later.
+1. Add native-speaker observations after reading the sources directly.
+2. Add glossary terms with source URLs before translating UI or questions.
+3. Add humor/tone examples that are newly authored, not copied.

@@ -63,7 +63,14 @@ export function buildDashboardProgressSnapshot({
   questionProgress,
   totalXp,
 }: DashboardProgressSnapshotInput): UserProgress {
-  const practiceAnswers = Object.values(questionProgress).flatMap(answerAttemptsForProgress);
+  const persistedPracticeAnswers = answerAttempts.map(answerAttemptToQuizAnswer);
+  const persistedQuestionIds = new Set(persistedPracticeAnswers.map((answer) => answer.questionId));
+  const aggregateFallbackAnswers = Object.values(questionProgress)
+    .filter((progress) => !persistedQuestionIds.has(progress.questionId))
+    .flatMap(answerAttemptsForProgress);
+  const practiceAnswers = [...persistedPracticeAnswers, ...aggregateFallbackAnswers].sort((a, b) =>
+    a.answeredAt.localeCompare(b.answeredAt),
+  );
   const practiceQuestionIds = [...new Set(practiceAnswers.map((answer) => answer.questionId))];
   const practiceSession: QuizSession | null =
     practiceAnswers.length > 0
