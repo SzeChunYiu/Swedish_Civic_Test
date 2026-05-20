@@ -541,6 +541,14 @@ function embeddedEnglishClause(value: string): string {
 }
 
 function replaceLeadingSwedishSubject(subject: string, value: string): string {
+  if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
+    if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
+      return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
+    }
+    if (/^Det är förbjudet att gifta sig med en person av samma kön$/i.test(value.trim())) {
+      return 'Äktenskap mellan personer av samma kön är förbjudet i Sverige';
+    }
+  }
   const normalizedSubject = upperFirst(subject.trim());
   return value
     .replace(/^De\s+/i, `${normalizedSubject} `)

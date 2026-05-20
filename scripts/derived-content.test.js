@@ -954,6 +954,14 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sveriges fem nationella minoriteter är danskar, norrmän, islänningar, tyskar och fransmän.',
       "Sweden's five national minorities are Danes, Norwegians, Icelanders, Germans, and French.",
     ],
+    [generatedQuestionId(sourceQuestions, 'q060', 'trueStatement')]: [
+      'Äktenskap mellan personer av samma kön är tillåtet i Sverige.',
+      'It is permitted to marry a person of the same sex.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q060', 'falseStatement')]: [
+      'Äktenskap mellan personer av samma kön är förbjudet i Sverige.',
+      'It is prohibited to marry a person of the same sex.',
+    ],
     [generatedQuestionId(sourceQuestions, 'q064', 'trueStatement')]: [
       'Fackförbund företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar.',
       'Trade unions represent employees, negotiate wages, and can help members.',
