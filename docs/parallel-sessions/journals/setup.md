@@ -1273,3 +1273,11 @@ Verification: clean SETUP worktree rebased onto current `origin/main` `1260753b`
 PR: pending from `setup/native-ebook-pro-promise-1779237259` at handoff commit time.
 Blocked? no for this bounded native Pro promise cleanup; the full native ebook reader/highlight surface remains a future product task.
 Next suggested validator action: inspect the tier comparison rows and rerun the focused Pro/highlight/profile checks before accepting `NATIVE-EBOOK-HIGHLIGHTS-SURFACE-1`.
+
+## Iteration 262 - 2026-05-20
+
+Task completed: RELEASE-PREFLIGHT-ALLOWED-DIRTY-FIRST-LINE-1 - preserved leading `git status --porcelain` columns in release-preflight command output so allowed dirty-path parsing works for the first modified line, and added a regression fixture for an allowed first-line modified file plus an allowed later untracked report.
+Artifacts changed: `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `codex-tasks/claims.txt`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `25549d24`; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/release-preflight.test.js --test-name-pattern 'dirty|allowed'` exit 0 with 57/57 passing before rebase; after rebase, `NODE_OPTIONS='--v8-pool-size=1' npm run test:release-preflight` exit 0 with 58/58 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 795 questions and static parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0 after excluding raw `codex-tasks/claims.txt`; `git diff --check` exit 0.
+Blocked? no for this release-health parser guard.
+Next suggested validator action: inspect the release-preflight output trimming change and rerun `npm run test:release-preflight`, the focused dirty/allowed test slice, typecheck, validate-content, ownership, and diff checks before accepting.
