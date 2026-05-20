@@ -1483,6 +1483,85 @@ function smtQuizQuestionDisclaimer(lang) {
   });
 }
 
+function smtQuizQuestionProvenance(question) {
+  const direct = question && question.questionProvenance;
+  if (direct === 'uhr' || direct === 'derived' || direct === 'editorial') return direct;
+  const tags = Array.isArray(question && question.tags) ? question.tags : [];
+  if (tags.includes('editorial')) return 'editorial';
+  if (tags.includes('published-variant')) return 'derived';
+  return question && question.source ? 'uhr' : 'derived';
+}
+
+const SMT_QUIZ_PROVENANCE_COPY = {
+  uhr: {
+    en: { label: 'UHR', description: "Based on UHR's study material Sverige i fokus." },
+    sv: { label: 'UHR', description: 'Baserad på UHR:s studiematerial Sverige i fokus.' },
+  },
+  derived: {
+    en: {
+      label: 'Supplementary',
+      description: 'Variant of an app-authored, UHR-referenced practice question.',
+    },
+    sv: {
+      label: 'Tillägg',
+      description: 'Variant av en appskriven, UHR-hänvisad övningsfråga.',
+    },
+  },
+  editorial: {
+    en: { label: 'Editorial', description: 'Hand-written editorial context.' },
+    sv: { label: 'Redaktionell', description: 'Redaktionellt skrivet sammanhang.' },
+  },
+};
+
+function smtQuizProvenanceBadge(question, lang) {
+  const provenance = smtQuizQuestionProvenance(question);
+  const language = lang === 'sv' ? 'sv' : 'en';
+  const copy = SMT_QUIZ_PROVENANCE_COPY[provenance][language];
+  const ariaPrefix = smtTr({
+    sv: 'Källtyp',
+    en: 'Provenance',
+    'zh-Hans': '来源类型',
+    'zh-Hant': '來源類型',
+    ar: 'نوع المصدر',
+    ckb: 'جۆری سەرچاوە',
+    fa: 'نوع منبع',
+    pl: 'Typ źródła',
+    so: 'Nooca ilaha',
+    ti: 'ዓይነት ምንጪ',
+    tr: 'Kaynak türü',
+    uk: 'Тип джерела',
+  });
+  const notePrefix = smtTr({
+    sv: 'Källanteckning',
+    en: 'Source note',
+    'zh-Hans': '来源备注',
+    'zh-Hant': '來源備註',
+    ar: 'ملاحظة المصدر',
+    ckb: 'تێبینیی سەرچاوە',
+    fa: 'یادداشت منبع',
+    pl: 'Notatka o źródle',
+    so: 'Qoraal ilaha',
+    ti: 'መዘክር ምንጪ',
+    tr: 'Kaynak notu',
+    uk: 'Примітка до джерела',
+  });
+  const label = smtQuizEscapeHtml(copy.label);
+  const note = smtQuizEscapeHtml(
+    `${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`,
+  );
+  return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
+}
+
+function smtQuizQuestionSourceRow(question, lang, citationClassName = 'quiz__source') {
+  const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(question, lang));
+  return `
+      <div class="quiz__source-row">
+        ${smtQuizProvenanceBadge(question, lang)}
+        <p class="${citationClassName}">${sourceCitation}</p>
+      </div>
+    `;
+}
+
 const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE = 0.35;
 
 function smtQuizHashString(value) {
@@ -1677,7 +1756,7 @@ function smtQuizRender() {
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
   const sessionId = `practice:${scope}`;
-  const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
+  const sourceRow = smtQuizQuestionSourceRow(q, lang);
   const dots = Array.from({ length: n }, (_, k) => {
     let cls = '';
     if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === questions[k].answer ? 'is-right' : 'is-wrong';
@@ -1726,7 +1805,7 @@ function smtQuizRender() {
     <div class="quiz__card">
       <div class="quiz__crumb">${q.chapter}</div>
       <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
-      <p class="quiz__source">${sourceCitation}</p>
+      ${sourceRow}
       <div class="quiz__opts">${opts}</div>
       ${feedback}
       <div class="quiz__actions">

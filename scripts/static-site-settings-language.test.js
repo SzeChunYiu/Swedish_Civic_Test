@@ -537,12 +537,12 @@ test('Settings language change rerenders an active Mock exam without reload', ()
     ].join('\n'),
   );
 
-  assert.match(context.element('mock-stage').innerHTML, /Mock exam/);
+  assert.match(context.element('mock-stage').innerHTML, /Timed practice/);
   assert.match(context.element('mock-stage').innerHTML, /Time left/);
   context.clickSettingsLanguage('sv');
 
   const html = context.element('mock-stage').innerHTML;
-  assert.match(html, /Övningsprov/);
+  assert.match(html, /Tidsatt övning/);
   assert.match(html, /Återstår/);
   assert.match(html, /Lämna in/);
   assert.match(html, /Var ligger Sverige\?/);
@@ -570,7 +570,7 @@ test('Settings language change rerenders submitted Mock results without restarti
   const html = context.element('mock-stage').innerHTML;
   assert.match(html, /Frågegenomgång/);
   assert.match(html, /Rätt svar/);
-  assert.match(html, /Övningen är klar/);
+  assert.match(html, /Övningspass klart/);
   assertNoMockOfficialPassLineCopy(html);
   assert.doesNotMatch(
     html,
