@@ -57,6 +57,7 @@ const maxHydratedFreezeLifetimeCount = 10000;
 const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
 const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
+const unsafeImportedMapKeys = new Set(['__proto__', 'constructor', 'prototype']);
 
 let progressStorage: MMKV | null = null;
 
@@ -109,6 +110,10 @@ function normalizeConfidenceRating(value: unknown): ConfidenceRating | undefined
   }
 
   return undefined;
+}
+
+function isSafeImportedMapKey(value: string): boolean {
+  return !unsafeImportedMapKeys.has(value);
 }
 
 function clampScore(value: unknown): number {
@@ -254,6 +259,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
 
   if (candidate.questionProgress && typeof candidate.questionProgress === 'object') {
     for (const [questionId, progress] of Object.entries(candidate.questionProgress)) {
+      if (!isSafeImportedMapKey(questionId)) continue;
       if (!progress || typeof progress !== 'object') continue;
       const item = progress as Partial<QuestionProgress>;
       const rawCorrectCount = normalizeNonNegativeInteger(

@@ -43,6 +43,12 @@ function loadImportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataImport.ts', storageById);
 }
 
+function assertNoUnsafeOwnKeys(value) {
+  assert.equal(Object.hasOwn(value, '__proto__'), false);
+  assert.equal(Object.hasOwn(value, 'constructor'), false);
+  assert.equal(Object.hasOwn(value, 'prototype'), false);
+}
+
 test('local study data import previews and applies all learner snapshot sections', () => {
   const storageById = createStorageById();
   const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
@@ -173,4 +179,104 @@ test('local study data import rejects purchase fields before any snapshot writes
   assert.equal(storageById['mistake-review'].values.size, 0);
   assert.equal(storageById.reviews.values.size, 0);
   assert.equal(storageById.settings.values.size, 0);
+});
+
+test('local study data import ignores prototype-pollution map keys', () => {
+  const storageById = createStorageById();
+  const { previewLocalStudyDataImport } = loadImportModule(storageById);
+  const rawPayload = `{
+    "version": 1,
+    "progress": {
+      "completedQuestionIds": ["q001"],
+      "questionProgress": {
+        "q001": {
+          "seenCount": 1,
+          "correctCount": 1,
+          "wrongCount": 0,
+          "correctStreak": 1,
+          "bookmarked": true
+        },
+        "__proto__": {
+          "seenCount": 7,
+          "correctCount": 7,
+          "wrongCount": 0,
+          "correctStreak": 7,
+          "bookmarked": true
+        },
+        "constructor": {
+          "seenCount": 8,
+          "correctCount": 8,
+          "wrongCount": 0,
+          "correctStreak": 8,
+          "bookmarked": true
+        },
+        "prototype": {
+          "seenCount": 9,
+          "correctCount": 9,
+          "wrongCount": 0,
+          "correctStreak": 9,
+          "bookmarked": true
+        }
+      }
+    },
+    "mistakeReview": {
+      "wrongAnswerReviews": {
+        "q001": {
+          "answeredAt": "2026-05-20T08:05:00.000Z",
+          "selectedOptionTextEn": "Wrong answer",
+          "selectedOptionTextSv": "Fel svar"
+        },
+        "__proto__": {
+          "answeredAt": "2026-05-20T08:05:00.000Z",
+          "selectedOptionTextEn": "Wrong answer",
+          "selectedOptionTextSv": "Fel svar"
+        },
+        "constructor": {
+          "answeredAt": "2026-05-20T08:05:00.000Z",
+          "selectedOptionTextEn": "Wrong answer",
+          "selectedOptionTextSv": "Fel svar"
+        },
+        "prototype": {
+          "answeredAt": "2026-05-20T08:05:00.000Z",
+          "selectedOptionTextEn": "Wrong answer",
+          "selectedOptionTextSv": "Fel svar"
+        }
+      }
+    },
+    "reviews": {
+      "byId": {
+        "q001": ${JSON.stringify(validReviewCard('q001'))},
+        "__proto__": ${JSON.stringify(validReviewCard('__proto__'))},
+        "constructor": ${JSON.stringify(validReviewCard('constructor'))},
+        "prototype": ${JSON.stringify(validReviewCard('prototype'))}
+      },
+      "gradedPerDay": {
+        "2026-05-20": 2,
+        "__proto__": 3,
+        "constructor": 4,
+        "prototype": 5
+      }
+    }
+  }`;
+
+  const previewResult = previewLocalStudyDataImport(rawPayload);
+  assert.equal(previewResult.ok, true);
+
+  const { progress, mistakeReview, reviews, summary } = previewResult.preview;
+  assert.deepEqual(Object.keys(progress.questionProgress), ['q001']);
+  assert.deepEqual(Object.keys(mistakeReview.wrongAnswerReviews), ['q001']);
+  assert.deepEqual(Object.keys(reviews.byId), ['q001']);
+  assert.deepEqual(Object.keys(reviews.gradedPerDay), ['2026-05-20']);
+  assertNoUnsafeOwnKeys(progress.questionProgress);
+  assertNoUnsafeOwnKeys(mistakeReview.wrongAnswerReviews);
+  assertNoUnsafeOwnKeys(reviews.byId);
+  assertNoUnsafeOwnKeys(reviews.gradedPerDay);
+  assert.equal(Object.getPrototypeOf(progress.questionProgress), Object.prototype);
+  assert.equal(Object.getPrototypeOf(mistakeReview.wrongAnswerReviews), Object.prototype);
+  assert.equal(Object.getPrototypeOf(reviews.byId), Object.prototype);
+  assert.equal(Object.getPrototypeOf(reviews.gradedPerDay), Object.prototype);
+  assert.equal(summary.bookmarkedQuestionCount, 1);
+  assert.equal(summary.wrongAnswerReviewCount, 1);
+  assert.equal(summary.fsrsReviewCardCount, 1);
+  assert.equal(summary.gradedReviewDayCount, 1);
 });

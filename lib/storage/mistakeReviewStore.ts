@@ -32,10 +32,12 @@ const emptyMistakeReview: PersistedMistakeReview = {
 };
 
 const maxSelectedAnswerTextLength = 500;
+const unsafeImportedMapKeys = new Set(['__proto__', 'constructor', 'prototype']);
 
 function normalizeQuestionId(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const questionId = value.trim();
+  if (unsafeImportedMapKeys.has(questionId)) return null;
   return questionId.length > 0 ? questionId : null;
 }
 

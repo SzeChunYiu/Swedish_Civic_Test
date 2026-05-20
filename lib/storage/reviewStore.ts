@@ -36,6 +36,11 @@ export interface PersistedReviews {
 }
 
 const EMPTY: PersistedReviews = { byId: {}, gradedPerDay: {} };
+const unsafeImportedMapKeys = new Set(['__proto__', 'constructor', 'prototype']);
+
+function isSafeImportedMapKey(value: string): boolean {
+  return !unsafeImportedMapKeys.has(value);
+}
 
 function isReviewCard(value: unknown): value is ReviewCard {
   if (!value || typeof value !== 'object') return false;
@@ -58,12 +63,14 @@ function normalize(value: unknown): PersistedReviews {
   const byId: Record<string, ReviewCard> = {};
   if (candidate.byId && typeof candidate.byId === 'object') {
     for (const [id, card] of Object.entries(candidate.byId)) {
+      if (!isSafeImportedMapKey(id)) continue;
       if (isReviewCard(card)) byId[id] = card;
     }
   }
   const gradedPerDay: Record<string, number> = {};
   if (candidate.gradedPerDay && typeof candidate.gradedPerDay === 'object') {
     for (const [day, count] of Object.entries(candidate.gradedPerDay)) {
+      if (!isSafeImportedMapKey(day)) continue;
       if (typeof count === 'number' && Number.isFinite(count) && count >= 0) {
         gradedPerDay[day] = count;
       }
