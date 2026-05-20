@@ -31,7 +31,7 @@ translated languages. Concrete deliverables are:
 | Word-level glossary/audit workspaces | `locales/{ar,ckb,fa,pl,so,ti,tr,uk,zh-Hans,zh-Hant}/` | README, glossary, phrasebook, and audit files exist for all listed language workspaces. | yes, phase 1 |
 | Runtime fail-closed state | `docs/localization/readiness.json`; `lib/i18n/locales.ts`; `node --test scripts/localization-readiness.test.js` | Picker targets `ar/fa/so/ti/pl/tr/zh-Hans/zh-Hant` are unavailable and blocked; test passes. | yes |
 | Actual website/static copy improvement | `site/i18n-extras.js`; `scripts/static-site-i18n-extras-cultural-copy.test.js` | Static extra copy improved for `zh-Hans`, `zh-Hant`, `ar`, `ckb`, `fa`, `pl`, `so`, `ti`, `tr`, `uk`; guard covers pass/passport slogans, Turkish outcome promises, and Chinese punctuation. | partial |
-| Actual app UI strings translated | `docs/localization/readiness.json` has `uiStrings: "not_started"`; `lib/i18n/locales.ts` and `components/ui/LanguagePicker.tsx` include native coming-soon badges for all blocked picker target locales | Full app UI translations are not done; zh-Hans now has preview-only settings, language-picker, and main entry-point copy slices in `lib/localization/zhHansUiPreview.ts`, and blocked picker target locales have native unavailable badges. | partial |
+| Actual app UI strings translated | `docs/localization/readiness.json` has `uiStrings: "not_started"`; `lib/i18n/locales.ts` and `components/ui/LanguagePicker.tsx` include native coming-soon badges for all blocked picker target locales | Full app UI translations are not done; zh-Hans now has preview-only settings, language-picker, main entry-point, and quiz-feedback copy slices in `lib/localization/zhHansUiPreview.ts`, and blocked picker target locales have native unavailable badges. | partial |
 | Question bank and answer explanations translated | `docs/localization/readiness.json` has `questionContent: "not_started"` for target picker locales | No target-language question/content translation is complete. | no |
 | Accessibility labels and screen-reader text translated | readiness entries show `missing`, `missing_rtl_runtime_review`, `missing_cjk_runtime_review`, or `missing_geez_script_review` | Accessibility/runtime review remains missing. | no |
 | Native review completed | readiness entries show `nativeReview: "missing"` for target picker locales | Native review is missing. | no |
@@ -72,7 +72,8 @@ Corpus-only workspaces outside the runtime picker:
 - `#1620` added native Chinese coming-soon badges while keeping Chinese fail-closed.
 - `#1635` restored native picker coming-soon badge rendering while keeping all target locales fail-closed.
 - `#1638` added a preview-only Simplified Chinese settings + language-picker UI slice in `lib/localization/zhHansUiPreview.ts` with `scripts/zh-hans-ui-preview.test.js`; it does not enable `zh-Hans`.
-- This branch extends that preview with home/profile/practice entry-point headers and accessibility labels while keeping `zh-Hans` blocked.
+- `#1640` extended that preview with home/profile/practice entry-point headers and accessibility labels while keeping `zh-Hans` blocked.
+- This branch adds preview-only Simplified Chinese quiz-feedback labels for answer options, explanations, source citations, confidence ratings, and result feedback while keeping `zh-Hans` blocked.
 - `#1611` summarized phase-1 readiness status.
 - `#1602`, `#1603`, `#1606`, `#1607`, and `#1608` closed the remaining
   phase-1 glossary/audit workspaces for Polish, Tigrinya, Traditional Chinese,
@@ -95,9 +96,9 @@ Corpus-only workspaces outside the runtime picker:
 
 ## Recommended next round
 
-After the preview-only `zh-Hans` entry-point slice, continue with the next bounded app UI surface before any release enablement:
+After the preview-only `zh-Hans` quiz-feedback slice, continue with the next bounded app UI surface before any release enablement:
 
-1. Add preview-only Simplified Chinese copy for quiz feedback components: answer option feedback, explanation panel labels, source citation labels, and confidence controls.
+1. Add preview-only Simplified Chinese copy for mock exam setup/results and mistake-review surfaces.
 2. Keep `zh-Hans.available=false`, `uiStrings=not_started`, and `releaseGate=blocked` until all app UI/content/native/accessibility blockers are closed.
 3. Add targeted tests proving fallback/blocking still works and the translated slice avoids pass/passport outcome promises.
 4. PR and merge the slice before moving to question content or another language.
