@@ -1993,6 +1993,51 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 3);
 });
 
+test('published question schema rejects generated web/social-media target fragments', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const webSocialMediaResiduals = {",
+        "  [generatedFixtureId('q153', 1)]: { questionSv: 'Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier.', questionEn: 'Anyone can create content there, and it is not always checked the same way as in other media.' },",
+        "  [generatedFixtureId('q153', 2)]: { questionSv: 'Bara ansvariga utgivare får skriva inlägg där.', questionEn: 'Only responsible publishers may write posts there.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  webSocialMediaResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...webSocialMediaResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
+});
+
 test('published question schema rejects generated proportional-party referent splices', () => {
   const result = spawnSync(
     process.execPath,
