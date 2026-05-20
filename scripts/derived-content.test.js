@@ -624,6 +624,8 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
   const { questions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
+  const sourceQ002 = byId.get('q002');
+  assert.ok(sourceQ002, 'q002 source true/false question must exist');
   const expectedRows = {
     q151: [
       'Sveriges nordligaste del ligger inte norr om polcirkeln.',
