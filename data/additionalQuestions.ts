@@ -536,8 +536,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q044',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Straffmyndighet och belastningsregister', pageApprox: 19 },
-    'Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?',
-    'From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?',
+    'Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?',
+    'From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?',
     [
       ['13 år', '13 years'],
       ['15 år', '15 years'],
@@ -545,8 +545,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ['21 år', '21 years'],
     ],
     1,
-    'I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller.',
-    'In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.',
+    'Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet.',
+    'The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.',
     ['criminal-responsibility', 'age-15', 'criminal-record'],
   ),
   single(

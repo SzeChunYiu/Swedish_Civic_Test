@@ -1956,8 +1956,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
-      "sv": "Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
+      "en": "From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -1979,8 +1979,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14898,8 +14898,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
-      "sv": "Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
+      "en": "Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -14921,8 +14921,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14946,8 +14946,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 15.",
-      "sv": "Från 15 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
+      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 15.",
+      "sv": "Från 15 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
       {
@@ -14961,8 +14961,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -14986,8 +14986,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime from age 13.",
-      "sv": "Från 13 år är en person i Sverige straffmyndig och kan bli åtalad för brott."
+      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from age 13.",
+      "sv": "Från 13 år är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
       {
@@ -15001,8 +15001,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -15026,8 +15026,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime?",
-      "sv": "Välj rätt alternativ: Från vilken ålder är en person i Sverige straffmyndig och kan bli åtalad för brott?"
+      "en": "Choose the correct option: From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Välj rätt alternativ: Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -15049,8 +15049,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In Sweden, a person is criminally responsible and can be prosecuted for a crime from age 15. The age 13 option refers to a 2026 government proposal for serious crimes, not the main rule asked about here.",
-      "sv": "I Sverige är en person straffmyndig och kan bli åtalad för brott från 15 års ålder. Uppgiften om 13 år gäller ett regeringsförslag under 2026 vid allvarliga brott, inte den huvudregel som frågan gäller."
+      "en": "The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.",
+      "sv": "Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet."
     },
     "source": {
       "title": "Sverige i fokus",
