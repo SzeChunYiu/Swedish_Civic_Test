@@ -309,17 +309,16 @@
         <div class="ad-slot__inner">
           <span class="ad-slot__label" data-i18n="ad.label">Sponsored</span>
           <div class="ad-slot__frame">
-            <!-- Replace ca-pub-XXX and the data-ad-slot value with your AdSense IDs -->
+            <!-- Static AdSense loads only after reviewed slot IDs are configured in site/app.js. -->
             <ins
               class="adsbygoogle"
               style="display: block; width: 100%; min-height: 120px"
-              data-ad-client="ca-pub-2451892671779738"
-              data-ad-slot="0000000001"
+              data-smt-ad-placement="inline"
               data-ad-format="auto"
               data-full-width-responsive="true"
             ></ins>
             <div class="ad-slot__placeholder" data-i18n="ad.placeholder">
-              Your AdSense slot will render here.
+              Ad space reserved while reviewed AdSense slots are configured.
             </div>
           </div>
         </div>
@@ -376,9 +375,10 @@
             <details class="faq__item">
               <summary data-i18n="faq.6.q">Is my data shared with anyone?</summary>
               <p data-i18n="faq.6.a">
-                Your study progress, answers, mistakes, and settings stay local. Google AdSense on
-                the website and Google Mobile Ads (AdMob) in the app can process ad and consent
-                signals, but ads never receive your study answers or progress.
+                Your study progress, answers, mistakes, and settings stay local. Google Mobile Ads
+                (AdMob) in the app can process ad and consent signals. The website's Google AdSense
+                slots stay disabled until reviewed web slot IDs are configured, and ads never
+                receive your study answers or progress.
               </p>
             </details>
           </div>
@@ -509,8 +509,8 @@
           </h1>
           <p class="doc__lede" data-i18n="privacy.lede">
             Almost Swedish is an independent study app. We don't ask for an account, and study
-            progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads
-            app ads, and optional one-time Remove Ads purchase.
+            progress stays local. This page explains the Google AdSense-ready web ad slots, Google
+            Mobile Ads app ads, and optional one-time Remove Ads purchase.
           </p>
           <div class="doc__meta">
             <span
@@ -578,18 +578,20 @@
 
               <h2 id="p5" data-i18n="privacy.s5.t">Ads and purchases</h2>
               <p data-i18n="privacy.s5.p">
-                This website uses Google AdSense. The mobile app uses Google Mobile Ads (AdMob)
+                This website has Google AdSense-ready ad slots, but they stay disabled until
+                reviewed slot IDs are configured. The mobile app uses Google Mobile Ads (AdMob)
                 behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase
                 that removes ads. Ads help fund the free study experience, and ads never collect
                 study answers or progress.
               </p>
               <h3 data-i18n="privacy.s5.web.t">Ads on this website</h3>
               <p data-i18n="privacy.s5.web.p">
-                This website uses <b>Google AdSense</b>. AdSense and its partners may set cookies on
-                your device and use them to personalise ads, measure performance, and detect fraud.
-                We load AdSense according to your cookie choice: <em>Accept all</em> allows
-                personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can
-                change your choice by clearing site data for this domain.
+                This website is prepared for <b>Google AdSense</b>, but the static build does not
+                load AdSense until reviewed web slot IDs are configured. When enabled, AdSense and
+                its partners may set cookies on your device and use them to personalise ads, measure
+                performance, and detect fraud. We load AdSense according to your cookie choice:
+                <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads
+                non-personalised. You can change your choice by clearing site data for this domain.
               </p>
               <h3 data-i18n="privacy.s5.app.t">Ads in the mobile app</h3>
               <p data-i18n="privacy.s5.app.p">
@@ -1251,12 +1253,13 @@
         <ins
           class="adsbygoogle"
           style="display: block; width: 100%; min-height: 60px"
-          data-ad-client="ca-pub-2451892671779738"
-          data-ad-slot="0000000002"
+          data-smt-ad-placement="anchor"
           data-ad-format="auto"
           data-full-width-responsive="true"
         ></ins>
-        <div class="ad-anchor__placeholder" data-i18n="ad.anchor.placeholder">Anchor ad slot</div>
+        <div class="ad-anchor__placeholder" data-i18n="ad.anchor.placeholder">
+          Ad space reserved.
+        </div>
       </div>
     </div>
 
@@ -1266,8 +1269,8 @@
         <div class="consent__copy">
           <b data-i18n="consent.title">Cookies, lagom-style.</b>
           <span data-i18n="consent.body"
-            >We use Google AdSense to show a couple of ads. AdSense sets cookies and may use them
-            for ad personalisation. You can accept all, accept only what's needed, or read the
+            >When web ad slots are enabled, Google AdSense can set cookies and may use them for ad
+            personalisation. You can accept all, accept only what's needed, or read the
             <a href="#/privacy">privacy page</a>.</span
           >
         </div>
