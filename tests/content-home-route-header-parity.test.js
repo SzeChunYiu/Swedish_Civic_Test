@@ -60,6 +60,22 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 });
 
+test('home source-trust row links learners to sources without unsupported rating copy', () => {
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const socialProofRow = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/SocialProofRow.tsx'),
+    'utf8',
+  );
+
+  assert.match(homeSource, /<SocialProofRow language=\{language\} \/>/);
+  assert.match(socialProofRow, /import \{ Link \} from 'expo-router';/);
+  assert.match(socialProofRow, /href="\/sources"/);
+  assert.match(socialProofRow, /accessibilityRole="link"/);
+  assert.match(socialProofRow, /Källor och transparens/);
+  assert.match(socialProofRow, /Sources and transparency/);
+  assert.match(socialProofRow, /Öppna källor och transparens/);
+  assert.match(socialProofRow, /Open sources and transparency/);
+  assert.doesNotMatch(socialProofRow, /Excellent|Utmärkt|5 of 5|5 av 5|★★★★★/);
 test('home route copy parity rejects unreachable flashcard promises', () => {
   const result = spawnSync(
     process.execPath,
