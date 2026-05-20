@@ -813,8 +813,11 @@
             <em data-i18n="sources.h1b">actually come from.</em>
           </h1>
           <p class="doc__lede" data-i18n="sources.lede">
-            The current question bank cites UHR's public study material <em>Sverige i fokus</em>. We
-            don't list other source families until questions backed by them actually ship.
+            The current question bank has two provenance families and every question is badged:
+            <strong>UHR</strong> (~179 questions cited directly to <em>Sverige i fokus</em>) and
+            <strong>Derived</strong> (~716 questions written editorially from those same UHR themes
+            for additional practice volume). You can restrict practice + mock to UHR only in
+            Settings → Question sources.
           </p>
           <div class="doc__meta">
             <span
@@ -827,7 +830,7 @@
             >
             <span
               ><b data-i18n="sources.meta3.b">Current bank</b>
-              <span data-i18n="sources.meta3.v">Sverige i fokus</span></span
+              <span data-i18n="sources.meta3.v">UHR + derived</span></span
             >
           </div>
 
@@ -850,7 +853,8 @@
                   test.
                 </li>
                 <li data-i18n="sources.s1.li2">
-                  Every shipped question cites a chapter, section, and page from this material.
+                  Direct UHR questions cite a chapter, section, and page from this material; derived
+                  questions are badged separately and written from the same UHR themes.
                 </li>
                 <li data-i18n="sources.s1.li3">
                   The public source list changes only when the shipped question bank contains
@@ -884,7 +888,9 @@
               <h2 id="src4" data-i18n="sources.s4.t">Current-source scope</h2>
               <ul>
                 <li data-i18n="sources.s4.li1">
-                  The bank is UHR-only today, based on <em>Sverige i fokus</em>.
+                  The bank has UHR-cited (~179) and editorially-derived (~716) questions; the
+                  per-question badge tells you which family each one belongs to, and Settings →
+                  Question sources lets you opt out of derived content.
                 </li>
                 <li data-i18n="sources.s4.li2">
                   The app is independent and is not an official UHR product.
@@ -1097,9 +1103,15 @@
           <div class="set-group">
             <h3 class="set-group__h" data-i18n="settings.theme">Theme</h3>
             <div class="set-segment" data-set="theme">
-              <button data-val="light" aria-pressed="false"><span data-i18n="settings.theme.light">Light</span></button>
-              <button data-val="dark" aria-pressed="false"><span data-i18n="settings.theme.dark">Dark</span></button>
-              <button data-val="auto" aria-pressed="true"><span data-i18n="settings.theme.auto">Auto</span></button>
+              <button data-val="light" aria-pressed="false">
+                <span data-i18n="settings.theme.light">Light</span>
+              </button>
+              <button data-val="dark" aria-pressed="false">
+                <span data-i18n="settings.theme.dark">Dark</span>
+              </button>
+              <button data-val="auto" aria-pressed="true">
+                <span data-i18n="settings.theme.auto">Auto</span>
+              </button>
             </div>
           </div>
 
@@ -1193,22 +1205,32 @@
           <div class="set-group">
             <h3 class="set-group__h" data-i18n="settings.text">Text size</h3>
             <div class="set-segment" data-set="textsize">
-              <button data-val="90" aria-pressed="false"><span data-i18n="settings.text.s">Small</span></button>
-              <button data-val="100" aria-pressed="true"><span data-i18n="settings.text.m">Regular</span></button>
-              <button data-val="115" aria-pressed="false"><span data-i18n="settings.text.l">Large</span></button>
+              <button data-val="90" aria-pressed="false">
+                <span data-i18n="settings.text.s">Small</span>
+              </button>
+              <button data-val="100" aria-pressed="true">
+                <span data-i18n="settings.text.m">Regular</span>
+              </button>
+              <button data-val="115" aria-pressed="false">
+                <span data-i18n="settings.text.l">Large</span>
+              </button>
             </div>
           </div>
 
           <div class="set-group">
             <h3 class="set-group__h" data-i18n="settings.sources">Question sources</h3>
             <div class="set-segment" data-set="sources">
-              <button data-val="all" aria-pressed="true"><span data-i18n="settings.sources.all">All sources</span></button>
-              <button data-val="uhr" aria-pressed="false"><span data-i18n="settings.sources.uhr">UHR only</span></button>
+              <button data-val="all" aria-pressed="true">
+                <span data-i18n="settings.sources.all">All sources</span>
+              </button>
+              <button data-val="uhr" aria-pressed="false">
+                <span data-i18n="settings.sources.uhr">UHR only</span>
+              </button>
             </div>
             <p class="set-hint" data-i18n="settings.sources.hint">
-              All = full bank (UHR-cited + editorially derived from UHR themes).
-              UHR only = ~169 questions traceable to Sverige i fokus citations.
-              Every question shows its provenance badge.
+              All = full bank (UHR-cited + editorially derived from UHR themes). UHR only = ~179
+              questions traceable to Sverige i fokus citations. Every question shows its provenance
+              badge.
             </p>
           </div>
 
