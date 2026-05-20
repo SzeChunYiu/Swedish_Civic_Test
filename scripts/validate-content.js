@@ -6951,6 +6951,120 @@ function validateAdPlacementRouteParity() {
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
+  let webBannerSource = '';
+  let nativeBannerSource = '';
+
+  try {
+    webBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+      'utf8',
+    );
+    nativeBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`AdBanner sources could not be read for banner placement parity: ${error.message}`);
+    return;
+  }
+
+  for (const { label, source } of [
+    { label: 'web AdBanner', source: webBannerSource },
+    { label: 'native AdBanner', source: nativeBannerSource },
+  ]) {
+    let sourceIsValid = true;
+
+    if (!/\bBannerAdPlacement\b/.test(source)) {
+      reject(`${label} props must use BannerAdPlacement`);
+      sourceIsValid = false;
+    }
+    if (!/placement\?: BannerAdPlacement;/.test(source)) {
+      reject(`${label} placement prop must be typed as optional BannerAdPlacement`);
+      sourceIsValid = false;
+    }
+    if (/\bAdPlacement\b/.test(source)) {
+      reject(`${label} must not accept the full AdPlacement union`);
+      sourceIsValid = false;
+    }
+    if (label === 'native AdBanner') {
+      if (!source.includes('const unit = getAdUnit(placement);')) {
+        reject('native AdBanner must inspect the configured ad unit');
+        sourceIsValid = false;
+      }
+      if (
+        !/const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner must derive the status label from unit.testOnly');
+        sourceIsValid = false;
+      }
+      if (
+        /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel,\s*copy\.liveStatus\)\}/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner accessibility label must not hardcode live ad status');
+        sourceIsValid = false;
+      }
+      if (!/accessibilityLabel=\{accessibilityLabel\}/.test(source)) {
+        reject('native AdBanner must pass the derived accessibility label');
+        sourceIsValid = false;
+      }
+      if (!source.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+        reject('native AdBanner must resolve banner units by Platform.OS');
+        sourceIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+          source,
+        )
+      ) {
+        reject('native AdBanner must gate banner visibility by Platform.OS');
+        sourceIsValid = false;
+      }
+    }
+
+    if (sourceIsValid) bannerAdPlacementTypeCasesValidated += 1;
+  }
+
+  let bannerUsageIsValid = true;
+  const bannerUsageRoots = ['app', 'components'];
+
+  function scanBannerUsages(directory) {
+    const entries = fs.readdirSync(directory, { withFileTypes: true });
+
+    entries.forEach((entry) => {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        scanBannerUsages(fullPath);
+        return;
+      }
+      if (!entry.isFile() || !/\.(?:tsx|ts)$/.test(entry.name)) return;
+
+      const relativePath = path.relative(repoRoot, fullPath).replace(/\\/g, '/');
+      const source = fs.readFileSync(fullPath, 'utf8');
+      const adBannerPlacementPattern = /<AdBanner\b[^>]*\bplacement="([^"]+)"/g;
+      let match;
+
+      while ((match = adBannerPlacementPattern.exec(source))) {
+        const placement = match[1];
+        if (!EXPECTED_BANNER_AD_PLACEMENTS.includes(placement)) {
+          bannerUsageIsValid = false;
+          reject(`${relativePath} must not pass non-banner placement ${placement} to AdBanner`);
+        }
+      }
+    });
+  }
+
+  try {
+    bannerUsageRoots.forEach((root) => scanBannerUsages(path.join(repoRoot, root)));
+  } catch (error) {
+    reject(`AdBanner call sites could not be scanned: ${error.message}`);
+    bannerUsageIsValid = false;
+  }
+
+  if (bannerUsageIsValid) bannerAdPlacementTypeCasesValidated += 1;
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';

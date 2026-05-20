@@ -41,6 +41,201 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
+test('ad placement route parity rejects non-banner placements routed through AdBanner', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<AdBanner placement="home_banner" />',
+        '<AdBanner placement="quiz_completed_interstitial" />\\n<AdBanner placement="results_native" />\\n<AdBanner placement="rewarded_extra_exam" />',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/home\.tsx must not pass non-banner placement quiz_completed_interstitial to AdBanner/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/home\.tsx must not pass non-banner placement results_native to AdBanner/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/home\.tsx must not pass non-banner placement rewarded_extra_exam to AdBanner/,
+  );
+});
+
+test('ad placement route parity rejects AdBanner widening back to all ad placements', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (
+    normalizedPath.endsWith('/components/monetization/AdBanner.tsx') ||
+    normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')
+  ) {
+    return originalReadFileSync.call(this, filePath, ...args).replace(/BannerAdPlacement/g, 'AdPlacement');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /web AdBanner props must use BannerAdPlacement|web AdBanner must not accept the full AdPlacement union/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native AdBanner props must use BannerAdPlacement|native AdBanner must not accept the full AdPlacement union/,
+  );
+});
+
+test('ad placement route parity rejects hardcoded native banner live status', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+        'const adStatusLabel = copy.liveStatus;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native AdBanner must derive the status label from unit\.testOnly/,
+  );
+});
+
+test('ad placement route parity rejects practice interstitials routed through BannerAd', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<PracticeInterstitialAd showKey={practiceInterstitialShowKey} />',
+        '<AdBanner placement="quiz_completed_interstitial" />',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/practice\.tsx must render PracticeInterstitialAd placement quiz_completed_interstitial|Practice completion interstitial must not flow through AdBanner/,
+  );
+});
+
+test('ad placement route parity rejects bare Swedish rewarded extra-exam ad copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/adCopy.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Annons för extra övningsprov', 'Annons för extra prov');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /rewarded_extra_exam Swedish ad placement label must say "Annons för extra övningsprov"|rewarded ad copy sources must not contain bare Swedish "extra prov" wording/,
+  );
+});
+
+test('ad placement parity keeps real ad unit env reads literal for web export', () => {
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  const realAdEnvKeys = [...adsSource.matchAll(/['"](EXPO_PUBLIC_ADMOB_[A-Z_]+_UNIT_ID)['"]/g)].map(
+    (match) => match[1],
+  );
+
+  assert.match(adsSource, /REAL_AD_UNIT_ENV_VALUES/);
+  assert.doesNotMatch(
+    adsSource,
+    /process\.env\s*\[[^\]]+\]/,
+    'web export needs literal process.env.EXPO_PUBLIC_ADMOB_* reads for real ad IDs',
+  );
+  assert.ok(realAdEnvKeys.length >= 12, 'expected platform-specific real ad unit env keys');
+
+  for (const envKey of new Set(realAdEnvKeys)) {
+    assert.match(
+      adsSource,
+      new RegExp(`process\\.env\\.${envKey}\\b`),
+      `${envKey} must have a matching literal process.env.${envKey} read`,
+    );
+  }
+});
+
 test('ad placement route parity rejects a drifted study route placement', () => {
   const result = spawnSync(
     process.execPath,
