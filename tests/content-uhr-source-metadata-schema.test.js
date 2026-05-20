@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('UHR source metadata schema validates a current retrieval date', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
