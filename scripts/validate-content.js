@@ -360,6 +360,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
+  /\b(?:Vem som helst kan skapa innehåll där|Bara ansvariga utgivare får skriva inlägg där)\b/i,
+  /\b(?:Anyone can create content there|Only responsible publishers may write posts there)\b/i,
   /^That Sweden's first mosques were built\b/i,
   /^(?:Försöka|Hindra)\b/i,
   /^(?:Try to|Stop others)\b/i,
@@ -4663,6 +4665,40 @@ function englishCivicActionClause(value) {
     .replace(/^public services being available\b/i, 'public services are available')
     .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
 }
+function webSocialMediaStatementSv(answer) {
+  if (/^Vem som helst kan skapa innehåll där/i.test(answer)) {
+    return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
+  }
+  if (/^Bara ansvariga utgivare får skriva inlägg där/i.test(answer)) {
+    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
+  }
+  if (/^Allt innehåll godkänns först av staten/i.test(answer)) {
+    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
+  }
+  if (/^Innehållet är alltid mer pålitligt/i.test(answer)) {
+    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
+  }
+  return `På webben och i sociala medier gäller att ${lowerFirst(
+    answer.replace(/\bdär\b/gi, 'på webben och i sociala medier'),
+  )}`;
+}
+function webSocialMediaStatementEn(answer) {
+  if (/^Anyone can create content there/i.test(answer)) {
+    return 'On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media';
+  }
+  if (/^Only responsible publishers may write posts there/i.test(answer)) {
+    return 'On the web and in social media, only responsible publishers may write posts';
+  }
+  if (/^All content is first approved by the state/i.test(answer)) {
+    return 'On the web and in social media, all content is first approved by the state';
+  }
+  if (/^The content is always more reliable/i.test(answer)) {
+    return 'Content on the web and in social media is always more reliable than news in newspapers';
+  }
+  return `On the web and in social media, ${lowerFirst(
+    answer.replace(/\bthere\b/gi, 'on the web and in social media'),
+  )}`;
+}
 function swedishCommonToDoStatement(timePhrase, answer) {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -5618,6 +5654,8 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} infaller ${lowerFirst(answer)}`;
   match = q.match(/^Vad uppmärksammas på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} uppmärksammas ${lowerFirst(answer)}`;
+  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
+  if (match) return webSocialMediaStatementSv(answer);
   match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
   if (match) return `På olika platser i Sverige finns ${lowerFirst(answer)} för ${match[1]}`;
   match = q.match(/^Vilka högtider är exempel på (.+)$/i);
@@ -5948,6 +5986,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} occurs ${englishOccurrencePhrase(answer)}`;
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
+  match = q.match(/^What is important to remember about the web and social media$/i);
+  if (match) return webSocialMediaStatementEn(answer);
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)
     return `In different places in Sweden, there are ${lowerEnglishNounPhrase(answer)} for ${match[1]}`;
