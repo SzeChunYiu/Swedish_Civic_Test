@@ -46,6 +46,10 @@ test('topbar language picker exposes one compact close target and keeps disabled
   await expect(menu).toBeVisible();
   await expect(closeButtons).toHaveCount(1);
   await expectCompactTarget(closeButtons.first(), 'language picker close button');
+  await expect(
+    closeButtons.first().locator('[data-testid="language-picker-close-icon"]'),
+  ).toHaveCount(1);
+  await expect(closeButtons.first()).not.toContainText(/^x$/i);
 
   const swedishRow = page.getByRole('menuitem', { name: 'Swedish' });
   const englishRow = page.getByRole('menuitem', { name: 'English' });
@@ -84,11 +88,20 @@ test('topbar language picker supports keyboard menu navigation', async ({ page }
 
   const trigger = await openLanguagePicker(page);
   const menu = page.getByRole('menu', { name: 'Språkväljare' });
+  const closeButton = page.getByRole('button', { name: 'Stäng språkväljaren' });
   const swedishRow = page.getByRole('menuitem', { name: 'Swedish' });
   const englishRow = page.getByRole('menuitem', { name: 'English' });
   const arabicRow = page.getByRole('menuitem', { name: 'Arabic, kommer snart' });
 
   await expect(menu).toBeVisible();
+  await expect(swedishRow).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(closeButton).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(englishRow).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(closeButton).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(swedishRow).toBeFocused();
 
   await page.keyboard.press('ArrowDown');
