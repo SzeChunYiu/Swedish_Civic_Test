@@ -134,10 +134,6 @@ const v11ScopeSurfacePaths = [
   'lib/monetization/proLifetimePurchase.ts',
 ];
 
-const removeAdsDeviceQaPath = 'reports/release-ads-iap-device-qa.md';
-const removeAdsStep3Command =
-  'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
-const releaseScopeOverrideId = 'release-scope-v11';
 const removeAdsDeviceQaPath =
   process.env.RELEASE_PREFLIGHT_DEVICE_QA_PATH || 'reports/release-ads-iap-device-qa.md';
 const removeAdsStep3StructuralGate =
@@ -242,17 +238,6 @@ function removeAdsV1AcceptanceFindings() {
   if (!/admob|advertis|in-app purchase/i.test(dataSafety)) {
     findings.push('GOAL step 7 is red: Google Play data safety does not disclose ads and IAP.');
   }
-  if (!exists(removeAdsDeviceQaPath)) {
-    findings.push(`Manual device-QA gate is red: ${removeAdsDeviceQaPath} is missing.`);
-  } else {
-    const deviceQa = readFileIfExists(removeAdsDeviceQaPath);
-    const blockedTerms = blockedEvidencePatterns
-      .filter(([pattern]) => pattern.test(deviceQa))
-      .map(([, label]) => label);
-    if (blockedTerms.length > 0) {
-      findings.push(
-        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} still contains ${blockedTerms.join(
-          ', ',
   const stalePublicPrivacyTerms = stalePublicPrivacyPatterns
     .filter(([pattern]) => pattern.test(publicPrivacySurface))
     .map(([, label]) => label);
