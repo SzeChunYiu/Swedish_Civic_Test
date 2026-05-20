@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -14,6 +15,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
@@ -22,6 +24,8 @@ import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShu
 import {
   getCompletedQuestionIdsForQuestionBank,
   getPracticeQuestionForSession,
+  getQuestionsForPracticeScope,
+  type PracticeScope,
 } from '../../lib/quiz/practiceFlow';
 import {
   getPracticeInterstitialShowKey,
@@ -35,16 +39,52 @@ import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
+type ChapterPracticeSummary = {
+  accuracy: number;
+  answered: number;
+  description: string;
+  id: string;
+  title: string;
+  total: number;
+};
+
 type PracticeCopy = {
   badge: string;
   bookmark: string;
   bookmarked: string;
   bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
+  allPracticeAccessibilityLabel: string;
+  allPracticeBody: string;
+  allPracticeCta: string;
+  allPracticeTitle: string;
+  chapterAccuracyLabel: (accuracy: number) => string;
+  chapterCardAccessibilityLabel: (
+    title: string,
+    answered: number,
+    total: number,
+    accuracy: number,
+  ) => string;
+  chapterHubSubtitle: string;
+  chapterHubTitle: string;
+  chapterProgressLabel: (answered: number, total: number) => string;
+  chapterStartCta: string;
   completedQuestions: (count: number) => string;
   emptyTitle: string;
+  hubBadge: string;
+  hubProgressSummary: (completed: number, total: number) => string;
+  hubSubtitle: string;
+  hubTitle: string;
+  mockExamAccessibilityLabel: string;
+  mockExamBody: string;
+  mockExamCta: string;
+  mockExamTitle: string;
   nextQuestion: string;
   nextQuestionAccessibilityLabel: string;
   questionTitle: (questionNumber: number) => string;
+  quickRoundAccessibilityLabel: (count: number) => string;
+  quickRoundBody: (count: number) => string;
+  quickRoundCta: string;
+  quickRoundTitle: string;
   scoreLabel: string;
   subtitle: string;
   tryAgain: string;
@@ -71,11 +111,36 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bokmärkt',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
+    allPracticeAccessibilityLabel: 'Starta övning med alla synliga frågor',
+    allPracticeBody: 'Fortsätt genom hela frågebanken i ordning med direkt återkoppling.',
+    allPracticeCta: 'Starta alla frågor',
+    allPracticeTitle: 'Alla frågor',
+    chapterAccuracyLabel: (accuracy) => `Träffsäkerhet: ${accuracy} %`,
+    chapterCardAccessibilityLabel: (title, answered, total, accuracy) =>
+      `${title}: ${answered} av ${total} frågor besvarade, ${accuracy} % träffsäkerhet. Öva kapitlet.`,
+    chapterHubSubtitle: 'Välj ett kapitel när du vill fokusera på ett område i taget.',
+    chapterHubTitle: 'Öva per kapitel',
+    chapterProgressLabel: (answered, total) => `${answered} av ${total} frågor besvarade`,
+    chapterStartCta: 'Öva kapitlet',
     completedQuestions: (count) => `Besvarade frågor: ${count}`,
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
+    hubBadge: 'Övningsnav',
+    hubProgressSummary: (completed, total) =>
+      `Du har besvarat ${completed} av ${total} synliga frågor.`,
+    hubSubtitle: 'Starta blandad övning, ta en kort runda eller fokusera på ett kapitel.',
+    hubTitle: 'Välj hur du vill öva',
+    mockExamAccessibilityLabel: 'Gå till övningsprovet',
+    mockExamBody: 'Byt till tidsatt provträning när du vill testa uthållighet och tempo.',
+    mockExamCta: 'Gå till övningsprov',
+    mockExamTitle: 'Övningsprov',
     nextQuestion: 'Nästa fråga',
     nextQuestionAccessibilityLabel: 'Gå till nästa övningsfråga',
     questionTitle: (questionNumber) => `Fråga ${questionNumber}`,
+    quickRoundAccessibilityLabel: (count) => `Starta en snabb runda med ${count} frågor`,
+    quickRoundBody: (count) =>
+      `${count} frågor blandade mellan kapitel, med obesvarade frågor först.`,
+    quickRoundCta: 'Starta snabb runda',
+    quickRoundTitle: 'Snabb runda',
     scoreLabel: 'Poäng',
     subtitle: 'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     tryAgain: 'Försök igen',
@@ -103,11 +168,36 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bookmarked',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
+    allPracticeAccessibilityLabel: 'Start practice with all visible questions',
+    allPracticeBody: 'Move through the full question bank in order with instant feedback.',
+    allPracticeCta: 'Start all questions',
+    allPracticeTitle: 'All questions',
+    chapterAccuracyLabel: (accuracy) => `Accuracy: ${accuracy}%`,
+    chapterCardAccessibilityLabel: (title, answered, total, accuracy) =>
+      `${title}: ${answered} of ${total} questions answered, ${accuracy}% accuracy. Practise this chapter.`,
+    chapterHubSubtitle: 'Choose a chapter when you want to focus on one area at a time.',
+    chapterHubTitle: 'Practise by chapter',
+    chapterProgressLabel: (answered, total) => `${answered} of ${total} questions answered`,
+    chapterStartCta: 'Practise chapter',
     completedQuestions: (count) => `Completed questions: ${count}`,
     emptyTitle: 'No practice questions are available yet.',
+    hubBadge: 'Practice hub',
+    hubProgressSummary: (completed, total) =>
+      `You have answered ${completed} of ${total} visible questions.`,
+    hubSubtitle: 'Start mixed practice, take a short round, or focus on one chapter.',
+    hubTitle: 'Choose how to practise',
+    mockExamAccessibilityLabel: 'Go to the mock exam',
+    mockExamBody: 'Switch to timed exam practice when you want to test stamina and pace.',
+    mockExamCta: 'Go to mock exam',
+    mockExamTitle: 'Mock exam',
     nextQuestion: 'Next question',
     nextQuestionAccessibilityLabel: 'Move to the next practice question',
     questionTitle: (questionNumber) => `Question ${questionNumber}`,
+    quickRoundAccessibilityLabel: (count) => `Start a quick round with ${count} questions`,
+    quickRoundBody: (count) =>
+      `${count} questions mixed across chapters, with unanswered questions first.`,
+    quickRoundCta: 'Start quick round',
+    quickRoundTitle: 'Quick round',
     scoreLabel: 'Score',
     subtitle: 'Answer, get instant feedback, then review the UHR source before moving on.',
     tryAgain: 'Try again',
@@ -131,6 +221,44 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
   },
 };
 
+const QUICK_ROUND_SIZE = 10;
+
+type PracticeQuestionItem = (typeof questions)[number];
+
+function buildChapterPracticeSummaries(
+  sourceQuestions: PracticeQuestionItem[],
+  completedQuestionIds: string[],
+  questionProgress: ReturnType<typeof useProgressStore.getState>['questionProgress'],
+  language: AppLanguage,
+): ChapterPracticeSummary[] {
+  const completedQuestionIdSet = new Set(completedQuestionIds);
+
+  return chapters.map((chapter) => {
+    const chapterQuestions = sourceQuestions.filter(
+      (question) => question.chapterId === chapter.id,
+    );
+    let correctAnswerCount = 0;
+    let totalAnswerCount = 0;
+
+    chapterQuestions.forEach((question) => {
+      const progress = questionProgress[question.id];
+      correctAnswerCount += progress?.correctCount ?? 0;
+      totalAnswerCount += progress?.seenCount ?? 0;
+    });
+
+    return {
+      accuracy:
+        totalAnswerCount > 0 ? Math.round((correctAnswerCount / totalAnswerCount) * 100) : 0,
+      answered: chapterQuestions.filter((question) => completedQuestionIdSet.has(question.id))
+        .length,
+      description: language === 'sv' ? chapter.descriptionSv : chapter.descriptionEn,
+      id: chapter.id,
+      title: language === 'sv' ? chapter.nameSv : chapter.nameEn,
+      total: chapterQuestions.length,
+    };
+  });
+}
+
 export default function Screen() {
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
@@ -153,6 +281,8 @@ export default function Screen() {
   const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
     null,
   );
+  const [practiceScope, setPracticeScope] = useState<PracticeScope>({ type: 'all' });
+  const [practiceStarted, setPracticeStarted] = useState(() => Boolean(activeQuestionId));
   const copy = practiceCopy[language];
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
@@ -162,9 +292,34 @@ export default function Screen() {
     () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
     [completedQuestionIds, filteredQuestions],
   );
+  const selectedPracticeQuestions = useMemo(
+    () =>
+      getQuestionsForPracticeScope(
+        filteredQuestions,
+        visibleCompletedQuestionIds,
+        practiceScope,
+        QUICK_ROUND_SIZE,
+      ),
+    [filteredQuestions, practiceScope, visibleCompletedQuestionIds],
+  );
+  const scopedCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(selectedPracticeQuestions, completedQuestionIds),
+    [completedQuestionIds, selectedPracticeQuestions],
+  );
+  const chapterPracticeSummaries = useMemo(
+    () =>
+      buildChapterPracticeSummaries(
+        filteredQuestions,
+        visibleCompletedQuestionIds,
+        questionProgress,
+        language,
+      ),
+    [filteredQuestions, language, questionProgress, visibleCompletedQuestionIds],
+  );
+  const quickRoundQuestionCount = Math.min(QUICK_ROUND_SIZE, filteredQuestions.length);
   const rawQuestion = getPracticeQuestionForSession(
-    filteredQuestions,
-    visibleCompletedQuestionIds,
+    selectedPracticeQuestions,
+    scopedCompletedQuestionIds,
     activeQuestionId,
   );
   const question = useMemo(
@@ -172,6 +327,130 @@ export default function Screen() {
       rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
     [rawQuestion, shuffleSessionId],
   );
+  const startPractice = (scope: PracticeScope) => {
+    setPracticeScope(scope);
+    setPracticeStarted(true);
+    advanceQuestion();
+  };
+
+  if (!practiceStarted && !activeQuestionId) {
+    return (
+      <ScrollView style={styles.container} contentContainerStyle={styles.hubContent}>
+        <View style={styles.hubHero}>
+          <Badge>{copy.hubBadge}</Badge>
+          <Text accessibilityRole="header" style={styles.hubTitle}>
+            {copy.hubTitle}
+          </Text>
+          <Text style={styles.subtitle}>{copy.hubSubtitle}</Text>
+          <ProgressBar
+            language={language}
+            progress={
+              filteredQuestions.length > 0
+                ? visibleCompletedQuestionIds.length / filteredQuestions.length
+                : 0
+            }
+          />
+          <Text style={styles.meta}>
+            {copy.hubProgressSummary(visibleCompletedQuestionIds.length, filteredQuestions.length)}
+          </Text>
+        </View>
+
+        <View style={styles.hubActionGrid}>
+          <View style={styles.hubActionPanel}>
+            <Text accessibilityRole="header" style={styles.hubPanelTitle}>
+              {copy.allPracticeTitle}
+            </Text>
+            <Text style={styles.hubPanelBody}>{copy.allPracticeBody}</Text>
+            <Button
+              accessibilityLabel={copy.allPracticeAccessibilityLabel}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: filteredQuestions.length === 0 }}
+              disabled={filteredQuestions.length === 0}
+              onPress={() => startPractice({ type: 'all' })}
+              style={styles.hubActionButton}
+            >
+              {copy.allPracticeCta}
+            </Button>
+          </View>
+          <View style={styles.hubActionPanel}>
+            <Text accessibilityRole="header" style={styles.hubPanelTitle}>
+              {copy.quickRoundTitle}
+            </Text>
+            <Text style={styles.hubPanelBody}>{copy.quickRoundBody(quickRoundQuestionCount)}</Text>
+            <Button
+              accessibilityLabel={copy.quickRoundAccessibilityLabel(quickRoundQuestionCount)}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: quickRoundQuestionCount === 0 }}
+              disabled={quickRoundQuestionCount === 0}
+              onPress={() => startPractice({ type: 'quick' })}
+              style={styles.hubActionButton}
+              variant="secondary"
+            >
+              {copy.quickRoundCta}
+            </Button>
+          </View>
+          <View style={styles.hubActionPanel}>
+            <Text accessibilityRole="header" style={styles.hubPanelTitle}>
+              {copy.mockExamTitle}
+            </Text>
+            <Text style={styles.hubPanelBody}>{copy.mockExamBody}</Text>
+            <Link
+              accessibilityLabel={copy.mockExamAccessibilityLabel}
+              accessibilityRole="link"
+              href="/exam"
+              style={styles.examLink}
+            >
+              {copy.mockExamCta}
+            </Link>
+          </View>
+        </View>
+
+        <View style={styles.chapterHub}>
+          <Text accessibilityRole="header" style={styles.chapterHubTitle}>
+            {copy.chapterHubTitle}
+          </Text>
+          <Text style={styles.chapterHubSubtitle}>{copy.chapterHubSubtitle}</Text>
+          <View style={styles.chapterGrid}>
+            {chapterPracticeSummaries.map((chapter) => (
+              <Pressable
+                key={chapter.id}
+                android_ripple={{ color: colors.focusSoft }}
+                aria-disabled={chapter.total === 0}
+                accessibilityLabel={copy.chapterCardAccessibilityLabel(
+                  chapter.title,
+                  chapter.answered,
+                  chapter.total,
+                  chapter.accuracy,
+                )}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: chapter.total === 0 }}
+                disabled={chapter.total === 0}
+                hitSlop={space[1]}
+                onPress={() => startPractice({ type: 'chapter', chapterId: chapter.id })}
+                style={({ pressed }) => [
+                  styles.chapterCard,
+                  chapter.total === 0 ? styles.chapterCardDisabled : null,
+                  pressed ? styles.chapterCardPressed : null,
+                ]}
+              >
+                <Text accessibilityRole="header" style={styles.chapterCardTitle}>
+                  {chapter.title}
+                </Text>
+                <Text style={styles.chapterCardDescription}>{chapter.description}</Text>
+                <Text style={styles.chapterCardMeta}>
+                  {copy.chapterProgressLabel(chapter.answered, chapter.total)}
+                </Text>
+                <Text style={styles.chapterCardMeta}>
+                  {copy.chapterAccuracyLabel(chapter.accuracy)}
+                </Text>
+                <Text style={styles.chapterCardCta}>{copy.chapterStartCta}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    );
+  }
 
   if (!question) {
     return (
@@ -190,9 +469,12 @@ export default function Screen() {
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
-  const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
+  const questionIndex = selectedPracticeQuestions.findIndex(
+    (candidate) => candidate.id === question.id,
+  );
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
+  const bankProgress =
+    selectedPracticeQuestions.length > 0 ? questionNumber / selectedPracticeQuestions.length : 0;
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -219,7 +501,7 @@ export default function Screen() {
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
         <Text style={styles.meta}>
-          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
+          {copy.completedQuestions(scopedCompletedQuestionIds.length)}
         </Text>
         <View style={styles.headerControls}>
           <Pressable
@@ -392,9 +674,137 @@ const styles = StyleSheet.create({
     padding: space[3],
     paddingBottom: space[10],
   },
+  hubContent: {
+    gap: space[2],
+    padding: space[3],
+    paddingBottom: space[10],
+  },
   emptyContainer: {
     flex: 1,
     padding: space[3],
+  },
+  hubHero: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.25],
+    padding: space[3],
+  },
+  hubTitle: {
+    color: colors.text,
+    fontSize: typography.sectionHeading.fontSize,
+    fontWeight: typography.sectionHeading.fontWeight,
+    lineHeight: typography.sectionHeading.lineHeight,
+  },
+  hubActionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1.5],
+  },
+  hubActionPanel: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    flexGrow: 1,
+    flexShrink: 1,
+    gap: space[1],
+    minWidth: 220,
+    padding: space[2],
+  },
+  hubPanelTitle: {
+    color: colors.text,
+    fontSize: typography.bodyLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyLarge.lineHeight,
+  },
+  hubPanelBody: {
+    color: colors.textMuted,
+    flexGrow: 1,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  hubActionButton: {
+    alignSelf: 'flex-start',
+  },
+  examLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.25],
+    textDecorationLine: 'none',
+  },
+  chapterHub: {
+    gap: space[1],
+  },
+  chapterHubTitle: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  chapterHubSubtitle: {
+    color: colors.textMuted,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  chapterGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1.5],
+  },
+  chapterCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    flexGrow: 1,
+    flexShrink: 1,
+    gap: space[0.75],
+    minHeight: space[12],
+    minWidth: 240,
+    padding: space[2],
+  },
+  chapterCardPressed: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  chapterCardDisabled: {
+    backgroundColor: colors.surfaceMuted,
+  },
+  chapterCardTitle: {
+    color: colors.text,
+    fontSize: typography.bodyLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyLarge.lineHeight,
+  },
+  chapterCardDescription: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  chapterCardMeta: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  chapterCardCta: {
+    color: colors.accent,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+    marginTop: space[0.5],
+    textTransform: 'uppercase',
   },
   hero: {
     backgroundColor: colors.surface,
