@@ -2,8 +2,6 @@ import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { closeLaunchAdIfPresent } from './browserLaunch';
-
 test('launch sponsor modal exposes one named dialog on web', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -22,14 +20,23 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
   await expect(page.getByRole('heading', { name: 'Launch sponsor' })).toHaveCount(0);
   await expect(page.getByText('Continue studying')).toHaveCount(0);
 
-  const launchAdDismissed = await closeLaunchAdIfPresent(page);
-  expect(launchAdDismissed).toBe(true);
+  const closeButton = dialogs.first().getByRole('button').first();
+  await expect(closeButton).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(closeButton).toBeFocused();
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(closeButton).toBeFocused();
+
+  await page.keyboard.press('Escape');
 
   await expect(dialogs).toHaveCount(0);
   await expect(page.getByText('Dagens mål')).toBeVisible();
 
   const searchLink = page.getByRole('link', { name: 'Sök' }).first();
   await expect(searchLink).toBeVisible();
+  await expect(searchLink).toBeFocused();
   const searchLinkBox = await searchLink.boundingBox();
   expect(searchLinkBox).not.toBeNull();
   expect(searchLinkBox?.width).toBeGreaterThanOrEqual(44);
