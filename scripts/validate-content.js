@@ -2045,9 +2045,9 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'Primary study material',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?action=\{/,
       /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?action=\{/,
     ],
     title: 'Sources',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -2070,7 +2070,7 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}[\s\S]*?action=\{/,
     ],
     title: 'Support and feedback',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -17061,11 +17061,17 @@ function validateUhrSourceMaterialLinkParity() {
   ) {
     reject('app/sources.tsx UHR boundary note must show Swedish and English retrieved dates');
   }
-  if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
-    reject('app/sources.tsx must render the UHR material URL through an Expo Link');
+  if (!/<ComplianceActionLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR material URL through ComplianceActionLink');
   }
-  if (!/<Link[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/.test(sourcesRoute)) {
-    reject('app/sources.tsx must render the UHR about-test URL through an Expo Link');
+  if (!/<ComplianceActionLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR about-test URL through ComplianceActionLink');
+  }
+  if (!sourcesRoute.includes('detail={getVisibleLinkDestination(UHR_EDUCATION_MATERIAL_URL)}')) {
+    reject('app/sources.tsx UHR material link must show visible destination context');
+  }
+  if (!sourcesRoute.includes('detail={getVisibleLinkDestination(UHR_ABOUT_TEST_URL)}')) {
+    reject('app/sources.tsx UHR boundary link must show visible destination context');
   }
   if (!sourcesRoute.includes('accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}')) {
     reject('app/sources.tsx UHR material link needs the localized accessibility label');

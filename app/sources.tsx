@@ -1,9 +1,9 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
-
+import {
+  ComplianceActionLink,
+  getVisibleLinkDestination,
+} from '../components/compliance/ComplianceActionLink';
 import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, typography } from '../lib/theme';
 
 const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const UHR_ABOUT_TEST_URL = 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/';
@@ -37,6 +37,7 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
       },
       primaryStudyMaterial: {
         body: 'Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan. UHR:s utbildningsmaterial:',
+        sourceLabel: 'UHR:s utbildningsmaterial',
         title: 'Primärt studiematerial',
       },
       questionReferences: {
@@ -57,6 +58,7 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
       },
       primaryStudyMaterial: {
         body: 'Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan. UHR education material:',
+        sourceLabel: 'UHR education material',
         title: 'Primary study material',
       },
       questionReferences: {
@@ -74,40 +76,35 @@ export default function Screen() {
 
   return (
     <LegalPage title={copy.title}>
-      <LegalSection title={copy.sections.primaryStudyMaterial.title}>
-        {copy.sections.primaryStudyMaterial.body}{' '}
-        <Link
-          accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}
-          accessibilityRole="link"
-          href={UHR_EDUCATION_MATERIAL_URL}
-          style={styles.externalLink}
-        >
-          {UHR_EDUCATION_MATERIAL_URL}
-        </Link>
+      <LegalSection
+        title={copy.sections.primaryStudyMaterial.title}
+        action={
+          <ComplianceActionLink
+            accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}
+            detail={getVisibleLinkDestination(UHR_EDUCATION_MATERIAL_URL)}
+            href={UHR_EDUCATION_MATERIAL_URL}
+            label={copy.sections.primaryStudyMaterial.sourceLabel ?? UHR_EDUCATION_MATERIAL_URL}
+          />
+        }
+      >
+        {copy.sections.primaryStudyMaterial.body}
       </LegalSection>
       <LegalSection title={copy.sections.questionReferences.title}>
         {copy.sections.questionReferences.body}
       </LegalSection>
-      <LegalSection title={copy.sections.authorityBoundaries.title}>
-        {copy.sections.authorityBoundaries.body}{' '}
-        <Link
-          accessibilityLabel={copy.openAuthorityBoundarySourceAccessibilityLabel}
-          accessibilityRole="link"
-          href={UHR_ABOUT_TEST_URL}
-          style={styles.externalLink}
-        >
-          {copy.sections.authorityBoundaries.sourceLabel}
-        </Link>
+      <LegalSection
+        title={copy.sections.authorityBoundaries.title}
+        action={
+          <ComplianceActionLink
+            accessibilityLabel={copy.openAuthorityBoundarySourceAccessibilityLabel}
+            detail={getVisibleLinkDestination(UHR_ABOUT_TEST_URL)}
+            href={UHR_ABOUT_TEST_URL}
+            label={copy.sections.authorityBoundaries.sourceLabel ?? UHR_ABOUT_TEST_URL}
+          />
+        }
+      >
+        {copy.sections.authorityBoundaries.body}
       </LegalSection>
     </LegalPage>
   );
 }
-
-const styles = StyleSheet.create({
-  externalLink: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'underline',
-  },
-});
