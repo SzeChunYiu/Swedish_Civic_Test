@@ -212,6 +212,61 @@ test('chapterWeaknesses: long-idle chapter gets staleness boost', () => {
   assert.ok(result[0].weaknessScore > 0); // staleness lifts from 0
 });
 
+test('chapterWeaknesses: invalid and future answer dates do not count toward weakness', () => {
+  const { chapterWeaknesses } = loadTs('lib/learning/weakChapters.ts');
+  const result = chapterWeaknesses({
+    progress: progressWithSessions([
+      {
+        id: 's1',
+        mode: 'study',
+        questionIds: [],
+        answers: [
+          {
+            questionId: 'bad-date',
+            selectedOptionIds: [],
+            isCorrect: false,
+            answeredAt: 'not-a-date',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'future-date',
+            selectedOptionIds: [],
+            isCorrect: false,
+            answeredAt: '2099-01-01T00:00:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'valid',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-18T10:00:00.000Z',
+            timeSpentSeconds: 5,
+          },
+        ],
+        startedAt: '2026-05-18T00:00:00.000Z',
+      },
+    ]),
+    chapters: [
+      { id: 'invalid-only', questionCount: 10 },
+      { id: 'valid-chapter', questionCount: 10 },
+    ],
+    questionChapterIndex: {
+      'bad-date': 'invalid-only',
+      'future-date': 'invalid-only',
+      valid: 'valid-chapter',
+    },
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  const invalidOnly = result.find((chapter) => chapter.chapterId === 'invalid-only');
+  const validChapter = result.find((chapter) => chapter.chapterId === 'valid-chapter');
+  assert.equal(invalidOnly.answers, 0);
+  assert.equal(invalidOnly.accuracy, null);
+  assert.equal(invalidOnly.coverage, 0);
+  assert.equal(validChapter.answers, 1);
+  assert.equal(validChapter.coverage, 0.1);
+});
+
 // ---------------------------------------------------------------- mock exam library
 
 test('mockExamLibrary: library contains the canonical 7 mocks', () => {

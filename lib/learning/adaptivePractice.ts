@@ -8,6 +8,7 @@
 // size, returns the ordered question ids for the session. Deterministic
 // given the inputs.
 
+import { validAnswerTimestampMs } from './answerDates';
 import type { UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -44,12 +45,13 @@ interface ScoredQuestion {
 }
 
 function recentAccuracy(progress: UserProgress, now: Date): number {
-  const cutoff = new Date(now.getTime() - 30 * DAY_MS).toISOString();
+  const cutoff = now.getTime() - 30 * DAY_MS;
   let total = 0;
   let correct = 0;
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {
-      if (answer.answeredAt < cutoff) continue;
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs === null || answeredAtMs < cutoff) continue;
       total += 1;
       if (answer.isCorrect) correct += 1;
     }
@@ -60,15 +62,18 @@ function recentAccuracy(progress: UserProgress, now: Date): number {
 
 function lastSeenMap(
   progress: UserProgress,
-): Record<string, { lastAt: string; correctStreak: number }> {
-  const out: Record<string, { lastAt: string; correctStreak: number }> = {};
+  now: Date,
+): Record<string, { lastAtMs: number; correctStreak: number }> {
+  const out: Record<string, { lastAtMs: number; correctStreak: number }> = {};
   for (const session of progress.sessions ?? []) {
     for (const answer of session.answers) {
+      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (answeredAtMs === null) continue;
       const prior = out[answer.questionId];
-      if (!prior || answer.answeredAt > prior.lastAt) {
+      if (!prior || answeredAtMs > prior.lastAtMs) {
         const streak =
           prior && answer.isCorrect ? prior.correctStreak + 1 : answer.isCorrect ? 1 : 0;
-        out[answer.questionId] = { lastAt: answer.answeredAt, correctStreak: streak };
+        out[answer.questionId] = { lastAtMs: answeredAtMs, correctStreak: streak };
       }
     }
   }
@@ -85,7 +90,7 @@ export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
   const now = input.now ?? new Date();
   const size = input.size ?? 10;
   const accuracy = input.recentAccuracyOverride ?? recentAccuracy(input.progress, now);
-  const seen = lastSeenMap(input.progress);
+  const seen = lastSeenMap(input.progress, now);
 
   // Difficulty preference shifts with accuracy:
   //   < 0.5 → bias toward easy (rebuild confidence)
@@ -111,7 +116,7 @@ export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
       score = 100;
       bucket = 'recently-wrong';
     } else {
-      const daysSince = (now.getTime() - new Date(last.lastAt).getTime()) / DAY_MS;
+      const daysSince = (now.getTime() - last.lastAtMs) / DAY_MS;
       if (last.correctStreak >= 3 && daysSince < 14) {
         // Recently mastered — deprioritize, but include if pool small.
         score = 30;
@@ -145,7 +150,7 @@ export function explainAdaptivePick(
   const now = input.now ?? new Date();
   const size = input.size ?? 10;
   const accuracy = input.recentAccuracyOverride ?? recentAccuracy(input.progress, now);
-  const seen = lastSeenMap(input.progress);
+  const seen = lastSeenMap(input.progress, now);
   const eligible = input.chapterId
     ? input.bank.filter((q) => q.chapterId === input.chapterId)
     : input.bank.slice();
@@ -161,7 +166,7 @@ export function explainAdaptivePick(
       score = 100;
       bucket = 'recently-wrong';
     } else {
-      const daysSince = (now.getTime() - new Date(last.lastAt).getTime()) / DAY_MS;
+      const daysSince = (now.getTime() - last.lastAtMs) / DAY_MS;
       if (last.correctStreak >= 3 && daysSince < 14) {
         score = 30;
         bucket = 'mastered';
