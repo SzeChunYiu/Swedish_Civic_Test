@@ -1246,3 +1246,12 @@ Verification: clean SETUP worktree from current `origin/main`; `npm run test:sta
 PR: pending from `task/adsense-stored-consent-1779235600` at handoff commit time.
 Blocked? no for this static AdSense stored-consent guard; no Vercel CLI was run.
 Next suggested validator action: inspect the static consent ordering fix and rerun `npm run test:static-site-adsense-consent-browser` plus the grouped static browser/privacy/mobile/live-site checks before accepting.
+
+## Iteration 259 - 2026-05-20
+
+Task completed: PLAYWRIGHT-E2E-PORT-CONFIG-GUARD-1 - made the exported-web Playwright server port derive from `E2E_PORT`, default to 4173, and pass the selected port to `serve-dist-web.cjs` through `PORT` with a build-config regression guard.
+Artifacts changed: `playwright.config.ts`, `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main` after claim commit `17a46abe`; `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'Playwright exported-web server port is configurable per worker' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 45/45 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 795 questions and static parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `E2E_PORT=4188 npx --no-install playwright test --list` exit 0 listing 36 tests; targeted Prettier check and `git diff --check` exit 0.
+PR: pending from `task/setup/playwright-e2e-port-guard-1779234942` at handoff commit time.
+Blocked? no for this e2e port-config guard.
+Next suggested validator action: inspect the Playwright config port wiring and rerun `npm run test:build-config`, typecheck, and an `E2E_PORT=<free-port> npx playwright test --list` smoke before accepting.
