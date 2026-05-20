@@ -1552,6 +1552,32 @@ test('exam screen does not import ad components', () => {
   assert.match(accessHookSource, /createSecureStoreMockExamAccessStorage/);
 });
 
+test('mock exam completion write failures stay retryable before the next free exam', () => {
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.match(examSource, /type CompletionSaveState = 'idle' \| 'saving' \| 'saved' \| 'failed';/);
+  assert.match(examSource, /const completionRecorded = completionSaveState === 'saved';/);
+  assert.match(
+    examSource,
+    /const canStartNextExam =[\s\S]*completionRecorded[\s\S]*completionSaveState === 'failed' && entitlements\.unlimitedMockExams[\s\S]*canStartAccessibleExam;/,
+  );
+  assert.match(
+    examSource,
+    /const handleRetryCompletionSave = useCallback\(async \(\) => \{[\s\S]*setCompletionRetrying\(true\);[\s\S]*await recordExamCompletion\(\);[\s\S]*setCompletionSaveState\('saved'\);[\s\S]*catch \{[\s\S]*setCompletionSaveState\('failed'\);[\s\S]*setAccessStatusMessage\(copy\.completionStoreFailure\);/,
+  );
+  assert.match(
+    examSource,
+    /completionSaveState === 'failed' \? \([\s\S]*accessibilityLabel=\{copy\.retryCompletionSave\}[\s\S]*disabled=\{completionRetrying\}[\s\S]*onPress=\{handleRetryCompletionSave\}/,
+  );
+  assert.match(
+    examSource,
+    /aria-disabled=\{!canStartNextExam \|\| startingAccessibleExam \|\| completionRetrying\}/,
+  );
+  assert.match(examSource, /retryCompletionSave: 'Försök spara igen'/);
+  assert.match(examSource, /retryCompletionSave: 'Retry saving result'/);
+  assert.doesNotMatch(examSource, /setCompletionRecorded\(true\)/);
+});
+
 test('global launch popup ad is suppressed on active question and compliance routes', () => {
   const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
   const entitlementHookSource = fs.readFileSync(

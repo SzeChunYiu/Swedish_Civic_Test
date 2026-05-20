@@ -58,3 +58,27 @@ require('./scripts/validate-content.js');
     /lib\/monetization\/rewardedExam\.ts MockExamAccessState\.rewardedExtraExamCredits optional=false, expected true/,
   );
 });
+
+test('mock exam result save failures expose a retry path without unlocking the next free exam', () => {
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.match(examSource, /const \[completionSaveState, setCompletionSaveState\]/);
+  assert.match(examSource, /const \[completionRetrying, setCompletionRetrying\]/);
+  assert.match(
+    examSource,
+    /const canStartNextExam =[\s\S]*completionRecorded[\s\S]*completionSaveState === 'failed' && entitlements\.unlimitedMockExams[\s\S]*canStartAccessibleExam;/,
+  );
+  assert.match(
+    examSource,
+    /const handleRetryCompletionSave = useCallback\(async \(\) => \{[\s\S]*await recordExamCompletion\(\);[\s\S]*setCompletionSaveState\('saved'\)[\s\S]*setAccessStatusMessage\(null\);[\s\S]*catch \{[\s\S]*setCompletionSaveState\('failed'\);[\s\S]*setAccessStatusMessage\(copy\.completionStoreFailure\);/,
+  );
+  assert.match(
+    examSource,
+    /completionSaveState === 'failed' \? \([\s\S]*accessibilityLabel=\{copy\.retryCompletionSave\}[\s\S]*onPress=\{handleRetryCompletionSave\}/,
+  );
+  assert.match(
+    examSource,
+    /disabled=\{!canStartNextExam \|\| startingAccessibleExam \|\| completionRetrying\}/,
+  );
+  assert.doesNotMatch(examSource, /setCompletionRecorded\(true\)/);
+});

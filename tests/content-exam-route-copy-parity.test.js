@@ -19,7 +19,7 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 58);
+  assert.equal(summary.examRouteCopyLabelsValidated, 62);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -29,8 +29,6 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /Select answer \$\{optionText\} for question \$\{questionNumber\}/);
   assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
-  assert.match(source, /retryCompletionLabel: 'Försök spara igen'/);
-  assert.match(source, /retryCompletionLabel: 'Try saving again'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
@@ -48,6 +46,23 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /recordMockExamSession\(\{/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
   assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
+  assert.match(source, /type CompletionSaveState = 'idle' \| 'saving' \| 'saved' \| 'failed';/);
+  assert.match(source, /retryCompletionSave: 'Försök spara igen'/);
+  assert.match(source, /retryCompletionSave: 'Retry saving result'/);
+  assert.match(
+    source,
+    /retryCompletionSaveHint: 'Spara resultatet innan nästa kostnadsfria övningsprov.'/,
+  );
+  assert.match(
+    source,
+    /retryCompletionSaveHint: 'Save the result before the next free mock exam.'/,
+  );
+  assert.match(source, /const completionRecorded = completionSaveState === 'saved';/);
+  assert.match(source, /const canStartNextExam =/);
+  assert.match(source, /completionSaveState === 'failed' && entitlements\.unlimitedMockExams/);
+  assert.match(source, /const handleRetryCompletionSave = useCallback\(async \(\) => \{/);
+  assert.match(source, /await recordExamCompletion\(\);[\s\S]*setCompletionSaveState\('saved'\)/);
+  assert.doesNotMatch(source, /setCompletionRecorded\(true\)/);
 });
 
 test('exam route copy parity rejects bypassing the settings language', () => {
