@@ -3467,12 +3467,14 @@ const EXPECTED_EXAM_GENERATOR_INTERFACES = [
       { name: 'isCorrect', type: 'boolean', optional: false },
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'explanationText', type: "PracticeQuestion['explanationText']", optional: true },
       { name: 'uhrReference', type: "PracticeQuestion['uhrReference']", optional: false },
     ],
   },
   {
     name: 'ExamAutoSubmitState',
     fields: [
+      { name: 'examActive', type: 'boolean', optional: true },
       { name: 'remainingSeconds', type: 'number', optional: false },
       { name: 'submitted', type: 'boolean', optional: false },
       { name: 'questionCount', type: 'number', optional: false },
@@ -14644,6 +14646,18 @@ function validateCriminalResponsibilityCurrentness() {
     allRowsAreValid &&
     criminalResponsibilityCurrentnessQuestionsValidated ===
       CRIMINAL_RESPONSIBILITY_CURRENTNESS.ids.length;
+}
+
+if (process.argv.includes('--focus-exam-generator-schema')) {
+  validateStaticValidationSyntaxGate();
+  validateExamGeneratorTypeSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    examGeneratorTypeAliasesValidated,
+    examGeneratorTypeInterfacesValidated,
+    examGeneratorTypeSchemaParityValidated,
+  });
+  process.exit(0);
 }
 
 validateCriminalResponsibilityCurrentness();

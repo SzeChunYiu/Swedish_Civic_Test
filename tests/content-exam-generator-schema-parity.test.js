@@ -7,9 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 test('exam generator TypeScript schema stays in parity with validator expectations', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-generator-schema'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -33,6 +37,7 @@ test('exam generator TypeScript schema stays in parity with validator expectatio
   assert.match(examGeneratorSource, /explanationText\?: PracticeQuestion\['explanationText'\];/);
   assert.match(examGeneratorSource, /uhrReference: PracticeQuestion\['uhrReference'\];/);
   assert.match(examGeneratorSource, /export type ExamAutoSubmitState = \{/);
+  assert.match(examGeneratorSource, /examActive\?: boolean;/);
 });
 
 test('exam generator schema parity rejects review item optionality drift', () => {
@@ -52,6 +57,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-exam-generator-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -82,6 +88,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-exam-generator-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -92,5 +99,36 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /lib\/quiz\/examGenerator\.ts ExamReviewItem fields are .*questionEn/,
+  );
+});
+
+test('exam generator schema parity rejects missing inactive-exam auto-submit gate', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/quiz/examGenerator.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('  examActive?: boolean;\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-exam-generator-schema');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /lib\/quiz\/examGenerator\.ts ExamAutoSubmitState fields are .*examActive/,
   );
 });
