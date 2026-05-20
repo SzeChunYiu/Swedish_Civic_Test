@@ -11717,7 +11717,6 @@ function validateMobileAdsConsentHookParity() {
   }
 
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
-  const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const hookCases = [
     [
       normalizedHookSource.includes(

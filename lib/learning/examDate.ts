@@ -1,25 +1,15 @@
-export const EXAM_REFORM_DATE = new Date('2026-06-06T00:00:00Z');
-
-// --- Citizenship reform timeline constants -----------------------------------
-
-export const CITIZENSHIP_RULES_EFFECTIVE_DATE = EXAM_REFORM_DATE;
-
-export const CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = new Date('2026-08-17T00:00:00Z');
-
-const CITIZENSHIP_RULES_SOURCE_URL =
-  'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html';
-
-const CIVIC_KNOWLEDGE_TEST_SOURCE_URL =
-  'https://www.uhr.se/studier-och-antagning/samhallsorientering-och-medborgarskapstest/';
-
-const CIVIC_KNOWLEDGE_TEST_ASSIGNMENT_SOURCE_URL =
-  'https://www.regeringen.se/rattsliga-dokument/statens-offentliga-utredningar/2025/12/sou-2025102/';
+export const CITIZENSHIP_RULES_EFFECTIVE_DATE = new Date('2026-06-06T00:00:00Z');
+export const EXAM_REFORM_DATE = CITIZENSHIP_RULES_EFFECTIVE_DATE;
+export const CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = new Date('2026-08-15T00:00:00Z');
+export const CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = new Date('2026-08-17T00:00:00Z');
 
 export const CITIZENSHIP_TIMELINE_SOURCE_URLS = {
-  rulesEffectiveDate: CITIZENSHIP_RULES_SOURCE_URL,
-  civicKnowledgeTestStart: CIVIC_KNOWLEDGE_TEST_SOURCE_URL,
-  civicKnowledgeTestFirstSitting: CIVIC_KNOWLEDGE_TEST_SOURCE_URL,
-  civicKnowledgeTestDeadline: CIVIC_KNOWLEDGE_TEST_ASSIGNMENT_SOURCE_URL,
+  rulesEffectiveDate:
+    'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
+  civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestDeadline:
+    'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 } as const;
 
 export function daysUntil(target: Date, now: Date = new Date()): number {
