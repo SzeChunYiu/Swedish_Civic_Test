@@ -257,6 +257,58 @@ test('scoreExam returns score and per-chapter breakdown', () => {
   ]);
 });
 
+test('scoreExam treats invalid question input as an empty exam', () => {
+  const { scoreExam } = loadTs('lib/quiz/examGenerator.ts');
+  const emptyResult = {
+    correctCount: 0,
+    totalCount: 0,
+    percent: 0,
+    chapterBreakdown: [],
+  };
+
+  assert.deepEqual(scoreExam(null, { q1: 'a' }), emptyResult);
+  assert.deepEqual(scoreExam('not questions', { q1: 'a' }), emptyResult);
+  assert.deepEqual(
+    scoreExam(
+      [
+        null,
+        { id: 'missing-chapter', correctOptionId: 'a' },
+        { id: 'blank-chapter', chapterId: '', correctOptionId: 'a' },
+        { chapterId: 'ch01', correctOptionId: 'a' },
+        { id: 'missing-correct', chapterId: 'ch01' },
+      ],
+      {
+        'missing-chapter': 'a',
+        'blank-chapter': 'a',
+        'missing-correct': 'a',
+      },
+    ),
+    emptyResult,
+  );
+});
+
+test('scoreExam treats invalid answer maps and non-string option ids as unanswered', () => {
+  const { scoreExam } = loadTs('lib/quiz/examGenerator.ts');
+  const questions = [{ ...baseQuestion, id: 'q1', chapterId: 'ch01', correctOptionId: 'a' }];
+  const unansweredResult = {
+    correctCount: 0,
+    totalCount: 1,
+    percent: 0,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 0, totalCount: 1 }],
+  };
+
+  assert.deepEqual(scoreExam(questions, null), unansweredResult);
+  assert.deepEqual(scoreExam(questions, ['a']), unansweredResult);
+  assert.deepEqual(scoreExam(questions, { q1: 1 }), unansweredResult);
+  assert.deepEqual(scoreExam(questions, { q1: { toString: () => 'a' } }), unansweredResult);
+  assert.deepEqual(scoreExam(questions, { q1: 'a' }), {
+    correctCount: 1,
+    totalCount: 1,
+    percent: 100,
+    chapterBreakdown: [{ chapterId: 'ch01', correctCount: 1, totalCount: 1 }],
+  });
+});
+
 test('buildCompletedExamQuizSession keeps ordered mock answers with clamped timing', () => {
   const { buildCompletedExamQuizSession, buildExamDiagnostic } = loadTs(
     'lib/learning/examDiagnostic.ts',
