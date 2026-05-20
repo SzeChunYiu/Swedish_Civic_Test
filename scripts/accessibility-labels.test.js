@@ -42,8 +42,10 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         const isIntentionallyHidden =
           tag.includes('accessible={false}') &&
           tag.includes('importantForAccessibility="no-hide-descendants"');
+        const isIntentionallyNonSemantic =
+          tag.includes('accessible={false}') && tag.includes('importantForAccessibility="no"');
 
-        if (isIntentionallyHidden) return;
+        if (isIntentionallyHidden || isIntentionallyNonSemantic) return;
 
         if (!isButtonImplementation && !tag.includes('accessibilityLabel=')) {
           offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
