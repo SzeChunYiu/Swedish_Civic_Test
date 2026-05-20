@@ -106,6 +106,49 @@ img { max-width: 100%; display: block; }
 }
 .lang button.is-on { background: var(--ink); color: var(--gold); }
 
+:root[dir="rtl"] {
+  direction: rtl;
+}
+:root[dir="rtl"] .topbar__inner,
+:root[dir="rtl"] .hero__inner,
+:root[dir="rtl"] .consent__copy,
+:root[dir="rtl"] .modal__panel--settings {
+  text-align: right;
+}
+:root[dir="rtl"] .nav {
+  margin-left: 0;
+  margin-right: auto;
+}
+:root[dir="rtl"] .topbar__tools,
+:root[dir="rtl"] .lang,
+:root[dir="rtl"] .cta-pill {
+  margin-left: 0;
+}
+:root[dir="rtl"] .topbar__tools {
+  margin-right: 8px;
+}
+:root[dir="rtl"] .lang {
+  margin-right: 10px;
+}
+:root[dir="rtl"] .cta-pill {
+  margin-right: 6px;
+}
+:root[dir="rtl"] .hero__ctas,
+:root[dir="rtl"] .consent__actions {
+  justify-content: flex-start;
+}
+:root[dir="rtl"] .modal__close {
+  left: 14px;
+  right: auto;
+}
+:root[dir="rtl"] .modal__head .modal__close {
+  position: static;
+}
+:root[dir="rtl"] .set-palette,
+:root[dir="rtl"] .set-link {
+  text-align: right;
+}
+
 .cta-pill {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--ink); color: var(--gold);
