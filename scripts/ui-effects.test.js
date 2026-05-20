@@ -711,6 +711,7 @@ test('quiz feedback cards expose accessible summaries', () => {
     /pageLabel\s*\?\s*`\$\{copy\.accessibilityLabelPrefix\}: \$\{label\}\. \$\{pageLabel\}`/,
   );
   assert.match(referenceSource, /<SourceCitation/);
+  assert.match(referenceSource, /accessibilityRole="none"/);
   assert.match(referenceSource, /<Card accessibilityLabel=\{referenceAccessibilityLabel\}>/);
   assert.match(referenceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(referenceSource, /\{copy\.title\}/);
@@ -759,7 +760,7 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /bookmarkedReviewQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad för fokuserad repetition/);
+  assert.match(source, /Sparad till senare övning/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
@@ -822,7 +823,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.match(source, /question\.correctOptionId/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
-  assert.match(source, /Ditt senaste felaktiga svar/);
+  assert.match(source, /Ditt senaste svar/);
   assert.match(source, /Your latest wrong answer/);
   assert.match(source, /Rätt svar/);
   assert.match(source, /Correct answer/);

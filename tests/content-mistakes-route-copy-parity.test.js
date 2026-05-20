@@ -37,12 +37,18 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Gå igenom fel svar med fråga, förklaring, källreferens/);
-  assert.match(source, /Sparad för fokuserad repetition/);
-  assert.match(source, /Fel svar att repetera/);
-  assert.match(source, /Ditt senaste felaktiga svar/);
+  assert.match(source, /Här samlas frågor du vill öva på igen, med förklaring, källhänvisning/);
+  assert.match(source, /Sparad till senare övning/);
+  assert.match(source, /Frågor att öva på/);
+  assert.match(source, /Ditt senaste svar/);
   assert.match(source, /Review wrong answers with the question, explanation, source reference/);
-  assert.match(source, /Fellogg/);
+  assert.match(source, /Missade frågor/);
+  [
+    ['Fell', 'ogg'],
+    ['Fel svar att', ' repetera'],
+    ['Ditt senaste felaktiga', ' svar'],
+    ['Sparad för fokuserad', ' repetition'],
+  ].forEach((parts) => assert.doesNotMatch(source, new RegExp(parts.join(''))));
   assert.match(source, /Fel svar: \$\{count\}/);
   assert.match(source, /accessibilityLabel=\{copy\.emptyPracticeAccessibilityLabel\}/);
   assert.match(source, /useMistakeReviewStore/);
@@ -108,7 +114,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'Svara fel på en övningsfråga så visas den här.'", "'No mistakes yet'");
+      .replace("'När du missar en övningsfråga visas den här.'", "'No mistakes yet'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
