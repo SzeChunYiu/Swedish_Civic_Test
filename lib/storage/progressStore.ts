@@ -23,6 +23,14 @@ export type QuestionProgress = {
   bookmarked?: boolean;
 };
 
+export type AnswerHistoryEntry = {
+  questionId: string;
+  isCorrect: boolean;
+  answeredAt: string;
+  timeSpentSeconds?: number;
+  confidenceRating?: ConfidenceRating;
+};
+
 export type MockExamProgress = {
   sessionId: string;
   score: number;
@@ -47,6 +55,8 @@ export type AnswerHistoryEntry = {
 const progressStateKey = 'progressState';
 const progressStorageId = 'progress';
 const maxHydratedQuestionAnswerCount = 10000;
+const maxHydratedAnswerHistoryCount = 10000;
+const maxHydratedAnswerTimeSeconds = 24 * 60 * 60;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
 const maxHydratedMockQuestionTimeSeconds = 4 * 60 * 60;
@@ -69,6 +79,7 @@ export type PersistedProgress = {
   questionProgress: Record<string, QuestionProgress>;
   totalXp: number;
   answerDates: string[];
+  answerHistory: AnswerHistoryEntry[];
   mockExamSessions: MockExamProgress[];
   streakFreezeState: StreakFreezeState;
 };
@@ -78,6 +89,7 @@ const emptyProgress: PersistedProgress = {
   questionProgress: {},
   totalXp: 0,
   answerDates: [],
+  answerHistory: [],
   mockExamSessions: [],
   streakFreezeState: createInitialFreezeState(),
 };
@@ -197,6 +209,30 @@ function normalizeMockExamQuestionTimings(value: unknown): MockExamQuestionTimin
   return timings;
 }
 
+function normalizeAnswerHistoryEntry(value: unknown): AnswerHistoryEntry | null {
+  if (!value || typeof value !== 'object') return null;
+
+  const candidate = value as Partial<AnswerHistoryEntry>;
+  const questionId = typeof candidate.questionId === 'string' ? candidate.questionId.trim() : '';
+  const answeredAt = normalizeIsoTimestamp(candidate.answeredAt);
+  if (!questionId || typeof candidate.isCorrect !== 'boolean' || !answeredAt) return null;
+
+  const entry: AnswerHistoryEntry = {
+    questionId,
+    isCorrect: candidate.isCorrect,
+    answeredAt,
+  };
+  const timeSpentSeconds = normalizeNonNegativeInteger(
+    candidate.timeSpentSeconds,
+    -1,
+    maxHydratedAnswerTimeSeconds,
+  );
+  const confidenceRating = normalizeConfidenceRating(candidate.confidenceRating);
+  if (timeSpentSeconds >= 0) entry.timeSpentSeconds = timeSpentSeconds;
+  if (confidenceRating) entry.confidenceRating = confidenceRating;
+  return entry;
+}
+
 function streakFreezeStatesEqual(a: StreakFreezeState, b: StreakFreezeState): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
@@ -214,6 +250,12 @@ function normalizeProgress(value: unknown): PersistedProgress {
           candidate.answerDates.map(normalizeLocalDateKey).filter((day): day is string => !!day),
         ),
       ]
+    : [];
+  const answerHistory = Array.isArray(candidate.answerHistory)
+    ? candidate.answerHistory
+        .map(normalizeAnswerHistoryEntry)
+        .filter((entry): entry is AnswerHistoryEntry => entry !== null)
+        .slice(-maxHydratedAnswerHistoryCount)
     : [];
   const mockExamSessions: MockExamProgress[] = [];
   const questionProgress: Record<string, QuestionProgress> = {};
@@ -294,6 +336,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
     questionProgress,
     totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp),
     answerDates,
+    answerHistory,
     mockExamSessions,
     streakFreezeState: normalizeStreakFreezeState(candidate.streakFreezeState),
   };
@@ -358,6 +401,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
+        answerHistory: state.answerHistory,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
@@ -420,6 +464,14 @@ export const useProgressStore = create<ProgressState>((set) => ({
       const answerDates = state.answerDates.includes(answerDate)
         ? state.answerDates
         : [...state.answerDates, answerDate];
+      const nextAnswerHistoryEntry: AnswerHistoryEntry = {
+        questionId,
+        isCorrect,
+        answeredAt,
+      };
+      if (normalizedConfidenceRating) {
+        nextAnswerHistoryEntry.confidenceRating = normalizedConfidenceRating;
+      }
       const nextProgress = {
         completedQuestionIds,
         questionProgress: {
@@ -428,6 +480,9 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
         answerDates,
+        answerHistory: [...state.answerHistory, nextAnswerHistoryEntry].slice(
+          -maxHydratedAnswerHistoryCount,
+        ),
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
@@ -462,6 +517,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp + completionXp,
         answerDates: state.answerDates,
+        answerHistory: state.answerHistory,
         mockExamSessions: [...otherSessions, nextSession],
         streakFreezeState: state.streakFreezeState,
       };
@@ -477,6 +533,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
+        answerHistory: state.answerHistory,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState,
       };
@@ -500,6 +557,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp,
         answerDates: state.answerDates,
+        answerHistory: state.answerHistory,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
