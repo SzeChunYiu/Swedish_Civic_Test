@@ -37,7 +37,7 @@ release posture.
   performance.
 - **Purchases** — App Store in-app purchase infrastructure and the app runtime
   process the Remove Ads non-consumable purchase/restore state for app
-  functionality. The app stores a local validated Remove Ads purchase-status record containing product ID, transaction ID or purchase token, receipt-validation timestamp, source, schema version, and valid receipt status.
+  functionality. The app stores only the local `adsDisabled` entitlement flag.
 - **Location review** — Google Mobile Ads may use IP address to estimate general
   location. Confirm whether the final Xcode privacy report requires a Coarse
   Location disclosure for the submitted binary.
@@ -47,7 +47,7 @@ release posture.
 - Third-party advertising: Google Mobile Ads on study screens.
 - Analytics / measurement: Google Mobile Ads SDK performance and ad measurement
   signals.
-- App functionality: Remove Ads purchase, restore, and local validated purchase-status record.
+- App functionality: Remove Ads purchase, restore, and local entitlement state.
 - Tracking: the app includes `expo-tracking-transparency`; on iOS, tracking-based
   advertising must wait for ATT authorization. Where required, Google UMP consent
   must be gathered before real AdMob serving.
