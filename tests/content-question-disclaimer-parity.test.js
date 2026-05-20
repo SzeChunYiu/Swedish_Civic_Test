@@ -34,6 +34,7 @@ function countQuestionDisclaimerOccurrences(source) {
 
 test('question disclaimer coverage stays aligned across study surfaces', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('theme token schema validates the exported design-token catalog', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

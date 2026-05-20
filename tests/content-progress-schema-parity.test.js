@@ -157,6 +157,7 @@ function progressSnapshot(state) {
 
 test('progress question schema stays in parity with persisted progress records', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

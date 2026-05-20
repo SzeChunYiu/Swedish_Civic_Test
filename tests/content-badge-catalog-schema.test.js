@@ -20,6 +20,7 @@ function loadTs(relativePath) {
 
 test('learning badge catalog schema validates the milestone badges', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -90,8 +91,14 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
-  assert.match(output, /streak_3 duplicates English badge title|streak_3 duplicates en badge title/);
-  assert.match(output, /streak_3 duplicates English badge description|streak_3 duplicates en badge description/);
+  assert.match(
+    output,
+    /streak_3 duplicates English badge title|streak_3 duplicates en badge title/,
+  );
+  assert.match(
+    output,
+    /streak_3 duplicates English badge description|streak_3 duplicates en badge description/,
+  );
   assert.match(output, /deriveBadges milestone ids are/);
 });
 

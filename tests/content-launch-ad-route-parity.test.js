@@ -20,6 +20,7 @@ const expectedSuppressedRoutes = [
 
 test('launch popup ad route suppression stays aligned with release-safe routes', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

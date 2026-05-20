@@ -89,6 +89,7 @@ function assertMockExamConfigPanelA11ySeparation(source) {
 
 test('default mock exam config stays UHR-based and ad-free during exams', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('premium entitlement parity keeps Remove Ads decoupled from full premium', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

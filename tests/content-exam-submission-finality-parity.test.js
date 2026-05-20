@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('exam submission finality stays aligned with the result route', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

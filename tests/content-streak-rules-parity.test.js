@@ -27,6 +27,7 @@ function loadTs(relativePath) {
 
 test('streak runtime parity validates daily habit rules', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

@@ -7,6 +7,7 @@ const EXPECTED_SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES = 7;
 
 test('published question text keeps the independent study boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

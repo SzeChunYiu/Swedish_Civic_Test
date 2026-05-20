@@ -7338,6 +7338,9 @@ let themeContrastPairsValidated = 0;
 let themeContrastValidated = false;
 let themeTokenSchemaValidated = false;
 let mascotAssetFilesValidated = 0;
+let contentTestValidateContentExecCallsValidated = 0;
+let contentTestValidateContentExecCwdPinnedValidated = 0;
+let contentTestValidateContentExecCwdParityValidated = false;
 let mascotAssetContractValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
@@ -16840,6 +16843,58 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+function contentTestFilesForValidation() {
+  return fs
+    .readdirSync(path.join(repoRoot, 'tests'))
+    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
+    .map((fileName) => `tests/${fileName}`)
+    .sort();
+}
+
+function collectValidateContentExecFileSyncCallsForValidation(sourceText) {
+  const calls = [];
+  const callPattern =
+    /execFileSync\(\s*process\.execPath,\s*\[\s*(['"])scripts\/validate-content\.js\1\s*\],\s*\{([\s\S]*?)\}\s*\)/g;
+  let match;
+  while ((match = callPattern.exec(sourceText)) !== null) {
+    calls.push({
+      index: match.index,
+      hasPinnedCwd: /\bcwd\s*:\s*repoRoot\b/.test(match[2]),
+    });
+  }
+  return calls;
+}
+
+function validateContentTestExecCwdParity() {
+  const unpinnedCalls = [];
+
+  for (const fileName of contentTestFilesForValidation()) {
+    const sourceText = fs.readFileSync(path.join(repoRoot, fileName), 'utf8');
+    const calls = collectValidateContentExecFileSyncCallsForValidation(sourceText);
+    contentTestValidateContentExecCallsValidated += calls.length;
+    for (const call of calls) {
+      if (call.hasPinnedCwd) {
+        contentTestValidateContentExecCwdPinnedValidated += 1;
+      } else {
+        const lineNumber = sourceText.slice(0, call.index).split('\n').length;
+        unpinnedCalls.push(`${fileName}:${lineNumber}`);
+      }
+    }
+  }
+
+  if (contentTestValidateContentExecCallsValidated === 0) {
+    fail('content tests should run validate-content directly');
+    return;
+  }
+  if (unpinnedCalls.length > 0) {
+    fail(`validate-content exec calls missing cwd: repoRoot: ${unpinnedCalls.join(', ')}`);
+    return;
+  }
+
+  contentTestValidateContentExecCwdParityValidated = true;
+}
+
+validateContentTestExecCwdParity();
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
@@ -17371,6 +17426,9 @@ console.log(
       themeContrastValidated,
       themeTokenSchemaValidated,
       mascotAssetFilesValidated,
+      contentTestValidateContentExecCallsValidated,
+      contentTestValidateContentExecCwdPinnedValidated,
+      contentTestValidateContentExecCwdParityValidated,
       mascotAssetContractValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,

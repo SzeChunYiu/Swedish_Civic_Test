@@ -97,6 +97,7 @@ function expectedSpeechText(question) {
 
 test('question speech text stays in parity with every published Swedish option', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
