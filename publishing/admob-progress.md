@@ -23,7 +23,8 @@ AND_APP_OPEN_LAUNCH        = ca-app-pub-2451892671779738/2329445168   # app_open
 AND_REWARDED_EXTRA_EXAM    = ca-app-pub-2451892671779738/9896943994   # rewarded_extra_exam
 
 ## Remaining (operator)
-- [ ] App Store Connect: 29 SEK non-consumable IAP id com.billyyiu.swedishcivictest.removeads
+
+- [ ] App Store Connect: 29 SEK non-consumable IAP id com.billyyiu.almostswedish.removeads
 - [ ] Play Console: 29 SEK in-app product id removeads
 - [ ] Factory: wire these into EXPO_PUBLIC_ADMOB_* (real-unit path); keep test units for dev
 
