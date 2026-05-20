@@ -501,6 +501,18 @@ test('mock exam config controls are not nested inside labelled summary container
     /<View\s+accessible\s+accessibilityLabel=\{resolvedPanelAccessibilityLabel\}\s+accessibilityRole=\{accessibilityRole\}\s+style=\{styles\.header\}/,
   );
   assert.match(source, /accessibilityRole="adjustable"/);
+  assert.match(source, /accessibilityActions=\{stepperAccessibilityActions\}/);
+  assert.match(source, /\{ name: 'decrement', label: decrementAccessibilityLabel \}/);
+  assert.match(source, /\{ name: 'increment', label: incrementAccessibilityLabel \}/);
+  assert.match(source, /onAccessibilityAction=\{handleAccessibilityAction\}/);
+  assert.match(
+    source,
+    /case 'decrement':[\s\S]*canDecrement[\s\S]*getNextValue\(value, step, -1, min, max\)/,
+  );
+  assert.match(
+    source,
+    /case 'increment':[\s\S]*canIncrement[\s\S]*getNextValue\(value, step, 1, min, max\)/,
+  );
   assert.match(source, /accessibilityRole="checkbox"/);
   assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
   assert.doesNotMatch(
