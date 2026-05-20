@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import { ComplianceActionLink } from './ComplianceActionLink';
 
 type ComplianceLinkKey =
   | 'disclaimer'
@@ -73,15 +74,12 @@ export function ComplianceLinks({ language }: { language?: AppLanguage } = {}) {
       </Text>
       <View style={styles.links}>
         {links.map((link) => (
-          <Link
+          <ComplianceActionLink
             key={String(link.href)}
             accessibilityLabel={copy.openLabel(link.label)}
-            accessibilityRole="link"
             href={link.href}
-            style={styles.link}
-          >
-            {link.label}
-          </Link>
+            label={link.label}
+          />
         ))}
       </View>
     </View>
@@ -105,11 +103,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.25],
-  },
-  link: {
-    color: colors.accent,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'none',
   },
 });

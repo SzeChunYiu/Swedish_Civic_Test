@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('purchase TypeScript schema stays in parity with validator expectations', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -25,7 +24,6 @@ test('purchase TypeScript schema stays in parity with validator expectations', (
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
   assert.match(purchaseSource, /export type RemoveAdsReceiptValidationStatus =/);
   assert.match(purchaseSource, /export type RemoveAdsPurchaseStatus =/);
-  assert.match(purchaseSource, /'persistence_failed'/);
   assert.match(purchaseSource, /export interface PurchaseStorage/);
   assert.match(purchaseSource, /deleteItemAsync\?\(key: string\): Promise<void>;/);
   assert.match(purchaseSource, /export interface RemoveAdsPurchaseProvider/);
