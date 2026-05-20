@@ -36,6 +36,10 @@ test('Simplified Chinese settings and picker preview uses native study-app wordi
     '提交前不显示反馈',
     '错题复习',
     '你上次选的答案',
+    '本地学习数据',
+    '章节进度',
+    '按章节学习，下一步更清楚',
+    '内容已列入计划',
   ]) {
     assert.match(source, new RegExp(phrase.replace(/[{}]/g, '\\$&')));
   }
@@ -50,6 +54,7 @@ test('Simplified Chinese settings and picker preview uses native study-app wordi
     '解释面板',
     '假的考试',
     '错误答案',
+    '条纹',
   ]) {
     assert.doesNotMatch(source, new RegExp(mechanicalPhrase));
   }
@@ -99,6 +104,19 @@ test('Simplified Chinese mock exam and mistakes preview covers setup, results, a
     'resultSummary',
     'answerReviewAccessibilityTemplate',
     'wrongAnswersTemplate',
+  ]) {
+    assert.match(source, new RegExp(phrase));
+  }
+});
+
+test('Simplified Chinese dashboard and learning preview covers progress and chapter labels', () => {
+  const source = read(previewPath);
+  for (const phrase of [
+    'dashboardAndLearning',
+    'summaryAccessibilityTemplate',
+    'sortAccessibilityLabelTemplate',
+    'chapterLink',
+    'chapterProgressCard',
   ]) {
     assert.match(source, new RegExp(phrase));
   }

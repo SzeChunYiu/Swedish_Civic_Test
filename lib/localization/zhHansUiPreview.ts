@@ -281,6 +281,80 @@ export const zhHansUiPreview = {
       answerReviewAccessibilityNoWrongTemplate: '需要复习的题目。正确答案：{correctAnswer}。',
     },
   },
+
+  dashboardAndLearning: {
+    dashboard: {
+      eyebrow: '本地学习数据',
+      title: '进度概览',
+      subtitle: '查看最近的练习活动、已覆盖的章节，以及连续学习天数的变化。',
+      homeLink: '返回首页',
+      homeLinkAccessibilityLabel: '返回首页',
+      summaryLineTemplate:
+        '本周已答 {questionsAnswered} 题 · 已练习 {touchedChapters} 个章节 · {unresolvedMistakes} 个待复习错题',
+      summaryAccessibilityTemplate:
+        '进度概览：本周已答 {questionsAnswered} 题，已练习 {touchedChapters} 个章节，{unresolvedMistakes} 个待复习错题。',
+      activity: {
+        title: '活跃日期',
+        subtitle: '每个方格代表一天的答题记录。',
+        emptyState: '答几道题后，这里会显示你的学习活动图。',
+        summaryTemplate:
+          '这一段时间共答 {totalAnswers} 题，{activeDays} 天有学习记录，单日最多 {maxDayCount} 题。',
+      },
+      streakXp: {
+        title: '连续学习和 XP',
+        subtitle: '显示最近 30 天的等级和每日学习节奏。',
+        emptyState: '开始答对题目后，XP 折线会显示在这里。',
+        levelLabel: '等级',
+        streakLabel: '连续学习天数',
+        summaryTemplate:
+          '最近 30 天获得 {totalXp} XP，{activeDays} 天有学习记录，连续学习 {currentStreak} 天，等级 {level}。',
+      },
+      chapterProgress: {
+        title: '章节进度',
+        subtitle: '每个章节同时显示正确率和覆盖度，方便判断下一步复习重点。',
+        accuracyLabel: '正确率',
+        coverageLabel: '覆盖度',
+        chapterOrder: '按章节顺序',
+        weakestFirst: '薄弱章节优先',
+        emptyState: '答题后，这里会显示各章节的进度。',
+        linkLabelTemplate: '打开章节：{chapterName}',
+        sortAccessibilityLabelTemplate: '章节排序方式：{mode}',
+      },
+    },
+    learning: {
+      eyebrow: '学习路径',
+      title: '按章节学习，下一步更清楚',
+      subtitle: '每个章节都会显示范围和本设备上的学习进度，帮助你决定先学哪里。',
+      flashcardSectionTitle: '快速抽认卡',
+      flashcardSectionSubtitle:
+        '从题库中抽出三张有资料依据的卡片。先读题、说出答案，再马上对照。',
+      sectionTitle: '13 个社会知识领域',
+      sectionSubtitle: '按接近资料来源的章节学习，然后用同一批内容练习。',
+      chapterLink: {
+        contentQueued: '内容已列入计划',
+        progressTemplate: '已练习 {completedCount}/{questionCount} 题',
+        accessibilityTemplate:
+          '打开章节：{primaryName}。另一种名称：{secondaryName}。进度：{progressLabel}。',
+      },
+      chapterCard: {
+        chapterUnavailable: '章节暂不可用',
+        contentQueued: '内容已列入计划',
+        practicedStatusTemplate: '已练习 {completedCount}/{questionCount} 题',
+        accessibilityLabels: {
+          chapterTemplate: '章节：{title}',
+          secondaryNameTemplate: '另一种名称：{name}',
+          statusTemplate: '状态：{status}',
+          descriptionTemplate: '说明：{description}',
+        },
+      },
+      chapterProgressCard: {
+        answeredLabel: '已答',
+        correctLabel: '答对',
+        accuracyLabel: '正确率',
+        progressTemplate: '完成度 {progressPercent}%',
+      },
+    },
+  },
   languagePicker: {
     triggerLabelTemplate: '当前语言为 {currentLabel}。打开语言选择器。',
     closeLabel: '关闭语言选择器',
