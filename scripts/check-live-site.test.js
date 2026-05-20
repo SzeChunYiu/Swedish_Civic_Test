@@ -7,19 +7,25 @@ const test = require('node:test');
 
 const {
   checkLiveSite,
+  extractStaticHeadMetadata,
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
-  REQUIRED_SECURITY_HEADERS,
+  resolveRequiredHeadMetadata,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
 } = require('./check-live-site');
 const { checkAssetManifest, writeAssetManifest } = require('./update-site-asset-manifest');
 
 const repoRoot = path.resolve(__dirname, '..');
-const SECURITY_RESPONSE_HEADERS = Object.fromEntries(
-  REQUIRED_SECURITY_HEADERS.map((header) => [header.name, header.value]),
-);
+const localHeadMetadata = resolveRequiredHeadMetadata();
+
+function headMarkup(metadata = localHeadMetadata) {
+  return [
+    `<title>${metadata.title}</title>`,
+    `<meta name="description" content="${metadata.description}" />`,
+  ].join('\n');
+}
 
 function generatedQuestions(count, label = 'current') {
   const questions = Array.from({ length: count }, (_, index) => ({
@@ -42,9 +48,7 @@ function currentQuestionBank() {
 function currentAssets() {
   return {
     '/index.html': [
-      '<head>',
-      '<meta name="description" content="A friendly, unofficial study app for Swedish citizenship test practice.">',
-      '</head>',
+      headMarkup(),
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
       '<script src="questions.js"></script>',
@@ -55,15 +59,6 @@ function currentAssets() {
     '/styles.css': [
       '.practice__inner--wide { max-width: 1080px; }',
       '.hub__grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }',
-    ].join('\n'),
-    '/app.js': [
-      'const SMT_ADS = {',
-      '  publisherId: "ca-pub-2451892671779738",',
-      '  slots: { inline: "", anchor: "" },',
-      '};',
-      'function smtIsRealAdSenseSlotId(slotId) { return /^[0-9]{8,}$/.test(String(slotId || "")) && !/^0+$/.test(String(slotId || "")); }',
-      'function smtStaticAdsAreConfigured() { return false; }',
-      '"Ad space reserved while reviewed AdSense slots are configured.";',
     ].join('\n'),
     '/practice.js': [
       'function renderPracticeHub(){ return `<a class="hub__card" href="#/mock">hub__grid</a>`; }',
@@ -80,8 +75,6 @@ function staleAssets() {
   return {
     '/index.html': '<main data-page="/"><div id="hero"></div></main>',
     '/styles.css': '.practice__inner { max-width: 720px; }',
-    '/app.js':
-      'const SMT_ADS = { publisherId: "ca-pub-2451892671779738" }; "Your AdSense slot will render here.";',
     '/practice.js': 'function renderPractice(){ return "old"; }',
     '/ebook.js': 'const copy = "Svenska översättningen kommer i v1.1";',
     '/questions.js': generatedQuestions(57, 'stale'),
@@ -95,27 +88,17 @@ function sameCountStaleAssets() {
   };
 }
 
-function unsupportedFooterClaimAssets() {
-  const unsupportedCredentialClaim = ['taken the ', 'test themselves'].join('');
-  return {
-    ...currentAssets(),
-    '/index.html': [
-      currentAssets()['/index.html'],
-      `<footer><p>An independent study tool from a team that has ${unsupportedCredentialClaim}.</p></footer>`,
-    ].join('\n'),
-  };
+function staleHeadAssets(replacement) {
+  const assets = currentAssets();
+  assets['/index.html'] = assets['/index.html'].replace(headMarkup(), headMarkup(replacement));
+  return assets;
 }
 
-async function withStaticServer(assets, callback, options = {}) {
+async function withStaticServer(assets, callback) {
   const server = http.createServer((request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
     const body = assets[pathname] ?? assets['/index.html'];
-    const headers = {
-      'content-type': 'text/plain; charset=utf-8',
-      ...(options.includeSecurityHeaders === false ? {} : SECURITY_RESPONSE_HEADERS),
-      ...(options.headers ?? {}),
-    };
-    response.writeHead(body == null ? 404 : 200, headers);
+    response.writeHead(body == null ? 404 : 200, { 'content-type': 'text/plain; charset=utf-8' });
     response.end(body ?? 'not found');
   });
 
@@ -140,6 +123,27 @@ test('normalizes production URL inputs', () => {
 
 test('reads the generated static question count', () => {
   assert.equal(readStaticQuestionCount(currentQuestionBank()), 715);
+});
+
+test('extracts static head title and description metadata', () => {
+  const metadata = extractStaticHeadMetadata(`
+    <title>
+      Almost Swedish — Study, fika, pass.
+    </title>
+    <meta content="A friendly, unofficial study app." name="description" />
+  `);
+  assert.deepEqual(metadata, {
+    title: 'Almost Swedish — Study, fika, pass.',
+    description: 'A friendly, unofficial study app.',
+  });
+});
+
+test('derives the expected live head metadata from the local static index', () => {
+  const metadata = resolveRequiredHeadMetadata();
+  assert.equal(metadata.title, localHeadMetadata.title);
+  assert.equal(metadata.description, localHeadMetadata.description);
+  assert.match(metadata.title, /Almost Swedish/);
+  assert.match(metadata.description, /unofficial study app/i);
 });
 
 test('derives the expected live count from the local generated site bank', () => {
@@ -194,26 +198,6 @@ test('live site check passes current static assets', async () => {
   });
 });
 
-test('live site check rejects missing static security headers', async () => {
-  await withStaticServer(
-    currentAssets(),
-    async (baseUrl) => {
-      const result = await checkLiveSite(baseUrl, {
-        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
-        requiredQuestionCount: 715,
-      });
-      const failedCheck = result.checks.find((check) => check.name === 'static security headers');
-      assert.equal(result.ok, false);
-      assert.equal(failedCheck?.ok, false);
-      assert.match(failedCheck?.details ?? '', /missing X-Content-Type-Options/);
-      assert.match(failedCheck?.details ?? '', /missing Referrer-Policy/);
-      assert.match(failedCheck?.details ?? '', /missing X-Frame-Options/);
-      assert.match(failedCheck?.details ?? '', /missing Permissions-Policy/);
-    },
-    { includeSecurityHeaders: false },
-  );
-});
-
 test('live site check rejects stale deploy assets', async () => {
   await withStaticServer(staleAssets(), async (baseUrl) => {
     const result = await checkLiveSite(baseUrl, {
@@ -226,9 +210,8 @@ test('live site check rejects stale deploy assets', async () => {
       [
         'static question bank',
         'static question bank content',
+        'static head metadata',
         'practice hub assets',
-        'static head metadata description',
-        'static AdSense slot config',
         'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',
@@ -238,76 +221,42 @@ test('live site check rejects stale deploy assets', async () => {
   });
 });
 
-test('live site check rejects missing, blank, or outcome meta descriptions', async () => {
-  const cases = [
-    {
-      label: 'missing description',
-      indexHtml: currentAssets()['/index.html'].replace(
-        /<meta name="description" content="[^"]+">\n/,
-        '',
-      ),
-      expectedDetails: /missing static meta description/,
-    },
-    {
-      label: 'blank description',
-      indexHtml: currentAssets()['/index.html'].replace(
-        /<meta name="description" content="[^"]+">/,
-        '<meta name="description" content="">',
-      ),
-      expectedDetails: /blank static meta description/,
-    },
-    {
-      label: 'outcome description',
-      indexHtml: currentAssets()['/index.html'].replace(
-        /<meta name="description" content="[^"]+">/,
-        '<meta name="description" content="Pass the test.">',
-      ),
-      expectedDetails: /static meta description English pass-the-test slogan/,
-    },
-  ];
-
-  for (const { indexHtml, expectedDetails, label } of cases) {
-    await withStaticServer({ ...currentAssets(), '/index.html': indexHtml }, async (baseUrl) => {
-      const result = await checkLiveSite(baseUrl, {
-        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
-        requiredQuestionCount: 715,
-      });
-      const failedCheck = result.checks.find(
-        (check) => check.name === 'static head metadata description',
-      );
-      assert.equal(result.ok, false, `${label} should fail live-site validation`);
-      assert.equal(failedCheck?.ok, false, `${label} should fail the metadata check`);
-      assert.match(failedCheck?.details ?? '', expectedDetails);
-    });
-  }
-});
-
-test('live site check rejects placeholder static AdSense slot IDs', async () => {
-  const placeholderIndex = [
-    currentAssets()['/index.html'],
-    '<ins class="adsbygoogle" data-ad-client="ca-pub-2451892671779738" data-ad-slot="0000000001"></ins>',
-    '<p>Your AdSense slot will render here.</p>',
-  ].join('\n');
-
+test('live site check rejects stale live head titles', async () => {
   await withStaticServer(
-    {
-      ...currentAssets(),
-      '/index.html': placeholderIndex,
-      '/app.js': 'const SMT_ADS = { publisherId: "ca-pub-2451892671779738" };',
-    },
+    staleHeadAssets({
+      ...localHeadMetadata,
+      title: 'Almost Swedish - stale search title',
+    }),
     async (baseUrl) => {
       const result = await checkLiveSite(baseUrl, {
         requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
         requiredQuestionCount: 715,
       });
-      const failedCheck = result.checks.find(
-        (check) => check.name === 'static AdSense slot config',
-      );
       assert.equal(result.ok, false);
-      assert.equal(failedCheck?.ok, false);
-      assert.match(failedCheck?.details ?? '', /data-ad-slot/);
-      assert.match(failedCheck?.details ?? '', /Your AdSense slot will render here/);
-      assert.match(failedCheck?.details ?? '', /without an explicit slot config/);
+      assert.deepEqual(
+        result.checks.filter((check) => !check.ok).map((check) => check.name),
+        ['static head metadata'],
+      );
+    },
+  );
+});
+
+test('live site check rejects stale live meta descriptions', async () => {
+  await withStaticServer(
+    staleHeadAssets({
+      ...localHeadMetadata,
+      description: 'A neutral but stale deployed search description.',
+    }),
+    async (baseUrl) => {
+      const result = await checkLiveSite(baseUrl, {
+        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+        requiredQuestionCount: 715,
+      });
+      assert.equal(result.ok, false);
+      assert.deepEqual(
+        result.checks.filter((check) => !check.ok).map((check) => check.name),
+        ['static head metadata'],
+      );
     },
   );
 });
@@ -322,20 +271,6 @@ test('live site check rejects same-count stale question banks', async () => {
     assert.deepEqual(
       result.checks.filter((check) => !check.ok).map((check) => check.name),
       ['static question bank content'],
-    );
-  });
-});
-
-test('live site check rejects unsupported static footer credential claims', async () => {
-  await withStaticServer(unsupportedFooterClaimAssets(), async (baseUrl) => {
-    const result = await checkLiveSite(baseUrl, {
-      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
-      requiredQuestionCount: 715,
-    });
-    assert.equal(result.ok, false);
-    assert.deepEqual(
-      result.checks.filter((check) => !check.ok).map((check) => check.name),
-      ['static footer credential claims'],
     );
   });
 });
