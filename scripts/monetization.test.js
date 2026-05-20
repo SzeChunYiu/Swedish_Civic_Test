@@ -1538,6 +1538,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
+  assert.match(placementCtaSource, /Open the Remove Ads panel in Profile/);
+  assert.match(placementCtaSource, /Öppna Ta bort annonser-panelen i profilen/);
   assert.match(placementCtaSource, /Restore Remove Ads purchase/);
   assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
   assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
@@ -1567,10 +1570,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /entitlementsReady/);
-  assert.match(
-    profileSource,
-    /\{entitlementsReady \? \(\s*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}/,
-  );
+  assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
+  assert.match(profileSource, /nativeID="remove-ads-paywall"/);
+  assert.match(profileSource, /\{removeAdsFocused \? removeAdsPaywall : null\}/);
+  assert.match(profileSource, /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
