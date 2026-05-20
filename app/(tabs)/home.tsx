@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
-import { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import type { ComponentProps, ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import {
   GuidedPracticePath,
@@ -29,13 +30,24 @@ import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
+import { resumeBannerCopy, resumeWhereLeftOff } from '../../lib/learning/resumeWhereLeftOff';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
+import type { UserProgress } from '../../types/progress';
+
+type HomeActionHref = ComponentProps<typeof Link>['href'];
+type HomeActionStyle = ComponentProps<typeof Link>['style'];
+type HomeActionLinkProps = {
+  accessibilityLabel: string;
+  children: ReactNode;
+  href: HomeActionHref;
+  style: HomeActionStyle;
+};
 
 type StudyLoopItemCopy = {
   label: string;
@@ -100,6 +112,9 @@ type HomeCopy = {
   readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
+  resumeAccessibilityLabel: (chapterTitle: string, subtitle: string) => string;
+  resumeCta: (chapterTitle: string) => string;
+  resumeKicker: string;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
@@ -120,6 +135,88 @@ const guidedPathChapterGroups = [
   { id: 'builder', chapterIds: ['ch05', 'ch06', 'ch07', 'ch08', 'ch09'] },
   { id: 'advanced', chapterIds: ['ch10', 'ch11', 'ch12', 'ch13'] },
 ] as const;
+
+const questionChapterIndex: Record<string, string> = Object.fromEntries(
+  questions.map((question) => [question.id, question.chapterId]),
+);
+const homeActionLinkClassName = 'home-action-link';
+const homeActionLinkStyleElementId = 'home-action-link-style';
+
+function useHomeActionLinkWebStyles() {
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    if (document.getElementById(homeActionLinkStyleElementId)) return;
+
+    const styleElement = document.createElement('style');
+    styleElement.id = homeActionLinkStyleElementId;
+    styleElement.textContent = `
+.${homeActionLinkClassName}:hover,
+.${homeActionLinkClassName}:focus-visible {
+  transform: scale(${motion.hoverScale});
+}
+
+.${homeActionLinkClassName}:active {
+  transform: scale(${motion.pressedScale});
+}
+`;
+    document.head.appendChild(styleElement);
+  }, []);
+}
+
+function HomeActionLink({ accessibilityLabel, children, href, style }: HomeActionLinkProps) {
+  const [isPressed, setIsPressed] = useState(false);
+  const webClassName = Platform.OS === 'web' ? { className: homeActionLinkClassName } : {};
+
+  return (
+    <Link
+      {...webClassName}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="link"
+      href={href}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      style={[styles.homeActionLink, style, isPressed ? styles.homeActionLinkPressed : null]}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function buildResumeProgress(questionProgress: Record<string, QuestionProgress>): UserProgress {
+  const answers = Object.values(questionProgress)
+    .filter((progress) => progress.lastAnsweredAt)
+    .map((progress) => ({
+      questionId: progress.questionId,
+      selectedOptionIds: [],
+      isCorrect: progress.correctCount > 0,
+      answeredAt: progress.lastAnsweredAt ?? '',
+      timeSpentSeconds: 0,
+    }))
+    .sort((a, b) => a.answeredAt.localeCompare(b.answeredAt));
+
+  const startedAt = answers[0]?.answeredAt ?? new Date(0).toISOString();
+  const completedAt = answers[answers.length - 1]?.answeredAt;
+
+  return {
+    currentStreak: 0,
+    dailyGoalAnswers: 0,
+    level: 1,
+    questionProgress,
+    sessions: answers.length
+      ? [
+          {
+            id: 'persisted-question-progress',
+            mode: 'study',
+            questionIds: answers.map((answer) => answer.questionId),
+            answers,
+            startedAt,
+            completedAt,
+          },
+        ]
+      : [],
+    totalXp: 0,
+  };
+}
 
 function getAnsweredChapterIds(questionProgress: Record<string, QuestionProgress>) {
   const answeredChapterIds = new Set<string>();
@@ -299,6 +396,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Nästan redo',
       strong_preparation: 'Stark förberedelse',
     },
+    resumeAccessibilityLabel: (chapterTitle, subtitle) =>
+      `Fortsätt där du slutade i ${chapterTitle}. ${subtitle}`,
+    resumeCta: (chapterTitle) => `Fortsätt ${chapterTitle}`,
+    resumeKicker: 'Senaste övning',
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
@@ -434,6 +535,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Almost ready',
       strong_preparation: 'Strong preparation',
     },
+    resumeAccessibilityLabel: (chapterTitle, subtitle) =>
+      `Continue where you left off in ${chapterTitle}. ${subtitle}`,
+    resumeCta: (chapterTitle) => `Resume ${chapterTitle}`,
+    resumeKicker: 'Recent practice',
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
@@ -472,6 +577,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 };
 
 export default function Screen() {
+  useHomeActionLinkWebStyles();
+
   const {
     entitlements: monetizationEntitlements,
     entitlementsReady: monetizationEntitlementsReady,
@@ -542,6 +649,23 @@ export default function Screen() {
     [dashboardProgress, dashboardQuestionChapterIndex],
   );
   const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
+  const resumeCandidate = useMemo(
+    () =>
+      resumeWhereLeftOff({
+        progress: buildResumeProgress(questionProgress),
+        questionChapterIndex,
+      }),
+    [questionProgress],
+  );
+  const resumeChapter = chapters.find((chapter) => chapter.id === resumeCandidate.chapterId);
+  const resumeChapterTitle =
+    resumeChapter && (language === 'sv' ? resumeChapter.nameSv : resumeChapter.nameEn);
+  const resumeCopy = resumeBannerCopy(resumeCandidate, language);
+  const resumeSubtitle = resumeCopy.subtitle;
+  const resumeAccessibilityLabel =
+    resumeChapterTitle && resumeSubtitle
+      ? copy.resumeAccessibilityLabel(resumeChapterTitle, resumeSubtitle)
+      : null;
   const guidedPathStages = useMemo(
     () => buildGuidedPracticePathStages(copy, questionProgress),
     [copy, questionProgress],
@@ -607,6 +731,24 @@ export default function Screen() {
           <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
         </View>
       </Link>
+      {resumeChapter && resumeChapterTitle && resumeSubtitle && resumeAccessibilityLabel ? (
+        <Card style={styles.resumeCard}>
+          <Badge tone="warm">{copy.resumeKicker}</Badge>
+          <Text accessibilityRole="header" style={styles.resumeTitle}>
+            {resumeCopy.title}
+          </Text>
+          <Text style={styles.resumeChapter}>{resumeChapterTitle}</Text>
+          <Text style={styles.resumeText}>{resumeSubtitle}</Text>
+          <Link
+            accessibilityLabel={resumeAccessibilityLabel}
+            accessibilityRole="link"
+            href={`/chapter/${resumeChapter.id}`}
+            style={styles.resumeLink}
+          >
+            {copy.resumeCta(resumeChapterTitle)}
+          </Link>
+        </Card>
+      ) : null}
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -630,14 +772,13 @@ export default function Screen() {
         {readiness.isSparse ? (
           <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
         ) : null}
-        <Link
+        <HomeActionLink
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
-          accessibilityRole="link"
           href="/exam"
           style={styles.readinessLink}
         >
           {copy.readinessCta}
-        </Link>
+        </HomeActionLink>
       </Card>
       <SocialProofRow language={language} />
       {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
@@ -648,22 +789,20 @@ export default function Screen() {
         />
       ) : null}
       <View style={styles.actions}>
-        <Link
+        <HomeActionLink
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
           style={styles.primaryLink}
         >
           {copy.startPractice}
-        </Link>
-        <Link
+        </HomeActionLink>
+        <HomeActionLink
           accessibilityLabel={copy.browseChaptersAccessibilityLabel}
-          accessibilityRole="link"
           href="/learn"
           style={styles.secondaryLink}
         >
           {copy.browseChapters}
-        </Link>
+        </HomeActionLink>
       </View>
 
       <SectionHeader title={copy.guidedPathTitle} subtitle={copy.guidedPathSubtitle} />
@@ -709,14 +848,13 @@ export default function Screen() {
           {copy.feedbackTitle}
         </Text>
         <Text style={styles.feedbackText}>{copy.feedbackText}</Text>
-        <Link
+        <HomeActionLink
           accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
-          accessibilityRole="link"
           href="/mistakes"
           style={styles.feedbackLink}
         >
           {copy.feedbackLink}
-        </Link>
+        </HomeActionLink>
       </Card>
 
       <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
@@ -748,6 +886,16 @@ export default function Screen() {
 }
 
 const styles = StyleSheet.create({
+  homeActionLink: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: space[6],
+    textDecorationLine: 'none',
+  },
+  homeActionLinkPressed: {
+    transform: [{ scale: motion.pressedScale }],
+  },
   statRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -781,6 +929,40 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     lineHeight: typography.navButton.lineHeight,
+  },
+  resumeCard: {
+    gap: space[1],
+  },
+  resumeTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  resumeChapter: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  resumeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  resumeLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    marginTop: space[0.5],
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   readinessCard: {
     gap: space[1.5],
@@ -846,6 +1028,7 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -885,6 +1068,7 @@ const styles = StyleSheet.create({
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -895,6 +1079,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -934,6 +1119,7 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',

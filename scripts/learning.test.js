@@ -219,7 +219,8 @@ test('readiness score includes recent persisted mock exam results', () => {
 
   assert.equal(base.components.mockAverage, 0);
   assert.ok(Math.abs(withMocks.components.mockAverage - 0.8) < 0.0001);
-  assert.equal(withMocks.score, 24);
+  assert.ok(withMocks.components.recency > 0.99);
+  assert.equal(withMocks.score, 34);
   assert.ok(withMocks.score > base.score);
 });
 
@@ -245,6 +246,40 @@ test('readiness mock totals do not inflate rolling practice accuracy', () => {
   assert.equal(result.components.accuracy, 0);
   assert.equal(result.components.mockAverage, 0.8);
   assert.ok(result.score > 0);
+});
+
+test('readiness mock recency uses completion metadata without depending on synthetic answers', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const commonInput = {
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  const scoreOnlyMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    mockExamSessions: [
+      { sessionId: 'score-only', score: 0.8, completedAt: '2026-05-19T10:00:00.000Z' },
+    ],
+  });
+  const countedMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    mockExamSessions: [
+      {
+        sessionId: 'counted',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: 32,
+        totalCount: 40,
+      },
+    ],
+  });
+
+  assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
+  assert.ok(scoreOnlyMock.components.recency > 0.99);
+  assert.equal(scoreOnlyMock.components.accuracy, 0);
+  assert.equal(countedMock.components.accuracy, 0);
 });
 
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
