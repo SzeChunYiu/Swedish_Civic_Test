@@ -5,6 +5,9 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const expectedHomepageSlogans = JSON.parse(
+  fs.readFileSync(path.join(repoRoot, 'data/homepage_slogans_v6.json'), 'utf8'),
+).exactReplacementKeys;
 
 const somaliHighFrequencyKeys = [
   'hero.eyebrow',
@@ -35,9 +38,14 @@ const somaliHighFrequencyKeys = [
 ];
 
 const expectedSomaliCopy = {
-  'hero.h1a': 'Gudub imtixaanka.',
-  'hero.lede':
-    'App barasho deggan oo aan rasmi ahayn oo loogu talagalay imtixaanka muwaadinnimada Iswiidhan. Cutubyo gaagaaban, tababar caqli leh, iyo imtixaan tijaabo ah oo maalinta imtixaanka ka dhigaya mid ka cabsi yar sheeko yar oo deriska lala yeesho.',
+  'hero.h1a': expectedHomepageSlogans.so['hero.h1a'],
+  'hero.lede': expectedHomepageSlogans.so['hero.lede'],
+  'hero.cta1': expectedHomepageSlogans.so['hero.cta1'],
+  'hero.cta2': expectedHomepageSlogans.so['hero.cta2'],
+  'demo.h1': expectedHomepageSlogans.so['demo.h1'],
+  'demo.h2': expectedHomepageSlogans.so['demo.h2'],
+  'footer.t1': expectedHomepageSlogans.so['footer.t1'],
+  'footer.t2': expectedHomepageSlogans.so['footer.t2'],
   'consent.body':
     'Waxaan isticmaalnaa Google AdSense si aan u muujinno xayaysiisyo kooban. AdSense waxay isticmaashaa cookies, waxaana laga yaabaa inay u adeegsato xayaysiisyo la shakhsiyeeyay. Aqbal dhammaan, kaliya kuwa lagama maarmaanka ah, ama akhri <a href="#/privacy">bogga asturnaanta</a>.',
   'settings.title': 'Dejinta',

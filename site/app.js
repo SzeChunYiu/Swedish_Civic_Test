@@ -95,23 +95,20 @@ const i18n = (window.i18n = {
     'nav.terms': 'Terms',
     'nav.sources': 'Sources',
     'nav.cta': 'Get the app ↗',
-
-    'hero.eyebrow': 'Unofficial · Free MVP · Source-backed questions',
-    'hero.h1a': 'Pass the test.',
-    'hero.h1b': 'Earn the passport.',
-    'hero.h1c': 'Brag at midsommar.',
+    'hero.eyebrow': 'Unofficial study tool · source-backed · no account',
+    'hero.h1a': 'Learn Sweden.',
+    'hero.h1b': 'Practise with sources.',
+    'hero.h1c': 'Go in prepared.',
     'hero.lede':
-      "A friendly, unofficial study app for Sweden's medborgarskapsprov. Bite-sized chapters, smart practice, and a mock exam that feels less scary than small talk with your neighbour.",
-    'hero.cta1': "Start studying — it's free",
-    'hero.cta2': 'Try a question',
+      'A calm, unofficial study tool for Swedish civic knowledge. Short chapters, focused practice, and mock exams help you understand the material without turning it into a full-time job.',
+    'hero.cta1': 'Start practising',
+    'hero.cta2': 'Try one question',
     'hero.stat1': 'civic questions',
     'hero.stat2': 'chapters, lagom-sized',
     'hero.stat3': 'to start, no account',
-
     'phone.crumb': 'Chapter 3 · Society & Rights',
     'phone.q': 'Which Swedish principle gives everyone the right to roam in nature?',
     'phone.hint': 'Nice. 18 streak days. Keep going.',
-
     'marquee.1': 'Allemansrätten',
     'marquee.2': 'Riksdagen',
     'marquee.3': 'Grundlagar',
@@ -120,16 +117,14 @@ const i18n = (window.i18n = {
     'marquee.6': 'Jämställdhet',
     'marquee.7': 'Vasaloppet',
     'marquee.8': 'Midsommar',
-
     'demo.eyebrow': 'Try a question',
-    'demo.h1': 'No textbooks.',
-    'demo.h2': 'Just clicks.',
+    'demo.h1': 'No cramming.',
+    'demo.h2': 'Just steady practice.',
     'demo.deck':
-      'Every question comes with a plain-language explanation and a link to the source. Get it wrong? It quietly shows up again later. Get it right? Move on, pour another coffee.',
+      'Answer one question, read the explanation, and keep going. Hard questions come back later, so review feels manageable.',
     'demo.li1': '<b>Spaced repetition</b> resurfaces tricky questions on the right day.',
     'demo.li2': '<b>Plain-language explanations</b> — no legalese, no jargon-jungle.',
     'demo.li3': '<b>Mock exam mode</b> with real timing, so test day feels familiar.',
-
     'qcard.chip': 'Chapter 3 · Q47',
     'qcard.q':
       'Which Swedish principle gives everyone the right to walk, swim, and pick berries on most land in nature?',
@@ -142,18 +137,15 @@ const i18n = (window.i18n = {
       " — \"everyone's right\" — lets you walk, swim, ski, camp, and forage on most land in Sweden. The catch: be careful, considerate, and don't pitch a tent in someone's flowerbed.",
     'qcard.src': 'Source · § Grundlagarna',
     'qcard.again': 'Try again →',
-
     'numbers.1': 'questions sourced from public records',
     'numbers.2': 'chapters covering history, society & rights',
     'numbers.3': 'daily — a fika-sized study habit',
     'numbers.4': 'to start. No login. Study progress stays local.',
-
     'chap.eyebrow': "What's inside",
-    'chap.h1': 'From kanelbullar to',
-    'chap.h2': 'Karl XIV Johan.',
+    'chap.h1': 'Short chapters.',
+    'chap.h2': 'Clear Swedish context.',
     'chap.deck':
-      "Compact chapters, sized so you can finish one between trams. Each one mixes the official material with the kind of context you'd actually get from a Swedish friend over coffee.",
-
+      'Each chapter keeps the official material close, while explaining Swedish words and ideas in everyday language.',
     'chap.1.t': 'A very short history of Sweden',
     'chap.1.d':
       'Vikings → kings → 1809 → folkhemmet → EU. The whole rollercoaster, minus the dynastic family tree memorisation.',
@@ -214,7 +206,6 @@ const i18n = (window.i18n = {
     'chap.12.m1': '3 full mocks',
     'chap.12.m2': '60 min each',
     'chap.13.t': 'Traditions, holidays & everyday culture',
-
     'how.eyebrow': 'How it works',
     'how.h1': 'Study lagom.',
     'how.h2': 'Pass big.',
@@ -229,7 +220,6 @@ const i18n = (window.i18n = {
     'how.s3.t': 'Mock exam — full timing',
     'how.s3.p':
       'Run the real format under real timing. Test day becomes Tuesday with a worse chair.',
-
     'faq.eyebrow': 'Frequently, honestly asked',
     'faq.h1': "Questions you'd ask",
     'faq.h2': 'over coffee.',
@@ -251,9 +241,7 @@ const i18n = (window.i18n = {
     'faq.6.q': 'Is my data shared with anyone?',
     'faq.6.a':
       'Your study progress, answers, mistakes, and settings stay local. Google AdSense on the website and Google Mobile Ads (AdMob) in the app can process ad and consent signals, but ads never receive your study answers or progress.',
-
     'doc.back': '← Back to home',
-
     'privacy.kicker': 'Privacy policy',
     'privacy.h1a': 'Your data',
     'privacy.h1b': 'stays on your phone.',
@@ -287,7 +275,6 @@ const i18n = (window.i18n = {
     'privacy.s6.t': 'Changes & contact',
     'privacy.s6.p':
       'If this policy changes, the effective date at the top of this page will change with it. Questions, concerns, or "wait, what does this actually mean?" — head over to the <a href="#/support">support page</a>.',
-
     'support.kicker': 'Support',
     'support.h1a': 'Something broken?',
     'support.h1b': 'Let us fix it.',
@@ -331,7 +318,6 @@ const i18n = (window.i18n = {
     'support.s5.t': 'Contact',
     'support.s5.p':
       'Email <a href="mailto:support@medborgartest.app">support@medborgartest.app</a>. We read everything. We answer almost everything. Privacy details live on the <a href="#/privacy">privacy page</a>.',
-
     'terms.kicker': 'Terms of use',
     'terms.h1a': 'Plain rules,',
     'terms.h1b': 'plainly written.',
@@ -362,7 +348,6 @@ const i18n = (window.i18n = {
     'terms.s6.t': 'Changes',
     'terms.s6.p':
       'If these terms change materially, the effective date above will change and the app will surface a notice on next launch. Continued use after that means you accept the new terms.',
-
     'sources.kicker': 'Sources & method',
     'sources.h1a': 'Where the answers',
     'sources.h1b': 'actually come from.',
@@ -403,7 +388,6 @@ const i18n = (window.i18n = {
       'Every question goes through draft → source-check → plain-language pass → native-Swedish review. When a source updates (a new election, a law amendment, a renamed agency), the affected questions get a refresh tag and re-enter review.',
     'sources.s5.p2':
       'See a question that disagrees with its cited source? <a href="#/support">Tell us</a> — corrections are usually live within a week.',
-
     'footer.brag1': 'Study lagom.',
     'footer.brag2': 'Pass big.',
     'footer.h.app': 'The app',
@@ -420,7 +404,6 @@ const i18n = (window.i18n = {
       'Unofficial. Independent. Not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. We just really like helping people study.',
     'footer.copyright': '© 2026 Almost Swedish. Made with kanelbullar in Stockholm.',
     'footer.fika': 'Lagom built. Fika tested.',
-
     'ad.label': 'Sponsored',
     'ad.placeholder': 'Your AdSense slot will render here.',
     'ad.anchor.placeholder': 'Anchor ad slot',
@@ -433,15 +416,15 @@ const i18n = (window.i18n = {
       'We use Google AdSense to show a couple of ads. AdSense sets cookies and may use them for ad personalisation. Accept all, accept only what\'s needed, or read the <a href="#/privacy">privacy page</a>.',
     'consent.min': 'Necessary only',
     'consent.all': 'Accept all',
-
     'privacy.s5.web.t': 'Ads on this website',
     'privacy.s5.web.p':
       'This website uses <b>Google AdSense</b>. AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
     'privacy.s5.app.t': 'Ads in the mobile app',
     'privacy.s5.app.p':
       "The mobile app uses <b>Google Mobile Ads (AdMob)</b>. On first launch the app shows Google's official consent screen (via the <em>User Messaging Platform</em> SDK), where you can pick personalised, non-personalised, or — in regions where the choice is available — opt out. Ads keep the app free. We never use ads to collect your study answers or progress.",
+    'footer.t1': 'Study clearly.',
+    'footer.t2': 'Practise with sources.',
   },
-
   sv: {
     brand: 'Almost Swedish',
     'nav.home': 'Hem',
@@ -453,23 +436,20 @@ const i18n = (window.i18n = {
     'nav.terms': 'Villkor',
     'nav.sources': 'Källor',
     'nav.cta': 'Hämta appen ↗',
-
-    'hero.eyebrow': 'Inofficiell · Gratis MVP · Källstödda frågor',
-    'hero.h1a': 'Klara provet.',
-    'hero.h1b': 'Få passet.',
-    'hero.h1c': 'Skryt på midsommar.',
+    'hero.eyebrow': 'Fristående studieverktyg · källstött · inget konto',
+    'hero.h1a': 'Lär känna Sverige.',
+    'hero.h1b': 'Öva med källor.',
+    'hero.h1c': 'Känn dig förberedd.',
     'hero.lede':
-      'En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett provexempel som känns mindre läskigt än småprat med grannen.',
-    'hero.cta1': 'Börja plugga — det är gratis',
+      'Ett lugnt, fristående studieverktyg för svensk samhällskunskap. Korta kapitel, fokuserad övning och provexempel hjälper dig att förstå innehållet steg för steg.',
+    'hero.cta1': 'Börja öva',
     'hero.cta2': 'Testa en fråga',
     'hero.stat1': 'samhällsfrågor',
     'hero.stat2': 'kapitel, i lagom format',
     'hero.stat3': 'att börja, inget konto',
-
     'phone.crumb': 'Kapitel 3 · Samhälle & Rättigheter',
     'phone.q': 'Vilken svensk princip ger alla rätt att vistas fritt i naturen?',
     'phone.hint': 'Snyggt. 18 dagars streak. Fortsätt.',
-
     'marquee.1': 'Allemansrätten',
     'marquee.2': 'Riksdagen',
     'marquee.3': 'Grundlagar',
@@ -478,16 +458,14 @@ const i18n = (window.i18n = {
     'marquee.6': 'Jämställdhet',
     'marquee.7': 'Vasaloppet',
     'marquee.8': 'Midsommar',
-
     'demo.eyebrow': 'Testa en fråga',
-    'demo.h1': 'Inga läroböcker.',
-    'demo.h2': 'Bara klick.',
+    'demo.h1': 'Inget hetsplugg.',
+    'demo.h2': 'Bara jämn övning.',
     'demo.deck':
-      'Varje fråga har en förklaring på begriplig svenska och en länk till källan. Fel svar? Den dyker upp igen senare, i lugn och ro. Rätt svar? Gå vidare, häll upp ett kaffe till.',
+      'Svara på en fråga, läs förklaringen och fortsätt. Svåra frågor kommer tillbaka senare, så repetitionen blir hanterbar.',
     'demo.li1': '<b>Repetition med intervall</b> tar fram svåra frågor på rätt dag.',
     'demo.li2': '<b>Begripliga förklaringar</b> — ingen juridiska, ingen byråkratdjungel.',
     'demo.li3': '<b>Provläge</b> med riktig tidsbegränsning, så provdagen känns bekant.',
-
     'qcard.chip': 'Kapitel 3 · F47',
     'qcard.q':
       'Vilken svensk princip ger alla rätt att gå, simma och plocka bär på det mesta av Sveriges mark?',
@@ -500,18 +478,15 @@ const i18n = (window.i18n = {
       ' — "allas rätt" — låter dig gå, simma, åka skidor, tälta och plocka bär på det mesta av Sveriges mark. Haken: var försiktig, hänsynsfull, och slå inte upp tältet i någons rabatt.',
     'qcard.src': 'Källa · § Grundlagarna',
     'qcard.again': 'Försök igen →',
-
     'numbers.1': 'frågor från offentliga källor',
     'numbers.2': 'kapitel om historia, samhälle & rättigheter',
     'numbers.3': 'om dagen — en fika-stor studievana',
     'numbers.4': 'att börja. Ingen inloggning. Dina framsteg sparas lokalt.',
-
     'chap.eyebrow': 'Vad ingår',
-    'chap.h1': 'Från kanelbullar till',
-    'chap.h2': 'Karl XIV Johan.',
+    'chap.h1': 'Korta kapitel.',
+    'chap.h2': 'Tydligt svenskt sammanhang.',
     'chap.deck':
-      'Korta kapitel, lagom stora så du hinner ett mellan spårvagnarna. Varje kapitel blandar det officiella materialet med den sortens sammanhang du faktiskt skulle få av en svensk vän över kaffe.',
-
+      'Varje kapitel håller sig nära källorna och förklarar ord och idéer på vanlig svenska.',
     'chap.1.t': 'Sveriges historia, mycket kortfattat',
     'chap.1.d':
       'Vikingar → kungar → 1809 → folkhemmet → EU. Hela berg-och-dalbanan, utan släktträdsplugget.',
@@ -572,7 +547,6 @@ const i18n = (window.i18n = {
     'chap.12.m1': '3 hela prov',
     'chap.12.m2': '60 min styck',
     'chap.13.t': 'Traditioner, helgdagar & vardagskultur',
-
     'how.eyebrow': 'Så funkar det',
     'how.h1': 'Plugga lagom.',
     'how.h2': 'Klara stort.',
@@ -587,7 +561,6 @@ const i18n = (window.i18n = {
     'how.s3.t': 'Provläge — realistisk tidskänsla',
     'how.s3.p':
       'Öva med ett längre provupplägg och realistisk tidskänsla. Provdagen blir en tisdag med sämre stol.',
-
     'faq.eyebrow': 'Ofta och uppriktigt ställda',
     'faq.h1': 'Frågor du skulle ställa',
     'faq.h2': 'över kaffe.',
@@ -609,9 +582,7 @@ const i18n = (window.i18n = {
     'faq.6.q': 'Delas mina data med någon?',
     'faq.6.a':
       'Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Google AdSense på webbplatsen och Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler, men annonser får aldrig dina studiesvar eller framsteg.',
-
     'doc.back': '← Tillbaka till hem',
-
     'privacy.kicker': 'Integritetspolicy',
     'privacy.h1a': 'Dina data',
     'privacy.h1b': 'stannar i telefonen.',
@@ -644,7 +615,6 @@ const i18n = (window.i18n = {
     'privacy.s6.t': 'Ändringar & kontakt',
     'privacy.s6.p':
       'Om policyn ändras uppdateras datumet längst upp. Frågor, oro, eller "vad betyder det här egentligen?" — gå till <a href="#/support">supportsidan</a>.',
-
     'support.kicker': 'Support',
     'support.h1a': 'Är något trasigt?',
     'support.h1b': 'Vi fixar det.',
@@ -687,7 +657,6 @@ const i18n = (window.i18n = {
     'support.s5.t': 'Kontakt',
     'support.s5.p':
       'Mejla <a href="mailto:support@medborgartest.app">support@medborgartest.app</a>. Vi läser allt. Vi svarar nästan på allt. Integritetsdetaljer finns på <a href="#/privacy">integritetssidan</a>.',
-
     'terms.kicker': 'Användarvillkor',
     'terms.h1a': 'Enkla regler,',
     'terms.h1b': 'enkelt skrivna.',
@@ -718,7 +687,6 @@ const i18n = (window.i18n = {
     'terms.s6.t': 'Ändringar',
     'terms.s6.p':
       'Om villkoren ändras väsentligt uppdateras datumet ovan och appen visar en notis vid nästa start. Fortsatt användning innebär att du godkänner de nya villkoren.',
-
     'sources.kicker': 'Källor & metod',
     'sources.h1a': 'Var svaren',
     'sources.h1b': 'faktiskt kommer ifrån.',
@@ -757,7 +725,6 @@ const i18n = (window.i18n = {
       'Varje fråga går igenom utkast → källkoll → enkel-svenska-pass → granskning av modersmålstalare. När en källa uppdateras (nytt val, lagändring, omdöpt myndighet) får berörda frågor en refresh-tagg och går tillbaka till granskning.',
     'sources.s5.p2':
       'Ser du en fråga som inte stämmer med sin källa? <a href="#/support">Berätta för oss</a> — rättelser är oftast live inom en vecka.',
-
     'footer.brag1': 'Plugga lagom.',
     'footer.brag2': 'Klara stort.',
     'footer.h.app': 'Appen',
@@ -774,7 +741,6 @@ const i18n = (window.i18n = {
       'Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.',
     'footer.copyright': '© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.',
     'footer.fika': 'Lagom byggt. Fika-testat.',
-
     'ad.label': 'Annons',
     'ad.placeholder': 'AdSense-yta visas här.',
     'ad.anchor.placeholder': 'Ankarannons',
@@ -787,18 +753,35 @@ const i18n = (window.i18n = {
       'Vi använder Google AdSense för att visa ett par annonser. AdSense sätter cookies och kan använda dem för personalisering. Godkänn allt, bara det nödvändiga, eller läs <a href="#/privacy">integritetssidan</a>.',
     'consent.min': 'Bara nödvändiga',
     'consent.all': 'Godkänn allt',
-
     'privacy.s5.web.t': 'Annonser på webbplatsen',
     'privacy.s5.web.p':
       'Den här webbplatsen använder <b>Google AdSense</b>. AdSense och dess partner kan sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
     'privacy.s5.app.t': 'Annonser i mobilappen',
     'privacy.s5.app.p':
       'Mobilappen använder <b>Google Mobile Ads (AdMob)</b>. Vid första start visar appen Googles officiella samtyckesskärm (via <em>User Messaging Platform</em>-SDK:n) där du kan välja personaliserat, icke-personaliserat eller — där det går — avstå. Annonser håller appen gratis. Vi använder aldrig annonser för att samla in dina studiesvar eller framsteg.',
+    'footer.t1': 'Plugga tydligt.',
+    'footer.t2': 'Öva med källor.',
   },
 });
 
+const SMT_RTL_LANGUAGES = new Set(['ar', 'ckb', 'fa']);
+
+function smtNormalizeLanguage(lang) {
+  return i18n[lang] ? lang : 'en';
+}
+window.smtNormalizeLanguage = smtNormalizeLanguage;
+
+function smtApplyLanguageDirection(lang) {
+  const normalized = smtNormalizeLanguage(lang);
+  const direction = SMT_RTL_LANGUAGES.has(normalized) ? 'rtl' : 'ltr';
+  document.documentElement.setAttribute('lang', normalized);
+  document.documentElement.setAttribute('dir', direction);
+  return normalized;
+}
+window.smtApplyLanguageDirection = smtApplyLanguageDirection;
+
 function applyLang(lang) {
-  document.documentElement.lang = lang;
+  lang = smtApplyLanguageDirection(lang);
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.dataset.i18n;
     const value = i18n[lang] && i18n[lang][key];
@@ -827,7 +810,7 @@ function smtEmitLanguageChange(lang) {
 }
 
 function smtSetLanguage(lang) {
-  const nextLang = i18n[lang] ? lang : 'en';
+  const nextLang = smtNormalizeLanguage(lang);
   applyLang(nextLang);
   smtEmitLanguageChange(nextLang);
 }
