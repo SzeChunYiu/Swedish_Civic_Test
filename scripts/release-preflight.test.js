@@ -1346,8 +1346,52 @@ test('release preflight detects classifier-discovered v1.1 runtime surfaces', ()
   const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
   assert.equal(scopeGate.status, 'BLOCKED');
   assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
-  assert.match(scopeGate.evidence, /FutureStudyPlanner\.tsx/);
+  assert.match(
+    scopeGate.evidence,
+    /custom-scope-root\/components\/FutureStudyPlanner\.tsx \(v1\.1 source marker\)/,
+  );
+  assert.ok(!scopeGate.evidence.includes(scanRoot), 'custom v1.1 scan root should be redacted');
   assert.match(scopeGate.nextAction, /explicit operator approval/i);
+});
+
+test('release preflight text output preserves v1.1 scope reasons and custom-root redaction', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-v11-text-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const scanRoot = path.join(tmpDir, 'scan-root');
+  const futureComponentPath = path.join(scanRoot, 'components', 'FutureStudyPlanner.tsx');
+
+  fs.mkdirSync(path.dirname(futureComponentPath), { recursive: true });
+  fs.writeFileSync(
+    futureComponentPath,
+    [
+      'export function FutureStudyPlanner() {',
+      "  return 'v1.1 adaptive study planner';",
+      '}',
+      '',
+    ].join('\n'),
+  );
+  writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+  writeFakeReleaseCommands(tmpDir);
+
+  const result = spawnSync(process.execPath, ['scripts/release-preflight.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      RELEASE_PREFLIGHT_V11_SCOPE_ROOTS: scanRoot,
+    },
+  });
+
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(result.stdout, /Release preflight: BLOCKED/);
+  assert.match(
+    result.stdout,
+    /custom-scope-root\/components\/FutureStudyPlanner\.tsx \(v1\.1 source marker\)/,
+  );
+  assert.ok(!result.stdout.includes(scanRoot), 'text output should redact custom v1.1 scan root');
 });
 
 test('release preflight blocks Remove Ads step 3 structural drift without the brittle GOAL grep', () => {
