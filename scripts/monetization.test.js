@@ -1846,6 +1846,10 @@ test('global launch popup ad is suppressed on active question and compliance rou
   assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/disclaimer'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test/intro'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding/checklist'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
@@ -1856,6 +1860,8 @@ test('global launch popup ad is suppressed on active question and compliance rou
     '/practice',
     '/quiz',
     '/disclaimer',
+    '/about-the-test',
+    '/onboarding',
     '/privacy',
     '/sources',
     '/support',
