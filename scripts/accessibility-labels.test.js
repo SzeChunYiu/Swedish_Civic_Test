@@ -220,7 +220,10 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /onFocus: \(\) => setIsFocused\(true\)/);
-  assert.match(source, /onBlur: \(\) => setIsFocused\(false\)/);
+  assert.match(
+    source,
+    /onBlur: \(\) => \{[\s\S]*setIsFocused\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*\}/,
+  );
   assert.match(source, /onHoverIn: \(\) => setIsHovered\(true\)/);
   assert.match(
     source,
