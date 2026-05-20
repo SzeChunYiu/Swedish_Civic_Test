@@ -4,9 +4,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const chapterFocusArgs = ['scripts/validate-content.js', '--focus-chapter-localized-text'];
 
 test('chapter metadata text fields are trimmed and single-spaced', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+  const output = execFileSync(process.execPath, chapterFocusArgs, {
     cwd: repoRoot,
     encoding: 'utf8',
   });
@@ -39,6 +40,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-chapter-localized-text');
 require('./scripts/validate-content.js');
 `,
     ],
