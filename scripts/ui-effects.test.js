@@ -1418,6 +1418,7 @@ test('premium banner announces Remove Ads purchase status changes', () => {
 test('pro paywall renders accessible tier summaries without changing Remove Ads wiring', () => {
   const source = read('components/monetization/ProPaywall.tsx');
   const profileSource = read('app/(tabs)/profile.tsx');
+  const tierComparisonSource = read('lib/monetization/tierComparison.ts');
 
   assert.match(source, /TIER_COLUMNS/);
   assert.match(source, /TIER_ROWS/);
@@ -1431,8 +1432,12 @@ test('pro paywall renders accessible tier summaries without changing Remove Ads 
   assert.match(source, /buyProLifetime/);
   assert.match(source, /restoreProLifetime/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
-  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
+  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
+  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
+  assert.match(tierComparisonSource, /Bara ta bort annonser · \$\{REMOVE_ADS_PRICE_LABEL\}/);
+  assert.doesNotMatch(source, /29 kr|29 kronor/);
+  assert.doesNotMatch(tierComparisonSource, /29 kr|29 kronor/);
   assert.doesNotMatch(source, /buyRemoveAds|restoreRemoveAdsPurchase/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.match(profileSource, /import \{ ProPaywall \}/);
