@@ -21,6 +21,23 @@ function createFakeNpm(tmpDir) {
   return fakeNpm;
 }
 
+function createFakeNode(tmpDir) {
+  const fakeNode = path.join(tmpDir, 'node');
+  fs.writeFileSync(
+    fakeNode,
+    [
+      '#!/bin/sh',
+      'for arg in "$@"; do',
+      '  printf "%s\\n" "$arg" >> "$TEST_DISPATCH_LOG"',
+      'done',
+      'exit 0',
+      '',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+  return fakeNode;
+}
+
 function runDispatcher(args, env) {
   return spawnSync(process.execPath, ['scripts/test-dispatch.js', ...args], {
     cwd: repoRoot,
@@ -37,11 +54,23 @@ function runPackageTest(args, env) {
   });
 }
 
+function runPackageContentFocused(args, env) {
+  return spawnSync('npm', ['run', 'test:content-focused', '--', ...args], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env,
+  });
+}
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
 
   assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
   assert.doesNotMatch(pkg.scripts.test, /&&/);
+  assert.equal(
+    pkg.scripts['test:content-focused'],
+    'node scripts/test-dispatch.js content-focused',
+  );
   assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
 });
 
@@ -96,6 +125,63 @@ test('package npm test selector enters the dispatcher before running suites', ()
     const selectedResult = runPackageTest(['monetization'], env);
     assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('content-focused package script routes test-name pattern before file list', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const pattern = 'religious-freedom option parallelism|focus-religious-freedom';
+  const env = {
+    ...process.env,
+    npm_config_loglevel: 'silent',
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = runPackageContentFocused(
+      [
+        '--test-name-pattern',
+        pattern,
+        'tests/content-test-script-routing.test.js',
+        'tests/content-published-question-types.test.js',
+      ],
+      env,
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split(/\n/), [
+      '--test',
+      '--test-name-pattern',
+      pattern,
+      'tests/content-test-script-routing.test.js',
+      'tests/content-published-question-types.test.js',
+    ]);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('content-focused selector rejects missing file lists before running node', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-invalid-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = runDispatcher(['content-focused', '--test-name-pattern', 'routing'], env);
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /missing test file list/);
+    assert.equal(fs.existsSync(nodeLog), false);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
