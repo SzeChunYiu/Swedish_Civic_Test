@@ -119,6 +119,8 @@ test('web rewarded unlocks require explicit completion before credit grant path'
   );
   assert.match(
     examSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{ entitlements \}\);[\s\S]*if \(rewardedAdResult\.status !== 'earned_reward'\) \{[\s\S]*return;[\s\S]*\}[\s\S]*await grantRewardedExamCredit\(\);/,
+    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*if \(rewardedAdResult\.status !== 'earned_reward'\) \{[\s\S]*return;[\s\S]*\}[\s\S]*await grantRewardedExamCredit\(\);/,
   );
+  assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
+  assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);
 });
