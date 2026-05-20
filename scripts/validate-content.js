@@ -692,6 +692,7 @@ const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 20;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
+const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -7748,6 +7749,8 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const dashboardStatsModule = loadTs('lib/learning/dashboardStats.ts');
 const perChapterProgress = dashboardStatsModule.perChapterProgress;
+const readinessModule = loadTs('lib/learning/readiness.ts');
+const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const mockExamLibraryModule = loadTs('lib/learning/mockExamLibrary.ts');
@@ -8030,6 +8033,8 @@ let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
 let dashboardPerChapterInputRulesValidated = 0;
 let dashboardPerChapterInputParityValidated = false;
+let readinessAdapterRulesValidated = 0;
+let readinessAdapterRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -8474,6 +8479,16 @@ if (process.argv.includes('--focus-xp-rules')) {
   printValidationSummary({
     xpRulesValidated,
     xpRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-readiness-adapter-rules')) {
+  validateReadinessAdapterRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    readinessAdapterRulesValidated,
+    readinessAdapterRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -16390,6 +16405,203 @@ function validateDashboardPerChapterInputRules() {
   }
 }
 
+function validateReadinessAdapterRules() {
+  if (typeof computeReadinessFromQuestionProgress !== 'function') return;
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const validQuestions = Array.from({ length: 40 }, (_, index) => ({
+    id: `q${index}`,
+    chapterId: index < 20 ? 'ch01' : 'ch02',
+  }));
+  const validQuestionProgress = Object.fromEntries(
+    validQuestions.map((question) => [
+      question.id,
+      {
+        seenCount: 1,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 1,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+    ]),
+  );
+  const validReadiness = computeReadinessFromQuestionProgress({
+    questionProgress: validQuestionProgress,
+    questions: validQuestions,
+    chapters: [
+      { id: 'ch01', questionCount: 20 },
+      { id: 'ch02', questionCount: 20 },
+    ],
+    now,
+  });
+
+  const malformedReadiness = computeReadinessFromQuestionProgress({
+    questionProgress: {
+      infinite: {
+        seenCount: Infinity,
+        correctCount: Infinity,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+      },
+      stringy: {
+        seenCount: '3',
+        correctCount: '2',
+        wrongCount: '1',
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:01:00.000Z',
+      },
+      fractional: {
+        seenCount: 1.5,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:02:00.000Z',
+      },
+      oversized: {
+        seenCount: 10001,
+        correctCount: 10001,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:03:00.000Z',
+      },
+      valid: {
+        seenCount: 1,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 1,
+        lastAnsweredAt: '2026-05-19T10:04:00.000Z',
+      },
+    },
+    questions: [
+      { id: 'infinite', chapterId: 'ch01' },
+      { id: 'stringy', chapterId: 'ch01' },
+      { id: 'fractional', chapterId: 'ch01' },
+      { id: 'oversized', chapterId: 'ch01' },
+      { id: 'valid', chapterId: 'ch02' },
+    ],
+    chapters: [
+      { id: 'ch01', questionCount: 4 },
+      { id: 'ch02', questionCount: 1 },
+    ],
+    now,
+  });
+
+  const scoreOnlyMock = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
+      { sessionId: 'score-only', score: 0.8, completedAt: '2026-05-19T10:00:00.000Z' },
+    ],
+    now,
+  });
+  const countedMock = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
+      {
+        sessionId: 'counted',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: 32,
+        totalCount: 40,
+      },
+    ],
+    now,
+  });
+  const malformedMock = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
+      {
+        sessionId: 'bad-total',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: 32,
+        totalCount: Infinity,
+      },
+    ],
+    now,
+  });
+
+  const readinessSource = loadText('lib/learning/readiness.ts');
+  const adapterStart = readinessSource.indexOf(
+    'export function computeReadinessFromQuestionProgress',
+  );
+  const adapterEnd = readinessSource.indexOf(
+    '\nexport function computeReadinessScore',
+    adapterStart,
+  );
+  const adapterBody =
+    adapterStart === -1 || adapterEnd === -1 ? '' : readinessSource.slice(adapterStart, adapterEnd);
+  const rules = [
+    {
+      label: 'valid persisted progress aggregates to a strong non-sparse score',
+      valid:
+        validReadiness.verdict === 'strong_preparation' &&
+        validReadiness.isSparse === false &&
+        validReadiness.components.accuracy === 1 &&
+        validReadiness.components.coverage === 1,
+      detail: JSON.stringify(validReadiness),
+    },
+    {
+      label: 'malformed study counters are ignored without changing valid aggregates',
+      valid:
+        malformedReadiness.isSparse === true &&
+        malformedReadiness.components.accuracy === 1 &&
+        malformedReadiness.components.coverage === 0.5,
+      detail: JSON.stringify(malformedReadiness),
+    },
+    {
+      label: 'score-only mock recency and score contribute without synthetic answers',
+      valid:
+        scoreOnlyMock.isSparse === true &&
+        scoreOnlyMock.components.accuracy === 0 &&
+        Math.abs(scoreOnlyMock.components.mockAverage - 0.8) < 0.0001 &&
+        scoreOnlyMock.components.recency > 0.99,
+      detail: JSON.stringify(scoreOnlyMock),
+    },
+    {
+      label: 'counted mock totals affect sparse state but not practice accuracy',
+      valid:
+        countedMock.isSparse === false &&
+        countedMock.components.accuracy === 0 &&
+        Math.abs(countedMock.components.mockAverage - 0.8) < 0.0001,
+      detail: JSON.stringify(countedMock),
+    },
+    {
+      label: 'malformed mock totals do not count as sparse-state answers',
+      valid:
+        malformedMock.isSparse === true &&
+        malformedMock.components.accuracy === 0 &&
+        Math.abs(malformedMock.components.mockAverage - 0.8) < 0.0001,
+      detail: JSON.stringify(malformedMock),
+    },
+    {
+      label: 'adapter computes aggregates without Array.from synthetic rows',
+      valid: adapterBody.length > 0 && !/Array\.from\s*\(/.test(adapterBody),
+      detail: 'computeReadinessFromQuestionProgress must not materialize answer rows',
+    },
+  ];
+  let rulesAreValid = true;
+
+  rules.forEach(({ label, valid, detail }) => {
+    if (valid) {
+      readinessAdapterRulesValidated += 1;
+      return;
+    }
+    rulesAreValid = false;
+    fail(`readiness adapter rule ${label} failed: ${detail}`);
+  });
+
+  if (rulesAreValid && readinessAdapterRulesValidated === EXPECTED_READINESS_ADAPTER_RULE_COUNT) {
+    readinessAdapterRuntimeParityValidated = true;
+  }
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -17954,6 +18166,7 @@ validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateDashboardPerChapterInputRules();
+validateReadinessAdapterRules();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -18222,6 +18435,8 @@ console.log(
       spacedRepetitionRuntimeParityValidated,
       dashboardPerChapterInputRulesValidated,
       dashboardPerChapterInputParityValidated,
+      readinessAdapterRulesValidated,
+      readinessAdapterRuntimeParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,

@@ -16,12 +16,7 @@
 
 import { validAnswerTimestampMs } from './answerDates';
 import { perChapterProgress, mockHistory } from './dashboardStats';
-import type {
-  QuizAnswer,
-  QuizSession,
-  UserProgress,
-  UserQuestionProgress,
-} from '../../types/progress';
+import type { QuizSession, UserProgress, UserQuestionProgress } from '../../types/progress';
 import type { PracticeQuestion } from '../../types/content';
 import type { MockExamProgress } from '../storage/progressStore';
 
@@ -47,6 +42,8 @@ export interface ReadinessScore {
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const MAX_PERSISTED_READINESS_STUDY_ANSWERS = 10000;
+const MAX_PERSISTED_READINESS_MOCK_ANSWERS = 720;
 
 function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 0;
@@ -135,6 +132,56 @@ function verdictForScore(score: number): ReadinessVerdict {
   return 'strong_preparation';
 }
 
+function nonNegativeInteger(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value) || !Number.isInteger(value)) {
+    return null;
+  }
+  return value < 0 ? null : value;
+}
+
+function boundedNonNegativeInteger(value: unknown, max: number): number | null {
+  const normalized = nonNegativeInteger(value);
+  if (normalized === null || normalized > max) return null;
+  return normalized;
+}
+
+function optionalNonNegativeInteger(value: unknown): number | null {
+  return value === undefined ? 0 : nonNegativeInteger(value);
+}
+
+function scoreFromComponents(input: {
+  accuracy: number;
+  coverage: number;
+  recency: number;
+  mockAverage: number;
+  hasMocks: boolean;
+  totalAnswers: number;
+}): ReadinessScore {
+  const weights = input.hasMocks
+    ? { accuracy: 0.35, coverage: 0.25, recency: 0.1, mock: 0.3 }
+    : { accuracy: 0.55, coverage: 0.3, recency: 0.15, mock: 0 };
+
+  const blended =
+    input.accuracy * weights.accuracy +
+    input.coverage * weights.coverage +
+    input.recency * weights.recency +
+    input.mockAverage * weights.mock;
+
+  const score = Math.round(clamp01(blended) * 100);
+
+  return {
+    score,
+    verdict: verdictForScore(score),
+    components: {
+      accuracy: input.accuracy,
+      coverage: input.coverage,
+      recency: input.recency,
+      mockAverage: input.mockAverage,
+    },
+    isSparse: input.totalAnswers < 30,
+  };
+}
+
 export interface ReadinessInput {
   progress: UserProgress;
   chapters: ReadonlyArray<{ id: string; questionCount: number }>;
@@ -150,112 +197,99 @@ export function computeReadinessFromQuestionProgress(input: {
   mockExamSessions?: readonly MockExamProgress[];
   now?: Date;
 }): ReadinessScore {
-  // Build a minimal UserProgress so computeReadinessScore can run unchanged.
+  const now = input.now ?? new Date();
   const questionChapterIndex: Record<string, string> = {};
   for (const q of input.questions) {
     questionChapterIndex[q.id] = q.chapterId;
   }
-  const studyAnswers: QuizAnswer[] = Object.entries(input.questionProgress).flatMap(
-    ([questionId, progress]) => {
-      const answeredAt = progress.lastAnsweredAt;
-      if (
-        typeof answeredAt !== 'string' ||
-        validAnswerTimestampMs(answeredAt, input.now ?? new Date()) === null
-      ) {
-        return [];
-      }
-      const seenCount = Math.max(
-        0,
-        progress.seenCount ?? progress.correctCount + progress.wrongCount,
-        progress.correctCount + progress.wrongCount,
-      );
-      const correctCount = Math.min(Math.max(0, progress.correctCount), seenCount);
-      const wrongCount = Math.min(
-        Math.max(0, progress.wrongCount),
-        Math.max(0, seenCount - correctCount),
-      );
-      const residualCount = Math.max(0, seenCount - correctCount - wrongCount);
 
-      return Array.from({ length: correctCount }, () => ({
-        questionId,
-        selectedOptionIds: [],
-        isCorrect: true,
-        answeredAt,
-        timeSpentSeconds: 0,
-      })).concat(
-        Array.from({ length: wrongCount + residualCount }, () => ({
-          questionId,
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt,
-          timeSpentSeconds: 0,
-        })),
+  let recentStudyTotal = 0;
+  let recentStudyCorrect = 0;
+  let validStudyAnswers = 0;
+  let mostRecent: number | null = null;
+  const touchedChapterIds = new Set<string>();
+  const rollingCutoff = now.getTime() - 14 * DAY_MS;
+
+  for (const [questionId, progress] of Object.entries(input.questionProgress)) {
+    const answeredAt = progress.lastAnsweredAt;
+    const answeredAtMs = validAnswerTimestampMs(answeredAt, now);
+    if (answeredAtMs === null) continue;
+
+    const correctCount = optionalNonNegativeInteger(progress.correctCount);
+    const wrongCount = optionalNonNegativeInteger(progress.wrongCount);
+    if (correctCount === null || wrongCount === null) continue;
+
+    const minimumSeenCount = correctCount + wrongCount;
+    const storedSeenCount =
+      progress.seenCount === undefined ? minimumSeenCount : nonNegativeInteger(progress.seenCount);
+    if (storedSeenCount === null) continue;
+    const seenCount = boundedNonNegativeInteger(
+      Math.max(storedSeenCount, minimumSeenCount),
+      MAX_PERSISTED_READINESS_STUDY_ANSWERS,
+    );
+    if (seenCount === null || seenCount === 0) continue;
+
+    const remainingStudyAnswerBudget = MAX_PERSISTED_READINESS_STUDY_ANSWERS - validStudyAnswers;
+    if (remainingStudyAnswerBudget <= 0) break;
+
+    const countedSeen = Math.min(seenCount, remainingStudyAnswerBudget);
+    const boundedCorrect = Math.min(correctCount, countedSeen);
+    validStudyAnswers += countedSeen;
+    if (answeredAtMs >= rollingCutoff) {
+      recentStudyTotal += countedSeen;
+      recentStudyCorrect += boundedCorrect;
+    }
+    if (mostRecent === null || answeredAtMs > mostRecent) mostRecent = answeredAtMs;
+
+    const chapterId = questionChapterIndex[questionId];
+    if (chapterId) touchedChapterIds.add(chapterId);
+  }
+
+  const mockScores: { score: number | null; completedAtMs: number }[] = [];
+  let validMockAnswers = 0;
+  for (const session of input.mockExamSessions ?? []) {
+    const completedAtMs = validAnswerTimestampMs(session.completedAt, now);
+    if (completedAtMs === null) continue;
+    if (mostRecent === null || completedAtMs > mostRecent) mostRecent = completedAtMs;
+
+    const totalCount = boundedNonNegativeInteger(
+      session.totalCount ?? 0,
+      MAX_PERSISTED_READINESS_MOCK_ANSWERS,
+    );
+    const correctCount = optionalNonNegativeInteger(session.correctCount);
+    if (totalCount !== null && correctCount !== null && correctCount <= totalCount) {
+      validMockAnswers += Math.min(
+        totalCount,
+        MAX_PERSISTED_READINESS_MOCK_ANSWERS - validMockAnswers,
       );
-    },
+    }
+
+    mockScores.push({
+      completedAtMs,
+      score:
+        typeof session.score === 'number' && Number.isFinite(session.score) ? session.score : null,
+    });
+  }
+  mockScores.sort((a, b) => a.completedAtMs - b.completedAtMs);
+
+  const recentMockScores = mockScores.slice(-3);
+  const mockScoreValues = recentMockScores.flatMap((mock) =>
+    mock.score === null ? [] : [mock.score],
   );
+  const mockAvg =
+    mockScoreValues.length === 0
+      ? 0
+      : clamp01(mockScoreValues.reduce((sum, score) => sum + score, 0) / mockScoreValues.length);
+  const daysSince = mostRecent === null ? null : (now.getTime() - mostRecent) / DAY_MS;
 
-  const studySessions: QuizSession[] =
-    studyAnswers.length > 0
-      ? [
-          {
-            id: 'persisted-question-progress',
-            mode: 'study' as const,
-            questionIds: [...new Set(studyAnswers.map((answer) => answer.questionId))],
-            answers: studyAnswers,
-            startedAt: studyAnswers
-              .map((answer) => answer.answeredAt)
-              .sort((a, b) => a.localeCompare(b))[0],
-          },
-        ]
-      : [];
-
-  const mockSessions: QuizSession[] = (input.mockExamSessions ?? []).flatMap((s) => {
-    if (validAnswerTimestampMs(s.completedAt, input.now ?? new Date()) === null) return [];
-    const totalCount = Math.max(0, Math.round(s.totalCount ?? 0));
-    const correctCount = Math.min(Math.max(0, Math.round(s.correctCount ?? 0)), totalCount);
-
-    return [
-      {
-        id: s.sessionId,
-        mode: 'exam' as const,
-        questionIds: [],
-        answers: Array.from({ length: correctCount }, () => ({
-          questionId: '',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt: s.completedAt,
-          timeSpentSeconds: 0,
-        })).concat(
-          Array.from({ length: totalCount - correctCount }, () => ({
-            questionId: '',
-            selectedOptionIds: [],
-            isCorrect: false,
-            answeredAt: s.completedAt,
-            timeSpentSeconds: 0,
-          })),
-        ),
-        startedAt: s.completedAt,
-        completedAt: s.completedAt,
-        score: s.score,
-      },
-    ];
-  });
-
-  const sessions: QuizSession[] = studySessions.concat(mockSessions);
-  const progress: UserProgress = {
-    totalXp: 0,
-    level: 1,
-    currentStreak: 0,
-    dailyGoalAnswers: 10,
-    questionProgress: input.questionProgress,
-    sessions,
-    dailyChallengeCompletions: {},
-  };
-  return computeReadinessScore({
-    progress,
-    chapters: input.chapters,
-    questionChapterIndex,
-    now: input.now,
+  return scoreFromComponents({
+    accuracy: recentStudyTotal === 0 ? 0 : clamp01(recentStudyCorrect / recentStudyTotal),
+    coverage:
+      input.chapters.length === 0 ? 0 : clamp01(touchedChapterIds.size / input.chapters.length),
+    recency: daysSince === null ? 0 : clamp01(1 - daysSince / 14),
+    mockAverage: mockAvg,
+    hasMocks: mockScores.length > 0,
+    totalAnswers: validStudyAnswers + validMockAnswers,
   });
 }
 
@@ -267,21 +301,7 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
   const recency = recencyFromProgressEvents(input.progress, now);
   const mockAvg = mockAverage(input.progress, now);
 
-  // Weights: accuracy is the strongest signal, coverage second, recency third,
-  // mocks substitute for accuracy once they exist (mocks ARE accuracy on the
-  // exam format). When no mocks, weight redistributes to accuracy.
   const hasMocks = mockHistory(input.progress, { now }).length > 0;
-  const weights = hasMocks
-    ? { accuracy: 0.35, coverage: 0.25, recency: 0.1, mock: 0.3 }
-    : { accuracy: 0.55, coverage: 0.3, recency: 0.15, mock: 0 };
-
-  const blended =
-    accuracy * weights.accuracy +
-    coverage * weights.coverage +
-    recency * weights.recency +
-    mockAvg * weights.mock;
-
-  const score = Math.round(clamp01(blended) * 100);
 
   // Sparse: too little data to be meaningful.
   const totalAnswers = (input.progress.sessions ?? []).reduce(
@@ -290,12 +310,13 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
       s.answers.filter((answer) => validAnswerTimestampMs(answer.answeredAt, now) !== null).length,
     0,
   );
-  const isSparse = totalAnswers < 30;
 
-  return {
-    score,
-    verdict: verdictForScore(score),
-    components: { accuracy, coverage, recency, mockAverage: mockAvg },
-    isSparse,
-  };
+  return scoreFromComponents({
+    accuracy,
+    coverage,
+    recency,
+    mockAverage: mockAvg,
+    hasMocks,
+    totalAnswers,
+  });
 }
