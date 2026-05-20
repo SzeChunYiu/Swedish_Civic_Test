@@ -42,24 +42,23 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
       selectedWrongAnswer
-        ? `Svar att repetera. Ditt senaste felaktiga svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
-        : `Svar att repetera. Rätt svar: ${correctAnswer}.`,
+        ? `Fråga att öva igen. Ditt senaste svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
+        : `Fråga att öva igen. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad för fokuserad repetition',
+    bookmarkedMeta: 'Sparad för att öva igen',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
-    emptyText: 'Svara fel på en övningsfråga så visas den här.',
-    emptyTitle: 'Inga misstag ännu',
-    mistakeBadge: 'Fellogg',
-    mistakeTitle: 'Fel svar att repetera',
-    selectedWrongAnswerLabel: 'Ditt senaste felaktiga svar',
-    subtitle:
-      'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
-    title: 'Misstag',
-    wrongAnswers: (count) => `Fel svar: ${count}`,
+    emptyText: 'När du missar en övningsfråga visas den här.',
+    emptyTitle: 'Inga missade frågor ännu',
+    mistakeBadge: 'Öva igen',
+    mistakeTitle: 'Frågor att öva igen',
+    selectedWrongAnswerLabel: 'Ditt senaste svar',
+    subtitle: 'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
+    title: 'Missade frågor',
+    wrongAnswers: (count) => `Antal missar: ${count}`,
   },
   en: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
