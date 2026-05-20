@@ -566,10 +566,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
     'Öppna inställningar',
-    'Första övningen',
-    'Nivå 2',
-    'Misstagsrepetition',
-    'Tre dagars svit',
   ],
   en: [
     'Local profile',
@@ -599,10 +595,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
-  [
-    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
-    'profile route must define localized badge-title overrides',
-  ],
+  ['getBadgeTitle', 'profile route must import badge titles from the bilingual catalog'],
   [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
@@ -632,6 +625,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   [
     'formatBadges(badges, language, copy.noBadges)',
     'profile badge summary must use localized badge and empty-state copy',
+  ],
+  [
+    'getBadgeTitle(badge, language)',
+    'profile badge summary must render titles from the bilingual badge catalog',
   ],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
@@ -6291,6 +6288,7 @@ let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
+let badgeLocalizedCopyFieldsValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
@@ -11548,8 +11546,14 @@ function validateBadgeCatalog() {
     );
   }
 
-  const seenTitles = new Set();
-  const seenDescriptions = new Set();
+  const seenTitlesByLanguage = {
+    en: new Set(),
+    sv: new Set(),
+  };
+  const seenDescriptionsByLanguage = {
+    en: new Set(),
+    sv: new Set(),
+  };
 
   entries.forEach(([key, badge], index) => {
     const label = hasText(badge?.id) ? badge.id : `badge[${index}]`;
@@ -11563,31 +11567,73 @@ function validateBadgeCatalog() {
     if (!badge || typeof badge !== 'object') {
       reject(`badgeCatalog.${key} is not an object`);
     } else {
+      const expectedBadgeKeys = ['descriptionEn', 'descriptionSv', 'id', 'titleEn', 'titleSv'];
+      const badgeKeys = Object.keys(badge).sort();
+      if (!jsonEqual(badgeKeys, expectedBadgeKeys)) {
+        reject(
+          `${label} badge keys are ${JSON.stringify(badgeKeys)}, expected ${JSON.stringify(
+            expectedBadgeKeys,
+          )}`,
+        );
+      }
       if (badge.id !== key) reject(`${label} id must match catalog key ${key}`);
       if (!expectedIds.has(badge.id)) reject(`${label} is not an expected badge id`);
       if (hasText(badge.id) && !isSnakeCaseId(badge.id)) {
         reject(`${label} id must use lowercase snake_case`);
       }
 
-      for (const field of ['title', 'description']) {
+      for (const field of ['titleSv', 'titleEn', 'descriptionSv', 'descriptionEn']) {
         if (!hasText(badge[field])) {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
           reject(`${label} ${field} must be trimmed and single-spaced`);
+        } else {
+          badgeLocalizedCopyFieldsValidated += 1;
         }
       }
 
-      const normalizedTitle = normalizeComparableText(badge.title);
-      if (normalizedTitle && seenTitles.has(normalizedTitle)) {
-        reject(`${label} duplicates badge title`);
+      if (
+        hasText(badge.titleSv) &&
+        hasText(badge.titleEn) &&
+        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
+      ) {
+        reject(`${label} titleSv and titleEn must be distinct bilingual text`);
       }
-      if (normalizedTitle) seenTitles.add(normalizedTitle);
+      if (
+        hasText(badge.descriptionSv) &&
+        hasText(badge.descriptionEn) &&
+        normalizeComparableText(badge.descriptionSv) ===
+          normalizeComparableText(badge.descriptionEn)
+      ) {
+        reject(`${label} descriptionSv and descriptionEn must be distinct bilingual text`);
+      }
 
-      const normalizedDescription = normalizeComparableText(badge.description);
-      if (normalizedDescription && seenDescriptions.has(normalizedDescription)) {
-        reject(`${label} duplicates badge description`);
+      for (const [language, field] of [
+        ['sv', 'titleSv'],
+        ['en', 'titleEn'],
+      ]) {
+        const normalizedTitle = normalizeComparableText(badge[field]);
+        if (normalizedTitle && seenTitlesByLanguage[language].has(normalizedTitle)) {
+          reject(`${label} duplicates ${field}`);
+        }
+        if (normalizedTitle) seenTitlesByLanguage[language].add(normalizedTitle);
       }
-      if (normalizedDescription) seenDescriptions.add(normalizedDescription);
+
+      for (const [language, field] of [
+        ['sv', 'descriptionSv'],
+        ['en', 'descriptionEn'],
+      ]) {
+        const normalizedDescription = normalizeComparableText(badge[field]);
+        if (
+          normalizedDescription &&
+          seenDescriptionsByLanguage[language].has(normalizedDescription)
+        ) {
+          reject(`${label} duplicates ${field}`);
+        }
+        if (normalizedDescription) {
+          seenDescriptionsByLanguage[language].add(normalizedDescription);
+        }
+      }
     }
 
     if (valid) badgesValidated += 1;
@@ -14168,6 +14214,7 @@ console.log(
       progressStoreFieldsValidated,
       progressStoreSchemaParityValidated,
       badgesValidated,
+      badgeLocalizedCopyFieldsValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
