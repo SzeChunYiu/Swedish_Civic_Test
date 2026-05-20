@@ -1,105 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 import fs from 'node:fs';
-import http from 'node:http';
 import path from 'node:path';
-
-const siteRoot = path.resolve('site');
-
-const contentTypeByExtension: Record<string, string> = {
-  '.css': 'text/css; charset=utf-8',
-  '.html': 'text/html; charset=utf-8',
-  '.ico': 'image/x-icon',
-  '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.svg': 'image/svg+xml',
-};
-
-type StaticSite = {
-  baseUrl: string;
-  close: () => Promise<void>;
-};
-
-function sanitizedIndexHtml() {
-  return fs
-    .readFileSync(path.join(siteRoot, 'index.html'), 'utf8')
-    .replace(/\s*<link\s+rel="preconnect"\s+href="https:\/\/fonts\.[^>]+>\s*/g, '\n')
-    .replace(
-      /\s*<link\s+href="https:\/\/fonts\.googleapis\.com\/css2\?[^>]+rel="stylesheet"\s*\/>\s*/g,
-      '\n',
-    )
-    .replace(/\s*<script[\s\S]*?src="https:\/\/unpkg\.com\/[\s\S]*?<\/script>\s*/g, '\n')
-    .replace(/\s*<script\s+type="text\/babel"\s+src="[^"]+"><\/script>\s*/g, '\n');
-}
-
-async function startStaticSiteServer(): Promise<StaticSite> {
-  const server = http.createServer((request, response) => {
-    const url = new URL(request.url ?? '/', 'http://127.0.0.1');
-    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
-    const requestedPath = path.join(siteRoot, safePath === '/' ? 'index.html' : safePath);
-    const filePath =
-      requestedPath.startsWith(siteRoot) &&
-      fs.existsSync(requestedPath) &&
-      fs.statSync(requestedPath).isFile()
-        ? requestedPath
-        : path.join(siteRoot, 'index.html');
-    const extension = path.extname(filePath);
-    response.writeHead(200, {
-      'content-type': contentTypeByExtension[extension] ?? 'application/octet-stream',
-    });
-    response.end(
-      filePath.endsWith('index.html') ? sanitizedIndexHtml() : fs.readFileSync(filePath),
-    );
-  });
-
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-  const address = server.address();
-  if (!address || typeof address === 'string') {
-    throw new Error('Static site test server did not bind to a TCP port');
-  }
-
-  return {
-    baseUrl: `http://127.0.0.1:${address.port}`,
-    close: () =>
-      new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve())),
-      ),
-  };
-}
-
-function collectPageErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  page.on('pageerror', (error) => errors.push(error.message));
-  return errors;
-}
-
-async function openStaticEbook(page: Page, baseUrl: string, language: 'en' | 'sv', hash: string) {
-  await page.goto(`${baseUrl}/${hash}`, { waitUntil: 'load' });
-  await page.evaluate((nextLanguage) => {
-    localStorage.setItem('smt_lang', nextLanguage);
-    const staticWindow = window as typeof window & {
-      smtEbookRender?: () => void;
-      smtSetLanguage?: (language: string) => void;
-    };
-    staticWindow.smtSetLanguage?.(nextLanguage);
-    staticWindow.smtEbookRender?.();
-  }, language);
-  await expect(page.locator('html')).toHaveAttribute('lang', language);
-  await expect(page.locator('#ebook-reader .ebook__h1')).toBeVisible();
-}
-
-async function expectNoHorizontalReaderOverflow(page: Page) {
-  await expect
-    .poll(() =>
-      page
-        .locator('#ebook-reader')
-        .evaluate((reader) => reader.scrollWidth <= reader.clientWidth + 1),
-    )
-    .toBe(true);
-}
+import {
+  collectPageErrors,
+  expectElementNoHorizontalOverflow,
+  openStaticEbook,
+  startStaticSiteServer,
+  type StaticSite,
+} from './staticSiteServer';
 
 async function expectMockLinksAreReachable(page: Page) {
   const mockLinks = page.locator('#ebook-reader .ebook__study-links a[href="#/mock"]');
@@ -149,6 +57,24 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
+test('static-site browser specs use the shared sanitized server helper', async () => {
+  const specDir = path.resolve('tests/e2e');
+  const localServerCall = ['http', 'createServer'].join('.');
+  const localSanitizedLoader = ['function sanitized', 'IndexHtml'].join('');
+
+  for (const file of fs
+    .readdirSync(specDir)
+    .filter((name) => name.startsWith('static-') && name.endsWith('.spec.ts'))) {
+    const source = fs.readFileSync(path.join(specDir, file), 'utf8');
+
+    expect(source, `${file} must not define a local HTTP server`).not.toContain(localServerCall);
+    expect(source, `${file} must not define a local sanitized index loader`).not.toContain(
+      localSanitizedLoader,
+    );
+    expect(source, `${file} must use staticSiteServer.ts`).toContain("from './staticSiteServer'");
+  }
+});
+
 test('static ebook mock-exam wording renders naturally in Swedish and English', async ({
   page,
 }) => {
@@ -162,7 +88,7 @@ test('static ebook mock-exam wording renders naturally in Swedish and English', 
   await expect(reader.getByRole('link', { name: 'Övningsprov', exact: true })).toBeVisible();
   await expect(reader).not.toContainText(/provexempel/i);
   await expectMockLinksAreReachable(page);
-  await expectNoHorizontalReaderOverflow(page);
+  await expectElementNoHorizontalOverflow(page, '#ebook-reader');
 
   await openStaticEbook(page, staticSite.baseUrl, 'sv', '#/ebook?c=12');
   await expect(reader).toContainText('Kapitel 12 · Övningsprov');
@@ -173,13 +99,13 @@ test('static ebook mock-exam wording renders naturally in Swedish and English', 
   await expect(reader.getByRole('link', { name: 'Övningsprov', exact: true })).toBeVisible();
   await expect(reader).not.toContainText(/provexempel/i);
   await expectMockLinksAreReachable(page);
-  await expectNoHorizontalReaderOverflow(page);
+  await expectElementNoHorizontalOverflow(page, '#ebook-reader');
 
   await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=intro');
   await expect(reader.getByRole('link', { name: 'Mock exam', exact: true })).toBeVisible();
   await expect(reader).toContainText('run a mock exam once you finish reading');
   await expectMockLinksAreReachable(page);
-  await expectNoHorizontalReaderOverflow(page);
+  await expectElementNoHorizontalOverflow(page, '#ebook-reader');
 
   await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=12');
   await expect(reader).toContainText('Chapter 12 · Mock exam');
@@ -187,7 +113,7 @@ test('static ebook mock-exam wording renders naturally in Swedish and English', 
   await expect(reader.getByRole('link', { name: 'Start mock exam' })).toBeVisible();
   await expect(reader.getByRole('link', { name: 'Mock exam', exact: true })).toBeVisible();
   await expectMockLinksAreReachable(page);
-  await expectNoHorizontalReaderOverflow(page);
+  await expectElementNoHorizontalOverflow(page, '#ebook-reader');
 
   expect(pageErrors).toEqual([]);
 });

@@ -1,58 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
-import fs from 'node:fs';
-import http from 'node:http';
-import path from 'node:path';
+import { startStaticSiteServer, type StaticSite } from './staticSiteServer';
 
-const siteRoot = path.resolve('site');
 const googleFontHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
-
-const contentTypeByExtension: Record<string, string> = {
-  '.css': 'text/css; charset=utf-8',
-  '.html': 'text/html; charset=utf-8',
-  '.ico': 'image/x-icon',
-  '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.svg': 'image/svg+xml',
-};
-
-type StaticSite = {
-  baseUrl: string;
-  close: () => Promise<void>;
-};
-
-async function startStaticSiteServer(): Promise<StaticSite> {
-  const server = http.createServer((request, response) => {
-    const url = new URL(request.url ?? '/', 'http://127.0.0.1');
-    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
-    const requestedPath = path.join(siteRoot, safePath === '/' ? 'index.html' : safePath);
-    const filePath =
-      requestedPath.startsWith(siteRoot) &&
-      fs.existsSync(requestedPath) &&
-      fs.statSync(requestedPath).isFile()
-        ? requestedPath
-        : path.join(siteRoot, 'index.html');
-    const extension = path.extname(filePath);
-    response.writeHead(200, {
-      'content-type': contentTypeByExtension[extension] ?? 'application/octet-stream',
-    });
-    response.end(fs.readFileSync(filePath));
-  });
-
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-  const address = server.address();
-  if (!address || typeof address === 'string') {
-    throw new Error('Static site test server did not bind to a TCP port');
-  }
-
-  return {
-    baseUrl: `http://127.0.0.1:${address.port}`,
-    close: () =>
-      new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve())),
-      ),
-  };
-}
 
 function isGoogleFontRequest(url: string) {
   return googleFontHosts.has(new URL(url).hostname);
@@ -108,7 +57,7 @@ async function expectNoHorizontalOverflow(page: Page) {
 let staticSite: StaticSite;
 
 test.beforeAll(async () => {
-  staticSite = await startStaticSiteServer();
+  staticSite = await startStaticSiteServer({ stripExternalScripts: false });
 });
 
 test.afterAll(async () => {

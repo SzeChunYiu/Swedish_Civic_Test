@@ -1258,9 +1258,26 @@ Next suggested validator action: inspect the Playwright config port wiring and r
 
 ## Iteration 260 - 2026-05-20
 
-Task completed: STATIC-FAQ-FALLBACK-ORDER-GUARD-1 - strengthened the static FAQ no-JS fallback guard so it requires exactly six FAQ items, numeric q/a order, immediate summary-to-answer pairing, and no orphaned `faq.*` fallback nodes outside the FAQ section.
-Artifacts changed: `scripts/static-site-source-provenance-copy.test.js`, `docs/parallel-sessions/journals/setup.md`.
-Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `npm run test:static-site-source-provenance-copy` exit 0 with 8/8 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `npm run typecheck -- --pretty false` exit 0; `npm run test:ownership` exit 0; targeted Prettier check and targeted `git diff --check` exit 0.
-PR: pending from `task/static-faq-fallback-order-1779236042` at handoff commit time.
-Blocked? no for this static FAQ fallback guard.
-Next suggested validator action: inspect the ordered FAQ fallback assertions and rerun `npm run test:static-site-source-provenance-copy` plus `npm run validate:content` before acceptance.
+Task completed: STATIC-SV-MOCK-EXAM-TERM-BROWSER-GUARD-1 - added rendered static-site browser coverage for Swedish/English mock-exam wording across Home, Support, mobile nav, footer, and `#/mock`, and restored the localized footer route link that the guard requires.
+Artifacts changed: `site/index.html`, `tests/e2e/static-site-sv-mock-exam-copy.spec.ts`, `scripts/static-site-question-count-copy.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `9e023246`; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/static-site-sv-mock-exam-copy.spec.ts --workers=1` exit 0 with 1/1 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `node --test scripts/static-site-question-count-copy.test.js scripts/static-site-mobile-nav.test.js` exit 0 with 9/9 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; repo format check plus targeted Prettier for the new static/e2e files exit 0; `git diff --check` exit 0.
+PR: pending from `setup/static-sv-mock-exam-browser-guard-1779236573` at handoff commit time.
+Blocked? no for this static browser wording/reachability guard; no Vercel CLI was run.
+Next suggested validator action: inspect the rendered static browser guard and rerun the focused e2e, content validation, and grouped static source/mobile-nav checks before accepting `STATIC-SV-MOCK-EXAM-TERM-BROWSER-GUARD-1`.
+
+## Iteration 261 - 2026-05-20
+
+Task completed: NATIVE-EBOOK-HIGHLIGHTS-SURFACE-1 bounded SETUP cleanup - stopped the native Pro tier table from advertising ebook highlights and notes export while the native app has no ebook route, keeping the tested local highlight store primitive for a future real reader surface.
+Artifacts changed: `lib/monetization/tierComparison.ts`, `tests/v1-1-pro-foundations.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `1260753b`; `node --test tests/v1-1-highlights-store.test.js tests/v1-1-effective-entitlements.test.js tests/content-learn-route-copy-parity.test.js tests/content-profile-route-copy-parity.test.js scripts/ui-effects.test.js tests/v1-1-pro-foundations.test.js` exit 0 with 129/129 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; repo format check plus targeted Prettier for changed files exit 0; `git diff --check` exit 0.
+PR: pending from `setup/native-ebook-pro-promise-1779237259` at handoff commit time.
+Blocked? no for this bounded native Pro promise cleanup; the full native ebook reader/highlight surface remains a future product task.
+Next suggested validator action: inspect the tier comparison rows and rerun the focused Pro/highlight/profile checks before accepting `NATIVE-EBOOK-HIGHLIGHTS-SURFACE-1`.
+
+## Iteration 263 - 2026-05-20
+
+Task completed: STATIC-SITE-E2E-SERVER-HARNESS-1 - extracted the repeated static-site Playwright HTTP server, CDN-script sanitization, page-error collection, language switching, ebook opening, and overflow helpers into `tests/e2e/staticSiteServer.ts`, then migrated the current static browser specs to import that shared helper.
+Artifacts changed: `tests/e2e/staticSiteServer.ts`, six static-site Playwright specs, `codex-tasks/claims.txt`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree validated on `origin/main` `7a1240a4` and then rebased cleanly onto `95811724`; linked shared ignored `node_modules`; first static E2E run failed before tests because `dist-web/index.html` was absent, then `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; after rebase, `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/static-ebook-mock-exam-copy.spec.ts tests/e2e/static-site-sv-mock-exam-copy.spec.ts tests/e2e/static-site-buddy-keyboard.spec.ts tests/e2e/static-site-settings-modal-focus.spec.ts tests/e2e/static-site-reduced-motion.spec.ts tests/e2e/static-site-network-privacy.spec.ts --workers=1` exit 0 with 9/9 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 795 questions and static parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check and `git diff --check` exit 0; direct source scan shows no `static-*.spec.ts` local `http.createServer`, `sanitizedIndexHtml`, or `startStaticSiteServer` definitions.
+Blocked? no for this static-site E2E harness extraction.
+Next suggested validator action: inspect the helper options and rerun the static-site browser specs plus typecheck before accepting `STATIC-SITE-E2E-SERVER-HARNESS-1`.
