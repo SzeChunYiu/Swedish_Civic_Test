@@ -46,7 +46,7 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
     sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     sessionTitle: (currentSessionId) => `Frågepass ${currentSessionId}`,
     tryAgain: 'Försök igen',
-    tryAgainAccessibilityLabel: 'Försök igen med den här övningsfrågan',
+    tryAgainAccessibilityLabel: 'Försök igen med den här frågan',
   },
   en: {
     backToPractice: 'Back to Practice',
