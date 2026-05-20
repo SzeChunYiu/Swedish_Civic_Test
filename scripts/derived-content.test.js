@@ -791,6 +791,14 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
       'Sweden is not usually divided into Götaland, Svealand, and Norrland.',
     ],
+    [generatedQuestionId(sourceQuestions, 'q146', 'trueStatement')]: [
+      'I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer.',
+      'In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q146', 'falseStatement')]: [
+      'I en demokrati har människor, grupper och partier rätt att hindra andra från att rösta.',
+      'In a democracy, people, groups, and parties have the right to stop others from voting.',
+    ],
     [generatedQuestionId(sourceQuestions, 'q147', 'trueStatement')]: [
       'Demokratin blir starkare när många röstar, engagerar sig och skaffar kunskap om samhällsfrågor.',
       'Democracy becomes stronger when many people vote, get involved, and learn about social issues.',
