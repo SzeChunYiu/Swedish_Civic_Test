@@ -1697,8 +1697,8 @@
         "sv": "När kommunala skolor ska öppna"
       },
       {
-        "en": "Which goods have VAT",
-        "sv": "Vilka varor som har moms"
+        "en": "When VAT is paid on goods and services",
+        "sv": "När moms betalas på varor och tjänster"
       }
     ],
     "answer": 0,
@@ -13859,8 +13859,8 @@
         "sv": "När kommunala skolor ska öppna"
       },
       {
-        "en": "Which goods have VAT",
-        "sv": "Vilka varor som har moms"
+        "en": "When VAT is paid on goods and services",
+        "sv": "När moms betalas på varor och tjänster"
       }
     ],
     "answer": 0,
@@ -13987,8 +13987,8 @@
         "sv": "När kommunala skolor ska öppna"
       },
       {
-        "en": "Which goods have VAT",
-        "sv": "Vilka varor som har moms"
+        "en": "When VAT is paid on goods and services",
+        "sv": "När moms betalas på varor och tjänster"
       }
     ],
     "answer": 0,
