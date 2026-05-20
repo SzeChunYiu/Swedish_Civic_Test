@@ -1,158 +1,216 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
-import { chapters } from '../data/chapters';
-import { glossaryTerms } from '../data/glossary';
+import { questions } from '../data/questions';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
-import type { GlossaryTerm } from '../types/content';
+import { colors, motion, radius, space, typography } from '../lib/theme';
+import type { PracticeQuestion } from '../types/content';
 
-type SearchQueryParams = {
-  q?: string | string[];
-  query?: string | string[];
+type StarterQuery = {
+  label: string;
+  query: string;
 };
 
-export default function SearchScreen() {
-  const searchParams = useLocalSearchParams<SearchQueryParams>();
-  const [query, setQuery] = useState(() =>
-    initialSearchQueryFromParams(searchParams.q, searchParams.query),
-  );
-  const language = useSettingsStore((state) => state.language);
-  const copy = searchRouteCopy[language];
-  const termsWithChapters = useMemo(
-    () =>
-      glossaryTerms.map((term) => ({
-        term,
-        chapter: chapters.find((chapter) => chapter.id === term.chapterId),
-      })),
-    [],
-  );
-  const trimmedQuery = query.trim();
-  const filteredTerms = useMemo(() => {
-    const normalizedQuery = normalizeSearchText(trimmedQuery);
-    if (!normalizedQuery) return termsWithChapters;
+type SearchCopy = {
+  backHome: string;
+  backHomeAccessibilityLabel: string;
+  emptyHelper: string;
+  inputAccessibilityLabel: string;
+  noResults: (query: string) => string;
+  openQuestion: string;
+  placeholder: string;
+  resultCount: (count: number) => string;
+  sourceLabel: (chapter: string, section: string) => string;
+  starterHeading: string;
+  subtitle: string;
+  title: string;
+};
 
-    return termsWithChapters.filter(({ chapter, term }) =>
-      glossaryTermMatchesQuery(term, chapter, normalizedQuery),
-    );
-  }, [termsWithChapters, trimmedQuery]);
-  const resultSummary =
-    trimmedQuery.length > 0
-      ? copy.filteredSummary(filteredTerms.length, termsWithChapters.length)
-      : copy.allTermsSummary(termsWithChapters.length);
-  const searchDescriptionId = 'search-route-glossary-description';
+const starterQueryChips: Record<AppLanguage, StarterQuery[]> = {
+  sv: [
+    { label: 'Riksdagen', query: 'riksdag' },
+    { label: 'Allemansrätten', query: 'allemansrätten' },
+    { label: 'Midsommar', query: 'midsommar' },
+    { label: 'Folkomröstning', query: 'folkomröstning' },
+  ],
+  en: [
+    { label: 'Riksdag', query: 'riksdag' },
+    { label: 'Right of public access', query: 'right of public access' },
+    { label: 'Midsummer', query: 'midsummer' },
+    { label: 'Referendum', query: 'referendum' },
+  ],
+};
+
+const searchCopy: Record<AppLanguage, SearchCopy> = {
+  sv: {
+    backHome: 'Tillbaka hem',
+    backHomeAccessibilityLabel: 'Tillbaka till startsidan',
+    emptyHelper: 'Sök i frågor, svarsalternativ, förklaringar, taggar och UHR-källor.',
+    inputAccessibilityLabel: 'Sök bland frågor',
+    noResults: (query) => `Inga frågor matchar "${query}". Prova ett förslag.`,
+    openQuestion: 'Öppna fråga',
+    placeholder: 'Sök till exempel riksdag eller midsommar',
+    resultCount: (count) => `${count} matchande frågor`,
+    sourceLabel: (chapter, section) => `Källa: ${chapter}, ${section}`,
+    starterHeading: 'Snabba sökningar',
+    subtitle: 'Hitta frågor snabbt och öppna dem direkt som ett quizpass.',
+    title: 'Sök frågor',
+  },
+  en: {
+    backHome: 'Back home',
+    backHomeAccessibilityLabel: 'Back to home',
+    emptyHelper: 'Search questions, answer options, explanations, tags, and UHR sources.',
+    inputAccessibilityLabel: 'Search questions',
+    noResults: (query) => `No questions match "${query}". Try a suggestion.`,
+    openQuestion: 'Open question',
+    placeholder: 'Try riksdag or midsummer',
+    resultCount: (count) => `${count} matching questions`,
+    sourceLabel: (chapter, section) => `Source: ${chapter}, ${section}`,
+    starterHeading: 'Quick searches',
+    subtitle: 'Find questions quickly and open them directly as a quiz session.',
+    title: 'Search questions',
+  },
+};
+
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function questionSearchFields(question: PracticeQuestion): string[] {
+  return [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    question.uhrReference.chapter,
+    question.uhrReference.section,
+    ...question.options.flatMap((option) => [option.textSv, option.textEn]),
+    ...question.tags,
+  ];
+}
+
+function searchQuestions(query: string): PracticeQuestion[] {
+  const normalizedQuery = normalizeSearchText(query.trim());
+  if (!normalizedQuery) return [];
+
+  return questions
+    .filter((question) =>
+      questionSearchFields(question).some((field) =>
+        normalizeSearchText(field).includes(normalizedQuery),
+      ),
+    )
+    .slice(0, 10);
+}
+
+function getQuestionTitle(question: PracticeQuestion, language: AppLanguage): string {
+  return language === 'sv' ? question.questionSv : question.questionEn;
+}
+
+function getQuestionPreview(question: PracticeQuestion, language: AppLanguage): string {
+  return language === 'sv' ? question.explanationSv : question.explanationEn;
+}
+
+export default function SearchScreen() {
+  const language = useSettingsStore((state) => state.language);
+  const copy = searchCopy[language];
+  const chips = starterQueryChips[language];
+  const [query, setQuery] = useState('');
+  const trimmedQuery = query.trim();
+  const results = useMemo(() => searchQuestions(query), [query]);
+  const hasQuery = trimmedQuery.length > 0;
+  const showSuggestions = !hasQuery || results.length === 0;
 
   return (
-    <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
-      <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
-
-      <Card>
-        <Text nativeID={searchDescriptionId} style={styles.accessibilitySummaryText}>
-          {copy.searchCardAccessibilityLabel}
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+      <View style={styles.hero}>
+        <Text accessibilityRole="header" style={styles.title}>
+          {copy.title}
         </Text>
-        <Text accessibilityRole="header" style={styles.searchLabel}>
-          {copy.searchLabel}
-        </Text>
-        <TextInput
-          aria-describedby={searchDescriptionId}
-          accessibilityHint={copy.searchCardAccessibilityLabel}
-          accessibilityLabel={copy.searchInputAccessibilityLabel}
-          autoCapitalize="none"
-          autoCorrect={false}
-          clearButtonMode="while-editing"
-          onChangeText={setQuery}
-          placeholder={copy.searchPlaceholder}
-          placeholderTextColor={colors.textPlaceholder}
-          returnKeyType="search"
-          style={styles.searchInput}
-          value={query}
-        />
-        <View style={styles.searchActions}>
-          <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.resultSummary}>
-            {resultSummary}
-          </Text>
-          <Button
-            accessibilityLabel={copy.clearSearchAccessibilityLabel}
-            accessibilityRole="button"
-            accessibilityState={{ disabled: query.length === 0 }}
-            disabled={query.length === 0}
-            onPress={() => setQuery('')}
-            variant="secondary"
-          >
-            {copy.clearSearch}
-          </Button>
-        </View>
-      </Card>
-
-      <View style={styles.termList}>
-        {filteredTerms.length > 0 ? (
-          filteredTerms.map(({ chapter, term }) => {
-            const primaryTerm = language === 'en' ? term.termEn : term.termSv;
-            const secondaryTerm = language === 'en' ? term.termSv : term.termEn;
-            const explanation = language === 'en' ? term.explanationEn : term.explanationSv;
-            const chapterName = chapter
-              ? language === 'en'
-                ? chapter.nameEn
-                : chapter.nameSv
-              : undefined;
-            const termSummary = copy.termAccessibilityLabel({
-              chapterName,
-              explanation,
-              primaryTerm,
-            });
-            const termSummaryId = `search-term-summary-${term.id}`;
-
-            return (
-              <Card key={term.id} style={styles.termCard}>
-                <Text nativeID={termSummaryId} style={styles.accessibilitySummaryText}>
-                  {termSummary}
-                </Text>
-                <View style={styles.termHeader}>
-                  <View style={styles.termTitleGroup}>
-                    <Text accessibilityRole="header" style={styles.termTitle}>
-                      {primaryTerm}
-                    </Text>
-                    <Text style={styles.termSubtitle}>{secondaryTerm}</Text>
-                  </View>
-                  {term.chapterId && chapterName ? (
-                    <Link
-                      aria-describedby={termSummaryId}
-                      accessibilityLabel={copy.openChapterAccessibilityLabel(chapterName)}
-                      accessibilityRole="link"
-                      href={`/chapter/${term.chapterId}`}
-                      style={styles.chapterLink}
-                    >
-                      {chapterName}
-                    </Link>
-                  ) : null}
-                </View>
-                <Text style={styles.explanation}>{explanation}</Text>
-              </Card>
-            );
-          })
-        ) : (
-          <Card accessible accessibilityLabel={`${copy.emptyTitle}. ${copy.emptyBody}`}>
-            <Text accessibilityRole="header" style={styles.emptyTitle}>
-              {copy.emptyTitle}
-            </Text>
-            <Text style={styles.explanation}>{copy.emptyBody}</Text>
-          </Card>
-        )}
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
       </View>
 
+      <View style={styles.searchPanel}>
+        <TextInput
+          accessibilityLabel={copy.inputAccessibilityLabel}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={setQuery}
+          placeholder={copy.placeholder}
+          placeholderTextColor={colors.textPlaceholder}
+          returnKeyType="search"
+          style={styles.input}
+          value={query}
+        />
+
+        {showSuggestions ? (
+          <View style={styles.suggestions}>
+            <Text accessibilityRole="header" style={styles.suggestionTitle}>
+              {copy.starterHeading}
+            </Text>
+            <Text style={styles.helperText}>
+              {hasQuery ? copy.noResults(trimmedQuery) : copy.emptyHelper}
+            </Text>
+            <View style={styles.chipRow}>
+              {chips.map((chip) => (
+                <Pressable
+                  key={chip.query}
+                  accessibilityLabel={chip.label}
+                  accessibilityRole="button"
+                  onPress={() => setQuery(chip.query)}
+                  style={({ pressed }) => [
+                    styles.queryChip,
+                    pressed ? styles.queryChipPressed : null,
+                  ]}
+                >
+                  <Text style={styles.queryChipText}>{chip.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        ) : null}
+      </View>
+
+      {results.length > 0 ? (
+        <View style={styles.results}>
+          <Text accessibilityRole="header" style={styles.resultsTitle}>
+            {copy.resultCount(results.length)}
+          </Text>
+          {results.map((question) => (
+            <View key={question.id} style={styles.resultCard}>
+              <Text style={styles.resultId}>{question.id}</Text>
+              <Text style={styles.resultQuestion}>{getQuestionTitle(question, language)}</Text>
+              <Text numberOfLines={2} style={styles.resultPreview}>
+                {getQuestionPreview(question, language)}
+              </Text>
+              <Text style={styles.resultSource}>
+                {copy.sourceLabel(question.uhrReference.chapter, question.uhrReference.section)}
+              </Text>
+              <Link
+                accessibilityLabel={`${copy.openQuestion}: ${getQuestionTitle(question, language)}`}
+                accessibilityRole="link"
+                href={`/quiz/${question.id}`}
+                style={styles.resultLink}
+              >
+                {copy.openQuestion}
+              </Link>
+            </View>
+          ))}
+        </View>
+      ) : null}
+
       <Link
-        accessibilityLabel={copy.browseChaptersAccessibilityLabel}
+        accessibilityLabel={copy.backHomeAccessibilityLabel}
         accessibilityRole="link"
-        href="/(tabs)/learn"
+        href="/(tabs)/home"
         style={styles.backLink}
       >
-        {copy.browseChapters}
+        {copy.backHome}
       </Link>
-    </ScreenShell>
+    </ScrollView>
   );
 }
 
@@ -286,90 +344,154 @@ function glossaryTermMatchesQuery(
 }
 
 const styles = StyleSheet.create({
-  searchLabel: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  searchInput: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-    marginTop: space[1],
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  searchActions: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'space-between',
-    marginTop: space[1.5],
-  },
-  resultSummary: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  accessibilitySummaryText: {
-    height: space.hairline,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: space.hairline,
-  },
-  termList: {
-    gap: space[1.5],
-  },
-  termCard: {
-    gap: space[1.25],
-  },
-  termHeader: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'space-between',
-  },
-  termTitleGroup: {
+  screen: {
+    backgroundColor: colors.canvas,
     flex: 1,
-    gap: space[0.5],
-    minWidth: space[15],
   },
-  termTitle: {
+  content: {
+    gap: space[3],
+    padding: space[3],
+    paddingBottom: space[10],
+  },
+  hero: {
+    gap: space[1],
+  },
+  title: {
     color: colors.text,
+    fontFamily: typography.subHeading.fontFamily,
     fontSize: typography.subHeading.fontSize,
     fontWeight: typography.subHeading.fontWeight,
     lineHeight: typography.subHeading.lineHeight,
   },
-  termSubtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  explanation: {
+  subtitle: {
     color: colors.textSecondary,
+    fontFamily: typography.body.fontFamily,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+    maxWidth: 560,
+  },
+  searchPanel: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    gap: space[2],
+    padding: space[2],
+  },
+  input: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
+    color: colors.text,
+    fontFamily: typography.body.fontFamily,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+  },
+  suggestions: {
+    gap: space[1],
+  },
+  suggestionTitle: {
+    color: colors.text,
+    fontFamily: typography.cardTitle.fontFamily,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  helperText: {
+    color: colors.textMuted,
+    fontFamily: typography.body.fontFamily,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
   },
-  chapterLink: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  queryChip: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
     borderRadius: radius.pill,
     borderWidth: space.hairline,
-    color: colors.text,
+    justifyContent: 'center',
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+  },
+  queryChipPressed: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  queryChipText: {
+    color: colors.textSoft,
     fontFamily: typography.navButton.fontFamily,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    minHeight: space[5],
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.75],
+    lineHeight: typography.navButton.lineHeight,
+  },
+  results: {
+    gap: space[1.5],
+  },
+  resultsTitle: {
+    color: colors.text,
+    fontFamily: typography.cardTitle.fontFamily,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  resultCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    gap: space[0.75],
+    padding: space[2],
+  },
+  resultId: {
+    color: colors.badgeBlueText,
+    fontFamily: typography.badge.fontFamily,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+    textTransform: 'uppercase',
+  },
+  resultQuestion: {
+    color: colors.text,
+    fontFamily: typography.cardTitle.fontFamily,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  resultPreview: {
+    color: colors.textSecondary,
+    fontFamily: typography.body.fontFamily,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  resultSource: {
+    color: colors.textMuted,
+    fontFamily: typography.badge.fontFamily,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+  },
+  resultLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontFamily: typography.navButton.fontFamily,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.25],
     textDecorationLine: 'none',
   },
   emptyTitle: {
@@ -380,10 +502,12 @@ const styles = StyleSheet.create({
   },
   backLink: {
     alignSelf: 'flex-start',
-    color: colors.accent,
+    color: colors.textMuted,
     fontFamily: typography.navButton.fontFamily,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
+    paddingVertical: space[1.25],
     textDecorationLine: 'none',
   },
 });
