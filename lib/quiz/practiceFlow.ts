@@ -1,5 +1,16 @@
 import type { PracticeQuestion } from '../../types/content';
 
+type QuestionProgressLike = {
+  correctCount?: number;
+  seenCount?: number;
+};
+
+export type PracticeChapterStats = {
+  answeredCount: number;
+  correctCount: number;
+  totalCount: number;
+};
+
 export function getPracticeQuestionForSession<TQuestion extends Pick<PracticeQuestion, 'id'>>(
   questions: TQuestion[],
   completedQuestionIds: string[],
@@ -35,6 +46,53 @@ export function getFirstQuestionForChapter<
   if (!chapterId) return undefined;
 
   return questions.find((question) => question.chapterId === chapterId);
+}
+
+export function getPracticeQuestionsForChapter<
+  TQuestion extends Pick<PracticeQuestion, 'chapterId'>,
+>(questions: TQuestion[], chapterId: string | null | undefined): TQuestion[] {
+  if (!chapterId) return [];
+
+  return questions.filter((question) => question.chapterId === chapterId);
+}
+
+export function getMixedPracticeRoundQuestions<TQuestion extends Pick<PracticeQuestion, 'id'>>(
+  questions: TQuestion[],
+  completedQuestionIds: string[],
+  limit = 10,
+): TQuestion[] {
+  if (!Number.isFinite(limit) || limit <= 0) return [];
+
+  const safeLimit = Math.floor(limit);
+  const completedIds = new Set(completedQuestionIds);
+  const unansweredQuestions = questions.filter((question) => !completedIds.has(question.id));
+  const answeredQuestions = questions.filter((question) => completedIds.has(question.id));
+
+  return [...unansweredQuestions, ...answeredQuestions].slice(0, safeLimit);
+}
+
+export function getPracticeChapterStats<
+  TQuestion extends Pick<PracticeQuestion, 'id' | 'chapterId'>,
+>(
+  questions: TQuestion[],
+  chapterId: string,
+  questionProgress: Record<string, QuestionProgressLike | undefined>,
+): PracticeChapterStats {
+  const chapterQuestions = getPracticeQuestionsForChapter(questions, chapterId);
+
+  return chapterQuestions.reduce<PracticeChapterStats>(
+    (stats, question) => {
+      const progress = questionProgress[question.id];
+      const answered = (progress?.seenCount ?? 0) > 0;
+
+      return {
+        answeredCount: stats.answeredCount + (answered ? 1 : 0),
+        correctCount: stats.correctCount + (progress?.correctCount ?? 0),
+        totalCount: stats.totalCount + 1,
+      };
+    },
+    { answeredCount: 0, correctCount: 0, totalCount: 0 },
+  );
 }
 
 export function getChapterQuizSessionId<

@@ -19,11 +19,30 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 76);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.match(source, /const practiceCopy: Record<AppLanguage, PracticeCopy> = \{/);
+  assert.match(
+    source,
+    /getMixedPracticeRoundQuestions\(filteredQuestions, completedQuestionIds, 10\)/,
+  );
+  assert.match(
+    source,
+    /getPracticeQuestionsForChapter\(filteredQuestions, practiceScope\.chapterId\)/,
+  );
+  assert.match(
+    source,
+    /getPracticeChapterStats\(filteredQuestions, chapter\.id, questionProgress\)/,
+  );
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = practiceCopy\[language\];/);
+  assert.match(source, /Välj hur du vill öva/);
+  assert.match(source, /Choose how to practise/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.quickRoundAccessibilityLabel\(quickRoundQuestions\.length\)\}/,
+  );
+  assert.match(source, /onPress=\{\(\) => handleStartChapter\(chapter\.id\)\}/);
   assert.match(source, /5-minutersövning/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);

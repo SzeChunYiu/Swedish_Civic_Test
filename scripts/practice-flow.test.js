@@ -117,3 +117,40 @@ test('chapter quiz session id resolves to the first question in that chapter', (
   assert.equal(getChapterQuizSessionId(questions, 'missing'), null);
   assert.equal(getChapterQuizSessionId(questions, null), null);
 });
+
+test('practice hub scopes chapter rounds and quick mixed rounds', () => {
+  const {
+    getMixedPracticeRoundQuestions,
+    getPracticeChapterStats,
+    getPracticeQuestionForSession,
+    getPracticeQuestionsForChapter,
+  } = loadTs('lib/quiz/practiceFlow.ts');
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch02' },
+    { id: 'q3', chapterId: 'ch01' },
+    { id: 'q4', chapterId: 'ch03' },
+  ];
+
+  const chapterQuestions = getPracticeQuestionsForChapter(questions, 'ch01');
+  assert.deepEqual(
+    chapterQuestions.map((question) => question.id),
+    ['q1', 'q3'],
+  );
+  assert.equal(getPracticeQuestionForSession(chapterQuestions, ['q1'], null)?.id, 'q3');
+
+  assert.deepEqual(
+    getMixedPracticeRoundQuestions(questions, ['q1', 'q2'], 3).map((question) => question.id),
+    ['q3', 'q4', 'q1'],
+  );
+  assert.deepEqual(getMixedPracticeRoundQuestions(questions, [], 0), []);
+
+  assert.deepEqual(
+    getPracticeChapterStats(questions, 'ch01', {
+      q1: { correctCount: 2, seenCount: 2 },
+      q2: { correctCount: 1, seenCount: 1 },
+      q3: { correctCount: 0, seenCount: 0 },
+    }),
+    { answeredCount: 1, correctCount: 2, totalCount: 2 },
+  );
+});

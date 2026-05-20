@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { ChapterProgressCard } from '../../components/ChapterProgressCard';
 import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
@@ -14,6 +16,7 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
@@ -21,7 +24,10 @@ import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerV
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
   getCompletedQuestionIdsForQuestionBank,
+  getMixedPracticeRoundQuestions,
+  getPracticeChapterStats,
   getPracticeQuestionForSession,
+  getPracticeQuestionsForChapter,
 } from '../../lib/quiz/practiceFlow';
 import {
   getPracticeInterstitialShowKey,
@@ -35,13 +41,36 @@ import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
+type PracticeScope =
+  | { type: 'all' }
+  | { type: 'chapter'; chapterId: string }
+  | { type: 'quick'; questionIds: string[] };
+
 type PracticeCopy = {
   badge: string;
   bookmark: string;
   bookmarked: string;
   bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
+  chapterCardLabel: (chapterNumber: number) => string;
+  chapterSectionTitle: string;
+  chapterStartAccessibilityLabel: (
+    chapterTitle: string,
+    answeredCount: number,
+    totalCount: number,
+  ) => string;
   completedQuestions: (count: number) => string;
   emptyTitle: string;
+  hubSubtitle: string;
+  hubTitle: string;
+  mockExamAccessibilityLabel: string;
+  mockExamCta: string;
+  practiceAll: string;
+  practiceAllAccessibilityLabel: string;
+  quickRoundAccessibilityLabel: (count: number) => string;
+  quickRoundDescription: (count: number) => string;
+  quickRoundStart: string;
+  quickRoundTitle: string;
+  scopeLabel: (scope: string) => string;
   nextQuestion: string;
   nextQuestionAccessibilityLabel: string;
   questionTitle: (questionNumber: number) => string;
@@ -71,8 +100,24 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bokmärkt',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
+    chapterCardLabel: (chapterNumber) => `Kapitel ${chapterNumber}`,
+    chapterSectionTitle: 'Öva per kapitel',
+    chapterStartAccessibilityLabel: (chapterTitle, answeredCount, totalCount) =>
+      `Starta frågepass för ${chapterTitle}. ${answeredCount} av ${totalCount} frågor besvarade.`,
     completedQuestions: (count) => `Besvarade frågor: ${count}`,
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
+    hubSubtitle:
+      'Välj en snabb mix, fortsätt hela banken eller fokusera på ett kapitel innan frågorna börjar.',
+    hubTitle: 'Välj hur du vill öva',
+    mockExamAccessibilityLabel: 'Gå till övningsprovet',
+    mockExamCta: 'Övningsprov',
+    practiceAll: 'Hela frågebanken',
+    practiceAllAccessibilityLabel: 'Öva med hela frågebanken',
+    quickRoundAccessibilityLabel: (count) => `Starta snabbmix med ${count} frågor`,
+    quickRoundDescription: (count) => `${count} frågor från dina synliga övningsfrågor.`,
+    quickRoundStart: 'Starta snabbmix',
+    quickRoundTitle: 'Snabbmix',
+    scopeLabel: (scope) => `Aktivt läge: ${scope}`,
     nextQuestion: 'Nästa fråga',
     nextQuestionAccessibilityLabel: 'Gå till nästa övningsfråga',
     questionTitle: (questionNumber) => `Fråga ${questionNumber}`,
@@ -103,8 +148,24 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bookmarked',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
+    chapterCardLabel: (chapterNumber) => `Chapter ${chapterNumber}`,
+    chapterSectionTitle: 'Practice by chapter',
+    chapterStartAccessibilityLabel: (chapterTitle, answeredCount, totalCount) =>
+      `Start a practice round for ${chapterTitle}. ${answeredCount} of ${totalCount} questions practiced.`,
     completedQuestions: (count) => `Completed questions: ${count}`,
     emptyTitle: 'No practice questions are available yet.',
+    hubSubtitle:
+      'Choose a quick mix, continue the full bank, or focus on one chapter before the questions begin.',
+    hubTitle: 'Choose how to practise',
+    mockExamAccessibilityLabel: 'Go to the mock exam',
+    mockExamCta: 'Mock exam',
+    practiceAll: 'Full question bank',
+    practiceAllAccessibilityLabel: 'Practise with the full question bank',
+    quickRoundAccessibilityLabel: (count) => `Start a quick mix with ${count} questions`,
+    quickRoundDescription: (count) => `${count} questions from your visible practice bank.`,
+    quickRoundStart: 'Start quick mix',
+    quickRoundTitle: 'Quick mix',
+    scopeLabel: (scope) => `Active mode: ${scope}`,
     nextQuestion: 'Next question',
     nextQuestionAccessibilityLabel: 'Move to the next practice question',
     questionTitle: (questionNumber) => `Question ${questionNumber}`,
@@ -131,6 +192,18 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
   },
 };
 
+function getPracticeCelebrationStreak(
+  selectedIsCorrect: boolean,
+  question: { id: string },
+  questionProgress: Record<string, { correctStreak?: number } | undefined>,
+) {
+  const celebrationStreak = selectedIsCorrect
+    ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
+
+  return celebrationStreak;
+}
+
 export default function Screen() {
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
@@ -150,6 +223,7 @@ export default function Screen() {
     (state) => state.setIncludeSupplementaryQuestions,
   );
   const [aboutSourcesOpen, setAboutSourcesOpen] = useState(false);
+  const [practiceScope, setPracticeScope] = useState<PracticeScope>({ type: 'all' });
   const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
     null,
   );
@@ -158,12 +232,28 @@ export default function Screen() {
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
-  const visibleCompletedQuestionIds = useMemo(
-    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+  const quickRoundQuestions = useMemo(
+    () => getMixedPracticeRoundQuestions(filteredQuestions, completedQuestionIds, 10),
     [completedQuestionIds, filteredQuestions],
   );
+  const scopedQuestions = useMemo(() => {
+    if (practiceScope.type === 'chapter') {
+      return getPracticeQuestionsForChapter(filteredQuestions, practiceScope.chapterId);
+    }
+
+    if (practiceScope.type === 'quick') {
+      const quickQuestionIds = new Set(practiceScope.questionIds);
+      return filteredQuestions.filter((candidate) => quickQuestionIds.has(candidate.id));
+    }
+
+    return filteredQuestions;
+  }, [filteredQuestions, practiceScope]);
+  const visibleCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(scopedQuestions, completedQuestionIds),
+    [completedQuestionIds, scopedQuestions],
+  );
   const rawQuestion = getPracticeQuestionForSession(
-    filteredQuestions,
+    scopedQuestions,
     visibleCompletedQuestionIds,
     activeQuestionId,
   );
@@ -172,28 +262,65 @@ export default function Screen() {
       rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
     [rawQuestion, shuffleSessionId],
   );
+  const chapterHubRows = useMemo(
+    () =>
+      chapters.map((chapter, index) => ({
+        chapter,
+        index,
+        stats: getPracticeChapterStats(filteredQuestions, chapter.id, questionProgress),
+      })),
+    [filteredQuestions, questionProgress],
+  );
+  const currentScopeTitle = useMemo(() => {
+    if (practiceScope.type === 'quick') return copy.quickRoundTitle;
+    if (practiceScope.type === 'chapter') {
+      const selectedChapter = chapters.find((chapter) => chapter.id === practiceScope.chapterId);
+      if (selectedChapter) {
+        return language === 'en' ? selectedChapter.nameEn : selectedChapter.nameSv;
+      }
+    }
 
-  if (!question) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text>{copy.emptyTitle}</Text>
-      </View>
-    );
-  }
+    return copy.practiceAll;
+  }, [copy, language, practiceScope]);
+  const handleStartAllQuestions = () => {
+    setPracticeScope({ type: 'all' });
+    advanceQuestion();
+  };
+  const handleStartQuickRound = () => {
+    setPracticeScope({
+      type: 'quick',
+      questionIds: quickRoundQuestions.map((candidate) => candidate.id),
+    });
+    advanceQuestion();
+  };
+  const handleStartChapter = (chapterId: string) => {
+    setPracticeScope({ type: 'chapter', chapterId });
+    advanceQuestion();
+  };
 
-  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
   const selectedIsCorrect =
-    hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
-  const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
+    question && hasSelectedAnswer && selectedOptionId
+      ? isCorrectAnswer(question, selectedOptionId)
+      : false;
+  const isBookmarked = Boolean(question ? questionProgress[question.id]?.bookmarked : false);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
-  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
-  const celebrationStreak = selectedIsCorrect
-    ? (questionProgress[question.id]?.correctStreak ?? 1)
+  const practiceInterstitialShowKey = question
+    ? getPracticeInterstitialShowKey(question.id, shuffleSessionId)
+    : '';
+  const celebrationStreak = question
+    ? getPracticeCelebrationStreak(selectedIsCorrect, question, questionProgress)
     : 0;
-  const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
+  const questionIndex = question
+    ? scopedQuestions.findIndex((candidate) => candidate.id === question.id)
+    : -1;
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
+  const bankProgress = scopedQuestions.length > 0 ? questionNumber / scopedQuestions.length : 0;
   const handleSelectOption = (optionId: string) => {
+    if (!question) return;
+
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
 
@@ -211,173 +338,273 @@ export default function Screen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.hero}>
+      <View style={styles.hub}>
         <Badge>{copy.badge}</Badge>
-        <Text accessibilityRole="header" style={styles.title}>
-          {copy.questionTitle(questionNumber)}
+        <Text accessibilityRole="header" style={styles.hubTitle}>
+          {copy.hubTitle}
         </Text>
-        <Text style={styles.subtitle}>{copy.subtitle}</Text>
-        <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>
-          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
-        </Text>
-        <View style={styles.headerControls}>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-selected={isBookmarked}
-            accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
+        <Text style={styles.subtitle}>{copy.hubSubtitle}</Text>
+        <View style={styles.hubActions}>
+          <Button
+            accessibilityLabel={copy.quickRoundAccessibilityLabel(quickRoundQuestions.length)}
             accessibilityRole="button"
-            accessibilityState={{ selected: isBookmarked }}
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('bookmark')}
-            onPress={() => toggleBookmark(question.id)}
-            style={({ pressed }) => [
-              styles.bookmarkButton,
-              isBookmarked ? styles.bookmarkButtonActive : null,
-              focusedHeaderControl === 'bookmark' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
+            disabled={quickRoundQuestions.length === 0}
+            onPress={handleStartQuickRound}
+            style={styles.hubAction}
           >
-            <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
-              {isBookmarked ? copy.bookmarked : copy.bookmark}
-            </Text>
-          </Pressable>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-checked={includeSupplementary}
-            accessibilityRole="switch"
-            accessibilityState={{ checked: includeSupplementary }}
-            accessibilityLabel={
-              includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
-            }
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('supplementary')}
-            onPress={() => setIncludeSupplementary(!includeSupplementary)}
-            style={({ pressed }) => [
-              styles.bookmarkButton,
-              includeSupplementary ? styles.bookmarkButtonActive : null,
-              focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
-          >
-            <Text
-              style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
-            >
-              {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
-            </Text>
-          </Pressable>
-          <Pressable
-            android_ripple={{ color: colors.focusSoft }}
-            aria-expanded={aboutSourcesOpen}
+            {copy.quickRoundStart}
+          </Button>
+          <Button
+            accessibilityLabel={copy.practiceAllAccessibilityLabel}
             accessibilityRole="button"
-            accessibilityState={{ expanded: aboutSourcesOpen }}
-            accessibilityLabel={aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
-            hitSlop={space[1]}
-            onBlur={() => setFocusedHeaderControl(null)}
-            onFocus={() => setFocusedHeaderControl('sources')}
-            onPress={() => setAboutSourcesOpen((value) => !value)}
-            style={({ pressed }) => [
-              styles.aboutSourcesTrigger,
-              focusedHeaderControl === 'sources' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
-            ]}
+            onPress={handleStartAllQuestions}
+            style={styles.hubAction}
+            variant="secondary"
           >
-            <Text style={styles.aboutSourcesTriggerText}>
-              {aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
-            </Text>
-          </Pressable>
-        </View>
-        {aboutSourcesOpen ? (
-          <View accessibilityRole="text" style={styles.aboutSourcesPanel}>
-            <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesUhrTitle}</Text>
-            <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesUhrBody}</Text>
-            <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesSupplementaryTitle}</Text>
-            <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesSupplementaryBody}</Text>
-            <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesEditorialTitle}</Text>
-            <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesEditorialBody}</Text>
-          </View>
-        ) : null}
-      </View>
-      <QuestionDisclaimer />
-      <QuestionCard question={question} language={language} />
-      <AudioButton
-        enabled={audioEnabled}
-        language={language}
-        text={buildQuestionSpeechText(question)}
-      />
-
-      <View style={styles.options}>
-        {question.options.map((option) => {
-          const feedback = getAnswerOptionFeedback(
-            question,
-            option.id,
-            hasSelectedAnswer ? selectedOptionId : null,
-            language,
-          );
-
-          return (
-            <AnswerOption
-              key={option.id}
-              disabled={hasSelectedAnswer}
-              language={language}
-              option={option}
-              onPress={() => handleSelectOption(option.id)}
-              resultLabel={feedback.resultLabel}
-              selected={hasSelectedAnswer && selectedOptionId === option.id}
-              tone={feedback.tone}
-            />
-          );
-        })}
-      </View>
-
-      {hasSelectedAnswer ? (
-        <View style={styles.feedback}>
-          <CelebrationBurst
-            active={selectedIsCorrect}
-            languageOverride={language}
-            streak={celebrationStreak}
-          />
-          {currentScore ? (
-            <Text style={styles.score}>
-              {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
-            </Text>
-          ) : null}
-          <ExplanationPanel
-            explanationEn={question.explanationEn}
-            explanationSv={question.explanationSv}
-            language={language}
-          />
-          <FeedbackAudioButton
-            enabled={audioEnabled}
-            language={language}
-            text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
-          />
-          <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <PracticeInterstitialAd showKey={practiceInterstitialShowKey} />
-          <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
-          <View style={styles.feedbackActions}>
+            {copy.practiceAll}
+          </Button>
+          <Link
+            accessibilityLabel={copy.mockExamAccessibilityLabel}
+            accessibilityRole="link"
+            asChild
+            href="/exam"
+          >
             <Button
-              accessibilityLabel={copy.nextQuestionAccessibilityLabel}
-              accessibilityRole="button"
-              onPress={advanceQuestion}
-              style={styles.feedbackButton}
-            >
-              {copy.nextQuestion}
-            </Button>
-            <Button
-              accessibilityLabel={copy.tryAgainAccessibilityLabel}
-              accessibilityRole="button"
-              onPress={resetSelection}
-              style={styles.feedbackButton}
+              accessibilityLabel={copy.mockExamAccessibilityLabel}
+              accessibilityRole="link"
+              style={styles.hubAction}
               variant="secondary"
             >
-              {copy.tryAgain}
+              {copy.mockExamCta}
             </Button>
-          </View>
+          </Link>
         </View>
-      ) : null}
+        <View style={styles.quickRoundCard}>
+          <Text style={styles.quickRoundTitle}>{copy.quickRoundTitle}</Text>
+          <Text style={styles.quickRoundDescription}>
+            {copy.quickRoundDescription(quickRoundQuestions.length)}
+          </Text>
+          <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.meta}>
+            {copy.scopeLabel(currentScopeTitle)}
+          </Text>
+        </View>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          {copy.chapterSectionTitle}
+        </Text>
+        <View style={styles.chapterGrid}>
+          {chapterHubRows.map(({ chapter, index, stats }) => {
+            const chapterTitle = language === 'en' ? chapter.nameEn : chapter.nameSv;
+            const chapterSubtitle =
+              language === 'en' ? chapter.descriptionEn : chapter.descriptionSv;
+
+            return (
+              <ChapterProgressCard
+                key={chapter.id}
+                accessibilityLabel={copy.chapterStartAccessibilityLabel(
+                  chapterTitle,
+                  stats.answeredCount,
+                  stats.totalCount,
+                )}
+                answeredCount={stats.answeredCount}
+                chapterLabel={copy.chapterCardLabel(index + 1)}
+                correctCount={stats.correctCount}
+                disabled={stats.totalCount === 0}
+                languageOverride={language}
+                onPress={() => handleStartChapter(chapter.id)}
+                subtitle={chapterSubtitle}
+                title={chapterTitle}
+                totalCount={stats.totalCount}
+              />
+            );
+          })}
+        </View>
+      </View>
+      {question ? (
+        <>
+          <View style={styles.hero}>
+            <Badge>{currentScopeTitle}</Badge>
+            <Text accessibilityRole="header" style={styles.title}>
+              {copy.questionTitle(questionNumber)}
+            </Text>
+            <Text style={styles.subtitle}>{copy.subtitle}</Text>
+            <ProgressBar language={language} progress={bankProgress} />
+            <Text style={styles.meta}>
+              {copy.completedQuestions(visibleCompletedQuestionIds.length)}
+            </Text>
+            <View style={styles.headerControls}>
+              <Pressable
+                android_ripple={{ color: colors.focusSoft }}
+                aria-selected={isBookmarked}
+                accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isBookmarked }}
+                hitSlop={space[1]}
+                onBlur={() => setFocusedHeaderControl(null)}
+                onFocus={() => setFocusedHeaderControl('bookmark')}
+                onPress={() => toggleBookmark(question.id)}
+                style={({ pressed }) => [
+                  styles.bookmarkButton,
+                  isBookmarked ? styles.bookmarkButtonActive : null,
+                  focusedHeaderControl === 'bookmark' ? styles.headerControlFocused : null,
+                  pressed ? styles.headerControlPressed : null,
+                ]}
+              >
+                <Text
+                  style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}
+                >
+                  {isBookmarked ? copy.bookmarked : copy.bookmark}
+                </Text>
+              </Pressable>
+              <Pressable
+                android_ripple={{ color: colors.focusSoft }}
+                aria-checked={includeSupplementary}
+                accessibilityRole="switch"
+                accessibilityState={{ checked: includeSupplementary }}
+                accessibilityLabel={
+                  includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+                }
+                hitSlop={space[1]}
+                onBlur={() => setFocusedHeaderControl(null)}
+                onFocus={() => setFocusedHeaderControl('supplementary')}
+                onPress={() => setIncludeSupplementary(!includeSupplementary)}
+                style={({ pressed }) => [
+                  styles.bookmarkButton,
+                  includeSupplementary ? styles.bookmarkButtonActive : null,
+                  focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
+                  pressed ? styles.headerControlPressed : null,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.bookmarkText,
+                    includeSupplementary ? styles.bookmarkTextActive : null,
+                  ]}
+                >
+                  {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
+                </Text>
+              </Pressable>
+              <Pressable
+                android_ripple={{ color: colors.focusSoft }}
+                aria-expanded={aboutSourcesOpen}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: aboutSourcesOpen }}
+                accessibilityLabel={
+                  aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow
+                }
+                hitSlop={space[1]}
+                onBlur={() => setFocusedHeaderControl(null)}
+                onFocus={() => setFocusedHeaderControl('sources')}
+                onPress={() => setAboutSourcesOpen((value) => !value)}
+                style={({ pressed }) => [
+                  styles.aboutSourcesTrigger,
+                  focusedHeaderControl === 'sources' ? styles.headerControlFocused : null,
+                  pressed ? styles.headerControlPressed : null,
+                ]}
+              >
+                <Text style={styles.aboutSourcesTriggerText}>
+                  {aboutSourcesOpen ? copy.aboutSourcesHide : copy.aboutSourcesShow}
+                </Text>
+              </Pressable>
+            </View>
+            {aboutSourcesOpen ? (
+              <View accessibilityRole="text" style={styles.aboutSourcesPanel}>
+                <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesUhrTitle}</Text>
+                <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesUhrBody}</Text>
+                <Text style={styles.aboutSourcesItemTitle}>
+                  {copy.aboutSourcesSupplementaryTitle}
+                </Text>
+                <Text style={styles.aboutSourcesItemBody}>
+                  {copy.aboutSourcesSupplementaryBody}
+                </Text>
+                <Text style={styles.aboutSourcesItemTitle}>{copy.aboutSourcesEditorialTitle}</Text>
+                <Text style={styles.aboutSourcesItemBody}>{copy.aboutSourcesEditorialBody}</Text>
+              </View>
+            ) : null}
+          </View>
+          <QuestionDisclaimer />
+          <QuestionCard question={question} language={language} />
+          <AudioButton
+            enabled={audioEnabled}
+            language={language}
+            text={buildQuestionSpeechText(question)}
+          />
+
+          <View style={styles.options}>
+            {question.options.map((option) => {
+              const feedback = getAnswerOptionFeedback(
+                question,
+                option.id,
+                hasSelectedAnswer ? selectedOptionId : null,
+                language,
+              );
+
+              return (
+                <AnswerOption
+                  key={option.id}
+                  disabled={hasSelectedAnswer}
+                  language={language}
+                  option={option}
+                  onPress={() => handleSelectOption(option.id)}
+                  resultLabel={feedback.resultLabel}
+                  selected={hasSelectedAnswer && selectedOptionId === option.id}
+                  tone={feedback.tone}
+                />
+              );
+            })}
+          </View>
+
+          {hasSelectedAnswer ? (
+            <View style={styles.feedback}>
+              <CelebrationBurst
+                active={selectedIsCorrect}
+                languageOverride={language}
+                streak={celebrationStreak}
+              />
+              {currentScore ? (
+                <Text style={styles.score}>
+                  {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
+                </Text>
+              ) : null}
+              <ExplanationPanel
+                explanationEn={question.explanationEn}
+                explanationSv={question.explanationSv}
+                language={language}
+              />
+              <FeedbackAudioButton
+                enabled={audioEnabled}
+                language={language}
+                text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
+              />
+              <UHRReferenceCard language={language} reference={question.uhrReference} />
+              <PracticeInterstitialAd showKey={practiceInterstitialShowKey} />
+              <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
+              <View style={styles.feedbackActions}>
+                <Button
+                  accessibilityLabel={copy.nextQuestionAccessibilityLabel}
+                  accessibilityRole="button"
+                  onPress={advanceQuestion}
+                  style={styles.feedbackButton}
+                >
+                  {copy.nextQuestion}
+                </Button>
+                <Button
+                  accessibilityLabel={copy.tryAgainAccessibilityLabel}
+                  accessibilityRole="button"
+                  onPress={resetSelection}
+                  style={styles.feedbackButton}
+                  variant="secondary"
+                >
+                  {copy.tryAgain}
+                </Button>
+              </View>
+            </View>
+          ) : null}
+        </>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text>{copy.emptyTitle}</Text>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -395,6 +622,57 @@ const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
     padding: space[3],
+  },
+  hub: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.5],
+    padding: space[3],
+  },
+  hubTitle: {
+    color: colors.text,
+    fontSize: typography.sectionHeading.fontSize,
+    fontWeight: typography.sectionHeading.fontWeight,
+    lineHeight: typography.sectionHeading.lineHeight,
+  },
+  hubActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  hubAction: {
+    flexGrow: 1,
+    minWidth: space[15],
+  },
+  quickRoundCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[0.5],
+    padding: space[2],
+  },
+  quickRoundTitle: {
+    color: colors.text,
+    fontSize: typography.bodyBold.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyBold.lineHeight,
+  },
+  quickRoundDescription: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  sectionTitle: {
+    color: colors.text,
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.sectionTitle.fontWeight,
+    lineHeight: typography.sectionTitle.lineHeight,
+  },
+  chapterGrid: {
+    gap: space[1.25],
   },
   hero: {
     backgroundColor: colors.surface,
