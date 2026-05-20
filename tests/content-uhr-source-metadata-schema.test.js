@@ -20,6 +20,7 @@ test('UHR source metadata schema validates a current retrieval date', () => {
 
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrSourceRetrievedDateValidated, true);
+  assert.equal(uhrSectionMap.source.publisher, 'Universitets- och högskolerådet (UHR)');
   assert.match(uhrSectionMap.source.retrievedDate, /^\d{4}-\d{2}-\d{2}$/);
   assert.ok(new Date(`${uhrSectionMap.source.retrievedDate}T00:00:00Z`) <= new Date());
 });
