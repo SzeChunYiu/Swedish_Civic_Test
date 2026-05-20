@@ -21,6 +21,7 @@ function actualStaticQuestions() {
 
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -366,7 +367,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
