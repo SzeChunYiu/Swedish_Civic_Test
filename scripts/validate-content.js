@@ -269,11 +269,14 @@ const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
 ];
 
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
-  ids: ['q044', 'q332', 'q333', 'q334', 'q335'],
   sourceId: 'q044',
-  retrievedAt: '2026-05-19',
+  retrievedAt: '2026-05-20',
   proposalSubmittedAt: '2026-04-16',
   proposalEffectiveDate: '2026-08-02',
+  postEffectiveDateRecheck: {
+    recheckedAt: null,
+    status: null,
+  },
   officialSources: [
     {
       label: 'current-law-main-rule',
@@ -7418,6 +7421,11 @@ let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
 let criminalResponsibilityCurrentnessProposalEffectiveDate = null;
+let criminalResponsibilityCurrentnessValidationDate = null;
+let criminalResponsibilityCurrentnessEffectiveDateRecheckDue = false;
+let criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated = false;
+let criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt = null;
+let criminalResponsibilityCurrentnessPostEffectiveDateStatus = null;
 let criminalResponsibilityCurrentnessQuestionsValidated = 0;
 let criminalResponsibilityCurrentnessParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
@@ -14586,10 +14594,36 @@ function validateQuestionBankCsvContract() {
   });
 }
 
+function criminalResponsibilityCurrentnessQuestionIds() {
+  const ids = [CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId];
+
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return ids;
+  }
+
+  const sourceIndex = sourceQuestions.findIndex(
+    (question) => question.id === CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId,
+  );
+  if (sourceIndex < 0) return ids;
+
+  return [
+    ...ids,
+    ...generatedPublishedQuestions
+      .slice(
+        sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+        (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+      )
+      .map((question) => question?.id)
+      .filter(hasText),
+  ];
+}
+
 function validateCriminalResponsibilityCurrentness() {
   if (!Array.isArray(questions)) return;
 
   const byId = new Map(questions.map((question) => [question.id, question]));
+  const currentnessIds = criminalResponsibilityCurrentnessQuestionIds();
+  const expectedCurrentnessRows = GENERATED_VARIANTS_PER_SOURCE + 1;
   let allRowsAreValid = true;
   let sourceMetadataIsValid = true;
 
@@ -14607,6 +14641,57 @@ function validateCriminalResponsibilityCurrentness() {
   }
   if (CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate !== '2026-08-02') {
     rejectMetadata('criminal-responsibility proposal effective-date metadata is invalid');
+  }
+
+  criminalResponsibilityCurrentnessValidationDate = dateIsoDay(new Date());
+  criminalResponsibilityCurrentnessEffectiveDateRecheckDue =
+    isIsoDate(criminalResponsibilityCurrentnessValidationDate) &&
+    criminalResponsibilityCurrentnessValidationDate >=
+      CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
+  criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.postEffectiveDateRecheck.recheckedAt;
+  criminalResponsibilityCurrentnessPostEffectiveDateStatus =
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.postEffectiveDateRecheck.status;
+  criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated =
+    !criminalResponsibilityCurrentnessEffectiveDateRecheckDue;
+
+  if (
+    isIsoDate(CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt) &&
+    isIsoDate(criminalResponsibilityCurrentnessValidationDate) &&
+    CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt >
+      criminalResponsibilityCurrentnessValidationDate
+  ) {
+    rejectMetadata('criminal-responsibility currentness retrievedAt must not be in the future');
+  }
+
+  if (criminalResponsibilityCurrentnessEffectiveDateRecheckDue) {
+    const recheck = CRIMINAL_RESPONSIBILITY_CURRENTNESS.postEffectiveDateRecheck;
+    const recheckDateIsValid =
+      isIsoDate(recheck.recheckedAt) &&
+      recheck.recheckedAt >= CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
+    const recheckStatusIsValid = hasText(recheck.status);
+
+    if (!recheckDateIsValid || !recheckStatusIsValid) {
+      rejectMetadata(
+        `${CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId} criminal-responsibility proposal outcome must be rechecked on or after ${CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate}`,
+      );
+    }
+    if (
+      !isIsoDate(CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt) ||
+      CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt <
+        CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate
+    ) {
+      rejectMetadata(
+        `${CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId} criminal-responsibility source metadata must be retrieved on or after ${CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate} once that date is reached`,
+      );
+    }
+
+    criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated =
+      recheckDateIsValid &&
+      recheckStatusIsValid &&
+      isIsoDate(CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt) &&
+      CRIMINAL_RESPONSIBILITY_CURRENTNESS.retrievedAt >=
+        CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
   }
 
   CRIMINAL_RESPONSIBILITY_CURRENTNESS.officialSources.forEach((source) => {
@@ -14628,7 +14713,13 @@ function validateCriminalResponsibilityCurrentness() {
   criminalResponsibilityCurrentnessProposalEffectiveDate =
     CRIMINAL_RESPONSIBILITY_CURRENTNESS.proposalEffectiveDate;
 
-  CRIMINAL_RESPONSIBILITY_CURRENTNESS.ids.forEach((id) => {
+  if (currentnessIds.length !== expectedCurrentnessRows) {
+    rejectMetadata(
+      `${CRIMINAL_RESPONSIBILITY_CURRENTNESS.sourceId} criminal-responsibility currentness guard found ${currentnessIds.length} rows, expected ${expectedCurrentnessRows}`,
+    );
+  }
+
+  currentnessIds.forEach((id) => {
     const question = byId.get(id);
     let rowIsValid = true;
 
@@ -14681,8 +14772,8 @@ function validateCriminalResponsibilityCurrentness() {
 
   criminalResponsibilityCurrentnessParityValidated =
     allRowsAreValid &&
-    criminalResponsibilityCurrentnessQuestionsValidated ===
-      CRIMINAL_RESPONSIBILITY_CURRENTNESS.ids.length;
+    currentnessIds.length === expectedCurrentnessRows &&
+    criminalResponsibilityCurrentnessQuestionsValidated === currentnessIds.length;
 }
 
 if (process.argv.includes('--focus-exam-generator-schema')) {
@@ -16151,6 +16242,11 @@ console.log(
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,
       criminalResponsibilityCurrentnessProposalEffectiveDate,
+      criminalResponsibilityCurrentnessValidationDate,
+      criminalResponsibilityCurrentnessEffectiveDateRecheckDue,
+      criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated,
+      criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt,
+      criminalResponsibilityCurrentnessPostEffectiveDateStatus,
       criminalResponsibilityCurrentnessQuestionsValidated,
       criminalResponsibilityCurrentnessParityValidated,
       staticSiteQuestionBankQuestionsValidated,
