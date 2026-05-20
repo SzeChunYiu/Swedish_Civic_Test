@@ -72,3 +72,26 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Legal and sources/);
   assert.match(complianceLinks, /Support/);
 });
+
+test('first-run about modal is suppressed on onboarding and compliance routes', () => {
+  const modalSource = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
+  const expectedSuppressedRoutes = [
+    '/exam',
+    '/quiz',
+    '/(auth)',
+    '/about-the-test',
+    '/onboarding',
+    '/disclaimer',
+    '/privacy',
+    '/sources',
+    '/support',
+    '/terms',
+  ];
+
+  assert.match(modalSource, /const SUPPRESSED_PATH_PREFIXES = \[/);
+  for (const route of expectedSuppressedRoutes) {
+    assert.ok(modalSource.includes(`'${route}'`), `${route} should suppress the first-run modal`);
+  }
+  assert.match(modalSource, /pathIsSuppressed\(pathname, suppressedPathPrefixes\)/);
+  assert.match(modalSource, /pathname\.startsWith\(prefix\)/);
+});

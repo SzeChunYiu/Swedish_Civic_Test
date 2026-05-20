@@ -337,6 +337,26 @@ test('onboarding route remains scrollable on narrow mobile viewports', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('first-run about modal stays off onboarding and compliance routes', () => {
+  const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
+  const suppressedRoutes = [
+    '/onboarding',
+    '/disclaimer',
+    '/privacy',
+    '/sources',
+    '/support',
+    '/terms',
+  ];
+
+  assert.match(source, /const SUPPRESSED_PATH_PREFIXES = \[/);
+  for (const route of suppressedRoutes) {
+    assert.ok(source.includes(`'${route}'`), `${route} should suppress the first-run modal`);
+  }
+  assert.match(source, /pathIsSuppressed\(pathname, suppressedPathPrefixes\)/);
+  assert.match(source, /pathname\.startsWith\(prefix\)/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('card scaffold groups labelled surfaces for accessibility', () => {
   const source = read('components/ui/Card.tsx');
 
