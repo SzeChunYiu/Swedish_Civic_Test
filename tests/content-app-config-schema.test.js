@@ -63,3 +63,33 @@ require('./scripts/validate-content.js');
     /react-native-google-mobile-ads must delay app measurement initialization/,
   );
 });
+
+test('app config schema rejects web document metadata identity drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/scaffold/webDocumentMetadata.js')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("const WEB_DOCUMENT_TITLE = 'Almost Swedish';", "const WEB_DOCUMENT_TITLE = 'Swedish Civic Test';");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /web document title must match app\.json expo\.name/,
+  );
+});

@@ -5,6 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 const { REQUIRED_SECURITY_HEADERS } = require('./check-live-site');
+const { webDocumentMetadata } = require('../lib/scaffold/webDocumentMetadata');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -1609,6 +1610,38 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   assert.match(index, /href="_expo\/static\/js\/web\/entry-test\.js"/);
   assert.match(index, /href="assets\/favicon\.png"/);
   assert.match(index, new RegExp(`<meta name="theme-color" content="${canvasColor}" />`));
+  assert.match(index, new RegExp(`<title>${webDocumentMetadata.title}</title>`));
+  assert.equal(index.includes('<title>Export</title>'), false);
+  assert.match(
+    index,
+    new RegExp(`<meta name="application-name" content="${webDocumentMetadata.applicationName}" />`),
+  );
+  assert.match(
+    index,
+    new RegExp(
+      `<meta name="apple-mobile-web-app-title" content="${webDocumentMetadata.appleMobileWebAppTitle}" />`,
+    ),
+  );
+  assert.match(
+    index,
+    new RegExp(`<meta name="description" content="${webDocumentMetadata.description}" />`),
+  );
+  assert.match(
+    index,
+    new RegExp(
+      `<meta property="og:site_name" content="${webDocumentMetadata.openGraphSiteName}" />`,
+    ),
+  );
+  assert.match(
+    index,
+    new RegExp(`<meta property="og:title" content="${webDocumentMetadata.openGraphTitle}" />`),
+  );
+  assert.match(
+    index,
+    new RegExp(
+      `<meta property="og:description" content="${webDocumentMetadata.openGraphDescription}" />`,
+    ),
+  );
   assert.match(index, /<link rel="manifest" href="manifest\.webmanifest" \/>/);
   assert.match(index, new RegExp(`<body style="background-color:${canvasColor}">`));
   assert.equal(
