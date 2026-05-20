@@ -6255,6 +6255,9 @@ let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
 let mistakesRouteCopyParityValidated = false;
+let mistakeReviewHydrationFixtureCasesValidated = 0;
+let mistakeReviewHydrationTestContentParityValidated = false;
+let mistakeReviewHydrationValidated = false;
 let settingsStoreFieldsValidated = 0;
 let settingsStoreSchemaParityValidated = false;
 let settingsDailyGoalOptionsValidated = 0;
@@ -8362,6 +8365,85 @@ function validateHomeRouteCopyParity() {
   if (valid && homeRouteCopyLabelsValidated === expectedLabelCount) {
     homeRouteCopyParityValidated = true;
     homeRouteInternalBenchmarkCopyValidated = true;
+  }
+}
+
+function validateMistakeReviewHydrationEvidence() {
+  let valid = true;
+  let testSource = '';
+  let packageSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    testSource = fs.readFileSync(
+      path.join(repoRoot, 'tests/content-mistakes-route-copy-parity.test.js'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`mistake review hydration test source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    packageSource = fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8');
+  } catch (error) {
+    reject(`package.json could not be read for mistake review hydration wiring: ${error.message}`);
+    return;
+  }
+
+  if (
+    !testSource.includes('mistake review store drops corrupt persisted selected-answer reviews')
+  ) {
+    reject('mistake review hydration guard test is missing');
+  }
+
+  const corruptFixtureKeys = [
+    'qBadDate',
+    'qMismatched',
+    "'': {",
+    'qBlankEn',
+    'qBlankSv',
+    'qTooLong',
+  ];
+  corruptFixtureKeys.forEach((fixtureKey) => {
+    if (testSource.includes(fixtureKey)) {
+      mistakeReviewHydrationFixtureCasesValidated += 1;
+    } else {
+      reject(`mistake review hydration corrupt fixture is missing ${fixtureKey}`);
+    }
+  });
+
+  if (!testSource.includes("selectedOptionTextEn: 'Wrong answer'")) {
+    reject('mistake review hydration guard must preserve trimmed selectedOptionTextEn');
+  }
+  if (!testSource.includes("selectedOptionTextSv: 'Fel svar'")) {
+    reject('mistake review hydration guard must preserve trimmed selectedOptionTextSv');
+  }
+  if (!testSource.includes('useMistakeReviewStore.getState().wrongAnswerReviews')) {
+    reject('mistake review hydration guard must assert hydrated wrongAnswerReviews state');
+  }
+
+  const testContentOccurrences = (
+    packageSource.match(/tests\/content-mistakes-route-copy-parity\.test\.js/g) || []
+  ).length;
+  if (testContentOccurrences !== 1) {
+    reject(
+      `test:content must include tests/content-mistakes-route-copy-parity.test.js exactly once, found ${testContentOccurrences}`,
+    );
+  } else {
+    mistakeReviewHydrationTestContentParityValidated = true;
+  }
+
+  if (
+    valid &&
+    mistakeReviewHydrationFixtureCasesValidated === corruptFixtureKeys.length &&
+    mistakeReviewHydrationTestContentParityValidated
+  ) {
+    mistakeReviewHydrationValidated = true;
   }
 }
 
@@ -14028,6 +14110,7 @@ validateHomeRouteHeaderParity();
 validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
+validateMistakeReviewHydrationEvidence();
 validateLegalRouteHeaderParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
@@ -14169,6 +14252,9 @@ console.log(
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
       mistakesRouteCopyParityValidated,
+      mistakeReviewHydrationFixtureCasesValidated,
+      mistakeReviewHydrationTestContentParityValidated,
+      mistakeReviewHydrationValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
