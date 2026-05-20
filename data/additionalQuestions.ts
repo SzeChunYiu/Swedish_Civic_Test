@@ -287,12 +287,12 @@ export const additionalQuestions: PracticeQuestion[] = [
         'Gemensamma idéer om hur samhället ska styras',
         'Shared ideas about how society should be governed',
       ],
-      ['De ersätter domstolarna', 'They replace the courts'],
+      ['Makt att ersätta domstolarna', 'The power to replace the courts'],
       [
-        'De ansvarar för pass och nationella id-kort',
-        'They handle passports and national ID cards',
+        'Ansvar för pass och nationella id-kort',
+        'Responsibility for passports and national ID cards',
       ],
-      ['De bestämmer alla löner direkt', 'They directly decide all wages'],
+      ['Direkt makt över alla löner', 'Direct power over all wages'],
     ],
     0,
     'Politiska partier samlar människor med gemensamma idéer om hur samhället ska styras. De föreslår lösningar, driver frågor och ger väljare olika alternativ; de ersätter inte domstolar, passmyndigheter eller löneförhandlingar.',
@@ -344,8 +344,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q036',
     'ch05',
     { chapter: 'Lag och rätt', section: 'Grundlagarna', pageApprox: 16 },
-    'Vilken lista innehåller bara Sveriges fyra grundlagar?',
-    "Which list contains only Sweden's four constitutional laws?",
+    'Vilka är Sveriges fyra grundlagar?',
+    "What are Sweden's four constitutional laws?",
     [
       [
         'Regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen',
@@ -365,8 +365,8 @@ export const additionalQuestions: PracticeQuestion[] = [
       ],
     ],
     0,
-    'Sverige har fyra grundlagar: regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen. Den listan innehåller bara grundlagar; de andra alternativen blandar vanliga lagar, balkar eller andra regelverk.',
-    'Sweden has four constitutional laws: the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession. That list contains only constitutional laws; the other options mix ordinary laws, codes, or other rule sets.',
+    'Sveriges fyra grundlagar är regeringsformen, tryckfrihetsförordningen, yttrandefrihetsgrundlagen och successionsordningen. De andra alternativen blandar vanliga lagar, balkar eller andra regelverk.',
+    "Sweden's four constitutional laws are the Instrument of Government, Freedom of the Press Act, Fundamental Law on Freedom of Expression, and Act of Succession. The other options mix ordinary laws, codes, or other rule sets.",
     ['constitutional-laws', 'fundamental-laws', 'law'],
     'hard',
   ),
@@ -3136,11 +3136,11 @@ export const additionalQuestions: PracticeQuestion[] = [
       pageApprox: 30,
     },
     'Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?',
-    'How can a welfare service be private and still tax-funded?',
+    'How can a welfare service be provided by a private company but still be funded by tax revenue?',
     [
       [
         'Ett privat företag kan utföra tjänsten medan skattepengar betalar den',
-        'A private company can provide the service while tax revenue pays for it',
+        'A private company can provide the service while tax revenue funds it',
       ],
       [
         'Tjänsten måste alltid betalas helt med privata lån',
