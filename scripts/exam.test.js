@@ -257,6 +257,51 @@ test('scoreExam returns score and per-chapter breakdown', () => {
   ]);
 });
 
+test('buildCompletedExamQuizSession keeps ordered mock answers with clamped timing', () => {
+  const { buildCompletedExamQuizSession, buildExamDiagnostic } = loadTs(
+    'lib/learning/examDiagnostic.ts',
+  );
+  const questions = [
+    { ...baseQuestion, id: 'q1', chapterId: 'ch01', correctOptionId: 'a' },
+    { ...baseQuestion, id: 'q2', chapterId: 'ch02', correctOptionId: 'b' },
+    { ...baseQuestion, id: 'q3', chapterId: 'ch02', correctOptionId: 'c' },
+  ];
+  const session = buildCompletedExamQuizSession({
+    answers: { q1: 'a', q2: 'a' },
+    answerTimingsSeconds: { q1: 4.4, q2: 999999 },
+    completedAt: '2026-05-20T01:20:00.000Z',
+    questions,
+    score: 1.5,
+    sessionId: 'mock-exam-7',
+    startedAt: '2026-05-20T01:00:00.000Z',
+  });
+
+  assert.equal(session.id, 'mock-exam-7');
+  assert.equal(session.mode, 'exam');
+  assert.deepEqual(session.questionIds, ['q1', 'q2', 'q3']);
+  assert.equal(session.score, 1);
+  assert.deepEqual(
+    session.answers.map((answer) => ({
+      isCorrect: answer.isCorrect,
+      questionId: answer.questionId,
+      selectedOptionIds: answer.selectedOptionIds,
+      timeSpentSeconds: answer.timeSpentSeconds,
+    })),
+    [
+      { questionId: 'q1', selectedOptionIds: ['a'], isCorrect: true, timeSpentSeconds: 4 },
+      { questionId: 'q2', selectedOptionIds: ['a'], isCorrect: false, timeSpentSeconds: 43200 },
+      { questionId: 'q3', selectedOptionIds: [], isCorrect: false, timeSpentSeconds: 0 },
+    ],
+  );
+
+  const diagnostic = buildExamDiagnostic({
+    questionChapterIndex: { q1: 'ch01', q2: 'ch02', q3: 'ch02' },
+    session,
+  });
+  assert.deepEqual(diagnostic.perQuestionMs, [4000, 43200000]);
+  assert.equal(diagnostic.medianMs, 21602000);
+});
+
 test('buildExamChapterBreakdownItems adds human-readable chapter names', () => {
   const { buildExamChapterBreakdownItems } = loadTs('lib/quiz/examGenerator.ts');
   const breakdown = [
