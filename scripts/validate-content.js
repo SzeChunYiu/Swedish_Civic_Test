@@ -251,6 +251,14 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
 ];
+const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
+  /\bskatt och moms\b/i,
+  /\btax and VAT\b/i,
+  /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
+  /\bCompanies also pay tax,\s+and VAT is paid\b/i,
+  /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
+  /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -4288,6 +4296,18 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   ].join(' ');
 
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionTaxVatTwoConceptIssue(question) {
+  const text = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  return QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionNestedMetaStem(question) {
@@ -16261,6 +16281,7 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
+      const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
@@ -16299,6 +16320,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted state-welfare English wording`);
       } else {
         questionStateWelfareEnglishNaturalnessValidated += 1;
+      }
+      if (taxVatTwoConceptIssue) {
+        fail(
+          `${label} combines tax liability and VAT purchase taxation in one learner-facing item`,
+        );
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);

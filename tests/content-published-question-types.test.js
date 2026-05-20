@@ -16,6 +16,8 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
+const taxVatTwoConceptPattern =
+  /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -303,6 +305,95 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q045 source prompt asks about the answer instead of the civic concept/,
+  );
+});
+
+test('tax-liability source and exports keep VAT as a separate concept', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) =>
+    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en]
+      .concat((question.opts || []).flatMap((option) => [option.sv, option.en]))
+      .join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => taxVatTwoConceptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => taxVatTwoConceptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => taxVatTwoConceptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q070 = generatedSiteBank.find((question) => question.id === 'q070');
+  const q070True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q070', 'trueStatement'),
+  );
+  const q070False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q070', 'falseStatement'),
+  );
+
+  assert.ok(q070, 'q070 should be published in the site bank');
+  assert.equal(q070.q.sv, 'Vilka betalar skatt i Sverige?');
+  assert.equal(q070.q.en, 'Who pays tax in Sweden?');
+  assert.deepEqual(
+    q070.opts.map((option) => option.sv),
+    [
+      'Både personer som arbetar och företag betalar skatt i Sverige',
+      'Bara personer som arbetar betalar skatt i Sverige',
+      'Bara företag betalar skatt i Sverige',
+      'Varken personer som arbetar eller företag betalar skatt i Sverige',
+    ],
+  );
+  assert.ok(q070True, 'q070 true generated variant should be published');
+  assert.equal(q070True.q.sv, 'Både personer som arbetar och företag betalar skatt i Sverige.');
+  assert.equal(q070True.q.en, 'Both people who work and companies pay tax in Sweden.');
+  assert.ok(q070False, 'q070 false generated variant should be published');
+  assert.equal(q070False.q.sv, 'Bara personer som arbetar betalar skatt i Sverige.');
+  assert.equal(q070False.q.en, 'Only people who work pay tax in Sweden.');
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('tax/VAT single-concept guard rejects the old combined prompt', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vilka betalar skatt i Sverige?',
+        'Vilket påstående om skatt och moms stämmer?',
+      )
+      .replace(
+        'Who pays tax in Sweden?',
+        'Which statement about tax and VAT is correct?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q070 combines tax liability and VAT purchase taxation in one learner-facing item/,
   );
 });
 
