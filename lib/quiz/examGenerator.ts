@@ -1,4 +1,5 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
+import type { QuizAnswer, QuizSession } from '../../types/progress';
 import { isUhrQuestion } from '../content/provenance';
 import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
 import { getQuestionExplanationText, getQuestionOptionText } from './questionText';
@@ -9,6 +10,7 @@ export type ExamOptions = {
 };
 
 export type ExamAnswerMap = Record<string, string>;
+export type ExamQuestionTimingMap = Record<string, number>;
 
 export type ExamChapterResult = {
   chapterId: string;
@@ -45,9 +47,19 @@ export type ExamReviewItem = {
 };
 
 export type ExamAutoSubmitState = {
+  examActive?: boolean;
   remainingSeconds: number;
   submitted: boolean;
   questionCount: number;
+};
+
+export type BuildMockExamQuizSessionInput = {
+  answers: ExamAnswerMap;
+  completedAt: string;
+  questionTimings?: ExamQuestionTimingMap;
+  questions: PracticeQuestion[];
+  sessionId: string;
+  startedAt: string;
 };
 
 export function formatExamTime(remainingSeconds: number): string {
@@ -58,11 +70,17 @@ export function formatExamTime(remainingSeconds: number): string {
 }
 
 export function shouldAutoSubmitExam({
+  examActive = true,
   remainingSeconds,
   submitted,
   questionCount,
 }: ExamAutoSubmitState): boolean {
-  return !submitted && questionCount > 0 && remainingSeconds <= 0;
+  return examActive && !submitted && questionCount > 0 && remainingSeconds <= 0;
+}
+
+function normalizeTimeSpentSeconds(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return 0;
+  return Math.max(0, Math.round(value));
 }
 
 function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
@@ -71,6 +89,24 @@ function isReviewedUhrQuestion(question: PracticeQuestion): boolean {
     Boolean(question.uhrReference?.chapter) &&
     isUhrQuestion(question)
   );
+}
+
+function hashSessionValue(value: string): number {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function rotateBucketForSession(
+  bucket: PracticeQuestion[],
+  chapterId: string,
+  sessionId: string,
+): PracticeQuestion[] {
+  if (bucket.length <= 1) return bucket;
+  const offset = hashSessionValue(`${sessionId}:${chapterId}`) % bucket.length;
+  return [...bucket.slice(offset), ...bucket.slice(0, offset)];
 }
 
 export function generateExam(
@@ -86,13 +122,16 @@ export function generateExam(
     chapterBuckets.set(question.chapterId, bucket);
   }
 
+  const sessionBuckets = Array.from(chapterBuckets.entries()).map(([chapterId, bucket]) =>
+    rotateBucketForSession(bucket, chapterId, sessionId),
+  );
   const selected: PracticeQuestion[] = [];
   let round = 0;
 
   while (selected.length < targetCount) {
     let addedQuestionThisRound = false;
 
-    for (const bucket of chapterBuckets.values()) {
+    for (const bucket of sessionBuckets) {
       const question = bucket[round];
       if (!question) continue;
 
@@ -131,6 +170,39 @@ export function scoreExam(questions: PracticeQuestion[], answers: ExamAnswerMap)
     totalCount: questions.length,
     percent: questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0,
     chapterBreakdown: [...chapterMap.values()],
+  };
+}
+
+export function buildMockExamQuizSession({
+  answers,
+  completedAt,
+  questionTimings = {},
+  questions,
+  sessionId,
+  startedAt,
+}: BuildMockExamQuizSessionInput): QuizSession {
+  const quizAnswers: QuizAnswer[] = questions.map((question) => {
+    const selectedOptionId = answers[question.id];
+
+    return {
+      answeredAt: completedAt,
+      isCorrect: selectedOptionId === question.correctOptionId,
+      questionId: question.id,
+      selectedOptionIds: selectedOptionId ? [selectedOptionId] : [],
+      timeSpentSeconds: normalizeTimeSpentSeconds(questionTimings[question.id]),
+    };
+  });
+  const correctCount = quizAnswers.filter((answer) => answer.isCorrect).length;
+  const totalCount = questions.length;
+
+  return {
+    answers: quizAnswers,
+    completedAt,
+    id: sessionId,
+    mode: 'exam',
+    questionIds: questions.map((question) => question.id),
+    score: totalCount > 0 ? correctCount / totalCount : 0,
+    startedAt,
   };
 }
 
