@@ -3185,13 +3185,13 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What does the state finance within welfare?",
-      "sv": "Vad finansierar staten inom välfärden?"
+      "en": "What does the state finance within higher education and research?",
+      "sv": "Vad finansierar staten inom högre utbildning och forskning?"
     },
     "opts": [
       {
-        "en": "Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance",
-        "sv": "Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag"
+        "en": "Higher education and research at colleges and universities",
+        "sv": "Högre utbildning och forskning vid högskolor och universitet"
       },
       {
         "en": "Hospitals, health centres, and regional health care",
@@ -3208,8 +3208,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3221,9 +3221,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support"
+      "higher-education",
+      "research",
+      "universities"
     ]
   },
   {
@@ -19662,13 +19662,13 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the state finance within welfare?",
-      "sv": "Vilket svar stämmer bäst? Vad finansierar staten inom välfärden?"
+      "en": "Which answer best matches? What does the state finance within higher education and research?",
+      "sv": "Vilket svar stämmer bäst? Vad finansierar staten inom högre utbildning och forskning?"
     },
     "opts": [
       {
-        "en": "Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance",
-        "sv": "Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag"
+        "en": "Higher education and research at colleges and universities",
+        "sv": "Högre utbildning och forskning vid högskolor och universitet"
       },
       {
         "en": "Hospitals, health centres, and regional health care",
@@ -19685,8 +19685,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19698,9 +19698,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "section-practice"
     ]
@@ -19711,8 +19711,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance.",
-      "sv": "Staten finansierar pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag."
+      "en": "The state finances higher education and research at colleges and universities.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet."
     },
     "opts": [
       {
@@ -19726,8 +19726,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19739,9 +19739,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "true-false"
     ]
@@ -19767,8 +19767,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19780,9 +19780,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "false-statement"
     ]
@@ -19793,13 +19793,13 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does the state finance within welfare?",
-      "sv": "Välj rätt alternativ: Vad finansierar staten inom välfärden?"
+      "en": "Choose the correct option: What does the state finance within higher education and research?",
+      "sv": "Välj rätt alternativ: Vad finansierar staten inom högre utbildning och forskning?"
     },
     "opts": [
       {
-        "en": "Pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance",
-        "sv": "Pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag"
+        "en": "Higher education and research at colleges and universities",
+        "sv": "Högre utbildning och forskning vid högskolor och universitet"
       },
       {
         "en": "Hospitals, health centres, and regional health care",
@@ -19816,8 +19816,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances pensions, sickness insurance, parental insurance, unemployment insurance, study support, and child allowance, among other things. It also funds higher education and research at colleges and universities.",
-      "sv": "Staten finansierar bland annat pensioner, sjukförsäkring, föräldraförsäkring, arbetslöshetsförsäkring, studiestöd och barnbidrag. Staten finansierar också högre utbildning och forskning vid högskolor och universitet."
+      "en": "The state funds higher education and research at colleges and universities. This is a state-funded part of welfare, separate from regional health care and municipal schools and care services.",
+      "sv": "Staten finansierar högre utbildning och forskning vid högskolor och universitet. Det är en statligt finansierad del av välfärden, skild från regionernas sjukvård och kommunernas skola och omsorg."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19829,9 +19829,9 @@
     "difficulty": "medium",
     "tags": [
       "state-welfare",
-      "pensions",
-      "child-allowance",
-      "study-support",
+      "higher-education",
+      "research",
+      "universities",
       "published-variant",
       "judgement"
     ]

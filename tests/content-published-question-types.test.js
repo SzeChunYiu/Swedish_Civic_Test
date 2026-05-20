@@ -16,6 +16,8 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
+const q071SocialInsuranceOverlapPattern =
+  /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring|sickness insurance|parental insurance|unemployment insurance)\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const councilOfEuropeWorkForEnglishPattern =
@@ -234,6 +236,97 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q156 uses stilted state-welfare English wording/,
+  );
+});
+
+test('state welfare source coverage separates q071 higher education from q156 social insurance', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const textForQuestion = (question) =>
+    [
+      question.q?.sv,
+      question.q?.en,
+      question.why?.sv,
+      question.why?.en,
+      ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
+    ].join(' ');
+  const q071Ids = [
+    'q071',
+    generatedQuestionId(sourceQuestions, 'q071', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q071', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q071', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q071', 'judgement'),
+  ];
+  const q071Rows = q071Ids.map((id) => generatedSiteBank.find((question) => question.id === id));
+  const q071StaticRows = actualSiteBank.filter((question) => q071Ids.includes(question.id));
+  const q156 = generatedSiteBank.find((question) => question.id === 'q156');
+
+  assert.equal(q071Rows.length, 5);
+  q071Rows.forEach((question, index) => {
+    assert.ok(question, `q071 row ${q071Ids[index]} should be published`);
+    assert.doesNotMatch(textForQuestion(question), q071SocialInsuranceOverlapPattern);
+  });
+  q071StaticRows.forEach((question) => {
+    assert.doesNotMatch(textForQuestion(question), q071SocialInsuranceOverlapPattern);
+  });
+  assert.equal(
+    q071Rows[0].q.en,
+    'What does the state finance within higher education and research?',
+  );
+  assert.equal(
+    q071Rows[0].opts[0]?.en,
+    'Higher education and research at colleges and universities',
+  );
+  assert.match(textForQuestion(q071Rows[0]), /högre utbildning/i);
+  assert.match(textForQuestion(q071Rows[0]), /forskning/i);
+  assert.match(textForQuestion(q071Rows[0]), /higher education/i);
+  assert.match(textForQuestion(q071Rows[0]), /research/i);
+
+  assert.ok(q156, 'q156 should be published in the site bank');
+  assert.match(q156.q.en, /state-funded social insurance systems/);
+  assert.match(textForQuestion(q156), /sickness insurance/i);
+  assert.match(textForQuestion(q156), /parental insurance/i);
+  assert.match(textForQuestion(q156), /unemployment insurance/i);
+  assert.doesNotMatch(textForQuestion(q156), /higher education|research at colleges/i);
+});
+
+test('state welfare source coverage guard rejects q071 social-insurance duplication', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Högre utbildning och forskning vid högskolor och universitet',
+        'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring',
+      )
+      .replace(
+        'Higher education and research at colleges and universities',
+        'Sickness insurance, parental insurance, and unemployment insurance',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q071 overlaps q071\/q156 state-welfare source coverage/,
   );
 });
 
