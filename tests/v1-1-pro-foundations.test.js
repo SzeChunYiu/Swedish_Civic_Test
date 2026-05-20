@@ -429,6 +429,11 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
   };
   const progress = buildDashboardProgressSnapshot({
     answerDates: ['2026-05-18', '2026-05-19'],
+    answerAttempts: [
+      { questionId: 'q2', isCorrect: false, answeredAt: '2026-05-18T10:00:00.000Z' },
+      { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
+      { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T11:00:00.000Z' },
+    ],
     dailyGoalAnswers: 10,
     mockExamSessions: [
       {
@@ -445,13 +450,13 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
   const questionChapterIndex = { q1: 'ch01', q2: 'ch02' };
 
   assert.equal(progress.sessions.length, 2);
-  assert.equal(progress.sessions[0].answers.length, 4);
+  assert.equal(progress.sessions[0].answers.length, 3);
   assert.equal(progress.level, 2);
   assert.equal(
     dailyActivityHistogram(progress, { daysBack: 2, now: new Date('2026-05-19T12:00:00.000Z') }).at(
       -1,
     ).count,
-    3,
+    2,
   );
   assert.equal(
     perChapterProgress(
@@ -462,7 +467,7 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
       ],
       questionChapterIndex,
     )[0].answers,
-    3,
+    2,
   );
   assert.equal(
     xpSparkline(progress, { daysBack: 1, now: new Date('2026-05-19T12:00:00.000Z') })[0].xp,
