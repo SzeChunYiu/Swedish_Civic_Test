@@ -195,6 +195,30 @@ test('UHR reference card focused content validation runs only its accessibility 
     false,
   );
 });
+
+test('CelebrationBurst focused content validation runs only its accessibility summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-celebration-burst-accessibility'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused CelebrationBurst validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 13);
+  assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
+    false,
+  );
+});
+
 test('unsupported npm test selectors fail before running any suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
   const npmLog = path.join(tmpDir, 'npm.log');
