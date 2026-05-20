@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import type { AccessibilityActionEvent, StyleProp, ViewStyle } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
@@ -60,7 +60,7 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     scoreModeLabel: 'Övningsresultat',
     selectedChaptersValueLabel: (count) => (count === 1 ? '1 valt' : `${count} valda`),
     sourceScopeLabel: 'UHR-baserade frågor',
-    startLabel: 'Starta övningsprov',
+    startLabel: 'Starta provet',
   },
   en: {
     allChaptersLabel: 'All',
@@ -80,7 +80,7 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     scoreModeLabel: 'Practice result',
     selectedChaptersValueLabel: (count) => `${count} selected`,
     sourceScopeLabel: 'UHR-based questions',
-    startLabel: 'Start mock exam',
+    startLabel: 'Start exam',
   },
 };
 
@@ -209,30 +209,12 @@ function Stepper({
 }: StepperProps) {
   const canDecrement = value > min && !disabled && Boolean(onChange);
   const canIncrement = value < max && !disabled && Boolean(onChange);
-  const stepperAccessibilityActions = [
-    { name: 'decrement', label: decrementAccessibilityLabel },
-    { name: 'increment', label: incrementAccessibilityLabel },
-  ];
-  const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
-    switch (event.nativeEvent.actionName) {
-      case 'decrement':
-        if (canDecrement) onChange?.(getNextValue(value, step, -1, min, max));
-        break;
-      case 'increment':
-        if (canIncrement) onChange?.(getNextValue(value, step, 1, min, max));
-        break;
-      default:
-        break;
-    }
-  };
 
   return (
     <View
-      accessibilityActions={stepperAccessibilityActions}
       accessibilityLabel={label}
       accessibilityRole="adjustable"
       accessibilityValue={{ max, min, now: value, text: valueLabel }}
-      onAccessibilityAction={handleAccessibilityAction}
       style={styles.stepper}
     >
       <View style={styles.stepperCopy}>

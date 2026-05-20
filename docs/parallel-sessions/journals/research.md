@@ -29,22 +29,6 @@ Verification (commands + result):
 - `curl -L -I --max-time 20` for all four cited official URLs: HTTP 200.
 - No project TypeScript touched; `npm run typecheck` not required for the artifact itself.
 - `git diff --check`: exit 0.
-PR (number + merged?): #1430 merged as squash commit `3e43e2322b75a8c8454abee939e0d8bb76815d9e`
-Accepted by worker? yes
+PR (number + merged?): branch pushed to `task/research/denmark-structure-1779238000`; PR creation blocked locally because `gh`/`hub` are not installed, no `GITHUB_TOKEN`/`GH_TOKEN` is present in the shell, `git credential fill` has no usable HTTPS credential in this noninteractive shell, and two attempts to use the GitHub MCP `_create_pull_request` tool failed during MCP startup/handshake. GitHub PR URL returned by push: https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/new/task/research/denmark-structure-1779238000
+Accepted by worker? no/blocked on PR tooling, research artifact complete
 Next suggested validator action: Review the Denmark research note for source adequacy; no CONTENT import is queued while UHR-only Phase A remains the operator policy.
-
-Lane: RESEARCH
-Host/branch: LUNARC / task/research/finland-structure
-Role type and manager: dynamic-worker research lane; escalates to CEO/VALIDATOR
-Task / checklist item: `nordic:finland citizenship/language requirement - structure, sources`
-Changed artifacts:
-- docs/research/nordic/finland-citizenship-language-requirement.md
-- docs/parallel-sessions/journals/research.md
-Verification (commands + result):
-- Official sources opened through web tool: Migri `Citizenship application for adults`, Migri `Language skills`, OPH language proof page, Finnish Government `Government proposes to introduce citizenship test`.
-- `curl -L -I --max-time 20` for all four cited official URLs: HTTP 200 (Migri citizenship URL redirects 302 to `/en/citizenship-for-adults`, then HTTP 200).
-- No project TypeScript touched; `npm run typecheck` not required for the artifact itself.
-- `git diff --check`: exit 0.
-PR (number + merged?): pending
-Accepted by worker? no/pending verification
-Next suggested validator action: Review the Finland note for source adequacy; no CONTENT import is queued while UHR-only Phase A remains the operator policy.
