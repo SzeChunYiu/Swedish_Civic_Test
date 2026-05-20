@@ -10,6 +10,7 @@ import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPl
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -19,6 +20,8 @@ import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
+import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -270,6 +273,8 @@ export default function Screen() {
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const totalXp = useProgressStore((state) => state.totalXp);
+  const answerDates = useProgressStore((state) => state.answerDates);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
@@ -469,6 +474,12 @@ export default function Screen() {
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
+  const answerXp = hasSelectedAnswer
+    ? calculateAnswerXp({ isCorrect: selectedIsCorrect, explanationRead: true })
+    : 0;
+  const streakDays = calculateStreak(answerDates);
+  const level = calculateLevel(totalXp);
+  const correctStreak = questionProgress[question.id]?.correctStreak ?? 0;
   const questionIndex = selectedPracticeQuestions.findIndex(
     (candidate) => candidate.id === question.id,
   );
@@ -620,6 +631,16 @@ export default function Screen() {
             active={selectedIsCorrect}
             languageOverride={language}
             streak={celebrationStreak}
+          />
+          <PostAnswerRewardPanel
+            answerXp={answerXp}
+            correctStreak={correctStreak}
+            isCorrect={selectedIsCorrect}
+            language={language}
+            level={level}
+            question={question}
+            streakDays={streakDays}
+            totalXp={totalXp}
           />
           {currentScore ? (
             <Text style={styles.score}>
