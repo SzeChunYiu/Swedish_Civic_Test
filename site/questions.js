@@ -35095,8 +35095,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Health centres, child health centres, and maternity clinics.",
-      "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler."
+      "en": "Primary care includes health centres, child health centres, and maternity clinics.",
+      "sv": "Primärvården omfattar vårdcentraler, barnavårdscentraler och mödravårdscentraler."
     },
     "opts": [
       {
@@ -35136,8 +35136,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Courts, prosecutors, and prison and probation services.",
-      "sv": "Domstolar, åklagare och kriminalvård."
+      "en": "Primary care includes courts, prosecutors, and prison and probation services.",
+      "sv": "Primärvården omfattar domstolar, åklagare och kriminalvård."
     },
     "opts": [
       {
@@ -35275,8 +35275,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.",
-      "sv": "Ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
+      "en": "The municipality is responsible for arranging preschools, after-school centres, compulsory schools, and upper-secondary schools.",
+      "sv": "Kommunen ansvarar för att ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
     },
     "opts": [
       {
@@ -35316,8 +35316,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Pay sickness insurance and state pensions.",
-      "sv": "Betala sjukförsäkring och statliga pensioner."
+      "en": "The municipality is responsible for paying sickness insurance and state pensions.",
+      "sv": "Kommunen ansvarar för att betala sjukförsäkring och statliga pensioner."
     },
     "opts": [
       {
@@ -35455,8 +35455,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Care and services at home or housing adapted for older people.",
-      "sv": "Vård och service hemma eller boende som är anpassat för äldre personer."
+      "en": "The municipality can offer older people care and services at home or housing adapted for older people to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer vård och service hemma eller boende som är anpassat för äldre personer för att klara vardagen."
     },
     "opts": [
       {
@@ -35496,8 +35496,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Automatic study support and a university place.",
-      "sv": "Automatiskt studiestöd och plats på universitet."
+      "en": "The municipality can offer older people automatic study support and a university place to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer automatiskt studiestöd och plats på universitet för att klara vardagen."
     },
     "opts": [
       {

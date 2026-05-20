@@ -347,6 +347,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Fewer people taking\b/i,
   /^People with [^.?!]*\bliving closer\b/i,
   /^People living completely separated\b/i,
+  /^(?:Vårdcentraler, barnavårdscentraler och mödravårdscentraler|Domstolar, åklagare och kriminalvård|Ordna förskolor|Betala sjukförsäkring|Vård och service hemma|Automatiskt studiestöd)\b/i,
+  /^(?:Health centres, child health centres, and maternity clinics|Courts, prosecutors, and prison and probation services|Arrange preschools|Pay sickness insurance|Care and services at home|Automatic study support)\b/i,
 ];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -5301,6 +5303,15 @@ function civicStatementSv(source, option) {
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad finansierar staten inom (.+)$/i);
   if (match) return `Staten finansierar ${lowerFirst(answer)}`;
+  match = q.match(/^Vad ingår i (.+)$/i);
+  if (match) return `${upperFirst(match[1])} omfattar ${lowerFirst(answer)}`;
+  match = q.match(/^Vilket ansvar har (.+?) för (.+)$/i);
+  if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
+  match = q.match(/^Vilken hjälp kan (.+?) få av (.+?) för att (.+)$/i);
+  if (match)
+    return `${upperFirst(match[2])} kan erbjuda ${lowerFirst(match[1])} ${lowerFirst(
+      answer,
+    )} för att ${match[3]}`;
   match = q.match(/^Vilket ansvar har (.+?) inom (.+)$/i);
   if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
   match = q.match(/^Vilket svar ger exempel på (.+)$/i);
@@ -5610,6 +5621,15 @@ function civicStatementEn(source, option) {
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does the state finance within (.+)$/i);
   if (match) return `The state finances ${lowerFirst(answer)}`;
+  match = q.match(/^What is included in (.+)$/i);
+  if (match) return `${upperFirst(match[1])} includes ${lowerFirst(answer)}`;
+  match = q.match(/^What responsibility does (.+?) have for (.+)$/i);
+  if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
+  match = q.match(/^What help can (.+?) receive from (.+?) to (.+)$/i);
+  if (match)
+    return `${upperFirst(match[2])} can offer ${lowerFirst(match[1])} ${lowerFirst(
+      answer,
+    )} to ${match[3]}`;
   match = q.match(/^What responsibility do (.+?) have within (.+)$/i);
   if (match) return `${upperFirst(match[1])} are responsible for ${englishGerundPhrase(answer)}`;
   match = q.match(/^Which answer gives examples of (.+)$/i);
