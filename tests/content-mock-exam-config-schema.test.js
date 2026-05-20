@@ -39,6 +39,36 @@ function assertMockExamConfigPanelA11ySeparation(source) {
     'MockExamConfigPanel should put the summary label on the non-interactive header',
   );
   assert.match(source, /accessibilityRole="adjustable"/, 'steppers must remain adjustable');
+  assert.match(
+    source,
+    /accessibilityActions=\{stepperAccessibilityActions\}/,
+    'adjustable steppers must expose increment and decrement accessibility actions',
+  );
+  assert.match(
+    source,
+    /\{ name: 'decrement', label: decrementAccessibilityLabel \}/,
+    'adjustable steppers should expose the decrement action with localized copy',
+  );
+  assert.match(
+    source,
+    /\{ name: 'increment', label: incrementAccessibilityLabel \}/,
+    'adjustable steppers should expose the increment action with localized copy',
+  );
+  assert.match(
+    source,
+    /onAccessibilityAction=\{handleAccessibilityAction\}/,
+    'adjustable steppers must handle screen-reader action gestures',
+  );
+  assert.match(
+    source,
+    /case 'decrement':[\s\S]*if \(canDecrement\) onChange\?\.\(getNextValue\(value, step, -1, min, max\)\);/,
+    'decrement accessibility actions should use the same clamped step path as the visible control',
+  );
+  assert.match(
+    source,
+    /case 'increment':[\s\S]*if \(canIncrement\) onChange\?\.\(getNextValue\(value, step, 1, min, max\)\);/,
+    'increment accessibility actions should use the same clamped step path as the visible control',
+  );
   assert.match(source, /accessibilityRole="checkbox"/, 'chapter chips must remain checkboxes');
   assert.match(
     source,
@@ -127,6 +157,14 @@ test('mock exam config panel a11y separation rejects grouped summary regressions
     '<View style={styles.chips}>',
     '<View\n          accessibilityLabel={resolvedChaptersLabel}\n          accessibilityRole="summary"\n          style={styles.chips}\n        >',
   );
+  const missingStepperActions = source.replace(
+    '\n      accessibilityActions={stepperAccessibilityActions}',
+    '',
+  );
+  const missingStepperActionHandler = source.replace(
+    '\n      onAccessibilityAction={handleAccessibilityAction}',
+    '',
+  );
 
   assert.throws(
     () => assertMockExamConfigPanelA11ySeparation(groupedPanel),
@@ -135,6 +173,14 @@ test('mock exam config panel a11y separation rejects grouped summary regressions
   assert.throws(
     () => assertMockExamConfigPanelA11ySeparation(groupedChapters),
     /chapter checkbox group should not be a labelled summary wrapper/,
+  );
+  assert.throws(
+    () => assertMockExamConfigPanelA11ySeparation(missingStepperActions),
+    /must expose increment and decrement accessibility actions/,
+  );
+  assert.throws(
+    () => assertMockExamConfigPanelA11ySeparation(missingStepperActionHandler),
+    /must handle screen-reader action gestures/,
   );
 });
 
