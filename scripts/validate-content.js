@@ -3927,6 +3927,10 @@ const STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED = [
   'Starta övningsprov',
   'gör ett övningsprov',
 ];
+const STATIC_I18N_CHINESE_LOCALES = ['zh-Hans', 'zh-Hant'];
+const STATIC_I18N_CHINESE_TEXT_PATTERN = /[\u3400-\u9fff]/;
+const STATIC_I18N_ASCII_SENTENCE_PUNCTUATION_NEAR_CHINESE =
+  /[\u3400-\u9fff][,:;?!.]|[,:;?!.][\u3400-\u9fff]/;
 
 function validateStaticSiteSwedishStudyTerms() {
   const source = loadText('site/app.js');
@@ -3989,6 +3993,76 @@ function validateStaticEbookSwedishStudyTerms() {
     forbiddenTermsValidated,
     requiredTermsValidated,
   };
+}
+
+function stripAllowedStaticI18nTokens(value) {
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/https?:\/\/\S+/gi, ' ')
+    .replace(/#[/a-z0-9_-]+/gi, ' ')
+    .replace(
+      /\b(?:Almost Swedish|Google AdSense|Google Mobile Ads|AdMob|Cookie|cookies|UHR|Skolverket|Migrationsverket|BankID|MVP|EN|SV|SEK|Jantelagen|Allemansrätten|Lagom|Fika|fika)\b/g,
+      ' ',
+    );
+}
+
+function loadStaticI18nExtras() {
+  const source = loadText('site/i18n-extras.js');
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+  return sandbox.window.__i18n_extra;
+}
+
+function validateStaticI18nChinesePunctuation() {
+  let localesValidated = 0;
+  let valuesValidated = 0;
+  let valid = true;
+  let dictionaries;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    dictionaries = loadStaticI18nExtras();
+  } catch (error) {
+    reject(`site/i18n-extras.js must stay parseable for static i18n validation: ${error.message}`);
+    return { localesValidated, valuesValidated, valid };
+  }
+
+  for (const locale of STATIC_I18N_CHINESE_LOCALES) {
+    const dictionary = dictionaries?.[locale];
+    if (!dictionary || typeof dictionary !== 'object' || Array.isArray(dictionary)) {
+      reject(`static i18n extra dictionary ${locale} must exist`);
+      continue;
+    }
+    localesValidated += 1;
+
+    for (const [key, value] of Object.entries(dictionary)) {
+      if (typeof value !== 'string') {
+        reject(`static i18n extra ${locale}.${key} must be a string`);
+        continue;
+      }
+      if (!STATIC_I18N_CHINESE_TEXT_PATTERN.test(value)) continue;
+
+      const learnerText = stripAllowedStaticI18nTokens(value);
+      if (STATIC_I18N_ASCII_SENTENCE_PUNCTUATION_NEAR_CHINESE.test(learnerText)) {
+        reject(
+          `static i18n extra ${locale}.${key} uses Latin sentence punctuation near Chinese text`,
+        );
+        continue;
+      }
+      valuesValidated += 1;
+    }
+  }
+
+  if (valuesValidated === 0) {
+    reject('static i18n Chinese punctuation guard must inspect learner-facing values');
+  }
+
+  return { localesValidated, valuesValidated, valid };
 }
 
 function questionSentenceEndingsAreComplete(question) {
@@ -6737,6 +6811,9 @@ let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let staticEbookSwedishStudyTermsValidated = 0;
 let staticEbookSwedishStudyTermNaturalnessValidated = false;
+let staticI18nChinesePunctuationLocalesValidated = 0;
+let staticI18nChinesePunctuationValuesValidated = 0;
+let staticI18nChinesePunctuationParityValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -7042,6 +7119,15 @@ staticEbookOutcomeClaimParityValidated =
       STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED.length;
 }
 {
+  const i18nPunctuationValidation = validateStaticI18nChinesePunctuation();
+  staticI18nChinesePunctuationLocalesValidated = i18nPunctuationValidation.localesValidated;
+  staticI18nChinesePunctuationValuesValidated = i18nPunctuationValidation.valuesValidated;
+  staticI18nChinesePunctuationParityValidated =
+    i18nPunctuationValidation.valid &&
+    staticI18nChinesePunctuationLocalesValidated === STATIC_I18N_CHINESE_LOCALES.length &&
+    staticI18nChinesePunctuationValuesValidated > 0;
+}
+{
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
     practicalTestValidation.unsupportedPracticalClaimsValidated;
@@ -7056,8 +7142,7 @@ staticEbookOutcomeClaimParityValidated =
 }
 {
   const factboxValidation = validateStaticEbookFactboxProvenance();
-  staticEbookFactboxClaimPatternsValidated =
-    factboxValidation.unsupportedFactboxClaimsValidated;
+  staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxClaimsValidated;
   staticEbookFactboxRequiredCopyValidated = factboxValidation.requiredCopyValidated;
   staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
   staticEbookFactboxProvenanceValidated =
@@ -15150,6 +15235,9 @@ console.log(
       staticSiteSwedishStudyTermNaturalnessValidated,
       staticEbookSwedishStudyTermsValidated,
       staticEbookSwedishStudyTermNaturalnessValidated,
+      staticI18nChinesePunctuationLocalesValidated,
+      staticI18nChinesePunctuationValuesValidated,
+      staticI18nChinesePunctuationParityValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
