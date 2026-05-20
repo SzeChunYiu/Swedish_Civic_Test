@@ -1698,13 +1698,15 @@ test('audio button disables playback when speech text is unavailable', () => {
   assert.doesNotMatch(source, /speakSwedish\(text\)/);
 });
 
-test('home screen surfaces focused review copy and review action', () => {
+test('home screen surfaces study-loop improvements and review action', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /Focused review/);
-  assert.match(source, /Fokuserad repetition/);
-  assert.match(source, /Keep track of what needs review/);
-  assert.match(source, /Håll koll på det som behöver övas/);
+  assert.match(source, /Study-loop improvements/);
+  assert.match(source, /Förbättrat studieflöde/);
+  assert.doesNotMatch(
+    source,
+    /simulerade\s+elever|simulerade\s+studier|simulated\s+learners|simulated\s+study\s+sessions/i,
+  );
   assert.match(source, /Review saved questions/);
   assert.match(source, /Repetera sparade frågor/);
   assert.match(source, /href="\/mistakes"/);

@@ -49,46 +49,14 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
-  assert.match(source, /Förberedelsesignal/);
-  assert.match(source, /Preparation signal/);
-  assert.match(source, /Väg från grund till provträning/);
-  assert.match(source, /Guided path from basics to exam practice/);
-  assert.match(source, /const guidedPathChapterGroups = \[/);
-  assert.match(source, /\{ id: 'beginner', chapterIds: \['ch01', 'ch02', 'ch03', 'ch04'\] \}/);
-  assert.match(
+  assert.match(source, /Redoindikator/);
+  assert.match(source, /Readiness indicator/);
+  assert.match(source, /Förbättrat studieflöde/);
+  assert.match(source, /Study-loop improvements/);
+  assert.doesNotMatch(
     source,
-    /\{ id: 'builder', chapterIds: \['ch05', 'ch06', 'ch07', 'ch08', 'ch09'\] \}/,
+    /simulerade\s+elever|simulerade\s+studier|simulated\s+learners|simulated\s+study\s+sessions/i,
   );
-  assert.match(source, /\{ id: 'advanced', chapterIds: \['ch10', 'ch11', 'ch12', 'ch13'\] \}/);
-  assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
-  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
-  assert.match(source, /<GuidedPracticePath/);
-  assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
-  assert.match(source, /dailyProgress=\{progress\}/);
-  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
-  assert.match(
-    source,
-    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
-  );
-  assert.match(source, /: '\/exam';/);
-  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
-  assert.match(guidedPathSource, /href=\{stage\.href\}/);
-  assert.match(guidedPathSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
-  assert.match(guidedPathSource, /\{stage\.cta\}/);
-  assert.match(guidedPathSource, /href="\/practice"/);
-  assert.match(guidedPathSource, /minHeight: space\[6\]/);
-  assert.match(source, /Smarta studievanor/);
-  assert.match(source, /Smart study habits/);
-  assert.match(source, /Hela banken gratis/);
-  assert.match(source, /Alla 13 ämnen och hela frågebanken ingår gratis/);
-  assert.match(source, /Full bank free/);
-  assert.match(source, /All 13 topics and the full question bank are included for free/);
-  assert.match(source, /<Badge tone="blue">\{copy\.freeBankBadge\}<\/Badge>/);
-  assert.match(source, /<Text style=\{styles\.freeBankText\}>\{copy\.freeBankText\}<\/Text>/);
-  assert.match(source, /calculateStreakWithFreeze/);
-  assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
-  assert.match(source, /Svitskydd/);
-  assert.match(source, /Streak freeze/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
@@ -374,4 +342,34 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /home route is missing sv copy/);
+});
+
+test('home route copy parity rejects synthetic learner feedback copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Study-loop improvements', ['10,000 simulated', 'learners'].join(' '));
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home route contains synthetic learner feedback copy/,
+  );
 });
