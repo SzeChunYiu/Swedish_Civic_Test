@@ -2,7 +2,7 @@ import type { Purchase } from 'react-native-iap';
 
 import type { PremiumEntitlements } from '../../types/monetization';
 
-export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
+export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.almostswedish.removeads';
 export const REMOVE_ADS_PRICE_LABEL = '29 SEK';
 export const REMOVE_ADS_STORAGE_KEY = 'monetization.removeAds.adsDisabled.v1';
 export const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;

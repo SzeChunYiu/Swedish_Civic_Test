@@ -63,6 +63,7 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
+  const appConfig = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8')).expo;
   const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
@@ -78,6 +79,7 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
   ]);
   assert.deepEqual(releaseMonetizationPolicy.noAdPlacements, ['exam_screen']);
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
+  assert.equal(REMOVE_ADS_PRODUCT_ID, `${appConfig.ios.bundleIdentifier}.removeads`);
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
   assert.deepEqual(releaseMonetizationPolicy.storeDisclosureTopics, [

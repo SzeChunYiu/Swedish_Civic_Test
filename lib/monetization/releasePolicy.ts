@@ -7,7 +7,7 @@ export const releaseMonetizationPolicy = {
   privacyReviewRequiresBinary: true,
   realAdsEnvFlag: 'EXPO_PUBLIC_REAL_ADS_ENABLED',
   removeAdsPriceLabel: '29 SEK',
-  removeAdsProductId: 'com.billyyiu.swedishcivictest.removeads',
+  removeAdsProductId: 'com.billyyiu.almostswedish.removeads',
   storeDisclosureTopics: [
     'Google Mobile Ads',
     'Remove Ads in-app purchase',
