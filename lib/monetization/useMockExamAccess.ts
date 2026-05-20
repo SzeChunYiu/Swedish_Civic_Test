@@ -50,6 +50,7 @@ function buildAccessDecision({
     consentDecision,
     entitlements,
     freeMockExamLimit,
+    platform: Platform.OS,
     rewardedExtraExamCredits: snapshot.rewardedExtraExamCredits,
   });
 }
