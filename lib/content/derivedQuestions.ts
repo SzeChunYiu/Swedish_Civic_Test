@@ -670,14 +670,14 @@ function importantRolesStatementEn(subject: string, context: string, answer: str
 }
 
 function commonStatementSv(subject: string, answer: string): string {
-  if (/^Gemensamma\s+/i.test(answer)) {
+  if (/^(?:Gemensamma|Makt|Ansvar|Direkt)\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
   }
   return replaceLeadingSwedishSubject(subject, answer);
 }
 
 function commonStatementEn(subject: string, answer: string): string {
-  if (/^Shared\s+/i.test(answer)) {
+  if (/^(?:Shared|The power|Responsibility|Direct)\s+/i.test(answer)) {
     return `${upperFirst(subject)} have ${lowerFirst(answer)}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
