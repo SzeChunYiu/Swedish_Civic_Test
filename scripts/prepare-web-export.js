@@ -2,6 +2,7 @@
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
+const { webDocumentMetadata } = require('../lib/scaffold/webDocumentMetadata');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
 const WEB_MANIFEST_HREF = 'manifest.webmanifest';
@@ -42,6 +43,14 @@ function assertFile(filePath) {
 
 function escapeRegExp(literal) {
   return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function escapeHtmlAttribute(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 function readJsonFile(filePath) {
@@ -119,6 +128,7 @@ function assertWebInstallShell(outputDir, html) {
   }
 
   assertWebManifestContract(outputDir, canvasColor);
+  assertWebDocumentMetadata(html);
 }
 
 function assertWebManifestContract(outputDir, canvasColor) {
@@ -198,6 +208,79 @@ function insertBeforeHeadEnd(html, tag) {
   );
 }
 
+function webDocumentMetaTags() {
+  return [
+    { attribute: 'name', key: 'application-name', content: webDocumentMetadata.applicationName },
+    {
+      attribute: 'name',
+      key: 'apple-mobile-web-app-title',
+      content: webDocumentMetadata.appleMobileWebAppTitle,
+    },
+    { attribute: 'name', key: 'description', content: webDocumentMetadata.description },
+    {
+      attribute: 'property',
+      key: 'og:site_name',
+      content: webDocumentMetadata.openGraphSiteName,
+    },
+    { attribute: 'property', key: 'og:title', content: webDocumentMetadata.openGraphTitle },
+    {
+      attribute: 'property',
+      key: 'og:description',
+      content: webDocumentMetadata.openGraphDescription,
+    },
+  ];
+}
+
+function webDocumentMetaTag({ attribute, key, content }) {
+  return `<meta ${attribute}="${escapeHtmlAttribute(key)}" content="${escapeHtmlAttribute(content)}" />`;
+}
+
+function ensureDocumentTitle(html) {
+  const title = `<title>${escapeHtmlAttribute(webDocumentMetadata.title)}</title>`;
+  if (/<title\b[^>]*>[\s\S]*?<\/title>/i.test(html)) {
+    return html.replace(/<title\b[^>]*>[\s\S]*?<\/title>/i, title);
+  }
+  return insertBeforeHeadEnd(html, title);
+}
+
+function ensureMetaTag(html, spec) {
+  const existingMeta = new RegExp(
+    `<meta\\b(?=[^>]*\\b${escapeRegExp(spec.attribute)}=["']${escapeRegExp(spec.key)}["'])[^>]*>`,
+    'i',
+  );
+  const tag = webDocumentMetaTag(spec);
+  if (existingMeta.test(html)) {
+    return html.replace(existingMeta, tag);
+  }
+  return insertBeforeHeadEnd(html, tag);
+}
+
+function ensureWebDocumentMetadata(html) {
+  return webDocumentMetaTags().reduce(
+    (nextHtml, spec) => ensureMetaTag(nextHtml, spec),
+    ensureDocumentTitle(html),
+  );
+}
+
+function assertWebDocumentMetadata(html) {
+  const expectedTitle = `<title>${escapeHtmlAttribute(webDocumentMetadata.title)}</title>`;
+  if (!new RegExp(escapeRegExp(expectedTitle), 'i').test(html)) {
+    throw new Error('index.html title must match shared web document metadata');
+  }
+
+  const metaTags = tagsFor(html, 'meta');
+  for (const spec of webDocumentMetaTags()) {
+    const hasTag = metaTags.some(
+      (tag) =>
+        tagHasAttribute(tag, spec.attribute, spec.key) &&
+        tagHasAttribute(tag, 'content', spec.content),
+    );
+    if (!hasTag) {
+      throw new Error(`${spec.attribute}=${spec.key} meta must match shared web document metadata`);
+    }
+  }
+}
+
 function ensureThemeColorMeta(html) {
   const canvasColor = readThemeCanvasColor();
   const themeColorMeta = `<meta name="theme-color" content="${canvasColor}" />`;
@@ -234,7 +317,9 @@ function ensureBodyBackground(html) {
 }
 
 function ensureWebInstallMarkup(html) {
-  return ensureBodyBackground(ensureWebManifestLink(ensureThemeColorMeta(html)));
+  return ensureWebDocumentMetadata(
+    ensureBodyBackground(ensureWebManifestLink(ensureThemeColorMeta(html))),
+  );
 }
 
 function walkFiles(directory, predicate) {
@@ -482,7 +567,9 @@ if (require.main === module) {
 module.exports = {
   WEB_EXPORT_FRESHNESS_MARKER,
   WEB_EXPORT_FRESHNESS_VERSION,
+  assertWebDocumentMetadata,
   check,
+  ensureWebDocumentMetadata,
   prepare,
   assertWebExportFreshness,
   buildWebExportSourceFingerprint,
