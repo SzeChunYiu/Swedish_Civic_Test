@@ -1367,6 +1367,10 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     "import { ResultSummary } from '../../components/ResultSummary';",
     'exam result must import the shared ResultSummary',
   ],
+  [
+    "import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';",
+    'exam result must import the mock-exam time heatmap',
+  ],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
   [
     '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
@@ -1394,6 +1398,7 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam chapter breakdown must use selected-language chapter names',
   ],
   ['<ResultSummary', 'exam result must render the shared ResultSummary'],
+  ['<MockExamTimeHeatmap', 'exam result must render the mock-exam time heatmap'],
   ['languageOverride={language}', 'exam result summary must receive settings language'],
   [
     'metricLabel={copy.correctCount(result.correctCount, result.totalCount)}',
@@ -8790,12 +8795,13 @@ function validateExamSubmissionFinalityParity() {
   if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||
     !examRoute.includes('recordMockExamSession({') ||
+    !examRoute.includes('answers: completedExamSession.answers.map') ||
     !examRoute.includes(
       'score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0',
     ) ||
-    !examRoute.includes('completedAt: new Date().toISOString()')
+    !examRoute.includes('completedAt: completedExamSession.completedAt')
   ) {
-    reject('exam result submission must persist a completed mock-exam score for readiness');
+    reject('exam result submission must persist completed mock-exam score and timing history');
   }
 
   if (valid) examSubmissionFinalityParityValidated = true;
@@ -12048,6 +12054,26 @@ function validateProgressStoreSchemaParity() {
     ],
     ['score: clampScore(item.score ?? 0)', 'mock-exam hydration must clamp persisted score'],
     [
+      'export type MockExamAnswerProgress = {',
+      'progress store must type persisted mock-exam answer timing rows',
+    ],
+    [
+      'answers: MockExamAnswerProgress[];',
+      'mock-exam progress must persist normalized answer timing rows',
+    ],
+    [
+      'function normalizeMockExamAnswers(value: unknown): MockExamAnswerProgress[]',
+      'mock-exam answer timing rows must hydrate through a normalizer',
+    ],
+    [
+      'const normalizedAnswers = normalizeMockExamAnswers(item.answers);',
+      'mock-exam hydration must normalize persisted answer timing rows',
+    ],
+    [
+      'const normalizedAnswers = normalizeMockExamAnswers(session.answers);',
+      'recordMockExamSession must normalize submitted answer timing rows',
+    ],
+    [
       'const serializedProgress = JSON.stringify(progress);',
       'writeProgress must serialize progress once before persistence and readback',
     ],
@@ -12114,6 +12140,7 @@ function validateProgressStoreSchemaParity() {
     'lastAnsweredAt: item.lastAnsweredAt',
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
+    'timeSpentSeconds: item.timeSpentSeconds',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
     'bookmarked: item.bookmarked,',
     'bookmarked: Boolean(item.bookmarked)',

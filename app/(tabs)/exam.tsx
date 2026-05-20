@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -25,6 +26,10 @@ import {
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
+import {
+  buildCompletedExamQuizSession,
+  buildExamDiagnostic,
+} from '../../lib/learning/examDiagnostic';
 import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
@@ -211,14 +216,22 @@ export default function Screen() {
     [examSessionId],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answerTimingsSeconds, setAnswerTimingsSeconds] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submittedAt, setSubmittedAt] = useState<string | null>(null);
   const [examUnlocked, setExamUnlocked] = useState(false);
+  const [examStartedAt, setExamStartedAt] = useState<string | null>(null);
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
+  const examStartedAtMsRef = useRef<number | null>(null);
+  const lastQuestionAnsweredAtMsRef = useRef<number | null>(null);
+  const reviewCardRefs = useRef<Record<string, { focus?: () => void } | null>>({});
+  const reviewCardYByQuestionIdRef = useRef<Record<string, number>>({});
+  const scrollViewRef = useRef<ScrollView | null>(null);
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
@@ -252,6 +265,7 @@ export default function Screen() {
         questionCount: examQuestions.length,
       })
     ) {
+      setSubmittedAt((current) => current ?? new Date().toISOString());
       setSubmitted(true);
     }
   }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
@@ -263,6 +277,41 @@ export default function Screen() {
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
+  const completedExamSession = useMemo(() => {
+    if (!submitted || !submittedAt) return null;
+
+    return buildCompletedExamQuizSession({
+      answerTimingsSeconds,
+      answers,
+      completedAt: submittedAt,
+      questions: examQuestions,
+      score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
+      sessionId: examSessionId,
+      startedAt: examStartedAt ?? submittedAt,
+    });
+  }, [
+    answerTimingsSeconds,
+    answers,
+    examQuestions,
+    examSessionId,
+    examStartedAt,
+    resultCorrectCount,
+    resultTotalCount,
+    submitted,
+    submittedAt,
+  ]);
+  const completedExamDiagnostic = useMemo(() => {
+    if (!completedExamSession) return null;
+
+    const questionChapterIndex = Object.fromEntries(
+      examQuestions.map((question) => [question.id, question.chapterId]),
+    );
+
+    return buildExamDiagnostic({
+      questionChapterIndex,
+      session: completedExamSession,
+    });
+  }, [completedExamSession, examQuestions]);
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
@@ -283,12 +332,64 @@ export default function Screen() {
     : getAccessStatusText(accessDecision.reason, language);
 
   const resetExamAttempt = useCallback(() => {
+    const startedAt = new Date();
+    examStartedAtMsRef.current = startedAt.getTime();
+    lastQuestionAnsweredAtMsRef.current = startedAt.getTime();
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
+    setAnswerTimingsSeconds({});
     setSubmitted(false);
+    setSubmittedAt(null);
+    setExamStartedAt(startedAt.toISOString());
     setCompletionRecorded(false);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
+  }, []);
+
+  const handleSelectAnswer = useCallback(
+    (questionId: string, optionId: string) => {
+      const answeredAtMs = Date.now();
+      const startedAtMs = examStartedAtMsRef.current ?? answeredAtMs;
+      const previousAnswerAtMs = lastQuestionAnsweredAtMsRef.current ?? startedAtMs;
+
+      examStartedAtMsRef.current = startedAtMs;
+
+      if (!answerTimingsSeconds[questionId]) {
+        const elapsedSeconds = Math.max(
+          1,
+          Math.min(
+            defaultMockExamConfig.durationMinutes * 60,
+            Math.ceil((answeredAtMs - previousAnswerAtMs) / 1000),
+          ),
+        );
+
+        lastQuestionAnsweredAtMsRef.current = answeredAtMs;
+        setAnswerTimingsSeconds((current) => ({ ...current, [questionId]: elapsedSeconds }));
+      }
+
+      setAnswers((current) => ({ ...current, [questionId]: optionId }));
+    },
+    [answerTimingsSeconds],
+  );
+
+  const handleSubmitExam = useCallback(() => {
+    setSubmittedAt((current) => current ?? new Date().toISOString());
+    setSubmitted(true);
+  }, []);
+
+  const handleSelectHeatmapQuestion = useCallback((questionId: string) => {
+    const reviewY = reviewCardYByQuestionIdRef.current[questionId];
+    if (typeof reviewY === 'number') {
+      scrollViewRef.current?.scrollTo({
+        animated: true,
+        y: Math.max(0, reviewY - space[2]),
+      });
+    }
+
+    const reviewCard = reviewCardRefs.current[questionId];
+    if (reviewCard && typeof reviewCard.focus === 'function') {
+      setTimeout(() => reviewCard.focus?.(), 250);
+    }
   }, []);
 
   const handleStartAccessibleExam = useCallback(async () => {
@@ -337,13 +438,18 @@ export default function Screen() {
   ]);
 
   useEffect(() => {
-    if (!submitted || completionRecorded) return undefined;
+    if (!submitted || completionRecorded || !completedExamSession) return undefined;
 
     let isMounted = true;
     recordMockExamSession({
+      answers: completedExamSession.answers.map((answer) => ({
+        questionId: answer.questionId,
+        isCorrect: answer.isCorrect,
+        timeSpentSeconds: answer.timeSpentSeconds,
+      })),
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: new Date().toISOString(),
+      completedAt: completedExamSession.completedAt,
       correctCount: resultCorrectCount,
       totalCount: resultTotalCount,
     });
@@ -363,6 +469,7 @@ export default function Screen() {
     };
   }, [
     completionRecorded,
+    completedExamSession,
     copy.completionStoreFailure,
     examSessionId,
     recordExamCompletion,
@@ -411,7 +518,11 @@ export default function Screen() {
 
   if (result) {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.hero}>
           <Badge tone={endedByTime ? 'orange' : 'blue'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
@@ -433,6 +544,14 @@ export default function Screen() {
           subtitle={copy.resultNote}
           totalCount={result.totalCount}
         />
+        {completedExamSession && completedExamDiagnostic ? (
+          <MockExamTimeHeatmap
+            answers={completedExamSession.answers}
+            language={language}
+            medianMs={completedExamDiagnostic.medianMs}
+            onSelectQuestion={handleSelectHeatmapQuestion}
+          />
+        ) : null}
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -485,7 +604,18 @@ export default function Screen() {
           {copy.questionReviewTitle}
         </Text>
         {reviewItems.map((item, index) => (
-          <View key={item.questionId} style={styles.reviewCard}>
+          <View
+            key={item.questionId}
+            onLayout={(event) => {
+              reviewCardYByQuestionIdRef.current[item.questionId] = event.nativeEvent.layout.y;
+            }}
+            ref={(node) => {
+              reviewCardRefs.current[item.questionId] = node as unknown as {
+                focus?: () => void;
+              } | null;
+            }}
+            style={styles.reviewCard}
+          >
             <View style={styles.reviewHeader}>
               <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
               <Badge tone={item.isCorrect ? 'green' : 'orange'}>
@@ -575,9 +705,7 @@ export default function Screen() {
                   accessibilityState={{ checked: isSelected, selected: isSelected }}
                   label={optionText}
                   languageOverride={language}
-                  onPress={() =>
-                    setAnswers((current) => ({ ...current, [question.id]: option.id }))
-                  }
+                  onPress={() => handleSelectAnswer(question.id, option.id)}
                   state={isSelected ? 'selected' : 'idle'}
                 />
               );
@@ -592,7 +720,7 @@ export default function Screen() {
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSubmit }}
         disabled={!canSubmit}
-        onPress={() => setSubmitted(true)}
+        onPress={handleSubmitExam}
         style={styles.actionButton}
       >
         {copy.submitLabel}
