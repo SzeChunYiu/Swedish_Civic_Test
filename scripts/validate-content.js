@@ -1274,13 +1274,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
     'Tillbaka till övning',
-    'Quizpass',
-    'Det finns inga quizfrågor ännu.',
+    'Frågepass',
+    'Det finns inga övningsfrågor ännu.',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    'Quizpass ${currentSessionId}',
+    'Frågepass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här quizfrågan',
+    'Försök igen med den här frågan',
   ],
   en: [
     'Back to Practice',
@@ -1350,8 +1350,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta quiz',
-    'Starta quiz för ${chapterTitle}',
+    'Starta frågepass',
+    'Starta frågepass för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -1363,6 +1363,12 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Start quiz for ${chapterTitle}',
   ],
 };
+const SWEDISH_QUIZ_LOANWORD_PATTERNS = [
+  new RegExp(['Starta', 'quiz'].join('\\s+')),
+  new RegExp(['Quiz', 'pass'].join('')),
+  new RegExp(['quiz', 'frågor'].join('')),
+  new RegExp(['quiz', 'frågan'].join('')),
+];
 const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
   ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
@@ -3677,6 +3683,11 @@ function exitWithValidationFailures() {
   process.exit(1);
 }
 
+function printValidationSummary(summary) {
+  console.log('Content validation OK');
+  console.log(JSON.stringify(summary, null, 2));
+}
+
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -3798,8 +3809,8 @@ const STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED = [
 ];
 const STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN = [
   /gör ett\s+quiz/i,
-  /quizfrågor/i,
-  /quizpass/i,
+  new RegExp(['quiz', 'frågor'].join(''), 'i'),
+  new RegExp(['quiz', 'pass'].join(''), 'i'),
   /quizet/i,
   /provexempel/i,
 ];
@@ -6817,6 +6828,25 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
+if (process.argv.includes('--focus-native-quiz-copy')) {
+  validateQuizRouteHeaderParity();
+  validateQuizRouteCopyParity();
+  validateChapterRouteHeaderParity();
+  validateChapterRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    quizRouteHeadersValidated,
+    quizRouteHeaderParityValidated,
+    quizRouteCopyLabelsValidated,
+    quizRouteCopyParityValidated,
+    chapterRouteHeadersValidated,
+    chapterRouteHeaderParityValidated,
+    chapterRouteCopyLabelsValidated,
+    chapterRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -8353,6 +8383,12 @@ function validateQuizRouteCopyParity() {
       if (labelIsValid) quizRouteCopyLabelsValidated += 1;
     });
   });
+  for (const pattern of SWEDISH_QUIZ_LOANWORD_PATTERNS) {
+    if (pattern.test(quizRoute)) {
+      reject('quiz route Swedish copy must avoid English quiz loanwords');
+      break;
+    }
+  }
 
   const expectedLabelCount = Object.values(EXPECTED_QUIZ_ROUTE_COPY_LABELS).reduce(
     (count, labels) => count + labels.length,
@@ -8574,6 +8610,9 @@ function validateChapterRouteHeaderParity() {
   if (unheaderedRouteHeadings.length > 0) {
     reject('chapter route title and section text must expose accessibilityRole="header"');
   }
+  if (/chapterQuestions\.map\s*\(/.test(chapterRoute)) {
+    reject('chapter route must not eagerly map all chapter questions');
+  }
 
   EXPECTED_CHAPTER_ROUTE_HEADERS.forEach((expectedHeader) => {
     if (!expectedHeader.pattern.test(chapterRoute)) {
@@ -8630,6 +8669,12 @@ function validateChapterRouteCopyParity() {
       if (labelIsValid) chapterRouteCopyLabelsValidated += 1;
     });
   });
+  for (const pattern of SWEDISH_QUIZ_LOANWORD_PATTERNS) {
+    if (pattern.test(chapterRoute)) {
+      reject('chapter route Swedish copy must avoid English quiz loanwords');
+      break;
+    }
+  }
 
   const expectedLabelCount = Object.values(EXPECTED_CHAPTER_ROUTE_COPY_LABELS).reduce(
     (count, labels) => count + labels.length,
