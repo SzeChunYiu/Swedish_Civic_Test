@@ -98,7 +98,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
       /Test native ad|Inbyggd testannons|AdMob test placement preview|AdMob-testplacering/,
     );
   }
-  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+  assert.doesNotMatch(
+    examSource,
+    /AdBanner|NativeAd|Interstitial|LaunchPopupAd|RewardedAd|showRewardedExtraExamAd|rewardPreview|sponsor preview|Sponsrad förhandsvisning|Sponsored preview|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
+  );
 });
 
 test('Home ad placement waits for Remove Ads entitlements before rendering', () => {

@@ -13,35 +13,24 @@ const copy: Record<
   {
     activeCount: string;
     heading: string;
-    previewBody: string;
-    previewButton: string;
-    previewTitle: string;
     status: string;
+    startButton: string;
     timeLeft: RegExp;
-    unlockButton: string;
   }
 > = {
   sv: {
     activeCount: `0/${totalQuestions} besvarade`,
     heading: 'Övningsprov',
-    previewBody:
-      'Slutför den korta förhandsvisningen innan du låser upp ett extra övningsprov. Det här är inte ett riktigt prov och ger ingen officiell fördel.',
-    previewButton: 'Slutför förhandsvisning',
-    previewTitle: 'Sponsrad förhandsvisning',
-    status: 'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
+    status: 'Dagens kostnadsfria övningsprov är använt. Extra prov låses inte upp på provskärmen.',
+    startButton: 'Starta övningsprov',
     timeLeft: /^Tid kvar/,
-    unlockButton: 'Lås upp extra prov',
   },
   en: {
     activeCount: `0/${totalQuestions} answered`,
     heading: 'Mock exam',
-    previewBody:
-      'Complete the short preview before unlocking an extra mock exam. This is not a real exam and does not provide any official advantage.',
-    previewButton: 'Complete sponsor preview',
-    previewTitle: 'Sponsored preview',
-    status: 'Daily free mock exam used. Extra exam available.',
+    status: 'Daily free mock exam used. Extra exams are not unlocked on the exam screen.',
+    startButton: 'Start mock exam',
     timeLeft: /^Time left/,
-    unlockButton: 'Unlock extra exam',
   },
 };
 
@@ -105,7 +94,7 @@ async function readRewardedCredits(page: Page) {
 test.use({ viewport: { width: 390, height: 844 } });
 
 for (const language of ['sv', 'en'] as const) {
-  test(`web rewarded preview unlocks an extra mock exam in ${language.toUpperCase()}`, async ({
+  test(`exam route keeps rewarded ads off-screen in ${language.toUpperCase()}`, async ({
     page,
   }) => {
     const consoleErrors = collectConsoleErrors(page);
@@ -118,24 +107,19 @@ for (const language of ['sv', 'en'] as const) {
 
     await expect(page.getByRole('heading', { name: t.heading }).first()).toBeVisible();
     await expect(page.getByText(t.status)).toBeVisible();
-    await expect(page.getByText(t.previewTitle)).toBeVisible();
-    await expect(page.getByText(t.previewBody)).toBeVisible();
+    await expect(page.getByText(/Sponsored preview|Sponsrad förhandsvisning/)).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: /Complete sponsor preview|Slutför förhandsvisning/ }),
+    ).toHaveCount(0);
     await expect(page.getByText(t.activeCount)).toHaveCount(0);
     await expect(page.getByText(t.timeLeft)).toHaveCount(0);
     await expect(await readRewardedCredits(page)).toBe(0);
 
-    const completionButton = page.getByRole('button', { name: t.previewButton });
-    await expectReachableTarget(completionButton);
-    await completionButton.click();
-    await expect(completionButton).toBeDisabled();
-
-    const unlockButton = page.getByRole('button', { name: t.unlockButton });
-    await expectReachableTarget(unlockButton);
-    await unlockButton.click();
-
-    await expect(page.getByText(t.activeCount)).toBeVisible();
-    await expect(page.getByText(t.timeLeft)).toBeVisible();
-    await expect(page.getByText(t.previewTitle)).toHaveCount(0);
+    const startButton = page.getByRole('button', { name: t.startButton });
+    await expectReachableTarget(startButton);
+    await expect(startButton).toBeDisabled();
+    await expect(page.getByText(t.activeCount)).toHaveCount(0);
+    await expect(page.getByText(t.timeLeft)).toHaveCount(0);
     await expect(await readRewardedCredits(page)).toBe(0);
 
     expect(consoleErrors).toEqual([]);
