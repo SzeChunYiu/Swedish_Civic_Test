@@ -24,6 +24,18 @@ test('question-bank CSV keeps its public row contract', () => {
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
 });
 
+test('question-bank CSV has unique public header names', () => {
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const [headerLine] = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(headerLine);
+  const duplicateHeaderNames = [
+    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
+  ];
+
+  assert.deepEqual(duplicateHeaderNames, []);
+  assert.equal(header.filter((field) => field === 'uhrSourcePublisher').length, 1);
+});
+
 test('question-bank CSV contract rejects public header drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -83,7 +95,39 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 19 columns, expected 18/,
+    /content\/question-bank\.csv row 2 has 22 columns, expected 21/,
+  );
+});
+
+test('question-bank CSV contract rejects duplicate header names', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(
+      '"questionProvenance"',
+      '"uhrSourcePublisher"',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /content\/question-bank\.csv header has duplicate column name\(s\): uhrSourcePublisher/,
   );
 });
 
@@ -208,52 +252,6 @@ test('question-bank CSV exposes UHR source metadata with no blank cells', () => 
       `every row should export ${field}`,
     );
   }
-});
-
-test('question-bank CSV contract rejects source publisher drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-process.argv.push('--check');
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/lib/content/provenance.ts')) {
-    return String(contents).replace(
-      "if (tags.includes('published-variant')) return 'derived';",
-      "if (tags.includes('published-variant')) return 'uhr';",
-    );
-  }
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    return String(contents).replace(/,"derived"$/gm, ',"uhr"');
-  }
-  return contents;
-};
-require('./scripts/export-question-bank.js');
-  if (normalizedPath.endsWith('/content/question-bank.csv')) {
-    return String(contents).replace(
-      'Universitets- och högskolerådet (UHR)',
-      'Fel utgivare',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /question-bank export provenance helper composition is .* expected tag-derived/,
-    /content\/question-bank\.csv row 2 q001 uhrSourcePublisher is "Fel utgivare", expected "Universitets- och högskolerådet \(UHR\)"/,
-  );
 });
 
 test('question-bank CSV contract summarizes shared UHR source metadata drift', () => {

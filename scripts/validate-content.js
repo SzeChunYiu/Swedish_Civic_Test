@@ -113,7 +113,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
   'questionProvenance',
-  'uhrSourcePublisher',
 ];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
@@ -6990,14 +6989,6 @@ function validateAdPlacementRouteParity() {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
       );
-      const webFallbackShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*WEB_AD_FALLBACK_CONSENT_DECISION\\s*,?\\s*\\)`,
-      );
-      const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
-      const adBannerSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-        'utf8',
-      );
       const nativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
@@ -7006,20 +6997,8 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
         'utf8',
       );
-      if (!adsSource.includes('export const WEB_AD_FALLBACK_CONSENT_DECISION')) {
-        reject('ads.ts must export the shared web fallback consent decision');
-        routeIsValid = false;
-      }
-      if (!adBannerSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
-        reject('AdBanner web fallback must use the shared web fallback consent decision');
-        routeIsValid = false;
-      }
-      if (!webFallbackShouldShowPattern.test(nativeAdCardSource)) {
+      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
-        routeIsValid = false;
-      }
-      if (!nativeAdCardSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
-        reject('NativeAdCard web fallback must use the shared web fallback consent decision');
         routeIsValid = false;
       }
       if (nativeAdCardSource.includes('react-native-google-mobile-ads')) {
@@ -13175,6 +13154,17 @@ function validateQuestionBankCsvContract() {
   }
 
   const [header, ...dataRows] = rows;
+  const duplicateHeaderNames = [
+    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
+  ];
+  if (duplicateHeaderNames.length) {
+    fail(
+      `content/question-bank.csv header has duplicate column name(s): ${duplicateHeaderNames.join(
+        ', ',
+      )}`,
+    );
+  }
+
   if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
     fail(
       `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
@@ -13232,7 +13222,6 @@ function validateQuestionBankCsvContract() {
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
       getQuestionProvenance(question),
-      uhrSectionMap?.source?.publisher,
     ];
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {

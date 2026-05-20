@@ -70,7 +70,6 @@ const uhrSource = JSON.parse(
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
 );
-const uhrSourcePublisher = uhrSectionMap.source?.publisher;
 const rows = [
   [
     'id',
@@ -94,7 +93,6 @@ const rows = [
     'reviewStatus',
     'tags',
     'questionProvenance',
-    'uhrSourcePublisher',
   ],
   ...questions.map((question) => [
     question.id,
@@ -118,7 +116,6 @@ const rows = [
     question.reviewStatus,
     question.tags.join('|'),
     getQuestionProvenance(question),
-    uhrSourcePublisher,
   ]),
 ];
 
