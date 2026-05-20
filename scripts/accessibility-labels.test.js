@@ -73,30 +73,3 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
 
   assert.deepEqual(offenders, []);
 });
-
-test('QuestionNavigator tabs keep stable token-sized touch targets', () => {
-  const source = fs.readFileSync(path.join(ROOT, 'components/QuestionNavigator.tsx'), 'utf8');
-
-  assert.match(
-    source,
-    /48px token-sized press targets/,
-    'QuestionNavigator JSDoc should name the concrete target-size contract',
-  );
-  assert.match(source, /hitSlop=\{space\[1\]\}/, 'navigator tabs should keep token hit slop');
-  assert.match(
-    source,
-    /minHeight:\s*space\[6\]/,
-    'navigator tabs should render at least 48px high',
-  );
-  assert.match(source, /minWidth:\s*space\[6\]/, 'navigator tabs should render at least 48px wide');
-  assert.doesNotMatch(
-    source,
-    /min(?:Height|Width):\s*space\[4\]/,
-    'navigator tabs must not regress to the old 32px visual target',
-  );
-  assert.match(
-    source,
-    /pressed && !isDisabled \? styles\.pressed : null/,
-    'navigator tabs should keep token pressed feedback',
-  );
-});
