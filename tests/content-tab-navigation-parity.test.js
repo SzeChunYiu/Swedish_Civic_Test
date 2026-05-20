@@ -15,7 +15,47 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
-test('tab navigation uses localized labels and suppresses placeholder glyph output', () => {
+function readValidationScript() {
+  return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
+}
+
+function extractTabNavigationParitySource(source) {
+  const start = source.indexOf('function validateTabNavigationParity()');
+  const end = source.indexOf('\nfunction validateAdPlacementRouteParity()', start);
+  assert.notEqual(start, -1, 'validateTabNavigationParity should exist');
+  assert.notEqual(end, -1, 'validateAdPlacementRouteParity should follow tab validation');
+  return source.slice(start, end);
+}
+
+function countConstDeclarations(source, identifier) {
+  return (source.match(new RegExp(`\\bconst\\s+${identifier}\\b`, 'g')) ?? []).length;
+}
+
+test('validate-content script parses before tab parity harness executes', () => {
+  const result = spawnSync(process.execPath, ['--check', 'scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+});
+
+test('tab navigation parity keeps one Swedish exam-title declaration block', () => {
+  const tabParitySource = extractTabNavigationParitySource(readValidationScript());
+
+  assert.equal(countConstDeclarations(tabParitySource, 'swedishTabCopyBlock'), 1);
+  assert.equal(countConstDeclarations(tabParitySource, 'swedishExamTabTitle'), 1);
+
+  const duplicateFixture = tabParitySource.replace(
+    'const iconMapBlock',
+    "const swedishTabCopyBlock = '';\n  const swedishExamTabTitle = '';\n\n  const iconMapBlock",
+  );
+
+  assert.equal(countConstDeclarations(duplicateFixture, 'swedishTabCopyBlock'), 2);
+  assert.equal(countConstDeclarations(duplicateFixture, 'swedishExamTabTitle'), 2);
+});
+
+test('tab navigation uses localized labels and semantic token-colored icons', () => {
   const summary = parseValidationSummary();
   const tabLayout = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/_layout.tsx'), 'utf8');
 

@@ -1335,6 +1335,7 @@ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
+const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
     label: 'mock exam title',
@@ -7857,12 +7858,6 @@ function validateTabNavigationParity() {
 
   const iconMapBlock = tabLayout.match(/const tabIconMap: TabIconMap = \{([\s\S]*?)\};/)?.[1] ?? '';
   const seenIcons = new Set();
-
-  const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
-  const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
-  if (swedishExamTabTitle !== 'Övningsprov') {
-    reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
-  }
 
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(

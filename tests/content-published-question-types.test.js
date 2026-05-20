@@ -1429,30 +1429,12 @@ require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
-        "    ? {",
-        "        ...question,",
-        "        explanationSv:",
-        "          'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften.',",
-        '        explanationEn:',
-        '          "The statement is true: Sweden\\'s northernmost part lies north of the Arctic Circle. That makes True correct, while False contradicts the fact.",',
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /contains a false-answer explanation that says True is correct/,
+    /q002 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -1479,8 +1461,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ...question,",
         "        explanationSv:",
         "          'Påståendet är sant: Sveriges nordligaste del ligger norr om polcirkeln. Därför stämmer alternativet Sant, medan Falskt motsäger uppgiften.',",
-        '        explanationEn:',
-        '          "The statement is true: Sweden\\'s northernmost part lies north of the Arctic Circle. That makes True correct, while False contradicts the fact.",',
+        "        explanationEn:",
+        "          \"The statement is true: Sweden's northernmost part lies north of the Arctic Circle. That makes True correct, while False contradicts the fact.\",",
         "      }",
         "    : question,",
         ");",
@@ -1570,8 +1552,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ...question,",
         "        explanationSv:",
         "          'Sveriges nordligaste del ligger norr om polcirkeln. Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.',",
-        '        explanationEn:',
-        '          "Sweden\\'s northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.",',
+        "        explanationEn:",
+        "          \"Sweden's northernmost part lies north of the Arctic Circle. Therefore the statement in the question is false, so False is correct.\",",
         "      }",
         "    : question,",
         ");",
