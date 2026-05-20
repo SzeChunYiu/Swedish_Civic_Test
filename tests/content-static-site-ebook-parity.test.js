@@ -26,6 +26,7 @@ const swedishEbookQuizLoanwordPatterns = [
   phrasePattern('quiz', 'pass'),
   phrasePattern('quiz', 'et'),
 ];
+const swedishEbookMockExamUnnaturalPatterns = [/provexempel/i];
 const unsupportedEbookOutcomeClaimPatterns = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -152,6 +153,12 @@ function assertNoSwedishEbookQuizLoanwords(value) {
   }
 }
 
+function assertNoSwedishEbookMockExamUnnaturalness(value) {
+  for (const pattern of swedishEbookMockExamUnnaturalPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
 function assertNoUnsupportedEbookOutcomeClaim(value) {
   for (const pattern of unsupportedEbookOutcomeClaimPatterns) {
     assert.doesNotMatch(value, pattern);
@@ -189,9 +196,30 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assertNoStaleEbookCopy(source);
   assertNoSwedishEbookQuizLoanwords(source);
+  assertNoSwedishEbookMockExamUnnaturalness(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
   assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
+  assert.match(source, /Starta [oö]vningsprov/);
+  assert.match(source, /gör ett [oö]vningsprov/);
+});
+
+test('static ebook Swedish mock-exam wording uses övningsprov', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const swedishIntroHtml = renderChapter(harness, 'sv', 'intro');
+  const swedishMockExamHtml = renderChapter(harness, 'sv', '12');
+  const englishMockExamHtml = renderChapter(harness, 'en', '12');
+
+  assertNoSwedishEbookMockExamUnnaturalness(source);
+  assertNoSwedishEbookMockExamUnnaturalness(swedishIntroHtml);
+  assertNoSwedishEbookMockExamUnnaturalness(swedishMockExamHtml);
+  assert.match(source, /Starta [oö]vningsprov/);
+  assert.match(source, /gör ett [oö]vningsprov/);
+  assert.match(swedishIntroHtml, /Avsluta veckan med ett[\s\S]{0,80}[oö]vningsprov/);
+  assert.match(swedishMockExamHtml, /Starta [oö]vningsprov/);
+  assert.match(swedishMockExamHtml, /gör ett [oö]vningsprov/);
+  assert.match(englishMockExamHtml, /Start mock exam/);
 });
 
 test('static ebook does not promise source-backed footnotes without citation coverage', () => {
@@ -232,6 +260,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assertNoStaleEbookCopy(englishHtml);
     assertNoStaleEbookCopy(swedishHtml);
     assertNoSwedishEbookQuizLoanwords(swedishHtml);
+    assertNoSwedishEbookMockExamUnnaturalness(swedishHtml);
     assertNoUnsupportedEbookOutcomeClaim(englishHtml);
     assertNoUnsupportedEbookOutcomeClaim(swedishHtml);
     assertNoUnsupportedPracticalTestClaim(englishHtml);
@@ -255,7 +284,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.match(swedishHtml, /href="#\/mock"/);
     assert.match(englishHtml, /href="#\/sources"/);
     assert.match(swedishHtml, /href="#\/sources"/);
-    assert.doesNotMatch(swedishHtml, /provexempel/i);
+    assert.match(swedishHtml, /[OÖ]vningsprov/);
 
     if (chapterId === 'intro') {
       assert.match(englishHtml, /What this book is/);

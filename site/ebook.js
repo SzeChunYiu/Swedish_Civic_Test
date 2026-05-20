@@ -475,8 +475,8 @@
     },
 
     12: {
-      kicker: { en: 'Chapter 12 · Mock exam', sv: 'Kapitel 12 · Provexempel' },
-      title: { en: 'Mock exam', sv: 'Provexempel' },
+      kicker: { en: 'Chapter 12 · Mock exam', sv: 'Kapitel 12 · Övningsprov' },
+      title: { en: 'Mock exam', sv: 'Övningsprov' },
       title_em: { en: 'and survival guide.', sv: 'och överlevnadsguide.' },
       lede: {
         en: "You've read the whole book. Now do twenty questions, take a fika, and book the real test.",
@@ -508,7 +508,7 @@
         sv: svStudyBrief(
           [
             'Provträning ska likna provsituationen: tidsgräns, blandade frågor och ingen återkoppling förrän du är klar.',
-            'Efter ett provexempel ska du inte bara titta på poängen. Läs igenom fel svar och gå tillbaka till kapitlen där du tappade flest poäng.',
+            'Efter ett övningsprov ska du inte bara titta på poängen. Läs igenom fel svar och gå tillbaka till kapitlen där du tappade flest poäng.',
             'Använd UHR:s officiella studiematerial som kontrollpunkt veckan före provet.',
             'På provdagen är giltig legitimation, god marginal och lugn läsning viktigare än sista-minuten-plugg.',
           ],
@@ -593,7 +593,7 @@
     9: { href: '#/practice?c=8', en: 'Practice money', sv: 'Öva ekonomi' },
     10: { href: '#/practice?c=11', en: 'Practice EU and world', sv: 'Öva EU och omvärld' },
     11: { href: '#/practice?c=mix', en: 'Practice mixed questions', sv: 'Öva blandade frågor' },
-    12: { href: '#/mock', en: 'Start mock exam', sv: 'Starta provexempel' },
+    12: { href: '#/mock', en: 'Start mock exam', sv: 'Starta övningsprov' },
     13: { href: '#/practice?c=13', en: 'Practice traditions', sv: 'Öva traditioner' },
   };
   function practiceLink(id) {
@@ -638,13 +638,13 @@
           <span class="ebook__progress">${progressLabel}</span>
           <p>${
             sv
-              ? 'Gör kapitlet aktivt: öva direkt, kontrollera källor eller kör ett provexempel när du har läst klart.'
+              ? 'Gör kapitlet aktivt: öva direkt, kontrollera källor eller gör ett övningsprov när du har läst klart.'
               : 'Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading.'
           }</p>
         </div>
         <div class="ebook__study-links">
           <a class="btn btn--gold btn--sm" href="${practice.href}">${practice[lang]} →</a>
-          <a class="btn btn--ghost btn--sm" href="#/mock">${sv ? 'Provexempel' : 'Mock exam'}</a>
+          <a class="btn btn--ghost btn--sm" href="#/mock">${sv ? 'Övningsprov' : 'Mock exam'}</a>
           <a class="btn btn--ghost btn--sm" href="#/sources">${sv ? 'Källor' : 'Sources'}</a>
         </div>
       </aside>
