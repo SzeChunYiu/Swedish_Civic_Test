@@ -3612,6 +3612,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'answerAttempts', type: 'AnswerAttemptProgress[]', optional: false },
   { name: 'totalXp', type: 'number', optional: false },
   { name: 'answerDates', type: 'string[]', optional: false },
+  { name: 'answerHistory', type: 'AnswerHistoryEntry[]', optional: false },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
   { name: 'streakFreezeState', type: 'StreakFreezeState', optional: false },
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
@@ -12694,6 +12695,15 @@ function validateProgressStoreSchemaParity() {
       'progress hydration must normalize persisted answerDates',
     ],
     [
+      'function normalizeAnswerHistoryEntry(value: unknown)',
+      'progress hydration must normalize persisted answerHistory entries through a shared helper',
+    ],
+    [
+      '.map(normalizeAnswerHistoryEntry) .filter((entry): entry is AnswerHistoryEntry => !!entry)',
+      'progress hydration must drop invalid answerHistory entries',
+    ],
+    ['answerHistory: [],', 'empty progress must initialize answer history'],
+    [
       'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
       'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
     ],
@@ -12786,6 +12796,10 @@ function validateProgressStoreSchemaParity() {
     [
       'totalXp: state.totalXp + completionXp,',
       'mock exam completion XP must update persisted total XP',
+    ],
+    [
+      'const answerHistory = [ ...state.answerHistory, { questionId, isCorrect, answeredAt, }, ].slice(-maxHydratedQuestionAnswerCount);',
+      'recordAnswer must persist a dated answer history entry',
     ],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
     [

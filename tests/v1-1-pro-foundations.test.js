@@ -476,6 +476,89 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
   );
 });
 
+test('dashboard progress snapshot prefers dated answer history over synthetic attempts', () => {
+  const { buildDashboardProgressSnapshot } = loadTs('lib/learning/dashboardProgressSnapshot.ts');
+  const { dailyActivityHistogram } = loadTs('lib/learning/dashboardStats.ts');
+  const questionProgress = {
+    q1: {
+      questionId: 'q1',
+      seenCount: 3,
+      correctCount: 2,
+      wrongCount: 1,
+      correctStreak: 1,
+      lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+    },
+    q2: {
+      questionId: 'q2',
+      seenCount: 1,
+      correctCount: 0,
+      wrongCount: 1,
+      correctStreak: 0,
+      lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+    },
+  };
+
+  const progress = buildDashboardProgressSnapshot({
+    answerDates: ['2026-05-17', '2026-05-18', '2026-05-19'],
+    answerHistory: [
+      {
+        questionId: 'q1',
+        isCorrect: false,
+        answeredAt: '2026-05-17T10:00:00.000Z',
+        timeSpentSeconds: 14,
+      },
+      {
+        questionId: 'q1',
+        isCorrect: true,
+        answeredAt: '2026-05-19T10:00:00.000Z',
+      },
+    ],
+    dailyGoalAnswers: 10,
+    mockExamSessions: [],
+    questionProgress,
+    totalXp: 120,
+  });
+
+  assert.equal(progress.sessions.length, 1);
+  assert.deepEqual(
+    progress.sessions[0].answers.map((answer) => ({
+      answeredAt: answer.answeredAt,
+      isCorrect: answer.isCorrect,
+      questionId: answer.questionId,
+      timeSpentSeconds: answer.timeSpentSeconds,
+    })),
+    [
+      {
+        answeredAt: '2026-05-17T10:00:00.000Z',
+        isCorrect: false,
+        questionId: 'q1',
+        timeSpentSeconds: 14,
+      },
+      {
+        answeredAt: '2026-05-18T10:00:00.000Z',
+        isCorrect: false,
+        questionId: 'q2',
+        timeSpentSeconds: 0,
+      },
+      {
+        answeredAt: '2026-05-19T10:00:00.000Z',
+        isCorrect: true,
+        questionId: 'q1',
+        timeSpentSeconds: 0,
+      },
+    ],
+  );
+  assert.equal(
+    dailyActivityHistogram(progress, { daysBack: 3, now: new Date('2026-05-19T12:00:00.000Z') })[0]
+      .count,
+    1,
+  );
+  assert.equal(
+    progress.sessions[0].answers.filter((answer) => answer.questionId === 'q1').length,
+    2,
+  );
+});
+
 test('dailyActivityHistogram: returns contiguous bins ending today', () => {
   const { dailyActivityHistogram } = loadTs('lib/learning/dashboardStats.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');

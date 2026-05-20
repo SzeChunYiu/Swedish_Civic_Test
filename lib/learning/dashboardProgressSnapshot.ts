@@ -1,9 +1,14 @@
-import type { MockExamProgress, QuestionProgress } from '../storage/progressStore';
+import type {
+  AnswerHistoryEntry,
+  MockExamProgress,
+  QuestionProgress,
+} from '../storage/progressStore';
 import type { QuizAnswer, QuizSession, UserProgress } from '../../types/progress';
 import { calculateLevel } from './xp';
 
 type DashboardProgressSnapshotInput = {
   answerDates: string[];
+  answerHistory?: AnswerHistoryEntry[];
   dailyGoalAnswers: number;
   mockExamSessions: MockExamProgress[];
   questionProgress: Record<string, QuestionProgress>;
@@ -40,30 +45,32 @@ function answerAttemptsForProgress(progress: QuestionProgress): QuizAnswer[] {
   }));
 }
 
-function answerAttemptsForMockExam(session: MockExamProgress): QuizAnswer[] {
-  return (session.answers ?? []).map((answer) => ({
-    answeredAt: session.completedAt,
-    isCorrect: answer.isCorrect,
-    questionId: answer.questionId,
+function answerAttemptForHistoryEntry(entry: AnswerHistoryEntry): QuizAnswer {
+  return {
+    answeredAt: entry.answeredAt,
+    isCorrect: entry.isCorrect,
+    questionId: entry.questionId,
     selectedOptionIds: [],
-    timeSpentSeconds: answer.timeSpentSeconds,
-  }));
+    timeSpentSeconds: entry.timeSpentSeconds ?? 0,
+  };
 }
 
-/**
- * Build the dashboard selector shape from the local progress store without
- * adding a new persisted session log. Repeated historical attempts are placed
- * on the latest known answer date because the current store does not retain
- * per-attempt timestamps.
- */
 export function buildDashboardProgressSnapshot({
   answerDates,
+  answerHistory = [],
   dailyGoalAnswers,
   mockExamSessions,
   questionProgress,
   totalXp,
 }: DashboardProgressSnapshotInput): UserProgress {
-  const practiceAnswers = Object.values(questionProgress).flatMap(answerAttemptsForProgress);
+  const historicalQuestionIds = new Set(answerHistory.map((entry) => entry.questionId));
+  const historicalAnswers = answerHistory.map(answerAttemptForHistoryEntry);
+  const fallbackAnswers = Object.values(questionProgress)
+    .filter((progress) => !historicalQuestionIds.has(progress.questionId))
+    .flatMap(answerAttemptsForProgress);
+  const practiceAnswers = [...historicalAnswers, ...fallbackAnswers].sort((a, b) =>
+    a.answeredAt.localeCompare(b.answeredAt),
+  );
   const practiceQuestionIds = [...new Set(practiceAnswers.map((answer) => answer.questionId))];
   const practiceSession: QuizSession | null =
     practiceAnswers.length > 0
