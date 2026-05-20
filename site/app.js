@@ -442,8 +442,8 @@ const i18n = (window.i18n = {
     'footer.copyright': '© 2026 Almost Swedish. Made with kanelbullar in Stockholm.',
     'footer.fika': 'Lagom built. Fika tested.',
     'ad.label': 'Sponsored',
-    'ad.placeholder': 'Your AdSense slot will render here.',
-    'ad.anchor.placeholder': 'Anchor ad slot',
+    'ad.placeholder': 'Ad space reserved while reviewed ad slots are configured.',
+    'ad.anchor.placeholder': 'Reserved ad area',
     'ad.native.placeholder': 'Native sponsored row',
     'practice.kicker': 'Practice round',
     'practice.title': 'Ten questions.',
@@ -828,8 +828,8 @@ const i18n = (window.i18n = {
     'footer.copyright': '© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.',
     'footer.fika': 'Lagom byggt. Fika-testat.',
     'ad.label': 'Annons',
-    'ad.placeholder': 'AdSense-yta visas här.',
-    'ad.anchor.placeholder': 'Ankarannons',
+    'ad.placeholder': 'Annonsyta reserverad tills granskade annonsplatser är konfigurerade.',
+    'ad.anchor.placeholder': 'Reserverad annonsyta',
     'ad.native.placeholder': 'Sponsrad rad',
     'practice.kicker': 'Övningsrunda',
     'practice.title': 'Tio frågor.',
@@ -997,28 +997,77 @@ document.addEventListener('click', (e) => {
 
 const SMT_ADS = {
   publisherId: 'ca-pub-2451892671779738',
+  slots: {
+    inline: '',
+    anchor: '',
+  },
   scriptLoaded: false,
 };
 
+function smtNormalizeConsent(value) {
+  return value === 'all' || value === 'min' ? value : null;
+}
+
+function smtClearConsent() {
+  try {
+    localStorage.removeItem('smt_consent');
+  } catch {}
+}
+
 function smtGetConsent() {
   try {
-    return localStorage.getItem('smt_consent');
+    const stored = localStorage.getItem('smt_consent');
+    const normalized = smtNormalizeConsent(stored);
+    if (stored && !normalized) smtClearConsent();
+    return normalized;
   } catch {
     return null;
   }
 }
+
 function smtSetConsent(v) {
+  const normalized = smtNormalizeConsent(v);
+  if (!normalized) {
+    smtClearConsent();
+    return;
+  }
   try {
-    localStorage.setItem('smt_consent', v);
+    localStorage.setItem('smt_consent', normalized);
   } catch {}
+}
+
+function smtIsRealAdSenseSlotId(slotId) {
+  return typeof slotId === 'string' && /^[0-9]{10,}$/.test(slotId) && !/^0+$/.test(slotId);
+}
+
+function smtStaticAdsAreConfigured() {
+  return (
+    /^ca-pub-[0-9]{16}$/.test(SMT_ADS.publisherId || '') &&
+    smtIsRealAdSenseSlotId(SMT_ADS.slots.inline) &&
+    smtIsRealAdSenseSlotId(SMT_ADS.slots.anchor)
+  );
+}
+
+function smtConfigureAdSenseSlots() {
+  document.querySelectorAll('ins.adsbygoogle[data-smt-ad-placement]').forEach((el) => {
+    const placement = el.getAttribute('data-smt-ad-placement');
+    const slotId = SMT_ADS.slots[placement];
+    if (!smtIsRealAdSenseSlotId(slotId)) {
+      el.removeAttribute('data-ad-client');
+      el.removeAttribute('data-ad-slot');
+      return;
+    }
+    el.setAttribute('data-ad-client', SMT_ADS.publisherId);
+    el.setAttribute('data-ad-slot', slotId);
+  });
 }
 
 function smtLoadAdSense() {
   if (SMT_ADS.scriptLoaded) return;
-  if (!SMT_ADS.publisherId || SMT_ADS.publisherId.includes('XXXX')) {
-    // No real publisher ID yet — leave the styled placeholders visible.
+  if (!smtStaticAdsAreConfigured()) {
     return;
   }
+  smtConfigureAdSenseSlots();
   SMT_ADS.scriptLoaded = true;
   const s = document.createElement('script');
   s.async = true;
@@ -1035,11 +1084,25 @@ function smtLoadAdSense() {
 
 function smtApplyConsent(choice) {
   // 'all' = personalised, 'min' = non-personalised (NPA=1)
-  if (choice === 'all' || choice === 'min') {
+  const normalized = smtNormalizeConsent(choice);
+  if (!normalized) {
+    smtClearConsent();
+    smtShowConsent();
+    if (window.smtRefreshAds) window.smtRefreshAds();
+    return;
+  }
+  if (!smtStaticAdsAreConfigured()) {
+    smtHideConsent();
+    if (window.smtRefreshAds) window.smtRefreshAds();
+    return;
+  }
+  if (normalized === 'all' || normalized === 'min') {
     document.querySelectorAll('ins.adsbygoogle').forEach((el) => {
-      if (choice === 'min') el.setAttribute('data-npa', '1');
+      if (normalized === 'min') el.setAttribute('data-npa', '1');
       else el.removeAttribute('data-npa');
     });
+    window.adsbygoogle = window.adsbygoogle || [];
+    window.adsbygoogle.requestNonPersonalizedAds = normalized === 'min' ? 1 : 0;
     smtLoadAdSense();
   }
   if (window.smtRefreshAds) window.smtRefreshAds();
@@ -1057,6 +1120,7 @@ function smtHideConsent() {
 function smtShowAds(mode) {
   // 'none' | 'inline' | 'anchor' | 'both'
   const consent = smtGetConsent();
+  const canShowAds = !!consent && smtStaticAdsAreConfigured();
   let anchorDismissed = false;
   try {
     anchorDismissed = sessionStorage.getItem('smt_anchor_closed') === '1';
@@ -1064,9 +1128,9 @@ function smtShowAds(mode) {
   const inline = document.querySelector('[data-ad-slot="inline"]');
   const anchor = document.querySelector('[data-ad-slot="anchor"]');
   const native = document.querySelectorAll('.list-quiet__ad');
-  const showInline = !!consent && (mode === 'inline' || mode === 'both');
-  const showAnchor = !!consent && !anchorDismissed && (mode === 'anchor' || mode === 'both');
-  const showNative = !!consent && (mode === 'inline' || mode === 'both');
+  const showInline = canShowAds && (mode === 'inline' || mode === 'both');
+  const showAnchor = canShowAds && !anchorDismissed && (mode === 'anchor' || mode === 'both');
+  const showNative = canShowAds && (mode === 'inline' || mode === 'both');
   if (inline) inline.hidden = !showInline;
   if (anchor) anchor.hidden = !showAnchor;
   native.forEach((el) => {

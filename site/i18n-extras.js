@@ -2163,7 +2163,8 @@
       'faq.h1': "Su'aalo aad waydiin lahayd",
       'faq.h2': 'kafee dhexdiisa.',
       'ad.label': 'Xayaysiin',
-      'ad.placeholder': 'Goobta xayaysiinta AdSense halkan ayey ka soo bixi doontaa.',
+      'ad.placeholder':
+        'Goob xayaysiin ayaa loo reebay inta meelaha xayaysiinta la hubinayo.',
       'ad.anchor.placeholder': 'Xayaysiin hoose oo ku dheggan',
       'ad.native.placeholder': 'Saf xayaysiin dabiici ah',
       'a11y.settings.open': 'Fur dejinta',

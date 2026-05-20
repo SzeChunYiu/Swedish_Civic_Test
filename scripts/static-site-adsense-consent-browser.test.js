@@ -199,6 +199,45 @@ for (const { consent } of [{ consent: 'min' }, { consent: 'all' }]) {
   );
 }
 
+for (const { consent } of [
+  { consent: 'yes' },
+  { consent: 'false' },
+  { consent: '0' },
+  { consent: 'banana' },
+  { consent: '{"choice":"all"}' },
+]) {
+  test(
+    `invalid stored AdSense consent "${consent}" is ignored before ads render`,
+    chromiumTestOptions(),
+    async () => {
+      const { adScriptRequests, browser, page, server } =
+        await openStaticSiteWithStoredConsent(consent);
+
+      try {
+        const state = await page.evaluate(() => ({
+          anchorHidden: document.querySelector('[data-ad-slot="anchor"]')?.hidden,
+          events: window.__adsenseEvents,
+          inlineHidden: document.querySelector('[data-ad-slot="inline"]')?.hidden,
+          modalHidden: document.getElementById('consent')?.hidden,
+          npa: window.adsbygoogle?.requestNonPersonalizedAds,
+          storedConsent: window.localStorage.getItem('smt_consent'),
+        }));
+
+        assert.equal(state.modalHidden, false);
+        assert.equal(state.storedConsent, null);
+        assert.equal(state.inlineHidden, true);
+        assert.equal(state.anchorHidden, true);
+        assert.equal(adScriptRequests.length, 0);
+        assert.deepEqual(state.events, []);
+        assert.equal(state.npa, undefined);
+      } finally {
+        await browser.close();
+        await server.close();
+      }
+    },
+  );
+}
+
 test('static AdSense stored-consent source keeps NPA before load ordering explicit', () => {
   const source = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
   const index = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
@@ -221,11 +260,15 @@ test('static AdSense stored-consent source keeps NPA before load ordering explic
   );
   assert.match(source, /function smtIsRealAdSenseSlotId\(slotId\)/);
   assert.match(source, /function smtStaticAdsAreConfigured\(\)/);
+  assert.match(source, /function smtNormalizeConsent\(value\)/);
+  assert.match(source, /const normalized = smtNormalizeConsent\(stored\);/);
+  assert.match(source, /if \(stored && !normalized\) smtClearConsent\(\);/);
   assert.match(source, /if \(!smtStaticAdsAreConfigured\(\)\) {\s*smtHideConsent\(\);/);
+  assert.match(source, /const canShowAds = !!consent && smtStaticAdsAreConfigured\(\);/);
   assert.match(source, /window\.adsbygoogle = window\.adsbygoogle \|\| \[\];/);
   assert.match(
     source,
-    /window\.adsbygoogle\.requestNonPersonalizedAds\s*=\s*choice === ['"]min['"] \? 1 : 0;/,
+    /window\.adsbygoogle\.requestNonPersonalizedAds\s*=\s*normalized === ['"]min['"] \? 1 : 0;/,
   );
   assert.ok(
     source.indexOf('window.adsbygoogle.requestNonPersonalizedAds') <
