@@ -1,4 +1,4 @@
-/* Almost Swedish — Settings modal
+/* Sveriges Medborgartest — Settings modal
    - Theme (light/dark/auto)
    - Color palette (5 Swedish-named presets)
    - Buddy picker (10 buddies)
