@@ -448,6 +448,45 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   expect(consoleErrors).toEqual([]);
 });
 
+test('bookmarked practice question appears in Mistakes with correct answer context', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expectPrimaryPrompt(page, 'Var ligger Sverige?', 'Where is Sweden located?');
+  await page.getByLabel('Bokmärk den här frågan').click();
+  await expect(
+    page.getByRole('button', { name: 'Ta bort bokmärket från den här frågan' }),
+  ).toBeVisible();
+
+  await page.getByText('Misstag', { exact: true }).click();
+  await dismissBlockingModals(page);
+
+  await expect(page).toHaveURL(/\/mistakes$/);
+  await expect(page.getByText('Bokmärkta frågor')).toBeVisible();
+  const bookmarkedAnswerCard = page.getByLabel(
+    'Svar att repetera. Rätt svar: I Norden i norra Europa.',
+  );
+  await expect(bookmarkedAnswerCard).toBeVisible();
+  await expect(bookmarkedAnswerCard.getByText('Rätt svar', { exact: true })).toBeVisible();
+  await expect(
+    bookmarkedAnswerCard.getByText('I Norden i norra Europa', { exact: true }),
+  ).toBeVisible();
+  await expect(bookmarkedAnswerCard.getByText('Ditt senaste felaktiga svar')).toHaveCount(0);
+  await expect(page.getByText('Fel svar att repetera')).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('wrong practice answer appears in Mistakes with English answer review context', async ({
   page,
 }) => {

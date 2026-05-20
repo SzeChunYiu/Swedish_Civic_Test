@@ -1189,11 +1189,29 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
     'wrong-count metadata must render localized copy',
   ],
   ['useMistakeReviewStore', 'mistakes route must read stored wrong-answer review text'],
+  ['type AnswerReviewBlockProps = {', 'mistakes route must share one answer-review contract'],
+  ['function AnswerReviewBlock({', 'mistakes route must render answer reviews through one block'],
   ['{copy.selectedWrongAnswerLabel}', 'selected wrong-answer label must render localized copy'],
   ['{copy.correctAnswerLabel}', 'correct-answer label must render localized copy'],
   [
     'accessibilityLabel={copy.answerReviewAccessibilityLabel(',
     'answer review must expose localized accessibility summary',
+  ],
+  [
+    'const bookmarkedReviewQuestions = questions.filter(',
+    'bookmarked review list must have a dedicated filtered collection',
+  ],
+  [
+    '(questionProgress[question.id]?.wrongCount ?? 0) === 0',
+    'saved questions with wrong-answer context must not duplicate in bookmarked review',
+  ],
+  [
+    '{bookmarkedReviewQuestions.map((question) => {',
+    'bookmarked review cards must render from the filtered saved-only list',
+  ],
+  [
+    '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
+    'bookmarked review cards must show the localized correct answer',
   ],
   ['{copy.emptyTitle}', 'empty title must render localized copy'],
   [
