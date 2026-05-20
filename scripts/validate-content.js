@@ -648,7 +648,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Redoindikator',
     'redo',
@@ -716,7 +716,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
     'Provredo',
-    'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+    'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',
@@ -803,6 +803,7 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
 const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
+const FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY = /\b(?:felspårning|repetition av misstag)\b/i;
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['GuidedPracticePath', 'home route must render the guided practice path component'],
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -9275,6 +9276,10 @@ function validateHomeRouteCopyParity() {
     }
   });
 
+  if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
+    reject('home route Swedish missed-question review copy must use natural learner wording');
+  }
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -10199,7 +10204,7 @@ function validateSwedishFlashcardCopyNaturalness() {
 
   if (
     !homeRoute.includes(
-      'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
+      'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
     )
   ) {
     reject('home route Swedish study-loop copy must not include unreachable flashcard copy');
