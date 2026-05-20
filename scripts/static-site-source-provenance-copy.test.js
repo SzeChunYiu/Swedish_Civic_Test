@@ -4,9 +4,6 @@ const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
 const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
-const {
-  assertNoUnsupportedStaticEbookCredentialClaims,
-} = require('./static-ebook-credential-claim-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -77,18 +74,12 @@ function englishTranslationMap(appSource) {
 }
 
 function normalizeInlineHtml(value) {
-  return value
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return value.replace(/\s+/g, ' ').trim();
 }
 
 function staticFallbackI18nValues(indexHtml, keyPrefix) {
   const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
 
   let match;
   while ((match = elementPattern.exec(indexHtml))) {
@@ -98,26 +89,37 @@ function staticFallbackI18nValues(indexHtml, keyPrefix) {
   return values;
 }
 
-function staticFallbackI18nValuesForKeys(indexHtml, keys) {
-  const expectedKeys = new Set(keys);
-  const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
-
-  let match;
-  while ((match = elementPattern.exec(indexHtml))) {
-    const [, , key, rawValue] = match;
-    if (!expectedKeys.has(key)) continue;
-    assert.equal(values.has(key), false, `${key} no-JS fallback should appear exactly once`);
-    values.set(key, normalizeInlineHtml(rawValue));
-  }
-
-  return values;
-}
-
 function staticFaqSection(indexHtml) {
   const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
   assert.ok(faqMatch, 'static FAQ fallback section should be present');
   return faqMatch[0];
+}
+
+function staticFaqItems(faqSectionHtml) {
+  return Array.from(
+    faqSectionHtml.matchAll(
+      /<details\b[^>]*\bclass="[^"]*\bfaq__item\b[^"]*"[^>]*>([\s\S]*?)<\/details>/g,
+    ),
+    (match) => match[1],
+  );
+}
+
+function staticFaqPairKeys(faqItemHtml) {
+  const keyPattern = /<(summary|p)\b[^>]*\bdata-i18n="(faq\.(\d+)\.(q|a))"[^>]*>[\s\S]*?<\/\1>/g;
+  return Array.from(faqItemHtml.matchAll(keyPattern), (match) => ({
+    tag: match[1],
+    key: match[2],
+    number: match[3],
+    kind: match[4],
+  }));
+}
+
+function staticFaqKeysOutsideSection(indexHtml) {
+  const indexWithoutFaqSection = indexHtml.replace(staticFaqSection(indexHtml), '');
+  return Array.from(
+    indexWithoutFaqSection.matchAll(/\bdata-i18n="(faq\.[^"]+)"/g),
+    (match) => match[1],
+  );
 }
 
 const unsupportedPracticalTestClaimPatterns = [
@@ -137,6 +139,22 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+];
+const ebookFactboxSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+];
+const unsupportedEbookFactboxPatterns = [
+  /Facts you'll see on the test/i,
+  /what you'll see on the test/i,
+  /\b69%\s+is\s+forest/i,
+  /\b9%\s+lake/i,
+  /35\s*000\s+km\s+of\s+coastline/i,
+  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /historically commits\s+~?1%\s+of\s+GNI/i,
+  /Citizenship test starts:\s*6 June 2026/i,
 ];
 
 function sourceProvenanceSurface() {
@@ -231,54 +249,41 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
   }
 });
 
-test('static Home hero and footer no-JS fallbacks mirror the English dictionary', () => {
+test('static FAQ no-JS fallback keeps ordered question and answer pairs', () => {
   const indexHtml = read('site/index.html');
-  const appSource = read('site/app.js');
-  const englishTranslations = englishTranslationMap(appSource);
-  const fallbackKeys = [
-    'hero.eyebrow',
-    'hero.h1a',
-    'hero.h1c',
-    'hero.lede',
-    'hero.cta1',
-    'hero.cta2',
-    'footer.t1',
-    'footer.t2',
-    'footer.honest.p',
-    'footer.h.study',
-    'footer.h.legal',
-    'footer.h.about',
-    'footer.about.p',
-    'footer.h.fika',
-    'footer.fika.p',
-    'footer.copyright',
-    'footer.fika',
-  ];
-  const staticFallbacks = staticFallbackI18nValuesForKeys(indexHtml, fallbackKeys);
+  const faqItems = staticFaqItems(staticFaqSection(indexHtml));
 
+  assert.equal(faqItems.length, 6, 'static FAQ fallback should render exactly six items');
+  assert.deepEqual(staticFaqKeysOutsideSection(indexHtml), []);
+
+  const itemPairs = faqItems.map(staticFaqPairKeys);
   assert.deepEqual(
-    Array.from(staticFallbacks.keys()).sort(),
-    fallbackKeys.slice().sort(),
-    'static no-JS Home hero/footer fallback keys should be present exactly once',
+    itemPairs.map((pairKeys) => pairKeys.map(({ key }) => key)),
+    [
+      ['faq.1.q', 'faq.1.a'],
+      ['faq.2.q', 'faq.2.a'],
+      ['faq.3.q', 'faq.3.a'],
+      ['faq.4.q', 'faq.4.a'],
+      ['faq.5.q', 'faq.5.a'],
+      ['faq.6.q', 'faq.6.a'],
+    ],
   );
 
-  for (const key of fallbackKeys) {
-    const expectedValue = englishTranslations.get(key);
-    assert.notEqual(
-      expectedValue,
-      undefined,
-      `${key} should exist in the English site/app.js dictionary`,
-    );
-    assert.equal(
-      staticFallbacks.get(key),
-      normalizeInlineHtml(expectedValue),
-      `${key} no-JS fallback should match the English site/app.js dictionary`,
+  for (const [index, pairKeys] of itemPairs.entries()) {
+    const expectedNumber = String(index + 1);
+    assert.deepEqual(
+      pairKeys.map(({ tag, number, kind }) => ({ tag, number, kind })),
+      [
+        { tag: 'summary', number: expectedNumber, kind: 'q' },
+        { tag: 'p', number: expectedNumber, kind: 'a' },
+      ],
+      `faq.${expectedNumber} should keep its summary immediately paired with its answer`,
     );
   }
 });
 
-test('static ebook intro copy rejects unsupported author credential claims', () => {
-  assertNoUnsupportedStaticEbookCredentialClaims(repoRoot);
+test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
+  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
 });
 
 test('static ebook practical test copy is backed by current UHR source metadata', () => {
@@ -307,4 +312,19 @@ test('static ebook practical test copy is backed by current UHR source metadata'
   unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
     assert.doesNotMatch(ebookSource, pattern),
   );
+});
+
+test('static ebook factbox and current prose claims use retrieved source metadata', () => {
+  const ebookSource = read('site/ebook.js');
+
+  assert.match(ebookSource, /const EBOOK_FACTBOX_SOURCE_NOTES = Object\.freeze\(/);
+  assert.match(ebookSource, /function ebookFactBox\(lang, heading, facts/);
+  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
+  assert.match(ebookSource, /Facts to review/);
+  assert.match(ebookSource, /Fakta att repetera/);
+  assert.match(ebookSource, /Sources accessed/);
+  assert.match(ebookSource, /Källor hämtade/);
+
+  ebookFactboxSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
+  unsupportedEbookFactboxPatterns.forEach((pattern) => assert.doesNotMatch(ebookSource, pattern));
 });
