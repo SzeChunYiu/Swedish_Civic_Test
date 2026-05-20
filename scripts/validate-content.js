@@ -3189,9 +3189,15 @@ const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'correctStreak',
   'lastAnsweredAt',
   'nextReviewAt',
+  'confidenceRating',
   'bookmarked',
 ];
-const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set(['lastAnsweredAt', 'nextReviewAt', 'bookmarked']);
+const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set([
+  'lastAnsweredAt',
+  'nextReviewAt',
+  'confidenceRating',
+  'bookmarked',
+]);
 const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   questionId: 'string',
   seenCount: 'number',
@@ -3200,11 +3206,14 @@ const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   correctStreak: 'number',
   lastAnsweredAt: 'string',
   nextReviewAt: 'string',
+  confidenceRating: 'ConfidenceRating',
   bookmarked: 'boolean',
 };
 const EXPECTED_PROGRESS_TYPE_UNIONS = [
   { typeName: 'QuizMode', values: ['study', 'exam', 'mistakes', 'challenge'] },
-  { typeName: 'Confidence', values: ['low', 'medium', 'high'] },
+];
+const EXPECTED_PROGRESS_TYPE_ALIASES = [
+  { typeName: 'ConfidenceRating', text: '1 | 2 | 3 | 4 | 5' },
 ];
 const EXPECTED_PROGRESS_INTERFACES = [
   {
@@ -3217,7 +3226,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'correctStreak', type: 'number', optional: false },
       { name: 'lastAnsweredAt', type: 'string', optional: true },
       { name: 'nextReviewAt', type: 'string', optional: true },
-      { name: 'confidence', type: 'Confidence', optional: true },
+      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
       { name: 'bookmarked', type: 'boolean', optional: true },
     ],
   },
@@ -3229,6 +3238,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'isCorrect', type: 'boolean', optional: false },
       { name: 'answeredAt', type: 'string', optional: false },
       { name: 'timeSpentSeconds', type: 'number', optional: false },
+      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
     ],
   },
   {
@@ -3265,7 +3275,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
-    type: '(questionId: string, isCorrect: boolean) => void',
+    type: '(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating) => void',
     optional: false,
   },
   {
@@ -11533,6 +11543,19 @@ function validateProgressTypeSchemaParity() {
     progressTypeUnionsValidated += 1;
   });
 
+  EXPECTED_PROGRESS_TYPE_ALIASES.forEach(({ typeName, text }) => {
+    const actualText = extractTypeAliasTextFromTs(progressTypesSource, typeName);
+    if (actualText !== text) {
+      reject(
+        `types/progress.ts ${typeName} alias is ${JSON.stringify(
+          actualText,
+        )}, expected ${JSON.stringify(text)}`,
+      );
+      return;
+    }
+    progressTypeUnionsValidated += 1;
+  });
+
   EXPECTED_PROGRESS_INTERFACES.forEach((expectedInterface) => {
     const actualFields = extractObjectTypePropertiesFromTs(
       progressTypesSource,
@@ -11586,7 +11609,8 @@ function validateProgressTypeSchemaParity() {
 
   if (
     valid &&
-    progressTypeUnionsValidated === EXPECTED_PROGRESS_TYPE_UNIONS.length &&
+    progressTypeUnionsValidated ===
+      EXPECTED_PROGRESS_TYPE_UNIONS.length + EXPECTED_PROGRESS_TYPE_ALIASES.length &&
     progressTypeInterfacesValidated === EXPECTED_PROGRESS_INTERFACES.length
   ) {
     progressTypeSchemaParityValidated = true;
@@ -11685,6 +11709,10 @@ function validateProgressStoreSchemaParity() {
       'progress hydration must normalize unknown ISO timestamp fields through a shared helper',
     ],
     [
+      'function normalizeConfidenceRating(value: unknown)',
+      'progress hydration must normalize optional confidence ratings through a shared helper',
+    ],
+    [
       'function normalizeLocalDateKey(value: unknown',
       'progress hydration must normalize persisted local date keys through a shared helper',
     ],
@@ -11711,6 +11739,14 @@ function validateProgressStoreSchemaParity() {
     [
       'if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;',
       'question progress hydration must normalize and omit absent nextReviewAt timestamps',
+    ],
+    [
+      'const confidenceRating = normalizeConfidenceRating(item.confidenceRating);',
+      'question progress hydration must read confidenceRating through the normalizer',
+    ],
+    [
+      'if (confidenceRating) normalizedQuestionProgress.confidenceRating = confidenceRating;',
+      'question progress hydration must preserve only valid 1..5 confidence ratings',
     ],
     [
       'const completedAt = normalizeIsoTimestamp(item.completedAt);',
@@ -11747,6 +11783,10 @@ function validateProgressStoreSchemaParity() {
     [
       "import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';",
       'progress store must import quiz completion XP rules',
+    ],
+    [
+      "import { gradeFromConfidence, lapsePenaltyForWrong } from '../learning/calibration';",
+      'progress store must import confidence-to-review mapping helpers',
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     [
@@ -11792,6 +11832,7 @@ function validateProgressStoreSchemaParity() {
     'lastAnsweredAt: item.lastAnsweredAt',
     'nextReviewAt: item.nextReviewAt',
     'completedAt: item.completedAt',
+    'confidenceRating: item.confidenceRating',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
     'bookmarked: item.bookmarked,',
     'bookmarked: Boolean(item.bookmarked)',

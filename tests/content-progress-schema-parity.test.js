@@ -167,7 +167,7 @@ test('progress question schema stays in parity with persisted progress records',
     'utf8',
   );
 
-  assert.equal(summary.progressQuestionFieldsValidated, 8);
+  assert.equal(summary.progressQuestionFieldsValidated, 9);
   assert.equal(summary.progressQuestionSchemaParityValidated, true);
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
@@ -179,6 +179,7 @@ test('progress question schema stays in parity with persisted progress records',
     progressTypes,
     /export type QuizMode = 'study' \| 'exam' \| 'mistakes' \| 'challenge';/,
   );
+  assert.match(progressTypes, /export type ConfidenceRating = 1 \| 2 \| 3 \| 4 \| 5;/);
   assert.match(progressTypes, /export interface QuizSession/);
   assert.match(progressTypes, /questionProgress: Record<string, UserQuestionProgress>;/);
   assert.match(progressStore, /export type QuestionProgress = \{/);
@@ -195,7 +196,14 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /const seenCount = normalizeNonNegativeInteger/);
   assert.match(progressStore, /totalXp: normalizeNonNegativeInteger/);
   assert.doesNotMatch(progressStore, /Math\.max\(0, item\.seenCount \?\? 0\)/);
+  assert.match(
+    progressStore,
+    /recordAnswer\(questionId: string, isCorrect: boolean, confidenceRating\?: ConfidenceRating\): void;/,
+  );
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
+  assert.match(progressStore, /function normalizeConfidenceRating\(value: unknown\)/);
+  assert.match(progressStore, /gradeFromConfidence\(isCorrect, normalizedConfidenceRating\)/);
+  assert.match(progressStore, /lapsePenaltyForWrong\(normalizedConfidenceRating\)/);
   assert.match(progressStore, /calculateAnswerXp, calculateQuizCompletionXp/);
   assert.match(progressStore, /const existingSession = state\.mockExamSessions\.find/);
   assert.match(progressStore, /const completionXp = existingSession/);
@@ -225,6 +233,7 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         correctStreak: 999999999,
         lastAnsweredAt: 'not-a-date',
         nextReviewAt: '2099-01-01T00:00:00.000Z',
+        confidenceRating: 7,
         bookmarked: 'yes',
       },
       q002: {
@@ -234,6 +243,7 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         correctStreak: 3,
         lastAnsweredAt: '2026-05-19T10:00:00.000Z',
         nextReviewAt: '2026-05-20T10:00:00.000Z',
+        confidenceRating: 5,
         bookmarked: true,
       },
       q003: {
@@ -241,6 +251,7 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         correctCount: 0,
         wrongCount: 1,
         correctStreak: 0,
+        confidenceRating: 2,
         bookmarked: false,
       },
     },
@@ -327,6 +338,9 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(state.questionProgress.q002.correctStreak, 3);
   assert.equal(state.questionProgress.q002.lastAnsweredAt, '2026-05-19T10:00:00.000Z');
   assert.equal(state.questionProgress.q002.nextReviewAt, '2026-05-20T10:00:00.000Z');
+  assert.equal(Object.hasOwn(state.questionProgress.q001, 'confidenceRating'), false);
+  assert.equal(state.questionProgress.q002.confidenceRating, 5);
+  assert.equal(state.questionProgress.q003.confidenceRating, 2);
   assert.equal(Object.hasOwn(state.questionProgress.q001, 'bookmarked'), false);
   assert.equal(state.questionProgress.q002.bookmarked, true);
   assert.equal(state.questionProgress.q003.bookmarked, false);
@@ -421,11 +435,18 @@ test('progress mutations return the same shape as persisted JSON readback', () =
   const answeredProgress = useProgressStore.getState().questionProgress.q001;
   assert.match(answeredProgress.lastAnsweredAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(answeredProgress.nextReviewAt, /^\d{4}-\d{2}-\d{2}T/);
+  assert.equal(Object.hasOwn(answeredProgress, 'confidenceRating'), false);
   assert.equal(answeredProgress.bookmarked, false);
   assert.equal(useProgressStore.getState().answerHistory.length, 1);
   assert.equal(useProgressStore.getState().answerHistory[0].questionId, 'q001');
   assert.equal(useProgressStore.getState().answerHistory[0].isCorrect, true);
   assert.match(useProgressStore.getState().answerHistory[0].answeredAt, /^\d{4}-\d{2}-\d{2}T/);
+
+  useProgressStore.getState().recordAnswer('q002', false, 5);
+  assertReturnedStateMatchesReadback();
+  const ratedProgress = useProgressStore.getState().questionProgress.q002;
+  assert.equal(ratedProgress.confidenceRating, 5);
+  assert.equal(ratedProgress.wrongCount, 1);
 
   useProgressStore.getState().markQuestionCompleted('q002');
   assertReturnedStateMatchesReadback();
@@ -535,6 +556,19 @@ test('progress store schema parity rejects raw bookmark hydration', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /question progress hydration must preserve only boolean bookmark values/,
+  );
+});
+
+test('progress store schema parity rejects raw confidence hydration', () => {
+  const result = runValidationWithProgressStorePatch(
+    'if (confidenceRating) normalizedQuestionProgress.confidenceRating = confidenceRating;',
+    'normalizedQuestionProgress.confidenceRating = item.confidenceRating;',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /question progress hydration must preserve only valid 1\.\.5 confidence ratings|progress hydration must not use raw numeric expression confidenceRating: item\.confidenceRating/,
   );
 });
 

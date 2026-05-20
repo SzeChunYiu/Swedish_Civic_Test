@@ -1,6 +1,6 @@
 export type QuizMode = 'study' | 'exam' | 'mistakes' | 'challenge';
 
-export type Confidence = 'low' | 'medium' | 'high';
+export type ConfidenceRating = 1 | 2 | 3 | 4 | 5;
 
 export interface UserQuestionProgress {
   questionId: string;
@@ -10,7 +10,7 @@ export interface UserQuestionProgress {
   correctStreak: number;
   lastAnsweredAt?: string;
   nextReviewAt?: string;
-  confidence?: Confidence;
+  confidenceRating?: ConfidenceRating;
   bookmarked?: boolean;
 }
 
@@ -20,6 +20,7 @@ export interface QuizAnswer {
   isCorrect: boolean;
   answeredAt: string;
   timeSpentSeconds: number;
+  confidenceRating?: ConfidenceRating;
 }
 
 export interface QuizSession {

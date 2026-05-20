@@ -2,6 +2,8 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import type { ConfidenceRating } from '../../types/progress';
+import { gradeFromConfidence, lapsePenaltyForWrong } from '../learning/calibration';
 import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
@@ -15,14 +17,8 @@ export type QuestionProgress = {
   correctStreak: number;
   lastAnsweredAt?: string;
   nextReviewAt?: string;
+  confidenceRating?: ConfidenceRating;
   bookmarked?: boolean;
-};
-
-export type AnswerHistoryEntry = {
-  questionId: string;
-  isCorrect: boolean;
-  answeredAt: string;
-  timeSpentSeconds?: number;
 };
 
 export type MockExamProgress = {
@@ -35,7 +31,6 @@ export type MockExamProgress = {
 
 const progressStateKey = 'progressState';
 const maxHydratedQuestionAnswerCount = 10000;
-const maxHydratedAnswerTimeSpentSeconds = 6 * 60 * 60;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
 const maxHydratedFreezeLifetimeCount = 10000;
@@ -56,7 +51,6 @@ type PersistedProgress = {
   questionProgress: Record<string, QuestionProgress>;
   totalXp: number;
   answerDates: string[];
-  answerHistory: AnswerHistoryEntry[];
   mockExamSessions: MockExamProgress[];
   streakFreezeState: StreakFreezeState;
 };
@@ -66,7 +60,6 @@ const emptyProgress: PersistedProgress = {
   questionProgress: {},
   totalXp: 0,
   answerDates: [],
-  answerHistory: [],
   mockExamSessions: [],
   streakFreezeState: createInitialFreezeState(),
 };
@@ -87,11 +80,12 @@ function normalizeNonNegativeInteger(value: unknown, fallback = 0, max = Number.
   return Math.max(0, Math.min(max, value));
 }
 
-function normalizeOptionalNonNegativeInteger(value: unknown, max: number): number | undefined {
-  if (value === undefined) return undefined;
+function normalizeConfidenceRating(value: unknown): ConfidenceRating | undefined {
+  if (value === 1 || value === 2 || value === 3 || value === 4 || value === 5) {
+    return value;
+  }
 
-  const normalized = normalizeNonNegativeInteger(value, -1, max);
-  return normalized >= 0 ? normalized : undefined;
+  return undefined;
 }
 
 function clampScore(value: unknown): number {
@@ -127,28 +121,6 @@ function normalizeLocalDateKey(value: unknown): string | undefined {
 
   const normalized = new Date(timeMs).toISOString().slice(0, 10);
   return normalized === trimmed ? trimmed : undefined;
-}
-
-function normalizeAnswerHistoryEntry(value: unknown): AnswerHistoryEntry | null {
-  if (!value || typeof value !== 'object') return null;
-
-  const item = value as Partial<AnswerHistoryEntry>;
-  const questionId = typeof item.questionId === 'string' ? item.questionId.trim() : '';
-  const answeredAt = normalizeIsoTimestamp(item.answeredAt);
-  if (!questionId || typeof item.isCorrect !== 'boolean' || !answeredAt) return null;
-
-  const entry: AnswerHistoryEntry = {
-    questionId,
-    isCorrect: item.isCorrect,
-    answeredAt,
-  };
-  const timeSpentSeconds = normalizeOptionalNonNegativeInteger(
-    item.timeSpentSeconds,
-    maxHydratedAnswerTimeSpentSeconds,
-  );
-  if (timeSpentSeconds !== undefined) entry.timeSpentSeconds = timeSpentSeconds;
-
-  return entry;
 }
 
 function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
@@ -199,12 +171,6 @@ function normalizeProgress(value: unknown): PersistedProgress {
         ),
       ]
     : [];
-  const answerHistory = Array.isArray(candidate.answerHistory)
-    ? candidate.answerHistory
-        .map(normalizeAnswerHistoryEntry)
-        .filter((entry): entry is AnswerHistoryEntry => !!entry)
-        .slice(-maxHydratedQuestionAnswerCount)
-    : [];
   const mockExamSessions: MockExamProgress[] = [];
   const questionProgress: Record<string, QuestionProgress> = {};
 
@@ -242,8 +208,10 @@ function normalizeProgress(value: unknown): PersistedProgress {
       };
       const lastAnsweredAt = normalizeIsoTimestamp(item.lastAnsweredAt);
       const nextReviewAt = normalizeIsoTimestamp(item.nextReviewAt);
+      const confidenceRating = normalizeConfidenceRating(item.confidenceRating);
       if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;
       if (nextReviewAt) normalizedQuestionProgress.nextReviewAt = nextReviewAt;
+      if (confidenceRating) normalizedQuestionProgress.confidenceRating = confidenceRating;
       if (typeof item.bookmarked === 'boolean') {
         normalizedQuestionProgress.bookmarked = item.bookmarked;
       }
@@ -281,7 +249,6 @@ function normalizeProgress(value: unknown): PersistedProgress {
     questionProgress,
     totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp),
     answerDates,
-    answerHistory,
     mockExamSessions,
     streakFreezeState: normalizeStreakFreezeState(candidate.streakFreezeState),
   };
@@ -312,7 +279,7 @@ function writeProgress(progress: PersistedProgress): PersistedProgress {
 
 type ProgressState = PersistedProgress & {
   markQuestionCompleted: (questionId: string) => void;
-  recordAnswer: (questionId: string, isCorrect: boolean) => void;
+  recordAnswer(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating): void;
   recordMockExamSession: (session: MockExamProgressInput) => void;
   setStreakFreezeState: (streakFreezeState: StreakFreezeState) => void;
   toggleBookmark: (questionId: string) => void;
@@ -332,17 +299,24 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
-        answerHistory: state.answerHistory,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
       const persistedProgress = writeProgress(nextProgress);
       return persistedProgress;
     }),
-  recordAnswer: (questionId, isCorrect) =>
+  recordAnswer: (questionId, isCorrect, confidenceRating) =>
     set((state) => {
       const answeredAt = new Date().toISOString();
       const answerDate = getLocalDateKey(new Date(answeredAt));
+      const normalizedConfidenceRating = normalizeConfidenceRating(confidenceRating);
+      const confidenceReviewGrade = normalizedConfidenceRating
+        ? gradeFromConfidence(isCorrect, normalizedConfidenceRating)
+        : null;
+      const confidenceLapsePenalty =
+        normalizedConfidenceRating && !isCorrect
+          ? lapsePenaltyForWrong(normalizedConfidenceRating)
+          : 0;
       const previous = state.questionProgress[questionId] ?? {
         questionId,
         seenCount: 0,
@@ -351,6 +325,22 @@ export const useProgressStore = create<ProgressState>((set) => ({
         correctStreak: 0,
       };
       const correctStreak = isCorrect ? previous.correctStreak + 1 : 0;
+      const scheduledCorrectStreak =
+        confidenceReviewGrade === 4 ? correctStreak + 1 : correctStreak;
+      const baseNextReviewAt = getNextReviewAt({
+        isCorrect,
+        correctStreak: scheduledCorrectStreak,
+        answeredAt,
+      });
+      const nextReviewAt =
+        confidenceLapsePenalty > 0
+          ? new Date(
+              Math.max(
+                Date.parse(answeredAt),
+                Date.parse(baseNextReviewAt) - confidenceLapsePenalty * 12 * 60 * 60 * 1000,
+              ),
+            ).toISOString()
+          : baseNextReviewAt;
       const nextQuestionProgress: QuestionProgress = {
         ...previous,
         seenCount: previous.seenCount + 1,
@@ -358,22 +348,19 @@ export const useProgressStore = create<ProgressState>((set) => ({
         wrongCount: previous.wrongCount + (isCorrect ? 0 : 1),
         correctStreak,
         lastAnsweredAt: answeredAt,
-        nextReviewAt: getNextReviewAt({ isCorrect, correctStreak, answeredAt }),
+        nextReviewAt,
       };
+      if (normalizedConfidenceRating) {
+        nextQuestionProgress.confidenceRating = normalizedConfidenceRating;
+      } else {
+        delete nextQuestionProgress.confidenceRating;
+      }
       const completedQuestionIds = state.completedQuestionIds.includes(questionId)
         ? state.completedQuestionIds
         : [...state.completedQuestionIds, questionId];
       const answerDates = state.answerDates.includes(answerDate)
         ? state.answerDates
         : [...state.answerDates, answerDate];
-      const answerHistory = [
-        ...state.answerHistory,
-        {
-          questionId,
-          isCorrect,
-          answeredAt,
-        },
-      ].slice(-maxHydratedQuestionAnswerCount);
       const nextProgress = {
         completedQuestionIds,
         questionProgress: {
@@ -382,7 +369,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
         answerDates,
-        answerHistory,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
@@ -416,7 +402,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp + completionXp,
         answerDates: state.answerDates,
-        answerHistory: state.answerHistory,
         mockExamSessions: [...otherSessions, nextSession],
         streakFreezeState: state.streakFreezeState,
       };
@@ -432,7 +417,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         questionProgress: state.questionProgress,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
-        answerHistory: state.answerHistory,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState,
       };
@@ -456,7 +440,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         },
         totalXp: state.totalXp,
         answerDates: state.answerDates,
-        answerHistory: state.answerHistory,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };

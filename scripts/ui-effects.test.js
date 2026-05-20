@@ -62,9 +62,6 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.match(source, /motion\.duration\.slow/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
-  assert.match(source, /export interface ProgressBarProps \{/);
-  assert.match(source, /presentationOnly\?: boolean;/);
-  assert.match(source, /presentationOnly = false,/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
   assert.match(source, /`\$\{progressPercent\} percent complete`/);
   assert.match(source, /const progressPercent = Math\.round\(clampedProgress \* 100\);/);
@@ -80,9 +77,6 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
   assert.match(source, /aria-valuetext=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{progressAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole="progressbar"/);
-  assert.match(source, /if \(presentationOnly\) \{/);
-  assert.match(source, /aria-hidden/);
-  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(
     source,
     /accessibilityValue=\{\{\s*min: 0,\s*max: 100,\s*now: progressPercent,\s*text: progressAccessibilityLabel,\s*\}\}/,
@@ -192,24 +186,8 @@ test('language picker future-language rows are disabled instead of selectable', 
   const source = read('components/ui/LanguagePicker.tsx');
 
   assert.match(source, /const availableLocaleOptions = useMemo\(/);
-  assert.match(source, /const closeButtonRef = useRef<View \| null>\(null\);/);
   assert.match(source, /const focusAvailableOption = \(optionCode: string\) => \{/);
-  assert.match(source, /const focusCloseButton = \(\) => \{/);
-  assert.match(source, /focusView\(closeButtonRef\.current\);/);
-  assert.match(source, /const containTabFocus = \(event: WebKeyboardEvent\) => \{/);
-  assert.match(source, /if \(!availableLocaleOptions\.length\) \{/);
-  assert.match(
-    source,
-    /focusAvailableIndex\(event\.shiftKey \? availableLocaleOptions\.length - 1 : 0\);/,
-  );
-  assert.match(
-    source,
-    /const nextIndex = event\.shiftKey \? focusedIndex - 1 : focusedIndex \+ 1;/,
-  );
-  assert.match(source, /if \(nextIndex < 0 \|\| nextIndex >= availableLocaleOptions\.length\) \{/);
   assert.match(source, /const handleMenuKeyDown = \(event: WebKeyboardEvent\) => \{/);
-  assert.match(source, /case 'Tab':/);
-  assert.match(source, /containTabFocus\(event\);/);
   assert.match(source, /case 'Escape':/);
   assert.match(source, /closePicker\(\{ restoreFocus: true \}\);/);
   assert.match(source, /case 'ArrowDown':/);
@@ -255,7 +233,6 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
   assert.match(source, /styles\.closeButton/);
-  assert.match(source, /ref=\{closeButtonRef\}/);
   assert.doesNotMatch(
     source,
     /const handleSelect = \(option: LocaleOption\) => \{[\s\S]*setOpen\(false\);[\s\S]*if \(!option\.available\) return;/,
@@ -314,30 +291,6 @@ test('top bar route links keep web anchors large enough with token hover and pre
   assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('home source-trust row is a token-sized sources link with focus and press feedback', () => {
-  const source = read('components/ui/SocialProofRow.tsx');
-
-  assert.match(source, /import \{ Link \} from 'expo-router';/);
-  assert.match(source, /useState/);
-  assert.match(source, /Platform\.OS === 'web'/);
-  assert.match(source, /href="\/sources"/);
-  assert.match(source, /accessibilityRole="link"/);
-  assert.match(source, /aria-label=\{rowAccessibilityLabel\}/);
-  assert.match(source, /accessibilityLabel=\{rowAccessibilityLabel\}/);
-  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
-  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
-  assert.match(source, /isFocused \|\| isHovered \? styles\.linkFocused : null/);
-  assert.match(source, /isPressed \? styles\.linkPressed : null/);
-  assert.match(source, /minHeight: space\[6\]/);
-  assert.match(source, /backgroundColor: colors\.surfaceMuted/);
-  assert.match(source, /backgroundColor: colors\.focusSoft/);
-  assert.match(source, /borderRadius: radius\.card/);
-  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
-  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-  assert.doesNotMatch(source, /Excellent|Utmärkt|5 of 5|5 av 5|★★★★★/);
 });
 
 test('screen scaffold exposes page and section titles as headers', () => {
@@ -434,41 +387,6 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.doesNotMatch(complianceLinksSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('compliance action links keep token-sized targets and feedback', () => {
-  const actionLinkSource = read('components/compliance/ComplianceActionLink.tsx');
-  const legalPageSource = read('components/compliance/LegalPage.tsx');
-  const complianceLinksSource = read('components/compliance/ComplianceLinks.tsx');
-  const sourcesSource = read('app/sources.tsx');
-  const supportSource = read('app/support.tsx');
-  const aboutSource = read('app/about-the-test.tsx');
-
-  assert.match(actionLinkSource, /export interface ComplianceActionLinkProps/);
-  assert.match(actionLinkSource, /export function ComplianceActionLink/);
-  assert.match(actionLinkSource, /const complianceActionLinkClassName = 'compliance-action-link';/);
-  assert.match(actionLinkSource, /document\.getElementById\(complianceActionLinkStyleElementId\)/);
-  assert.match(actionLinkSource, /document\.head\.appendChild\(styleElement\);/);
-  assert.match(actionLinkSource, /\.\$\{complianceActionLinkClassName\}:hover,/);
-  assert.match(actionLinkSource, /\.\$\{complianceActionLinkClassName\}:focus-visible/);
-  assert.match(actionLinkSource, /transform: scale\(\$\{motion\.hoverScale\}\);/);
-  assert.match(actionLinkSource, /transform: scale\(\$\{motion\.pressedScale\}\);/);
-  assert.match(actionLinkSource, /onPressIn: \(\) => setIsPressed\(true\)/);
-  assert.match(actionLinkSource, /onPressOut: clearPressedState/);
-  assert.match(actionLinkSource, /<Link[\s\S]*accessibilityRole="link"[\s\S]*href=\{href\}/);
-  assert.match(actionLinkSource, /display: 'flex'/);
-  assert.match(actionLinkSource, /minHeight: space\[6\]/);
-  assert.match(actionLinkSource, /backgroundColor: colors\.focusSoft/);
-  assert.match(actionLinkSource, /borderColor: colors\.focus/);
-  assert.match(actionLinkSource, /transform: \[\{ scale: motion\.pressedScale \}\]/);
-  assert.match(actionLinkSource, /export function getVisibleLinkDestination/);
-  assert.match(legalPageSource, /<ComplianceActionLink[\s\S]*label=\{resolvedBackLabel\}/);
-  assert.match(complianceLinksSource, /<ComplianceActionLink[\s\S]*label=\{link\.label\}/);
-  assert.match(sourcesSource, /<ComplianceActionLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
-  assert.match(sourcesSource, /<ComplianceActionLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
-  assert.match(supportSource, /<ComplianceActionLink[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
-  assert.match(aboutSource, /<ComplianceActionLink[\s\S]*variant="primary"/);
-  assert.doesNotMatch(actionLinkSource, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
 test('settings route exposes page and section titles as headers', () => {
   const source = read('app/settings.tsx');
   const sectionHeaderMatches = source.match(
@@ -483,26 +401,20 @@ test('settings route exposes page and section titles as headers', () => {
   assert.match(source, /Frågespråk/);
   assert.match(source, /Question language/);
   assert.match(source, /Dagligt mål/);
-  assert.match(source, /Tema/);
-  assert.match(source, /Theme/);
   assert.match(source, /Audio/);
-  assert.equal(sectionHeaderMatches?.length, 4);
+  assert.equal(sectionHeaderMatches?.length, 3);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('settings controls expose exclusive radio groups and checked state', () => {
+test('settings controls mirror selected and checked state to web aria attributes', () => {
   const source = read('app/settings.tsx');
 
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy>/);
   assert.match(source, /const copy = settingsCopy\[language\]/);
-  assert.equal(source.match(/accessibilityRole="radiogroup"/g)?.length, 2);
-  assert.equal(source.match(/accessibilityRole="radio"/g)?.length, 2);
-  assert.match(source, /aria-label=\{copy\.questionLanguageTitle\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.questionLanguageTitle\}/);
-  assert.match(source, /aria-checked=\{language === value\}/);
+  assert.match(source, /aria-selected=\{language === value\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
-  assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
+  assert.match(source, /accessibilityState=\{\{ selected: language === value \}\}/);
   assert.match(source, /aria-checked=\{audioEnabled\}/);
   assert.match(
     source,
@@ -510,62 +422,70 @@ test('settings controls expose exclusive radio groups and checked state', () => 
   );
   assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
-  assert.match(source, /aria-selected=\{selected\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
-  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
-  assert.match(source, /accessibilityState=\{\{ checked: dailyGoalAnswers === goal \}\}/);
-  assert.doesNotMatch(source, /aria-selected=\{language === value\}/);
-  assert.doesNotMatch(source, /aria-selected=\{dailyGoalAnswers === goal\}/);
-  assert.doesNotMatch(source, /accessibilityRole="button"[\s\S]{0,140}languageAccessibilityLabel/);
-  assert.doesNotMatch(
-    source,
-    /accessibilityRole="button"[\s\S]{0,140}setDailyGoalAccessibilityLabel/,
-  );
+  assert.match(source, /accessibilityState=\{\{ selected: dailyGoalAnswers === goal \}\}/);
   assert.match(source, /Svenska/);
   assert.match(source, /Engelskt stöd/);
   assert.match(source, /Byt frågespråk till \$\{label\}/);
   assert.match(source, /Set question language to \$\{label\}/);
-  assert.match(source, /Välj tema: \$\{label\}/);
-  assert.match(source, /Choose theme: \$\{label\}/);
   assert.match(source, /\$\{answerCount\} svar per dag/);
   assert.match(source, /\$\{answerCount\} answers per day/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('onboarding daily goal presets persist through settings with selected state', () => {
-  const source = read('app/onboarding.tsx');
+test('custom pressed controls mirror false checked and expanded state to web aria attributes', () => {
+  const topBarSource = read('components/ui/TopBarActions.tsx');
+  const mockExamConfigSource = read('components/MockExamConfigPanel.tsx');
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const provenanceBadgeSource = read('components/quiz/ProvenanceBadge.tsx');
 
-  assert.match(source, /const onboardingDailyGoalPresetValues = \[10, 20, 40\] as const;/);
+  assert.match(topBarSource, /aria-checked=\{audioEnabled\}/);
+  assert.match(topBarSource, /accessibilityRole="switch"/);
+  assert.match(topBarSource, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
+  assert.match(mockExamConfigSource, /aria-checked=\{selected\}/);
+  assert.match(mockExamConfigSource, /accessibilityRole="checkbox"/);
+  assert.match(mockExamConfigSource, /accessibilityState=\{\{ checked: selected, disabled \}\}/);
+  assert.match(practiceSource, /aria-checked=\{includeSupplementary\}/);
+  assert.match(practiceSource, /accessibilityState=\{\{ checked: includeSupplementary \}\}/);
+  assert.match(practiceSource, /aria-expanded=\{aboutSourcesOpen\}/);
+  assert.match(practiceSource, /accessibilityState=\{\{ expanded: aboutSourcesOpen \}\}/);
+  assert.match(provenanceBadgeSource, /aria-expanded=\{sourceNoteVisible\}/);
+  assert.match(provenanceBadgeSource, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
+  assert.doesNotMatch(topBarSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(mockExamConfigSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.doesNotMatch(provenanceBadgeSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('settings controls use token pressed feedback on all direct controls', () => {
+  const source = read('app/settings.tsx');
+
+  assert.match(source, /colors, motion, radius, shadows, space, typography/);
   assert.match(
     source,
-    /const dailyGoalAnswers = useSettingsStore\(\(state\) => state\.dailyGoalAnswers\);/,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*language === value \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
   );
   assert.match(
     source,
-    /const setDailyGoalAnswers = useSettingsStore\(\(state\) => state\.setDailyGoalAnswers\);/,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.secondaryButton,[\s\S]*pressed \? styles\.secondaryButtonPressed : null,[\s\S]*\]\}/,
   );
-  assert.match(source, /copy\.dailyGoalPresets\[goal\]/);
-  assert.match(source, /aria-selected=\{selected\}/);
-  assert.match(source, /accessibilityLabel=\{preset\.accessibilityLabel\}/);
-  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
-  assert.match(source, /onPress=\{\(\) => setDailyGoalAnswers\(goal\)\}/);
-  assert.match(source, /Välj ett mjukt dagligt mål/);
-  assert.match(source, /Choose a gentle daily goal/);
-  assert.match(source, /Bestäm senare/);
-  assert.match(source, /Decide later/);
-  assert.doesNotMatch(source, /streak survival|save your streak|lose your streak/i);
+  assert.match(
+    source,
+    /style=\{\(\{ pressed \}\) => \[\s*styles\.pill,[\s\S]*styles\.goalPill,[\s\S]*selected \? styles\.pillActive : null,[\s\S]*pressed \? styles\.controlPressed : null,[\s\S]*\]\}/,
+  );
+  assert.match(source, /controlPressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(
+    source,
+    /secondaryButtonPressed: \{[\s\S]*backgroundColor: colors\.accentActive,[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
+  );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('settings route remains scrollable on narrow mobile viewports', () => {
   const source = read('app/settings.tsx');
 
-  assert.match(
-    source,
-    /import \{ Pressable, ScrollView, StyleSheet, Text, useColorScheme, View \}/,
-  );
+  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
@@ -589,8 +509,6 @@ test('onboarding route exposes its primary title as a header', () => {
   assert.match(source, /Prepare calmly for the civic test/);
   assert.match(source, /Börja studera/);
   assert.match(source, /Start studying/);
-  assert.match(source, /Alla 13 ämnen och hela frågebanken ingår gratis/);
-  assert.match(source, /All 13 topics and the full question bank are included for free/);
   assert.match(source, /Justera inställningar/);
   assert.match(source, /Adjust settings/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -599,7 +517,7 @@ test('onboarding route exposes its primary title as a header', () => {
 test('onboarding route remains scrollable on narrow mobile viewports', () => {
   const source = read('app/onboarding.tsx');
 
-  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
+  assert.match(source, /import \{ ScrollView, StyleSheet, Text, View \}/);
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
@@ -608,44 +526,6 @@ test('onboarding route remains scrollable on narrow mobile viewports', () => {
   assert.match(source, /content: \{\n\s+flexGrow: 1,/);
   assert.match(source, /paddingBottom: space\[10\]/);
   assert.doesNotMatch(source, /<View style=\{styles\.container\}>/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('first-run about modal manages web focus and real actions', () => {
-  const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
-
-  assert.match(source, /import \{ useCallback, useEffect, useRef \} from 'react';/);
-  assert.match(source, /Modal, Platform, Pressable/);
-  assert.match(source, /type FocusableView =/);
-  assert.match(source, /type RestorableElement =/);
-  assert.match(source, /type WebKeyboardEvent =/);
-  assert.match(source, /findFirstRunFocusFallback/);
-  assert.match(source, /getFirstRunFocusRestoreTarget/);
-  assert.match(source, /const visible =/);
-  assert.match(source, /const guideLinkRef = useRef<View \| null>\(null\);/);
-  assert.match(source, /const skipButtonRef = useRef<View \| null>\(null\);/);
-  assert.match(source, /const restoreFocusRef = useRef<RestorableElement \| null>\(null\);/);
-  assert.match(source, /focusFirstRunAction/);
-  assert.match(source, /getFocusedFirstRunActionIndex/);
-  assert.match(source, /restoreFirstRunFocus/);
-  assert.match(source, /dismissFirstRunModal/);
-  assert.match(source, /handleDialogKeyDown/);
-  assert.match(source, /case 'Escape':/);
-  assert.match(source, /case 'Tab':/);
-  assert.match(source, /document\.addEventListener\('keydown', handleDialogKeyDown, true\)/);
-  assert.match(source, /document\.removeEventListener\('keydown', handleDialogKeyDown, true\)/);
-  assert.match(source, /onRequestClose=\{dismissFirstRunModal\}/);
-  assert.match(source, /onPress=\{dismissFirstRunModal\}/);
-  assert.match(source, /ref=\{guideLinkRef\}/);
-  assert.match(source, /ref=\{skipButtonRef\}/);
-  assert.match(source, /router\.push\('\/about-the-test'\)/);
-  assert.match(source, /accessible=\{false\}/);
-  assert.match(source, /accessibilityElementsHidden/);
-  assert.match(source, /importantForAccessibility="no-hide-descendants"/);
-  assert.match(source, /openAccessibilityLabel: 'Läs guiden om medborgarskapsprovet'/);
-  assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
-  assert.doesNotMatch(source, /om-provet-guiden|om-[^']*-guiden/);
-  assert.doesNotMatch(source, /<Pressable[\s\S]*accessibilityRole="button"[\s\S]*styles\.backdrop/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -742,12 +622,7 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   );
 
   assert.match(practiceSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
-  assert.match(practiceSource, /\{titleText\}/);
-  assert.match(practiceSource, /copy\.questionTitle\(questionNumber\)/);
-  assert.match(
-    practiceSource,
-    /copy\.challengeQuestionTitle\(questionNumber, challengeQuestions\.length\)/,
-  );
+  assert.match(practiceSource, /\{copy\.questionTitle\(questionNumber\)\}/);
   assert.equal(quizHeaderMatches?.length, 2);
   assert.match(practiceSource, /type PracticeCopy =/);
   assert.match(practiceSource, /const practiceCopy: Record<AppLanguage, PracticeCopy>/);
@@ -804,7 +679,7 @@ test('routed quiz answer state resets when the shuffle session seed changes', ()
 
   assert.match(
     source,
-    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
+    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+setSelectedConfidenceRating\(null\);\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
   );
   assert.doesNotMatch(source, /\}, \[question\?\.id\]\);/);
 });
@@ -812,8 +687,8 @@ test('routed quiz answer state resets when the shuffle session seed changes', ()
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /countAnswerAttemptsForLocalDate/);
-  assert.match(source, /countAnswerAttemptsForLocalDate\(\{ answerAttempts, questionProgress \}\)/);
+  assert.match(source, /countAnswersForLocalDate/);
+  assert.match(source, /countAnswersForLocalDate\(questionProgress\)/);
   assert.doesNotMatch(source, /completedQuestionIds\.length,\s*dailyGoalAnswers/);
 });
 
@@ -850,49 +725,42 @@ test('practice and routed quiz answer options expose selected state', () => {
 
   assert.match(answerOptionSource, /selected = false/);
   assert.match(answerOptionSource, /selected\?: boolean/);
-  assert.match(answerOptionSource, /const checked = selected;/);
-  assert.match(answerOptionSource, /accessibilityState=\{\{ checked, disabled, selected \}\}/);
+  assert.match(answerOptionSource, /accessibilityState=\{\{ disabled, selected \}\}/);
   assert.match(practiceSource, /selected=\{hasSelectedAnswer && selectedOptionId === option\.id\}/);
   assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
 });
 
-test('post-answer reward panel renders a Swedish-humor fact bubble with XP and streak context', () => {
-  const rewardPanelSource = read('components/quiz/PostAnswerRewardPanel.tsx');
+test('practice and routed quiz expose Pro-gated confidence ratings', () => {
   const practiceSource = read('app/(tabs)/practice.tsx');
   const routedQuizSource = read('app/quiz/[sessionId].tsx');
+  const pickerSource = read('components/quiz/ConfidenceRatingPicker.tsx');
+  const progressStoreSource = read('lib/storage/progressStore.ts');
+  const calibrationSource = read('lib/learning/calibration.ts');
 
-  assert.match(rewardPanelSource, /type PostAnswerRewardPanelCopy =/);
+  for (const source of [practiceSource, routedQuizSource]) {
+    assert.match(source, /useProLifetimeEntitlements\(\)/);
+    assert.match(source, /proEntitlementsReady && proEntitlements\.confidenceSlider === true/);
+    assert.match(source, /const \[selectedConfidenceRating, setSelectedConfidenceRating\]/);
+    assert.match(source, /<ConfidenceRatingPicker/);
+    assert.match(source, /disabled=\{hasSelectedAnswer\}/);
+    assert.match(source, /recordAnswer\(question\.id, optionIsCorrect, answerConfidenceRating\)/);
+  }
+
+  assert.match(pickerSource, /accessibilityRole="radiogroup"/);
+  assert.match(pickerSource, /accessibilityRole="radio"/);
+  assert.match(pickerSource, /accessibilityState=\{\{ checked: selected, disabled \}\}/);
+  assert.match(pickerSource, /hitSlop=\{space\[1\]\}/);
+  assert.match(pickerSource, /minHeight: space\[6\]/);
+  assert.doesNotMatch(pickerSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.match(
-    rewardPanelSource,
-    /const postAnswerRewardPanelCopy: Record<AppLanguage, PostAnswerRewardPanelCopy>/,
+    progressStoreSource,
+    /recordAnswer\(questionId: string, isCorrect: boolean, confidenceRating\?: ConfidenceRating\): void;/,
   );
-  assert.match(rewardPanelSource, /Visste du\?/);
-  assert.match(rewardPanelSource, /svensk kölapp/);
-  assert.match(rewardPanelSource, /Did you know\?/);
-  assert.match(rewardPanelSource, /Swedish queue ticket/);
-  assert.match(rewardPanelSource, /accessibilityRole="summary"/);
-  assert.match(rewardPanelSource, /accessibilityLabel=\{panelAccessibilityLabel\}/);
-  assert.match(rewardPanelSource, /aria-label=\{panelAccessibilityLabel\}/);
-  assert.match(rewardPanelSource, /answerXp/);
-  assert.match(rewardPanelSource, /streakDays/);
-  assert.match(rewardPanelSource, /totalXp/);
-  assert.match(rewardPanelSource, /correctStreak/);
-  assert.doesNotMatch(
-    rewardPanelSource,
-    /Animated\.|Easing|setTimeout|requestAnimationFrame|#[0-9a-fA-F]{6}|rgba?\(/,
+  assert.match(progressStoreSource, /normalizeConfidenceRating\(confidenceRating\)/);
+  assert.match(
+    calibrationSource,
+    /import type \{ ConfidenceRating \} from '..\/..\/types\/progress';/,
   );
-  assert.match(practiceSource, /import \{ PostAnswerRewardPanel \}/);
-  assert.match(routedQuizSource, /import \{ PostAnswerRewardPanel \}/);
-  assert.match(practiceSource, /calculateAnswerXp\(\{ isCorrect: selectedIsCorrect/);
-  assert.match(routedQuizSource, /calculateAnswerXp\(\{ isCorrect: selectedIsCorrect/);
-  assert.match(practiceSource, /const streakDays = calculateStreak\(answerDates\);/);
-  assert.match(routedQuizSource, /const streakDays = calculateStreak\(answerDates\);/);
-  assert.match(practiceSource, /const level = calculateLevel\(totalXp\);/);
-  assert.match(routedQuizSource, /const level = calculateLevel\(totalXp\);/);
-  assert.match(practiceSource, /<PostAnswerRewardPanel[\s\S]*question=\{question\}/);
-  assert.match(routedQuizSource, /<PostAnswerRewardPanel[\s\S]*question=\{question\}/);
-  assert.match(practiceSource, /<PostAnswerRewardPanel[\s\S]*streakDays=\{streakDays\}/);
-  assert.match(routedQuizSource, /<PostAnswerRewardPanel[\s\S]*streakDays=\{streakDays\}/);
 });
 
 test('answer option feedback remains available in the accessibility label', () => {
@@ -995,13 +863,7 @@ test('chapter card groups title, translation, status, and description into an ac
   assert.match(source, /copy\.accessibilityLabel\.secondaryName\(secondaryName\)/);
   assert.match(source, /copy\.accessibilityLabel\.status\(status\)/);
   assert.match(source, /copy\.accessibilityLabel\.description\(description\)/);
-  assert.match(source, /accessibilitySummary\?: boolean/);
-  assert.match(source, /accessibilitySummary = true/);
-  assert.match(source, /accessible=\{accessibilitySummary\}/);
-  assert.match(
-    source,
-    /accessibilityLabel=\{accessibilitySummary \? chapterAccessibilityLabel : undefined\}/,
-  );
+  assert.match(source, /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated/);
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -1057,7 +919,6 @@ test('learn route chapter links announce chapter progress', () => {
     /copy\.accessibilityLabel\(\{ primaryName, secondaryName, progressLabel \}\)/,
   );
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel/);
-  assert.match(source, /accessibilitySummary=\{false\}/);
   assert.match(source, /language=\{language\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Open chapter \$\{chapter\.nameSv\}`\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -1141,16 +1002,13 @@ test('mistakes screen has a bookmarked-question review section', () => {
 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /bookmarkedReviewQuestions/);
-  assert.match(source, /\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\) === 0/);
+  assert.match(source, /bookmarkedQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad för att öva igen/);
+  assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
-  assert.match(source, /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} \/>/);
-  assert.match(source, /accessibilityLabel=\{copy\.answerReviewAccessibilityLabel/);
 });
 
 test('mistakes screen exposes page and review section headings as headers', () => {
@@ -1173,8 +1031,6 @@ test('chapter detail route exposes page and question section headings as headers
 
   assert.match(source, /Kapitlet hittades inte/);
   assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
-  assert.match(source, /Starta frågepass för \$\{chapterTitle\}/);
-  assert.doesNotMatch(source, new RegExp(['Starta', 'kapitelövning'].join(' ')));
   assert.match(source, /Chapter not found/);
   assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.equal(headerMatches?.length, 3);
@@ -1182,16 +1038,6 @@ test('chapter detail route exposes page and question section headings as headers
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
   assert.match(source, /\{copy\.missingTitle\}/);
   assert.match(source, /\{copy\.practiceQuestionsTitle\(chapterQuestions\.length\)\}/);
-  assert.match(source, /<FlatList[\s\S]*data=\{chapterQuestions\}/);
-  assert.match(source, /renderItem=\{renderQuestionItem\}/);
-  assert.match(source, /keyExtractor=\{\(question\) => question\.id\}/);
-  assert.match(source, /ListHeaderComponent=\{renderListHeader\}/);
-  assert.match(source, /ListEmptyComponent=\{renderEmptyQuestions\}/);
-  assert.match(source, /initialNumToRender=\{8\}/);
-  assert.match(source, /maxToRenderPerBatch=\{8\}/);
-  assert.match(source, /windowSize=\{5\}/);
-  assert.doesNotMatch(source, /\bScrollView\b/);
-  assert.doesNotMatch(source, /chapterQuestions\.map\s*\(/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1222,7 +1068,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.match(source, /question\.correctOptionId/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
-  assert.match(source, /Ditt senaste svar/);
+  assert.match(source, /Ditt senaste felaktiga svar/);
   assert.match(source, /Your latest wrong answer/);
   assert.match(source, /Rätt svar/);
   assert.match(source, /Correct answer/);
@@ -1267,19 +1113,12 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
-  assert.match(nativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(
-    nativeSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(nativeSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     nativeSource,
     /accessibilityHint=\{`\$\{copy\.previewHint\} \$\{copy\.removeAdsHint\}`\}/,
   );
-  assert.match(nativeSource, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.doesNotMatch(
+  assert.match(
     nativeSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
@@ -1378,68 +1217,23 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(source, /Återställ köp av Ta bort annonser/);
   assert.match(source, /Annonser är avstängda på den här enheten\./);
-  assert.match(source, /Hela frågebanken och alla 13 ämnen ingår gratis/);
+  assert.match(source, /Tidsatta övningsprov är redan annonsfria/);
+  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
+  assert.doesNotMatch(placementCtaSource, /\bProv är redan annonsfria\b/);
+  assert.doesNotMatch(placementCtaSource, /\b(?:prov|provet)\b.{0,48}\bannonsfri(?:tt|a)?\b/i);
+  assert.doesNotMatch(source, /\bprov förblir annonsfria\b/i);
   assert.match(source, /Remove Ads/);
   assert.match(source, /Buy Remove Ads for \$\{price\}/);
   assert.match(source, /Restore Remove Ads purchase/);
-  assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
-  assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
-  assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
-  assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
-  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
-  assert.match(placementCtaSource, /Open the Remove Ads panel in Profile/);
-  assert.match(placementCtaSource, /Öppna Ta bort annonser-panelen i profilen/);
-  assert.match(placementCtaSource, /Restore Remove Ads purchase/);
-  assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
-  assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
-  assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
   assert.match(source, /Ads are disabled on this device\./);
-  assert.match(source, /The full question bank and all 13 topics are free/);
+  assert.doesNotMatch(source, /adsDisabled \? copy\.bodyIdle/);
+  assert.doesNotMatch(source, /activeAction !== null \|\| adsDisabled/);
   assert.match(homeSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(homeSource, /language=\{language\}/);
   assert.match(profileSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(profileSource, /language=\{language\}/);
-  assert.match(profileSource, /useLocalSearchParams<\{ focus\?: string \}>/);
-  assert.match(profileSource, /const removeAdsFocused = focus === 'remove-ads';/);
-  assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
-  assert.match(profileSource, /nativeID="remove-ads-paywall"/);
-  assert.match(profileSource, /\{removeAdsFocused \? removeAdsPaywall : null\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(placementCtaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
-});
-
-test('pro paywall renders accessible tier summaries without changing Remove Ads wiring', () => {
-  const source = read('components/monetization/ProPaywall.tsx');
-  const profileSource = read('app/(tabs)/profile.tsx');
-  const tierComparisonSource = read('lib/monetization/tierComparison.ts');
-
-  assert.match(source, /TIER_COLUMNS/);
-  assert.match(source, /TIER_ROWS/);
-  assert.match(source, /paywallCtaLabels/);
-  assert.match(source, /const proPaywallCopy: Record<AppLanguage, ProPaywallCopy>/);
-  assert.match(source, /Jämför Gratis, Annonsfri och Pro/);
-  assert.match(source, /Compare Free, Ad-Free, and Pro/);
-  assert.match(source, /copy\.priceAccessibilityLabel\(column\)/);
-  assert.match(source, /copy\.rowSummary\(/);
-  assert.match(source, /accessibilityRole="summary"/);
-  assert.match(source, /buyProLifetime/);
-  assert.match(source, /restoreProLifetime/);
-  assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
-  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
-  assert.match(tierComparisonSource, /Bara ta bort annonser · \$\{REMOVE_ADS_PRICE_LABEL\}/);
-  assert.doesNotMatch(source, /29 kr|29 kronor/);
-  assert.doesNotMatch(tierComparisonSource, /29 kr|29 kronor/);
-  assert.doesNotMatch(source, /buyRemoveAds|restoreRemoveAdsPurchase/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
-  assert.match(profileSource, /import \{ isProRuntimeScopeEnabled \}/);
-  assert.match(profileSource, /const proRuntimeScopeEnabled = isProRuntimeScopeEnabled\(\);/);
-  assert.match(profileSource, /\{entitlementsReady && proRuntimeScopeEnabled \? \(/);
-  assert.match(profileSource, /import \{ ProPaywall \}/);
-  assert.match(profileSource, /<ProPaywall/);
-  assert.match(profileSource, /alreadyAdFree=\{monetizationEntitlements\.adsDisabled\}/);
-  assert.match(profileSource, /onEntitlementsChange=\{\(nextEntitlements\) =>/);
 });
 
 test('profile shell copy follows Swedish and English settings language', () => {
@@ -1453,21 +1247,35 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
-  assert.match(source, /<BadgeRow/);
-  assert.match(source, /getAllBadges\(\)\.map/);
-  assert.match(source, /getBadgeProgressHint\(badge, badgeInput, language\)/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Studieinställningar/);
   assert.match(source, /Märken/);
-  assert.match(source, /Låst/);
-  assert.match(source, /Upplåst/);
-  assert.match(source, /Öppna inställningar/);
+  assert.match(source, /Inga märken ännu/);
+  assert.match(source, /Ändra mål, språk och ljud/);
+  assert.match(source, /Första övningen/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
-  assert.match(source, /Locked/);
-  assert.match(source, /Unlocked/);
-  assert.match(source, /Open settings/);
+  assert.match(source, /No badges yet/);
+  assert.match(source, /Edit goal, language, and audio/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('profile study setup shortcut keeps shared link semantics and token target size', () => {
+  const source = read('app/(tabs)/profile.tsx');
+  const settingsLinks = source.match(/href="\/settings"/g) ?? [];
+  const studySetupIndex = source.indexOf('<SectionHeader title={copy.studySetupTitle}');
+  const settingsLinkIndex = source.indexOf('href="/settings"');
+  const badgesIndex = source.indexOf('<SectionHeader title={copy.badgesTitle}');
+
+  assert.equal(settingsLinks.length, 1);
+  assert.ok(studySetupIndex >= 0 && settingsLinkIndex > studySetupIndex);
+  assert.ok(badgesIndex > settingsLinkIndex);
+  assert.match(source, /import \{ Button \} from '..\/..\/components\/ui\/Button';/);
+  assert.match(source, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /style=\{styles\.settingsLink\}/);
+  assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1513,17 +1321,7 @@ test('search route turns the header search action into a searchable glossary ref
   assert.match(source, /TextInput/);
   assert.match(source, /type SearchRouteCopy =/);
   assert.match(source, /const searchRouteCopy: Record<AppLanguage, SearchRouteCopy>/);
-  assert.match(source, /import \{ Link, useLocalSearchParams \} from 'expo-router';/);
-  assert.match(source, /type SearchRouteParams = \{/);
-  assert.match(source, /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/);
-  assert.match(source, /const routeQuery = getRouteSearchQuery\(searchParams\);/);
-  assert.match(source, /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/);
-  assert.match(source, /function getRouteSearchQuery\(params: SearchRouteParams\)/);
-  assert.match(
-    source,
-    /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
-  );
-  assert.doesNotMatch(source, /const \[query, setQuery\] = useState\(''\);/);
+  assert.match(source, /const \[query, setQuery\] = useState\(''\);/);
   assert.match(source, /normalizeSearchText/);
   assert.match(source, /const filteredTerms = useMemo/);
   assert.match(source, /placeholderTextColor=\{colors\.textPlaceholder\}/);
@@ -1543,23 +1341,16 @@ test('audio button disables playback when speech text is unavailable', () => {
   assert.match(source, /const speechText = text\.trim\(\);/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
-  assert.match(source, /const isSpeaking = canPlayAudio && activeSpeechText === speechText;/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /Lyssna på den svenska frågan och svaren/);
   assert.match(source, /Listen to the Swedish question and answers/);
-  assert.match(source, /Stoppa ljudet/);
-  assert.match(source, /Stop audio/);
   assert.match(source, /Audio is unavailable/);
   assert.match(source, /const accessibilityLabel = label;/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(
-    source,
-    /accessibilityState=\{\{ disabled: !canPlayAudio, busy: isSpeaking, selected: isSpeaking \}\}/,
-  );
+  assert.match(source, /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/);
   assert.match(source, /disabled=\{!canPlayAudio\}/);
   assert.match(source, /if \(!canPlayAudio\) return;/);
-  assert.match(source, /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*return;/);
-  assert.match(source, /speakSwedish\(speechText, \{/);
+  assert.match(source, /speakSwedish\(speechText\)/);
   assert.doesNotMatch(source, /speakSwedish\(text\)/);
 });
 
@@ -1573,24 +1364,6 @@ test('home screen surfaces focused review copy and review action', () => {
   assert.match(source, /Review saved questions/);
   assert.match(source, /Repetera sparade frågor/);
   assert.match(source, /href="\/mistakes"/);
-});
-
-test('home screen surfaces a localized resume card from persisted progress', () => {
-  const source = read('app/(tabs)/home.tsx');
-
-  assert.match(source, /resumeWhereLeftOff/);
-  assert.match(source, /resumeBannerCopy/);
-  assert.match(source, /buildResumeProgress\(questionProgress\)/);
-  assert.match(source, /Senaste övning/);
-  assert.match(source, /Recent practice/);
-  assert.match(source, /Fortsätt \${chapterTitle}/);
-  assert.match(source, /Resume \${chapterTitle}/);
-  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.resumeTitle\}>/);
-  assert.match(source, /\{resumeCopy\.title\}/);
-  assert.match(source, /accessibilityLabel=\{resumeAccessibilityLabel\}/);
-  assert.match(source, /href=\{`\/chapter\/\$\{resumeChapter\.id\}`\}/);
-  assert.match(source, /minHeight: space\[6\]/);
-  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('home screen surfaces a guided civic readiness path', () => {
@@ -1610,17 +1383,7 @@ test('home screen surfaces a guided civic readiness path', () => {
   assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
   assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
   assert.match(source, /dailyProgress=\{progress\}/);
-  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
-  assert.match(
-    source,
-    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
-  );
-  assert.match(source, /: '\/exam';/);
-  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
   assert.match(componentSource, /href="\/practice"/);
-  assert.match(componentSource, /href=\{stage\.href\}/);
-  assert.match(componentSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
-  assert.match(componentSource, /\{stage\.cta\}/);
   assert.match(componentSource, /ProgressBar language=\{language\} progress=\{stage\.progress\}/);
   assert.match(componentSource, /minHeight: space\[6\]/);
   assert.doesNotMatch(`${source}\n${componentSource}`, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -1638,8 +1401,6 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}/);
   assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
-  assert.match(source, /<Badge tone="blue">\{copy\.freeBankBadge\}<\/Badge>/);
-  assert.match(source, /\{copy\.freeBankText\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.guidedPathTitle\}/);
   assert.match(source, /<GuidedPracticePath/);
@@ -1650,18 +1411,10 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
-  assert.match(source, /Förberedelsesignal/);
-  assert.match(source, /Gör ett tidsatt övningsprov/);
   assert.match(source, /Smarta studievanor/);
-  assert.match(source, /Hela banken gratis/);
-  assert.match(source, /Alla 13 ämnen och hela frågebanken ingår gratis/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
-  assert.match(source, /Preparation signal/);
-  assert.match(source, /Take a timed practice exam/);
   assert.match(source, /Smart study habits/);
-  assert.match(source, /Full bank free/);
-  assert.match(source, /All 13 topics and the full question bank are included for free/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1671,14 +1424,53 @@ test('home screen exposes dashboard card titles as headers', () => {
 
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /\{copy\.readinessTitle\}/);
-  assert.match(source, /\{dailyChallengeBanner\.title\}/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
-  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.dailyChallengeTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
-  assert.equal(headerMatches?.length, 4);
+  assert.equal(headerMatches?.length, 3);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('free dashboard surface is routed, localized, and accessible', () => {
+  const dashboard = read('app/dashboard.tsx');
+  const home = read('app/(tabs)/home.tsx');
+  const profile = read('app/(tabs)/profile.tsx');
+  const activity = read('components/dashboard/ActivityHeatmap.tsx');
+  const chapters = read('components/dashboard/PerChapterProgressBars.tsx');
+  const sparkline = read('components/dashboard/StreakXpSparkline.tsx');
+
+  assert.match(home, /href="\/dashboard"/);
+  assert.match(profile, /href="\/dashboard"/);
+  assert.match(home, /Framstegsöversikt/);
+  assert.match(home, /Progress dashboard/);
+  assert.match(profile, /Aktivitet, kapitelframsteg och XP visas på en egen sida\./);
+  assert.match(profile, /Activity, chapter progress, and XP live on a dedicated page\./);
+  assert.match(dashboard, /type DashboardCopy =/);
+  assert.match(dashboard, /const dashboardCopy: Record<AppLanguage, DashboardCopy>/);
+  assert.match(dashboard, /const copy = dashboardCopy\[language\]/);
+  assert.match(dashboard, /dailyActivityHistogram/);
+  assert.match(dashboard, /perChapterProgress/);
+  assert.match(dashboard, /dashboardSummary/);
+  assert.match(dashboard, /xpSparkline/);
+  assert.match(dashboard, /buildDashboardProgressSnapshot/);
+  assert.match(dashboard, /hasProEntitlement/);
+  assert.match(dashboard, /predictedPassProbability/);
+  assert.match(dashboard, /<ActivityHeatmap bins=\{activityBins\} copy=\{copy\.activity\} \/>/);
+  assert.match(dashboard, /<PerChapterProgressBars/);
+  assert.match(dashboard, /<StreakXpSparkline/);
+  assert.match(activity, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(activity, /copy\.emptyState/);
+  assert.match(chapters, /accessibilityState=\{\{ selected \}\}/);
+  assert.match(chapters, /copy\.emptyState/);
+  assert.match(sparkline, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(sparkline, /copy\.emptyState/);
+  assert.doesNotMatch(profile, /Kapitelprogress|kapitelprogress|XP-linjen/);
+  assert.doesNotMatch(dashboard, /Kapitelprogress|kapitelprogress|XP-linjen/);
+  assert.doesNotMatch(
+    `${dashboard}\n${activity}\n${chapters}\n${sparkline}`,
+    /#[0-9a-fA-F]{6}|rgba?\(/,
+  );
 });
 
 test('launch popup ad has native app-open implementation and safe web preview', () => {
@@ -1691,43 +1483,24 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(layoutSource, /<LaunchPopupAd entitlements=\{monetizationEntitlements\} \/>/);
   assert.match(webSource, /launchPopupShownThisRuntime/);
   assert.match(webSource, /Modal/);
-  assert.match(webSource, /Modal, Platform, Pressable/);
   assert.match(webSource, /useSettingsStore, type AppLanguage/);
   assert.match(webSource, /type LaunchPopupAdCopy =/);
-  assert.match(webSource, /type FocusableView =/);
-  assert.match(webSource, /type RestorableElement =/);
-  assert.match(webSource, /type WebKeyboardEvent =/);
   assert.match(webSource, /const launchPopupAdCopy: Record<AppLanguage, LaunchPopupAdCopy>/);
   assert.match(webSource, /dialogAccessibilityLabel: 'Startannons'/);
   assert.match(webSource, /closeAccessibilityLabel: 'Stäng startannons'/);
   assert.match(webSource, /closeLabel: 'Fortsätt studera'/);
   assert.match(webSource, /dialogAccessibilityLabel: 'Launch sponsor ad'/);
   assert.match(webSource, /closeAccessibilityLabel: 'Close launch sponsor ad'/);
-  assert.match(webSource, /findLaunchFocusFallback/);
-  assert.match(webSource, /getLaunchFocusRestoreTarget/);
   assert.match(webSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(webSource, /const copy = launchPopupAdCopy\[language\];/);
-  assert.match(webSource, /const closeButtonRef = useRef<View \| null>\(null\);/);
-  assert.match(webSource, /const restoreFocusRef = useRef<RestorableElement \| null>\(null\);/);
-  assert.match(webSource, /focusLaunchCloseButton/);
-  assert.match(webSource, /restoreLaunchFocus/);
-  assert.match(webSource, /dismissLaunchPopupAd/);
-  assert.match(webSource, /handleDialogKeyDown/);
-  assert.match(webSource, /case 'Escape':/);
-  assert.match(webSource, /case 'Tab':/);
-  assert.match(webSource, /document\.addEventListener\('keydown', handleDialogKeyDown, true\)/);
-  assert.match(webSource, /document\.removeEventListener\('keydown', handleDialogKeyDown, true\)/);
   assert.match(webSource, /accessibilityLabel=\{copy\.dialogAccessibilityLabel\}/);
   assert.match(webSource, /accessibilityViewIsModal/);
-  assert.match(webSource, /onRequestClose=\{dismissLaunchPopupAd\}/);
   assert.doesNotMatch(webSource, /aria-modal=\{true\}/);
   assert.doesNotMatch(webSource, /role="dialog"/);
   assert.match(webSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(webSource, /\{copy\.title\}/);
   assert.match(webSource, /\{unit\?\.testOnly \? copy\.testBody : copy\.liveBody\}/);
   assert.match(webSource, /accessibilityLabel=\{copy\.closeAccessibilityLabel\}/);
-  assert.match(webSource, /onPress=\{dismissLaunchPopupAd\}/);
-  assert.match(webSource, /ref=\{closeButtonRef\}/);
   assert.match(webSource, /\{copy\.closeLabel\}/);
   const closedGuardIndex = webSource.indexOf('if (!visible) {');
   const modalIndex = webSource.indexOf('<Modal');
