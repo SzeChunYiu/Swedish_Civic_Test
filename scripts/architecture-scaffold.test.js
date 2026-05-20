@@ -40,8 +40,8 @@ const architectureTargetFiles = [
   'components/learning/Flashcard.tsx',
   'components/learning/AudioButton.tsx',
   'components/monetization/AdBanner.tsx',
+  'components/monetization/PracticeInterstitialAd.tsx',
   'components/monetization/PremiumBanner.tsx',
-  'components/monetization/RemoveAdsPlacementCta.tsx',
   'data/chapters.ts',
   'data/questions.ts',
   'data/glossary.ts',
@@ -108,6 +108,7 @@ const routerShellRuntimeFiles = [
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
+  'app/dashboard.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -129,6 +130,7 @@ const designSystemSupportComponentFiles = [
 const themeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
+  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',
@@ -212,9 +214,12 @@ const monetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
+  'components/monetization/PracticeInterstitialAd.native.tsx',
+  'components/monetization/PracticeInterstitialAd.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
+  'app/(tabs)/practice.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/(tabs)/exam.tsx',
 ];
@@ -491,7 +496,11 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
   const tsconfig = readJson('tsconfig.json');
   const babelConfig = readText('babel.config.js');
 
-  assert.equal(packageJson.main, 'expo-router/entry');
+  assert.equal(packageJson.main, 'index.js');
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, 'index.js'), 'utf8'),
+    /require\.context\(\s*['"]\.\/app['"]/,
+  );
   assert.equal(packageJson.scripts.start, 'expo start');
   assert.equal(packageJson.scripts.typecheck, 'tsc --noEmit');
   assert.equal(packageJson.dependencies.expo.startsWith('~54.'), true);
@@ -500,7 +509,7 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
   assert.equal(typeof packageJson.dependencies['react-native-mmkv'], 'string');
   assert.equal(typeof packageJson.dependencies['expo-speech'], 'string');
   assert.equal(appJson.plugins.includes('expo-router'), true);
-  assert.equal(appJson.scheme, 'swedish-civic-test');
+  assert.equal(appJson.scheme, 'almost-swedish');
   assert.equal(tsconfig.extends, 'expo/tsconfig.base');
   assert.equal(tsconfig.compilerOptions.strict, true);
   assert.match(babelConfig, /babel-preset-expo/);
@@ -509,28 +518,37 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
 test('Expo Router tab scaffold exposes the architecture tab routes', () => {
   const tabLayout = readText('app/(tabs)/_layout.tsx');
 
-  assert.match(tabLayout, /import\s+\{\s*Tabs\s*\}\s+from ['"]expo-router['"]/);
+  assert.match(tabLayout, /import\s+\{\s*Tabs,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
   assert.deepEqual(extractTabScreenNames(tabLayout).sort(), [...architectureTabRouteNames].sort());
 });
 
 test('Expo Router tab scaffold titles follow the persisted settings language', () => {
   const tabLayout = readText('app/(tabs)/_layout.tsx');
 
+  assert.match(tabLayout, /import \{ Tabs, usePathname \} from 'expo-router';/);
   assert.match(tabLayout, /useSettingsStore, type AppLanguage/);
   assert.match(
     tabLayout,
     /type TabRouteName = 'home' \| 'learn' \| 'practice' \| 'exam' \| 'mistakes' \| 'profile';/,
   );
   assert.match(tabLayout, /type TabTitleCopy = Record<TabRouteName, string>;/);
+  assert.match(tabLayout, /type TabIconMap = Record<TabRouteName, TabBarIconName>;/);
+  assert.match(tabLayout, /type TabPathMap = Record<TabRouteName, string>;/);
+  assert.match(tabLayout, /const tabIconMap: TabIconMap = \{/);
+  assert.match(tabLayout, /const tabPathMap: TabPathMap = \{/);
+  assert.match(tabLayout, /function isActiveTab\(routeName: TabRouteName, pathname: string\)/);
+  assert.match(tabLayout, /function TabRouteIcon/);
   assert.match(tabLayout, /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/);
-  assert.match(tabLayout, /const hiddenTabIcon = \(\) => null;/);
-  assert.match(tabLayout, /function getTabOptions\(title: string\)/);
+  assert.doesNotMatch(tabLayout, /hiddenTabIcon/);
+  assert.match(tabLayout, /function getTabOptions\(routeName: TabRouteName, title: string\)/);
   assert.match(tabLayout, /tabBarAccessibilityLabel: title/);
-  assert.match(tabLayout, /tabBarIcon: hiddenTabIcon/);
+  assert.match(tabLayout, /<TabRouteIcon routeName=\{routeName\} size=\{size\} \/>/);
+  assert.match(tabLayout, /tabBarActiveTintColor: colors\.accent/);
+  assert.match(tabLayout, /tabBarInactiveTintColor: colors\.textSecondary/);
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
-  assert.match(tabLayout, /exam: 'Prov'/);
+  assert.match(tabLayout, /exam: 'Övningsprov'/);
   assert.match(tabLayout, /mistakes: 'Misstag'/);
   assert.match(tabLayout, /profile: 'Profil'/);
   assert.match(tabLayout, /home: 'Home'/);
@@ -546,7 +564,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
     assert.match(
       tabLayout,
       new RegExp(
-        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{getTabOptions\\(copy\\.${routeName}\\)\\}`,
+        `<Tabs\\.Screen\\s+name="${routeName}"\\s+options=\\{getTabOptions\\('${routeName}', copy\\.${routeName}\\)\\}`,
       ),
     );
   }
@@ -560,6 +578,7 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
     '(tabs)',
     '+not-found',
+    'dashboard',
     'index',
     'search',
   ]);

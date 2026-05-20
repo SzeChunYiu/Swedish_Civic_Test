@@ -1,6 +1,6 @@
 import type { PremiumEntitlements } from '../../types/monetization';
 import { getLocalDateKey } from '../learning/streaks';
-import { REAL_ADS_ENABLED, shouldShowAd } from './ads';
+import { REAL_ADS_ENABLED, shouldShowAd, type AdRuntimePlatform } from './ads';
 import type { AdConsentDecision } from './consent';
 
 export const REWARDED_EXTRA_EXAM_PLACEMENT = 'rewarded_extra_exam' as const;
@@ -8,6 +8,7 @@ export const MOCK_EXAM_ACCESS_STORAGE_KEY = 'monetization.mockExamAccess.v1';
 export const FREE_MOCK_EXAM_DAILY_LIMIT = 1;
 
 export type MockExamAccessReason =
+  | 'access_read_failed'
   | 'free_exam_available'
   | 'premium_unlimited_mock_exams'
   | 'rewarded_exam_credit'
@@ -17,10 +18,12 @@ export type MockExamAccessReason =
   | 'ads_unavailable';
 
 export type MockExamAccessState = {
+  accessReadFailed?: boolean;
   completedMockExamsToday: number;
   consentDecision?: Pick<AdConsentDecision, 'adServingAllowed'>;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled' | 'unlimitedMockExams'>;
   freeMockExamLimit: number;
+  platform?: AdRuntimePlatform;
   rewardedExtraExamCredits?: number;
 };
 
@@ -35,6 +38,7 @@ export type MockExamAccessDecision = {
 
 export type PersistedMockExamAccess = {
   completedMockExamsByDate: Record<string, number>;
+  completedMockExamSessionIdsByDate: Record<string, string[]>;
   rewardedExtraExamCredits: number;
 };
 
@@ -54,6 +58,10 @@ export type MockExamAccessStorageOptions = {
   storage: MockExamAccessStorage;
 };
 
+export type RecordMockExamCompletionOptions = MockExamAccessStorageOptions & {
+  sessionId: string;
+};
+
 type SecureStoreModule = typeof import('expo-secure-store');
 
 interface BrowserMockExamAccessStorage {
@@ -63,6 +71,7 @@ interface BrowserMockExamAccessStorage {
 }
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const MOCK_EXAM_SESSION_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/;
 
 function toNonNegativeInteger(value: number | undefined): number {
   if (!Number.isFinite(value)) return 0;
@@ -72,6 +81,7 @@ function toNonNegativeInteger(value: number | undefined): number {
 function createEmptyPersistedMockExamAccess(): PersistedMockExamAccess {
   return {
     completedMockExamsByDate: {},
+    completedMockExamSessionIdsByDate: {},
     rewardedExtraExamCredits: 0,
   };
 }
@@ -79,6 +89,12 @@ function createEmptyPersistedMockExamAccess(): PersistedMockExamAccess {
 function normalizeDateKey(value: string): string | null {
   const dateKey = value.trim().slice(0, 10);
   return DATE_KEY_PATTERN.test(dateKey) ? dateKey : null;
+}
+
+function normalizeMockExamSessionId(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const sessionId = value.trim();
+  return MOCK_EXAM_SESSION_ID_PATTERN.test(sessionId) ? sessionId : null;
 }
 
 function getBrowserMockExamAccessStorage(): BrowserMockExamAccessStorage | undefined {
@@ -104,6 +120,7 @@ function normalizePersistedMockExamAccess(value: unknown): PersistedMockExamAcce
 
   const candidate = value as Partial<PersistedMockExamAccess>;
   const completedMockExamsByDate: Record<string, number> = {};
+  const completedMockExamSessionIdsByDate: Record<string, string[]> = {};
 
   if (
     candidate.completedMockExamsByDate &&
@@ -118,8 +135,32 @@ function normalizePersistedMockExamAccess(value: unknown): PersistedMockExamAcce
     }
   }
 
+  if (
+    candidate.completedMockExamSessionIdsByDate &&
+    typeof candidate.completedMockExamSessionIdsByDate === 'object'
+  ) {
+    for (const [rawDateKey, rawSessionIds] of Object.entries(
+      candidate.completedMockExamSessionIdsByDate,
+    )) {
+      const dateKey = normalizeDateKey(rawDateKey);
+      if (!dateKey || !Array.isArray(rawSessionIds)) continue;
+
+      const sessionIds = Array.from(
+        new Set(rawSessionIds.map(normalizeMockExamSessionId).filter((id): id is string => !!id)),
+      );
+      if (sessionIds.length === 0) continue;
+
+      completedMockExamSessionIdsByDate[dateKey] = sessionIds;
+      completedMockExamsByDate[dateKey] = Math.max(
+        completedMockExamsByDate[dateKey] ?? 0,
+        sessionIds.length,
+      );
+    }
+  }
+
   return {
     completedMockExamsByDate,
+    completedMockExamSessionIdsByDate,
     rewardedExtraExamCredits: toNonNegativeInteger(candidate.rewardedExtraExamCredits),
   };
 }
@@ -129,10 +170,19 @@ function getStoredSnapshot(
   date: Date | string | undefined,
 ): StoredMockExamAccessSnapshot {
   const dateKey = getMockExamAccessDateKey(date);
+  const completedSessionIds = persistedAccess.completedMockExamSessionIdsByDate[dateKey] ?? [];
 
   return {
     completedMockExamsByDate: { ...persistedAccess.completedMockExamsByDate },
-    completedMockExamsToday: persistedAccess.completedMockExamsByDate[dateKey] ?? 0,
+    completedMockExamSessionIdsByDate: Object.fromEntries(
+      Object.entries(persistedAccess.completedMockExamSessionIdsByDate).map(
+        ([sessionDateKey, sessionIds]) => [sessionDateKey, [...sessionIds]],
+      ),
+    ),
+    completedMockExamsToday: Math.max(
+      persistedAccess.completedMockExamsByDate[dateKey] ?? 0,
+      completedSessionIds.length,
+    ),
     dateKey,
     rewardedExtraExamCredits: persistedAccess.rewardedExtraExamCredits,
   };
@@ -302,15 +352,35 @@ export async function clearStoredMockExamAccess({
 
 export async function recordStoredMockExamCompletion({
   date,
+  sessionId,
   storage,
-}: MockExamAccessStorageOptions): Promise<StoredMockExamAccessSnapshot> {
+}: RecordMockExamCompletionOptions): Promise<StoredMockExamAccessSnapshot> {
+  const normalizedSessionId = normalizeMockExamSessionId(sessionId);
+  if (!normalizedSessionId) {
+    throw new Error('Mock exam completion requires a valid sessionId.');
+  }
+
   const dateKey = getMockExamAccessDateKey(date);
   const persistedAccess = await readPersistedMockExamAccess(storage);
+  const completedSessionIds = persistedAccess.completedMockExamSessionIdsByDate[dateKey] ?? [];
+  const completedCount = Math.max(
+    toNonNegativeInteger(persistedAccess.completedMockExamsByDate[dateKey]),
+    completedSessionIds.length,
+  );
+
+  if (completedSessionIds.includes(normalizedSessionId)) {
+    return getStoredSnapshot(persistedAccess, dateKey);
+  }
+
   const nextAccess = {
     ...persistedAccess,
     completedMockExamsByDate: {
       ...persistedAccess.completedMockExamsByDate,
-      [dateKey]: toNonNegativeInteger(persistedAccess.completedMockExamsByDate[dateKey]) + 1,
+      [dateKey]: completedCount + 1,
+    },
+    completedMockExamSessionIdsByDate: {
+      ...persistedAccess.completedMockExamSessionIdsByDate,
+      [dateKey]: [...completedSessionIds, normalizedSessionId],
     },
   };
 
@@ -356,10 +426,12 @@ export function consumeRewardedExtraExamCredit(currentCredits = 0): number {
 }
 
 export function getMockExamAccessDecision({
+  accessReadFailed,
   completedMockExamsToday,
   consentDecision,
   entitlements,
   freeMockExamLimit,
+  platform,
   rewardedExtraExamCredits,
 }: MockExamAccessState): MockExamAccessDecision {
   const completedExams = toNonNegativeInteger(completedMockExamsToday);
@@ -367,7 +439,7 @@ export function getMockExamAccessDecision({
   const freeExamsRemaining = Math.max(0, freeLimit - completedExams);
   const credits = toNonNegativeInteger(rewardedExtraExamCredits);
   const baseDecision = {
-    freeExamsRemaining,
+    freeExamsRemaining: accessReadFailed ? 0 : freeExamsRemaining,
     placement: REWARDED_EXTRA_EXAM_PLACEMENT,
     rewardedExtraExamCredits: credits,
   };
@@ -378,6 +450,15 @@ export function getMockExamAccessDecision({
       canOfferRewardedAd: false,
       canStartExam: true,
       reason: 'premium_unlimited_mock_exams',
+    };
+  }
+
+  if (accessReadFailed) {
+    return {
+      ...baseDecision,
+      canOfferRewardedAd: false,
+      canStartExam: false,
+      reason: 'access_read_failed',
     };
   }
 
@@ -408,13 +489,19 @@ export function getMockExamAccessDecision({
     };
   }
 
-  const placementAvailableAfterConsent = shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, {
-    adServingAllowed: true,
-  });
+  const placementAvailableAfterConsent = shouldShowAd(
+    REWARDED_EXTRA_EXAM_PLACEMENT,
+    entitlements,
+    {
+      adServingAllowed: true,
+    },
+    platform,
+  );
   const canOfferRewardedAd = shouldShowAd(
     REWARDED_EXTRA_EXAM_PLACEMENT,
     entitlements,
     consentDecision,
+    platform,
   );
   const reason: MockExamAccessReason = canOfferRewardedAd
     ? 'rewarded_ad_available'
