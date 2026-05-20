@@ -1,19 +1,17 @@
-// Readiness score (competitive-teardown.md rec #1, P0).
+// Local preparation score (competitive-teardown.md rec #1, P0).
 //
-// "Are you ready to pass?" — a synthesized number on the home dashboard
-// derived from rolling accuracy, chapter coverage, recency, and recent
-// mock scores. Pure function over UserProgress + chapter index + mock
-// history. No I/O.
+// A synthesized practice signal on the home dashboard derived from rolling
+// accuracy, chapter coverage, recency, and recent mock scores. Pure function
+// over UserProgress + chapter index + mock history. No I/O.
 //
-// Verdict ladder maps to the existing exam-readiness band copy in
-// `06_learning_and_gamification.md`:
+// Verdict ladder maps to local-preparation band copy in the Home route:
 //   0–49  not_ready_yet
 //   50–69 getting_there
 //   70–84 almost_ready
 //   85–100 strong_preparation
 //
-// NEVER say "you will pass". Verdict strings are codes; UI maps them
-// through i18n to user-facing copy.
+// NEVER say "you will pass" or present this as an official forecast. Verdict
+// strings are codes; UI maps them through i18n to user-facing copy.
 
 import { perChapterProgress, mockHistory } from './dashboardStats';
 import type { UserProgress } from '../../types/progress';
@@ -125,8 +123,8 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessScore {
   const mockAvg = mockAverage(input.progress);
 
   // Weights: accuracy is the strongest signal, coverage second, recency third,
-  // mocks substitute for accuracy once they exist (mocks ARE accuracy on the
-  // exam format). When no mocks, weight redistributes to accuracy.
+  // mocks substitute for accuracy once they exist because they are timed
+  // practice accuracy. When no mocks, weight redistributes to accuracy.
   const hasMocks = mockHistory(input.progress).length > 0;
   const weights = hasMocks
     ? { accuracy: 0.35, coverage: 0.25, recency: 0.1, mock: 0.3 }
