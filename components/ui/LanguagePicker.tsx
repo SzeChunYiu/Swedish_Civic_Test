@@ -99,6 +99,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
             <ScrollView style={styles.list}>
               {locales.map((opt) => {
                 const selected = opt.available && opt.fallback === language;
+                const comingSoonLabel = opt.comingSoonLabel ?? copy.comingSoon;
                 return (
                   <Pressable
                     key={opt.code}
@@ -127,7 +128,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                       ) : null
                     ) : (
                       <View style={styles.comingSoonBadge}>
-                        <Text style={styles.comingSoonText}>{copy.comingSoon}</Text>
+                        <Text style={styles.comingSoonText}>{comingSoonLabel}</Text>
                       </View>
                     )}
                   </Pressable>
