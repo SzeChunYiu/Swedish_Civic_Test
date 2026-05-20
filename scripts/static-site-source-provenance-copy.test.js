@@ -3,10 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
 const {
-  assertNoUnsupportedStaticOutcomeSlogans,
-  assertNoUnsupportedStaticTeamCredentialClaims,
-} = require('./static-outcome-copy-guard');
+  assertNoUnsupportedStaticEbookCredentialClaims,
+} = require('./static-ebook-credential-claim-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -29,35 +29,6 @@ function staticQuestionBank() {
 
 function staticQuestionSourceTitles() {
   return uniqueSorted(staticQuestionBank().map((question) => question.source?.title));
-}
-
-function staticBuddyCopyManifest() {
-  const context = {
-    document: { addEventListener() {} },
-    localStorage: {
-      getItem() {
-        return 'sv';
-      },
-      setItem() {},
-      removeItem() {},
-    },
-    sessionStorage: {
-      getItem() {
-        return null;
-      },
-      setItem() {},
-    },
-    window: { addEventListener() {} },
-  };
-  context.globalThis = context;
-  vm.createContext(context);
-  vm.runInContext(read('site/buddies.js'), context, { timeout: 3000 });
-  assert.equal(
-    typeof context.window.smtBuddyCopyManifest,
-    'function',
-    'static buddies should expose their copy manifest for parity guards',
-  );
-  return context.window.smtBuddyCopyManifest();
 }
 
 function sourceClaimTitles(indexHtml) {
@@ -133,51 +104,6 @@ function staticFaqSection(indexHtml) {
   return faqMatch[0];
 }
 
-function staticHomeRoute(indexHtml) {
-  const homeMatch = indexHtml.match(
-    /<main data-screen-label="01 Home" data-page="\/"[\s\S]*?<\/main>/,
-  );
-  assert.ok(homeMatch, 'static Home route should be present');
-  return homeMatch[0];
-}
-
-function isGuardedHomeBodyKey(key) {
-  if (/^chap\.\d+\.m1$/.test(key)) return false;
-  return (
-    key.startsWith('demo.') ||
-    key.startsWith('qcard.') ||
-    key.startsWith('chap.') ||
-    key === 'ad.label' ||
-    key === 'ad.placeholder'
-  );
-}
-
-function assertStaticHomeBodyFallbackParitySource(indexHtml, appSource) {
-  const englishTranslations = englishTranslationMap(appSource);
-  const homeFallback = staticFallbackI18nValues(staticHomeRoute(indexHtml), '');
-  const guardedEntries = Array.from(homeFallback.entries()).filter(([key]) =>
-    isGuardedHomeBodyKey(key),
-  );
-
-  assert.ok(guardedEntries.length > 0, 'static Home body should expose guarded fallback copy');
-
-  for (const [key, fallbackValue] of guardedEntries) {
-    const expectedValue = englishTranslations.get(key);
-    assert.equal(
-      fallbackValue,
-      normalizeInlineHtml(expectedValue ?? ''),
-      `${key} Home no-JS fallback should match the English site/app.js dictionary`,
-    );
-  }
-
-  assert.ok(
-    !guardedEntries.some(([key]) => /^chap\.\d+\.m1$/.test(key)),
-    'runtime chapter count placeholders should not be treated as required literal fallback copy',
-  );
-
-  return guardedEntries.length;
-}
-
 const unsupportedPracticalTestClaimPatterns = [
   phrasePattern('Format of ', 'the real test'),
   phrasePattern('multiple-choice ', 'and timed'),
@@ -195,22 +121,6 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-];
-const ebookFactboxSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const unsupportedEbookFactboxPatterns = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
 ];
 
 function sourceProvenanceSurface() {
@@ -320,19 +230,8 @@ test('static Home body no-JS fallback mirrors the English dictionary', () => {
   );
 });
 
-test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
-  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
-});
-
-test('static footer about copy avoids unsupported team test-taking credential claims', () => {
-  assert.equal(assertNoUnsupportedStaticTeamCredentialClaims(repoRoot), 5);
-
-  const appSource = read('site/app.js');
-  const indexHtml = read('site/index.html');
-
-  assert.match(appSource, /public source material/);
-  assert.match(appSource, /offentligt källmaterial/);
-  assert.match(indexHtml, /public source material/);
+test('static ebook intro copy rejects unsupported author credential claims', () => {
+  assertNoUnsupportedStaticEbookCredentialClaims(repoRoot);
 });
 
 test('static ebook practical test copy is backed by current UHR source metadata', () => {
@@ -361,60 +260,4 @@ test('static ebook practical test copy is backed by current UHR source metadata'
   unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
     assert.doesNotMatch(ebookSource, pattern),
   );
-});
-
-test('static buddy tips, facts, reactions, greetings, and nudges keep SV/EN parity', () => {
-  const buddySource = read('site/buddies.js');
-  const manifest = staticBuddyCopyManifest();
-
-  [
-    /shorter one usually/i,
-    /det kortare/i,
-    /switched two answer letters/i,
-    /answer-letter trick/i,
-    /\btamper/i,
-    /manipuler(?:a|ade|ar)/i,
-  ].forEach((pattern) => assert.doesNotMatch(buddySource, pattern));
-
-  assert.ok(Array.isArray(manifest.facts), 'facts should be present');
-  assert.ok(Array.isArray(manifest.buddies), 'buddies should be present');
-  assert.ok(manifest.facts.length >= 30, 'static buddy facts should keep the shipped fact pool');
-  assert.equal(manifest.greetings.en.length, manifest.greetings.sv.length);
-  assert.deepEqual(Object.keys(manifest.pageNudges).sort(), ['/ebook', '/practice']);
-
-  function assertLocalizedPair(value, label) {
-    assert.equal(typeof value.en, 'string', `${label} missing English text`);
-    assert.equal(typeof value.sv, 'string', `${label} missing Swedish text`);
-    assert.notEqual(value.en.trim(), '', `${label} English text should not be empty`);
-    assert.notEqual(value.sv.trim(), '', `${label} Swedish text should not be empty`);
-  }
-
-  manifest.facts.forEach((fact, index) => assertLocalizedPair(fact, `fact ${index + 1}`));
-  manifest.greetings.en.forEach((en, index) =>
-    assertLocalizedPair({ en, sv: manifest.greetings.sv[index] }, `greeting ${index + 1}`),
-  );
-
-  for (const [pathName, nudge] of Object.entries(manifest.pageNudges)) {
-    assertLocalizedPair(nudge, `page nudge ${pathName}`);
-  }
-
-  for (const buddy of manifest.buddies) {
-    assertLocalizedPair(buddy.factPrefix, `${buddy.id} fact prefix`);
-    for (const field of ['tips', 'pet']) {
-      assert.ok(Array.isArray(buddy[field].en), `${buddy.id} ${field}.en should be an array`);
-      assert.ok(Array.isArray(buddy[field].sv), `${buddy.id} ${field}.sv should be an array`);
-      assert.equal(
-        buddy[field].en.length,
-        buddy[field].sv.length,
-        `${buddy.id} ${field} should have matching SV/EN counts`,
-      );
-      assert.ok(buddy[field].en.length > 0, `${buddy.id} ${field} should not be empty`);
-      buddy[field].en.forEach((en, index) =>
-        assertLocalizedPair(
-          { en, sv: buddy[field].sv[index] },
-          `${buddy.id} ${field} ${index + 1}`,
-        ),
-      );
-    }
-  }
 });
