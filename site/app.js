@@ -97,9 +97,9 @@ const i18n = window.i18n = {
     "nav.cta": "Get the app ↗",
 
     "hero.eyebrow": "Unofficial · Free MVP · Source-backed questions",
-    "hero.h1a": "Study the material.",
-    "hero.h1b": "Practice with sources.",
-    "hero.h1c": "Feel calmer on exam day.",
+    "hero.h1a": "Pass the test.",
+    "hero.h1b": "Earn the passport.",
+    "hero.h1c": "Brag at midsommar.",
     "hero.lede": "A friendly, unofficial study app for Sweden's medborgarskapsprov. Bite-sized chapters, smart practice, and a mock exam that feels less scary than small talk with your neighbour.",
     "hero.cta1": "Start studying — it's free",
     "hero.cta2": "Try a question",
@@ -142,7 +142,7 @@ const i18n = window.i18n = {
     "numbers.1": "questions sourced from public records",
     "numbers.2": "chapters covering history, society & rights",
     "numbers.3": "daily — a fika-sized study habit",
-    "numbers.4": "to start. No login. Study progress stays local.",
+    "numbers.4": "to start. No login. No tracking.",
 
     "chap.eyebrow": "What's inside",
     "chap.h1": "From kanelbullar to",
@@ -151,45 +151,57 @@ const i18n = window.i18n = {
 
     "chap.1.t": "A very short history of Sweden",
     "chap.1.d": "Vikings → kings → 1809 → folkhemmet → EU. The whole rollercoaster, minus the dynastic family tree memorisation.",
+    "chap.1.m1": "38 questions",
     "chap.1.m2": "~9 min",
     "chap.2.t": "How Sweden is governed",
     "chap.2.d": "Riksdag, regering, kommun, region. Who decides what, who you vote for, and why nobody fears the king.",
+    "chap.2.m1": "52 questions",
     "chap.2.m2": "~12 min",
     "chap.3.t": "Rights, freedoms & the four basic laws",
     "chap.3.d": "Grundlagarna in plain English. Press freedom, free speech, and why your boss can't ask about your religion.",
+    "chap.3.m1": "47 questions",
     "chap.3.m2": "~11 min",
     "chap.4.t": "Work, taxes & the welfare state",
     "chap.4.d": "Skatteverket, kollektivavtal, föräldraledighet, sjukpenning. The deal you signed up for.",
+    "chap.4.m1": "44 questions",
     "chap.4.m2": "~10 min",
     "chap.5.t": "Equality & the modern household",
     "chap.5.d": "Jämställdhet, LGBTQ+ rights, parental leave splits. The reason Sweden keeps showing up in those ranking lists.",
+    "chap.5.m1": "39 questions",
     "chap.5.m2": "~9 min",
     "chap.6.t": "Society, school & healthcare",
     "chap.6.d": "Förskola to universitet, BVC to 1177. How daily life is plumbed.",
+    "chap.6.m1": "41 questions",
     "chap.6.m2": "~10 min",
     "chap.7.t": "Nature, climate & allemansrätten",
     "chap.7.d": "The right to roam, environmental rules, why you can't actually pick someone's apples (sorry).",
+    "chap.7.m1": "36 questions",
     "chap.7.m2": "~8 min",
     "chap.8.t": "Culture, traditions & the calendar",
     "chap.8.d": "Midsommar, lucia, kräftskiva, semla day. Useful for the test. Essential for the small talk.",
+    "chap.8.m1": "40 questions",
     "chap.8.m2": "~9 min",
     "chap.9.t": "Money, banks & BankID",
     "chap.9.d": "Personnummer, BankID, Swish, kronor. Sweden runs on plastic and identifiers — meet them.",
+    "chap.9.m1": "28 questions",
     "chap.9.m2": "~7 min",
     "chap.10.t": "Sweden, the EU & the world",
     "chap.10.d": "Member of EU since 1995, neutral-ish for centuries, now NATO. The international story.",
+    "chap.10.m1": "33 questions",
     "chap.10.m2": "~8 min",
     "chap.11.t": "Migration, residence & citizenship",
     "chap.11.d": "The actual path to a passport. Routes, requirements, the difference between PUT, medborgarskap, and \"just visiting\".",
+    "chap.11.m1": "35 questions",
     "chap.11.m2": "~9 min",
     "chap.12.t": "Mock exam & survival guide",
     "chap.12.d": "Timed full-length exams that look and feel like the real thing. Plus a what-to-bring list.",
+    "chap.12.m1": "3 full mocks",
     "chap.12.m2": "60 min each",
     "chap.13.t": "Traditions, holidays & everyday culture",
 
     "how.eyebrow": "How it works",
     "how.h1": "Study lagom.",
-    "how.h2": "Study smart.",
+    "how.h2": "Pass big.",
     "how.deck": "Three modes, one app. Use them in any order — most people end up cycling through all three the week before the exam.",
     "how.s1.t": "Learn — short chapters",
     "how.s1.p": "Read a 5-minute explainer, then a tiny quiz. Like having a patient Swedish friend who actually finishes their sentences.",
@@ -334,7 +346,7 @@ const i18n = window.i18n = {
     "sources.s5.p2": "See a question that disagrees with its cited source? <a href=\"#/support\">Tell us</a> — corrections are usually live within a week.",
 
     "footer.brag1": "Study lagom.",
-    "footer.brag2": "Study smart.",
+    "footer.brag2": "Pass big.",
     "footer.h.app": "The app",
     "footer.app.1": "Why it exists",
     "footer.app.2": "Try a question",
@@ -352,10 +364,6 @@ const i18n = window.i18n = {
     "ad.placeholder": "Your AdSense slot will render here.",
     "ad.anchor.placeholder": "Anchor ad slot",
     "ad.native.placeholder": "Native sponsored row",
-    "a11y.settings.open": "Settings",
-    "a11y.close": "Close",
-    "a11y.ad.close": "Close ad",
-    "a11y.studyBuddy": "Study buddy",
     "practice.kicker": "Practice round",
     "practice.title": "Ten questions.",
     "practice.subtitle": "No pressure.",
@@ -374,7 +382,7 @@ const i18n = window.i18n = {
     "brand": "Almost Swedish",
     "nav.home": "Hem",
     "nav.practice": "Öva",
-    "nav.mock": "Övningsprov",
+    "nav.mock": "Provexempel",
     "nav.ebook": "E-bok",
     "nav.support": "Support",
     "nav.privacy": "Integritet",
@@ -383,10 +391,10 @@ const i18n = window.i18n = {
     "nav.cta": "Hämta appen ↗",
 
     "hero.eyebrow": "Inofficiell · Gratis MVP · Källstödda frågor",
-    "hero.h1a": "Plugga materialet.",
-    "hero.h1b": "Öva med källor.",
-    "hero.h1c": "Känn dig lugnare på provdagen.",
-    "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett tidsatt övningsprov som känns mindre läskigt än småprat med grannen.",
+    "hero.h1a": "Klara provet.",
+    "hero.h1b": "Få passet.",
+    "hero.h1c": "Skryt på midsommar.",
+    "hero.lede": "En vänlig, inofficiell studieapp för Sveriges medborgarskapsprov. Lagom korta kapitel, smart övning och ett provexempel som känns mindre läskigt än småprat med grannen.",
     "hero.cta1": "Börja plugga — det är gratis",
     "hero.cta2": "Testa en fråga",
     "hero.stat1": "samhällsfrågor",
@@ -411,7 +419,7 @@ const i18n = window.i18n = {
     "demo.h2": "Bara klick.",
     "demo.deck": "Varje fråga har en förklaring på begriplig svenska och en länk till källan. Fel svar? Den dyker upp igen senare, i lugn och ro. Rätt svar? Gå vidare, häll upp ett kaffe till.",
     "demo.li1": "<b>Spaced repetition</b> tar fram svåra frågor på rätt dag.",
-    "demo.li2": "<b>Begripliga förklaringar</b> — ingen juridiska, ingen byråkratdjungel.",
+    "demo.li2": "<b>Begripliga förklaringar</b> — inget juridiskt krångel, ingen byråkratdjungel.",
     "demo.li3": "<b>Provläge</b> med riktig tidsbegränsning, så provdagen känns bekant.",
 
     "qcard.chip": "Kapitel 3 · F47",
@@ -427,8 +435,8 @@ const i18n = window.i18n = {
 
     "numbers.1": "frågor från offentliga källor",
     "numbers.2": "kapitel om historia, samhälle & rättigheter",
-    "numbers.3": "om dagen — en fika-stor studievana",
-    "numbers.4": "att börja. Ingen inloggning. Studieframsteg stannar lokalt.",
+    "numbers.3": "om dagen — en kort studievana",
+    "numbers.4": "att börja. Ingen inloggning. Ingen spårning.",
 
     "chap.eyebrow": "Vad ingår",
     "chap.h1": "Från kanelbullar till",
@@ -437,45 +445,57 @@ const i18n = window.i18n = {
 
     "chap.1.t": "Sveriges historia, mycket kortfattat",
     "chap.1.d": "Vikingar → kungar → 1809 → folkhemmet → EU. Hela berg-och-dalbanan, utan släktträdsplugget.",
+    "chap.1.m1": "38 frågor",
     "chap.1.m2": "~9 min",
     "chap.2.t": "Så styrs Sverige",
     "chap.2.d": "Riksdag, regering, kommun, region. Vem bestämmer vad, vem du röstar på, och varför ingen är rädd för kungen.",
+    "chap.2.m1": "52 frågor",
     "chap.2.m2": "~12 min",
     "chap.3.t": "Rättigheter, friheter & de fyra grundlagarna",
     "chap.3.d": "Grundlagarna på enkel svenska. Tryckfrihet, yttrandefrihet, och varför chefen inte får fråga om din religion.",
+    "chap.3.m1": "47 frågor",
     "chap.3.m2": "~11 min",
     "chap.4.t": "Arbete, skatt & välfärden",
     "chap.4.d": "Skatteverket, kollektivavtal, föräldraledighet, sjukpenning. Avtalet du gick med på.",
+    "chap.4.m1": "44 frågor",
     "chap.4.m2": "~10 min",
     "chap.5.t": "Jämställdhet & det moderna hushållet",
     "chap.5.d": "Jämställdhet, HBTQ+-rättigheter, hur föräldraledigheten delas. Anledningen till att Sverige dyker upp i alla rankinglistor.",
+    "chap.5.m1": "39 frågor",
     "chap.5.m2": "~9 min",
     "chap.6.t": "Samhälle, skola & sjukvård",
     "chap.6.d": "Förskola till universitet, BVC till 1177. Hur vardagen är monterad.",
+    "chap.6.m1": "41 frågor",
     "chap.6.m2": "~10 min",
     "chap.7.t": "Natur, klimat & allemansrätten",
     "chap.7.d": "Rätten att vistas fritt, miljöregler, varför man trots allt inte får plocka grannens äpplen (tyvärr).",
+    "chap.7.m1": "36 frågor",
     "chap.7.m2": "~8 min",
     "chap.8.t": "Kultur, traditioner & kalendern",
     "chap.8.d": "Midsommar, lucia, kräftskiva, semladagen. Bra för provet. Avgörande för småpratet.",
+    "chap.8.m1": "40 frågor",
     "chap.8.m2": "~9 min",
     "chap.9.t": "Pengar, banker & BankID",
     "chap.9.d": "Personnummer, BankID, Swish, kronor. Sverige drivs av plast och identifierare — lär känna dem.",
+    "chap.9.m1": "28 frågor",
     "chap.9.m2": "~7 min",
     "chap.10.t": "Sverige, EU & världen",
     "chap.10.d": "Med i EU sedan 1995, lite-neutralt i sekler, nu i NATO. Den internationella berättelsen.",
+    "chap.10.m1": "33 frågor",
     "chap.10.m2": "~8 min",
     "chap.11.t": "Migration, uppehållstillstånd & medborgarskap",
     "chap.11.d": "Den faktiska vägen till passet. Vägar, krav, skillnaden mellan PUT, medborgarskap och \"bara på besök\".",
+    "chap.11.m1": "35 frågor",
     "chap.11.m2": "~9 min",
-    "chap.12.t": "Övningsprov & överlevnadsguide",
-    "chap.12.d": "Tidsatta övningsprov i full längd som hjälper dig träna provsituationen. Plus en \"så här packar du väskan\"-lista.",
+    "chap.12.t": "Provexempel & överlevnadsguide",
+    "chap.12.d": "Tidsatta fullängdsprov som ser ut och känns som det riktiga. Plus en \"så här packar du väskan\"-lista.",
+    "chap.12.m1": "3 hela prov",
     "chap.12.m2": "60 min styck",
     "chap.13.t": "Traditioner, helgdagar & vardagskultur",
 
     "how.eyebrow": "Så funkar det",
     "how.h1": "Plugga lagom.",
-    "how.h2": "Plugga smart.",
+    "how.h2": "Klara stort.",
     "how.deck": "Tre lägen, en app. Använd i valfri ordning — de flesta cyklar genom alla tre veckan innan provet.",
     "how.s1.t": "Lär — korta kapitel",
     "how.s1.p": "Läs en 5-minuters förklaring, gör sedan ett litet quiz. Som att ha en tålmodig svensk vän som faktiskt avslutar sina meningar.",
@@ -494,7 +514,7 @@ const i18n = window.i18n = {
     "faq.3.q": "Behöver jag ett konto?",
     "faq.3.a": "Nej. MVP:n kräver ingen registrering. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.",
     "faq.4.q": "Är den gratis?",
-    "faq.4.a": "Gratis att börja, plugga och göra övningsprov. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.",
+    "faq.4.a": "Gratis att börja, plugga och göra provexempel. Annonser hjälper oss hålla kärnfunktionerna tillgängliga; Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.",
     "faq.5.q": "Fungerar den på svenska också?",
     "faq.5.a": "Ja. Växla med EN / SV-knappen i menyn, eller byt inne i appen. Många använder båda samtidigt — läs frågan på svenska, kika på engelska när det kör ihop sig.",
     "faq.6.q": "Delas mina data med någon?",
@@ -518,11 +538,11 @@ const i18n = window.i18n = {
     "privacy.s2.t": "Inget konto krävs",
     "privacy.s2.p": "MVP:n kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.",
     "privacy.s3.t": "Lokala studieframsteg",
-    "privacy.s3.p": "Framsteg, inställningar, misstag, XP, studiesviter, märken, bokmärken och ljudpreferenser lagras lokalt på din enhet. De lämnar den aldrig. Avinstallerar du appen är de borta — bra att veta.",
+    "privacy.s3.p": "Framsteg, inställningar, misstag, XP, streaks, märken, bokmärken och ljudpreferenser lagras lokalt på din enhet. De lämnar den aldrig. Avinstallerar du appen är de borta — bra att veta.",
     "privacy.s4.t": "Nuvarande datahantering",
     "privacy.s4.callout.b": "På klarspråk:",
     "privacy.s4.callout.p": "studieframsteg och svar stannar lokalt; annonssystem får inte dem.",
-    "privacy.s4.p": "Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, studiesviter, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.",
+    "privacy.s4.p": "Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, streaks, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.",
     "privacy.s5.t": "Annonser och köp",
     "privacy.s5.p": "Den här webbplatsen använder Google AdSense. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.",
     "privacy.s6.t": "Ändringar & kontakt",
@@ -545,7 +565,7 @@ const i18n = window.i18n = {
     "support.s1.li2": "Otydlig svenska i en fråga eller förklaring.",
     "support.s1.li3": "En trasig källänk eller saknad referens.",
     "support.s1.li4": "Ett ljudproblem — klipp som hackar, fel uttal, tystnad där det borde vara tal.",
-    "support.s1.li5": "Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett övningsprov som inte går att avsluta.",
+    "support.s1.li5": "Ett studieflöde-bug — framsteg som inte sparades, en streak som bröts utan anledning, ett provexempel som inte går att avsluta.",
     "support.s1.li6": "Ett butik- eller bygge-problem — krasch vid start, betalningskrångel, en nedladdning som vägrar.",
     "support.s2.t": "Vad du bör inkludera",
     "support.s2.p": "Hjälp oss hjälpa dig snabbare:",
@@ -585,7 +605,7 @@ const i18n = window.i18n = {
     "terms.s4.t": "Inga garantier",
     "terms.s4.p": "Vi garanterar inte att du klarar det officiella provet. Vi garanterar inte att appen funkar perfekt på varje enhet varje dag. Vi garanterar att vi fortsätter försöka.",
     "terms.s5.t": "Ansvar",
-    "terms.s5.callout": "<b>Kort version:</b> appen tillhandahålls \"i befintligt skick\" enligt vad som tillåts av svensk lag. Vi är inte ansvariga för missade deadlines, avslagna ansökningar, fika-skador eller beslut som en myndighet tar i ditt ärende.",
+    "terms.s5.callout": "<b>Kort version:</b> appen tillhandahålls \"i befintligt skick\" enligt vad som tillåts av svensk lag. Vi är inte ansvariga för missade deadlines, avslagna ansökningar eller beslut som en myndighet tar i ditt ärende.",
     "terms.s6.t": "Ändringar",
     "terms.s6.p": "Om villkoren ändras väsentligt uppdateras datumet ovan och appen visar en notis vid nästa start. Fortsatt användning innebär att du godkänner de nya villkoren.",
 
@@ -620,15 +640,15 @@ const i18n = window.i18n = {
     "sources.s5.p2": "Ser du en fråga som inte stämmer med sin källa? <a href=\"#/support\">Berätta för oss</a> — rättelser är oftast live inom en vecka.",
 
     "footer.brag1": "Plugga lagom.",
-    "footer.brag2": "Plugga smart.",
+    "footer.brag2": "Klara stort.",
     "footer.h.app": "Appen",
     "footer.app.1": "Varför den finns",
     "footer.app.2": "Testa en fråga",
     "footer.app.3": "Kapitel",
-    "footer.app.4": "Övningsprov",
+    "footer.app.4": "Provexempel",
     "footer.app.5": "Roadmap",
     "footer.h.legal": "Finstilta",
-    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra övningsprov.",
+    "footer.about.p": "Ett fristående studieverktyg byggt av personer som själva har gjort provet. Gratis att börja, plugga och göra provexempel.",
     "footer.h.honest": "Ärlig friskrivning",
     "footer.honest.p": "Inofficiell. Fristående. Inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Vi gillar bara verkligen att hjälpa folk plugga.",
     "footer.copyright": "© 2026 Almost Swedish. Gjort med kanelbullar i Stockholm.",
@@ -638,10 +658,6 @@ const i18n = window.i18n = {
     "ad.placeholder": "AdSense-yta visas här.",
     "ad.anchor.placeholder": "Ankarannons",
     "ad.native.placeholder": "Sponsrad rad",
-    "a11y.settings.open": "Inställningar",
-    "a11y.close": "Stäng",
-    "a11y.ad.close": "Stäng annons",
-    "a11y.studyBuddy": "Studiekompis",
     "practice.kicker": "Övningsrunda",
     "practice.title": "Tio frågor.",
     "practice.subtitle": "Ingen press.",
@@ -657,54 +673,11 @@ const i18n = window.i18n = {
   }
 };
 
-function smtChapterQuestionCountLabel(chapterNumber, lang) {
-  const chapterId = Number(chapterNumber);
-  const chapters = Array.isArray(window.SMT_CHAPTERS_META) ? window.SMT_CHAPTERS_META : [];
-  const chapter = chapters.find((entry) => Number(entry && entry.id) === chapterId);
-  const count = Number(chapter && chapter.questionCount);
-  if (!Number.isInteger(chapterId) || !Number.isInteger(count) || count < 0) return undefined;
-  return lang === "sv" ? `${count} frågor` : `${count} questions`;
-}
-window.smtChapterQuestionCountLabel = smtChapterQuestionCountLabel;
-
-function smtDynamicI18nValue(key, lang) {
-  const chapterQuestionCountMatch = key.match(/^chap\.(\d+)\.m1$/);
-  if (chapterQuestionCountMatch) {
-    return smtChapterQuestionCountLabel(chapterQuestionCountMatch[1], lang);
-  }
-  return undefined;
-}
-
-function smtI18nValue(key, lang) {
-  const dynamicValue = smtDynamicI18nValue(key, lang);
-  if (dynamicValue !== undefined) return dynamicValue;
-  const dict = i18n[lang] || i18n.en;
-  if (dict && dict[key] !== undefined) return dict[key];
-  return i18n.en && i18n.en[key];
-}
-window.smtI18nValue = smtI18nValue;
-
-function smtStaticControlLabel(key, lang) {
-  return smtI18nValue(key, lang || document.documentElement.lang || "en") || "";
-}
-window.smtStaticControlLabel = smtStaticControlLabel;
-
-function smtUpdateStaticControlLabels(lang) {
-  const activeLang = lang || document.documentElement.lang || "en";
-  document.querySelectorAll("[data-a11y-label]").forEach((el) => {
-    const key = el.dataset && el.dataset.a11yLabel;
-    const value = key ? smtStaticControlLabel(key, activeLang) : "";
-    if (!value || typeof el.setAttribute !== "function") return;
-    el.setAttribute("aria-label", value);
-  });
-}
-window.smtUpdateStaticControlLabels = smtUpdateStaticControlLabels;
-
 function applyLang(lang) {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
-    const value = smtI18nValue(key, lang);
+    const value = (i18n[lang] && i18n[lang][key]);
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
@@ -712,7 +685,6 @@ function applyLang(lang) {
   document.querySelectorAll(".lang button[data-lang]").forEach((b) => {
     b.classList.toggle("is-on", b.dataset.lang === lang);
   });
-  smtUpdateStaticControlLabels(lang);
   try { localStorage.setItem("smt_lang", lang); } catch {}
 }
 window.applyLang = applyLang;
@@ -807,8 +779,6 @@ function smtLoadAdSense() {
 function smtApplyConsent(choice) {
   // 'all' = personalised, 'min' = non-personalised (NPA=1)
   if (choice === "all" || choice === "min") {
-    window.adsbygoogle = window.adsbygoogle || [];
-    window.adsbygoogle.requestNonPersonalizedAds = choice === "min" ? 1 : 0;
     document.querySelectorAll("ins.adsbygoogle").forEach((el) => {
       if (choice === "min") el.setAttribute("data-npa", "1");
       else el.removeAttribute("data-npa");
@@ -1044,10 +1014,6 @@ function smtQuizCurrentLang() {
   try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
 }
 
-function smtQuizFxPrefersReducedMotion(fx) {
-  return !!(fx && typeof fx.prefersReducedMotion === "function" && fx.prefersReducedMotion());
-}
-
 function smtQuizEscapeHtml(value) {
   return String(value ?? "").replace(/[&<>"]/g, (c) => ({
     "&": "&amp;",
@@ -1073,50 +1039,6 @@ function smtQuizQuestionDisclaimer(lang) {
   return lang === "sv"
     ? "Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga."
     : "Independent study practice, not a real exam or an official UHR question.";
-}
-
-const SMT_QUIZ_PROVENANCE_COPY = {
-  uhr: {
-    en: { label: "UHR", description: "Directly from UHR's study material Sverige i fokus." },
-    sv: { label: "UHR", description: "Direkt från UHR:s utbildningsmaterial Sverige i fokus." },
-  },
-  derived: {
-    en: { label: "Supplementary", description: "Variant generated from a UHR question." },
-    sv: { label: "Tillägg", description: "Variant som genererats från en UHR-fråga." },
-  },
-  editorial: {
-    en: { label: "Editorial", description: "Hand-written editorial context." },
-    sv: { label: "Redaktionell", description: "Redaktionellt skrivet sammanhang." },
-  },
-};
-
-function smtQuizQuestionProvenance(question) {
-  const direct = question && question.questionProvenance;
-  if (direct === "uhr" || direct === "derived" || direct === "editorial") return direct;
-  const tags = Array.isArray(question && question.tags) ? question.tags : [];
-  if (tags.includes("editorial")) return "editorial";
-  if (tags.includes("published-variant")) return "derived";
-  return "uhr";
-}
-
-function smtQuizProvenanceBadge(question, lang) {
-  const provenance = smtQuizQuestionProvenance(question);
-  const copy = SMT_QUIZ_PROVENANCE_COPY[provenance][lang] || SMT_QUIZ_PROVENANCE_COPY[provenance].en;
-  const ariaPrefix = lang === "sv" ? "Källtyp" : "Provenance";
-  const notePrefix = lang === "sv" ? "Källanteckning" : "Source note";
-  const label = smtQuizEscapeHtml(copy.label);
-  const note = smtQuizEscapeHtml(`${ariaPrefix}: ${copy.label}. ${notePrefix}: ${copy.description}`);
-  return `<span class="quiz__provenance quiz__provenance--${provenance}" role="text" aria-label="${note}" title="${note}">${label}</span>`;
-}
-
-function smtQuizSourceRow(question, lang, citationClassName = "quiz__source") {
-  const citation = smtQuizEscapeHtml(smtQuizSourceCitation(question, lang));
-  return `
-    <div class="quiz__source-row">
-      ${smtQuizProvenanceBadge(question, lang)}
-      <p class="${citationClassName}">${citation}</p>
-    </div>
-  `;
 }
 
 const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE = 0.35;
@@ -1297,17 +1219,13 @@ function smtQuizRender() {
     if (fx) {
       fx.countUp(document.getElementById("score-num"), 0, correct, 1100);
       if (pct === 100) {
-        if (!smtQuizFxPrefersReducedMotion(fx)) {
-          setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
-        }
+        setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
         if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(
           "Lysande! 10/10. Tell people I helped.",
           "Lysande! 10/10. Berätta att jag hjälpte."
         );
       } else if (pct >= 70) {
-        if (!smtQuizFxPrefersReducedMotion(fx)) {
-          setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
-        }
+        setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
       }
     }
     return;
@@ -1317,7 +1235,7 @@ function smtQuizRender() {
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
   const sessionId = `practice:${scope}`;
-  const sourceRow = smtQuizSourceRow(q, lang);
+  const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
   const dots = Array.from({ length: n }, (_, k) => {
     let cls = "";
     if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === questions[k].answer ? "is-right" : "is-wrong";
@@ -1327,7 +1245,6 @@ function smtQuizRender() {
 
   const opts = smtQuizDisplayOptions(q, sessionId).map(({ option: o, originalIndex, displayIndex }) => {
     const letter = String.fromCharCode(65 + displayIndex);
-    const optionText = smtQuizEscapeHtml(o[lang] || o.en);
     let cls = "";
     if (answered) {
       if (originalIndex === q.answer) cls = "is-correct";
@@ -1336,19 +1253,19 @@ function smtQuizRender() {
     return `
       <button class="quiz__opt ${cls}" data-i="${originalIndex}" ${answered ? "disabled" : ""}>
         <span class="key">${letter}</span>
-        <span>${optionText}</span>
+        <span>${o[lang] || o.en}</span>
       </button>`;
   }).join("");
 
   let feedback = "";
   if (answered) {
     const right = ans === q.answer;
+    const feedbackSource = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
     const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
-    const explanation = smtQuizEscapeHtml(q.why[lang] || q.why.en);
     feedback = `
       <div class="quiz__feedback ${right ? "" : "is-wrong"}">
-        <b>${right ? copy.correct : copy.wrong}</b> ${explanation}
-        ${smtQuizSourceRow(q, lang, "quiz__feedback-source")}
+        <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
+        <p class="quiz__feedback-source">${feedbackSource}</p>
         <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
     `;
@@ -1363,9 +1280,9 @@ function smtQuizRender() {
   stage.innerHTML = `
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
-      <div class="quiz__crumb">${smtQuizEscapeHtml(q.chapter)}</div>
-      <h2 class="quiz__q">${smtQuizEscapeHtml(q.q[lang] || q.q.en)}</h2>
-      ${sourceRow}
+      <div class="quiz__crumb">${q.chapter}</div>
+      <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
+      <p class="quiz__source">${sourceCitation}</p>
       <div class="quiz__opts">${opts}</div>
       ${feedback}
       <div class="quiz__actions">
@@ -1435,7 +1352,7 @@ document.addEventListener("click", (e) => {
     smtQuizRender();
 
     // pulse correct option subtly after re-render
-    if (!correct && !smtQuizFxPrefersReducedMotion(fx)) {
+    if (!correct) {
       requestAnimationFrame(() => {
         const right = document.querySelector("#quiz-stage .quiz__opt.is-correct");
         if (right) right.classList.add("is-pulse");
