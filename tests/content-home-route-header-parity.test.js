@@ -41,7 +41,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 88);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
@@ -378,7 +378,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('10,000-learner feedback pass', ['10,000 simulated', 'learners'].join(' '));
+      .replace('source-backed explanations', ['simulated', ' learners'].join(''));
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

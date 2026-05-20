@@ -58,6 +58,8 @@ type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
   dailyGoalTitle: string;
+  dashboardAccessibilityLabel: string;
+  dashboardLink: string;
   dailyChallengeAccessibilityLabel: (title: string, subtitle: string, completed: boolean) => string;
   dailyChallengeCta: (completed: boolean) => string;
   dayStreakHelper: string;
@@ -120,6 +122,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         completed ? 'Dagens utmaning är redan klar.' : 'Starta dagens utmaning.'
       }`,
     dailyChallengeCta: (completed) => (completed ? 'Öva igen' : 'Starta utmaningen'),
+    dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
+    dashboardLink: 'Visa framsteg',
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
@@ -258,6 +262,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         completed ? "Today's challenge is already complete." : "Start today's challenge."
       }`,
     dailyChallengeCta: (completed) => (completed ? 'Practise again' : 'Start challenge'),
+    dashboardAccessibilityLabel: 'Open progress dashboard',
+    dashboardLink: 'View dashboard',
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
@@ -553,6 +559,14 @@ export default function Screen() {
           variant="secondary"
         >
           {copy.feedbackLink}
+        </RouteLink>
+        <RouteLink
+          accessibilityLabel={copy.dashboardAccessibilityLabel}
+          href="/dashboard"
+          style={styles.quickActionLink}
+          variant="secondary"
+        >
+          {copy.dashboardLink}
         </RouteLink>
       </View>
 

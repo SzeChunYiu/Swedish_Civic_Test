@@ -1097,6 +1097,7 @@ test('home shell copy follows Swedish and English settings language', () => {
     /<RouteLink[\s\S]*accessibilityLabel=\{copy\.feedbackLinkAccessibilityLabel\}[\s\S]*href="\/mistakes"[\s\S]*style=\{styles\.quickActionLink\}[\s\S]*\{copy\.feedbackLink\}[\s\S]*<\/RouteLink>/,
   );
   assert.match(source, /quickActionLink: \{[\s\S]*flexBasis: 180,[\s\S]*flexGrow: 1,/);
+  assert.match(source, /accessibilityLabel=\{copy\.dashboardAccessibilityLabel\}/);
   assert.match(source, /<MetricCard[\s\S]*label=\{copy\.levelMetric\}/);
   assert.match(source, /helper=\{copy\.questionsHelper\(chapters\.length\)\}/);
   assert.match(source, /<Badge tone="blue">\{copy\.feedbackBadge\}<\/Badge>/);
@@ -1107,9 +1108,11 @@ test('home shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Studera lugnt, ett samhällsbegrepp i taget/);
   assert.match(source, /Starta den rekommenderade övningen/);
+  assert.match(source, /Öppna framstegsöversikten/);
   assert.match(source, /Smarta studievanor/);
   assert.match(source, /Prepare calmly, one civic concept at a time/);
   assert.match(source, /Start the recommended practice session/);
+  assert.match(source, /Open progress dashboard/);
   assert.match(source, /Smart study habits/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
