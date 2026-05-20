@@ -15,7 +15,7 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
-test('chapter route title, missing state, and question section stay accessible as headers', () => {
+test('chapter route title, disclaimer, missing state, and question section stay localized and accessible', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
 
@@ -33,10 +33,16 @@ test('chapter route title, missing state, and question section stay accessible a
   assert.match(source, /chapterDescription: \(chapter\) => chapter\.descriptionEn/);
   assert.match(source, /Kapitlet hittades inte/);
   assert.match(source, /Övningsfrågor \(\$\{count\}\)/);
-  assert.match(source, /Starta frågepass för \$\{chapterTitle\}/);
+  assert.match(source, /Starta övning för \$\{chapterTitle\}/);
   assert.match(source, /Chapter not found/);
   assert.match(source, /Practice questions \(\$\{count\}\)/);
   assert.match(source, /Start quiz for \$\{chapterTitle\}/);
+  assert.doesNotMatch(
+    source,
+    new RegExp(
+      ['Starta ' + 'quiz', 'Quiz' + 'pass', 'quiz' + 'frågor', 'quiz' + 'frågan'].join('|'),
+    ),
+  );
   assert.match(
     source,
     /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.missingTitle\}\s*<\/Text>/,
@@ -108,6 +114,38 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /chapter route is missing sv copy/);
+});
+
+test('chapter route copy parity rejects Swedish quiz loanwords', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const oldStart = ['Starta', 'quiz'].join(' ');
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/chapter/[chapterId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("'Starta övning'", "'" + oldStart + "'")
+      .replace("\`Starta övning för \${chapterTitle}\`", "\`" + oldStart + " för \${chapterTitle}\`");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /chapter route Swedish copy must avoid English quiz loanwords/,
+  );
 });
 
 test('chapter route header parity rejects an unheadered question section title', () => {
