@@ -58,7 +58,12 @@ export interface RemoveAdsPurchaseProvider {
   restorePurchases(productIds: readonly string[]): Promise<RemoveAdsPurchaseRecord[]>;
 }
 
-export type RemoveAdsPurchaseStatus = 'purchased' | 'pending' | 'restored' | 'not_found';
+export type RemoveAdsPurchaseStatus =
+  | 'purchased'
+  | 'pending'
+  | 'restored'
+  | 'not_found'
+  | 'persistence_failed';
 
 export interface RemoveAdsPurchaseResult {
   entitlements: PremiumEntitlements;
@@ -72,6 +77,11 @@ export interface RemoveAdsPurchaseResult {
 export interface PurchaseRuntimeOptions {
   provider?: RemoveAdsPurchaseProvider;
   storage?: PurchaseStorage;
+}
+
+interface RemoveAdsPersistenceResult {
+  entitlements: PremiumEntitlements;
+  persisted: boolean;
 }
 
 export interface NativePurchaseProviderOptions {
@@ -448,6 +458,14 @@ export async function getPurchaseEntitlements({
   return removeAdsEntitlements(Boolean(parseStoredRemoveAdsEntitlementRecord(storedValue)));
 }
 
+async function getFailClosedPurchaseEntitlements(storage: PurchaseStorage) {
+  try {
+    return await getPurchaseEntitlements({ storage });
+  } catch {
+    return removeAdsEntitlements(false);
+  }
+}
+
 export function createNativePurchaseProvider({
   purchaseTimeoutMs = 30000,
 }: NativePurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
@@ -613,14 +631,32 @@ async function validateRemoveAdsReceipt(
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
 }
 
-async function finishRemoveAdsPurchase(
-  provider: RemoveAdsPurchaseProvider,
-  purchase: RemoveAdsPurchaseRecord,
-): Promise<void> {
+async function persistValidatedRemoveAdsEntitlement({
+  purchase,
+  receiptValidation,
+  source,
+  storage,
+}: {
+  purchase: RemoveAdsPurchaseRecord;
+  receiptValidation: RemoveAdsReceiptValidationResult;
+  source: RemoveAdsGrantSource;
+  storage: PurchaseStorage;
+}): Promise<RemoveAdsPersistenceResult> {
   try {
-    await provider.finishPurchase?.(purchase);
+    return {
+      entitlements: await setRemoveAdsEntitlement(true, {
+        purchase,
+        receiptValidation,
+        source,
+        storage,
+      }),
+      persisted: true,
+    };
   } catch {
-    // Receipt validation is the entitlement boundary; store acknowledgement can retry later.
+    return {
+      entitlements: await getFailClosedPurchaseEntitlements(storage),
+      persisted: false,
+    };
   }
 }
 
@@ -641,15 +677,21 @@ export async function buyRemoveAds({
       return createResult('pending', await getPurchaseEntitlements({ storage }), purchase);
     }
 
-    await finishRemoveAdsPurchase(provider, purchase);
-    const entitlements = await setRemoveAdsEntitlement(true, {
+    await provider.finishPurchase?.(purchase);
+    const persistenceResult = await persistValidatedRemoveAdsEntitlement({
       purchase,
       receiptValidation,
       source: 'purchase',
       storage,
     });
-    return createResult('purchased', entitlements, purchase);
-  });
+    if (!persistenceResult.persisted) {
+      return createResult('persistence_failed', persistenceResult.entitlements, purchase);
+    }
+
+    return createResult('purchased', persistenceResult.entitlements, purchase);
+  } finally {
+    await provider.disconnect?.();
+  }
 }
 
 export async function restoreRemoveAdsPurchase({
@@ -670,13 +712,18 @@ export async function restoreRemoveAdsPurchase({
       return createResult('not_found', await getPurchaseEntitlements({ storage }), purchase);
     }
 
-    await finishRemoveAdsPurchase(provider, purchase);
-    const entitlements = await setRemoveAdsEntitlement(true, {
+    const persistenceResult = await persistValidatedRemoveAdsEntitlement({
       purchase,
       receiptValidation,
       source: 'restore',
       storage,
     });
-    return createResult('restored', entitlements, purchase);
-  });
+    if (!persistenceResult.persisted) {
+      return createResult('persistence_failed', persistenceResult.entitlements, purchase);
+    }
+
+    return createResult('restored', persistenceResult.entitlements, purchase);
+  } finally {
+    await provider.disconnect?.();
+  }
 }
