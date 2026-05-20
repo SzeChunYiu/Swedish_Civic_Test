@@ -878,6 +878,73 @@ test('computeReadinessScore: exam answers feed mock average, not practice accura
   assert.equal(result.components.mockAverage, 0.8);
 });
 
+test('computeReadinessScore: mock recency uses completedAt instead of exam answer rows', () => {
+  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+  const recentExamAnswers = Array.from({ length: 40 }, (_, index) => ({
+    questionId: `exam-${index}`,
+    selectedOptionIds: [],
+    isCorrect: index < 32,
+    answeredAt: '2026-05-19T10:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  const scoreOnlyMock = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'score-only-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: [],
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const countedMock = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'counted-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const invalidCompletedAt = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'invalid-completed-at-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: 'not-a-date',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+
+  assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
+  assert.ok(scoreOnlyMock.components.recency > 0.99);
+  assert.equal(countedMock.components.accuracy, 0);
+  assert.equal(invalidCompletedAt.components.recency, 0);
+  assert.equal(invalidCompletedAt.components.accuracy, 0);
+});
+
 // -------------------------------------------------------- Calibration
 
 test('generateCalibration: empty input → insufficient verdict', () => {

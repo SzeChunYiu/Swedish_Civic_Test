@@ -143,8 +143,96 @@ test('criminal-responsibility age copy is date-stamped to the current main-rule 
   assert.equal(summary.criminalResponsibilityCurrentnessSourceMetadataValidated, true);
   assert.equal(summary.criminalResponsibilityCurrentnessSourceRetrievedAt, '2026-05-20');
   assert.equal(summary.criminalResponsibilityCurrentnessProposalEffectiveDate, '2026-08-02');
+  assert.match(summary.criminalResponsibilityCurrentnessValidationDate, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(summary.criminalResponsibilityCurrentnessEffectiveDateRecheckDue, false);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated, true);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt, null);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateStatus, null);
   assert.equal(summary.criminalResponsibilityCurrentnessQuestionsValidated, 5);
   assert.equal(summary.criminalResponsibilityCurrentnessParityValidated, true);
+});
+
+test('criminal-responsibility age copy fails closed on the proposal effective date without a recheck', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const RealDate = Date;
+class MockDate extends RealDate {
+  constructor(...args) {
+    super(...(args.length ? args : ['2026-08-02T12:00:00.000Z']));
+  }
+  static now() {
+    return new RealDate('2026-08-02T12:00:00.000Z').getTime();
+  }
+}
+global.Date = MockDate;
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q044 criminal-responsibility proposal outcome must be rechecked on or after 2026-08-02/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q044 criminal-responsibility source metadata must be retrieved on or after 2026-08-02 once that date is reached/,
+  );
+});
+
+test('criminal-responsibility age copy accepts an explicit post-effective provisional recheck', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const RealDate = Date;
+class MockDate extends RealDate {
+  constructor(...args) {
+    super(...(args.length ? args : ['2026-08-02T12:00:00.000Z']));
+  }
+  static now() {
+    return new RealDate('2026-08-02T12:00:00.000Z').getTime();
+  }
+}
+global.Date = MockDate;
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
+    return String(contents)
+      .replace("retrievedAt: '2026-05-20'", "retrievedAt: '2026-08-02'")
+      .replace(
+        'postEffectiveDateRecheck: {\\n    recheckedAt: null,\\n    status: null,',
+        "postEffectiveDateRecheck: {\\n    recheckedAt: '2026-08-02',\\n    status: 'confirmed-still-provisional',",
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.criminalResponsibilityCurrentnessEffectiveDateRecheckDue, true);
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated, true);
+  assert.equal(
+    summary.criminalResponsibilityCurrentnessPostEffectiveDateStatus,
+    'confirmed-still-provisional',
+  );
+  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt, '2026-08-02');
 });
 
 test('criminal-responsibility age copy rejects undated 13-year proposal wording', () => {
@@ -448,16 +536,13 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
   assert.equal(
     q097SingleChoice?.q.en,
-    'Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+    'How is New Year’s Eve on 31 December commonly celebrated in Sweden ...?',
   );
   assert.equal(
     q097Judgement?.q.en,
     'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
-  assert.equal(
-    q104SingleChoice?.q.en,
-    'Which answer best matches? How is All Saints’ Day commonly observed in Sweden?',
-  );
+  assert.equal(q104SingleChoice?.q.en, 'All Saints’ Day is commonly observed by ...');
   assert.equal(
     q104Judgement?.q.en,
     'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
@@ -498,7 +583,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(output, /q097 uses literal common-to-do English wording/);
   assert.match(output, /q104 uses literal common-to-do English wording/);
-  assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 6, output);
+  assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 4, output);
 });
 
 test('May Day source and exports use natural English holiday name', () => {
@@ -1053,11 +1138,8 @@ test('municipal responsibilities source and generated prompts ask directly about
   assert.equal(q026.q.sv, 'Vilka vardagstjänster ansvarar kommuner för?');
   assert.equal(q026.q.en, 'Which everyday services are municipalities responsible for?');
   assert.ok(q026SectionPractice, 'q026 section-practice generated variant should be published');
-  assert.match(q026SectionPractice.q.sv, /Vilka vardagstjänster ansvarar kommuner för/);
-  assert.match(
-    q026SectionPractice.q.en,
-    /Which everyday services are municipalities responsible for/,
-  );
+  assert.equal(q026SectionPractice.q.sv, 'Kommuner ansvarar för ...');
+  assert.equal(q026SectionPractice.q.en, 'Municipalities are responsible for ...');
   assert.ok(q026Judgement, 'q026 judgement generated variant should be published');
   assert.match(q026Judgement.q.sv, /Vilka vardagstjänster ansvarar kommuner för/);
   assert.match(q026Judgement.q.en, /Which everyday services are municipalities responsible for/);
@@ -1497,7 +1579,8 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const actualSiteBank = actualStaticQuestions();
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
-  const metaStemPattern = /^(?:Vilket svar är korrekt\?|Which answer is correct\?)/i;
+  const metaStemPattern =
+    /^(?:Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
   const absentTrueFalseExplanationPattern =
     /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 
@@ -3051,6 +3134,52 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /generated variant\[3\] option\[2\] uses generated single-choice filler option "(?:Inget av alternativen stämmer|None of the options is correct)"/,
+  );
+});
+
+test('published question schema rejects generated single-choice meta prompts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map((question) =>",
+        "  question.id === generatedFixtureId('q001', 0)",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vilket svar stämmer bäst? Var ligger Sverige?',",
+        "        questionEn: 'Which answer best matches? Where is Sweden located?',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[0\] uses generated single-choice meta-stem wording/,
   );
 });
 

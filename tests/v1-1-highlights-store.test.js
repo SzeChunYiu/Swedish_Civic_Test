@@ -108,6 +108,56 @@ test('highlights store: throwing MMKV reads fall back to empty state and record 
   assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
+test('highlights store: corrupt persisted highlight rows are dropped on hydration', () => {
+  const persisted = {
+    byChapter: {
+      '': [makeHighlight({ id: 'blank-chapter' })],
+      ch01: [
+        makeHighlight({ id: 'valid-green', color: 'green', note: 'Keep this note' }),
+        makeHighlight({ id: '', color: 'yellow' }),
+        makeHighlight({ id: 'blank-block', blockId: '' }),
+        makeHighlight({ id: 'negative-start', startOffset: -1 }),
+        makeHighlight({ id: 'fractional-start', startOffset: 1.5 }),
+        makeHighlight({ id: 'reversed-range', startOffset: 12, endOffset: 3 }),
+        makeHighlight({ id: 'infinite-end', endOffset: Number.POSITIVE_INFINITY }),
+        makeHighlight({ id: 'bad-color', color: 'orange' }),
+        makeHighlight({ id: 'bad-created-at', createdAt: '2026-05-19' }),
+        makeHighlight({ id: 'bad-updated-at', updatedAt: 'not-a-date' }),
+        makeHighlight({ id: 'oversized-note', note: 'A'.repeat(2001) }),
+      ],
+      ch02: [
+        makeHighlight({
+          id: 'valid-pink',
+          blockId: 'b2',
+          color: 'pink',
+          note: 'Short note',
+          updatedAt: undefined,
+        }),
+      ],
+      ch03: 'not-an-array',
+    },
+  };
+  const storage = createMemoryMMKV({ 'ebook.highlights.v1': JSON.stringify(persisted) });
+  const { useHighlightsStore } = loadHighlightsStore({
+    'ebook-highlights': storage,
+  });
+  const state = useHighlightsStore.getState();
+
+  assert.deepEqual(Object.keys(state.byChapter), ['ch01', 'ch02']);
+  assert.deepEqual(
+    state.byChapter.ch01.map((highlight) => highlight.id),
+    ['valid-green'],
+  );
+  assert.equal(state.byChapter.ch01[0].chapterId, 'ch01');
+  assert.equal(state.byChapter.ch01[0].note, 'Keep this note');
+  assert.deepEqual(
+    state.byChapter.ch02.map((highlight) => highlight.id),
+    ['valid-pink'],
+  );
+  assert.equal(state.byChapter.ch02[0].chapterId, 'ch02');
+  assert.equal(state.byChapter.ch02[0].updatedAt, state.byChapter.ch02[0].createdAt);
+});
+
 test('highlights store: successful writes persist JSON and corrupt reads still fall back', () => {
   const storage = createMemoryMMKV();
   const { useHighlightsStore } = loadHighlightsStore({
@@ -133,4 +183,76 @@ test('highlights store: successful writes persist JSON and corrupt reads still f
   });
 
   assert.deepEqual(useCorruptHighlightsStore.getState().byChapter, {});
+});
+
+test('highlights store: invalid add inputs are rejected before persistence', () => {
+  const storage = createMemoryMMKV();
+  const { useHighlightsStore } = loadHighlightsStore({
+    'ebook-highlights': storage,
+  });
+
+  const invalidInputs = [
+    { chapterId: '', blockId: 'b1', startOffset: 0, endOffset: 5, color: 'yellow' },
+    { chapterId: 'ch01', blockId: ' ', startOffset: 0, endOffset: 5, color: 'yellow' },
+    { chapterId: 'ch01', blockId: 'b1', startOffset: -1, endOffset: 5, color: 'yellow' },
+    { chapterId: 'ch01', blockId: 'b1', startOffset: 1.5, endOffset: 5, color: 'yellow' },
+    {
+      chapterId: 'ch01',
+      blockId: 'b1',
+      startOffset: 0,
+      endOffset: Number.POSITIVE_INFINITY,
+      color: 'yellow',
+    },
+    { chapterId: 'ch01', blockId: 'b1', startOffset: 5, endOffset: 5, color: 'yellow' },
+    { chapterId: 'ch01', blockId: 'b1', startOffset: 8, endOffset: 5, color: 'yellow' },
+    { chapterId: 'ch01', blockId: 'b1', startOffset: 0, endOffset: 5, color: 'orange' },
+    { chapterId: 'ch01', blockId: 'b1', startOffset: 0, endOffset: 5, color: 'yellow', note: null },
+  ];
+
+  for (const input of invalidInputs) {
+    assert.equal(useHighlightsStore.getState().addHighlight(input), null);
+  }
+
+  assert.deepEqual(useHighlightsStore.getState().byChapter, {});
+  assert.equal(storage.values.has('ebook.highlights.v1'), false);
+});
+
+test('highlights store: add and update normalize allowed runtime input boundaries', () => {
+  const storage = createMemoryMMKV();
+  const { useHighlightsStore } = loadHighlightsStore({
+    'ebook-highlights': storage,
+  });
+
+  const highlight = useHighlightsStore.getState().addHighlight({
+    chapterId: ' ch01 ',
+    blockId: ' b1 ',
+    startOffset: 2,
+    endOffset: 6,
+    color: 'blue',
+    note: 'A'.repeat(2001),
+  });
+
+  assert.ok(highlight);
+  assert.equal(highlight.chapterId, 'ch01');
+  assert.equal(highlight.blockId, 'b1');
+  assert.equal(highlight.note.length, 2000);
+  assert.equal(useHighlightsStore.getState().byChapter.ch01[0].note.length, 2000);
+
+  const beforeInvalidPatch = storage.values.get('ebook.highlights.v1');
+  useHighlightsStore.getState().updateHighlight(highlight.id, { color: 'orange' });
+  assert.equal(useHighlightsStore.getState().byChapter.ch01[0].color, 'blue');
+  assert.equal(storage.values.get('ebook.highlights.v1'), beforeInvalidPatch);
+
+  useHighlightsStore.getState().updateHighlight(highlight.id, { note: null });
+  assert.equal(useHighlightsStore.getState().byChapter.ch01[0].note.length, 2000);
+
+  useHighlightsStore.getState().updateHighlight(highlight.id, { color: 'pink' });
+  assert.equal(useHighlightsStore.getState().byChapter.ch01[0].color, 'pink');
+
+  useHighlightsStore.getState().updateHighlight(highlight.id, { note: 'B'.repeat(2001) });
+  assert.equal(useHighlightsStore.getState().byChapter.ch01[0].note.length, 2000);
+  assert.equal(
+    JSON.parse(storage.values.get('ebook.highlights.v1')).byChapter.ch01[0].note.length,
+    2000,
+  );
 });

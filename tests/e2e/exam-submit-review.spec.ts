@@ -1,7 +1,12 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
+import {
+  dismissBlockingModals,
+  markAboutTheTestSeen,
+  seedSettingsLanguage,
+  type AppLanguage,
+} from './browserLaunch';
 
 const totalQuestions = 20;
 const unsupportedPassVerdictPattern =
@@ -12,6 +17,13 @@ type NeutralSummaryContract = {
   progressPattern: RegExp;
   summaryAriaPrefix: string;
   visibleLabel: string;
+};
+
+type TimeHeatmapContract = {
+  firstCellPattern: RegExp;
+  medianLabel: string;
+  summaryAriaPrefix: string;
+  title: string;
 };
 
 async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryContract) {
@@ -25,21 +37,24 @@ async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryCo
   await expect(summary.getByRole('progressbar', { name: contract.progressPattern })).toBeVisible();
 }
 
+async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
+  await expect(
+    page.locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`),
+  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: contract.title })).toBeVisible();
+  await expect(page.getByText(contract.medianLabel, { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: contract.firstCellPattern }).first()).toBeVisible();
+}
+
 async function expectNoPassVerdictCopy(page: Page) {
   await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
 }
 
-async function enableEnglishSupport(page: Page) {
-  await page.goto('/settings', { waitUntil: 'networkidle' });
+async function openExamWithLanguage(page: Page, language: AppLanguage) {
+  await seedSettingsLanguage(page, language);
+  await markAboutTheTestSeen(page);
+  await page.goto('/exam', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page
-    .getByRole('radio', {
-      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
-    })
-    .click();
-  await expect(
-    page.getByRole('radio', { name: 'Set question language to English support' }),
-  ).toHaveAttribute('aria-checked', 'true');
 }
 
 test('mock exam requires all answers before showing Swedish score and source-backed review', async ({
@@ -52,8 +67,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openExamWithLanguage(page, 'sv');
 
   await expect(page.getByRole('heading', { name: 'Övningsprov' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-baserade frågor`))).toBeVisible();
@@ -96,6 +110,13 @@ test('mock exam requires all answers before showing Swedish score and source-bac
     visibleLabel: 'Övningsresultat',
   });
   await expect(page.getByText(new RegExp(`/${totalQuestions} rätt`))).toBeVisible();
+  await expectTimeHeatmap(page, {
+    firstCellPattern:
+      /^Fråga 1, \d+ sek, (Snabb|Nära median|Tog längre tid|Fastnade), (rätt|behöver granskas)\. Hoppa till genomgången\.$/,
+    medianLabel: 'Nära median',
+    summaryAriaPrefix: 'Tidskarta per fråga',
+    title: 'Tidskarta per fråga',
+  });
   await expect(page.getByText('Kapitelöversikt')).toBeVisible();
   await expect(page.getByText('Frågegenomgång')).toBeVisible();
   await expect(page.getByText('Valt svar').first()).toBeVisible();
@@ -117,9 +138,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await enableEnglishSupport(page);
-  await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openExamWithLanguage(page, 'en');
 
   await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();
@@ -164,6 +183,13 @@ test('mock exam review follows English support mode', async ({ page }) => {
     visibleLabel: 'Practice result',
   });
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
+  await expectTimeHeatmap(page, {
+    firstCellPattern:
+      /^Question 1, \d+ sec, (Rushed|Near median|Over-thought|Stuck), (correct|needs review)\. Jump to review\.$/,
+    medianLabel: 'Near median',
+    summaryAriaPrefix: 'Time map by question',
+    title: 'Time map by question',
+  });
   await expect(page.getByText('Chapter breakdown')).toBeVisible();
   await expect(page.getByText('The country of Sweden')).toBeVisible();
   await expect(page.getByText('Question review')).toBeVisible();

@@ -30,6 +30,13 @@ const XP_DAYS = 30;
 type DashboardCopy = {
   activity: {
     emptyState: string;
+    legend: {
+      high: string;
+      low: string;
+      medium: string;
+      none: string;
+      title: string;
+    };
     summary: (totalAnswers: number, activeDays: number, maxDayCount: number) => string;
     subtitle: string;
     title: string;
@@ -66,6 +73,13 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   sv: {
     activity: {
       emptyState: 'Svara på några frågor så byggs din aktivitetskarta här.',
+      legend: {
+        high: 'Hög aktivitet',
+        low: 'Låg aktivitet',
+        medium: 'Medelaktivitet',
+        none: 'Inga svar',
+        title: 'Aktivitetsskala',
+      },
       summary: (totalAnswers, activeDays, maxDayCount) =>
         `${totalAnswers} svar under perioden. ${activeDays} aktiva dagar. Högsta dag: ${maxDayCount} svar.`,
       subtitle: 'Varje ruta visar svar under en dag.',
@@ -104,6 +118,13 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   en: {
     activity: {
       emptyState: 'Answer a few questions and your activity map will build here.',
+      legend: {
+        high: 'High activity',
+        low: 'Low activity',
+        medium: 'Medium activity',
+        none: 'No answers',
+        title: 'Activity scale',
+      },
       summary: (totalAnswers, activeDays, maxDayCount) =>
         `${totalAnswers} answers in this period. ${activeDays} active days. Highest day: ${maxDayCount} answers.`,
       subtitle: 'Each square shows answers from one day.',
