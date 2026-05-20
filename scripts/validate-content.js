@@ -1995,11 +1995,11 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Importen är klar.',
     '${count} bokmärken',
     '${count} frågor med sparad progression',
-    '${count} dagar med FSRS-repetition',
-    '${count} FSRS-repetitionskort',
+    '${count} repetitionsdagar',
+    '${count} repetitionskort',
     '${count} provhistorikposter',
     '${count} inställningar',
-    'Studiesvit och frysstatus ingår',
+    'Studiesvit och svitskydd ingår',
     'Sammanfattning före import',
     '${count} granskningar av fel svar',
     'Importera studiedata',
@@ -7959,6 +7959,16 @@ if (process.argv.includes('--focus-legal-route-parity')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-settings-route-copy')) {
+  validateSettingsRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-static-head-metadata')) {
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
@@ -10744,6 +10754,12 @@ function validateSettingsRouteCopyParity() {
       );
     }
   });
+  const swedishSettingsCopyMatch = settingsRoute.match(/sv:\s*\{[\s\S]*?\n\s*\},\n\s*en:/);
+  if (!swedishSettingsCopyMatch) {
+    reject('settings route must expose a Swedish copy block before English copy');
+  } else if (/\bFSRS\b|frysstatus/.test(swedishSettingsCopyMatch[0])) {
+    reject('settings route Swedish import summary copy must hide scheduler jargon');
+  }
   if (
     /aria-selected=\{(?:language === value|dailyGoalAnswers === goal)\}/.test(settingsRoute) ||
     /accessibilityState=\{\{\s*selected:\s*(?:language === value|dailyGoalAnswers === goal)\s*\}\}/.test(
