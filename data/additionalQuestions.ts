@@ -156,8 +156,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q026',
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Kommunernas ansvar', pageApprox: 13 },
-    'Vilket exempel beskriver kommunernas ansvar?',
-    'Which example describes municipal responsibilities?',
+    'Vilka vardagstjänster ansvarar kommuner för?',
+    'Which everyday services are municipalities responsible for?',
     [
       [
         'Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning',
