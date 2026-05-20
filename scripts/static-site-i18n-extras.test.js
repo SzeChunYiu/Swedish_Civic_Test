@@ -1,24 +1,13 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const ARABIC_SCRIPT_PATTERN = /[\u0600-\u06ff]/;
-const REQUIRED_ARABIC_STATIC_UI_KEYS = [
-  'nav.home',
-  'nav.practice',
-  'nav.mock',
-  'nav.ebook',
-  'nav.support',
-  'nav.privacy',
-  'nav.terms',
-  'nav.sources',
-  'nav.cta',
+
+const somaliHighFrequencyKeys = [
   'hero.eyebrow',
-  'hero.h1a',
-  'hero.h1b',
-  'hero.h1c',
   'hero.lede',
   'hero.cta1',
   'hero.cta2',
@@ -31,20 +20,9 @@ const REQUIRED_ARABIC_STATIC_UI_KEYS = [
   'settings.theme.light',
   'settings.theme.dark',
   'settings.theme.auto',
-  'settings.palette',
-  'settings.palette.sub',
-  'settings.buddy',
-  'settings.buddy.sub',
-  'settings.buddy.show',
   'settings.language',
   'settings.text',
-  'settings.text.s',
-  'settings.text.m',
-  'settings.text.l',
   'settings.misc',
-  'settings.motion',
-  'settings.aurora',
-  'settings.flag',
   'settings.consent.reset',
   'settings.savedHint',
   'settings.done',
@@ -53,57 +31,77 @@ const REQUIRED_ARABIC_STATIC_UI_KEYS = [
   'footer.h.study',
   'footer.h.legal',
   'footer.h.about',
-  'footer.about.p',
   'footer.h.fika',
-  'footer.fika.p',
-  'footer.honest.p',
-  'footer.copyright',
-  'footer.fika',
 ];
-const BANNED_ARABIC_STATIC_UI_VALUES = new Map([
-  [
-    'hero.lede',
-    'تطبيق دراسة هادئ وغير رسمي لاختبار المواطنة السويدي. فصول قصيرة، ووضع تدريب ذكي، واختبار وهمي يجعل يوم الامتحان أقل رعباً.',
-  ],
-  ['settings.consent.reset', 'إعادة ضبط موافقة الكوكيز / الإعلانات…'],
-  ['footer.fika', 'صُنع باعتدال · مُختبر بالقهوة.'],
-  ['nav.ebook', 'كتاب'],
-  ['settings.theme', 'السمة'],
-]);
 
-function read(relativePath) {
-  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+const expectedSomaliCopy = {
+  'hero.h1a': 'Gudub imtixaanka.',
+  'hero.lede':
+    'App barasho deggan oo aan rasmi ahayn oo loogu talagalay imtixaanka muwaadinnimada Iswiidhan. Cutubyo gaagaaban, tababar caqli leh, iyo imtixaan tijaabo ah oo maalinta imtixaanka ka dhigaya mid ka cabsi yar sheeko yar oo deriska lala yeesho.',
+  'consent.body':
+    'Waxaan isticmaalnaa Google AdSense si aan u muujinno xayaysiisyo kooban. AdSense waxay isticmaashaa cookies, waxaana laga yaabaa inay u adeegsato xayaysiisyo la shakhsiyeeyay. Aqbal dhammaan, kaliya kuwa lagama maarmaanka ah, ama akhri <a href="#/privacy">bogga asturnaanta</a>.',
+  'settings.title': 'Dejinta',
+  'settings.theme.auto': 'Si otomaatig ah',
+  'settings.done': 'Dhammay',
+};
+
+const forbiddenSomaliFragments = [
+  'Goobinta',
+  'Toosan',
+  'Gudaha',
+  'qaab gaar ah',
+  'ka yaraan cabsida ka yaraan',
+];
+
+const englishFallbacksByKey = {
+  'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
+  'consent.body': 'We use Google AdSense',
+  'settings.title': 'Settings',
+  'settings.theme': 'Theme',
+  'settings.theme.auto': 'Auto',
+  'settings.done': 'Done',
+};
+
+function loadExtraI18n() {
+  const source = fs.readFileSync(path.join(repoRoot, 'site/i18n-extras.js'), 'utf8');
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+  return sandbox.window.__i18n_extra;
 }
 
-function loadExtrasDictionary() {
-  const window = { i18n: {} };
-  const source = read('site/i18n-extras.js');
-  return new Function('window', `${source}\nreturn window.i18n || window.__i18n_extra;`)(window);
-}
+test('Somali static-site high-frequency labels use reviewed local copy', () => {
+  const extra = loadExtraI18n();
+  const somali = extra?.so;
 
-test('Arabic static-site extras cover high-frequency UI without English fallbacks', () => {
-  const extras = loadExtrasDictionary();
-  const arabic = extras.ar;
-
-  assert.equal(typeof arabic, 'object');
-
-  for (const key of REQUIRED_ARABIC_STATIC_UI_KEYS) {
-    const value = arabic[key];
-    assert.equal(typeof value, 'string', `${key} should have Arabic copy`);
-    assert.equal(value, value.trim().replace(/\s+/g, ' '), `${key} should be normalized`);
-    assert.match(value, ARABIC_SCRIPT_PATTERN, `${key} should not fall back to English`);
+  assert.equal(typeof somali, 'object');
+  for (const [key, expected] of Object.entries(expectedSomaliCopy)) {
+    assert.equal(somali[key], expected, `Somali ${key} should use reviewed copy`);
   }
 });
 
-test('Arabic static-site extras avoid known machine-like labels', () => {
-  const { ar: arabic } = loadExtrasDictionary();
+test('Somali static-site labels reject known machine-like strings and English fallback', () => {
+  const extra = loadExtraI18n();
+  const somali = extra?.so;
 
-  for (const [key, value] of BANNED_ARABIC_STATIC_UI_VALUES) {
-    assert.notEqual(arabic[key], value, `${key} should avoid literal machine-like Arabic`);
+  assert.equal(typeof somali, 'object');
+  for (const key of somaliHighFrequencyKeys) {
+    const value = somali[key];
+    assert.equal(typeof value, 'string', `Somali ${key} must be a string`);
+    assert.notEqual(value.trim(), '', `Somali ${key} must not be empty`);
+
+    const englishFallback = englishFallbacksByKey[key];
+    if (englishFallback) {
+      assert.doesNotMatch(value, new RegExp(englishFallback, 'i'), `${key} uses English fallback`);
+    }
   }
 
-  assert.match(arabic['hero.lede'], /اختبار تجريبي/);
-  assert.match(arabic['settings.consent.reset'], /ملفات تعريف الارتباط/);
-  assert.match(arabic['nav.ebook'], /دليل/);
-  assert.equal(arabic['settings.theme'], 'المظهر');
+  const serializedSomali = Object.values(somali).join('\n');
+  for (const fragment of forbiddenSomaliFragments) {
+    assert.doesNotMatch(
+      serializedSomali,
+      new RegExp(fragment, 'i'),
+      `Somali dictionary still contains ${fragment}`,
+    );
+  }
 });

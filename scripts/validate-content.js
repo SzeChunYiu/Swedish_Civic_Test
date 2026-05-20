@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 const ts = require('typescript');
 const {
   buildSiteQuestionBank,
@@ -540,6 +541,58 @@ const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
+};
+const STATIC_I18N_SOMALI_REQUIRED_COPY = {
+  'hero.h1a': 'Gudub imtixaanka.',
+  'hero.lede':
+    'App barasho deggan oo aan rasmi ahayn oo loogu talagalay imtixaanka muwaadinnimada Iswiidhan. Cutubyo gaagaaban, tababar caqli leh, iyo imtixaan tijaabo ah oo maalinta imtixaanka ka dhigaya mid ka cabsi yar sheeko yar oo deriska lala yeesho.',
+  'consent.body':
+    'Waxaan isticmaalnaa Google AdSense si aan u muujinno xayaysiisyo kooban. AdSense waxay isticmaashaa cookies, waxaana laga yaabaa inay u adeegsato xayaysiisyo la shakhsiyeeyay. Aqbal dhammaan, kaliya kuwa lagama maarmaanka ah, ama akhri <a href="#/privacy">bogga asturnaanta</a>.',
+  'settings.title': 'Dejinta',
+  'settings.theme.auto': 'Si otomaatig ah',
+  'settings.done': 'Dhammay',
+};
+const STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS = [
+  'hero.eyebrow',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'consent.title',
+  'consent.body',
+  'consent.min',
+  'consent.all',
+  'settings.title',
+  'settings.theme',
+  'settings.theme.light',
+  'settings.theme.dark',
+  'settings.theme.auto',
+  'settings.language',
+  'settings.text',
+  'settings.misc',
+  'settings.consent.reset',
+  'settings.savedHint',
+  'settings.done',
+  'footer.t1',
+  'footer.t2',
+  'footer.h.study',
+  'footer.h.legal',
+  'footer.h.about',
+  'footer.h.fika',
+];
+const STATIC_I18N_SOMALI_FORBIDDEN_FRAGMENTS = [
+  'Goobinta',
+  'Toosan',
+  'Gudaha',
+  'qaab gaar ah',
+  'ka yaraan cabsida ka yaraan',
+];
+const STATIC_I18N_SOMALI_ENGLISH_FALLBACKS = {
+  'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
+  'consent.body': 'We use Google AdSense',
+  'settings.title': 'Settings',
+  'settings.theme': 'Theme',
+  'settings.theme.auto': 'Auto',
+  'settings.done': 'Done',
 };
 const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
   sv: [
@@ -7686,9 +7739,9 @@ let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
-let staticEbookFactboxClaimPatternsValidated = 0;
-let staticEbookFactboxSourceUrlsValidated = 0;
-let staticEbookFactboxSourceParityValidated = false;
+let staticI18nSomaliRequiredCopyValidated = 0;
+let staticI18nSomaliHighFrequencyKeysValidated = 0;
+let staticI18nSomaliNaturalnessValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -12162,6 +12215,81 @@ function validateLocalizationLanguageContract() {
   }
 
   if (valid) languageSettingsParityValidated = true;
+}
+
+function loadStaticI18nExtras() {
+  const source = fs.readFileSync(path.join(repoRoot, 'site/i18n-extras.js'), 'utf8');
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+  return sandbox.window.__i18n_extra;
+}
+
+function validateStaticI18nSomaliNaturalness() {
+  let valid = true;
+  let somali = null;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    const extra = loadStaticI18nExtras();
+    somali = extra?.so;
+  } catch (error) {
+    reject(`site/i18n-extras.js could not be loaded: ${error.message}`);
+    return;
+  }
+
+  if (!somali || typeof somali !== 'object' || Array.isArray(somali)) {
+    reject('site/i18n-extras.js must expose a Somali "so" dictionary');
+    return;
+  }
+
+  Object.entries(STATIC_I18N_SOMALI_REQUIRED_COPY).forEach(([key, expected]) => {
+    if (somali[key] !== expected) {
+      reject(
+        `Somali ${key} is ${JSON.stringify(somali[key])}, expected ${JSON.stringify(expected)}`,
+      );
+      return;
+    }
+    staticI18nSomaliRequiredCopyValidated += 1;
+  });
+
+  STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS.forEach((key) => {
+    const value = somali[key];
+    let keyIsValid = true;
+
+    if (!hasText(value)) {
+      keyIsValid = false;
+      reject(`Somali ${key} must be a non-empty localized string`);
+    }
+
+    const englishFallback = STATIC_I18N_SOMALI_ENGLISH_FALLBACKS[key];
+    if (englishFallback && new RegExp(englishFallback, 'i').test(value)) {
+      keyIsValid = false;
+      reject(`Somali ${key} still uses English fallback copy`);
+    }
+
+    if (keyIsValid) staticI18nSomaliHighFrequencyKeysValidated += 1;
+  });
+
+  const serializedSomali = Object.values(somali).join('\n');
+  STATIC_I18N_SOMALI_FORBIDDEN_FRAGMENTS.forEach((fragment) => {
+    if (new RegExp(fragment, 'i').test(serializedSomali)) {
+      reject(`Somali static-site dictionary still contains machine-like phrase: ${fragment}`);
+    }
+  });
+
+  if (
+    valid &&
+    staticI18nSomaliRequiredCopyValidated ===
+      Object.keys(STATIC_I18N_SOMALI_REQUIRED_COPY).length &&
+    staticI18nSomaliHighFrequencyKeysValidated === STATIC_I18N_SOMALI_HIGH_FREQUENCY_KEYS.length
+  ) {
+    staticI18nSomaliNaturalnessValidated = true;
+  }
 }
 
 function validateSettingsStoreSchemaParity() {
@@ -17530,6 +17658,7 @@ validateThemeTokenSchema();
 validateGlossaryTerms();
 validateUxBenchmarks();
 validateLocalizationLanguageContract();
+validateStaticI18nSomaliNaturalness();
 validateSettingsStoreSchemaParity();
 validateSettingsDailyGoalParity();
 validateSettingsAudioParity();
@@ -17751,6 +17880,9 @@ console.log(
           : 0,
       localizationStringsValidated,
       languageSettingsParityValidated,
+      staticI18nSomaliRequiredCopyValidated,
+      staticI18nSomaliHighFrequencyKeysValidated,
+      staticI18nSomaliNaturalnessValidated,
       settingsStoreFieldsValidated,
       settingsStoreSchemaParityValidated,
       settingsDailyGoalOptionsValidated,
