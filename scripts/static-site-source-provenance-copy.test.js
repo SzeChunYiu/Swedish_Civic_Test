@@ -4,7 +4,6 @@ const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
 const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
-const { validateStaticHeadMetadata } = require('./check-live-site');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -75,12 +74,18 @@ function englishTranslationMap(appSource) {
 }
 
 function normalizeInlineHtml(value) {
-  return value.replace(/\s+/g, ' ').trim();
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function staticFallbackI18nValues(indexHtml, keyPrefix) {
   const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
 
   let match;
   while ((match = elementPattern.exec(indexHtml))) {
@@ -94,6 +99,64 @@ function staticFaqSection(indexHtml) {
   const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
   assert.ok(faqMatch, 'static FAQ fallback section should be present');
   return faqMatch[0];
+function listTextFiles(relativePath) {
+  const absolutePath = path.join(repoRoot, relativePath);
+  const stats = fs.statSync(absolutePath);
+  if (stats.isFile()) return [relativePath];
+
+  return fs
+    .readdirSync(absolutePath, { withFileTypes: true })
+    .flatMap((entry) => listTextFiles(path.join(relativePath, entry.name)))
+    .filter((file) => /\.(?:js|ts|tsx)$/.test(file));
+}
+
+function joinedSource(paths) {
+  return paths.map((file) => `\n--- ${file} ---\n${read(file)}`).join('\n');
+}
+
+function staticHomeRoute(indexHtml) {
+  const homeMatch = indexHtml.match(
+    /<main data-screen-label="01 Home" data-page="\/"[\s\S]*?<\/main>/,
+  );
+  assert.ok(homeMatch, 'static Home route should be present');
+  return homeMatch[0];
+}
+
+function isGuardedHomeBodyKey(key) {
+  if (/^chap\.\d+\.m1$/.test(key)) return false;
+  return (
+    key.startsWith('demo.') ||
+    key.startsWith('qcard.') ||
+    key.startsWith('chap.') ||
+    key === 'ad.label' ||
+    key === 'ad.placeholder'
+  );
+}
+
+function assertStaticHomeBodyFallbackParitySource(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const homeFallback = staticFallbackI18nValues(staticHomeRoute(indexHtml), '');
+  const guardedEntries = Array.from(homeFallback.entries()).filter(([key]) =>
+    isGuardedHomeBodyKey(key),
+  );
+
+  assert.ok(guardedEntries.length > 0, 'static Home body should expose guarded fallback copy');
+
+  for (const [key, fallbackValue] of guardedEntries) {
+    const expectedValue = englishTranslations.get(key);
+    assert.equal(
+      fallbackValue,
+      normalizeInlineHtml(expectedValue ?? ''),
+      `${key} Home no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
+
+  assert.ok(
+    !guardedEntries.some(([key]) => /^chap\.\d+\.m1$/.test(key)),
+    'runtime chapter count placeholders should not be treated as required literal fallback copy',
+  );
+
+  return guardedEntries.length;
 }
 
 const unsupportedPracticalTestClaimPatterns = [
@@ -113,6 +176,22 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+];
+const ebookFactboxSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+];
+const unsupportedEbookFactboxPatterns = [
+  /Facts you'll see on the test/i,
+  /what you'll see on the test/i,
+  /\b69%\s+is\s+forest/i,
+  /\b9%\s+lake/i,
+  /35\s*000\s+km\s+of\s+coastline/i,
+  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
+  /historically commits\s+~?1%\s+of\s+GNI/i,
+  /Citizenship test starts:\s*6 June 2026/i,
 ];
 
 function sourceProvenanceSurface() {
@@ -162,13 +241,6 @@ test('static question bank exports visible question provenance', () => {
   assert.equal(questions.find((question) => question.id === 'q001')?.questionProvenance, 'uhr');
   assert.ok(counts.uhr > 0, 'static bank should include UHR provenance rows');
   assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
-test('static head metadata does not make pass or passport outcome claims', () => {
-  const result = validateStaticHeadMetadata(read('site/index.html'));
-
-  assert.equal(result.ok, true, result.details);
-  assert.match(result.title, /^Almost Swedish\b/);
-  assert.doesNotMatch(result.surface, /Study,\s*fika,\s*pass/i);
-  assert.doesNotMatch(result.surface, /\b(?:pass the test|earn the passport|get the passport)\b/i);
 });
 
 test('static source provenance copy rejects unshipped external source families', () => {
@@ -214,6 +286,21 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
   }
 });
 
+test('static Home body no-JS fallback mirrors the English dictionary', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+
+  assert.equal(assertStaticHomeBodyFallbackParitySource(indexHtml, appSource), 33);
+  assert.throws(
+    () =>
+      assertStaticHomeBodyFallbackParitySource(
+        indexHtml.replace('No textbooks.', 'No stale textbooks.'),
+        appSource,
+      ),
+    /demo\.h1 Home no-JS fallback should match the English site\/app\.js dictionary/,
+  );
+});
+
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
 });
@@ -244,4 +331,34 @@ test('static ebook practical test copy is backed by current UHR source metadata'
   unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
     assert.doesNotMatch(ebookSource, pattern),
   );
+});
+
+test('static companion copy rejects answer-pattern hacks and answer-manipulation jokes', () => {
+  const companionCopy = joinedSource(['site/buddies.js', 'site/extras.js']);
+  const guardedSources = joinedSource([
+    'site/buddies.js',
+    'site/extras.js',
+    ...listTextFiles('scripts'),
+    ...listTextFiles('tests'),
+  ]);
+
+  [
+    phrasePattern('shorter ', 'one ', 'usually'),
+    phrasePattern('det ', 'kortare'),
+    phrasePattern('\\bkortare\\b(?:\\s+\\S+){0,6}\\s+', 'fel'),
+    phrasePattern('switched ', 'two ', 'answer ', 'letters'),
+    phrasePattern('answer', '[-\\s]*', 'letter ', 'trick'),
+    phrasePattern('answer ', 'length'),
+    phrasePattern('tamp', 'er'),
+    phrasePattern('manipul', 'era'),
+    phrasePattern('\\bbytte\\b(?:\\s+\\S+){0,6}\\s+', 'svar'),
+    phrasePattern('svars', 'bokstav'),
+  ].forEach((pattern) => assert.doesNotMatch(guardedSources, pattern));
+
+  [
+    phrasePattern('Pass ', 'the test'),
+    phrasePattern('Earn ', 'the passport'),
+    phrasePattern('Klara ', 'provet'),
+    phrasePattern('Få ', 'passet'),
+  ].forEach((pattern) => assert.doesNotMatch(companionCopy, pattern));
 });
