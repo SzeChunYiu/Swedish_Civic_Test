@@ -1,21 +1,26 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { daysUntil, EXAM_REFORM_DATE, formatExamDate } from '../../lib/learning/examDate';
+import {
+  CITIZENSHIP_RULES_EFFECTIVE_DATE,
+  CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
+  daysUntil,
+  formatExamDate,
+} from '../../lib/learning/examDate';
 import { colors, radius, space, typography } from '../../lib/theme';
 
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (date: string) =>
-      `Det nya samhällskunskapstestet träder i kraft ${date}. Förbered dig nu.`,
-    untilLabel: 'tills nya provet',
+    body: (rulesDate: string, firstSittingDate: string) =>
+      `Nya medborgarskapsregler gäller från ${rulesDate}. Första samhällskunskapsprovet genomförs den ${firstSittingDate} i Stockholm. Förbered dig nu.`,
+    untilLabel: 'tills nya reglerna',
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (date: string) =>
-      `The new civic knowledge test takes effect on ${date}. Start preparing now.`,
-    untilLabel: 'until new exam',
+    body: (rulesDate: string, firstSittingDate: string) =>
+      `New citizenship rules apply from ${rulesDate}. The first civic-knowledge test will be held on ${firstSittingDate} in Stockholm. Start preparing now.`,
+    untilLabel: 'until new rules',
   },
 } as const;
 
@@ -40,9 +45,11 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
   if (days <= 0) return null;
 
   const t = copy[language];
-  const dateString = formatExamDate(EXAM_REFORM_DATE, language);
+  const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
+  const firstSittingDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, language);
   const resolvedAccessibilityLabel =
-    accessibilityLabel ?? `${t.label(days)} ${t.untilLabel}. ${t.body(dateString)}`;
+    accessibilityLabel ??
+    `${t.label(days)} ${t.untilLabel}. ${t.body(rulesDateString, firstSittingDateString)}`;
 
   return (
     <View
@@ -54,7 +61,7 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
         <Text style={styles.daysNumber}>{days}</Text>
         <Text style={styles.daysLabel}>{t.untilLabel}</Text>
       </View>
-      <Text style={styles.body}>{t.body(dateString)}</Text>
+      <Text style={styles.body}>{t.body(rulesDateString, firstSittingDateString)}</Text>
     </View>
   );
 }
