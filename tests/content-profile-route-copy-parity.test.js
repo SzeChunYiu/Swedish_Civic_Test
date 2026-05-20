@@ -41,7 +41,9 @@ test('profile route shell copy stays keyed by the settings language', () => {
   );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
-  assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.studySetupCtaAccessibilityLabel\}/);
+  assert.match(source, /\{copy\.studySetupCta\}/);
+  assert.match(source, /href="\/settings"/);
 });
 
 test('profile route copy parity rejects bypassing the settings language', () => {

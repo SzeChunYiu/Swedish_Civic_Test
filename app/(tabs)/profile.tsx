@@ -27,8 +27,8 @@ type ProfileCopy = {
   languageBadge: string;
   levelMetric: string;
   noBadges: string;
-  openSettings: string;
-  openSettingsAccessibilityLabel: string;
+  studySetupCta: string;
+  studySetupCtaAccessibilityLabel: string;
   questionsHelper: string;
   streakFreezeBadge: string;
   studySetupSubtitle: string;
@@ -50,11 +50,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Öppna inställningar',
-    openSettingsAccessibilityLabel: 'Öppna inställningar',
     questionsHelper: 'frågor',
     streakFreezeBadge: 'Svitskydd',
-    studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
+    studySetupCta: 'Justera mål, språk och ljud',
+    studySetupCtaAccessibilityLabel: 'Justera mål, språk och ljud',
+    studySetupSubtitle: 'Justera dagligt mål, frågespråk och ljud innan nästa pass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
       'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
@@ -72,11 +72,12 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Open settings',
-    openSettingsAccessibilityLabel: 'Open settings',
     questionsHelper: 'questions',
     streakFreezeBadge: 'Streak freeze',
-    studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
+    studySetupCta: 'Adjust goal, language, and audio',
+    studySetupCtaAccessibilityLabel: 'Adjust goal, language, and audio',
+    studySetupSubtitle:
+      'Tune your daily goal, question language, and audio before the next session.',
     studySetupTitle: 'Study setup',
     subtitle:
       'Your goals, language mode, streaks, and badges stay on this device for a private study experience.',
@@ -170,6 +171,14 @@ export default function Screen() {
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
         </View>
+        <Link
+          accessibilityLabel={copy.studySetupCtaAccessibilityLabel}
+          accessibilityRole="link"
+          href="/settings"
+          style={styles.studySetupLink}
+        >
+          {copy.studySetupCta}
+        </Link>
       </Card>
 
       <Card style={styles.cardWide}>
@@ -185,15 +194,6 @@ export default function Screen() {
         runtimeOptions={purchaseRuntime}
       />
       <ComplianceLinks />
-
-      <Link
-        accessibilityLabel={copy.openSettingsAccessibilityLabel}
-        accessibilityRole="link"
-        href="/settings"
-        style={styles.settingsLink}
-      >
-        {copy.openSettings}
-      </Link>
     </ScreenShell>
   );
 }
@@ -225,13 +225,17 @@ const styles = StyleSheet.create({
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
   },
-  settingsLink: {
+  studySetupLink: {
     alignSelf: 'flex-start',
     backgroundColor: colors.accent,
-    borderRadius: radius.micro,
+    borderRadius: radius.card,
     color: colors.surface,
+    display: 'flex',
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    justifyContent: 'center',
+    lineHeight: typography.navButton.lineHeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',

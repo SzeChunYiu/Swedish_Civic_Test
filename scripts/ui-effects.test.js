@@ -914,18 +914,19 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
-  assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.studySetupCtaAccessibilityLabel\}/);
+  assert.match(source, /\{copy\.studySetupCta\}/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Studieinställningar/);
+  assert.match(source, /Justera mål, språk och ljud/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
-  assert.match(source, /Öppna inställningar/);
   assert.match(source, /Första övningen/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
+  assert.match(source, /Adjust goal, language, and audio/);
   assert.match(source, /No badges yet/);
-  assert.match(source, /Open settings/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
