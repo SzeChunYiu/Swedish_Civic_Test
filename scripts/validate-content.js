@@ -423,6 +423,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^(?:Vårdcentraler, barnavårdscentraler och mödravårdscentraler|Domstolar, åklagare och kriminalvård|Ordna förskolor|Betala sjukförsäkring|Vård och service hemma|Automatiskt studiestöd)\b/i,
   /^(?:Health centres, child health centres, and maternity clinics|Courts, prosecutors, and prison and probation services|Arrange preschools|Pay sickness insurance|Care and services at home|Automatic study support)\b/i,
 ];
+const QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN = /\bhur\s+den\s+röstar\b/i;
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -4586,6 +4587,16 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function findQuestionSecretBallotSvPronounNaturalnessIssue(question) {
+  const text = [
+    question.questionSv,
+    question.explanationSv,
+    ...(question.options || []).map((option) => option.textSv),
+  ].join(' ');
+
+  return QUESTION_SECRET_BALLOT_SV_PRONOUN_NATURALNESS_PATTERN.test(text);
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -7390,6 +7401,7 @@ let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
+let questionSecretBallotSvPronounNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -16740,6 +16752,8 @@ if (Array.isArray(questions)) {
       const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+      const secretBallotSvPronounNaturalnessIssue =
+        findQuestionSecretBallotSvPronounNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -16806,6 +16820,11 @@ if (Array.isArray(questions)) {
       }
       if (successionVatDistractorIssue) {
         fail(`${label} uses the old q038 VAT distractor wording`);
+      }
+      if (secretBallotSvPronounNaturalnessIssue) {
+        fail(`${label} uses unnatural secret-ballot Swedish voting pronoun`);
+      } else {
+        questionSecretBallotSvPronounNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -17278,6 +17297,7 @@ console.log(
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
+      questionSecretBallotSvPronounNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
