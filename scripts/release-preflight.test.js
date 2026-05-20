@@ -925,6 +925,36 @@ function createRemoveAdsDeviceQaEvidence(options = {}) {
   };
 }
 
+test('checked-in Remove Ads device QA template links structured platform JSON stubs', () => {
+  const report = read('reports/release-ads-iap-device-qa.md');
+
+  assert.match(report, /reports\/release-device-qa\/ios\.json/);
+  assert.match(report, /reports\/release-device-qa\/android\.json/);
+  assert.doesNotMatch(report, /\bTBD\b|placeholder|- \[[ x]\]/i);
+  assert.doesNotMatch(report, /reports\/release-device-qa\/[^\s]+\.md/i);
+
+  for (const [platform, relativePath] of [
+    ['ios', 'reports/release-device-qa/ios.json'],
+    ['android', 'reports/release-device-qa/android.json'],
+  ]) {
+    const artifact = readJson(relativePath);
+
+    assert.equal(artifact.schemaVersion, 1);
+    assert.equal(artifact.status, 'pending');
+    assert.equal(artifact.platform, platform);
+    assert.deepEqual(
+      artifact.checks.map((check) => check.id),
+      removeAdsDeviceQaRequiredChecks,
+    );
+    assert.ok(
+      artifact.checks.every((check) => check.result === 'pending' && check.notes),
+      relativePath + ' should keep every required manual check pending with reviewer guidance',
+    );
+    assert.ok(artifact.proof.screenshots.length > 0);
+    assert.ok(artifact.proof.logs.length > 0);
+  }
+});
+
 function createStoreRecordEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -1272,8 +1302,8 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
   assert.match(scopeGate.evidence, /tests\/v1-1-/i);
   assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
-  assert.match(scopeGate.evidence, /report must link a ios JSON artifact/i);
-  assert.match(scopeGate.evidence, /report must link a android JSON artifact/i);
+  assert.match(scopeGate.evidence, /reports\/release-device-qa\/ios\.json/i);
+  assert.match(scopeGate.evidence, /reports\/release-device-qa\/android\.json/i);
   assert.match(scopeGate.nextAction, /Remove Ads structural gate/i);
   assert.match(scopeGate.nextAction, /test -f reports\/release-ads-iap-device-qa\.md/);
 });

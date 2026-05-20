@@ -350,9 +350,12 @@ function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
   const normalizedPurchasesSource = purchasesSource.replace(/\s+/g, ' ');
   const step3Checks = [
     [
-      /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
+      (/export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*['"][a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+\.removeads['"]/.test(
         purchasesSource,
-      ),
+      ) ||
+        /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*`\$\{APP_NATIVE_IDENTIFIER\}\.removeads`/.test(
+          purchasesSource,
+        )),
       'Remove Ads product id must be an exported reverse-DNS removeads identifier',
     ],
     [
@@ -763,8 +766,8 @@ function validateRemoveAdsDeviceQaArtifact(artifactPath, expectedPlatform) {
     if (!check?.id || !String(check.id).trim()) {
       errors.push(`checks[${index}].id is required`);
     }
-    if (!/^(passed|failed|not_applicable)$/i.test(check?.result || '')) {
-      errors.push(`checks[${index}].result must be passed, failed, or not_applicable`);
+    if (!/^(passed|failed|not_applicable|pending)$/i.test(check?.result || '')) {
+      errors.push(`checks[${index}].result must be passed, failed, not_applicable, or pending`);
     }
     if (check?.result !== 'passed') {
       errors.push(`${check?.id || `checks[${index}]`} result must be passed`);
