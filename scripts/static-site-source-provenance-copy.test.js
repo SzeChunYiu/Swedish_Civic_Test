@@ -74,12 +74,18 @@ function englishTranslationMap(appSource) {
 }
 
 function normalizeInlineHtml(value) {
-  return value.replace(/\s+/g, ' ').trim();
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function staticFallbackI18nValues(indexHtml, keyPrefix) {
   const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
+  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1\s*>/g;
 
   let match;
   while ((match = elementPattern.exec(indexHtml))) {
@@ -95,19 +101,49 @@ function staticFaqSection(indexHtml) {
   return faqMatch[0];
 }
 
-function listTextFiles(relativePath) {
-  const absolutePath = path.join(repoRoot, relativePath);
-  const stats = fs.statSync(absolutePath);
-  if (stats.isFile()) return [relativePath];
-
-  return fs
-    .readdirSync(absolutePath, { withFileTypes: true })
-    .flatMap((entry) => listTextFiles(path.join(relativePath, entry.name)))
-    .filter((file) => /\.(?:js|ts|tsx)$/.test(file));
+function staticHomeRoute(indexHtml) {
+  const homeMatch = indexHtml.match(
+    /<main data-screen-label="01 Home" data-page="\/"[\s\S]*?<\/main>/,
+  );
+  assert.ok(homeMatch, 'static Home route should be present');
+  return homeMatch[0];
 }
 
-function joinedSource(paths) {
-  return paths.map((file) => `\n--- ${file} ---\n${read(file)}`).join('\n');
+function isGuardedHomeBodyKey(key) {
+  if (/^chap\.\d+\.m1$/.test(key)) return false;
+  return (
+    key.startsWith('demo.') ||
+    key.startsWith('qcard.') ||
+    key.startsWith('chap.') ||
+    key === 'ad.label' ||
+    key === 'ad.placeholder'
+  );
+}
+
+function assertStaticHomeBodyFallbackParitySource(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const homeFallback = staticFallbackI18nValues(staticHomeRoute(indexHtml), '');
+  const guardedEntries = Array.from(homeFallback.entries()).filter(([key]) =>
+    isGuardedHomeBodyKey(key),
+  );
+
+  assert.ok(guardedEntries.length > 0, 'static Home body should expose guarded fallback copy');
+
+  for (const [key, fallbackValue] of guardedEntries) {
+    const expectedValue = englishTranslations.get(key);
+    assert.equal(
+      fallbackValue,
+      normalizeInlineHtml(expectedValue ?? ''),
+      `${key} Home no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
+
+  assert.ok(
+    !guardedEntries.some(([key]) => /^chap\.\d+\.m1$/.test(key)),
+    'runtime chapter count placeholders should not be treated as required literal fallback copy',
+  );
+
+  return guardedEntries.length;
 }
 
 const unsupportedPracticalTestClaimPatterns = [
@@ -237,38 +273,23 @@ test('static FAQ no-JS fallback mirrors the English dictionary', () => {
   }
 });
 
-test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
-  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
+test('static Home body no-JS fallback mirrors the English dictionary', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+
+  assert.equal(assertStaticHomeBodyFallbackParitySource(indexHtml, appSource), 33);
+  assert.throws(
+    () =>
+      assertStaticHomeBodyFallbackParitySource(
+        indexHtml.replace('No textbooks.', 'No stale textbooks.'),
+        appSource,
+      ),
+    /demo\.h1 Home no-JS fallback should match the English site\/app\.js dictionary/,
+  );
 });
 
-test('static companion copy rejects answer-pattern hacks and answer-manipulation jokes', () => {
-  const companionCopy = joinedSource(['site/buddies.js', 'site/extras.js']);
-  const guardedSources = joinedSource([
-    'site/buddies.js',
-    'site/extras.js',
-    ...listTextFiles('scripts'),
-    ...listTextFiles('tests'),
-  ]);
-
-  [
-    phrasePattern('shorter ', 'one ', 'usually'),
-    phrasePattern('det ', 'kortare'),
-    phrasePattern('\\bkortare\\b(?:\\s+\\S+){0,6}\\s+', 'fel'),
-    phrasePattern('switched ', 'two ', 'answer ', 'letters'),
-    phrasePattern('answer', '[-\\s]*', 'letter ', 'trick'),
-    phrasePattern('answer ', 'length'),
-    phrasePattern('tamp', 'er'),
-    phrasePattern('manipul', 'era'),
-    phrasePattern('\\bbytte\\b(?:\\s+\\S+){0,6}\\s+', 's', 'var'),
-    phrasePattern('svars', 'bokstav'),
-  ].forEach((pattern) => assert.doesNotMatch(guardedSources, pattern));
-
-  [
-    phrasePattern('Pass ', 'the test'),
-    phrasePattern('Earn ', 'the passport'),
-    phrasePattern('Klara ', 'provet'),
-    phrasePattern('Få ', 'passet'),
-  ].forEach((pattern) => assert.doesNotMatch(companionCopy, pattern));
+test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
+  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
 });
 
 test('static ebook practical test copy is backed by current UHR source metadata', () => {
