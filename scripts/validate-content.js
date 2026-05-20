@@ -649,7 +649,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Redoindikator',
     'redo',
@@ -692,7 +692,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
     'Provredo',
-    'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+    'Kombinera realistiska tidsatta prov med flashcards, bokmärken, missade frågor, ljud, offline-studier och tydliga redo-signaler.',
   ],
   en: [
     'Study dashboard',
@@ -740,7 +740,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Study rhythm',
     'Get one simple next action and gentle habit feedback without blocking serious study.',
     'Exam readiness',
-    'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+    'Combine realistic timed exams with flashcards, bookmarks, wrong-answer tracking, audio, offline study, and readiness indicators.',
   ],
 };
 const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
@@ -753,6 +753,15 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
+const EXPECTED_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
+  'genomgång av frågor du missat',
+  'bokmärken, missade frågor, ljud',
+];
+const FORBIDDEN_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
+  /felspårning/i,
+  /repetition av misstag/i,
+  /upprepning av misstag/i,
+];
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
   ['type HomeCopy = {', 'home route must define a typed copy contract'],
@@ -6628,6 +6637,7 @@ let homeRouteHeaderParityValidated = false;
 let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
 let homeRouteInternalBenchmarkCopyValidated = false;
+let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -8984,6 +8994,37 @@ function validateHomeRouteCopyParity() {
     homeRouteCopyParityValidated = true;
     homeRouteInternalBenchmarkCopyValidated = true;
   }
+}
+
+function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
+  let valid = true;
+  let homeRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  } catch (error) {
+    reject(`home route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  FORBIDDEN_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY.forEach((pattern) => {
+    if (pattern.test(homeRoute)) {
+      reject('home route Swedish missed-question review copy must use natural learner wording');
+    }
+  });
+
+  EXPECTED_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY.forEach((phrase) => {
+    if (!homeRoute.includes(phrase)) {
+      reject('home route Swedish missed-question review copy must use natural learner wording');
+    }
+  });
+
+  if (valid) homeRouteSwedishMistakeReviewCopyNaturalnessValidated = true;
 }
 
 function validateMistakeReviewHydrationEvidence() {
@@ -14600,6 +14641,21 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
+if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
+  validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
@@ -14872,6 +14928,7 @@ validateLearnRouteLinkCopyParity();
 validateProfileRouteHeaderParity();
 validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
+validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
@@ -15013,6 +15070,7 @@ console.log(
       homeRouteCopyLabelsValidated,
       homeRouteCopyParityValidated,
       homeRouteInternalBenchmarkCopyValidated,
+      homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,

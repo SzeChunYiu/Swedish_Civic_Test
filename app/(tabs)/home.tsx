@@ -110,7 +110,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       'Duolingo-inspired learning loops':
         'Ge en snabb första vinst, en självklar nästa handling och varsam daglig vanefeedback utan att hindra seriösa studier.',
       'Life in the UK Test apps':
-        'Kombinera realistiska tidsatta prov med flashcards, bokmärken, felspårning, ljud, offline-studier och tydliga redo-signaler.',
+        'Kombinera realistiska tidsatta prov med flashcards, bokmärken, missade frågor, ljud, offline-studier och tydliga redo-signaler.',
     },
     dailyGoalTitle: 'Dagens mål',
     dayStreakHelper: 'daglig vana',
@@ -215,7 +215,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       'Lärdomar från framgångsrika samhällsprovs- och språkstudieappar: ett tydligt nästa steg, direkt återkoppling och synliga framsteg.',
     studyLoopTitle: 'Optimerat studieflöde',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',

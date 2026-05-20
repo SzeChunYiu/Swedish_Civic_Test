@@ -1001,6 +1001,15 @@ test('home screen surfaces focused review copy and review action', () => {
   assert.match(source, /href="\/mistakes"/);
 });
 
+test('home screen uses natural Swedish missed-question review copy', () => {
+  const source = read('app/(tabs)/home.tsx');
+
+  assert.match(source, /genomgång av frågor du missat/);
+  assert.match(source, /missade frågor/);
+  assert.doesNotMatch(source, /felspårning|repetition av misstag|upprepning av misstag/i);
+  assert.match(source, /href="\/mistakes"/);
+});
+
 test('home shell copy follows Swedish and English settings language', () => {
   const source = read('app/(tabs)/home.tsx');
 
