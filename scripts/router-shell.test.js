@@ -295,6 +295,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     '(tabs)',
     'search',
     'dashboard',
+    'citizenship-requirements',
     '+not-found',
   ]);
   assert.deepEqual(manifest.rootStackScreenFiles, [
@@ -302,6 +303,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'app/(tabs)/_layout.tsx',
     'app/search.tsx',
     'app/dashboard.tsx',
+    'app/citizenship-requirements.tsx',
     'app/+not-found.tsx',
   ]);
   assert.deepEqual(manifest.recoveryHrefs, ['/home']);
@@ -314,6 +316,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'support',
     'terms',
     'about-the-test',
+    'citizenship-requirements',
   ]);
   assert.deepEqual(manifest.notFoundRouteNames, ['+not-found']);
   assert.deepEqual(manifest.notFoundHeaderModes, ['visible-language-picker']);
@@ -341,19 +344,24 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     true,
     'native intent static route allowlist should include the registered dashboard route',
   );
+  assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/citizenship-requirements'),
+    true,
+    'native intent static route allowlist should include the citizenship requirements guide',
+  );
   assert.deepEqual(manifest.nativeIntentRuntimeSampleInputs.slice(0, 5), [
     '   ',
     '/practice?mode=review#question',
     '/about-the-test',
+    '/citizenship-requirements',
     '/search?q=riksdag',
-    'almost-swedish://app/chapter/ch01?from=learn',
   ]);
   assert.deepEqual(manifest.nativeIntentRuntimeSampleExpectedPaths.slice(0, 5), [
     '/home',
     '/practice?mode=review#question',
     '/about-the-test',
+    '/citizenship-requirements',
     '/search?q=riksdag',
-    '/chapter/ch01?from=learn',
   ]);
 
   for (const file of manifest.files) {
@@ -432,6 +440,26 @@ test('native intent resolves about-the-test deep links before the Home fallback'
   );
 });
 
+test('native intent resolves citizenship requirements deep links before the Home fallback', () => {
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(
+    redirectSystemPath({ initial: true, path: '/citizenship-requirements' }),
+    '/citizenship-requirements',
+  );
+  assert.equal(
+    redirectSystemPath({
+      initial: true,
+      path: 'almost-swedish://app/citizenship-requirements',
+    }),
+    '/citizenship-requirements',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: '/citizenship-requirements/details' }),
+    '/home',
+  );
+});
+
 test('native intent resolves search deep links before the Home fallback', () => {
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
@@ -461,6 +489,21 @@ test('router shell tooling guard is wired into package scripts', () => {
   const pkg = readJson('package.json');
 
   assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
+  if (pkg.scripts.test === 'node scripts/test-dispatch.js') {
+    const testDispatcher = read('scripts/test-dispatch.js');
+    assertMatches(
+      testDispatcher,
+      /runNpmScript\('test:all'\)/,
+      'npm test dispatcher should run the full aggregate suite without a selector',
+    );
+    assertMatches(
+      pkg.scripts['test:all'],
+      /npm run test:router-shell/,
+      'aggregate test script should include the router shell scaffold guard',
+    );
+    return;
+  }
+
   assertMatches(
     pkg.scripts.test,
     /npm run test:router-shell/,

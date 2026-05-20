@@ -115,6 +115,11 @@ export const expoRouterRootStackScreens = [
     purpose: 'Dashboard route registered in the root stack',
   },
   {
+    name: 'citizenship-requirements',
+    file: 'app/citizenship-requirements.tsx',
+    purpose: 'Citizenship requirements guide registered in the root stack',
+  },
+  {
     name: '+not-found',
     file: 'app/+not-found.tsx',
     purpose: 'Unknown-route recovery screen registered in the root stack',
@@ -202,6 +207,7 @@ export const expoRouterRootLayoutGlobalPlacements = [
 export const expoRouterNativeIntentStaticRoutes = [
   '/',
   '/about-the-test',
+  '/citizenship-requirements',
   '/dashboard',
   '/disclaimer',
   '/exam',
@@ -248,6 +254,10 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/about-the-test',
   },
   {
+    input: '/citizenship-requirements',
+    expectedPath: '/citizenship-requirements',
+  },
+  {
     input: '/search?q=riksdag',
     expectedPath: '/search?q=riksdag',
   },
@@ -262,6 +272,10 @@ export const expoRouterNativeIntentRuntimeSamples = [
   {
     input: 'almost-swedish://app/about-the-test',
     expectedPath: '/about-the-test',
+  },
+  {
+    input: 'almost-swedish://app/citizenship-requirements',
+    expectedPath: '/citizenship-requirements',
   },
   {
     input: 'almost-swedish://quiz/q001',
@@ -337,6 +351,12 @@ export const expoRouterStandaloneRoutes = [
     href: '/about-the-test',
     purpose: 'About-the-test informational route outside the primary tabs',
   },
+  {
+    name: 'citizenship-requirements',
+    file: 'app/citizenship-requirements.tsx',
+    href: '/citizenship-requirements',
+    purpose: 'Citizenship requirements checklist route outside the primary tabs',
+  },
 ] as const satisfies readonly ExpoRouterStandaloneRoute[];
 
 export const expoRouterStandaloneHeaderHiddenRoutes = [
@@ -348,6 +368,7 @@ export const expoRouterStandaloneHeaderHiddenRoutes = [
   'support',
   'terms',
   'about-the-test',
+  'citizenship-requirements',
 ] as const;
 
 export const expoRouterShellContract = {

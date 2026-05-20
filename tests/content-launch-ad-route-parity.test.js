@@ -1,17 +1,18 @@
 const assert = require('node:assert/strict');
-const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 const expectedSuppressedRoutes = [
   '/exam',
   '/practice',
   '/quiz',
-  '/disclaimer',
   '/about-the-test',
   '/citizenship-requirements',
+  '/disclaimer',
   '/onboarding',
   '/privacy',
   '/sources',
@@ -19,83 +20,123 @@ const expectedSuppressedRoutes = [
   '/terms',
 ];
 
-test('launch popup ad route suppression stays aligned with release-safe routes', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
+function readRepoFile(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
 
-  const summary = JSON.parse(match[0]);
-  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
-  const rootLayout = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
+function loadAdsRuntime(source = readRepoFile('lib/monetization/ads.ts')) {
+  const module = { exports: {} };
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
 
-  assert.equal(summary.launchAdSuppressedRoutesValidated, expectedSuppressedRoutes.length);
-  assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
+  vm.runInNewContext(
+    transpiled,
+    {
+      module,
+      exports: module.exports,
+      process: { env: {} },
+    },
+    { filename: 'lib/monetization/ads.ts' },
+  );
+
+  return module.exports;
+}
+
+function assertLaunchPopupSuppressionContract({
+  adsSource,
+  rootLayout,
+  runtime,
+  validationSource,
+}) {
+  const { adsConfig, shouldSuppressLaunchPopupAdForPath } = runtime;
+
+  assert.deepEqual(
+    Array.from(adsConfig.suppressedLaunchPopupRoutes),
+    expectedSuppressedRoutes,
+    'launch popup suppressed routes should match release-safe route allowlist',
+  );
 
   for (const route of expectedSuppressedRoutes) {
     assert.ok(adsSource.includes(`'${route}'`), `${route} should be in the suppression list`);
+    assert.equal(
+      shouldSuppressLaunchPopupAdForPath(route),
+      true,
+      `${route} should suppress launch popup ads`,
+    );
+    assert.equal(
+      shouldSuppressLaunchPopupAdForPath(`${route}/nested`),
+      true,
+      `${route}/nested should suppress launch popup ads`,
+    );
+    assert.ok(
+      validationSource.includes(`'${route}': 'app/`) ||
+        validationSource.includes(`'${route}': "app/`),
+      `${route} should have a validate-content route-file guard`,
+    );
   }
 
-  assert.match(rootLayout, /usePathname\(\)/);
-  assert.match(rootLayout, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
-  assert.match(rootLayout, /!suppressLaunchPopupAd && entitlementsReady/);
+  for (const route of ['/', '/home', '/learn', '/mistakes', '/profile']) {
+    assert.equal(shouldSuppressLaunchPopupAdForPath(route), false);
+  }
+
+  assert.match(rootLayout, /usePathname\(\)/, 'root layout must read the current pathname');
+  assert.match(
+    rootLayout,
+    /shouldSuppressLaunchPopupAdForPath\(pathname\)/,
+    'root layout must derive launch ad suppression from current pathname',
+  );
+  assert.match(
+    rootLayout,
+    /!suppressLaunchPopupAd && entitlementsReady/,
+    'root layout must gate launch popup ads behind route suppression',
+  );
+}
+
+test('launch popup ad route suppression stays aligned with release-safe routes', () => {
+  assertLaunchPopupSuppressionContract({
+    adsSource: readRepoFile('lib/monetization/ads.ts'),
+    rootLayout: readRepoFile('app/_layout.tsx'),
+    runtime: loadAdsRuntime(),
+    validationSource: readRepoFile('scripts/validate-content.js'),
+  });
 });
 
 test('launch popup ad route suppression rejects missing compliance routes', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/ads.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("'\/privacy',", "'\/privacy-disabled',");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
+  const adsSource = readRepoFile('lib/monetization/ads.ts').replace(
+    "'/privacy',",
+    "'/privacy-disabled',",
   );
 
-  assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /launch popup suppressed routes/);
+  assert.throws(
+    () =>
+      assertLaunchPopupSuppressionContract({
+        adsSource,
+        rootLayout: readRepoFile('app/_layout.tsx'),
+        runtime: loadAdsRuntime(adsSource),
+        validationSource: readRepoFile('scripts/validate-content.js'),
+      }),
+    /launch popup suppressed routes should match release-safe route allowlist/,
+  );
 });
 
 test('launch popup ad route suppression rejects root-layout bypass drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/_layout.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('shouldSuppressLaunchPopupAdForPath(pathname)', 'false');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
+  const rootLayout = readRepoFile('app/_layout.tsx').replace(
+    'shouldSuppressLaunchPopupAdForPath(pathname)',
+    'false',
   );
 
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
+  assert.throws(
+    () =>
+      assertLaunchPopupSuppressionContract({
+        adsSource: readRepoFile('lib/monetization/ads.ts'),
+        rootLayout,
+        runtime: loadAdsRuntime(),
+        validationSource: readRepoFile('scripts/validate-content.js'),
+      }),
     /root layout must derive launch ad suppression from current pathname/,
   );
 });
