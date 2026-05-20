@@ -46,7 +46,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 164;
+const EXPECTED_SOURCE_QUESTIONS = 169;
 const EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
   'scripts/static-v11-readiness-copy-guard.js',
