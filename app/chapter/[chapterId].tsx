@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
+import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/Button';
 import { chapters } from '../../data/chapters';
@@ -122,6 +123,7 @@ export default function ChapterScreen() {
             <View key={question.id} style={styles.questionBlock}>
               <QuestionCard question={question} language={language} />
               <UHRReferenceCard language={language} reference={question.uhrReference} />
+              <QuestionReportLink language={language} question={question} screen="chapter" />
             </View>
           ))
         ) : (
