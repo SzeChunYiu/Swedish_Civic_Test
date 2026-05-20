@@ -78,17 +78,21 @@ const expectedLegalRoutes = [
     file: 'app/sources.tsx',
     requiredSnippets: [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
+      'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
+      "retrievedDate: '2026-05-20'",
+      "title: 'UHR: Om medborgarskapsprovet'",
+      "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
       'Källor',
       'Primärt studiematerial',
-      'UHR står inte bakom dem',
-      'Källa hämtad 2026-05-19',
+      'UHR inte står bakom dessa',
+      'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
       'Varje övningsfråga visar en källrad med UHR:s kapitel',
       'Sources',
       'Primary study material',
-      'quality is not checked by UHR or any other authority',
-      'Source accessed 2026-05-19',
+      'quality is not controlled by UHR or any other authority',
+      'Source accessed ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
       'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
@@ -142,6 +146,30 @@ function parseValidationSummary() {
 function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+
+test('sources route authority boundary cites the current UHR page', () => {
+  const routeSource = fs.readFileSync(path.join(repoRoot, 'app/sources.tsx'), 'utf8');
+
+  for (const snippet of [
+    'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
+    "retrievedDate: '2026-05-20'",
+    "title: 'UHR: Om medborgarskapsprovet'",
+    "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
+    'UHR inte står bakom dessa',
+    'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
+    'quality is not controlled by UHR or any other authority',
+    'Source accessed ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
+  ]) {
+    assert.match(routeSource, new RegExp(escapeRegExp(snippet)));
+  }
+
+  assert.match(routeSource, /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/);
+  assert.doesNotMatch(routeSource, /UHR\s+varnar|UHR\s+warns/i);
+  assert.doesNotMatch(
+    routeSource,
+    /kvalitets(?:granskad|granskade|kontrollerad|kontrollerade)\s+av\s+UHR|quality-(?:controlled|checked|reviewed)\s+by\s+UHR/i,
+  );
+});
 
 test('legal, source, and support routes stay on shared accessible header path', () => {
   const summary = parseValidationSummary();
