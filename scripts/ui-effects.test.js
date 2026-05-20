@@ -1443,6 +1443,9 @@ test('pro paywall renders accessible tier summaries without changing Remove Ads 
   assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
   assert.doesNotMatch(source, /buyRemoveAds|restoreRemoveAdsPurchase/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.match(profileSource, /import \{ isProRuntimeScopeEnabled \}/);
+  assert.match(profileSource, /const proRuntimeScopeEnabled = isProRuntimeScopeEnabled\(\);/);
+  assert.match(profileSource, /\{entitlementsReady && proRuntimeScopeEnabled \? \(/);
   assert.match(profileSource, /import \{ ProPaywall \}/);
   assert.match(profileSource, /<ProPaywall/);
   assert.match(profileSource, /alreadyAdFree=\{monetizationEntitlements\.adsDisabled\}/);
