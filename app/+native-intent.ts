@@ -8,6 +8,7 @@ const APP_LINK_BASE = 'almost-swedish://app';
 const staticRoutes = new Set([
   '/',
   '/about-the-test',
+  '/citizenship-requirements',
   '/dashboard',
   '/disclaimer',
   '/exam',
