@@ -36,6 +36,10 @@ Avoid:
 | Informationsverige English/Swedish | Plain learner-facing civic explanations; use as meaning anchor, not Chinese style model. |
 | UN/OHCHR Chinese treaty texts | Established treaty names such as 《儿童权利公约》. |
 
+## Required local style guide
+
+See `style-guide.md` for the zh-Hans word-by-word audit checklist, mechanical-translation repair table, UI patterns, and humor rules. Future Chinese translation work should cite that file in PR notes when copy is changed.
+
 ## Approved micro-samples for app tone
 
 These are newly authored examples for the app; they are not copied from a
@@ -64,8 +68,6 @@ source.
 
 ## Next zh-Hans tasks
 
-1. Add a source card TSV row for every source already listed in
-   `locales/zh-Hans/glossary.md`.
-2. Audit current site/app Chinese strings when they exist; flag any
-   translationese against the rules above.
+1. Add source cards for any new domain before translating it.
+2. When Chinese UI strings are introduced, audit them against `style-guide.md` before enabling the locale.
 3. Translate only after a second native-read pass is assigned.
