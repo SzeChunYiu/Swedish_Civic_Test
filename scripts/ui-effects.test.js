@@ -316,6 +316,45 @@ test('top bar route links keep web anchors large enough with token hover and pre
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('top bar route links keep token-sized web anchors and interaction feedback', () => {
+  const source = read('components/ui/TopBarActions.tsx');
+
+  assert.match(source, /<TopBarActionLink href="\/search" accessibilityLabel=\{copy\.search\}>/);
+  assert.match(
+    source,
+    /<TopBarActionLink href="\/mistakes" accessibilityLabel=\{copy\.savedQuestions\}>/,
+  );
+  assert.match(
+    source,
+    /<TopBarActionLink href="\/settings" accessibilityLabel=\{copy\.settings\}>/,
+  );
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /onMouseEnter: \(\) => setIsHovered\(true\)/);
+  assert.match(source, /onMouseDown: \(\) => setIsPressed\(true\)/);
+  assert.match(
+    source,
+    /onMouseLeave: \(\) => \{\s*setIsHovered\(false\);\s*setIsPressed\(false\);\s*\}/,
+  );
+  assert.match(source, /onMouseUp: \(\) => setIsPressed\(false\)/);
+  assert.match(source, /onFocus: \(\) => setIsFocused\(true\)/);
+  assert.match(source, /onBlur: \(\) => setIsFocused\(false\)/);
+  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
+  assert.match(source, /isFocused \|\| isHovered \? styles\.iconLinkHover : null/);
+  assert.match(source, /isPressed \? styles\.iconLinkPressed : null/);
+  assert.match(source, /display: 'flex'/);
+  assert.match(source, /height: space\[6\]/);
+  assert.match(source, /width: space\[6\]/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /minWidth: space\[6\]/);
+  assert.match(source, /textDecorationLine: 'none'/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /\basChild\b/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('screen scaffold exposes page and section titles as headers', () => {
   const source = read('components/ui/ScreenShell.tsx');
 
