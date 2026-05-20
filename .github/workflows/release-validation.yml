@@ -43,6 +43,31 @@ jobs:
       - name: Verify visual smoke screenshot manifest
         run: npm run test:screenshot-manifest
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build web export for visual smoke
+        env:
+          EXPO_NO_TELEMETRY: '1'
+        run: |
+          rm -rf dist-web
+          npm run build:web:export -- --max-workers 2
+          node scripts/prepare-web-export.js --check dist-web
+
+      - name: Run visual smoke screenshots
+        run: npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1
+
+      - name: Upload visual smoke artifacts
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: release-validation-visual-smoke-artifacts
+          path: |
+            test-results/
+            playwright-report/
+            reports/2026-05-15-uiux-screenshots/
+          if-no-files-found: ignore
+
       - name: Verify release ownership guard
         run: npm run test:ownership
 

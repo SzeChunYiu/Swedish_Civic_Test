@@ -1034,6 +1034,27 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.equal(fs.existsSync(workflowPath), true);
 
   const workflow = fs.readFileSync(workflowPath, 'utf8');
+  const indexOfRequired = (needle) => {
+    const index = workflow.indexOf(needle);
+    assert.ok(index > -1, `release validation workflow should include ${needle}`);
+    return index;
+  };
+  const fullValidationIndex = indexOfRequired('Run full local validation suite');
+  const screenshotManifestIndex = indexOfRequired('Verify visual smoke screenshot manifest');
+  const playwrightInstallIndex = indexOfRequired('Install Playwright Chromium');
+  const visualSmokeBuildIndex = indexOfRequired('Build web export for visual smoke');
+  const visualSmokeStepIndex = indexOfRequired('Run visual smoke screenshots');
+  const visualSmokeArtifactIndex = indexOfRequired('Upload visual smoke artifacts');
+  const releaseEvidenceArtifactIndex = indexOfRequired('Upload release evidence index');
+  const nextStepAfterVisualSmokeArtifacts = workflow.indexOf(
+    '\n      - name:',
+    visualSmokeArtifactIndex + 1,
+  );
+  const visualSmokeArtifactBlock = workflow.slice(
+    visualSmokeArtifactIndex,
+    nextStepAfterVisualSmokeArtifacts === -1 ? undefined : nextStepAfterVisualSmokeArtifacts,
+  );
+
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /branches:\s*\[\s*main\s*\]/);
   assert.match(workflow, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*true/);
@@ -1049,14 +1070,39 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
   assert.ok(
-    workflow.indexOf('npm run validate') < workflow.indexOf('npm run test:screenshot-manifest'),
+    screenshotManifestIndex > fullValidationIndex,
     'release validation should verify the screenshot manifest after the full validation suite',
   );
+  assert.match(workflow, /npx playwright install --with-deps chromium/);
+  assert.match(workflow, /EXPO_NO_TELEMETRY:\s*'1'/);
+  assert.match(workflow, /npm run build:web:export -- --max-workers 2/);
+  assert.match(workflow, /npm run test:e2e -- tests\/e2e\/visual-smoke\.spec\.ts --workers=1/);
   assert.ok(
-    workflow.indexOf('npm run test:screenshot-manifest') <
-      workflow.indexOf('actions/upload-artifact@v6'),
-    'release validation should verify the screenshot manifest before uploading artifacts',
+    playwrightInstallIndex > screenshotManifestIndex,
+    'Playwright Chromium should install after the screenshot manifest check',
   );
+  assert.ok(
+    visualSmokeBuildIndex > playwrightInstallIndex,
+    'visual smoke web export should build after Playwright Chromium is installed',
+  );
+  assert.ok(
+    visualSmokeStepIndex > visualSmokeBuildIndex,
+    'visual smoke should run after the web export is built',
+  );
+  assert.ok(
+    visualSmokeArtifactIndex > visualSmokeStepIndex,
+    'visual smoke artifact upload should run after the visual smoke step',
+  );
+  assert.ok(
+    releaseEvidenceArtifactIndex > visualSmokeArtifactIndex,
+    'release evidence upload should not run before visual smoke artifacts are preserved',
+  );
+  assert.match(visualSmokeArtifactBlock, /actions\/upload-artifact@v6/);
+  assert.match(visualSmokeArtifactBlock, /if:\s*always\(\)/);
+  assert.match(visualSmokeArtifactBlock, /name:\s*release-validation-visual-smoke-artifacts/);
+  assert.match(visualSmokeArtifactBlock, /test-results\//);
+  assert.match(visualSmokeArtifactBlock, /playwright-report\//);
+  assert.match(visualSmokeArtifactBlock, /reports\/2026-05-15-uiux-screenshots\//);
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 
