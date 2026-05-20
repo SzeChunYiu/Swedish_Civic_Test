@@ -1238,11 +1238,29 @@ PR: pending from `task/setup/static-hero-fallback-copy-1779229718-4134892` at ha
 Blocked? no for this static outcome-copy guard follow-up; no Vercel CLI was run.
 Next suggested validator action: inspect the no-JS fallback copy and rerun the shared static outcome-copy guard tests before accepting `STATIC-HERO-PASSPORT-OUTCOME-COPY-1`.
 
-## Iteration 257 - 2026-05-20
+## Iteration 258 - 2026-05-20
 
-Task completed: MASCOT-SKOGLIMPA-FAVORITE-CONTRACT-1 - added `skoglimpa` to the mascot catalog, made `kanelbulle` the default companion, exposed typed favorite ordering for Kanelbulle plus Skoglimpa, and added a free companion picker component that consumes the order without Pro gating.
-Artifacts changed: `lib/mascot/catalog.ts`, `components/mascot/CompanionPicker.tsx`, `tests/v1-1-mascot-catalog.test.js`, `tests/v1-1-companion-store.test.js`, `scripts/app-assets.test.js`, `docs/parallel-sessions/journals/setup.md`.
-Verification: clean task worktree from current `origin/main`; linked shared ignored `node_modules`; `npm run validate:content` exit 0; `node --test tests/v1-1-mascot-catalog.test.js tests/v1-1-companion-store.test.js scripts/app-assets.test.js scripts/ui-effects.test.js` exit 0 with 81/81 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `node --test scripts/theme-discipline.test.js` exit 0 with 3/3 passing; `git diff --check` exit 0.
-PR: pending from `task/mascot-skoglimpa-1779235600` at handoff commit time.
-Blocked? no for this mascot catalog/default/favorite-order atom; the separate asset-pack and Settings picker surfaces remain queued follow-ups, and no Vercel CLI was run.
-Next suggested validator action: inspect the mascot catalog/default/favorite ordering and rerun the focused mascot/store/asset tests plus typecheck before accepting.
+Task completed: STATIC-ADSENSE-STORED-CONSENT-BROWSER-GUARD-1 - set `adsbygoogle.requestNonPersonalizedAds` before static AdSense loads and added served-browser coverage for returning visitors with stored `min` and `all` consent.
+Artifacts changed: `site/app.js`, `scripts/static-site-adsense-consent-browser.test.js`, `package.json`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main`; `npm run test:static-site-adsense-consent-browser` exit 0 with 3/3 passing; `npm run validate:content` exit 0 with 770 questions and `staticSiteQuestionBankParityValidated:true`; `node --test scripts/static-site-adsense-consent-browser.test.js scripts/static-site-privacy-copy.test.js scripts/static-site-mobile-nav.test.js scripts/check-live-site.test.js` exit 0 with 18/18 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; `git diff --check` exit 0. The browser guard seeds `smt_consent=min` and `smt_consent=all` before first navigation, fakes `pagead2.googlesyndication.com`, verifies the consent modal stays hidden, confirms localStorage survives reload, checks `ins.adsbygoogle` `data-npa`, checks `window.adsbygoogle.requestNonPersonalizedAds`, and requires script append before the two ad pushes with NPA already applied.
+PR: pending from `task/adsense-stored-consent-1779235600` at handoff commit time.
+Blocked? no for this static AdSense stored-consent guard; no Vercel CLI was run.
+Next suggested validator action: inspect the static consent ordering fix and rerun `npm run test:static-site-adsense-consent-browser` plus the grouped static browser/privacy/mobile/live-site checks before accepting.
+
+## Iteration 259 - 2026-05-20
+
+Task completed: PLAYWRIGHT-E2E-PORT-CONFIG-GUARD-1 - made the exported-web Playwright server port derive from `E2E_PORT`, default to 4173, and pass the selected port to `serve-dist-web.cjs` through `PORT` with a build-config regression guard.
+Artifacts changed: `playwright.config.ts`, `scripts/build-config.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main` after claim commit `17a46abe`; `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'Playwright exported-web server port is configurable per worker' scripts/build-config.test.js` exit 0 with 1/1 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config` exit 0 with 45/45 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with 795 questions and static parity true; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `E2E_PORT=4188 npx --no-install playwright test --list` exit 0 listing 36 tests; targeted Prettier check and `git diff --check` exit 0.
+PR: pending from `task/setup/playwright-e2e-port-guard-1779234942` at handoff commit time.
+Blocked? no for this e2e port-config guard.
+Next suggested validator action: inspect the Playwright config port wiring and rerun `npm run test:build-config`, typecheck, and an `E2E_PORT=<free-port> npx playwright test --list` smoke before accepting.
+
+## Iteration 260 - 2026-05-20
+
+Task completed: STATIC-FAQ-FALLBACK-ORDER-GUARD-1 - strengthened the static FAQ no-JS fallback guard so it requires exactly six FAQ items, numeric q/a order, immediate summary-to-answer pairing, and no orphaned `faq.*` fallback nodes outside the FAQ section.
+Artifacts changed: `scripts/static-site-source-provenance-copy.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `npm run test:static-site-source-provenance-copy` exit 0 with 8/8 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `npm run typecheck -- --pretty false` exit 0; `npm run test:ownership` exit 0; targeted Prettier check and targeted `git diff --check` exit 0.
+PR: pending from `task/static-faq-fallback-order-1779236042` at handoff commit time.
+Blocked? no for this static FAQ fallback guard.
+Next suggested validator action: inspect the ordered FAQ fallback assertions and rerun `npm run test:static-site-source-provenance-copy` plus `npm run validate:content` before acceptance.
