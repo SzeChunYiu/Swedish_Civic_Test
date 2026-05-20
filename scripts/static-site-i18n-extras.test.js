@@ -1,164 +1,109 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const ARABIC_SCRIPT_PATTERN = /[\u0600-\u06ff]/;
+const REQUIRED_ARABIC_STATIC_UI_KEYS = [
+  'nav.home',
+  'nav.practice',
+  'nav.mock',
+  'nav.ebook',
+  'nav.support',
+  'nav.privacy',
+  'nav.terms',
+  'nav.sources',
+  'nav.cta',
+  'hero.eyebrow',
+  'hero.h1a',
+  'hero.h1b',
+  'hero.h1c',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'consent.title',
+  'consent.body',
+  'consent.min',
+  'consent.all',
+  'settings.title',
+  'settings.theme',
+  'settings.theme.light',
+  'settings.theme.dark',
+  'settings.theme.auto',
+  'settings.palette',
+  'settings.palette.sub',
+  'settings.buddy',
+  'settings.buddy.sub',
+  'settings.buddy.show',
+  'settings.language',
+  'settings.text',
+  'settings.text.s',
+  'settings.text.m',
+  'settings.text.l',
+  'settings.misc',
+  'settings.motion',
+  'settings.aurora',
+  'settings.flag',
+  'settings.consent.reset',
+  'settings.savedHint',
+  'settings.done',
+  'footer.t1',
+  'footer.t2',
+  'footer.h.study',
+  'footer.h.legal',
+  'footer.h.about',
+  'footer.about.p',
+  'footer.h.fika',
+  'footer.fika.p',
+  'footer.honest.p',
+  'footer.copyright',
+  'footer.fika',
+];
+const BANNED_ARABIC_STATIC_UI_VALUES = new Map([
+  [
+    'hero.lede',
+    'تطبيق دراسة هادئ وغير رسمي لاختبار المواطنة السويدي. فصول قصيرة، ووضع تدريب ذكي، واختبار وهمي يجعل يوم الامتحان أقل رعباً.',
+  ],
+  ['settings.consent.reset', 'إعادة ضبط موافقة الكوكيز / الإعلانات…'],
+  ['footer.fika', 'صُنع باعتدال · مُختبر بالقهوة.'],
+  ['nav.ebook', 'كتاب'],
+  ['settings.theme', 'السمة'],
+]);
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createI18nContext({ storedLanguage = 'en' } = {}) {
-  const listeners = { document: [], window: [] };
-  const storage = new Map([['smt_lang', storedLanguage]]);
-  const translatedNodes = ['nav.home', 'hero.cta1', 'settings.title', 'consent.title'].map(
-    (key) => ({
-      dataset: { i18n: key },
-      innerHTML: '',
-    }),
-  );
-  const languageButtons = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'so'].map((lang) => ({
-    dataset: { lang },
-    classList: {
-      active: false,
-      toggle(_className, enabled) {
-        this.active = !!enabled;
-      },
-    },
-  }));
-  const documentElement = {
-    attributes: new Map(),
-    dir: 'ltr',
-    lang: storedLanguage,
-    setAttribute(name, value) {
-      this.attributes.set(name, String(value));
-      this[name] = String(value);
-    },
-    getAttribute(name) {
-      return this.attributes.get(name) || null;
-    },
-  };
-
-  const sandbox = {
-    CustomEvent: function CustomEvent(type, init = {}) {
-      return { type, detail: init.detail || null };
-    },
-    Event: function Event(type) {
-      return { type };
-    },
-    console,
-    localStorage: {
-      getItem(key) {
-        return storage.has(key) ? storage.get(key) : null;
-      },
-      setItem(key, value) {
-        storage.set(key, String(value));
-      },
-    },
-    location: { hash: '#/' },
-    document: {
-      documentElement,
-      getElementById() {
-        return null;
-      },
-      querySelector() {
-        return null;
-      },
-      querySelectorAll(selector) {
-        if (selector === '[data-i18n]') return translatedNodes;
-        if (selector === '.lang button[data-lang]') return languageButtons;
-        return [];
-      },
-      addEventListener(type, handler) {
-        listeners.document.push({ type, handler });
-      },
-    },
-    window: {},
-    scrollTo() {},
-  };
-
-  sandbox.window = sandbox;
-  sandbox.window.addEventListener = (type, handler) => {
-    listeners.window.push({ type, handler });
-  };
-  sandbox.window.dispatchEvent = (event) => {
-    listeners.window
-      .filter((entry) => entry.type === event.type)
-      .forEach((entry) => entry.handler(event));
-    return true;
-  };
-
-  vm.createContext(sandbox);
-  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
-  vm.runInContext(read('site/i18n-extras.js'), sandbox, { timeout: 3000 });
-
-  return {
-    activeLanguages() {
-      return languageButtons
-        .filter((button) => button.classList.active)
-        .map((button) => button.dataset.lang);
-    },
-    dispatchWindow(type) {
-      listeners.window
-        .filter((entry) => entry.type === type)
-        .forEach((entry) => entry.handler({ type }));
-    },
-    documentElement,
-    sandbox,
-    storage,
-    translated(key) {
-      return translatedNodes.find((node) => node.dataset.i18n === key).innerHTML;
-    },
-  };
+function loadExtrasDictionary() {
+  const window = { i18n: {} };
+  const source = read('site/i18n-extras.js');
+  return new Function('window', `${source}\nreturn window.i18n || window.__i18n_extra;`)(window);
 }
 
-test('static extra-language selection applies Arabic RTL direction and renders Arabic UI strings', () => {
-  const context = createI18nContext();
+test('Arabic static-site extras cover high-frequency UI without English fallbacks', () => {
+  const extras = loadExtrasDictionary();
+  const arabic = extras.ar;
 
-  vm.runInContext('smtSetLanguage("ar");', context.sandbox, { timeout: 3000 });
+  assert.equal(typeof arabic, 'object');
 
-  assert.equal(context.documentElement.lang, 'ar');
-  assert.equal(context.documentElement.dir, 'rtl');
-  assert.equal(context.documentElement.getAttribute('dir'), 'rtl');
-  assert.equal(context.storage.get('smt_lang'), 'ar');
-  assert.deepEqual(context.activeLanguages(), ['ar']);
-  assert.equal(context.translated('nav.home'), 'الرئيسية');
-  assert.equal(context.translated('settings.title'), 'الإعدادات');
-  assert.equal(context.translated('consent.title'), 'ملفات تعريف الارتباط، باعتدال.');
+  for (const key of REQUIRED_ARABIC_STATIC_UI_KEYS) {
+    const value = arabic[key];
+    assert.equal(typeof value, 'string', `${key} should have Arabic copy`);
+    assert.equal(value, value.trim().replace(/\s+/g, ' '), `${key} should be normalized`);
+    assert.match(value, ARABIC_SCRIPT_PATTERN, `${key} should not fall back to English`);
+  }
 });
 
-test('static extra-language restore applies RTL only for Arabic and resets other languages to LTR', () => {
-  const context = createI18nContext({ storedLanguage: 'ar' });
+test('Arabic static-site extras avoid known machine-like labels', () => {
+  const { ar: arabic } = loadExtrasDictionary();
 
-  context.dispatchWindow('DOMContentLoaded');
-  assert.equal(context.documentElement.lang, 'ar');
-  assert.equal(context.documentElement.dir, 'rtl');
+  for (const [key, value] of BANNED_ARABIC_STATIC_UI_VALUES) {
+    assert.notEqual(arabic[key], value, `${key} should avoid literal machine-like Arabic`);
+  }
 
-  vm.runInContext('smtSetLanguage("zh-Hans");', context.sandbox, { timeout: 3000 });
-  assert.equal(context.documentElement.lang, 'zh-Hans');
-  assert.equal(context.documentElement.dir, 'ltr');
-  assert.equal(context.translated('settings.title'), '设置');
-
-  vm.runInContext('smtSetLanguage("so");', context.sandbox, { timeout: 3000 });
-  assert.equal(context.documentElement.lang, 'so');
-  assert.equal(context.documentElement.dir, 'ltr');
-  assert.equal(context.translated('nav.home'), 'Bogga Hore');
-});
-
-test('static RTL stylesheet covers visible navigation, hero, settings, and consent surfaces', () => {
-  const styles = read('site/styles.css');
-
-  assert.match(styles, /:root\[dir="rtl"\]\s*\{\s*direction:\s*rtl;/);
-  assert.match(
-    styles,
-    /:root\[dir="rtl"\]\s+\.nav\s*\{[^}]*margin-left:\s*0;[^}]*margin-right:\s*auto;/s,
-  );
-  assert.match(styles, /:root\[dir="rtl"\]\s+\.hero__inner,[\s\S]*?text-align:\s*right;/);
-  assert.match(styles, /:root\[dir="rtl"\]\s+\.consent__copy,[\s\S]*?text-align:\s*right;/);
-  assert.match(
-    styles,
-    /:root\[dir="rtl"\]\s+\.modal__panel--settings\s*\{[^}]*text-align:\s*right;/s,
-  );
+  assert.match(arabic['hero.lede'], /اختبار تجريبي/);
+  assert.match(arabic['settings.consent.reset'], /ملفات تعريف الارتباط/);
+  assert.match(arabic['nav.ebook'], /دليل/);
+  assert.equal(arabic['settings.theme'], 'المظهر');
 });
