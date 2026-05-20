@@ -1007,6 +1007,12 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
   );
   const defaultResult = await showRewardedExtraExamAd();
+  const previewCompletedResult = await showRewardedExtraExamAd({
+    confirmReward: () => true,
+  });
+  const previewDeclinedResult = await showRewardedExtraExamAd({
+    confirmReward: () => false,
+  });
   const confirmedResult = await showRewardedExtraExamAd({
     confirmReward: () => true,
   });
@@ -1019,9 +1025,11 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     },
   });
   const removeAdsResult = await showRewardedExtraExamAd({
+    confirmReward: () => true,
     entitlements: { adsDisabled: true },
   });
   const disabledAdsResult = await showUnavailableRewardedExtraExamAd({
+    confirmReward: () => true,
     entitlements: { adsDisabled: false },
   });
   const nativeRewardedAdSource = fs.readFileSync(
@@ -1035,6 +1043,7 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
   assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
+  assert.deepEqual(previewCompletedResult, {
   assert.deepEqual(confirmedResult, {
     reward: {
       amount: 1,
@@ -1042,6 +1051,12 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     },
     status: 'earned_reward',
   });
+  assert.deepEqual(previewDeclinedResult, { status: 'closed_without_reward' });
+  assert.deepEqual(removeAdsResult, { status: 'unavailable' });
+  assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
+  assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
+  assert.match(webRewardedAdSource, /confirmReward\?: RewardedExtraExamConfirmation/);
+  assert.match(webRewardedAdSource, /Boolean\(await confirmReward\?\.\(\)\)/);
   assert.deepEqual(rejectedResult, { status: 'closed_without_reward' });
   assert.deepEqual(failedConfirmationResult, { status: 'closed_without_reward' });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
@@ -1078,8 +1093,14 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   );
   assert.match(
     examSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{ entitlements \}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*await grantRewardedExamCredit\(\);/,
+    /const usesWebRewardPreview = Platform\.OS === 'web' && shouldAttemptRewardedAd;/,
   );
+  assert.match(
+    examSource,
+    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: usesWebRewardPreview \? \(\) => true : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*await grantRewardedExamCredit\(\);/,
+  );
+  assert.match(examSource, /rewardPreviewTitle: 'Förhandsvisning för extra prov'/);
+  assert.match(examSource, /rewardPreviewAction: 'Complete preview'/);
 });
 
 test('ad rendering flag disables all placements even for free users', () => {

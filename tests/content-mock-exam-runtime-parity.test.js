@@ -56,9 +56,33 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   const chapters = loadTs('data/chapters.ts', 'chapters');
   const config = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
   const { generateExam } = loadTs('lib/quiz/examGenerator.ts');
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const rewardedAdSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedAd.ts'),
+    'utf8',
+  );
   const exam = generateExam(questions, { questionCount: config.questionCount });
 
   assert.equal(summary.mockExamRuntimeParityValidated, true);
+  assert.match(rewardedAdSource, /confirmReward\?: RewardedExtraExamConfirmation/);
+  assert.match(
+    rewardedAdSource,
+    /if \(!rewardConfirmed\) \{[\s\S]*status: 'closed_without_reward'/,
+  );
+  assert.match(
+    examRouteSource,
+    /import \{ Platform, Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+  );
+  assert.match(
+    examRouteSource,
+    /const usesWebRewardPreview = Platform\.OS === 'web' && shouldAttemptRewardedAd;/,
+  );
+  assert.match(
+    examRouteSource,
+    /confirmReward: usesWebRewardPreview \? \(\) => true : undefined,[\s\S]*entitlements,/,
+  );
+  assert.match(examRouteSource, /\{copy\.rewardPreviewTitle\}/);
+  assert.match(examRouteSource, /\{copy\.rewardPreviewBody\}/);
   assert.equal(exam.length, config.questionCount);
   assert.equal(new Set(exam.map((question) => question.id)).size, exam.length);
   assert.equal(
