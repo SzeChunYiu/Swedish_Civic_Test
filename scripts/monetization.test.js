@@ -296,6 +296,51 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   );
 });
 
+test('real ad units can be supplied through the local override loader', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: undefined,
+      EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID: undefined,
+      EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON: JSON.stringify({
+        results_native: {
+          androidUnitId: 'ca-app-pub-1234567890123456/5555555555',
+          ios: 'ca-app-pub-1234567890123456/6666666666',
+        },
+      }),
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const gitignore = fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8');
+      const { REAL_AD_UNITS_JSON_ENV, readRealAdUnitOverrides } = loadTs(
+        'lib/monetization/adUnitsReal.ts',
+      );
+      const { adsConfig, getAdUnit, getPlatformAdUnitId, shouldShowAd } =
+        loadTs('lib/monetization/ads.ts');
+
+      assert.equal(REAL_AD_UNITS_JSON_ENV, 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON');
+      assert.match(gitignore, /lib\/monetization\/ad-units\.real\.ts/);
+      assert.deepEqual(readRealAdUnitOverrides().results_native, {
+        androidUnitId: 'ca-app-pub-1234567890123456/5555555555',
+        iosUnitId: 'ca-app-pub-1234567890123456/6666666666',
+      });
+      assert.equal(adsConfig.realUnitOverrideEnvKey, 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON');
+      assert.equal(getAdUnit('results_native').enabled, true);
+      assert.equal(
+        getPlatformAdUnitId('results_native', 'android'),
+        'ca-app-pub-1234567890123456/5555555555',
+      );
+      assert.equal(
+        getPlatformAdUnitId('results_native', 'ios'),
+        'ca-app-pub-1234567890123456/6666666666',
+      );
+      assert.equal(
+        shouldShowAd('results_native', { adsDisabled: false }, { adServingAllowed: true }),
+        true,
+      );
+    },
+  );
+});
 test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
   const nativeAdCardSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
