@@ -1158,6 +1158,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket år hölls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hölls ${answer}`;
 
+  match = q.match(/^Vilket år presenterades (.+)$/i);
+  if (match) return `${upperFirst(match[1])} presenterades ${answer}`;
+
+  match = q.match(/^Hur många (.+?) innehåller (.+)$/i);
+  if (match) return `${upperFirst(match[2])} innehåller ${answer}`;
+
   match = q.match(/^Vad blev (.+?) viktigt för$/i);
   if (match)
     return `${upperFirst(match[1])} blev viktigt för ${lowerLeadingSwedishClauseStart(answer)}`;
@@ -1592,8 +1598,14 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What did (.+?) decide as (.+)$/i);
   if (match) return decisionStatementEn(match[1], match[2], answer);
 
+  match = q.match(/^In which year was (.+?) presented$/i);
+  if (match) return `${upperFirst(match[1])} was presented in ${answer}`;
+
   match = q.match(/^In which year was (.+)$/i);
   if (match) return `${upperFirst(match[1])} was in ${answer}`;
+
+  match = q.match(/^How many (.+?) does (.+?) contain$/i);
+  if (match) return `${upperFirst(match[2])} contains ${answer}`;
 
   match = q.match(/^What did (.+?) become important for$/i);
   if (match)

@@ -2293,6 +2293,43 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects UDHR year and article-count combos', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'FN presenterade förklaringen om de mänskliga rättigheterna 1948. Förklaringen utgår',
+        'FN presenterade förklaringen om de mänskliga rättigheterna 1948, och den innehåller 30 artiklar. Förklaringen utgår',
+      )
+      .replace(
+        'The UN presented the Universal Declaration of Human Rights in 1948. The declaration is based',
+        'The UN presented the Universal Declaration of Human Rights in 1948, and it contains 30 articles. The declaration is based',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q052 combines the UDHR year and article-count facts in one text/,
+  );
+});
+
 test('published question schema rejects generated true/false grammar-splice stems', () => {
   const result = spawnSync(
     process.execPath,

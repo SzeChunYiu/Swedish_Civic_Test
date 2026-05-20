@@ -7,7 +7,7 @@ export const chapters: Chapter[] = [
     nameEn: 'The country of Sweden',
     descriptionSv: 'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
     descriptionEn: 'Geography, climate, nature, population, natural resources, and climate change.',
-    questionCount: 90,
+    questionCount: 65,
   },
   {
     id: 'ch02',
@@ -26,7 +26,7 @@ export const chapters: Chapter[] = [
       'Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick.',
     descriptionEn:
       "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
-    questionCount: 80,
+    questionCount: 55,
   },
   {
     id: 'ch04',
@@ -62,7 +62,7 @@ export const chapters: Chapter[] = [
       'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',
     descriptionEn:
       "Human rights, gender equality, children's rights, minority rights, and discrimination.",
-    questionCount: 80,
+    questionCount: 60,
   },
   {
     id: 'ch08',
@@ -71,7 +71,7 @@ export const chapters: Chapter[] = [
     descriptionSv: 'Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.',
     descriptionEn:
       'The labour market, labour-market parties, workplace rules, and personal finance.',
-    questionCount: 60,
+    questionCount: 35,
   },
   {
     id: 'ch09',
@@ -90,7 +90,7 @@ export const chapters: Chapter[] = [
       'Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering.',
     descriptionEn:
       "From agricultural society to industrial society, democratization, the people's home, and globalization.",
-    questionCount: 75,
+    questionCount: 50,
   },
   {
     id: 'ch11',
@@ -99,7 +99,7 @@ export const chapters: Chapter[] = [
     descriptionSv:
       'Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik.',
     descriptionEn: 'Nordic, European, and global cooperation, plus defence and security policy.',
-    questionCount: 60,
+    questionCount: 35,
   },
   {
     id: 'ch12',
