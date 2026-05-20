@@ -1144,8 +1144,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which example describes municipal responsibilities?",
-      "sv": "Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Which everyday services are municipalities responsible for?",
+      "sv": "Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {
@@ -4559,7 +4559,7 @@
         "sv": "Advent"
       },
       {
-        "en": "First of May",
+        "en": "May Day",
         "sv": "Första maj"
       },
       {
@@ -4569,7 +4569,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -4615,7 +4615,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -4639,7 +4639,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is marked on First of May in Sweden?",
+      "en": "What is marked on May Day in Sweden?",
       "sv": "Vad uppmärksammas på första maj i Sverige?"
     },
     "opts": [
@@ -4662,7 +4662,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -4803,7 +4803,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -4840,7 +4840,7 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -5311,7 +5311,7 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -5701,7 +5701,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -5984,7 +5984,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -6363,7 +6363,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -6621,7 +6621,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
@@ -7077,12 +7077,12 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "How can a welfare service be private and still tax-funded?",
+      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue?",
       "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
     },
     "opts": [
       {
-        "en": "A private company can provide the service while tax revenue pays for it",
+        "en": "A private company can provide the service while tax revenue funds it",
         "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
       },
       {
@@ -7312,8 +7312,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Where is Sweden located?",
-      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?"
+      "en": "Sweden is located ...",
+      "sv": "Sverige ligger ..."
     },
     "opts": [
       {
@@ -7663,8 +7663,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Approximately how far does Sweden stretch from Treriksröset to Smygehuk?",
-      "sv": "Vilket svar stämmer bäst? Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?"
+      "en": "Sweden stretches ... from Treriksröset to Smygehuk.",
+      "sv": "Sverige sträcker sig ... från Treriksröset till Smygehuk."
     },
     "opts": [
       {
@@ -7843,8 +7843,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is the sea along Sweden's eastern coast called?",
-      "sv": "Vilket svar stämmer bäst? Vad heter havet vid Sveriges östra kust?"
+      "en": "The sea along Sweden's eastern coast is called ...",
+      "sv": "Havet vid Sveriges östra kust heter ..."
     },
     "opts": [
       {
@@ -8019,8 +8019,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which islands are Sweden's two largest?",
-      "sv": "Vilket svar stämmer bäst? Vilka öar är Sveriges två största?"
+      "en": "Sweden's two largest islands are ...",
+      "sv": "Sveriges två största öar är ..."
     },
     "opts": [
       {
@@ -8374,8 +8374,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is the name of Sweden's highest mountain?",
-      "sv": "Vilket svar stämmer bäst? Vad heter Sveriges högsta berg?"
+      "en": "Sweden's highest mountain is called ...",
+      "sv": "Sveriges högsta berg heter ..."
     },
     "opts": [
       {
@@ -8550,8 +8550,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which are Sweden's three largest lakes?",
-      "sv": "Vilket svar stämmer bäst? Vilka är Sveriges tre största sjöar?"
+      "en": "Sweden's three largest lakes are ...",
+      "sv": "Sveriges tre största sjöar är ..."
     },
     "opts": [
       {
@@ -8734,8 +8734,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Approximately how many people live in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Ungefär hur många människor bor i Sverige?"
+      "en": "... people live in Sweden.",
+      "sv": "... människor bor i Sverige."
     },
     "opts": [
       {
@@ -8910,8 +8910,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which natural resources are important in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilka naturresurser är viktiga i Sverige?"
+      "en": "... are important natural resources in Sweden.",
+      "sv": "... är viktiga naturresurser i Sverige."
     },
     "opts": [
       {
@@ -9090,8 +9090,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does democracy mean?",
-      "sv": "Vilket svar stämmer bäst? Vad betyder demokrati?"
+      "en": "Democracy means ...",
+      "sv": "Demokrati betyder ..."
     },
     "opts": [
       {
@@ -9266,8 +9266,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which of the following is part of free elections in a democracy?",
-      "sv": "Vilket svar stämmer bäst? Vilket av följande ingår i fria val i en demokrati?"
+      "en": "A feature of free elections in a democracy is ...",
+      "sv": "Ett inslag i fria val i en demokrati är ..."
     },
     "opts": [
       {
@@ -9442,8 +9442,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How can people influence society and participate in democracy?",
-      "sv": "Vilket svar stämmer bäst? Hur kan människor påverka samhället och delta i demokratin?"
+      "en": "People can influence society and participate in democracy ...",
+      "sv": "Människor kan påverka samhället och delta i demokratin ..."
     },
     "opts": [
       {
@@ -9618,8 +9618,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?",
-      "sv": "Vilket svar stämmer bäst? Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
+      "en": "When laws apply equally to everyone and no one can be convicted without a fair trial, it is called ...",
+      "sv": "När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det ..."
     },
     "opts": [
       {
@@ -9794,8 +9794,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How can a low voter turnout affect democracy?",
-      "sv": "Vilket svar stämmer bäst? Hur kan ett lågt valdeltagande påverka demokratin?"
+      "en": "... when a low voter turnout affects democracy.",
+      "sv": "... när ett lågt valdeltagande påverkar demokratin."
     },
     "opts": [
       {
@@ -9970,8 +9970,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
-      "sv": "Vilket svar stämmer bäst? Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?"
+      "en": "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy ...",
+      "sv": "Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati ..."
     },
     "opts": [
       {
@@ -10146,8 +10146,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How many members does the Riksdag have?",
-      "sv": "Vilket svar stämmer bäst? Hur många ledamöter har riksdagen?"
+      "en": "The Riksdag has ... members.",
+      "sv": "Riksdagen har ... ledamöter."
     },
     "opts": [
       {
@@ -10322,8 +10322,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Who chooses the prime minister?",
-      "sv": "Vilket svar stämmer bäst? Vem väljer statsministern?"
+      "en": "The prime minister is chosen by ...",
+      "sv": "Statsministern väljs av ..."
     },
     "opts": [
       {
@@ -10498,8 +10498,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How old must a person be to have the right to vote?",
-      "sv": "Vilket svar stämmer bäst? Hur gammal måste man ha fyllt för att ha rösträtt?"
+      "en": "A person must be ... to have the right to vote.",
+      "sv": "Man måste ha fyllt ... för att ha rösträtt."
     },
     "opts": [
       {
@@ -10674,8 +10674,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does it mean that referendums in Sweden are advisory?",
-      "sv": "Vilket svar stämmer bäst? Vad betyder det att folkomröstningar i Sverige är rådgivande?"
+      "en": "That referendums in Sweden are advisory means ...",
+      "sv": "Att folkomröstningar i Sverige är rådgivande betyder ..."
     },
     "opts": [
       {
@@ -10850,8 +10850,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which three levels share political responsibility in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilka tre nivåer delar det politiska ansvaret i Sverige?"
+      "en": "... share political responsibility in Sweden.",
+      "sv": "... delar det politiska ansvaret i Sverige."
     },
     "opts": [
       {
@@ -11026,8 +11026,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which of the following tasks belongs to the Riksdag?",
-      "sv": "Vilket svar stämmer bäst? Vilken av följande uppgifter har riksdagen?"
+      "en": "The Riksdag has the task ...",
+      "sv": "Riksdagen har uppgiften ..."
     },
     "opts": [
       {
@@ -11378,8 +11378,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes government agencies?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver statliga myndigheter?"
+      "en": "Which statement describes government agencies ...?",
+      "sv": "Vilket påstående beskriver statliga myndigheter ...?"
     },
     "opts": [
       {
@@ -11554,8 +11554,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is the foremost task of Sweden's regions?",
-      "sv": "Vilket svar stämmer bäst? Vilken är regionernas främsta uppgift i Sverige?"
+      "en": "The foremost task of Sweden's regions is ...",
+      "sv": "Regionernas främsta uppgift i Sverige är ..."
     },
     "opts": [
       {
@@ -11730,8 +11730,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which example describes municipal responsibilities?",
-      "sv": "Vilket svar stämmer bäst? Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Municipalities are responsible for ...",
+      "sv": "Kommuner ansvarar för ..."
     },
     "opts": [
       {
@@ -11778,8 +11778,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.",
-      "sv": "Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning är exempel på kommunernas ansvar."
+      "en": "Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.",
+      "sv": "Kommuner ansvarar för vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning."
     },
     "opts": [
       {
@@ -11818,8 +11818,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Sending ambassadors to other countries belongs among municipal responsibilities.",
-      "sv": "Att skicka ambassadörer till andra länder är exempel på kommunernas ansvar."
+      "en": "Municipalities are responsible for sending ambassadors to other countries.",
+      "sv": "Kommuner ansvarar för att skicka ambassadörer till andra länder."
     },
     "opts": [
       {
@@ -11858,8 +11858,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which example describes municipal responsibilities?",
-      "sv": "Välj rätt alternativ: Vilket exempel beskriver kommunernas ansvar?"
+      "en": "Choose the correct option: Which everyday services are municipalities responsible for?",
+      "sv": "Välj rätt alternativ: Vilka vardagstjänster ansvarar kommuner för?"
     },
     "opts": [
       {
@@ -11906,8 +11906,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does it mean that Sweden is a constitutional monarchy?",
-      "sv": "Vilket svar stämmer bäst? Vad betyder det att Sverige är en konstitutionell monarki?"
+      "en": "That Sweden is a constitutional monarchy means ...",
+      "sv": "Att Sverige är en konstitutionell monarki betyder ..."
     },
     "opts": [
       {
@@ -12258,8 +12258,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
+      "en": "Elections to the Riksdag, regional councils, and municipal councils are held ... in Sweden.",
+      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige hålls ..."
     },
     "opts": [
       {
@@ -12434,8 +12434,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which requirements apply to voting in Sweden’s Riksdag election?",
-      "sv": "Vilket svar stämmer bäst? Vilka krav gäller för att rösta i Sveriges riksdagsval?"
+      "en": "To vote in Sweden’s Riksdag election, ...",
+      "sv": "För att rösta i Sveriges riksdagsval måste ..."
     },
     "opts": [
       {
@@ -12786,8 +12786,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why do voters vote behind a screen at the polling station?",
-      "sv": "Vilket svar stämmer bäst? Varför röstar väljare bakom en skärm i vallokalen?"
+      "en": "One reason voters vote behind a screen at the polling station is ...",
+      "sv": "En anledning till att väljare röstar bakom en skärm i vallokalen är ..."
     },
     "opts": [
       {
@@ -12962,8 +12962,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do people in a political party have in common?",
-      "sv": "Vilket svar stämmer bäst? Vad har människor i ett politiskt parti gemensamt?"
+      "en": "People in a political party have ...",
+      "sv": "Människor i ett politiskt parti har ..."
     },
     "opts": [
       {
@@ -13138,8 +13138,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What happens in a proportional election if a party receives 20 percent of the votes?",
-      "sv": "Vilket svar stämmer bäst? Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?"
+      "en": "What happens in a proportional election if a party receives 20 percent of the votes ...?",
+      "sv": "Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna ...?"
     },
     "opts": [
       {
@@ -13314,8 +13314,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What minimum share of votes must a party receive to enter the Riksdag?",
-      "sv": "Vilket svar stämmer bäst? Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?"
+      "en": "A party must receive ... to enter the Riksdag.",
+      "sv": "Ett parti måste få ... för att komma in i riksdagen."
     },
     "opts": [
       {
@@ -13490,8 +13490,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which list contains only Sweden's four constitutional laws?",
-      "sv": "Vilket svar stämmer bäst? Vilken lista innehåller bara Sveriges fyra grundlagar?"
+      "en": "The list with ... contains only Sweden's four constitutional laws.",
+      "sv": "Listan med ... innehåller bara Sveriges fyra grundlagar."
     },
     "opts": [
       {
@@ -13666,8 +13666,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the Instrument of Government say about public power in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad säger regeringsformen om offentlig makt i Sverige?"
+      "en": "The Instrument of Government says that ...",
+      "sv": "Regeringsformen säger ..."
     },
     "opts": [
       {
@@ -13842,8 +13842,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the Act of Succession regulate?",
-      "sv": "Vilket svar stämmer bäst? Vad reglerar successionsordningen?"
+      "en": "The Act of Succession regulates ...",
+      "sv": "Successionsordningen reglerar ..."
     },
     "opts": [
       {
@@ -14018,8 +14018,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the right of public access mean?",
-      "sv": "Vilket svar stämmer bäst? Vad innebär allemansrätten?"
+      "en": "What does the right of public access mean ...?",
+      "sv": "Vad innebär allemansrätten ...?"
     },
     "opts": [
       {
@@ -14194,8 +14194,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which authorities are part of the Swedish justice system?",
-      "sv": "Vilket svar stämmer bäst? Vilka myndigheter ingår i det svenska rättsväsendet?"
+      "en": "... are part of the Swedish justice system.",
+      "sv": "... ingår i det svenska rättsväsendet."
     },
     "opts": [
       {
@@ -14370,8 +14370,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes legal certainty in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver rättssäkerhet i Sverige?"
+      "en": "Which statement describes legal certainty in Sweden ...?",
+      "sv": "Vilket påstående beskriver rättssäkerhet i Sverige ...?"
     },
     "opts": [
       {
@@ -14546,8 +14546,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What applies to a person suspected of a crime in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gäller för en person som är misstänkt för brott i Sverige?"
+      "en": "What applies to a person suspected of a crime in Sweden ...?",
+      "sv": "Vad gäller för en person som är misstänkt för brott i Sverige ...?"
     },
     "opts": [
       {
@@ -14722,8 +14722,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes the role of the police in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver polisens uppgift i Sverige?"
+      "en": "The role of the police in Sweden is ...",
+      "sv": "Polisens uppgift i Sverige är ..."
     },
     "opts": [
       {
@@ -14898,8 +14898,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
-      "sv": "Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
+      "en": "From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule ...?",
+      "sv": "Från ... är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott."
     },
     "opts": [
       {
@@ -15074,8 +15074,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What important roles do free media play in a democracy?",
-      "sv": "Vilket svar stämmer bäst? Vilka viktiga uppgifter har fria medier i en demokrati?"
+      "en": "What important roles do free media play in a democracy ...?",
+      "sv": "I en demokrati har fria medier viktiga uppgifter: ..."
     },
     "opts": [
       {
@@ -15250,8 +15250,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How does the principle of public access make it easier to scrutinize authorities?",
-      "sv": "Vilket svar stämmer bäst? Hur underlättar offentlighetsprincipen granskning av myndigheter?"
+      "en": "The principle of public access makes it easier to scrutinize authorities ...",
+      "sv": "Offentlighetsprincipen underlättar granskning av myndigheter ..."
     },
     "opts": [
       {
@@ -15602,8 +15602,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which three companies are called public service in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilka tre företag kallas public service i Sverige?"
+      "en": "... are called public service in Sweden.",
+      "sv": "... kallas public service i Sverige."
     },
     "opts": [
       {
@@ -15958,8 +15958,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does it mean to be source-critical?",
-      "sv": "Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?"
+      "en": "To be source-critical means ...",
+      "sv": "Att vara källkritisk betyder ..."
     },
     "opts": [
       {
@@ -16134,8 +16134,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why was the United Nations created after the Second World War?",
-      "sv": "Vilket svar stämmer bäst? Varför bildades Förenta nationerna efter andra världskriget?"
+      "en": "The United Nations was created after the Second World War ...",
+      "sv": "Förenta nationerna bildades efter andra världskriget ..."
     },
     "opts": [
       {
@@ -16310,8 +16310,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement is correct about the UN Universal Declaration of Human Rights?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?"
+      "en": "Which statement is correct about the UN Universal Declaration of Human Rights ...?",
+      "sv": "Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna ...?"
     },
     "opts": [
       {
@@ -16486,8 +16486,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the goal of Sweden’s gender equality policy mean?",
-      "sv": "Vilket svar stämmer bäst? Vad innebär målet med Sveriges jämställdhetspolitik?"
+      "en": "The goal of Sweden’s gender equality policy means ...",
+      "sv": "Målet med Sveriges jämställdhetspolitik innebär ..."
     },
     "opts": [
       {
@@ -16662,8 +16662,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What applies to violence in close relationships and honour-related violence and oppression in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige?"
+      "en": "What applies to violence in close relationships and honour-related violence and oppression in Sweden ...?",
+      "sv": "Vad gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige ...?"
     },
     "opts": [
       {
@@ -16842,8 +16842,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What applies to buying sex in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gäller för att köpa sex i Sverige?"
+      "en": "What applies to buying sex in Sweden ...?",
+      "sv": "Vad gäller för att köpa sex i Sverige ...?"
     },
     "opts": [
       {
@@ -17018,8 +17018,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Since what year has the Convention on the Rights of the Child been law in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Sedan vilket år är barnkonventionen lag i Sverige?"
+      "en": "The Convention on the Rights of the Child has been law in Sweden since ...",
+      "sv": "Barnkonventionen är lag i Sverige sedan ..."
     },
     "opts": [
       {
@@ -17194,8 +17194,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What did Sweden decide as the first country in the world in 1979?",
-      "sv": "Vilket svar stämmer bäst? Vad beslutade Sverige som första land i världen 1979?"
+      "en": "In 1979, Sweden was the first country in the world to decide ...",
+      "sv": "År 1979 beslutade Sverige som första land i världen ..."
     },
     "opts": [
       {
@@ -17370,8 +17370,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which groups are Sweden's five national minorities?",
-      "sv": "Vilket svar stämmer bäst? Vilka är Sveriges fem nationella minoriteter?"
+      "en": "Sweden's five national minorities are ...",
+      "sv": "Sveriges fem nationella minoriteter är ..."
     },
     "opts": [
       {
@@ -17546,8 +17546,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is one task of the Sami Parliament?",
-      "sv": "Vilket svar stämmer bäst? Vilken uppgift har Sametinget?"
+      "en": "One task of the Sami Parliament is ...",
+      "sv": "Sametinget har uppgiften ..."
     },
     "opts": [
       {
@@ -17722,8 +17722,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What applies to marriage between people of the same sex in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gäller för äktenskap mellan personer av samma kön i Sverige?"
+      "en": "What applies to marriage between people of the same sex in Sweden ...?",
+      "sv": "Vad gäller för äktenskap mellan personer av samma kön i Sverige ...?"
     },
     "opts": [
       {
@@ -17898,8 +17898,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is one role of the Equality Ombudsman (DO)?",
-      "sv": "Vilket svar stämmer bäst? Vad är en uppgift för Diskrimineringsombudsmannen (DO)?"
+      "en": "One role of the Equality Ombudsman (DO) is ...",
+      "sv": "En uppgift för Diskrimineringsombudsmannen (DO) är ..."
     },
     "opts": [
       {
@@ -18074,8 +18074,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is meant by the public sector in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad menas med offentlig sektor i Sverige?"
+      "en": "The public sector in Sweden means ...",
+      "sv": "Offentlig sektor i Sverige är ..."
     },
     "opts": [
       {
@@ -18250,8 +18250,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What share of the workforce works in Sweden's private sector?",
-      "sv": "Vilket svar stämmer bäst? Hur stor del av arbetskraften jobbar i privat sektor i Sverige?"
+      "en": "... of the workforce works in Sweden's private sector.",
+      "sv": "... av arbetskraften jobbar i privat sektor i Sverige."
     },
     "opts": [
       {
@@ -18426,8 +18426,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do trade unions do in the labour market?",
-      "sv": "Vilket svar stämmer bäst? Vad gör fackförbund på arbetsmarknaden?"
+      "en": "What do trade unions do in the labour market ...?",
+      "sv": "Vad gör fackförbund på arbetsmarknaden ...?"
     },
     "opts": [
       {
@@ -18602,8 +18602,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How are wages set in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Hur bestäms löner i Sverige?"
+      "en": "Wages in Sweden are set ...",
+      "sv": "Löner i Sverige bestäms ..."
     },
     "opts": [
       {
@@ -18778,8 +18778,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why does Sweden have labour-market laws?",
-      "sv": "Vilket svar stämmer bäst? Varför finns lagar på arbetsmarknaden i Sverige?"
+      "en": "Sweden has labour-market laws ...",
+      "sv": "Lagar på arbetsmarknaden i Sverige finns ..."
     },
     "opts": [
       {
@@ -18954,8 +18954,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What support can A-kassan provide to unemployed members?",
-      "sv": "Vilket svar stämmer bäst? Vilket stöd kan A-kassan ge arbetslösa medlemmar?"
+      "en": "What support can A-kassan provide to unemployed members ...?",
+      "sv": "Vilket stöd kan A-kassan ge arbetslösa medlemmar ...?"
     },
     "opts": [
       {
@@ -19130,8 +19130,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How does the Swedish Enforcement Authority help with debts?",
-      "sv": "Vilket svar stämmer bäst? Hur hjälper Kronofogdemyndigheten till med skulder?"
+      "en": "How does the Swedish Enforcement Authority help with debts ...?",
+      "sv": "Hur hjälper Kronofogdemyndigheten till med skulder ...?"
     },
     "opts": [
       {
@@ -19310,8 +19310,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What role do taxes have in Sweden's welfare system?",
-      "sv": "Vilket svar stämmer bäst? Vilken roll har skatter i Sveriges välfärd?"
+      "en": "What role do taxes have in Sweden's welfare system ...?",
+      "sv": "Vilken roll har skatter i Sveriges välfärd ...?"
     },
     "opts": [
       {
@@ -19486,8 +19486,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Who pays tax in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilka betalar skatt i Sverige?"
+      "en": "Who pays tax in Sweden ...?",
+      "sv": "Vilka betalar skatt i Sverige ...?"
     },
     "opts": [
       {
@@ -19662,8 +19662,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the state finance within higher education and research?",
-      "sv": "Vilket svar stämmer bäst? Vad finansierar staten inom högre utbildning och forskning?"
+      "en": "The state finances ...",
+      "sv": "Staten finansierar ..."
     },
     "opts": [
       {
@@ -19842,8 +19842,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What responsibility do Sweden's regions have within welfare?",
-      "sv": "Vilket svar stämmer bäst? Vilket ansvar har Sveriges regioner inom välfärden?"
+      "en": "Sweden's regions are responsible for ...",
+      "sv": "Sveriges regioner ansvarar för ..."
     },
     "opts": [
       {
@@ -20018,8 +20018,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer gives examples of municipal welfare?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar ger exempel på kommunal välfärd?"
+      "en": "... are examples of municipal welfare.",
+      "sv": "... är exempel på kommunal välfärd."
     },
     "opts": [
       {
@@ -20370,8 +20370,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes Sweden two hundred years ago?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver Sverige för tvåhundra år sedan?"
+      "en": "Two hundred years ago, Sweden w...",
+      "sv": "Vilket påstående beskriver Sverige för tvåhundra år sedan ...?"
     },
     "opts": [
       {
@@ -20546,8 +20546,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why did Sweden’s population grow during the 19th century?",
-      "sv": "Vilket svar stämmer bäst? Varför ökade Sveriges befolkning under 1800-talet?"
+      "en": "Sweden’s population grew during the 19th century because of ...",
+      "sv": "Sveriges befolkning ökade under 1800-talet på grund av ..."
     },
     "opts": [
       {
@@ -20726,8 +20726,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Approximately how many Swedes emigrated to the United States between 1850 and 1920?",
-      "sv": "Vilket svar stämmer bäst? Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?"
+      "en": "... Swedes emigrated to the United States between 1850 and 1920.",
+      "sv": "... svenskar utvandrade till USA mellan 1850 och 1920."
     },
     "opts": [
       {
@@ -20902,8 +20902,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What changed through the new constitution in 1809?",
-      "sv": "Vilket svar stämmer bäst? Vad förändrades genom den nya grundlagen år 1809?"
+      "en": "The change through the new constitution in 1809 was ...",
+      "sv": "Förändringen genom den nya grundlagen år 1809 var ..."
     },
     "opts": [
       {
@@ -21078,8 +21078,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which four popular movements were among the largest in Sweden during the 19th century?",
-      "sv": "Vilket svar stämmer bäst? Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?"
+      "en": "... were among the largest popular movements in Sweden during the 19th century.",
+      "sv": "... var bland de största folkrörelserna i Sverige under 1800-talet."
     },
     "opts": [
       {
@@ -21254,8 +21254,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? In which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?",
-      "sv": "Vilket svar stämmer bäst? Vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
+      "en": "The first Riksdag election held in which both women and men could vote and women could become members of the Riksdag was in ...",
+      "sv": "Det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter hölls ..."
     },
     "opts": [
       {
@@ -21430,8 +21430,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What was the 1938 Saltsjöbaden Agreement important for?",
-      "sv": "Vilket svar stämmer bäst? Vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
+      "en": "The 1938 Saltsjöbaden Agreement was important for ...",
+      "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för ..."
     },
     "opts": [
       {
@@ -21606,8 +21606,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why is the period after the Second World War often called the Swedish record years?",
-      "sv": "Vilket svar stämmer bäst? Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?"
+      "en": "The period after the Second World War is often called the Swedish record years because ...",
+      "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom ..."
     },
     "opts": [
       {
@@ -21782,8 +21782,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What was the goal of the Million Programme during the 1960s?",
-      "sv": "Vilket svar stämmer bäst? Vad var miljonprogrammets mål under 1960-talet?"
+      "en": "The goal of the Million Programme during the 1960s was ...",
+      "sv": "Miljonprogrammets mål under 1960-talet var ..."
     },
     "opts": [
       {
@@ -21958,8 +21958,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What has the digital revolution changed?",
-      "sv": "Vilket svar stämmer bäst? Vad har den digitala revolutionen förändrat?"
+      "en": "The digital revolution has changed ...",
+      "sv": "Den digitala revolutionen har förändrat ..."
     },
     "opts": [
       {
@@ -22134,8 +22134,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Through which two bodies does Sweden's Nordic cooperation mainly take place?",
-      "sv": "Vilket svar stämmer bäst? Genom vilka två organ sker Sveriges nordiska samarbete främst?"
+      "en": "Sweden's Nordic cooperation mainly takes place through ...",
+      "sv": "Sveriges nordiska samarbete sker främst genom ..."
     },
     "opts": [
       {
@@ -22310,8 +22310,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? In what year did Sweden become a member of the EU?",
-      "sv": "Vilket svar stämmer bäst? Vilket år blev Sverige medlem i EU?"
+      "en": "Sweden became a member of the EU in ...",
+      "sv": "Sverige blev medlem i EU ..."
     },
     "opts": [
       {
@@ -22486,8 +22486,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do the EU's four freedoms mean?",
-      "sv": "Vilket svar stämmer bäst? Vad innebär EU:s fyra friheter?"
+      "en": "What do the EU's four freedoms mean ...?",
+      "sv": "EU:s fyra friheter innebär ..."
     },
     "opts": [
       {
@@ -22662,8 +22662,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the Council of Europe promote?",
-      "sv": "Vilket svar stämmer bäst? Vad arbetar Europarådet för?"
+      "en": "The Council of Europe promotes ...",
+      "sv": "Europarådet arbetar för ..."
     },
     "opts": [
       {
@@ -22838,8 +22838,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does Sida work to do?",
-      "sv": "Vilket svar stämmer bäst? Vad arbetar Sida för?"
+      "en": "Sida works ...",
+      "sv": "Sida arbetar för ..."
     },
     "opts": [
       {
@@ -23014,8 +23014,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
-      "sv": "Vilket svar stämmer bäst? Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?"
+      "en": "Sweden and Finland chose ... after Russia's attack on Ukraine in 2022.",
+      "sv": "Sverige och Finland valde ... efter Rysslands attack mot Ukraina 2022."
     },
     "opts": [
       {
@@ -23366,8 +23366,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does it mean that Sweden is a secular state?",
-      "sv": "Vilket svar stämmer bäst? Vad betyder det att Sverige är en sekulär stat?"
+      "en": "That Sweden is a secular state means ...",
+      "sv": "Att Sverige är en sekulär stat betyder ..."
     },
     "opts": [
       {
@@ -23542,8 +23542,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which law marked the final breakthrough for religious freedom in 1951?",
-      "sv": "Vilket svar stämmer bäst? Vilken lag markerade religionsfrihetens slutliga genombrott 1951?"
+      "en": "... marked the final breakthrough for religious freedom in 1951.",
+      "sv": "... markerade religionsfrihetens slutliga genombrott 1951."
     },
     "opts": [
       {
@@ -23894,8 +23894,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which tradition does the Church of Sweden have historical roots in?",
-      "sv": "Vilket svar stämmer bäst? Vilken tradition har Svenska kyrkan historiska rötter i?"
+      "en": "The Church of Sweden has historical roots in ...",
+      "sv": "Svenska kyrkan har historiska rötter i ..."
     },
     "opts": [
       {
@@ -24070,8 +24070,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which religion is described as the second largest in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilken religion beskrivs som den näst största i Sverige?"
+      "en": "... is described as the second-largest religion in Sweden.",
+      "sv": "... beskrivs som den näst största religionen i Sverige."
     },
     "opts": [
       {
@@ -24246,8 +24246,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
+      "en": "How is New Year’s Eve on 31 December commonly celebrated in Sweden ...?",
+      "sv": "På nyårsafton den 31 december är det vanligt ..."
     },
     "opts": [
       {
@@ -24422,8 +24422,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What usually happens on Sweden’s National Day, 6 June?",
-      "sv": "Vilket svar stämmer bäst? Vad brukar hända på Sveriges nationaldag den 6 juni?"
+      "en": "On Sweden’s National Day, 6 June, ...",
+      "sv": "På Sveriges nationaldag den 6 juni brukar ..."
     },
     "opts": [
       {
@@ -24602,8 +24602,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? When is Midsummer Eve celebrated in Sweden?",
-      "sv": "Vilket svar stämmer bäst? När firas midsommarafton i Sverige?"
+      "en": "Midsummer Eve is observed ...",
+      "sv": "Midsommarafton firas ..."
     },
     "opts": [
       {
@@ -24782,8 +24782,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is the Lucia celebration largely about in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad handlar luciafirandet mycket om i Sverige?"
+      "en": "The Lucia celebration is largely about ...",
+      "sv": "Luciafirandet handlar mycket om ..."
     },
     "opts": [
       {
@@ -24962,8 +24962,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?",
-      "sv": "Vilket svar stämmer bäst? Vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?"
+      "en": "... is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday.",
+      "sv": "... firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen."
     },
     "opts": [
       {
@@ -24975,7 +24975,7 @@
         "sv": "Advent"
       },
       {
-        "en": "First of May",
+        "en": "May Day",
         "sv": "Första maj"
       },
       {
@@ -24985,7 +24985,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25025,7 +25025,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25065,7 +25065,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25103,7 +25103,7 @@
         "sv": "Advent"
       },
       {
-        "en": "First of May",
+        "en": "May Day",
         "sv": "Första maj"
       },
       {
@@ -25113,7 +25113,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, First of May, and All Saints' Day belong to other parts of the year.",
+      "en": "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
       "sv": "Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året."
     },
     "source": {
@@ -25138,8 +25138,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is typical of Walpurgis Night, 30 April, in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad är typiskt för valborgsmässoafton den 30 april i Sverige?"
+      "en": "... are typical of Walpurgis Night, 30 April.",
+      "sv": "Typiskt för valborgsmässoafton den 30 april är ..."
     },
     "opts": [
       {
@@ -25161,7 +25161,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25202,7 +25202,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25243,7 +25243,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25292,7 +25292,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, First of May demonstrations, and Lucia processions belong to other holidays.",
+      "en": "On Walpurgis Night, 30 April, many people welcome spring with large evening bonfires. Traditional spring songs are often sung by the bonfire, and sometimes someone gives a speech welcoming spring; fireworks, May Day demonstrations, and Lucia processions belong to other holidays.",
       "sv": "På valborgsmässoafton den 30 april välkomnar många våren med stora brasor på kvällen. Vid brasan sjungs ofta traditionella vårsånger, och ibland håller någon ett tal till våren; fyrverkerier, första maj-demonstrationer och luciatåg hör till andra högtider."
     },
     "source": {
@@ -25318,8 +25318,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is marked on First of May in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad uppmärksammas på första maj i Sverige?"
+      "en": "May Day marks ...",
+      "sv": "På första maj uppmärksammas ..."
     },
     "opts": [
       {
@@ -25341,7 +25341,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25367,7 +25367,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "First of May marks workers' day with demonstrations and speeches.",
+      "en": "May Day marks workers' day with demonstrations and speeches.",
       "sv": "På första maj uppmärksammas arbetarnas dag med demonstrationer och tal."
     },
     "opts": [
@@ -25382,7 +25382,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25408,7 +25408,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "First of May marks the new year with parties and fireworks.",
+      "en": "May Day marks the new year with parties and fireworks.",
       "sv": "På första maj uppmärksammas det nya året med fester och fyrverkerier."
     },
     "opts": [
@@ -25423,7 +25423,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25449,7 +25449,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is marked on First of May in Sweden?",
+      "en": "Choose the correct option: What is marked on May Day in Sweden?",
       "sv": "Välj rätt alternativ: Vad uppmärksammas på första maj i Sverige?"
     },
     "opts": [
@@ -25472,7 +25472,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "First of May is International Workers’ Day and is a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
+      "en": "May Day is International Workers’ Day and a public holiday in Sweden. The labour movement marks the day with demonstrations around the country, and people from trade unions, political parties, and other groups give speeches about social and political issues.",
       "sv": "Första maj är arbetarnas dag internationellt och är en helgdag i Sverige. Dagen uppmärksammas av arbetarrörelsen med demonstrationer runt om i landet, och personer från fackförbund, politiska partier och andra grupper håller tal om sociala och politiska frågor."
     },
     "source": {
@@ -25498,8 +25498,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How is All Saints’ Day commonly observed in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på Alla helgons dag i Sverige?"
+      "en": "All Saints’ Day is commonly observed by ...",
+      "sv": "På Alla helgons dag är det vanligt ..."
     },
     "opts": [
       {
@@ -25678,8 +25678,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? When does Advent occur in Sweden?",
-      "sv": "Vilket svar stämmer bäst? När infaller advent i Sverige?"
+      "en": "Advent occurs on ...",
+      "sv": "Advent infaller ..."
     },
     "opts": [
       {
@@ -25858,8 +25858,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do families commonly do on Christmas Eve, 24 December, in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad är vanligt att familjer gör på julafton den 24 december i Sverige?"
+      "en": "On Christmas Eve, 24 December, families commonly ...",
+      "sv": "På julafton den 24 december brukar familjer ..."
     },
     "opts": [
       {
@@ -25881,7 +25881,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -25922,7 +25922,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -25963,7 +25963,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -26012,7 +26012,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating the birth of Jesus, and it is also a major family holiday in Sweden. On Christmas Eve, families often gather to spend time together, eat special Christmas food, and give presents; the other options belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse och är också en stor familjehögtid i Sverige. På julafton samlas familjer ofta för att umgås, äta särskild julmat och ge julklappar; de andra alternativen hör till valborg, första maj och nyår."
     },
     "source": {
@@ -26038,8 +26038,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which holidays are examples of traditions that have come to Sweden with immigrants?",
-      "sv": "Vilket svar stämmer bäst? Vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?"
+      "en": "... are examples of traditions that have come to Sweden with immigrants.",
+      "sv": "... är exempel på traditioner som har kommit till Sverige med invandrare."
     },
     "opts": [
       {
@@ -26051,7 +26051,7 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -26182,7 +26182,7 @@
         "sv": "Midsommar och Lucia"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -26218,8 +26218,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What exists in different places in Sweden for Buddhists and Hindus?",
-      "sv": "Vilket svar stämmer bäst? Vad finns på olika platser i Sverige för buddhister och hinduer?"
+      "en": "In different places in Sweden, there are ... for Buddhists and Hindus.",
+      "sv": "På olika platser i Sverige finns ... för buddhister och hinduer."
     },
     "opts": [
       {
@@ -26398,8 +26398,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about the role of religion in Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om religionens roll i Sverige stämmer?"
+      "en": "Which statement about the role of religion in Sweden is correct ...?",
+      "sv": "Vilket påstående om religionens roll i Sverige stämmer ...?"
     },
     "opts": [
       {
@@ -26578,8 +26578,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about Judaism's history in Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om judendomens historia i Sverige stämmer?"
+      "en": "Which statement about Judaism's history in Sweden is correct ...?",
+      "sv": "Vilket påstående om judendomens historia i Sverige stämmer ...?"
     },
     "opts": [
       {
@@ -26758,8 +26758,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is one goal of religion studies in Swedish schools?",
-      "sv": "Vilket svar stämmer bäst? Vad är ett mål med religionskunskapen i svensk skola?"
+      "en": "One goal of religion studies in Swedish schools is ...",
+      "sv": "Ett mål med religionskunskapen i svensk skola är ..."
     },
     "opts": [
       {
@@ -26938,8 +26938,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? When were Sweden's first mosques built?",
-      "sv": "Vilket svar stämmer bäst? När byggdes Sveriges första moskéer?"
+      "en": "Sweden's first mosques were built ...",
+      "sv": "Sveriges första moskéer byggdes ..."
     },
     "opts": [
       {
@@ -27118,8 +27118,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which Christian churches or communities exist in Sweden today?",
-      "sv": "Vilket svar stämmer bäst? Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
+      "en": "... exist in Sweden today.",
+      "sv": "... finns i dagens Sverige."
     },
     "opts": [
       {
@@ -27298,8 +27298,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Vilket svar stämmer bäst? Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "... contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      "sv": "... bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet."
     },
     "opts": [
       {
@@ -27482,8 +27482,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What became permitted for Swedes in 1860?",
-      "sv": "Vilket svar stämmer bäst? Vad blev tillåtet för svenskar år 1860?"
+      "en": "In 1860, Swedes were permitted ...",
+      "sv": "År 1860 blev det tillåtet för svenskar ..."
     },
     "opts": [
       {
@@ -27662,8 +27662,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the Instrument of Government protect regarding religion?",
-      "sv": "Vilket svar stämmer bäst? Vad skyddar regeringsformen när det gäller religion?"
+      "en": "What does the Instrument of Government protect regarding religion ...?",
+      "sv": "Vad skyddar regeringsformen när det gäller religion ...?"
     },
     "opts": [
       {
@@ -27842,8 +27842,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?",
-      "sv": "Vilket svar stämmer bäst? Vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?"
+      "en": "... are Christian holidays that many Swedes celebrate even if they do not see themselves as religious.",
+      "sv": "... är kristna högtider som många svenskar firar även om de inte ser sig som religiösa."
     },
     "opts": [
       {
@@ -27855,7 +27855,7 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -27989,7 +27989,7 @@
         "sv": "Id al-fitr och Newroz"
       },
       {
-        "en": "Sweden’s National Day and First of May",
+        "en": "Sweden’s National Day and May Day",
         "sv": "Sveriges nationaldag och första maj"
       },
       {
@@ -28026,8 +28026,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which religious rituals are still common in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilka religiösa ritualer är fortfarande vanliga i Sverige?"
+      "en": "... are still common in Sweden.",
+      "sv": "... är fortfarande vanliga i Sverige."
     },
     "opts": [
       {
@@ -28214,8 +28214,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?",
-      "sv": "Vilket svar stämmer bäst? Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?"
+      "en": "Sweden was ... during the Middle Ages.",
+      "sv": "Sverige var ... under medeltiden."
     },
     "opts": [
       {
@@ -28394,8 +28394,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What did Jews gain the right to do in Sweden in the 18th century?",
-      "sv": "Vilket svar stämmer bäst? Vad fick judar rätt att göra i Sverige på 1700-talet?"
+      "en": "What did Jews gain the right to do in Sweden in the 18th century ...?",
+      "sv": "Vad fick judar rätt att göra i Sverige på 1700-talet ...?"
     },
     "opts": [
       {
@@ -28574,8 +28574,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which branches of Islam are found in Swedish Muslim congregations?",
-      "sv": "Vilket svar stämmer bäst? Vilka riktningar inom islam finns i svenska muslimska församlingar?"
+      "en": "... are found in Swedish Muslim congregations.",
+      "sv": "... finns i svenska muslimska församlingar."
     },
     "opts": [
       {
@@ -28754,8 +28754,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do Muslim congregations in Sweden offer?",
-      "sv": "Vilket svar stämmer bäst? Vad erbjuder muslimska församlingar i Sverige?"
+      "en": "Muslim congregations in Sweden offer ...",
+      "sv": "Muslimska församlingar i Sverige erbjuder ..."
     },
     "opts": [
       {
@@ -28938,8 +28938,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about Buddhists and Hindus in present-day Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om buddhister och hinduer i dagens Sverige stämmer?"
+      "en": "Which statement about Buddhists and Hindus in present-day Sweden is correct ...?",
+      "sv": "Vilket påstående om buddhister och hinduer i dagens Sverige stämmer ...?"
     },
     "opts": [
       {
@@ -29118,8 +29118,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What happened on 6 June 1523, a date connected with Sweden's National Day?",
-      "sv": "Vilket svar stämmer bäst? Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
+      "en": "What happened on 6 June 1523, a date connected with Sweden's National Day ...?",
+      "sv": "Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag ...?"
     },
     "opts": [
       {
@@ -29298,8 +29298,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is common during Midsummer celebrations in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad är vanligt vid midsommarfirande i Sverige?"
+      "en": "... are common during Midsummer celebrations in Sweden.",
+      "sv": "Vid midsommarfirande i Sverige är det vanligt med ..."
     },
     "opts": [
       {
@@ -29321,7 +29321,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -29363,7 +29363,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -29405,7 +29405,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -29455,7 +29455,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, First of May, or Advent and Christmas.",
+      "en": "Midsummer celebrations are about welcoming summer and light. Many people celebrate outdoors, make flower wreaths, and dance around a midsummer pole, and common food includes herring, new potatoes, and strawberries; the other options belong to New Year, May Day, or Advent and Christmas.",
       "sv": "Midsommarfirandet handlar om att välkomna sommaren och ljuset. Många firar utomhus, binder blomsterkransar och dansar runt en midsommarstång, och vanlig mat är sill, färskpotatis och jordgubbar; de andra alternativen hör till nyår, första maj eller advent och jul."
     },
     "source": {
@@ -29482,8 +29482,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about many public holidays in Sweden is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om många helgdagar i Sverige stämmer?"
+      "en": "Which statement about many public holidays in Sweden is correct ...?",
+      "sv": "Vilket påstående om många helgdagar i Sverige stämmer ...?"
     },
     "opts": [
       {
@@ -29662,8 +29662,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which holiday ends the fasting month of Ramadan?",
-      "sv": "Vilket svar stämmer bäst? Vilken högtid avslutar fastemånaden ramadan?"
+      "en": "... ends the fasting month of Ramadan.",
+      "sv": "... avslutar fastemånaden ramadan."
     },
     "opts": [
       {
@@ -29842,8 +29842,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? When are Nouruz and Newroz celebrated?",
-      "sv": "Vilket svar stämmer bäst? När firas Nouruz och Newroz?"
+      "en": "Nouruz and Newroz are observed ...",
+      "sv": "Nouruz och Newroz firas ..."
     },
     "opts": [
       {
@@ -30022,8 +30022,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does the person who is Lucia usually wear in a Lucia procession?",
-      "sv": "Vilket svar stämmer bäst? Vad brukar personen som är Lucia bära i ett luciatåg?"
+      "en": "The person who is Lucia usually wears ...",
+      "sv": "Personen som är Lucia brukar bära ..."
     },
     "opts": [
       {
@@ -30202,8 +30202,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is the church service early on the morning of 25 December called?",
-      "sv": "Vilket svar stämmer bäst? Vad kallas gudstjänsten tidigt på morgonen den 25 december?"
+      "en": "The church service early on the morning of 25 December is called ...",
+      "sv": "Gudstjänsten tidigt på morgonen den 25 december kallas ..."
     },
     "opts": [
       {
@@ -30382,8 +30382,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is common on Easter Saturday in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad är vanligt på påskafton i Sverige?"
+      "en": "What is common on Easter Saturday in Sweden ...?",
+      "sv": "På påskafton är det vanligt ..."
     },
     "opts": [
       {
@@ -30405,7 +30405,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -30447,7 +30447,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -30489,7 +30489,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -30539,7 +30539,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and First of May.",
+      "en": "On Easter Saturday, it is common to eat eggs, lamb, salmon, and herring, and children often receive candy in Easter eggs. Advent candles, grave candles, and demonstrations instead belong to Advent, All Saints’ Day, and May Day.",
       "sv": "På påskafton är det vanligt att äta ägg, lamm, lax och sill, och barn får ofta godis i påskägg. Adventsljus, gravljus och demonstrationer hör i stället till advent, Alla helgons dag och första maj."
     },
     "source": {
@@ -30566,8 +30566,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do children often do with an Advent calendar at home?",
-      "sv": "Vilket svar stämmer bäst? Vad gör barn ofta med en adventskalender hemma?"
+      "en": "Children with an Advent calendar at home often ...",
+      "sv": "Barn med en adventskalender hemma ..."
     },
     "opts": [
       {
@@ -30746,8 +30746,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? In which year did Sweden’s National Day become a public holiday through a Riksdag decision?",
-      "sv": "Vilket svar stämmer bäst? Vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?"
+      "en": "Sweden’s National Day became a public holiday through a Riksdag decision in ...",
+      "sv": "Sveriges nationaldag blev en helgdag genom riksdagsbeslut ..."
     },
     "opts": [
       {
@@ -30930,8 +30930,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? When is All Saints’ Day observed in Sweden?",
-      "sv": "Vilket svar stämmer bäst? När firas Alla helgons dag i Sverige?"
+      "en": "All Saints’ Day is observed ...",
+      "sv": "Alla helgons dag firas ..."
     },
     "opts": [
       {
@@ -31110,8 +31110,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is common in many homes during Advent?",
-      "sv": "Vilket svar stämmer bäst? Vad är vanligt i många hem under advent?"
+      "en": "... are common in many homes during Advent.",
+      "sv": "Under advent är det vanligt med ... i många hem."
     },
     "opts": [
       {
@@ -31290,8 +31290,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do many people do on All Saints’ Day in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gör många på Alla helgons dag i Sverige?"
+      "en": "On All Saints’ Day, ...",
+      "sv": "På Alla helgons dag ..."
     },
     "opts": [
       {
@@ -31474,8 +31474,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What can happen to traditions when people move to other countries?",
-      "sv": "Vilket svar stämmer bäst? Vad kan hända med traditioner när människor flyttar till andra länder?"
+      "en": "What can happen to traditions when people move to other countries ...?",
+      "sv": "Vad kan hända med traditioner när människor flyttar till andra länder ...?"
     },
     "opts": [
       {
@@ -31654,8 +31654,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do many people do with a tree at Christmas in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gör många med en gran vid jul i Sverige?"
+      "en": "At Christmas, ...",
+      "sv": "Vid jul ..."
     },
     "opts": [
       {
@@ -31834,8 +31834,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does Christmas traditionally celebrate in Christianity?",
-      "sv": "Vilket svar stämmer bäst? Vad firar julen traditionellt inom kristendomen?"
+      "en": "Christmas traditionally celebrates ... in Christianity.",
+      "sv": "Julen firar traditionellt ... inom kristendomen."
     },
     "opts": [
       {
@@ -31857,7 +31857,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -31898,7 +31898,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -31939,7 +31939,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -31988,7 +31988,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, First of May, and New Year.",
+      "en": "Christmas is traditionally a Christian holiday celebrating Jesus' birth. In Sweden, Christmas is also a major family holiday, while the arrival of spring, Workers' Day, and the arrival of the new year belong to Walpurgis Night, May Day, and New Year.",
       "sv": "Julen är traditionellt en kristen högtid för att fira Jesu födelse. I Sverige är julen också en stor familjehögtid, medan vårens ankomst, arbetarnas dag och det nya årets ankomst hör till valborg, första maj och nyår."
     },
     "source": {
@@ -32014,8 +32014,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
-      "sv": "Vilket svar stämmer bäst? Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
+      "en": "How do many people in Sweden celebrate Christmas even when it has no religious meaning for them ...?",
+      "sv": "Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem ...?"
     },
     "opts": [
       {
@@ -32194,8 +32194,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is commonly served on 13 December in connection with Lucia?",
-      "sv": "Vilket svar stämmer bäst? Vad brukar man bjuda på den 13 december i samband med lucia?"
+      "en": "On 13 December, people commonly serve ...",
+      "sv": "Den 13 december brukar man bjuda på ..."
     },
     "opts": [
       {
@@ -32374,8 +32374,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How many islands does Sweden have?",
-      "sv": "Vilket svar stämmer bäst? Hur många öar har Sverige?"
+      "en": "Sweden has ... islands.",
+      "sv": "Sverige har ... öar."
     },
     "opts": [
       {
@@ -32738,8 +32738,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How many historical provinces is Sweden divided into?",
-      "sv": "Vilket svar stämmer bäst? Hur många landskap är Sverige indelat i?"
+      "en": "Sweden is divided in...",
+      "sv": "Sverige är indelat i ..."
     },
     "opts": [
       {
@@ -32918,13 +32918,13 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does it mean that elections in a democracy are secret?",
-      "sv": "Vilket svar stämmer bäst? Vad betyder det att val i en demokrati är hemliga?"
+      "en": "That elections in a democracy are secret means ...",
+      "sv": "Att val i en demokrati är hemliga betyder ..."
     },
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
@@ -32967,7 +32967,7 @@
     "type": "true_false",
     "q": {
       "en": "That elections in a democracy are secret means no one has to reveal how they vote.",
-      "sv": "Att val i en demokrati är hemliga betyder att ingen behöver avslöja hur den röstar."
+      "sv": "Att val i en demokrati är hemliga betyder att väljare inte behöver avslöja hur de röstar."
     },
     "opts": [
       {
@@ -33052,7 +33052,7 @@
     "opts": [
       {
         "en": "No one has to reveal how they vote",
-        "sv": "Ingen behöver avslöja hur den röstar"
+        "sv": "Att väljare inte behöver avslöja hur de röstar"
       },
       {
         "en": "Only authorities may know how each person votes",
@@ -33094,8 +33094,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What right do people, groups, and parties have in a democracy?",
-      "sv": "Vilket svar stämmer bäst? Vilken rätt har människor, grupper och partier i en demokrati?"
+      "en": "In a democracy, people, groups, and parties have the right ...",
+      "sv": "I en demokrati har människor, grupper och partier rätt ..."
     },
     "opts": [
       {
@@ -33270,8 +33270,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What can make democracy stronger?",
-      "sv": "Vilket svar stämmer bäst? Vad kan göra demokratin starkare?"
+      "en": "Democracy becomes stronger when ...",
+      "sv": "Demokratin blir starkare när ..."
     },
     "opts": [
       {
@@ -33446,8 +33446,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why can false information and hate be a threat to democracy?",
-      "sv": "Vilket svar stämmer bäst? Varför kan falsk information och hat vara ett hot mot demokratin?"
+      "en": "One reason false information and hate can be a threat to democracy is ...",
+      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är ..."
     },
     "opts": [
       {
@@ -33626,8 +33626,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes integration in a democratic society?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver integration i ett demokratiskt samhälle?"
+      "en": "Integration in a democratic society means ...",
+      "sv": "Integration i ett demokratiskt samhälle är ..."
     },
     "opts": [
       {
@@ -33806,8 +33806,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How can commercial radio and TV channels earn income?",
-      "sv": "Vilket svar stämmer bäst? Hur kan kommersiella radio- och tv-kanaler få inkomster?"
+      "en": "How can commercial radio and TV channels earn income ...?",
+      "sv": "Hur kan kommersiella radio- och tv-kanaler få inkomster ...?"
     },
     "opts": [
       {
@@ -33982,8 +33982,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What characterizes media financed by advertising?",
-      "sv": "Vilket svar stämmer bäst? Vad kännetecknar medier som finansieras med reklam?"
+      "en": "What characterizes media financed by advertising ...?",
+      "sv": "Vad kännetecknar medier som finansieras med reklam ...?"
     },
     "opts": [
       {
@@ -34158,8 +34158,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How are many newspapers published today?",
-      "sv": "Vilket svar stämmer bäst? Hur publiceras många tidningar i dag?"
+      "en": "How are many newspapers published today ...?",
+      "sv": "Hur publiceras många tidningar i dag ...?"
     },
     "opts": [
       {
@@ -34334,8 +34334,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is important to remember about the web and social media?",
-      "sv": "Vilket svar stämmer bäst? Vad är viktigt att komma ihåg om webben och sociala medier?"
+      "en": "What is important to remember about the web and social media ...?",
+      "sv": "Vad är viktigt att komma ihåg om webben och sociala medier ...?"
     },
     "opts": [
       {
@@ -34510,8 +34510,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why is source criticism needed when using media?",
-      "sv": "Vilket svar stämmer bäst? Varför behövs källkritik när man använder medier?"
+      "en": "One reason source criticism is needed when using media is ...",
+      "sv": "En anledning till att källkritik behövs när man använder medier är ..."
     },
     "opts": [
       {
@@ -34686,12 +34686,12 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How can a welfare service be private and still tax-funded?",
-      "sv": "Vilket svar stämmer bäst? Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
+      "en": "How can a welfare service be provided by a private company but still be funded by tax revenue ...?",
+      "sv": "Hur kan en välfärdstjänst vara privat och ändå skattefinansierad ...?"
     },
     "opts": [
       {
-        "en": "A private company can provide the service while tax revenue pays for it",
+        "en": "A private company can provide the service while tax revenue funds it",
         "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
       },
       {
@@ -34735,7 +34735,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "A private company can provide the service while tax revenue pays for it.",
+      "en": "A private company can provide the service while tax revenue funds it.",
       "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den."
     },
     "opts": [
@@ -34817,12 +34817,12 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: How can a welfare service be private and still tax-funded?",
+      "en": "Choose the correct option: How can a welfare service be provided by a private company but still be funded by tax revenue?",
       "sv": "Välj rätt alternativ: Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?"
     },
     "opts": [
       {
-        "en": "A private company can provide the service while tax revenue pays for it",
+        "en": "A private company can provide the service while tax revenue funds it",
         "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den"
       },
       {
@@ -34866,8 +34866,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
-      "sv": "Vilket svar stämmer bäst? Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
+      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment ...?",
+      "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet ...?"
     },
     "opts": [
       {
@@ -35046,8 +35046,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is included in primary care?",
-      "sv": "Vilket svar stämmer bäst? Vad ingår i primärvården?"
+      "en": "Primary care includes ...",
+      "sv": "Primärvården omfattar ..."
     },
     "opts": [
       {
@@ -35226,8 +35226,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What responsibility does the municipality have for children’s everyday life and education?",
-      "sv": "Vilket svar stämmer bäst? Vilket ansvar har kommunen för barns vardag och utbildning?"
+      "en": "The municipality is responsible for ...",
+      "sv": "Kommunen ansvarar för ..."
     },
     "opts": [
       {
@@ -35406,8 +35406,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What help can older people receive from the municipality to manage everyday life?",
-      "sv": "Vilket svar stämmer bäst? Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?"
+      "en": "The municipality can offer older people ... to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer ... för att klara vardagen."
     },
     "opts": [
       {

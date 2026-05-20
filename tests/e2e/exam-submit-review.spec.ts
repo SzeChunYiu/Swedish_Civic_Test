@@ -1,21 +1,60 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
+import {
+  dismissBlockingModals,
+  markAboutTheTestSeen,
+  seedSettingsLanguage,
+  type AppLanguage,
+} from './browserLaunch';
 
 const totalQuestions = 20;
+const unsupportedPassVerdictPattern =
+  /(?:passing line|pass line|pass threshold|official pass|passed|failed|pass\/fail|gräns för godkänt|officiell(?:a)?\s+gräns|godkänt|underkänt|75\s*%\s*(?:pass|passing|godkänt|godkänd)|(?:pass|passing|godkänt|godkänd)\s*(?:line|threshold|gräns)?\s*75\s*%)/i;
 
-async function enableEnglishSupport(page: Page) {
-  await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-  await page
-    .getByRole('radio', {
-      name: /Byt frågespråk till Engelskt stöd|Set question language to English support/,
-    })
-    .click();
+type NeutralSummaryContract = {
+  correctCountPattern: RegExp;
+  progressPattern: RegExp;
+  summaryAriaPrefix: string;
+  visibleLabel: string;
+};
+
+type TimeHeatmapContract = {
+  firstCellPattern: RegExp;
+  medianLabel: string;
+  summaryAriaPrefix: string;
+  title: string;
+};
+
+async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryContract) {
+  const summary = page
+    .locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`)
+    .first();
+
+  await expect(summary).toBeVisible();
+  await expect(summary.getByText(contract.visibleLabel, { exact: true })).toBeVisible();
+  await expect(summary.getByText(contract.correctCountPattern)).toBeVisible();
+  await expect(summary.getByRole('progressbar', { name: contract.progressPattern })).toBeVisible();
+}
+
+async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
   await expect(
-    page.getByRole('radio', { name: 'Set question language to English support' }),
-  ).toHaveAttribute('aria-checked', 'true');
+    page.locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`),
+  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: contract.title })).toBeVisible();
+  await expect(page.getByText(contract.medianLabel, { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: contract.firstCellPattern }).first()).toBeVisible();
+}
+
+async function expectNoPassVerdictCopy(page: Page) {
+  await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
+}
+
+async function openExamWithLanguage(page: Page, language: AppLanguage) {
+  await seedSettingsLanguage(page, language);
+  await markAboutTheTestSeen(page);
+  await page.goto('/exam', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 }
 
 test('mock exam requires all answers before showing Swedish score and source-backed review', async ({
@@ -28,8 +67,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openExamWithLanguage(page, 'sv');
 
   await expect(page.getByRole('heading', { name: 'Övningsprov' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-baserade frågor`))).toBeVisible();
@@ -65,8 +103,20 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await submit.click();
 
   await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();
-  await expect(page.getByText('Övningsresultat').first()).toBeVisible();
+  await expectNeutralResultSummary(page, {
+    correctCountPattern: new RegExp(`\\d+/${totalQuestions} rätt`),
+    progressPattern: /\d+ procent rätt/,
+    summaryAriaPrefix: 'Övningsresultat.',
+    visibleLabel: 'Övningsresultat',
+  });
   await expect(page.getByText(new RegExp(`/${totalQuestions} rätt`))).toBeVisible();
+  await expectTimeHeatmap(page, {
+    firstCellPattern:
+      /^Fråga 1, \d+ sek, (Snabb|Nära median|Tog längre tid|Fastnade), (rätt|behöver granskas)\. Hoppa till genomgången\.$/,
+    medianLabel: 'Nära median',
+    summaryAriaPrefix: 'Tidskarta per fråga',
+    title: 'Tidskarta per fråga',
+  });
   await expect(page.getByText('Kapitelöversikt')).toBeVisible();
   await expect(page.getByText('Frågegenomgång')).toBeVisible();
   await expect(page.getByText('Valt svar').first()).toBeVisible();
@@ -75,6 +125,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Skickade resultat är slutgiltiga')).toBeVisible();
   await expect(page.getByLabel('Back to exam answers')).toHaveCount(0);
+  await expectNoPassVerdictCopy(page);
 
   expect(consoleErrors).toEqual([]);
 });
@@ -87,9 +138,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await enableEnglishSupport(page);
-  await page.goto('/exam', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openExamWithLanguage(page, 'en');
 
   await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();
@@ -127,7 +176,20 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await expect(page.getByText('Exam result', { exact: true })).toBeVisible();
   await expect(page.getByText('Mock exam result')).toBeVisible();
+  await expectNeutralResultSummary(page, {
+    correctCountPattern: new RegExp(`\\d+/${totalQuestions} correct`),
+    progressPattern: /\d+ percent correct/,
+    summaryAriaPrefix: 'Practice result.',
+    visibleLabel: 'Practice result',
+  });
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
+  await expectTimeHeatmap(page, {
+    firstCellPattern:
+      /^Question 1, \d+ sec, (Rushed|Near median|Over-thought|Stuck), (correct|needs review)\. Jump to review\.$/,
+    medianLabel: 'Near median',
+    summaryAriaPrefix: 'Time map by question',
+    title: 'Time map by question',
+  });
   await expect(page.getByText('Chapter breakdown')).toBeVisible();
   await expect(page.getByText('The country of Sweden')).toBeVisible();
   await expect(page.getByText('Question review')).toBeVisible();
@@ -142,6 +204,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(page.getByText('Rätt svar')).toHaveCount(0);
   await expect(page.getByText('UHR-källa')).toHaveCount(0);
   await expect(page.getByLabel('Tillbaka till provsvar')).toHaveCount(0);
+  await expectNoPassVerdictCopy(page);
 
   expect(consoleErrors).toEqual([]);
 });

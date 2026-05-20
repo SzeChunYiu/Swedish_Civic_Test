@@ -254,6 +254,14 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
         true,
       );
       assert.equal(
+        shouldShowAd('home_banner', { adsDisabled: false }, { adServingAllowed: true }, 'android'),
+        true,
+      );
+      assert.equal(
+        shouldShowAd('home_banner', { adsDisabled: false }, { adServingAllowed: true }, 'ios'),
+        true,
+      );
+      assert.equal(
         getPlatformAdUnitId('rewarded_extra_exam', 'android'),
         'ca-app-pub-1234567890123456/3333333333',
       );
@@ -265,14 +273,37 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
         getPlatformAdUnitId('results_native', 'android'),
         'ca-app-pub-1234567890123456/5555555555',
       );
+      assert.equal(getPlatformAdUnitId('results_native', 'ios'), undefined);
       assert.equal(
         shouldShowAd('rewarded_extra_exam', { adsDisabled: false }, { adServingAllowed: true }),
+        true,
+      );
+      assert.equal(
+        shouldShowAd(
+          'rewarded_extra_exam',
+          { adsDisabled: false },
+          { adServingAllowed: true },
+          'android',
+        ),
         true,
       );
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
       assert.equal(
         shouldShowAd('results_native', { adsDisabled: false }, { adServingAllowed: true }),
         true,
+      );
+      assert.equal(
+        shouldShowAd(
+          'results_native',
+          { adsDisabled: false },
+          { adServingAllowed: true },
+          'android',
+        ),
+        true,
+      );
+      assert.equal(
+        shouldShowAd('results_native', { adsDisabled: false }, { adServingAllowed: true }, 'ios'),
+        false,
       );
       assert.match(liveNativeCopyEn.accessibilityLabel, /^Ad:/);
       assert.match(liveNativeCopyEn.meta, /Google AdMob placement/);
@@ -343,7 +374,7 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.match(nativeAdCardSource, /\.destroy\(\)/);
   assert.match(
     nativeAdCardSource,
-    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
   assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd/);
 
@@ -398,7 +429,7 @@ test('practice completion placement uses a native interstitial and web preview',
   );
   assert.match(
     nativeInterstitialSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
   assert.match(nativeInterstitialSource, /useMobileAdsConsent/);
   assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
@@ -551,6 +582,22 @@ test('rewarded extra exam ad copy uses Swedish practice-exam wording', () => {
 });
 
 test('rewarded extra exam access honors real-ad consent readiness', () => {
+  const rewardedAccessSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
+    'utf8',
+  );
+  const useMockExamAccessSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+
+  assert.match(rewardedAccessSource, /platform\?: AdRuntimePlatform;/);
+  assert.match(
+    rewardedAccessSource,
+    /shouldShowAd\(\s*REWARDED_EXTRA_EXAM_PLACEMENT,\s*entitlements,\s*\{[\s\S]*adServingAllowed: true[\s\S]*\},\s*platform,\s*\)/,
+  );
+  assert.match(useMockExamAccessSource, /platform: Platform\.OS/);
+
   withEnv(
     {
       EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID: undefined,
@@ -592,8 +639,19 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
           completedMockExamsToday: 1,
           entitlements: freeEntitlements,
           freeMockExamLimit: 1,
+          platform: 'android',
         }).reason,
         'consent_required',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          consentDecision: { adServingAllowed: true },
+          entitlements: freeEntitlements,
+          freeMockExamLimit: 1,
+          platform: 'ios',
+        }).reason,
+        'ads_unavailable',
       );
 
       assert.deepEqual(
@@ -602,6 +660,7 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
           consentDecision: { adServingAllowed: true },
           entitlements: freeEntitlements,
           freeMockExamLimit: 1,
+          platform: 'android',
         }),
         {
           canOfferRewardedAd: true,
@@ -1538,6 +1597,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /href="\/profile\?focus=remove-ads"/);
+  assert.match(placementCtaSource, /Open the Remove Ads panel in Profile/);
+  assert.match(placementCtaSource, /Öppna Ta bort annonser-panelen i profilen/);
   assert.match(placementCtaSource, /Restore Remove Ads purchase/);
   assert.match(placementCtaSource, /Återställ köp av Ta bort annonser/);
   assert.match(placementCtaSource, /No previous Remove Ads purchase was found/);
@@ -1567,10 +1629,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /entitlementsReady/);
-  assert.match(
-    profileSource,
-    /\{entitlementsReady \? \(\s*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}/,
-  );
+  assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
+  assert.match(profileSource, /nativeID="remove-ads-paywall"/);
+  assert.match(profileSource, /\{removeAdsFocused \? removeAdsPaywall : null\}/);
+  assert.match(profileSource, /<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
@@ -1827,8 +1889,10 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(Platform\.OS\)/);
   assert.match(nativeBannerSource, /useMobileAdsConsent/);
   assert.match(nativeBannerSource, /consentDecision/);
+  assert.match(nativeBannerSource, /shouldShowAd\([\s\S]*Platform\.OS/);
   assert.match(launchSource, /useMobileAdsConsent/);
   assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*consentDecision/);
+  assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*platform: Platform\.OS/);
   assert.equal(mapTrackingTransparencyStatus({ status: 'granted' }, 'ios'), 'authorized');
   assert.equal(mapTrackingTransparencyStatus({ status: 'undetermined' }, 'ios'), 'not_determined');
   assert.equal(mapUmpConsentStatus({ status: 'OBTAINED' }), 'obtained');

@@ -45,6 +45,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q001 generated variant\[0\] tags do not exactly match generated tag template/,
+    /content\/question-bank\.csv row \d+ q\d+ tags is .*expected .*editorial-extra/,
   );
 });
