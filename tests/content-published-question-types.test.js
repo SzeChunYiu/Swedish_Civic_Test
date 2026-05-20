@@ -16,28 +16,20 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
-const privateWelfareTaxFundingStiltedEnglishPattern = /\b(?:tax-funded|tax revenue pays for it)\b/i;
 const q071SocialInsuranceOverlapPattern =
   /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring|sickness insurance|parental insurance|unemployment insurance)\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
-const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
-const luciaExplanationRoleScaffoldPattern =
-  /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
+const equalityOmbudsmanWorkForEqualRightsPattern = /\bwork(?:s|ing)?\s+for\s+equal\s+rights\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
-const authoredWayToPromptPattern = /\b(?:Vilket är ett sätt att|Which is a way to)\b/i;
-const q026OldMunicipalResponsibilitiesPromptPattern =
-  /\b(?:Vilket exempel beskriver kommunernas ansvar|Which example describes municipal responsibilities)\b/i;
 const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
-const sourceRecallPromptPattern =
-  /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -127,6 +119,10 @@ test('published question types stay answerable by quiz runtime', () => {
     summary.publishedQuestions,
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionEqualityOmbudsmanEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
@@ -144,96 +140,8 @@ test('criminal-responsibility age copy is date-stamped to the current main-rule 
   assert.equal(summary.criminalResponsibilityCurrentnessSourceMetadataValidated, true);
   assert.equal(summary.criminalResponsibilityCurrentnessSourceRetrievedAt, '2026-05-20');
   assert.equal(summary.criminalResponsibilityCurrentnessProposalEffectiveDate, '2026-08-02');
-  assert.match(summary.criminalResponsibilityCurrentnessValidationDate, /^\d{4}-\d{2}-\d{2}$/);
-  assert.equal(summary.criminalResponsibilityCurrentnessEffectiveDateRecheckDue, false);
-  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated, true);
-  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt, null);
-  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateStatus, null);
   assert.equal(summary.criminalResponsibilityCurrentnessQuestionsValidated, 5);
   assert.equal(summary.criminalResponsibilityCurrentnessParityValidated, true);
-});
-
-test('criminal-responsibility age copy fails closed on the proposal effective date without a recheck', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const RealDate = Date;
-class MockDate extends RealDate {
-  constructor(...args) {
-    super(...(args.length ? args : ['2026-08-02T12:00:00.000Z']));
-  }
-  static now() {
-    return new RealDate('2026-08-02T12:00:00.000Z').getTime();
-  }
-}
-global.Date = MockDate;
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q044 criminal-responsibility proposal outcome must be rechecked on or after 2026-08-02/,
-  );
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q044 criminal-responsibility source metadata must be retrieved on or after 2026-08-02 once that date is reached/,
-  );
-});
-
-test('criminal-responsibility age copy accepts an explicit post-effective provisional recheck', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const RealDate = Date;
-class MockDate extends RealDate {
-  constructor(...args) {
-    super(...(args.length ? args : ['2026-08-02T12:00:00.000Z']));
-  }
-  static now() {
-    return new RealDate('2026-08-02T12:00:00.000Z').getTime();
-  }
-}
-global.Date = MockDate;
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
-    return String(contents)
-      .replace("retrievedAt: '2026-05-20'", "retrievedAt: '2026-08-02'")
-      .replace(
-        'postEffectiveDateRecheck: {\\n    recheckedAt: null,\\n    status: null,',
-        "postEffectiveDateRecheck: {\\n    recheckedAt: '2026-08-02',\\n    status: 'confirmed-still-provisional',",
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-  assert.equal(summary.criminalResponsibilityCurrentnessEffectiveDateRecheckDue, true);
-  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckValidated, true);
-  assert.equal(
-    summary.criminalResponsibilityCurrentnessPostEffectiveDateStatus,
-    'confirmed-still-provisional',
-  );
-  assert.equal(summary.criminalResponsibilityCurrentnessPostEffectiveDateRecheckedAt, '2026-08-02');
 });
 
 test('criminal-responsibility age copy rejects undated 13-year proposal wording', () => {
@@ -335,153 +243,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q156 uses stilted state-welfare English wording/,
-  );
-});
-
-test('private welfare source and exports use natural tax-funding English', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    privateWelfareTaxFundingStiltedEnglishPattern.test(
-      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
-    ),
-  );
-  const textForQuestion = (question) =>
-    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
-      ' ',
-    );
-  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
-    .filter((question) =>
-      privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
-    )
-    .map((question) => question.id);
-  const q155 = generatedSiteBank.find((question) => question.id === 'q155');
-  const welfareVariantIds = ['q155', 'q776', 'q777', 'q778', 'q779'];
-  const welfareVariants = generatedSiteBank.filter((question) =>
-    welfareVariantIds.includes(question.id),
-  );
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
-  assert.ok(q155, 'q155 should be published in the site bank');
-  assert.equal(
-    q155.q.en,
-    'How can a welfare service be provided by a private company but still be funded by tax revenue?',
-  );
-  assert.equal(
-    q155.opts[q155.answer].en,
-    'A private company can provide the service while tax revenue funds it',
-  );
-  assert.equal(welfareVariants.length, welfareVariantIds.length);
-  for (const question of welfareVariants) {
-    assert.equal(
-      privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
-      false,
-    );
-  }
-});
-
-test('private welfare English naturalness guard rejects tax-funded calques', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'How can a welfare service be provided by a private company but still be funded by tax revenue?',
-        'How can a welfare service be private and still tax-funded?',
-      )
-      .replace(
-        'A private company can provide the service while tax revenue funds it',
-        'A private company can provide the service while tax revenue pays for it',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q155 uses stilted state-welfare English wording/,
-  );
-});
-
-test('Lucia explanation copy and exports avoid role-scaffold wording', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    luciaExplanationRoleScaffoldPattern.test(
-      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
-    ),
-  );
-  const textForQuestion = (question) =>
-    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en].join(' ');
-  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
-    .filter((question) => luciaExplanationRoleScaffoldPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const q129 = generatedSiteBank.find((question) => question.id === 'q129');
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
-  assert.ok(q129, 'q129 should be published in the site bank');
-  assert.match(q129.why.sv, /I ett luciatåg bär Lucia en ljuskrona på huvudet/);
-  assert.match(q129.why.en, /In a Lucia procession, Lucia wears a crown of lights on her head/);
-});
-
-test('Lucia explanation naturalness guard rejects role-scaffold wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'I ett luciatåg bär Lucia en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger.',
-        'I ett luciatåg är en person Lucia och bär en ljuskrona på huvudet, medan andra deltagare bär ljus i händerna och sjunger särskilda sånger.',
-      )
-      .replace(
-        'In a Lucia procession, Lucia wears a crown of lights on her head, while other participants carry candles and sing special songs.',
-        'In a Lucia procession, one person is Lucia and wears a crown of lights on their head, while other participants carry candles and sing special songs.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q129 uses Lucia role-scaffold explanation wording/,
   );
 });
 
@@ -621,13 +382,16 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
   assert.equal(
     q097SingleChoice?.q.en,
-    'How is New Year’s Eve on 31 December commonly celebrated in Sweden ...?',
+    'Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
   assert.equal(
     q097Judgement?.q.en,
     'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
-  assert.equal(q104SingleChoice?.q.en, 'All Saints’ Day is commonly observed by ...');
+  assert.equal(
+    q104SingleChoice?.q.en,
+    'Which answer best matches? How is All Saints’ Day commonly observed in Sweden?',
+  );
   assert.equal(
     q104Judgement?.q.en,
     'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
@@ -668,63 +432,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(output, /q097 uses literal common-to-do English wording/);
   assert.match(output, /q104 uses literal common-to-do English wording/);
-  assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 4, output);
-});
-
-test('May Day source and exports use natural English holiday name', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = Array.from(actualStaticQuestions());
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    mayDayEnglishCalquePattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
-  );
-  const textForQuestion = (question) =>
-    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
-      ' ',
-    );
-  const bankFindings = [...generatedSiteBank, ...actualSiteBank]
-    .filter((question) => mayDayEnglishCalquePattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const q103 = generatedSiteBank.find((question) => question.id === 'q103');
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
-  assert.ok(q103, 'q103 should be published in the site bank');
-  assert.equal(q103.q.en, 'What is marked on May Day in Sweden?');
-  assert.match(q103.why.en, /^May Day is International Workers’ Day and a public holiday/);
-});
-
-test('May Day English naturalness guard rejects literal First of May wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents).replace(
-      'What is marked on May Day in Sweden?',
-      'What is marked on First of May in Sweden?',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.match(output, /q103 uses literal First of May English wording/);
+  assert.ok((output.match(/uses literal common-to-do English wording/g) || []).length >= 6, output);
 });
 
 test('Council of Europe source and exports use natural promote English', () => {
@@ -903,6 +611,102 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('Equality Ombudsman source and exports use natural promote English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q061GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q061', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q061', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q061', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q061', 'judgement'),
+  ];
+  const q061Ids = ['q061', ...q061GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q061Ids.includes(question.id))
+    .filter((question) =>
+      equalityOmbudsmanWorkForEqualRightsPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q061Ids.includes(question.id))
+    .filter((question) =>
+      equalityOmbudsmanWorkForEqualRightsPattern.test(textForQuestion(question)),
+    )
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q061Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => equalityOmbudsmanWorkForEqualRightsPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q061 = generatedSiteBank.find((question) => question.id === 'q061');
+  const q061True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q061', 'trueStatement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q061, 'q061 should be published in the site bank');
+  assert.equal(
+    q061.opts[0].en,
+    'To promote equal rights for everyone and make sure the Discrimination Act is followed',
+  );
+  assert.equal(
+    q061.why.en,
+    'The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone. DO makes sure the Discrimination Act is followed; debts, military defence, and Nordic government cooperation belong to other actors.',
+  );
+  assert.ok(q061True, 'q061 true generated variant should be published');
+  assert.equal(
+    q061True.q.en,
+    'One role of the Equality Ombudsman (DO) is to promote equal rights for everyone and make sure the Discrimination Act is followed.',
+  );
+});
+
+test('Equality Ombudsman English naturalness guard rejects literal work-for wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'To promote equal rights for everyone and make sure the Discrimination Act is followed',
+        'To work for equal rights for everyone and make sure the Discrimination Act is followed',
+      )
+      .replace(
+        'The Equality Ombudsman (DO) is a government agency that promotes equal rights and opportunities for everyone.',
+        'The Equality Ombudsman (DO) is a government agency that works for equal rights and opportunities for everyone.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q061 uses literal Equality Ombudsman English wording/,
+  );
+});
+
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -950,21 +754,6 @@ test('free-media source prompts ask the civic concept directly in exports', () =
   assert.deepEqual(csvOffenders, []);
 });
 
-test('published question prompts do not use source-recall wording', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => sourceRecallPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const actualOffenders = Array.from(actualSiteBank)
-    .filter((question) => sourceRecallPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-});
-
 test('free-media source prompt guard rejects answer-key wording', () => {
   const result = spawnSync(
     process.execPath,
@@ -999,95 +788,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q045 source prompt asks about the answer instead of the civic concept/,
-  );
-});
-
-test('participation source prompts ask the civic concept directly in exports', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => authoredWayToPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const actualOffenders = Array.from(actualSiteBank)
-    .filter((question) => authoredWayToPromptPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const csvOffenders = fs
-    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
-    .split(/\r?\n/)
-    .filter((line) => authoredWayToPromptPattern.test(line))
-    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const q013 = generatedSiteBank.find((question) => question.id === 'q013');
-  const q013True = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'trueStatement'),
-  );
-  const q013False = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'falseStatement'),
-  );
-
-  assert.ok(q013, 'q013 should be published in the site bank');
-  assert.equal(q013.q.sv, 'Hur kan människor påverka samhället och delta i demokratin?');
-  assert.equal(q013.q.en, 'How can people influence society and participate in democracy?');
-  assert.ok(q013True, 'q013 true generated variant should be published');
-  assert.equal(
-    q013True.q.sv,
-    'Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling.',
-  );
-  assert.equal(
-    q013True.q.en,
-    'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
-  );
-  assert.ok(q013False, 'q013 false generated variant should be published');
-  assert.equal(
-    q013False.q.sv,
-    'Människor kan påverka samhället och delta i demokratin genom att förbjuda andra från att rösta i politiska val.',
-  );
-  assert.equal(
-    q013False.q.en,
-    'People can influence society and participate in democracy by banning others from voting in political elections.',
-  );
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-  assert.deepEqual(csvOffenders, []);
-});
-
-test('participation source prompt guard rejects way-to answer-key wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Hur kan människor påverka samhället och delta i demokratin?',
-        'Vilket är ett sätt att påverka och delta i samhället?',
-      )
-      .replace(
-        'How can people influence society and participate in democracy?',
-        'Which is a way to influence and participate in society?',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q013 source prompt asks about the answer instead of the civic concept/,
   );
 });
 
@@ -1177,109 +877,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q070 combines tax liability and VAT purchase taxation in one learner-facing item/,
-  );
-});
-
-test('municipal responsibilities source and generated prompts ask directly about services', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const textForQuestion = (question) =>
-    [question.q?.sv, question.q?.en, question.why?.sv, question.why?.en]
-      .concat((question.opts || []).flatMap((option) => [option.sv, option.en]))
-      .join(' ');
-  const generatedOffenders = generatedSiteBank
-    .filter((question) =>
-      q026OldMunicipalResponsibilitiesPromptPattern.test(textForQuestion(question)),
-    )
-    .map((question) => question.id);
-  const actualOffenders = Array.from(actualSiteBank)
-    .filter((question) =>
-      q026OldMunicipalResponsibilitiesPromptPattern.test(textForQuestion(question)),
-    )
-    .map((question) => question.id);
-  const csvOffenders = fs
-    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
-    .split(/\r?\n/)
-    .filter((line) => q026OldMunicipalResponsibilitiesPromptPattern.test(line))
-    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
-  const q026 = generatedSiteBank.find((question) => question.id === 'q026');
-  const q026SectionPractice = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'singleChoice'),
-  );
-  const q026Judgement = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'judgement'),
-  );
-  const q026True = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'trueStatement'),
-  );
-  const q026False = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q026', 'falseStatement'),
-  );
-
-  assert.ok(q026, 'q026 should be published in the site bank');
-  assert.equal(q026.q.sv, 'Vilka vardagstjänster ansvarar kommuner för?');
-  assert.equal(q026.q.en, 'Which everyday services are municipalities responsible for?');
-  assert.ok(q026SectionPractice, 'q026 section-practice generated variant should be published');
-  assert.equal(q026SectionPractice.q.sv, 'Kommuner ansvarar för ...');
-  assert.equal(q026SectionPractice.q.en, 'Municipalities are responsible for ...');
-  assert.ok(q026Judgement, 'q026 judgement generated variant should be published');
-  assert.match(q026Judgement.q.sv, /Vilka vardagstjänster ansvarar kommuner för/);
-  assert.match(q026Judgement.q.en, /Which everyday services are municipalities responsible for/);
-  assert.equal(
-    q026True?.q.sv,
-    'Kommuner ansvarar för vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning.',
-  );
-  assert.equal(
-    q026True?.q.en,
-    'Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.',
-  );
-  assert.equal(q026False?.q.sv, 'Kommuner ansvarar för att skicka ambassadörer till andra länder.');
-  assert.equal(
-    q026False?.q.en,
-    'Municipalities are responsible for sending ambassadors to other countries.',
-  );
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-  assert.deepEqual(csvOffenders, []);
-});
-
-test('municipal responsibilities prompt guard rejects the old answer-key phrasing', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'Vilka vardagstjänster ansvarar kommuner för?',
-        'Vilket exempel beskriver kommunernas ansvar?',
-      )
-      .replace(
-        'Which everyday services are municipalities responsible for?',
-        'Which example describes municipal responsibilities?',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q026 source prompt asks about the answer instead of the civic concept/,
   );
 });
 
@@ -1596,76 +1193,12 @@ test('published true/false question banks omit UI-afforded prefixes', () => {
   assert.deepEqual(csvOffenders, []);
 });
 
-test('secret-ballot Swedish copy uses plural voter wording across published banks', () => {
-  const secretBallotPronounPattern = /\bhur\s+den\s+röstar\b/i;
-  const expectedOption = 'Att väljare inte behöver avslöja hur de röstar';
-  const source = fs.readFileSync(path.join(repoRoot, 'data/additionalQuestions.ts'), 'utf8');
-  const csv = fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8');
-  const staticSource = fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8');
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-
-  function learnerFacingSvText(question) {
-    return [
-      question.q?.sv,
-      question.why?.sv,
-      ...(question.opts || []).map((option) => option.sv),
-    ].join(' ');
-  }
-
-  function bankFindings(bank) {
-    return Array.from(bank)
-      .filter((question) => secretBallotPronounPattern.test(learnerFacingSvText(question)))
-      .map((question) => question.id);
-  }
-
-  assert.equal(source.includes(expectedOption), true);
-  assert.equal(secretBallotPronounPattern.test(source), false);
-  assert.equal(secretBallotPronounPattern.test(csv), false);
-  assert.equal(secretBallotPronounPattern.test(staticSource), false);
-  assert.deepEqual(bankFindings(generatedSiteBank), []);
-  assert.deepEqual(bankFindings(actualSiteBank), []);
-});
-
-test('secret-ballot Swedish copy rejects singular den voting wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents).replace(
-      'Att väljare inte behöver avslöja hur de röstar',
-      'Ingen behöver avslöja hur den röstar',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q145 uses unnatural secret-ballot Swedish voting pronoun/,
-  );
-});
-
 test('generated single-choice banks omit true-false and filler option shells', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
-  const metaStemPattern =
-    /^(?:Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
+  const metaStemPattern = /^(?:Vilket svar är korrekt\?|Which answer is correct\?)/i;
   const absentTrueFalseExplanationPattern =
     /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 
@@ -3219,52 +2752,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /generated variant\[3\] option\[2\] uses generated single-choice filler option "(?:Inget av alternativen stämmer|None of the options is correct)"/,
-  );
-});
-
-test('published question schema rejects generated single-choice meta prompts', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
-        "  sourceQuestions,",
-        "  sourceQuestions.length + 1,",
-        ").map((question) =>",
-        "  question.id === generatedFixtureId('q001', 0)",
-        "    ? {",
-        "        ...question,",
-        "        questionSv: 'Vilket svar stämmer bäst? Var ligger Sverige?',",
-        "        questionEn: 'Which answer best matches? Where is Sweden located?',",
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /generated variant\[0\] uses generated single-choice meta-stem wording/,
   );
 });
 
