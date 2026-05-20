@@ -1047,9 +1047,10 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
   {
     file: 'app/(tabs)/practice.tsx',
-    component: 'AdBanner',
+    component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<AdBanner\s+placement="quiz_completed_interstitial"\s+\/>/,
+    pattern:
+      /<PracticeInterstitialAd\s+showKey=\{getPracticeInterstitialShowKey\(question\.id,\s*shuffleSessionId\)\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -6154,6 +6155,7 @@ const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForS
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
+const getPracticeInterstitialShowKey = practiceSessionStoreModule.getPracticeInterstitialShowKey;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -6387,6 +6389,7 @@ let practiceFlowParityValidated = false;
 let practiceSessionStoreFieldsValidated = 0;
 let practiceSessionStoreSchemaParityValidated = false;
 let practiceSessionStoreRuntimeParityValidated = false;
+let practiceInterstitialQuestionCapValidated = false;
 let answerValidationTypeUnionsValidated = 0;
 let answerValidationTypeInterfacesValidated = 0;
 let answerValidationTypeSchemaParityValidated = false;
@@ -6578,6 +6581,9 @@ if (
   typeof usePracticeSessionStore.setState !== 'function'
 ) {
   fail('usePracticeSessionStore export is not a Zustand store');
+}
+if (typeof getPracticeInterstitialShowKey !== 'function') {
+  fail('getPracticeInterstitialShowKey export is not a function');
 }
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
@@ -6965,6 +6971,82 @@ function validateAdPlacementRouteParity() {
       }
       if (!/\.destroy\(\)/.test(nativeAdCardNativeSource)) {
         reject('NativeAdCard native placement must destroy loaded native ads on cleanup');
+        routeIsValid = false;
+      }
+    }
+
+    if (spec.component === 'PracticeInterstitialAd') {
+      const consentAwareShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
+      );
+      const webInterstitialSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+        'utf8',
+      );
+      const nativeInterstitialSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+        'utf8',
+      );
+
+      if (/showKey=\{[\s\S]{0,160}selectedOptionId/.test(source)) {
+        reject(
+          'Practice route must key quiz_completed_interstitial by question and shuffle session, not selectedOptionId',
+        );
+        routeIsValid = false;
+      }
+      if (!source.includes('getPracticeInterstitialShowKey(question.id, shuffleSessionId)')) {
+        reject('Practice route must use getPracticeInterstitialShowKey for interstitial capping');
+        routeIsValid = false;
+      }
+      if (
+        !webInterstitialSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)
+      ) {
+        reject(
+          `PracticeInterstitialAd web fallback must gate ${spec.placement} through shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (webInterstitialSource.includes('react-native-google-mobile-ads')) {
+        reject('PracticeInterstitialAd web fallback must not import native-only ad SDK APIs');
+        routeIsValid = false;
+      }
+      if (!nativeInterstitialSource.includes('InterstitialAd.createForAdRequest')) {
+        reject('PracticeInterstitialAd native placement must load through InterstitialAd');
+        routeIsValid = false;
+      }
+      if (
+        !nativeInterstitialSource.includes(`getPlatformAdUnitId('${spec.placement}', Platform.OS)`)
+      ) {
+        reject(
+          `PracticeInterstitialAd native placement must resolve the ${spec.placement} unit by platform`,
+        );
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(nativeInterstitialSource)) {
+        reject(
+          `PracticeInterstitialAd native placement must gate ${spec.placement} through consent-aware shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
+        reject(
+          'PracticeInterstitialAd native placement must pass non-personalized ad request options',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !nativeInterstitialSource.includes('AdEventType.OPENED') ||
+        !nativeInterstitialSource.includes('AdEventType.CLOSED')
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must consume the cap on opened/closed show paths',
+        );
+        routeIsValid = false;
+      }
+      if (
+        /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/.test(nativeInterstitialSource)
+      ) {
+        reject('PracticeInterstitialAd must not consume the show key in the LOADED listener');
         routeIsValid = false;
       }
     }
@@ -11998,7 +12080,8 @@ function validatePracticeSessionStoreParity() {
   if (
     usePracticeSessionStore &&
     typeof usePracticeSessionStore.getState === 'function' &&
-    typeof usePracticeSessionStore.setState === 'function'
+    typeof usePracticeSessionStore.setState === 'function' &&
+    typeof getPracticeInterstitialShowKey === 'function'
   ) {
     usePracticeSessionStore.setState({
       activeQuestionId: null,
@@ -12014,6 +12097,10 @@ function validatePracticeSessionStoreParity() {
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session selectOption must keep the current shuffle session seed');
     }
+    const firstFeedbackKey = getPracticeInterstitialShowKey(
+      state.activeQuestionId,
+      state.shuffleSessionId,
+    );
 
     usePracticeSessionStore.getState().resetSelection();
     state = usePracticeSessionStore.getState();
@@ -12024,6 +12111,12 @@ function validatePracticeSessionStoreParity() {
     }
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session resetSelection must keep the current shuffle session seed');
+    }
+    if (
+      firstFeedbackKey !==
+      getPracticeInterstitialShowKey(state.activeQuestionId, state.shuffleSessionId)
+    ) {
+      rejectRuntime('practice retry must keep the same interstitial feedback-cycle key');
     }
 
     usePracticeSessionStore.getState().advanceQuestion();
@@ -12036,12 +12129,18 @@ function validatePracticeSessionStoreParity() {
     if (state.shuffleSessionId !== 'practice-session-1') {
       rejectRuntime('practice session advanceQuestion must advance the shuffle session seed');
     }
+    if (
+      firstFeedbackKey === getPracticeInterstitialShowKey('q-validator', state.shuffleSessionId)
+    ) {
+      rejectRuntime('practice advance must create a fresh interstitial feedback-cycle key');
+    }
 
     usePracticeSessionStore.setState({
       activeQuestionId: null,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
     });
+    if (runtimeValid) practiceInterstitialQuestionCapValidated = true;
   }
 
   if (
@@ -14465,6 +14564,7 @@ console.log(
       practiceSessionStoreFieldsValidated,
       practiceSessionStoreSchemaParityValidated,
       practiceSessionStoreRuntimeParityValidated,
+      practiceInterstitialQuestionCapValidated,
       answerValidationTypeUnionsValidated,
       answerValidationTypeInterfacesValidated,
       answerValidationTypeSchemaParityValidated,

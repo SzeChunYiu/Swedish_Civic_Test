@@ -42,7 +42,18 @@ export function PracticeInterstitialAd({
 
     let unsubscribeLoaded: (() => void) | undefined;
     let unsubscribeError: (() => void) | undefined;
-    let didReachShowPath = false;
+    let unsubscribeOpened: (() => void) | undefined;
+    let unsubscribeClosed: (() => void) | undefined;
+    let attemptSettled = false;
+    let showStarted = false;
+
+    const finishAttempt = () => {
+      interstitialLoadInFlight = false;
+      attemptSettled = true;
+    };
+    const consumeShowKey = () => {
+      lastInterstitialShowKey = showKey;
+    };
 
     try {
       const interstitialAd = InterstitialAd.createForAdRequest(unitId, {
@@ -52,33 +63,52 @@ export function PracticeInterstitialAd({
       interstitialLoadInFlight = true;
 
       unsubscribeLoaded = interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
-        lastInterstitialShowKey = showKey;
-        interstitialLoadInFlight = false;
-        didReachShowPath = true;
+        showStarted = true;
 
         try {
-          void Promise.resolve(interstitialAd.show()).catch(() => undefined);
+          void Promise.resolve(interstitialAd.show())
+            .then(() => {
+              consumeShowKey();
+              finishAttempt();
+            })
+            .catch(() => {
+              finishAttempt();
+            });
         } catch {
-          // Interstitial ads are optional; feedback and navigation must continue.
+          finishAttempt();
         }
       });
 
       unsubscribeError = interstitialAd.addAdEventListener(AdEventType.ERROR, () => {
-        interstitialLoadInFlight = false;
+        finishAttempt();
+      });
+
+      unsubscribeOpened = interstitialAd.addAdEventListener(AdEventType.OPENED, () => {
+        consumeShowKey();
+        finishAttempt();
+      });
+
+      unsubscribeClosed = interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
+        consumeShowKey();
+        finishAttempt();
       });
 
       interstitialAd.load();
       return () => {
         unsubscribeLoaded?.();
         unsubscribeError?.();
-        if (!didReachShowPath) {
-          interstitialLoadInFlight = false;
+        unsubscribeOpened?.();
+        unsubscribeClosed?.();
+        if (!showStarted && !attemptSettled) {
+          finishAttempt();
         }
       };
     } catch {
       unsubscribeLoaded?.();
       unsubscribeError?.();
-      interstitialLoadInFlight = false;
+      unsubscribeOpened?.();
+      unsubscribeClosed?.();
+      finishAttempt();
       return undefined;
     }
   }, [entitlementsReady, mobileAdsConsent, resolvedEntitlements, showKey]);
